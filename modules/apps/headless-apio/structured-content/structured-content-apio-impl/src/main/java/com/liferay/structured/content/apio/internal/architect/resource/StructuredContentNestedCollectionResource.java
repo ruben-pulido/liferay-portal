@@ -18,6 +18,7 @@ import static com.liferay.portal.apio.idempotent.Idempotent.idempotent;
 
 import com.liferay.aggregate.rating.apio.architect.identifier.AggregateRatingIdentifier;
 import com.liferay.apio.architect.functional.Try;
+import com.liferay.apio.architect.language.AcceptLanguage;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
 import com.liferay.apio.architect.representor.Representor;
@@ -36,6 +37,7 @@ import com.liferay.content.space.apio.architect.identifier.ContentSpaceIdentifie
 import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
+import com.liferay.dynamic.data.mapping.kernel.Value;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureService;
@@ -47,11 +49,14 @@ import com.liferay.journal.util.JournalContent;
 import com.liferay.journal.util.JournalHelper;
 import com.liferay.media.object.apio.architect.identifier.MediaObjectIdentifier;
 import com.liferay.person.apio.architect.identifier.PersonIdentifier;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.apio.identifier.ClassNameClassPK;
 import com.liferay.portal.apio.permission.HasPermission;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
@@ -122,9 +127,10 @@ public class StructuredContentNestedCollectionResource
 				builder) {
 
 		return builder.addGetter(
-			this::_getPageItems, ThemeDisplay.class, Filter.class, Sort.class
+			this::_getPageItems, AcceptLanguage.class, ThemeDisplay.class,
+			Filter.class, Sort.class
 		).addCreator(
-			this::_addJournalArticle, ThemeDisplay.class,
+			this::_addJournalArticle, AcceptLanguage.class, ThemeDisplay.class,
 			_hasPermission.forAddingIn(ContentSpaceIdentifier.class),
 			StructuredContentCreatorForm::buildForm
 		).build();
@@ -140,12 +146,14 @@ public class StructuredContentNestedCollectionResource
 		ItemRoutes.Builder<JournalArticleWrapper, Long> builder) {
 
 		return builder.addGetter(
-			this::_getJournalArticleWrapper, ThemeDisplay.class
+			this::_getJournalArticleWrapper, AcceptLanguage.class,
+			ThemeDisplay.class
 		).addRemover(
 			idempotent(this::_deleteJournalArticle), _hasPermission::forDeleting
 		).addUpdater(
-			this::_updateJournalArticle, ThemeDisplay.class,
-			_hasPermission::forUpdating, StructuredContentUpdaterForm::buildForm
+			this::_updateJournalArticle, AcceptLanguage.class,
+			ThemeDisplay.class, _hasPermission::forUpdating,
+			StructuredContentUpdaterForm::buildForm
 		).build();
 	}
 
@@ -190,13 +198,15 @@ public class StructuredContentNestedCollectionResource
 				"renderedContent", RenderedJournalArticle::getRenderedContent
 			).build()
 		).addNestedList(
-			"values", this::_getJournalArticleDDMFormFieldValues,
+			"values", this::_getJournalArticleDDMFormFieldWrappers,
 			fieldValuesBuilder -> fieldValuesBuilder.types(
 				"ContentFieldValue"
 			).addLinkedModel(
 				"document", MediaObjectIdentifier.class,
-				ddmFormFieldValue -> Try.fromFallible(
-					ddmFormFieldValue::getValue
+				ddmFormFieldWrapper -> Try.fromFallible(
+					ddmFormFieldWrapper::getDDMFormFieldValue
+				).map(
+					DDMFormFieldValue::getValue
 				).map(
 					value -> value.getString(LocaleUtil.getDefault())
 				).map(
@@ -209,7 +219,7 @@ public class StructuredContentNestedCollectionResource
 				"structuredContent", StructuredContentIdentifier.class,
 				this::_getStructuredContentId
 			).addLocalizedStringByLocale(
-				"value", this::_getLocalizedString
+				"value", StructuredContentField::getLocalizedValue
 			).addNested(
 				"geo", this::_getGeoJSONObject,
 				geoBuilder -> geoBuilder.types(
@@ -221,8 +231,10 @@ public class StructuredContentNestedCollectionResource
 				).build()
 			).addRelativeURL(
 				"link", this::_getLink
+			).addLocalizedStringByLocale(
+				"label", StructuredContentField::getLocalizedLabel
 			).addString(
-				"name", DDMFormFieldValue::getName
+				"name", StructuredContentField::getName
 			).build()
 		).addRelatedCollection(
 			"category", CategoryIdentifier.class
@@ -241,7 +253,7 @@ public class StructuredContentNestedCollectionResource
 	private JournalArticleWrapper _addJournalArticle(
 			long contentSpaceId,
 			StructuredContentCreatorForm structuredContentCreatorForm,
-			ThemeDisplay themeDisplay)
+			AcceptLanguage acceptLanguage, ThemeDisplay themeDisplay)
 		throws PortalException {
 
 		Long ddmStructureId =
@@ -287,7 +299,8 @@ public class StructuredContentNestedCollectionResource
 			0, 0, 0, 0, 0, true, 0, 0, 0, 0, 0, true, true, null,
 			serviceContext);
 
-		return new JournalArticleWrapper(journalArticle, themeDisplay);
+		return new JournalArticleWrapper(
+			journalArticle, acceptLanguage.getPreferredLocale(), themeDisplay);
 	}
 
 	private ClassNameClassPK _createClassNameClassPK(
@@ -356,16 +369,16 @@ public class StructuredContentNestedCollectionResource
 		return optional.orElse(defaultValue);
 	}
 
-	private List<DDMFormFieldValue> _getFormFieldValues(
-		List<DDMFormFieldValue> ddmFormFieldValues) {
+	private List<StructuredContentField> _getFormFieldValues(
+		List<StructuredContentField> ddmFormFieldValues) {
 
-		Stream<DDMFormFieldValue> ddmFormFieldValueStream =
+		Stream<StructuredContentField> ddmFormFieldValueStream =
 			ddmFormFieldValues.stream();
 
-		List<DDMFormFieldValue> nestedDDMFormFieldValues =
+		List<StructuredContentField> nestedDDMFormFieldValues =
 			ddmFormFieldValueStream.flatMap(
 				ddmFormFieldValue -> _getFormFieldValues(
-					ddmFormFieldValue.getNestedDDMFormFieldValues()
+					ddmFormFieldValue.getNestedFields()
 				).stream()
 			).collect(
 				Collectors.toList()
@@ -397,9 +410,13 @@ public class StructuredContentNestedCollectionResource
 		return booleanQuery;
 	}
 
-	private JSONObject _getGeoJSONObject(DDMFormFieldValue ddmFormFieldValue) {
+	private JSONObject _getGeoJSONObject(
+		StructuredContentField ddmFormFieldWrapper) {
+
 		return Try.fromFallible(
-			ddmFormFieldValue::getValue
+			ddmFormFieldWrapper::getDDMFormFieldValue
+		).map(
+			DDMFormFieldValue::getValue
 		).map(
 			value -> value.getString(LocaleUtil.getDefault())
 		).filter(
@@ -431,7 +448,7 @@ public class StructuredContentNestedCollectionResource
 		return ListUtil.toList(assetTags, AssetTag::getName);
 	}
 
-	private List<DDMFormFieldValue> _getJournalArticleDDMFormFieldValues(
+	private List<StructuredContentField> _getJournalArticleDDMFormFieldWrappers(
 		JournalArticleWrapper journalArticleWrapper) {
 
 		return Try.fromFallible(
@@ -449,6 +466,19 @@ public class StructuredContentNestedCollectionResource
 		).map(
 			DDMFormValues::getDDMFormFieldValues
 		).map(
+			ddmFormFieldValueList -> {
+				Stream<DDMFormFieldValue> stream =
+					ddmFormFieldValueList.stream();
+
+				return stream.map(
+					ddmFormFieldValue -> new StructuredContentField(
+						ddmFormFieldValue,
+						journalArticleWrapper.getDDMStructure())
+				).collect(
+					Collectors.toList()
+				);
+			}
+		).map(
 			this::_getFormFieldValues
 		).orElse(
 			null
@@ -464,13 +494,15 @@ public class StructuredContentNestedCollectionResource
 	}
 
 	private JournalArticleWrapper _getJournalArticleWrapper(
-			long journalArticleId, ThemeDisplay themeDisplay)
+			long journalArticleId, AcceptLanguage acceptLanguage,
+			ThemeDisplay themeDisplay)
 		throws PortalException {
 
 		JournalArticle journalArticle = _journalArticleService.getLatestArticle(
 			journalArticleId);
 
-		return new JournalArticleWrapper(journalArticle, themeDisplay);
+		return new JournalArticleWrapper(
+			journalArticle, acceptLanguage.getPreferredLocale(), themeDisplay);
 	}
 
 	private String _getLayoutLink(JSONObject jsonObject)
@@ -486,9 +518,11 @@ public class StructuredContentNestedCollectionResource
 		return layoutByUuidAndGroupId.getFriendlyURL();
 	}
 
-	private String _getLink(DDMFormFieldValue ddmFormFieldValue) {
+	private String _getLink(StructuredContentField ddmFormFieldWrapper) {
 		return Try.fromFallible(
-			ddmFormFieldValue::getValue
+			ddmFormFieldWrapper::getDDMFormFieldValue
+		).map(
+			DDMFormFieldValue::getValue
 		).map(
 			value -> value.getString(LocaleUtil.getDefault())
 		).filter(
@@ -504,29 +538,16 @@ public class StructuredContentNestedCollectionResource
 		);
 	}
 
-	private String _getLocalizedString(
-		DDMFormFieldValue ddmFormFieldValue, Locale locale) {
-
-		return Try.fromFallible(
-			ddmFormFieldValue::getValue
-		).map(
-			value -> value.getString(locale)
-		).filter(
-			valueString -> !StructuredContentUtil.isJSONObject(valueString)
-		).orElse(
-			null
-		);
-	}
-
 	private PageItems<JournalArticleWrapper> _getPageItems(
 			Pagination pagination, long contentSpaceId,
-			ThemeDisplay themeDisplay, Filter filter, Sort sort)
+			AcceptLanguage acceptLanguage, ThemeDisplay themeDisplay,
+			Filter filter, Sort sort)
 		throws PortalException {
 
 		SearchContext searchContext = _createSearchContext(
 			themeDisplay.getCompanyId(), contentSpaceId,
-			themeDisplay.getLocale(), sort, pagination.getStartPosition(),
-			pagination.getEndPosition());
+			acceptLanguage.getPreferredLocale(), sort,
+			pagination.getStartPosition(), pagination.getEndPosition());
 
 		Query fullQuery = _getFullQuery(
 			filter, themeDisplay.getLocale(), searchContext);
@@ -559,7 +580,8 @@ public class StructuredContentNestedCollectionResource
 			List::stream
 		).map(
 			journalArticle -> new JournalArticleWrapper(
-				journalArticle, themeDisplay)
+				journalArticle, acceptLanguage.getPreferredLocale(),
+				themeDisplay)
 		).collect(
 			Collectors.toList()
 		);
@@ -637,9 +659,13 @@ public class StructuredContentNestedCollectionResource
 		);
 	}
 
-	private Long _getStructuredContentId(DDMFormFieldValue ddmFormFieldValue) {
+	private Long _getStructuredContentId(
+		StructuredContentField ddmFormFieldWrapper) {
+
 		return Try.fromFallible(
-			ddmFormFieldValue::getValue
+			ddmFormFieldWrapper::getDDMFormFieldValue
+		).map(
+			ddmFormFieldValue -> ddmFormFieldValue.getValue()
 		).map(
 			value -> value.getString(LocaleUtil.getDefault())
 		).filter(
@@ -658,7 +684,7 @@ public class StructuredContentNestedCollectionResource
 	private JournalArticleWrapper _updateJournalArticle(
 			long journalArticleId,
 			StructuredContentUpdaterForm structuredContentUpdaterForm,
-			ThemeDisplay themeDisplay)
+			AcceptLanguage acceptLanguage, ThemeDisplay themeDisplay)
 		throws PortalException {
 
 		JournalArticle journalArticle = _journalArticleService.getLatestArticle(
@@ -670,7 +696,7 @@ public class StructuredContentNestedCollectionResource
 
 		DDMStructure ddmStructure = journalArticle.getDDMStructure();
 
-		Locale locale = themeDisplay.getLocale();
+		Locale locale = acceptLanguage.getPreferredLocale();
 
 		String content =
 			_journalArticleContentHelper.createJournalArticleContent(
@@ -715,8 +741,12 @@ public class StructuredContentNestedCollectionResource
 				0, 0, 0, 0, 0, true, 0, 0, 0, 0, 0, true, true, false, null,
 				null, null, null, serviceContext);
 
-		return new JournalArticleWrapper(updatedJournalArticle, themeDisplay);
+		return new JournalArticleWrapper(
+			updatedJournalArticle, locale, themeDisplay);
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		StructuredContentNestedCollectionResource.class);
 
 	@Reference
 	private AssetTagLocalService _assetTagLocalService;
@@ -764,5 +794,70 @@ public class StructuredContentNestedCollectionResource
 	@Reference
 	private SearchResultPermissionFilterFactory
 		_searchResultPermissionFilterFactory;
+
+	private static class StructuredContentField {
+
+		public StructuredContentField(
+			DDMFormFieldValue value, DDMStructure ddmStructure) {
+
+			_value = value;
+			_ddmStructure = ddmStructure;
+		}
+
+		public DDMFormFieldValue getDDMFormFieldValue() {
+			return _value;
+		}
+
+		public String getLocalizedLabel(Locale locale) {
+			try {
+				return _ddmStructure.getFieldLabel(_value.getName(), locale);
+			}
+			catch (PortalException pe) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						StringBundler.concat(
+							"Cannot get localized label for value name ",
+							_value.getName(), " and locale ", locale),
+						pe);
+				}
+
+				return null;
+			}
+		}
+
+		public String getLocalizedValue(Locale locale) {
+			Value value = _value.getValue();
+
+			String localizedValue = value.getString(locale);
+
+			if (!StructuredContentUtil.isJSONObject(localizedValue)) {
+				return localizedValue;
+			}
+
+			return null;
+		}
+
+		public String getName() {
+			return _value.getName();
+		}
+
+		public List<StructuredContentField> getNestedFields() {
+			List<DDMFormFieldValue> ddmFormFieldValues =
+				_value.getNestedDDMFormFieldValues();
+
+			Stream<DDMFormFieldValue> stream = ddmFormFieldValues.stream();
+
+			return stream.map(
+				ddmFormFieldValue ->
+					new StructuredContentField(ddmFormFieldValue, _ddmStructure)
+			).collect(
+				Collectors.toList()
+			);
+		}
+
+		private final DDMStructure _ddmStructure;
+		private final DDMFormFieldValue _value;
+
+	}
 
 }
