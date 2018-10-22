@@ -83,13 +83,13 @@ public class StructuredContentApioTestBundleActivator
 		StructuredContentApioTestBundleActivator.class.getSimpleName() +
 			"Title1_es";
 
-	public static final String TITLE_2_LOCALE_DEFAULT =
-		StructuredContentApioTestBundleActivator.class.getSimpleName() +
-			"Title2_DefaultLocale";
-
 	public static final String TITLE_2_LOCALE_ES =
 		StructuredContentApioTestBundleActivator.class.getSimpleName() +
 			"Title2_es";
+
+	public static final String TITLE_2_LOCALE_US =
+		StructuredContentApioTestBundleActivator.class.getSimpleName() +
+			"Title2_us";
 
 	public static final String TITLE_NO_GUEST_NO_GROUP =
 		StructuredContentApioTestBundleActivator.class.getSimpleName() +
@@ -199,13 +199,13 @@ public class StructuredContentApioTestBundleActivator
 
 		Map<Locale, String> stringMap = new HashMap<Locale, String>() {
 			{
-				put(LocaleUtil.getDefault(), title);
+				put(LocaleUtil.US, title);
 			}
 		};
 
 		return _addJournalArticle(
-			stringMap, userId, groupId, LocaleUtil.getDefault(),
-			addGuestPermissions, addGroupPermissions);
+			stringMap, userId, groupId, LocaleUtil.US, addGuestPermissions,
+			addGroupPermissions);
 	}
 
 	private User _addUser(String emailAddress, long companyId, long groupId)
@@ -221,10 +221,10 @@ public class StructuredContentApioTestBundleActivator
 		User user = UserLocalServiceUtil.addUser(
 			UserConstants.USER_ID_DEFAULT, companyId, false, Constants.TEST,
 			Constants.TEST, true, StringUtil.randomString(20), emailAddress, 0,
-			null, PortalUtil.getSiteDefaultLocale(groupId),
-			StringUtil.randomString(20), null, StringUtil.randomString(10), 0,
-			0, true, 1, 1, 2000, null, new long[] {groupId}, new long[0],
-			new long[0], new long[0], false, new ServiceContext());
+			null, LocaleUtil.US, StringUtil.randomString(20), null,
+			StringUtil.randomString(10), 0, 0, true, 1, 1, 2000, null,
+			new long[] {groupId}, new long[0], new long[0], new long[0], false,
+			new ServiceContext());
 
 		_autoCloseables.add(
 			() -> UserLocalServiceUtil.deleteUser(user.getUserId()));
@@ -282,7 +282,7 @@ public class StructuredContentApioTestBundleActivator
 
 		Map<Locale, String> titleMap2 = new HashMap<Locale, String>() {
 			{
-				put(LocaleUtil.getDefault(), TITLE_2_LOCALE_DEFAULT);
+				put(LocaleUtil.US, TITLE_2_LOCALE_US);
 				put(LocaleUtil.SPAIN, TITLE_2_LOCALE_ES);
 			}
 		};
@@ -296,7 +296,7 @@ public class StructuredContentApioTestBundleActivator
 	private void _prepareTest() throws Exception {
 		User user = UserTestUtil.getAdminUser(TestPropsValues.getCompanyId());
 		Map<Locale, String> nameMap = Collections.singletonMap(
-			LocaleUtil.getDefault(), SITE_NAME);
+			LocaleUtil.US, SITE_NAME);
 
 		Group group = GroupLocalServiceUtil.addGroup(
 			user.getUserId(), GroupConstants.DEFAULT_PARENT_GROUP_ID, null, 0,

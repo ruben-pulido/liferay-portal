@@ -139,8 +139,7 @@ public class StructuredContentApioTest {
 			_toStringAsGuest(
 				_getURLWithFilterByTitle(
 					hrefs.get(0),
-					StructuredContentApioTestBundleActivator.
-						TITLE_2_LOCALE_DEFAULT),
+					StructuredContentApioTestBundleActivator.TITLE_2_LOCALE_US),
 				headers),
 			"$._embedded.StructuredContent[*]._embedded.values._embedded[*]." +
 				"value");
@@ -170,8 +169,7 @@ public class StructuredContentApioTest {
 
 		Assert.assertTrue(
 			titles.contains(
-				StructuredContentApioTestBundleActivator.
-					TITLE_2_LOCALE_DEFAULT));
+				StructuredContentApioTestBundleActivator.TITLE_2_LOCALE_US));
 	}
 
 	@Test
@@ -197,8 +195,7 @@ public class StructuredContentApioTest {
 
 		Assert.assertTrue(
 			titles.contains(
-				StructuredContentApioTestBundleActivator.
-					TITLE_2_LOCALE_DEFAULT));
+				StructuredContentApioTestBundleActivator.TITLE_2_LOCALE_US));
 	}
 
 	@Test
