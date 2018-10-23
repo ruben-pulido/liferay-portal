@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+
+<root available-locales="" default-locale="en_US">
+	<dynamic-element index-type="keyword" instance-id="hkfa" name="MySeparator" type="selection_break" />
+</root>
