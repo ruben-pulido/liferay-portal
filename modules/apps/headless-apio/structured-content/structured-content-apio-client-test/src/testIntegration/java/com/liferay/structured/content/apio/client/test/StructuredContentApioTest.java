@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minidev.json.JSONArray;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -313,6 +315,45 @@ public class StructuredContentApioTest {
 				"dataType");
 
 		Assert.assertTrue(dataTypes.contains("document-library"));
+	}
+
+	@Test
+	public void testFieldWithSeparatorDataTypeIsNotDisplayed()
+		throws Exception {
+
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		JSONArray valuesJSONArray = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_SEPARATOR_FIELD_LOCALE_US),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values");
+
+		Assert.assertEquals(1, valuesJSONArray.size());
+
+		Map map = (Map)valuesJSONArray.get(0);
+
+		Integer total = (Integer)map.get("total");
+
+		Assert.assertEquals(0, total.intValue());
+
+		JSONArray embeddedJSONArray = (JSONArray)map.get("_embedded");
+
+		Assert.assertEquals(0, embeddedJSONArray.size());
 	}
 
 	@Test
