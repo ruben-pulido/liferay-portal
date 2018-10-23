@@ -151,6 +151,10 @@ public class StructuredContentApioTestBundleActivator
 		StructuredContentApioTestBundleActivator.class.getSimpleName() +
 			"TitleSelectField_us";
 
+	public static final String TITLE_SEPARATOR_FIELD_LOCALE_US =
+		StructuredContentApioTestBundleActivator.class.getSimpleName() +
+			"TitleSeparatorField_us";
+
 	public static final String TITLE_TEXT_BOX_FIELD_LOCALE_US =
 		StructuredContentApioTestBundleActivator.class.getSimpleName() +
 			"TitleTextBoxField_us";
