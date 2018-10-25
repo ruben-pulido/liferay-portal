@@ -122,6 +122,35 @@ public class StructuredContentApioTest {
 	}
 
 	@Test
+	public void testBooleanFieldInputControlIsDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyBoolean')].inputControl");
+
+		Assert.assertEquals(inputControls.toString(), 1, inputControls.size());
+		Assert.assertTrue(inputControls.contains("checkbox"));
+	}
+
+	@Test
 	public void testColorFieldDataTypeIsDisplayed() throws Exception {
 		List<String> hrefs = JsonPath.read(
 			_toStringAsAdmin(
@@ -148,6 +177,34 @@ public class StructuredContentApioTest {
 
 		Assert.assertEquals(dataTypes.toString(), 1, dataTypes.size());
 		Assert.assertTrue(dataTypes.contains("color"));
+	}
+
+	@Test
+	public void testColorFieldInputControlIsNotDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyColor')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
 	}
 
 	@Test
@@ -180,6 +237,34 @@ public class StructuredContentApioTest {
 	}
 
 	@Test
+	public void testDateFieldInputControlIsNotDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyDate')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
+	}
+
+	@Test
 	public void testDecimalFieldDataTypeIsDisplayed() throws Exception {
 		List<String> hrefs = JsonPath.read(
 			_toStringAsAdmin(
@@ -206,6 +291,34 @@ public class StructuredContentApioTest {
 
 		Assert.assertEquals(dataTypes.toString(), 1, dataTypes.size());
 		Assert.assertTrue(dataTypes.contains("double"));
+	}
+
+	@Test
+	public void testDecimalFieldInputControlIsNotDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyDecimal')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
 	}
 
 	@Test
@@ -349,6 +462,36 @@ public class StructuredContentApioTest {
 	}
 
 	@Test
+	public void testDocumentsAndMediaFieldInputControlIsNotDisplayed()
+		throws Exception {
+
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyDocumentsAndMedia')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
+	}
+
+	@Test
 	public void testGeolocationDataTypeIsDisplayed() throws Exception {
 		List<String> hrefs = JsonPath.read(
 			_toStringAsAdmin(
@@ -375,6 +518,34 @@ public class StructuredContentApioTest {
 
 		Assert.assertEquals(dataTypes.toString(), 1, dataTypes.size());
 		Assert.assertTrue(dataTypes.contains("geolocation"));
+	}
+
+	@Test
+	public void testGeolocationInputControlIsNotDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyGeolocation')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
 	}
 
 	@Test
@@ -436,6 +607,34 @@ public class StructuredContentApioTest {
 	}
 
 	@Test
+	public void testHtmlInputControlIsNotDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyHTML')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
+	}
+
+	@Test
 	public void testImageDataTypeIsDisplayed() throws Exception {
 		List<String> hrefs = JsonPath.read(
 			_toStringAsAdmin(
@@ -462,6 +661,34 @@ public class StructuredContentApioTest {
 
 		Assert.assertEquals(dataTypes.toString(), 1, dataTypes.size());
 		Assert.assertTrue(dataTypes.contains("image"));
+	}
+
+	@Test
+	public void testImageInputControlIsNotDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyImage')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
 	}
 
 	@Test
@@ -494,6 +721,34 @@ public class StructuredContentApioTest {
 	}
 
 	@Test
+	public void testIntegerInputControlIsNotDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyInteger')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
+	}
+
+	@Test
 	public void testJournalArticleDataTypeIsDisplayed() throws Exception {
 		List<String> hrefs = JsonPath.read(
 			_toStringAsAdmin(
@@ -523,6 +778,36 @@ public class StructuredContentApioTest {
 	}
 
 	@Test
+	public void testJournalArticleInputControlIsNotDisplayed()
+		throws Exception {
+
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyJournalArticle')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
+	}
+
+	@Test
 	public void testLinkToPageDataTypeIsDisplayed() throws Exception {
 		List<String> hrefs = JsonPath.read(
 			_toStringAsAdmin(
@@ -549,6 +834,34 @@ public class StructuredContentApioTest {
 
 		Assert.assertEquals(dataTypes.toString(), 1, dataTypes.size());
 		Assert.assertTrue(dataTypes.contains("url"));
+	}
+
+	@Test
+	public void testLinkToPageInputControlIsNotDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyLinkToPage')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
 	}
 
 	@Test
@@ -698,6 +1011,34 @@ public class StructuredContentApioTest {
 	}
 
 	@Test
+	public void testNumberInputControlIsNotDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyNumber')].inputControl");
+
+		Assert.assertTrue(inputControls.toString(), inputControls.isEmpty());
+	}
+
+	@Test
 	public void testRadioDataTypeIsDisplayed() throws Exception {
 		List<String> hrefs = JsonPath.read(
 			_toStringAsAdmin(
@@ -727,6 +1068,35 @@ public class StructuredContentApioTest {
 	}
 
 	@Test
+	public void testRadioInputControlIsDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyRadio')].inputControl");
+
+		Assert.assertEquals(inputControls.toString(), 1, inputControls.size());
+		Assert.assertTrue(inputControls.contains("radio"));
+	}
+
+	@Test
 	public void testSelectDataTypeIsDisplayed() throws Exception {
 		List<String> hrefs = JsonPath.read(
 			_toStringAsAdmin(
@@ -753,6 +1123,35 @@ public class StructuredContentApioTest {
 
 		Assert.assertEquals(dataTypes.toString(), 1, dataTypes.size());
 		Assert.assertTrue(dataTypes.contains("string"));
+	}
+
+	@Test
+	public void testSelectInputControlIsDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MySelect')].inputControl");
+
+		Assert.assertEquals(inputControls.toString(), 1, inputControls.size());
+		Assert.assertTrue(inputControls.contains("select"));
 	}
 
 	@Test
@@ -877,6 +1276,35 @@ public class StructuredContentApioTest {
 	}
 
 	@Test
+	public void testTextBoxInputControlIsDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='MyTextBox')].inputControl");
+
+		Assert.assertEquals(inputControls.toString(), 1, inputControls.size());
+		Assert.assertTrue(inputControls.contains("textArea"));
+	}
+
+	@Test
 	public void testTextDataTypeIsDisplayed() throws Exception {
 		List<String> hrefs = JsonPath.read(
 			_toStringAsAdmin(
@@ -903,6 +1331,35 @@ public class StructuredContentApioTest {
 
 		Assert.assertEquals(dataTypes.toString(), 1, dataTypes.size());
 		Assert.assertTrue(dataTypes.contains("string"));
+	}
+
+	@Test
+	public void testTextInputControlIsDisplayed() throws Exception {
+		List<String> hrefs = JsonPath.read(
+			_toStringAsAdmin(
+				JsonPath.read(
+					_toStringAsAdmin(_rootEndpointURL.toExternalForm()),
+					"$._links.content-space.href")),
+			"$._embedded.ContentSpace[?(@.name == '" +
+				StructuredContentApioTestBundleActivator.SITE_NAME +
+					"')]._links.structuredContents.href");
+
+		Map<String, String> headers = _getHeaders();
+
+		headers.put("Accept-Language", "en-US");
+
+		List<String> inputControls = JsonPath.read(
+			_toStringAsGuest(
+				_getURLWithFilterByTitle(
+					hrefs.get(0),
+					StructuredContentApioTestBundleActivator.
+						TITLE_2_LOCALE_DEFAULT),
+				headers),
+			"$._embedded.StructuredContent[*]._embedded.values._embedded" +
+				"[?(@.name=='TextFieldName')].inputControl");
+
+		Assert.assertEquals(inputControls.toString(), 1, inputControls.size());
+		Assert.assertTrue(inputControls.contains("text"));
 	}
 
 	private JSONWebServiceClient _getGuestJSONWebServiceClient() {
