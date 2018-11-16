@@ -183,6 +183,15 @@ public class EntityModelSchemaBasedEdmProvider extends SchemaBasedEdmProvider {
 					EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName())
 			);
 		}
+		else if (Objects.equals(
+					entityField.getType(), EntityField.Type.DOUBLE)) {
+
+			return Optional.of(
+				_createPrimitiveCsdlProperty(
+					entityField,
+					EdmPrimitiveTypeKind.Double.getFullQualifiedName())
+			);
+		}
 		else if (Objects.equals(entityField.getType(), EntityField.Type.ID) ||
 				 Objects.equals(
 					 entityField.getType(), EntityField.Type.STRING)) {
@@ -191,6 +200,15 @@ public class EntityModelSchemaBasedEdmProvider extends SchemaBasedEdmProvider {
 				_createPrimitiveCsdlProperty(
 					entityField,
 					EdmPrimitiveTypeKind.String.getFullQualifiedName())
+			);
+		}
+		else if (Objects.equals(
+					entityField.getType(), EntityField.Type.INTEGER)) {
+
+			return Optional.of(
+				_createPrimitiveCsdlProperty(
+					entityField,
+					EdmPrimitiveTypeKind.Int64.getFullQualifiedName())
 			);
 		}
 		else if (Objects.equals(
