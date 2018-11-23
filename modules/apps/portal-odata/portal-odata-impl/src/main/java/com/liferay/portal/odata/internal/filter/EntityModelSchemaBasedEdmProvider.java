@@ -190,7 +190,8 @@ public class EntityModelSchemaBasedEdmProvider extends SchemaBasedEdmProvider {
 			return Optional.of(
 				_createPrimitiveCsdlProperty(
 					entityField,
-					EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName())
+					EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName(),
+					entityField.isCollection())
 			);
 		}
 		else if (Objects.equals(
@@ -209,7 +210,8 @@ public class EntityModelSchemaBasedEdmProvider extends SchemaBasedEdmProvider {
 			return Optional.of(
 				_createPrimitiveCsdlProperty(
 					entityField,
-					EdmPrimitiveTypeKind.String.getFullQualifiedName())
+					EdmPrimitiveTypeKind.String.getFullQualifiedName(),
+					entityField.isCollection())
 			);
 		}
 		else if (Objects.equals(
@@ -243,10 +245,12 @@ public class EntityModelSchemaBasedEdmProvider extends SchemaBasedEdmProvider {
 	}
 
 	private CsdlProperty _createPrimitiveCsdlProperty(
-		EntityField entityField, FullQualifiedName fullQualifiedName) {
+		EntityField entityField, FullQualifiedName fullQualifiedName,
+		boolean collection) {
 
 		CsdlProperty csdlProperty = new CsdlProperty();
 
+		csdlProperty.setCollection(collection);
 		csdlProperty.setName(entityField.getName());
 		csdlProperty.setType(fullQualifiedName);
 
