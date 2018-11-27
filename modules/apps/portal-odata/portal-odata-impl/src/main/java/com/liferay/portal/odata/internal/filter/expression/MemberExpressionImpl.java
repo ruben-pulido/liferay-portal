@@ -27,12 +27,12 @@ import java.util.List;
  */
 public class MemberExpressionImpl implements MemberExpression {
 
-	public MemberExpressionImpl(List<Expression> expressions) {
-		this(null, expressions);
+	public MemberExpressionImpl(Expression expression) {
+		this(Collections.emptyList(), expression);
 	}
 
 	public MemberExpressionImpl(
-		List<String> resourcePath, List<Expression> expressions) {
+		List<String> resourcePath, Expression expression) {
 
 		if (resourcePath == null) {
 			_resourcePath = Collections.emptyList();
@@ -41,12 +41,7 @@ public class MemberExpressionImpl implements MemberExpression {
 			_resourcePath = Collections.unmodifiableList(resourcePath);
 		}
 
-		if (expressions == null) {
-			_expressions = Collections.emptyList();
-		}
-		else {
-			_expressions = Collections.unmodifiableList(expressions);
-		}
+		_expression = expression;
 	}
 
 	@Override
@@ -57,8 +52,8 @@ public class MemberExpressionImpl implements MemberExpression {
 	}
 
 	@Override
-	public List<Expression> getExpressions() {
-		return _expressions;
+	public Expression getExpression() {
+		return _expression;
 	}
 
 	@Override
@@ -68,10 +63,10 @@ public class MemberExpressionImpl implements MemberExpression {
 
 	@Override
 	public String toString() {
-		return _resourcePath.toString();
+		return _expression.toString();
 	}
 
-	private final List<Expression> _expressions;
+	private final Expression _expression;
 	private final List<String> _resourcePath;
 
 }

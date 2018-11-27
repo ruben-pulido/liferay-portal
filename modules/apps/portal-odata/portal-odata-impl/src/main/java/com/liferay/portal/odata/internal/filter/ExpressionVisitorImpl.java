@@ -27,11 +27,11 @@ import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.search.generic.WildcardQueryImpl;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.entity.CollectionEntityField;
-import com.liferay.portal.odata.entity.ComplexEntityField;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.odata.filter.InvalidFilterException;
 import com.liferay.portal.odata.filter.expression.BinaryExpression;
+import com.liferay.portal.odata.filter.expression.CollectionPropertyExpression;
 import com.liferay.portal.odata.filter.expression.ComplexPropertyExpression;
 import com.liferay.portal.odata.filter.expression.Expression;
 import com.liferay.portal.odata.filter.expression.ExpressionVisitException;
@@ -47,10 +47,9 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.ParsePosition;
 
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -83,10 +82,33 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<Object> {
 	}
 
 	@Override
+	public Object visitCollectionPropertyExpression(
+			CollectionPropertyExpression collectionPropertyExpression)
+		throws ExpressionVisitException {
+
+		LambdaFunctionExpression lambdaFunctionExpression =
+			collectionPropertyExpression.getLambdaFunctionExpression();
+
+		Map<String, EntityField> entityFieldsMap =
+			_entityModel.getEntityFieldsMap();
+
+		return lambdaFunctionExpression.accept(
+			new ExpressionVisitorImpl(
+				_format, _locale,
+				_getLambdaEntityModel(
+					lambdaFunctionExpression.getVariableName(),
+					(CollectionEntityField)entityFieldsMap.get(
+						collectionPropertyExpression.getName()))));
+	}
+
+	@Override
 	public Object visitComplexPropertyExpression(
 		ComplexPropertyExpression complexPropertyExpression) {
 
-		return complexPropertyExpression.getName();
+		Map<String, EntityField> entityFieldsMap =
+			_entityModel.getEntityFieldsMap();
+
+		return entityFieldsMap.get(complexPropertyExpression.getName());
 	}
 
 	@Override
@@ -144,49 +166,9 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<Object> {
 	public Object visitMemberExpression(MemberExpression memberExpression)
 		throws ExpressionVisitException {
 
-		List<Expression> expressions = memberExpression.getExpressions();
+		Expression expression = memberExpression.getExpression();
 
-		int expressionsCount = expressions.size();
-
-		if (expressionsCount == 0) {
-			throw new UnsupportedOperationException(
-				"Unsupported member expression with no expressions");
-		}
-
-		ListIterator<Expression> listIterator = expressions.listIterator(
-			expressionsCount);
-
-		Expression expression = listIterator.previous();
-
-		if (expression instanceof LambdaFunctionExpression) {
-			PrimitivePropertyExpression primitivePropertyExpression =
-				(PrimitivePropertyExpression)listIterator.previous();
-
-			EntityField primitiveEntityField = _getPrimitiveEntityField(
-				primitivePropertyExpression, listIterator);
-
-			LambdaFunctionExpression lambdaFunctionExpression =
-				(LambdaFunctionExpression)expression;
-
-			return expression.accept(
-				new ExpressionVisitorImpl(
-					_format, _locale,
-					_getLambdaEntityModel(
-						lambdaFunctionExpression.getVariableName(),
-						(CollectionEntityField)primitiveEntityField)));
-		}
-		else if (expression instanceof LambdaVariableExpression) {
-			return expression.accept(this);
-		}
-		else if (expression instanceof PrimitivePropertyExpression) {
-			return _getPrimitiveEntityField(
-				(PrimitivePropertyExpression)expression, listIterator);
-		}
-		else {
-			throw new UnsupportedOperationException(
-				"Unsupported member expression with expression " +
-					expression.getClass());
-		}
+		return expression.accept(this);
 	}
 
 	@Override
@@ -214,7 +196,10 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<Object> {
 	public Object visitPrimitivePropertyExpression(
 		PrimitivePropertyExpression primitivePropertyExpression) {
 
-		return primitivePropertyExpression.getName();
+		Map<String, EntityField> entityFieldsMap =
+			_entityModel.getEntityFieldsMap();
+
+		return entityFieldsMap.get(primitivePropertyExpression.getName());
 	}
 
 	private Object _any(Expression expression) throws ExpressionVisitException {
@@ -324,13 +309,8 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<Object> {
 
 			@Override
 			public Map<String, EntityField> getEntityFieldsMap() {
-				return new HashMap<String, EntityField>() {
-					{
-						put(
-							variableName,
-							collectionEntityField.getEntityField());
-					}
-				};
+				return Collections.singletonMap(
+					variableName, collectionEntityField.getEntityField());
 			}
 
 			@Override
@@ -384,33 +364,6 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<Object> {
 		booleanFilter.add(rightFilter, BooleanClauseOccur.SHOULD);
 
 		return booleanFilter;
-	}
-
-	private EntityField _getPrimitiveEntityField(
-		PrimitivePropertyExpression primitivePropertyExpression,
-		ListIterator<Expression> listIterator) {
-
-		Map<String, EntityField> entityFieldsMap =
-			_entityModel.getEntityFieldsMap();
-
-		if (!listIterator.hasPrevious()) {
-			return entityFieldsMap.get(primitivePropertyExpression.getName());
-		}
-
-		Expression previousExpression = listIterator.previous();
-
-		ComplexPropertyExpression complexPropertyExpression =
-			(ComplexPropertyExpression)previousExpression;
-
-		ComplexEntityField complexEntityField =
-			(ComplexEntityField)entityFieldsMap.get(
-				complexPropertyExpression.getName());
-
-		Map<String, EntityField> complexEntityFieldEntityFieldsMap =
-			complexEntityField.getEntityFieldsMap();
-
-		return complexEntityFieldEntityFieldsMap.get(
-			primitivePropertyExpression.getName());
 	}
 
 	private Object _normalizeDateLiteral(String literal) {

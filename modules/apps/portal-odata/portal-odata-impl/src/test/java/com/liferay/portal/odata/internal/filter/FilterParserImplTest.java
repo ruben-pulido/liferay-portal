@@ -23,6 +23,7 @@ import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.odata.entity.StringEntityField;
 import com.liferay.portal.odata.filter.expression.BinaryExpression;
+import com.liferay.portal.odata.filter.expression.CollectionPropertyExpression;
 import com.liferay.portal.odata.filter.expression.ComplexPropertyExpression;
 import com.liferay.portal.odata.filter.expression.Expression;
 import com.liferay.portal.odata.filter.expression.ExpressionVisitException;
@@ -80,13 +81,8 @@ public class FilterParserImplTest {
 		MemberExpression memberExpression = (MemberExpression)expressions.get(
 			0);
 
-		List<Expression> memberExpressions = memberExpression.getExpressions();
-
-		Assert.assertEquals(
-			memberExpressions.toString(), 1, memberExpressions.size());
-
 		PrimitivePropertyExpression primitivePropertyExpression =
-			(PrimitivePropertyExpression)memberExpressions.get(0);
+			(PrimitivePropertyExpression)memberExpression.getExpression();
 
 		Assert.assertEquals(
 			"fieldExternal", primitivePropertyExpression.getName());
@@ -167,12 +163,8 @@ public class FilterParserImplTest {
 		MemberExpression memberExpression =
 			(MemberExpression)binaryExpression.getLeftOperationExpression();
 
-		List<Expression> expressions = memberExpression.getExpressions();
-
-		Assert.assertEquals(expression.toString(), 1, expressions.size());
-
 		PrimitivePropertyExpression primitivePropertyExpression =
-			(PrimitivePropertyExpression)expressions.get(0);
+			(PrimitivePropertyExpression)memberExpression.getExpression();
 
 		Assert.assertEquals(
 			BinaryExpression.Operation.EQ, binaryExpression.getOperation());
@@ -212,12 +204,8 @@ public class FilterParserImplTest {
 		MemberExpression memberExpression =
 			(MemberExpression)binaryExpression.getLeftOperationExpression();
 
-		List<Expression> expressions = memberExpression.getExpressions();
-
-		Assert.assertEquals(expression.toString(), 1, expressions.size());
-
 		PrimitivePropertyExpression primitivePropertyExpression =
-			(PrimitivePropertyExpression)expressions.get(0);
+			(PrimitivePropertyExpression)memberExpression.getExpression();
 
 		Assert.assertEquals(
 			BinaryExpression.Operation.EQ, binaryExpression.getOperation());
@@ -260,12 +248,8 @@ public class FilterParserImplTest {
 		MemberExpression memberExpression =
 			(MemberExpression)binaryExpression.getLeftOperationExpression();
 
-		List<Expression> expressions = memberExpression.getExpressions();
-
-		Assert.assertEquals(expressions.toString(), 1, expressions.size());
-
 		PrimitivePropertyExpression primitivePropertyExpression =
-			(PrimitivePropertyExpression)expressions.get(0);
+			(PrimitivePropertyExpression)memberExpression.getExpression();
 
 		Assert.assertEquals(
 			"dateExternal", primitivePropertyExpression.getName());
@@ -293,18 +277,15 @@ public class FilterParserImplTest {
 		MemberExpression memberExpression =
 			(MemberExpression)binaryExpression.getLeftOperationExpression();
 
-		List<Expression> expressions = memberExpression.getExpressions();
-
-		Assert.assertEquals(expressions.toString(), 2, expressions.size());
-
 		ComplexPropertyExpression complexPropertyExpression =
-			(ComplexPropertyExpression)expressions.get(0);
+			(ComplexPropertyExpression)memberExpression.getExpression();
 
 		Assert.assertEquals(
 			"complexField", complexPropertyExpression.getName());
 
 		PrimitivePropertyExpression primitivePropertyExpression =
-			(PrimitivePropertyExpression)expressions.get(1);
+			(PrimitivePropertyExpression)
+				complexPropertyExpression.getPropertyExpression();
 
 		Assert.assertEquals(
 			"primitiveField", primitivePropertyExpression.getName());
@@ -347,12 +328,8 @@ public class FilterParserImplTest {
 		MemberExpression memberExpression =
 			(MemberExpression)binaryExpression.getLeftOperationExpression();
 
-		List<Expression> expressions = memberExpression.getExpressions();
-
-		Assert.assertEquals(expressions.toString(), 1, expressions.size());
-
 		PrimitivePropertyExpression primitivePropertyExpression =
-			(PrimitivePropertyExpression)expressions.get(0);
+			(PrimitivePropertyExpression)memberExpression.getExpression();
 
 		Assert.assertEquals(
 			"fieldExternal", primitivePropertyExpression.getName());
@@ -382,12 +359,8 @@ public class FilterParserImplTest {
 		MemberExpression memberExpression =
 			(MemberExpression)binaryExpression.getLeftOperationExpression();
 
-		List<Expression> expressions = memberExpression.getExpressions();
-
-		Assert.assertEquals(expressions.toString(), 1, expressions.size());
-
 		PrimitivePropertyExpression primitivePropertyExpression =
-			(PrimitivePropertyExpression)expressions.get(0);
+			(PrimitivePropertyExpression)memberExpression.getExpression();
 
 		Assert.assertEquals(
 			"fieldExternal", primitivePropertyExpression.getName());
@@ -414,12 +387,8 @@ public class FilterParserImplTest {
 		MemberExpression memberExpression =
 			(MemberExpression)binaryExpression.getLeftOperationExpression();
 
-		List<Expression> expressions = memberExpression.getExpressions();
-
-		Assert.assertEquals(expressions.toString(), 1, expressions.size());
-
 		PrimitivePropertyExpression primitivePropertyExpression =
-			(PrimitivePropertyExpression)expressions.get(0);
+			(PrimitivePropertyExpression)memberExpression.getExpression();
 
 		Assert.assertEquals(
 			BinaryExpression.Operation.GE, binaryExpression.getOperation());
@@ -436,17 +405,15 @@ public class FilterParserImplTest {
 
 	@Test
 	public void testParseWithLambdaAllOnCollectionField() {
-		try {
-			_filterParserImpl.parse(
-				"collectionFieldExternal/all(f:contains(f,'alu'))");
-			Assert.fail(
-				"Expected UnsupportedOperationException was not thrown");
-		}
-		catch (ExpressionVisitException eve) {
-			Assert.assertEquals(
-				"UriResource of type UriResourceLambdaAll is not supported",
-				eve.getMessage());
-		}
+		AbstractThrowableAssert exception = Assertions.assertThatThrownBy(
+			() -> _filterParserImpl.parse(
+				"collectionFieldExternal/all(f:contains(f,'alu'))")
+		).isInstanceOf(
+			ExpressionVisitException.class
+		);
+
+		exception.hasMessage(
+			"UriResource of type UriResourceLambdaAll is not supported");
 	}
 
 	@Test
@@ -460,20 +427,14 @@ public class FilterParserImplTest {
 
 		MemberExpression memberExpression = (MemberExpression)expression;
 
-		List<Expression> expressions = memberExpression.getExpressions();
-
-		Assert.assertNotNull(expressions);
-
-		Assert.assertEquals(expressions.toString(), 2, expressions.size());
-
-		PrimitivePropertyExpression primitivePropertyExpression =
-			(PrimitivePropertyExpression)expressions.get(0);
+		CollectionPropertyExpression collectionPropertyExpression =
+			(CollectionPropertyExpression)memberExpression.getExpression();
 
 		Assert.assertEquals(
-			"collectionFieldExternal", primitivePropertyExpression.getName());
+			"collectionFieldExternal", collectionPropertyExpression.getName());
 
 		LambdaFunctionExpression lambdaFunctionExpression =
-			(LambdaFunctionExpression)expressions.get(1);
+			collectionPropertyExpression.getLambdaFunctionExpression();
 
 		Assert.assertEquals(
 			LambdaFunctionExpression.Type.ANY,
@@ -497,17 +458,9 @@ public class FilterParserImplTest {
 		MemberExpression methodExpressionMemberExpression =
 			(MemberExpression)methodExpressionExpressions.get(0);
 
-		List<Expression> methodExpressionMemberExpressionExpressions =
-			methodExpressionMemberExpression.getExpressions();
-
-		Assert.assertNotNull(methodExpressionMemberExpressionExpressions);
-		Assert.assertEquals(
-			methodExpressionMemberExpressionExpressions.toString(), 1,
-			methodExpressionMemberExpressionExpressions.size());
-
 		LambdaVariableExpression lambdaVariableExpression =
 			(LambdaVariableExpression)
-				methodExpressionMemberExpressionExpressions.get(0);
+				methodExpressionMemberExpression.getExpression();
 
 		Assert.assertNotNull(lambdaVariableExpression);
 		Assert.assertEquals("f", lambdaVariableExpression.getVariableName());
@@ -560,10 +513,8 @@ public class FilterParserImplTest {
 		MemberExpression memberExpression =
 			(MemberExpression)binaryExpression.getLeftOperationExpression();
 
-		List<Expression> expressions = memberExpression.getExpressions();
-
 		PrimitivePropertyExpression primitivePropertyExpression =
-			(PrimitivePropertyExpression)expressions.get(0);
+			(PrimitivePropertyExpression)memberExpression.getExpression();
 
 		Assert.assertEquals(
 			"fieldExternal", primitivePropertyExpression.getName());

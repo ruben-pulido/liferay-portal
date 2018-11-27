@@ -33,6 +33,7 @@ import com.liferay.portal.odata.filter.expression.LambdaFunctionExpression;
 import com.liferay.portal.odata.filter.expression.LiteralExpression;
 import com.liferay.portal.odata.filter.expression.MemberExpression;
 import com.liferay.portal.odata.internal.filter.expression.BinaryExpressionImpl;
+import com.liferay.portal.odata.internal.filter.expression.CollectionPropertyExpressionImpl;
 import com.liferay.portal.odata.internal.filter.expression.ComplexPropertyExpressionImpl;
 import com.liferay.portal.odata.internal.filter.expression.LambdaFunctionExpressionImpl;
 import com.liferay.portal.odata.internal.filter.expression.LambdaVariableExpressionImpl;
@@ -42,7 +43,6 @@ import com.liferay.portal.odata.internal.filter.expression.PrimitivePropertyExpr
 
 import java.text.SimpleDateFormat;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -271,8 +271,7 @@ public class ExpressionVisitorImplTest {
 				LambdaFunctionExpression.Type.ANY, "k",
 				new BinaryExpressionImpl(
 					new MemberExpressionImpl(
-						Collections.singletonList(
-							new LambdaVariableExpressionImpl("k"))),
+						new LambdaVariableExpressionImpl("k")),
 					BinaryExpression.Operation.EQ,
 					new LiteralExpressionImpl(
 						"keyword1", LiteralExpression.Type.STRING)));
@@ -316,17 +315,16 @@ public class ExpressionVisitorImplTest {
 		throws ExpressionVisitException {
 
 		MemberExpression memberExpression = new MemberExpressionImpl(
-			Arrays.asList(
-				new ComplexPropertyExpressionImpl("values"),
-				new PrimitivePropertyExpressionImpl("value1")));
+			new ComplexPropertyExpressionImpl(
+				"values", new PrimitivePropertyExpressionImpl("value1")));
 
 		EntityField entityField =
 			(EntityField)_expressionVisitorImpl.visitMemberExpression(
 				memberExpression);
 
 		Assert.assertNotNull(entityField);
-		Assert.assertEquals("value1", entityField.getName());
-		Assert.assertEquals(EntityField.Type.STRING, entityField.getType());
+		Assert.assertEquals("values", entityField.getName());
+		Assert.assertEquals(EntityField.Type.COMPLEX, entityField.getType());
 	}
 
 	@Test
@@ -334,14 +332,13 @@ public class ExpressionVisitorImplTest {
 		throws ExpressionVisitException {
 
 		MemberExpression memberExpression = new MemberExpressionImpl(
-			Arrays.asList(
+			new CollectionPropertyExpressionImpl(
 				new PrimitivePropertyExpressionImpl("keywords"),
 				new LambdaFunctionExpressionImpl(
 					LambdaFunctionExpression.Type.ANY, "k",
 					new BinaryExpressionImpl(
 						new MemberExpressionImpl(
-							Collections.singletonList(
-								new LambdaVariableExpressionImpl("k"))),
+							new LambdaVariableExpressionImpl("k")),
 						BinaryExpression.Operation.EQ,
 						new LiteralExpressionImpl(
 							"'keyword1'", LiteralExpression.Type.STRING)))));
@@ -360,8 +357,7 @@ public class ExpressionVisitorImplTest {
 		throws ExpressionVisitException {
 
 		MemberExpression memberExpression = new MemberExpressionImpl(
-			Collections.singletonList(
-				new PrimitivePropertyExpressionImpl("title")));
+			new PrimitivePropertyExpressionImpl("title"));
 
 		EntityField entityField =
 			(EntityField)_expressionVisitorImpl.visitMemberExpression(
@@ -398,7 +394,7 @@ public class ExpressionVisitorImplTest {
 			});
 
 		MemberExpression memberExpression = new MemberExpressionImpl(
-			Collections.singletonList(new LambdaVariableExpressionImpl("k")));
+			new LambdaVariableExpressionImpl("k"));
 
 		EntityField entityField2 =
 			(EntityField)expressionVisitor.visitMemberExpression(

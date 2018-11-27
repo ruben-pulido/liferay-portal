@@ -49,6 +49,24 @@ public interface ExpressionVisitor<T> {
 	/**
 	 * Called for each traversed {@link ComplexPropertyExpression} expression
 	 *
+	 * @param  collectionPropertyExpression the complex property expression
+	 * @return T the object of type {@code T}
+	 * @throws ExpressionVisitException the expression visit exception
+	 * @review
+	 */
+	public default T visitCollectionPropertyExpression(
+			CollectionPropertyExpression collectionPropertyExpression)
+		throws ExpressionVisitException {
+
+		throw new UnsupportedOperationException(
+			"Unsupported method visitCollectionPropertyExpression with " +
+				"collection property expression " +
+					collectionPropertyExpression);
+	}
+
+	/**
+	 * Called for each traversed {@link ComplexPropertyExpression} expression
+	 *
 	 * @param  complexPropertyExpression the complex property expression
 	 * @return T the object of type {@code T}
 	 * @throws ExpressionVisitException the expression visit exception
@@ -66,7 +84,6 @@ public interface ExpressionVisitor<T> {
 	/**
 	 * Called for each traversed {@link LambdaFunctionExpression} expression
 	 *
-	 * @param  type       the type of the lambda function expression
 	 * @param  variableName the name of the lambda variable
 	 * @param  expression the expression
 	 * @return T the object of type {@code T}
@@ -80,8 +97,8 @@ public interface ExpressionVisitor<T> {
 
 		throw new UnsupportedOperationException(
 			StringBundler.concat(
-				"Unsupported method visitLambdaFunctionExpression with type ",
-				type.name(), " variableName ", variableName, " and expression ",
+				"Unsupported method visitLambdaFunctionExpression with ",
+				"variableName ", variableName, " and expression ",
 				expression.toString()));
 	}
 

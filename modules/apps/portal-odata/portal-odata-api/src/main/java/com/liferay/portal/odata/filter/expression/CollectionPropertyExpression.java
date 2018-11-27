@@ -14,36 +14,21 @@
 
 package com.liferay.portal.odata.filter.expression;
 
-import java.util.List;
-
 /**
- * Represents a member expression node in the expression tree. This expression
- * is used to describe access paths to properties.
+ * Models a complex {@code PropertyExpression}.
  *
- * @author Cristina González
+ * @author Ruben Pulido
  * @review
  */
-public interface MemberExpression extends Expression {
+public interface CollectionPropertyExpression extends PropertyExpression {
 
 	/**
-	 * Returns the expression which form this MemberExpression.
+	 * Gets the lambda function expression.
 	 *
-	 * @return the list of expression.
-	 * @review
+	 * @return the lambda function expression
 	 */
-	public default Expression getExpression() {
-		throw new UnsupportedOperationException(
-			"Unsupported method getExpression");
-	}
+	public LambdaFunctionExpression getLambdaFunctionExpression();
 
-	/**
-	 * Returns the member expression's resource path.
-	 *
-	 * @return the resource path
-	 * @deprecated As of Judson (7.1.x)
-	 * @review
-	 */
-	@Deprecated
-	public List<String> getResourcePath();
+	public PropertyExpression getPropertyExpression();
 
 }

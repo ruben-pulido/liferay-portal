@@ -14,34 +14,41 @@
 
 package com.liferay.portal.odata.internal.filter.expression;
 
-import com.liferay.portal.odata.filter.expression.ComplexPropertyExpression;
+import com.liferay.portal.odata.filter.expression.CollectionPropertyExpression;
 import com.liferay.portal.odata.filter.expression.ExpressionVisitException;
 import com.liferay.portal.odata.filter.expression.ExpressionVisitor;
+import com.liferay.portal.odata.filter.expression.LambdaFunctionExpression;
 import com.liferay.portal.odata.filter.expression.PropertyExpression;
 
 /**
  * @author Ruben Pulido
  */
-public class ComplexPropertyExpressionImpl
-	implements ComplexPropertyExpression {
+public class CollectionPropertyExpressionImpl
+	implements CollectionPropertyExpression {
 
-	public ComplexPropertyExpressionImpl(
-		String name, PropertyExpression propertyExpression) {
+	public CollectionPropertyExpressionImpl(
+		PropertyExpression propertyExpression,
+		LambdaFunctionExpression lambdaFunctionExpression) {
 
-		_name = name;
 		_propertyExpression = propertyExpression;
+		_lambdaFunctionExpression = lambdaFunctionExpression;
 	}
 
 	@Override
 	public <T> T accept(ExpressionVisitor<T> expressionVisitor)
 		throws ExpressionVisitException {
 
-		return expressionVisitor.visitComplexPropertyExpression(this);
+		return expressionVisitor.visitCollectionPropertyExpression(this);
+	}
+
+	@Override
+	public LambdaFunctionExpression getLambdaFunctionExpression() {
+		return _lambdaFunctionExpression;
 	}
 
 	@Override
 	public String getName() {
-		return _name;
+		return _propertyExpression.getName();
 	}
 
 	@Override
@@ -49,7 +56,7 @@ public class ComplexPropertyExpressionImpl
 		return _propertyExpression;
 	}
 
-	private final String _name;
+	private final LambdaFunctionExpression _lambdaFunctionExpression;
 	private final PropertyExpression _propertyExpression;
 
 }

@@ -21,4 +21,12 @@ package com.liferay.portal.odata.filter.expression;
  * @review
  */
 public interface ComplexPropertyExpression extends PropertyExpression {
+
+	/**
+	 * Gets the primitive property expression.
+	 *
+	 * @return the primitive property expression
+	 */
+	public PropertyExpression getPropertyExpression();
+
 }

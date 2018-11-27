@@ -29,14 +29,13 @@ import com.liferay.portal.odata.filter.expression.LambdaFunctionExpression;
 import com.liferay.portal.odata.filter.expression.LiteralExpression;
 import com.liferay.portal.odata.filter.expression.MemberExpression;
 import com.liferay.portal.odata.internal.filter.expression.BinaryExpressionImpl;
+import com.liferay.portal.odata.internal.filter.expression.CollectionPropertyExpressionImpl;
 import com.liferay.portal.odata.internal.filter.expression.LambdaFunctionExpressionImpl;
 import com.liferay.portal.odata.internal.filter.expression.LambdaVariableExpressionImpl;
 import com.liferay.portal.odata.internal.filter.expression.LiteralExpressionImpl;
 import com.liferay.portal.odata.internal.filter.expression.MemberExpressionImpl;
 import com.liferay.portal.odata.internal.filter.expression.PrimitivePropertyExpressionImpl;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
@@ -73,8 +72,7 @@ public class ExpressionConvertImplTest {
 
 		BinaryExpression binaryExpression = new BinaryExpressionImpl(
 			new MemberExpressionImpl(
-				Collections.singletonList(
-					new PrimitivePropertyExpressionImpl("title"))),
+				new PrimitivePropertyExpressionImpl("title")),
 			BinaryExpression.Operation.EQ,
 			new LiteralExpressionImpl("test", LiteralExpression.Type.STRING));
 
@@ -90,14 +88,13 @@ public class ExpressionConvertImplTest {
 		throws ExpressionVisitException {
 
 		MemberExpression memberExpression = new MemberExpressionImpl(
-			Arrays.asList(
+			new CollectionPropertyExpressionImpl(
 				new PrimitivePropertyExpressionImpl("keywords"),
 				new LambdaFunctionExpressionImpl(
 					LambdaFunctionExpression.Type.ANY, "k",
 					new BinaryExpressionImpl(
 						new MemberExpressionImpl(
-							Collections.singletonList(
-								new LambdaVariableExpressionImpl("k"))),
+							new LambdaVariableExpressionImpl("k")),
 						BinaryExpression.Operation.EQ,
 						new LiteralExpressionImpl(
 							"'keyword1'", LiteralExpression.Type.STRING)))));
