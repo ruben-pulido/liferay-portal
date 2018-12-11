@@ -10,7 +10,9 @@
 			"indexType": "keyword",
 			"label": {
 				"en_US": "TextFieldNameLabel_us",
-				"es_ES": "TextFieldNameLabel_es"
+				"es_ES": "TextFieldNameLabel_es",
+				"fr_FR": "TextFieldNameLabel_fr",
+				"de_DE": "TextFieldNameLabel_de"
 			},
 			"localizable": true,
 			"name": "MyText",
