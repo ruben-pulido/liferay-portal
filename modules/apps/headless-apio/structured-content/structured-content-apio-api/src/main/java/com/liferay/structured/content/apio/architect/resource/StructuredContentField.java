@@ -55,8 +55,19 @@ public interface StructuredContentField {
 	 * @param  locale the locale.
 	 * @return the input control.
 	 * @review
+	 * @deprecated
 	 */
-	public String getLocalizedLabel(Locale locale);
+	public default String getLocalizedLabel(Locale locale) {
+		return getLocalizedLabel();
+	}
+
+	/**
+	 * Returns the label of the structured content.
+	 *
+	 * @return the input control.
+	 * @review
+	 */
+	public String getLocalizedLabel();
 
 	/**
 	 * Returns the value of the structured content given a locale.
@@ -64,8 +75,19 @@ public interface StructuredContentField {
 	 * @param  locale the locale.
 	 * @return the vale.
 	 * @review
+	 * @deprecated
 	 */
-	public String getLocalizedValue(Locale locale);
+	public default String getLocalizedValue(Locale locale) {
+		return getLocalizedValue();
+	}
+
+	/**
+	 * Returns the value of the structured content.
+	 *
+	 * @return the vale.
+	 * @review
+	 */
+	public String getLocalizedValue();
 
 	/**
 	 * Returns the name of the structured content field.

@@ -206,17 +206,17 @@ public class StructuredContentNestedCollectionResource
 			this::_getJournalArticleStructureId
 		).addLinkedModel(
 			"creator", PersonIdentifier.class, JournalArticle::getUserId
-		).addLocalizedStringByLocale(
-			"description", JournalArticleWrapper::getDescription
-		).addLocalizedStringByLocale(
-			"title", JournalArticle::getTitle
+		).addString(
+			"description", JournalArticleWrapper::getLocalizedDescription
+		).addString(
+			"title", JournalArticleWrapper::getLocalizedTitle
 		).addNestedList(
 			"renderedContentsByTemplate", this::_getRenderedJournalArticles,
 			nestedBuilder -> nestedBuilder.types(
 				"templates"
-			).addLocalizedStringByLocale(
+			).addString(
 				"template", RenderedJournalArticle::getTemplateName
-			).addLocalizedStringByLocale(
+			).addString(
 				"renderedContent", RenderedJournalArticle::getRenderedContent
 			).build()
 		).addNestedList(
@@ -237,9 +237,9 @@ public class StructuredContentNestedCollectionResource
 			).addLinkedModel(
 				"structuredContent", StructuredContentIdentifier.class,
 				this::_getStructuredContentId
-			).addLocalizedStringByLocale(
+			).addString(
 				"label", StructuredContentField::getLocalizedLabel
-			).addLocalizedStringByLocale(
+			).addString(
 				"value", StructuredContentField::getLocalizedValue
 			).addNested(
 				"geo", this::_getGeoJSONObject,
@@ -614,9 +614,8 @@ public class StructuredContentNestedCollectionResource
 			List::stream
 		).map(
 			ddmTemplate -> RenderedJournalArticle.create(
-				ddmTemplate::getName,
-				locale -> _getRenderedContent(
-					journalArticleWrapper, ddmTemplate))
+				() -> ddmTemplate.getName(journalArticleWrapper.getLocale()),
+				() -> _getRenderedContent(journalArticleWrapper, ddmTemplate))
 		).collect(
 			Collectors.toList()
 		);
@@ -655,7 +654,7 @@ public class StructuredContentNestedCollectionResource
 	}
 
 	private List<StructuredContentField> _getStructuredContentFields(
-		JournalArticle journalArticle) {
+		JournalArticleWrapper journalArticleWrapper) {
 
 		return Try.fromFallible(
 			() ->
@@ -663,7 +662,8 @@ public class StructuredContentNestedCollectionResource
 					JournalArticle.class)
 		).map(
 			assetRendererFactory -> assetRendererFactory.getAssetRenderer(
-				journalArticle, AssetRendererFactory.TYPE_LATEST_APPROVED)
+				journalArticleWrapper,
+				AssetRendererFactory.TYPE_LATEST_APPROVED)
 		).map(
 			AssetRenderer::getDDMFormValuesReader
 		).map(
@@ -672,7 +672,8 @@ public class StructuredContentNestedCollectionResource
 			DDMFormValues::getDDMFormFieldValues
 		).map(
 			ddmFormFieldValueList -> _toStructuredContentFields(
-				ddmFormFieldValueList, journalArticle.getDDMStructure())
+				ddmFormFieldValueList, journalArticleWrapper.getDDMStructure(),
+				journalArticleWrapper.getLocale())
 		).map(
 			this::_getStructuredContentFields
 		).orElse(
@@ -720,7 +721,8 @@ public class StructuredContentNestedCollectionResource
 	}
 
 	private List<StructuredContentField> _toStructuredContentFields(
-		List<DDMFormFieldValue> ddmFormFieldValues, DDMStructure ddmStructure) {
+		List<DDMFormFieldValue> ddmFormFieldValues, DDMStructure ddmStructure,
+		Locale locale) {
 
 		Stream<DDMFormFieldValue> stream = ddmFormFieldValues.stream();
 
@@ -729,7 +731,7 @@ public class StructuredContentNestedCollectionResource
 				DDMFormFieldType.SEPARATOR, ddmFormFieldValue.getType())
 		).map(
 			ddmFormFieldValue -> new StructuredContentFieldImpl(
-				ddmFormFieldValue, ddmStructure)
+				ddmFormFieldValue, ddmStructure, locale)
 		).collect(
 			Collectors.toList()
 		);
@@ -855,10 +857,12 @@ public class StructuredContentNestedCollectionResource
 	private class StructuredContentFieldImpl implements StructuredContentField {
 
 		public StructuredContentFieldImpl(
-			DDMFormFieldValue ddmFormFieldValue, DDMStructure ddmStructure) {
+			DDMFormFieldValue ddmFormFieldValue, DDMStructure ddmStructure,
+			Locale locale) {
 
 			_ddmFormFieldValue = ddmFormFieldValue;
 			_ddmStructure = ddmStructure;
+			_locale = locale;
 		}
 
 		@Override
@@ -925,10 +929,10 @@ public class StructuredContentNestedCollectionResource
 		}
 
 		@Override
-		public String getLocalizedLabel(Locale locale) {
+		public String getLocalizedLabel() {
 			try {
 				return _ddmStructure.getFieldLabel(
-					_ddmFormFieldValue.getName(), locale);
+					_ddmFormFieldValue.getName(), _locale);
 			}
 			catch (PortalException pe) {
 				if (_log.isWarnEnabled()) {
@@ -936,7 +940,7 @@ public class StructuredContentNestedCollectionResource
 						StringBundler.concat(
 							"Unable to get localized label for value name ",
 							_ddmFormFieldValue.getName(), " and locale ",
-							locale),
+							_locale),
 						pe);
 				}
 
@@ -945,10 +949,10 @@ public class StructuredContentNestedCollectionResource
 		}
 
 		@Override
-		public String getLocalizedValue(Locale locale) {
+		public String getLocalizedValue() {
 			Value value = _ddmFormFieldValue.getValue();
 
-			String localizedValue = value.getString(locale);
+			String localizedValue = value.getString(_locale);
 
 			if (!StructuredContentUtil.isJSONObject(localizedValue)) {
 				return localizedValue;
@@ -965,12 +969,13 @@ public class StructuredContentNestedCollectionResource
 		@Override
 		public List<StructuredContentField> getNestedStructuredContentFields() {
 			return _toStructuredContentFields(
-				_ddmFormFieldValue.getNestedDDMFormFieldValues(),
-				_ddmStructure);
+				_ddmFormFieldValue.getNestedDDMFormFieldValues(), _ddmStructure,
+				_locale);
 		}
 
 		private final DDMFormFieldValue _ddmFormFieldValue;
 		private final DDMStructure _ddmStructure;
+		private final Locale _locale;
 
 	}
 

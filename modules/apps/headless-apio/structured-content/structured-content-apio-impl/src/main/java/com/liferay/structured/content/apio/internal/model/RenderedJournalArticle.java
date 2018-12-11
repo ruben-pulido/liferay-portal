@@ -14,9 +14,7 @@
 
 package com.liferay.structured.content.apio.internal.model;
 
-import com.liferay.portal.kernel.util.Function;
-
-import java.util.Locale;
+import java.util.function.Supplier;
 
 /**
  * @author Eduardo Perez
@@ -24,26 +22,26 @@ import java.util.Locale;
 public interface RenderedJournalArticle {
 
 	public static RenderedJournalArticle create(
-		Function<Locale, String> templateNameFunction,
-		Function<Locale, String> renderedContentFunction) {
+		Supplier<String> templateNameFunction,
+		Supplier<String> renderedContentFunction) {
 
 		return new RenderedJournalArticle() {
 
 			@Override
-			public String getRenderedContent(Locale locale) {
-				return renderedContentFunction.apply(locale);
+			public String getRenderedContent() {
+				return renderedContentFunction.get();
 			}
 
 			@Override
-			public String getTemplateName(Locale locale) {
-				return templateNameFunction.apply(locale);
+			public String getTemplateName() {
+				return templateNameFunction.get();
 			}
 
 		};
 	}
 
-	public String getRenderedContent(Locale locale);
+	public String getRenderedContent();
 
-	public String getTemplateName(Locale locale);
+	public String getTemplateName();
 
 }

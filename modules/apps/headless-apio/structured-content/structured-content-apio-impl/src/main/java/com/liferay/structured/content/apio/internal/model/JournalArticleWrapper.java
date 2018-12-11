@@ -52,6 +52,14 @@ public class JournalArticleWrapper
 		return _locale;
 	}
 
+	public String getLocalizedDescription() {
+		return getDescription(_locale);
+	}
+
+	public String getLocalizedTitle() {
+		return getTitle(_locale);
+	}
+
 	/**
 	 * Returns the theme display.
 	 *
