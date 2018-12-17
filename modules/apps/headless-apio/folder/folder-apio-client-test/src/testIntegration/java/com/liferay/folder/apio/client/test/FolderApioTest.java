@@ -20,6 +20,7 @@ import com.liferay.portal.apio.test.util.ApioClientBuilder;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 import org.hamcrest.core.IsNull;
 
@@ -97,6 +98,105 @@ public class FolderApioTest {
 			"_embedded.ContentSpace.find {it.name == '" +
 				FolderTestActivator.CONTENT_SPACE_NAME + "'}._links." +
 					"documentsRepository.href",
+			IsNull.notNullValue()
+		);
+	}
+
+	@Test
+	public void testCreateFolder() {
+		ApioClientBuilder.given(
+		).basicAuth(
+			"test@liferay.com", "test"
+		).header(
+			"Accept", "application/hal+json"
+		).when(
+		).get(
+			_rootEndpointURL.toExternalForm()
+		).follow(
+			"_links.content-space.href"
+		).follow(
+			"_embedded.ContentSpace.find {it.name == '" +
+			FolderTestActivator.CONTENT_SPACE_NAME +
+			"'}._links.documentsRepository.href"
+		).post(
+			"_links.folders.href",
+			new HashMap<String, String>() {{
+				put("name", "folder1");
+				put("description", "folder1 description");
+			}}
+		).then(
+		).statusCode(
+			200
+		).body(
+			"_embedded.Folder.find {it.name == '" +
+			FolderTestActivator.FOLDER_NAME +
+			"'}.dateCreated",
+			IsNull.notNullValue()
+		).body(
+			"_embedded.Folder.find {it.name == '" +
+			FolderTestActivator.FOLDER_NAME +
+			"'}.dateModified",
+			IsNull.notNullValue()
+		).body(
+			"_embedded.Folder.find {it.name == '" +
+			FolderTestActivator.FOLDER_NAME +
+			"'}._links.documents",
+			IsNull.notNullValue()
+		).body(
+			"_embedded.Folder.find {it.name == '" +
+			FolderTestActivator.FOLDER_NAME +
+			"'}._links.self.href",
+			IsNull.notNullValue()
+		).body(
+			"_embedded.Folder.find {it.name == '" +
+			FolderTestActivator.FOLDER_NAME +
+			"'}._links.subFolders",
+			IsNull.notNullValue()
+		);
+
+		ApioClientBuilder.given(
+		).basicAuth(
+			"test@liferay.com", "test"
+		).header(
+			"Accept", "application/hal+json"
+		).when(
+		).get(
+			_rootEndpointURL.toExternalForm()
+		).follow(
+			"_links.content-space.href"
+		).follow(
+			"_embedded.ContentSpace.find {it.name == '" +
+			FolderTestActivator.CONTENT_SPACE_NAME +
+			"'}._links.documentsRepository.href"
+		).follow(
+			"_links.folders.href"
+		).then(
+		).statusCode(
+			200
+		).body(
+			"_embedded.Folder.find {it.name == '" +
+			FolderTestActivator.FOLDER_NAME +
+			"'}.dateCreated",
+			IsNull.notNullValue()
+		).body(
+			"_embedded.Folder.find {it.name == '" +
+			FolderTestActivator.FOLDER_NAME +
+			"'}.dateModified",
+			IsNull.notNullValue()
+		).body(
+			"_embedded.Folder.find {it.name == '" +
+			FolderTestActivator.FOLDER_NAME +
+			"'}._links.documents",
+			IsNull.notNullValue()
+		).body(
+			"_embedded.Folder.find {it.name == '" +
+			FolderTestActivator.FOLDER_NAME +
+			"'}._links.self.href",
+			IsNull.notNullValue()
+		).body(
+			"_embedded.Folder.find {it.name == '" +
+			FolderTestActivator.FOLDER_NAME +
+			"'}._links.subFolders",
 			IsNull.notNullValue()
 		);
 	}

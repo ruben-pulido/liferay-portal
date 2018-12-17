@@ -103,6 +103,17 @@ public class ApioClientBuilder {
 			return new Response(response.then(), _requestSpecification);
 		}
 
+		public Response post(String url, Map<String, ?> bodyMap) {
+			io.restassured.specification.RequestSpecification
+				requestSpecification =
+					_requestSpecification.getRestAssuredRequestSpecification();
+
+			io.restassured.response.Response response =
+				requestSpecification.post(url, bodyMap);
+
+			return new Response(response.then(), _requestSpecification);
+		}
+
 		public ValidatableResponse then() {
 			return _validatableResponse;
 		}
