@@ -14,7 +14,7 @@
 
 package com.liferay.folder.apio.client.test;
 
-import com.liferay.folder.apio.client.test.activator.FolderTestActivator;
+import com.liferay.folder.apio.client.test.internal.activator.FolderTestActivator;
 import com.liferay.oauth2.provider.test.util.OAuth2ProviderTestUtil;
 import com.liferay.portal.apio.test.util.ApioClientBuilder;
 

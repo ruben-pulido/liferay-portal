@@ -12,13 +12,8 @@
  * details.
  */
 
-package com.liferay.folder.apio.client.test.activator;
+package com.liferay.content.space.apio.client.test.internal.activator;
 
-import com.liferay.document.library.kernel.exception.NoSuchFolderException;
-import com.liferay.document.library.kernel.model.DLFolder;
-import com.liferay.document.library.kernel.model.DLFolderConstants;
-import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.apio.test.util.AuthConfigurationTestUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -26,26 +21,18 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
-import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
-import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.test.rule.callback.PermissionCheckerTestCallback;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 /**
- * @author Ruben Pulido
+ * @author Cristina González
  */
-public class FolderTestActivator implements BundleActivator {
+public class ContentSpaceTestActivator implements BundleActivator {
 
 	public static final String CONTENT_SPACE_NAME =
-		FolderTestActivator.class.getSimpleName() + "ContentSpaceName";
-
-	public static final String FOLDER_NAME =
-		FolderTestActivator.class.getSimpleName() + "FolderName";
-
-	public static final String SUBFOLDER_NAME =
-		FolderTestActivator.class.getSimpleName() + "SubfolderName";
+		ContentSpaceTestActivator.class.getSimpleName() + "ContentSpaceName";
 
 	@Override
 	public void start(BundleContext bundleContext) {
@@ -57,25 +44,6 @@ public class FolderTestActivator implements BundleActivator {
 		_deleteDemoData();
 	}
 
-	private static DLFolder _addDLFolder(
-			long groupId, long parentFolderId, String name)
-		throws Exception {
-
-		try {
-			DLFolder folder = DLFolderLocalServiceUtil.getFolder(
-				groupId, parentFolderId, name);
-
-			DLFolderLocalServiceUtil.deleteFolder(folder.getFolderId());
-		}
-		catch (NoSuchFolderException nsfe) {
-		}
-
-		return DLFolderLocalServiceUtil.addFolder(
-			TestPropsValues.getUserId(), groupId, groupId, false,
-			parentFolderId, name, StringPool.BLANK, false,
-			ServiceContextTestUtil.getServiceContext(groupId));
-	}
-
 	private void _createDemoData(BundleContext bundleContext) {
 		try {
 			_permissionCheckerTestCallback.beforeMethod(null, null);
@@ -85,13 +53,6 @@ public class FolderTestActivator implements BundleActivator {
 				new ServiceContext());
 
 			AuthConfigurationTestUtil.deployOAuthConfiguration(bundleContext);
-
-			DLFolder dlFolder = _addDLFolder(
-				_group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-				FOLDER_NAME);
-
-			_addDLFolder(
-				_group.getGroupId(), dlFolder.getFolderId(), SUBFOLDER_NAME);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -110,7 +71,7 @@ public class FolderTestActivator implements BundleActivator {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		FolderTestActivator.class);
+		ContentSpaceTestActivator.class);
 
 	private static final PermissionCheckerTestCallback
 		_permissionCheckerTestCallback = PermissionCheckerTestCallback.INSTANCE;
