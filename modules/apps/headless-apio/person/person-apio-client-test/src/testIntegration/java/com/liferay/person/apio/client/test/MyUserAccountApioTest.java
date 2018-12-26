@@ -145,6 +145,98 @@ public class MyUserAccountApioTest {
 		);
 	}
 
+	@Test
+	public void testGetMyUserAccountWithWrongCredentials() throws Exception {
+		String href = ApioClientBuilder.given(
+		).basicAuth(
+			"test@liferay.com", "test"
+		).header(
+			"Accept", "application/hal+json"
+		).when(
+		).get(
+			_rootEndpointURL.toExternalForm()
+		).then(
+		).extract(
+		).path(
+			"_links.user-account.href"
+		);
+
+		String userHref = ApioClientBuilder.given(
+		).basicAuth(
+			"test@liferay.com", "test"
+		).header(
+			"Accept", "application/hal+json"
+		).header(
+			"Content-Type", "application/json"
+		).body(
+			_read("test-get-my-user-account-create-user.json")
+		).when(
+		).post(
+			href
+		).then(
+		).statusCode(
+			200
+		).extract(
+		).path(
+			"_links.self.href"
+		);
+
+		ApioClientBuilder.given(
+		).basicAuth(
+			"test@liferay.com", "test"
+		).header(
+			"Accept", "application/hal+json"
+		).header(
+			"Content-Type", "application/json"
+		).body(
+			_read("test-get-my-user-account-update-user.json")
+		).when(
+		).put(
+			userHref
+		).then(
+		).statusCode(
+			200
+		);
+
+		String myUserAccountHref = ApioClientBuilder.given(
+		).basicAuth(
+			"kate.williams@liferay.com", "wkate"
+		).header(
+			"Accept", "application/hal+json"
+		).when(
+		).get(
+			_rootEndpointURL.toExternalForm()
+		).then(
+		).extract(
+		).path(
+			"_links.my-user-account.href"
+		);
+
+		ApioClientBuilder.given(
+		).basicAuth(
+			"kate.williams@liferay.com", "wrongpassword"
+		).header(
+			"Accept", "application/hal+json"
+		).when(
+		).get(
+			myUserAccountHref
+		).then(
+		).statusCode(
+			403
+		);
+
+		ApioClientBuilder.given(
+		).basicAuth(
+			"test@liferay.com", "test"
+		).when(
+		).delete(
+			userHref
+		).then(
+		).statusCode(
+			200
+		);
+	}
+
 	private String _read(String fileName) throws Exception {
 		Class<?> clazz = getClass();
 
