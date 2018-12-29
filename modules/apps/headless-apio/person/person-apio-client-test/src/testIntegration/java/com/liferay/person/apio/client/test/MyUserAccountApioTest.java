@@ -56,25 +56,26 @@ public class MyUserAccountApioTest {
 			"_links.user-account.href"
 		);
 
-		_userHrefURL = ApioClientBuilder.given(
-		).basicAuth(
-			"test@liferay.com", "test"
-		).header(
-			"Accept", "application/hal+json"
-		).header(
-			"Content-Type", "application/json"
-		).body(
-			_read("test-get-my-user-account-create-user.json")
-		).when(
-		).post(
-			userAccountHrefURL
-		).then(
-		).statusCode(
-			200
-		).extract(
-		).path(
-			"_links.self.href"
-		);
+		_userHrefURL = new URL(
+			ApioClientBuilder.given(
+			).basicAuth(
+				"test@liferay.com", "test"
+			).header(
+				"Accept", "application/hal+json"
+			).header(
+				"Content-Type", "application/json"
+			).body(
+				_read("test-get-my-user-account-create-user.json")
+			).when(
+			).post(
+				userAccountHrefURL
+			).then(
+			).statusCode(
+				200
+			).extract(
+			).path(
+				"_links.self.href"
+			));
 
 		ApioClientBuilder.given(
 		).basicAuth(
@@ -87,25 +88,26 @@ public class MyUserAccountApioTest {
 			_read("test-get-my-user-account-update-user.json")
 		).when(
 		).put(
-			_userHrefURL
+			_userHrefURL.toExternalForm()
 		).then(
 		).statusCode(
 			200
 		);
 
-		_myUserAccountHref = ApioClientBuilder.given(
-		).basicAuth(
-			"kate.williams@liferay.com", "wkate"
-		).header(
-			"Accept", "application/hal+json"
-		).when(
-		).get(
-			_rootEndpointURL.toExternalForm()
-		).then(
-		).extract(
-		).path(
-			"_links.my-user-account.href"
-		);
+		_myUserAccountHref = new URL(
+			ApioClientBuilder.given(
+			).basicAuth(
+				"kate.williams@liferay.com", "wkate"
+			).header(
+				"Accept", "application/hal+json"
+			).when(
+			).get(
+				_rootEndpointURL.toExternalForm()
+			).then(
+			).extract(
+			).path(
+				"_links.my-user-account.href"
+			));
 	}
 
 	@After
@@ -115,7 +117,7 @@ public class MyUserAccountApioTest {
 			"test@liferay.com", "test"
 		).when(
 		).delete(
-			_userHrefURL
+			_userHrefURL.toExternalForm()
 		).then(
 		).statusCode(
 			Matchers.isOneOf(200, 204)
@@ -131,7 +133,7 @@ public class MyUserAccountApioTest {
 			"Accept", "application/hal+json"
 		).when(
 		).get(
-			_myUserAccountHref
+			_myUserAccountHref.toExternalForm()
 		).then(
 		).statusCode(
 			200
@@ -169,12 +171,12 @@ public class MyUserAccountApioTest {
 		return String.format(StringUtil.read(url.openStream()));
 	}
 
-	private String _myUserAccountHref;
+	private URL _myUserAccountHref;
 	private URL _rootEndpointURL;
 
 	@ArquillianResource
 	private URL _url;
 
-	private String _userHrefURL;
+	private URL _userHrefURL;
 
 }
