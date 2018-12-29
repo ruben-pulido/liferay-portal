@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 
 import java.net.URL;
 
+import org.hamcrest.Matchers;
 import org.hamcrest.core.IsNull;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -117,7 +118,7 @@ public class MyUserAccountApioTest {
 			_userHrefURL
 		).then(
 		).statusCode(
-			200
+			Matchers.isOneOf(200, 204)
 		);
 	}
 
