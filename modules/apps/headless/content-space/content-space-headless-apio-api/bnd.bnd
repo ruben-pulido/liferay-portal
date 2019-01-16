@@ -1,0 +1,6 @@
+Bundle-Name: Liferay Content Space Headless Apio API
+Bundle-SymbolicName: com.liferay.content.space.headless.apio.api
+Bundle-Version: 2.0.0
+Export-Package:\
+	com.liferay.content.space.headless.apio.architect.identifier,\
+	com.liferay.content.space.headless.apio.architect.model
