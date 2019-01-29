@@ -12,17 +12,35 @@
  * details.
  */
 
-package com.liferay.headless.web.experience.resource;
+package com.liferay.headless.web.experience.dto;
+
+import com.liferay.portal.vulcan.collection.BaseCollection;
+
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.annotation.Generated;
 
-import javax.ws.rs.Path;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
  * @author Javier Gamarra
  * @generated
  */
 @Generated("")
-@Path("/1.0.0/structure")
-public interface StructureResource {
+@XmlRootElement(name = "collection")
+@XmlSeeAlso({Comment.class})
+public class CommentCollection<T> extends BaseCollection<T> {
+
+	public CommentCollection() {
+		setItems(Collections.emptyList());
+		setTotalCount(0);
+	}
+
+	public CommentCollection(Collection<T> items, int totalCount) {
+		setItems(items);
+		setTotalCount(totalCount);
+	}
+
 }

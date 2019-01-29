@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 @Generated("")
-@XmlRootElement(name = "ContentDocument")
-public class ContentDocument {
+@XmlRootElement(name = "ContentStructure")
+public class ContentStructure {
 
 	public long getId() {
 		return _id;

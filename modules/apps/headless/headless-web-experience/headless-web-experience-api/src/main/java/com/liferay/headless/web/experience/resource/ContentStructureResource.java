@@ -14,8 +14,8 @@
 
 package com.liferay.headless.web.experience.resource;
 
-import com.liferay.headless.web.experience.dto.Comment;
-import com.liferay.headless.web.experience.dto.CommentCollection;
+import com.liferay.headless.web.experience.dto.ContentStructure;
+import com.liferay.headless.web.experience.dto.ContentStructureCollection;
 import com.liferay.oauth2.provider.scope.RequiresScope;
 import com.liferay.portal.vulcan.context.Pagination;
 
@@ -32,13 +32,13 @@ import javax.ws.rs.core.Context;
  * @generated
  */
 @Generated("")
-@Path("/1.0.0/comment")
-public interface CommentResource {
+@Path("/1.0.0/content-structure")
+public interface ContentStructureResource {
 
 	@GET
 	@Produces("application/json")
 	@RequiresScope("headless-web-experience-application.read")
-	public CommentCollection<Comment> getCommentCollection(
+	public ContentStructureCollection<ContentStructure> getContentStructureCollection(
 			@Context Pagination pagination, @QueryParam("size") String size)
 		throws Exception;
 

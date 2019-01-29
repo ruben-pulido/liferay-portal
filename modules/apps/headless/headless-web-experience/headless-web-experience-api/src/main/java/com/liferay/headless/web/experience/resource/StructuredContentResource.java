@@ -14,15 +14,32 @@
 
 package com.liferay.headless.web.experience.resource;
 
+import com.liferay.headless.web.experience.dto.StructuredContent;
+import com.liferay.headless.web.experience.dto.StructuredContentCollection;
+import com.liferay.oauth2.provider.scope.RequiresScope;
+import com.liferay.portal.vulcan.context.Pagination;
+
 import javax.annotation.Generated;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 
 /**
  * @author Javier Gamarra
  * @generated
  */
 @Generated("")
-@Path("/1.0.0/structuredcontent")
+@Path("/1.0.0/structured-content")
 public interface StructuredContentResource {
+
+	@GET
+	@Produces("application/json")
+	@RequiresScope("headless-web-experience-application.read")
+	public StructuredContentCollection<StructuredContent> getStructuredContentCollection(
+			@Context Pagination pagination, @QueryParam("size") String size)
+		throws Exception;
+
 }

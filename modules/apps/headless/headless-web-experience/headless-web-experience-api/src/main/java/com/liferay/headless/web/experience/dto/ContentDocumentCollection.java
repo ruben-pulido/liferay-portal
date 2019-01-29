@@ -14,15 +14,33 @@
 
 package com.liferay.headless.web.experience.dto;
 
+import com.liferay.portal.vulcan.collection.BaseCollection;
+
+import java.util.Collection;
+import java.util.Collections;
+
 import javax.annotation.Generated;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
  * @author Javier Gamarra
  * @generated
  */
 @Generated("")
-@XmlRootElement(name = "Structure")
-public class Structure {
+@XmlRootElement(name = "collection")
+@XmlSeeAlso({ContentDocument.class})
+public class ContentDocumentCollection<T> extends BaseCollection<T> {
+
+	public ContentDocumentCollection() {
+		setItems(Collections.emptyList());
+		setTotalCount(0);
+	}
+
+	public ContentDocumentCollection(Collection<T> items, int totalCount) {
+		setItems(items);
+		setTotalCount(totalCount);
+	}
+
 }
