@@ -14,7 +14,12 @@
 
 package com.liferay.headless.web.experience.internal.resource;
 
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.model.AssetTagModel;
+import com.liferay.asset.kernel.service.AssetTagLocalService;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.headless.web.experience.dto.Comment;
+import com.liferay.headless.web.experience.dto.ContentStructure;
 import com.liferay.headless.web.experience.dto.StructuredContent;
 import com.liferay.headless.web.experience.resource.StructuredContentResource;
 import com.liferay.journal.model.JournalArticle;
@@ -38,6 +43,7 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyService;
 import com.liferay.portal.kernel.service.GroupService;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -74,8 +80,7 @@ public class StructuredContentResourceImpl
 	@Override
 	public Page<StructuredContent> getContentSpaceStructuredContents(
 			Integer parentId, String AcceptLanguage, String filter, String sort,
-			Pagination pagination)
-		throws Exception {
+			Pagination pagination) {
 
 		Group group = _groupService.getGroup((long)parentId);
 
@@ -89,8 +94,36 @@ public class StructuredContentResourceImpl
 			journalArticle -> {
 				StructuredContent structuredContent = new StructuredContent();
 
+				structuredContent.setAggregateRating(null);
+				structuredContent.setAvailableLanguages(
+					LocaleUtil.toW3cLanguageIds(
+						journalArticle.getAvailableLanguageIds()));
+				structuredContent.setCategory(null);
+				structuredContent.setComment(null);
+				structuredContent.setContentSpace(
+					String.valueOf(journalArticle.getGroupId()));
+				structuredContent.setContentStructure(null);
+				structuredContent.setCreator(
+					journalArticle.getUserName());
+				structuredContent.setDateCreated(
+					String.valueOf(journalArticle.getCreateDate()));
+				structuredContent.setDateModified(
+					String.valueOf(journalArticle.getModifiedDate()));
+				structuredContent.setDatePublished(
+					String.valueOf(journalArticle.getLastPublishDate()));
+				structuredContent.setDescription(
+					journalArticle.getDescription());
 				structuredContent.setId(
 					(int)journalArticle.getResourcePrimKey());
+				structuredContent.setKeywords(
+					_getJournalArticleAssetTags(journalArticle));
+				structuredContent.setLastReviewed(
+					String.valueOf(journalArticle.getReviewDate()));
+				structuredContent.setRenderedContentsByTemplate(null);
+				structuredContent.setSelf(null);
+				structuredContent.setTitle(
+					journalArticle.getTitle());
+				structuredContent.setValues(null);
 
 				return structuredContent;
 			}
@@ -182,12 +215,31 @@ public class StructuredContentResourceImpl
 		return searchResultPermissionFilter.search(searchContext);
 	}
 
+	private String[] _getJournalArticleAssetTags(
+		JournalArticle journalArticle) {
+
+		List<AssetTag> assetTags = _assetTagLocalService.getTags(
+			JournalArticle.class.getName(),
+			journalArticle.getResourcePrimKey());
+
+		Stream<AssetTag> stream = assetTags.stream();
+
+		return stream.map(
+			AssetTag::getName
+		).toArray(
+			size -> new String[assetTags.size()]
+		);
+	}
+
 	private Query _getQuery(SearchContext searchContext) throws Exception {
 		Indexer<JournalArticle> indexer = _indexerRegistry.nullSafeGetIndexer(
 			JournalArticle.class);
 
 		return indexer.getFullQuery(searchContext);
 	}
+
+	@Reference
+	private AssetTagLocalService _assetTagLocalService;
 
 	@Reference
 	private CompanyService _companyService;
