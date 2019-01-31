@@ -23,6 +23,7 @@ import com.liferay.portal.vulcan.dto.Page;
 import javax.annotation.Generated;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
