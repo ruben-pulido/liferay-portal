@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.search.SearchResultPermissionFilterSearcher;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyService;
+import com.liferay.portal.kernel.service.GroupService;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -76,7 +77,9 @@ public class StructuredContentResourceImpl
 			Pagination pagination)
 		throws Exception {
 
-		Hits hits = _getHits(pagination);
+		Group group = _groupService.getGroup((long)parentId);
+
+		Hits hits = _getHits(group.getGroupId(), pagination);
 
 		List<StructuredContent> structuredContents = Stream.of(
 			_journalHelper.getArticles(hits)
@@ -139,15 +142,15 @@ public class StructuredContentResourceImpl
 		return searchContext;
 	}
 
-	private Hits _getHits(Pagination pagination) throws Exception {
+	private Hits _getHits(long groupId, Pagination pagination)
+		throws Exception {
+
 		Company company = _companyService.getCompanyByWebId(
 			PropsUtil.get(PropsKeys.COMPANY_DEFAULT_WEB_ID));
 
-		Group group = company.getGroup();
-
 		SearchContext searchContext = _createSearchContext(
-			company.getCompanyId(), group.getGroupId(),
-			pagination.getStartPosition(), pagination.getEndPosition());
+			company.getCompanyId(), groupId, pagination.getStartPosition(),
+			pagination.getEndPosition());
 
 		Query query = _getQuery(searchContext);
 
@@ -188,6 +191,9 @@ public class StructuredContentResourceImpl
 
 	@Reference
 	private CompanyService _companyService;
+
+	@Reference
+	private GroupService _groupService;
 
 	@Reference
 	private IndexerRegistry _indexerRegistry;
