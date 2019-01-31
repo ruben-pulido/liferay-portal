@@ -86,7 +86,8 @@ public class StructuredContentResourceImpl
 			journalArticle -> {
 				StructuredContent structuredContent = new StructuredContent();
 
-				structuredContent.setId(journalArticle.getResourcePrimKey());
+				structuredContent.setId(
+					(int)journalArticle.getResourcePrimKey());
 
 				return structuredContent;
 			}
