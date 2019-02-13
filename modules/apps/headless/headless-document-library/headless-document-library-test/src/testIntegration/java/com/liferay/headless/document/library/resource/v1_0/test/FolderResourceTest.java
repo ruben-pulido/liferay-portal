@@ -14,17 +14,121 @@
 
 package com.liferay.headless.document.library.resource.v1_0.test;
 
+import static junit.framework.TestCase.assertEquals;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import com.liferay.headless.document.library.dto.v1_0.Folder;
+import com.liferay.headless.document.library.resource.v1_0.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+
+import io.restassured.response.Response;
+
+import java.net.MalformedURLException;
+
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author Javier Gamarra
  */
-@Ignore
 @RunAsClient
 @RunWith(Arquillian.class)
 public class FolderResourceTest extends BaseFolderResourceTestCase {
+
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+
+		_groupId = GroupTestUtil.addGroup(getURL());
+	}
+
+	@After
+	public void tearDown() throws MalformedURLException {
+		GroupTestUtil.deleteGroup(getURL(), _groupId);
+	}
+
+	@Ignore
+	@Test
+	public void testDeleteFolder() throws Exception {
+		Folder folder = invokePostDocumentsRepositoryFolder(
+			_groupId, _buildFolder());
+
+		invokeDeleteFolder(folder.getId());
+
+		invokeGetFolder(folder.getId());
+
+		Response response = invokeGetFolderResponse(folder.getId());
+
+		assertEquals(404, response.getStatusCode());
+	}
+
+	@Ignore
+	@Test
+	public void testGetFolder() throws Exception {
+		Folder folder = invokePostDocumentsRepositoryFolder(
+			_groupId, _buildFolder());
+
+		assertThat(
+			toJSON(invokeGetFolder(folder.getId())), sameJSONAs(folder));
+	}
+
+	@Test
+	public void testPostDocumentsRepositoryFolder() throws Exception {
+		Folder folder = _buildFolder();
+
+		assertThat(
+			toJSON(invokePostDocumentsRepositoryFolder(_groupId, folder)),
+			sameJSONAs(folder));
+	}
+
+	@Ignore
+	@Test
+	public void testPostFolderFolder() throws Exception {
+		Folder parentFolder = invokePostDocumentsRepositoryFolder(
+			_groupId, _buildFolder());
+
+		Folder subfolder = _buildFolder();
+
+		assertThat(
+			toJSON(invokePostFolderFolder(parentFolder.getId(), subfolder)),
+			sameJSONAs(subfolder));
+	}
+
+	@Ignore
+	@Test
+	public void testPutFolder() throws Exception {
+		Folder folder = invokePostDocumentsRepositoryFolder(
+			_groupId, _buildFolder());
+
+		Folder inputUpdateFolder = _buildFolder();
+
+		Folder updatedFolder = invokePutFolder(
+			folder.getId(), inputUpdateFolder);
+
+		assertThat(toJSON(updatedFolder), sameJSONAs(inputUpdateFolder));
+
+		assertThat(
+			toJSON(invokeGetFolder(updatedFolder.getId())),
+			sameJSONAs(inputUpdateFolder));
+	}
+
+	private Folder _buildFolder() {
+		Folder folder = new Folder();
+
+		folder.setDescription(StringUtil.randomString(10));
+		folder.setDocumentsRepositoryId(_groupId);
+		folder.setName(StringUtil.randomString(10));
+
+		return folder;
+	}
+
+	private long _groupId;
+
 }
