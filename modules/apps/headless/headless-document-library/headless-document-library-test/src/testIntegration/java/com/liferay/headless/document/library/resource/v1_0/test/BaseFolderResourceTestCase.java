@@ -14,7 +14,9 @@
 
 package com.liferay.headless.document.library.resource.v1_0.test;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.liferay.headless.document.library.dto.v1_0.Folder;
@@ -22,9 +24,11 @@ import com.liferay.portal.vulcan.pagination.Pagination;
 
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
 
 import java.net.URL;
+import java.util.Date;
 
 import javax.annotation.Generated;
 
@@ -34,6 +38,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.co.datumedge.hamcrest.json.SameJSONAs;
 
 /**
  * @author Javier Gamarra
@@ -105,10 +111,15 @@ public abstract class BaseFolderResourceTestCase {
 		Assert.assertTrue(true);
 	}
 
+	protected URL getUrl() {
+		return _url;
+	}
+
 	protected void invokeDeleteFolders(Long folderId) throws Exception {
 		RequestSender requestSender = _createRequestSender();
 
-		requestSender.post("/folders/{folder-id}");
+		requestSender.delete(
+			_getPath("/folders/{folder-id}", folderId));
 	}
 
 	protected void invokeGetDocumentsRepositories(Long documentsRepositoryId)
@@ -116,8 +127,10 @@ public abstract class BaseFolderResourceTestCase {
 
 		RequestSender requestSender = _createRequestSender();
 
-		requestSender.post(
-			"/documents-repositories/{documents-repository-id}");
+		requestSender.get(
+			_getPath(
+				"/documents-repositories/{documents-repository-id}",
+				documentsRepositoryId));
 	}
 
 	protected void invokeGetDocumentsRepositoriesFoldersPage(
@@ -126,14 +139,22 @@ public abstract class BaseFolderResourceTestCase {
 
 		RequestSender requestSender = _createRequestSender();
 
-		requestSender.post(
-			"/documents-repositories/{documents-repository-id}/folders");
+		requestSender.get(
+			_getPath(
+				"/documents-repositories/{documents-repository-id}/folders",
+				documentsRepositoryId));
 	}
 
-	protected void invokeGetFolders(Long folderId) throws Exception {
+	protected Folder invokeGetFolders(Long folderId) throws Exception {
+		Response response = invokeGetFoldersResponse(folderId);
+
+		return response.as(Folder.class);
+	}
+
+	protected Response invokeGetFoldersResponse(Long folderId) {
 		RequestSender requestSender = _createRequestSender();
 
-		requestSender.post("/folders/{folder-id}");
+		return requestSender.get(_getPath("/folders/{folder-id}", folderId));
 	}
 
 	protected void invokeGetFoldersFoldersPage(
@@ -142,17 +163,24 @@ public abstract class BaseFolderResourceTestCase {
 
 		RequestSender requestSender = _createRequestSender();
 
-		requestSender.post("/folders/{folder-id}/folders");
+		requestSender.get(
+			_getPath("/folders/{folder-id}/folders", folderId),
+			pagination);
 	}
 
-	protected void invokePostDocumentsRepositoriesFolders(
+	protected Folder invokePostDocumentsRepositoriesFolders(
 			Long documentsRepositoryId, Folder folder)
 		throws Exception {
 
 		RequestSender requestSender = _createRequestSender();
 
-		requestSender.post(
-			"/documents-repositories/{documents-repository-id}/folders");
+		Response response = requestSender.post(
+			_getPath(
+				"/documents-repositories/{documents-repository-id}/folders",
+				documentsRepositoryId),
+			folder);
+
+		return response.as(Folder.class);
 	}
 
 	protected void invokePostDocumentsRepositoriesFoldersBatchCreate(
@@ -162,16 +190,22 @@ public abstract class BaseFolderResourceTestCase {
 		RequestSender requestSender = _createRequestSender();
 
 		requestSender.post(
-			"/documents-repositories/{documents-repository-id}/folders/" +
-				"batch-create");
+			_getPath(
+				"/documents-repositories/{documents-repository-id}/folders/" +
+					"batch-create",
+				documentsRepositoryId),
+			folder);
 	}
 
-	protected void invokePostFoldersFolders(Long folderId, Folder folder)
+	protected Folder invokePostFoldersFolders(Long folderId, Folder folder)
 		throws Exception {
 
 		RequestSender requestSender = _createRequestSender();
 
-		requestSender.post("/folders/{folder-id}/folders");
+		Response response = requestSender.post(
+			_getPath("/folders/{folder-id}/folders", folderId), folder);
+
+		return response.as(Folder.class);
 	}
 
 	protected void invokePostFoldersFoldersBatchCreate(
@@ -180,15 +214,20 @@ public abstract class BaseFolderResourceTestCase {
 
 		RequestSender requestSender = _createRequestSender();
 
-		requestSender.post("/folders/{folder-id}/folders/batch-create");
+		requestSender.post(
+			_getPath("/folders/{folder-id}/folders/batch-create", folderId),
+			folder);
 	}
 
-	protected void invokePutFolders(Long folderId, Folder folder)
+	protected Folder invokePutFolders(Long folderId, Folder folder)
 		throws Exception {
 
 		RequestSender requestSender = _createRequestSender();
 
-		requestSender.post("/folders/{folder-id}");
+		Response response = requestSender.put(
+			_getPath("/folders/{folder-id}", folderId), folder);
+
+		return response.as(Folder.class);
 	}
 
 	private RequestSender _createRequestSender() {
@@ -204,6 +243,12 @@ public abstract class BaseFolderResourceTestCase {
 		).when();
 	}
 
+	private String _getPath(String pathTemplate, Long documentsRepositoryId) {
+
+		return pathTemplate.replace(
+			"\\{.*\\}", String.valueOf(documentsRepositoryId));
+	}
+
 	private static final ObjectMapper _inputObjectMapper = new ObjectMapper() {
 		{
 			setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -211,6 +256,33 @@ public abstract class BaseFolderResourceTestCase {
 	};
 
 	private static final ObjectMapper _outputObjectMapper = new ObjectMapper();
+
+	protected static SameJSONAs<? super String> sameJSONAs(Folder folder)
+		throws JsonProcessingException {
+
+		return SameJSONAs.sameJSONAs(
+			toJSON(folder)
+		).allowingExtraUnexpectedFields();
+	}
+
+	protected static String toJSON(Folder folder)
+		throws JsonProcessingException {
+
+		return _outputObjectMapper.writeValueAsString(folder);
+	}
+
+	private abstract class IgnoreFieldsMixin {
+
+		@JsonIgnore
+		public abstract Date getDateCreated();
+
+		@JsonIgnore
+		public abstract Date getDateModified();
+
+		@JsonIgnore
+		public abstract Long getId();
+
+	}
 
 	private URL _resourceURL;
 
