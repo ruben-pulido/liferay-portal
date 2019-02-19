@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liferay.headless.collaboration.dto.v1_0.BlogPosting;
 import com.liferay.headless.collaboration.internal.dto.v1_0.BlogPostingImpl;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -116,13 +118,13 @@ public abstract class BaseBlogPostingResourceTestCase {
 			);
 
 	}
-	protected Response invokeGetContentSpaceBlogPostingsPage( Long contentSpaceId , Pagination pagination ) throws Exception {
+	protected Response invokeGetContentSpaceBlogPostingsPage( Long contentSpaceId , Filter filter , Pagination pagination , Sort[] sorts ) throws Exception {
 		RequestSpecification requestSpecification = _createRequestSpecification();
 
 			return requestSpecification.when(
 			).get(
 				_resourceURL + "/content-spaces/{content-space-id}/blog-postings",
-				contentSpaceId 
+				contentSpaceId , filter  , sorts
 			);
 
 	}
