@@ -31,8 +31,18 @@ import com.liferay.headless.collaboration.internal.dto.v1_0.ImageImpl;
 import com.liferay.headless.collaboration.internal.dto.v1_0.util.AggregateRatingUtil;
 import com.liferay.headless.collaboration.internal.dto.v1_0.util.CreatorUtil;
 import com.liferay.headless.collaboration.resource.v1_0.BlogPostingResource;
+import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
+import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.IndexerRegistry;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.BooleanFilter;
+import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.search.filter.TermFilter;
+import com.liferay.portal.kernel.service.ClassNameService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
@@ -42,10 +52,12 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
 
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -82,17 +94,41 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 
 	@Override
 	public Page<BlogPosting> getContentSpaceBlogPostingsPage(
-		Long parentId, Pagination pagination) {
+		Long contentSpaceId, Filter filter, Pagination pagination,
+		Sort[] sorts) {
+
+		List<BlogsEntry> assetVocabularies = new ArrayList<>();
+
+		ClassName className = _classNameService.fetchClassName(
+			BlogPosting.class.getName());
+
+		Hits hits = SearchUtil.getHits(
+			filter, _indexerRegistry.nullSafeGetIndexer(BlogsEntry.class),
+			pagination,
+			booleanQuery -> {
+			},
+			queryConfig -> {
+				queryConfig.setSelectedFieldNames(Field.);
+			},
+			searchContext -> {
+				searchContext.setAttribute(
+					Field.CLASS_NAME_ID, className.getClassNameId());
+				searchContext.setAttribute("head", Boolean.TRUE);
+				searchContext.setCompanyId(company.getCompanyId());
+				searchContext.setGroupIds(new long[] {contentSpaceId});
+			},
+			_searchResultPermissionFilterFactory, sorts);
+
+		for (Document document : hits.getDocs()) {
+			AssetVocabulary vocabulary = _assetVocabularyService.getVocabulary(
+				GetterUtil.getLong(document.get(Field.ASSET_VOCABULARY_ID)));
+
+			assetVocabularies.add(vocabulary);
+		}
 
 		return Page.of(
-			transform(
-				_blogsEntryService.getGroupEntries(
-					parentId, WorkflowConstants.STATUS_APPROVED,
-					pagination.getStartPosition(), pagination.getEndPosition()),
-				this::_toBlogPosting),
-			pagination,
-			_blogsEntryService.getGroupEntriesCount(
-				parentId, WorkflowConstants.STATUS_APPROVED));
+			transform(assetVocabularies, this::_toVocabulary), pagination,
+			assetVocabularies.size());
 	}
 
 	@Override
@@ -264,10 +300,16 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 	private BlogsEntryService _blogsEntryService;
 
 	@Reference
+	private ClassNameService _classNameService;
+
+	@Reference
 	private DLAppService _dlAppService;
 
 	@Reference
 	private DLURLHelper _dlurlHelper;
+
+	@Reference
+	private IndexerRegistry _indexerRegistry;
 
 	@Reference
 	private Portal _portal;
