@@ -74,6 +74,7 @@ public class VocabularyResourceTest extends BaseVocabularyResourceTestCase {
 		assertValid(page);
 	}
 
+	@Override
 	@Test
 	public void testGetContentSpaceVocabulariesPageWithFilterDateTimeEquals()
 		throws Exception {
@@ -100,6 +101,7 @@ public class VocabularyResourceTest extends BaseVocabularyResourceTestCase {
 		}
 	}
 
+	@Override
 	@Test
 	public void testGetContentSpaceVocabulariesPageWithFilterStringEquals()
 		throws Exception {
@@ -125,6 +127,7 @@ public class VocabularyResourceTest extends BaseVocabularyResourceTestCase {
 		}
 	}
 
+	@Override
 	@Test
 	public void testGetContentSpaceVocabulariesPageWithPagination()
 		throws Exception {
@@ -169,6 +172,7 @@ public class VocabularyResourceTest extends BaseVocabularyResourceTestCase {
 			});
 	}
 
+	@Override
 	@Test
 	public void testGetContentSpaceVocabulariesPageWithSort() throws Exception {
 		Vocabulary randomVocabulary1 = randomVocabulary();
