@@ -1,0 +1,9 @@
+apiDir: "../headless-asset-api/src/main/java"
+apiPackagePath: "com.liferay.headless.asset"
+application:
+    baseURI: "/headless-asset"
+    className: "HeadlessAssetApplication"
+    name: "Liferay.Headless.Asset"
+author: "Javier Gamarra"
+implDir: "../headless-asset-impl/src/main/java"
+testDir: "../headless-asset-test/src/testIntegration/java"
