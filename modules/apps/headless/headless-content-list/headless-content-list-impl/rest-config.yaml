@@ -1,0 +1,9 @@
+apiDir: "../headless-content-list-api/src/main/java"
+apiPackagePath: "com.liferay.headless.content.list"
+application:
+    baseURI: "/headless-content-list"
+    className: "HeadlessContentListApplication"
+    name: "Liferay.Headless.Content.List"
+author: "Javier Gamarra"
+implDir: "../headless-content-list-impl/src/main/java"
+testDir: "../headless-content-list-test/src/testIntegration/java"

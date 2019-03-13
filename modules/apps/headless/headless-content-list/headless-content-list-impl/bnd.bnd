@@ -1,0 +1,3 @@
+Bundle-Name: Liferay Headless Content List Implementation
+Bundle-SymbolicName: com.liferay.headless.content.list.impl
+Bundle-Version: 1.0.0

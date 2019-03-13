@@ -1,0 +1,6 @@
+Bundle-Name: Liferay Headless Content List API
+Bundle-SymbolicName: com.liferay.headless.content.list.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.headless.content.list.dto.v1_0,\
+	com.liferay.headless.content.list.resource.v1_0
