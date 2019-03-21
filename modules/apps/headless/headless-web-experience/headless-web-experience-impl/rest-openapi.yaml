@@ -421,6 +421,74 @@ components:
                 title:
                     type: string
             type: object
+        KnowledgeBaseArticle:
+            description: https://www.schema.org/KnowledgeBaseArticle
+            properties:
+                aggregateRating:
+                    $ref: "#/components/schemas/AggregateRating"
+                articleBody:
+                    type: string
+                contentSpaceId:
+                    format: int64
+                    type: integer
+                creator:
+                    $ref: "#/components/schemas/Creator"
+                dateCreated:
+                    format: date-time
+                    type: string
+                dateModified:
+                    format: date-time
+                    type: string
+                description:
+                    type: string
+                friendlyUrlPath:
+                    type: string
+                id:
+                    format: int64
+                    type: integer
+                keywords:
+                    items:
+                        type: string
+                    type: array
+                numberOfAttachments:
+                    type: number
+                numberOfKnowledgeBaseArticles:
+                    type: number
+                parentKnowledgeBaseFolder:
+                    properties:
+                        folderId:
+                            format: int64
+                            type: integer
+                        folderName:
+                            type: string
+                    type: object
+                parentKnowledgeBaseFolderId:
+                    format: int64
+                    type: integer
+                    writeOnly: true
+                taxonomyCategories:
+                    items:
+                        properties:
+                            taxonomyCategoryId:
+                                format: int64
+                                type: integer
+                            taxonomyCategoryName:
+                                type: string
+                        type: object
+                    type: array
+                taxonomyCategoryIds:
+                    items:
+                        format: int64
+                        type: integer
+                    type: array
+                    writeOnly: true
+                title:
+                    type: string
+                viewableBy:
+                    enum: [Anyone, Members, Owner]
+                    type: string
+                    writeOnly: true
+            type: object
         StructuredContent:
             description: https://www.schema.org/StructuredContent
             properties:
