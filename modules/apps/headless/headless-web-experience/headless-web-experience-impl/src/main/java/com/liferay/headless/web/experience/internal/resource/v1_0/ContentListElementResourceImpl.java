@@ -21,6 +21,7 @@ import com.liferay.adaptive.media.image.finder.AMImageQueryBuilder;
 import com.liferay.adaptive.media.image.mime.type.AMImageMimeTypeProvider;
 import com.liferay.adaptive.media.image.processor.AMImageAttribute;
 import com.liferay.adaptive.media.image.processor.AMImageProcessor;
+import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
@@ -44,6 +45,8 @@ import com.liferay.headless.web.experience.dto.v1_0.Document;
 import com.liferay.headless.web.experience.dto.v1_0.Folder;
 import com.liferay.headless.web.experience.dto.v1_0.GenericContentListElement;
 import com.liferay.headless.web.experience.dto.v1_0.Image;
+import com.liferay.headless.web.experience.dto.v1_0.KnowledgeBaseArticle;
+import com.liferay.headless.web.experience.dto.v1_0.ParentKnowledgeBaseFolder;
 import com.liferay.headless.web.experience.dto.v1_0.StructuredContent;
 import com.liferay.headless.web.experience.dto.v1_0.TaxonomyCategory;
 import com.liferay.headless.web.experience.internal.dto.v1_0.util.AggregateRatingUtil;
@@ -55,8 +58,12 @@ import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.service.JournalArticleService;
 import com.liferay.journal.util.JournalConverter;
 import com.liferay.knowledge.base.model.KBArticle;
+import com.liferay.knowledge.base.model.KBFolder;
+import com.liferay.knowledge.base.service.KBArticleService;
+import com.liferay.knowledge.base.service.KBFolderService;
 import com.liferay.message.boards.model.MBMessage;
 import com.liferay.portal.kernel.comment.CommentManager;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
@@ -64,11 +71,13 @@ import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
 import com.liferay.wiki.model.WikiPage;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -243,6 +252,12 @@ public class ContentListElementResourceImpl
 				_journalArticleService.getLatestArticle(
 					assetEntry.getClassPK()));
 		}
+		else if (className.equals(KBArticle.class.getName())) {
+			contentListElement = _toKBArticle(
+				_kbArticleService.getLatestKBArticle(
+					assetEntry.getClassPK(),
+					WorkflowConstants.STATUS_APPROVED));
+		}
 		else {
 			contentListElement = _toGenericContentListElement(assetEntry);
 		}
@@ -383,6 +398,79 @@ public class ContentListElementResourceImpl
 		};
 	}
 
+	private KnowledgeBaseArticle _toKBArticle(KBArticle kbArticle)
+		throws PortalException {
+
+		if (kbArticle == null) {
+			return null;
+		}
+
+		return new KnowledgeBaseArticle() {
+			{
+				aggregateRating = AggregateRatingUtil.toAggregateRating(
+					_ratingsStatsLocalService.fetchStats(
+						KBArticle.class.getName(),
+						kbArticle.getResourcePrimKey()));
+				articleBody = kbArticle.getContent();
+				creator = CreatorUtil.toCreator(
+					_portal, _userLocalService.getUser(kbArticle.getUserId()));
+				dateCreated = kbArticle.getCreateDate();
+				dateModified = kbArticle.getModifiedDate();
+				description = kbArticle.getDescription();
+				friendlyUrlPath = kbArticle.getUrlTitle();
+				id = kbArticle.getResourcePrimKey();
+				keywords = ListUtil.toArray(
+					_assetTagLocalService.getTags(
+						KBArticle.class.getName(), kbArticle.getClassPK()),
+					AssetTag.NAME_ACCESSOR);
+				numberOfAttachments = Optional.ofNullable(
+					kbArticle.getAttachmentsFileEntries()
+				).map(
+					List::size
+				).orElse(
+					0
+				);
+				numberOfKnowledgeBaseArticles =
+					_kbArticleService.getKBArticlesCount(
+						kbArticle.getGroupId(), kbArticle.getResourcePrimKey(),
+						WorkflowConstants.STATUS_APPROVED);
+				parentKnowledgeBaseFolderId = kbArticle.getKbFolderId();
+				taxonomyCategories = transformToArray(
+					_assetCategoryLocalService.getCategories(
+						KBArticle.class.getName(), kbArticle.getClassPK()),
+					assetCategory -> _toTaxonomyCategory(assetCategory),
+					TaxonomyCategory.class);
+				title = kbArticle.getTitle();
+
+				setParentKnowledgeBaseFolder(
+					() -> {
+						if (kbArticle.getKbFolderId() <= 0) {
+							return null;
+						}
+
+						return _toParentKnowledgeBaseFolder(
+							_kbFolderService.getKBFolder(
+								kbArticle.getKbFolderId()));
+					});
+			}
+		};
+	}
+
+	private ParentKnowledgeBaseFolder _toParentKnowledgeBaseFolder(
+		KBFolder kbFolder) {
+
+		if (kbFolder == null) {
+			return null;
+		}
+
+		return new ParentKnowledgeBaseFolder() {
+			{
+				folderId = kbFolder.getKbFolderId();
+				folderName = kbFolder.getName();
+			}
+		};
+	}
+
 	private StructuredContent _toStructuredContent(
 			JournalArticle journalArticle)
 		throws Exception {
@@ -393,6 +481,15 @@ public class ContentListElementResourceImpl
 			_fieldsToDDMFormValuesConverter, _journalArticleService,
 			_journalConverter, _layoutLocalService, _portal,
 			_ratingsStatsLocalService, contextUriInfo, _userLocalService);
+	}
+
+	private TaxonomyCategory _toTaxonomyCategory(AssetCategory assetCategory) {
+		return new TaxonomyCategory() {
+			{
+				taxonomyCategoryId = assetCategory.getCategoryId();
+				taxonomyCategoryName = assetCategory.getName();
+			}
+		};
 	}
 
 	@Reference
@@ -433,6 +530,12 @@ public class ContentListElementResourceImpl
 
 	@Reference
 	private JournalConverter _journalConverter;
+
+	@Reference
+	private KBArticleService _kbArticleService;
+
+	@Reference
+	private KBFolderService _kbFolderService;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;
