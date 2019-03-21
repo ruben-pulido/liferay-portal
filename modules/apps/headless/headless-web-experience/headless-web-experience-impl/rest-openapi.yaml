@@ -199,6 +199,9 @@ components:
                   genericContentListElement:
                       $ref: "#/components/schemas/GenericContentListElement"
                 - properties:
+                  knowledgeBaseArticle:
+                      $ref: "#/components/schemas/KnowledgeBaseArticle"
+                - properties:
                   structuredContent:
                       $ref: "#/components/schemas/StructuredContent"
             properties:
