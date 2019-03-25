@@ -26,7 +26,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class Document {
+public class Document extends ContentListElement {
 
 	public static enum ViewableBy {
 

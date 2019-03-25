@@ -25,7 +25,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class GenericContentListElement {
+public class GenericContentListElement extends ContentListElement {
 
 	public Long getContentSpaceId() {
 		return contentSpaceId;
