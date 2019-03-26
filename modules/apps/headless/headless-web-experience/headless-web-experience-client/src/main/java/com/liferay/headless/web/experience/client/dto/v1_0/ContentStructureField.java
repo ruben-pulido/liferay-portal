@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import javax.annotation.Generated;
@@ -33,6 +34,7 @@ public class ContentStructureField {
 		this.dataType = dataType;
 	}
 
+	@JsonIgnore
 	public void setDataType(
 		UnsafeSupplier<String, Exception> dataTypeUnsafeSupplier) {
 
@@ -54,6 +56,7 @@ public class ContentStructureField {
 		this.inputControl = inputControl;
 	}
 
+	@JsonIgnore
 	public void setInputControl(
 		UnsafeSupplier<String, Exception> inputControlUnsafeSupplier) {
 
@@ -75,6 +78,7 @@ public class ContentStructureField {
 		this.label = label;
 	}
 
+	@JsonIgnore
 	public void setLabel(
 		UnsafeSupplier<String, Exception> labelUnsafeSupplier) {
 
@@ -96,6 +100,7 @@ public class ContentStructureField {
 		this.localizable = localizable;
 	}
 
+	@JsonIgnore
 	public void setLocalizable(
 		UnsafeSupplier<Boolean, Exception> localizableUnsafeSupplier) {
 
@@ -117,6 +122,7 @@ public class ContentStructureField {
 		this.multiple = multiple;
 	}
 
+	@JsonIgnore
 	public void setMultiple(
 		UnsafeSupplier<Boolean, Exception> multipleUnsafeSupplier) {
 
@@ -138,6 +144,7 @@ public class ContentStructureField {
 		this.name = name;
 	}
 
+	@JsonIgnore
 	public void setName(UnsafeSupplier<String, Exception> nameUnsafeSupplier) {
 		try {
 			name = nameUnsafeSupplier.get();
@@ -159,6 +166,7 @@ public class ContentStructureField {
 		this.nestedContentStructureFields = nestedContentStructureFields;
 	}
 
+	@JsonIgnore
 	public void setNestedContentStructureFields(
 		UnsafeSupplier<ContentStructureField[], Exception>
 			nestedContentStructureFieldsUnsafeSupplier) {
@@ -182,6 +190,7 @@ public class ContentStructureField {
 		this.options = options;
 	}
 
+	@JsonIgnore
 	public void setOptions(
 		UnsafeSupplier<Option[], Exception> optionsUnsafeSupplier) {
 
@@ -203,6 +212,7 @@ public class ContentStructureField {
 		this.predefinedValue = predefinedValue;
 	}
 
+	@JsonIgnore
 	public void setPredefinedValue(
 		UnsafeSupplier<String, Exception> predefinedValueUnsafeSupplier) {
 
@@ -224,6 +234,7 @@ public class ContentStructureField {
 		this.repeatable = repeatable;
 	}
 
+	@JsonIgnore
 	public void setRepeatable(
 		UnsafeSupplier<Boolean, Exception> repeatableUnsafeSupplier) {
 
@@ -245,6 +256,7 @@ public class ContentStructureField {
 		this.required = required;
 	}
 
+	@JsonIgnore
 	public void setRequired(
 		UnsafeSupplier<Boolean, Exception> requiredUnsafeSupplier) {
 
@@ -266,6 +278,7 @@ public class ContentStructureField {
 		this.showLabel = showLabel;
 	}
 
+	@JsonIgnore
 	public void setShowLabel(
 		UnsafeSupplier<Boolean, Exception> showLabelUnsafeSupplier) {
 

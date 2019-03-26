@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import java.util.Date;
@@ -67,6 +68,7 @@ public class BlogPosting extends ContentListElement {
 		this.aggregateRating = aggregateRating;
 	}
 
+	@JsonIgnore
 	public void setAggregateRating(
 		UnsafeSupplier<AggregateRating, Exception>
 			aggregateRatingUnsafeSupplier) {
@@ -89,6 +91,7 @@ public class BlogPosting extends ContentListElement {
 		this.alternativeHeadline = alternativeHeadline;
 	}
 
+	@JsonIgnore
 	public void setAlternativeHeadline(
 		UnsafeSupplier<String, Exception> alternativeHeadlineUnsafeSupplier) {
 
@@ -110,6 +113,7 @@ public class BlogPosting extends ContentListElement {
 		this.articleBody = articleBody;
 	}
 
+	@JsonIgnore
 	public void setArticleBody(
 		UnsafeSupplier<String, Exception> articleBodyUnsafeSupplier) {
 
@@ -131,6 +135,7 @@ public class BlogPosting extends ContentListElement {
 		this.contentSpaceId = contentSpaceId;
 	}
 
+	@JsonIgnore
 	public void setContentSpaceId(
 		UnsafeSupplier<Long, Exception> contentSpaceIdUnsafeSupplier) {
 
@@ -152,6 +157,7 @@ public class BlogPosting extends ContentListElement {
 		this.creator = creator;
 	}
 
+	@JsonIgnore
 	public void setCreator(
 		UnsafeSupplier<Creator, Exception> creatorUnsafeSupplier) {
 
@@ -173,6 +179,7 @@ public class BlogPosting extends ContentListElement {
 		this.dateCreated = dateCreated;
 	}
 
+	@JsonIgnore
 	public void setDateCreated(
 		UnsafeSupplier<Date, Exception> dateCreatedUnsafeSupplier) {
 
@@ -194,6 +201,7 @@ public class BlogPosting extends ContentListElement {
 		this.dateModified = dateModified;
 	}
 
+	@JsonIgnore
 	public void setDateModified(
 		UnsafeSupplier<Date, Exception> dateModifiedUnsafeSupplier) {
 
@@ -215,6 +223,7 @@ public class BlogPosting extends ContentListElement {
 		this.datePublished = datePublished;
 	}
 
+	@JsonIgnore
 	public void setDatePublished(
 		UnsafeSupplier<Date, Exception> datePublishedUnsafeSupplier) {
 
@@ -236,6 +245,7 @@ public class BlogPosting extends ContentListElement {
 		this.description = description;
 	}
 
+	@JsonIgnore
 	public void setDescription(
 		UnsafeSupplier<String, Exception> descriptionUnsafeSupplier) {
 
@@ -257,6 +267,7 @@ public class BlogPosting extends ContentListElement {
 		this.encodingFormat = encodingFormat;
 	}
 
+	@JsonIgnore
 	public void setEncodingFormat(
 		UnsafeSupplier<String, Exception> encodingFormatUnsafeSupplier) {
 
@@ -278,6 +289,7 @@ public class BlogPosting extends ContentListElement {
 		this.friendlyUrlPath = friendlyUrlPath;
 	}
 
+	@JsonIgnore
 	public void setFriendlyUrlPath(
 		UnsafeSupplier<String, Exception> friendlyUrlPathUnsafeSupplier) {
 
@@ -299,6 +311,7 @@ public class BlogPosting extends ContentListElement {
 		this.headline = headline;
 	}
 
+	@JsonIgnore
 	public void setHeadline(
 		UnsafeSupplier<String, Exception> headlineUnsafeSupplier) {
 
@@ -320,6 +333,7 @@ public class BlogPosting extends ContentListElement {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public void setId(UnsafeSupplier<Long, Exception> idUnsafeSupplier) {
 		try {
 			id = idUnsafeSupplier.get();
@@ -339,6 +353,7 @@ public class BlogPosting extends ContentListElement {
 		this.image = image;
 	}
 
+	@JsonIgnore
 	public void setImage(UnsafeSupplier<Image, Exception> imageUnsafeSupplier) {
 		try {
 			image = imageUnsafeSupplier.get();
@@ -358,6 +373,7 @@ public class BlogPosting extends ContentListElement {
 		this.keywords = keywords;
 	}
 
+	@JsonIgnore
 	public void setKeywords(
 		UnsafeSupplier<String[], Exception> keywordsUnsafeSupplier) {
 
@@ -379,6 +395,7 @@ public class BlogPosting extends ContentListElement {
 		this.numberOfComments = numberOfComments;
 	}
 
+	@JsonIgnore
 	public void setNumberOfComments(
 		UnsafeSupplier<Number, Exception> numberOfCommentsUnsafeSupplier) {
 
@@ -400,6 +417,7 @@ public class BlogPosting extends ContentListElement {
 		this.taxonomyCategories = taxonomyCategories;
 	}
 
+	@JsonIgnore
 	public void setTaxonomyCategories(
 		UnsafeSupplier<TaxonomyCategory[], Exception>
 			taxonomyCategoriesUnsafeSupplier) {
@@ -422,6 +440,7 @@ public class BlogPosting extends ContentListElement {
 		this.taxonomyCategoryIds = taxonomyCategoryIds;
 	}
 
+	@JsonIgnore
 	public void setTaxonomyCategoryIds(
 		UnsafeSupplier<Long[], Exception> taxonomyCategoryIdsUnsafeSupplier) {
 
@@ -451,6 +470,7 @@ public class BlogPosting extends ContentListElement {
 		this.viewableBy = viewableBy;
 	}
 
+	@JsonIgnore
 	public void setViewableBy(
 		UnsafeSupplier<ViewableBy, Exception> viewableByUnsafeSupplier) {
 

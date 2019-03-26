@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import java.util.Date;
@@ -35,6 +36,7 @@ public class ContentStructure {
 		this.availableLanguages = availableLanguages;
 	}
 
+	@JsonIgnore
 	public void setAvailableLanguages(
 		UnsafeSupplier<String[], Exception> availableLanguagesUnsafeSupplier) {
 
@@ -56,6 +58,7 @@ public class ContentStructure {
 		this.contentSpaceId = contentSpaceId;
 	}
 
+	@JsonIgnore
 	public void setContentSpaceId(
 		UnsafeSupplier<Long, Exception> contentSpaceIdUnsafeSupplier) {
 
@@ -79,6 +82,7 @@ public class ContentStructure {
 		this.contentStructureFields = contentStructureFields;
 	}
 
+	@JsonIgnore
 	public void setContentStructureFields(
 		UnsafeSupplier<ContentStructureField[], Exception>
 			contentStructureFieldsUnsafeSupplier) {
@@ -101,6 +105,7 @@ public class ContentStructure {
 		this.creator = creator;
 	}
 
+	@JsonIgnore
 	public void setCreator(
 		UnsafeSupplier<Creator, Exception> creatorUnsafeSupplier) {
 
@@ -122,6 +127,7 @@ public class ContentStructure {
 		this.dateCreated = dateCreated;
 	}
 
+	@JsonIgnore
 	public void setDateCreated(
 		UnsafeSupplier<Date, Exception> dateCreatedUnsafeSupplier) {
 
@@ -143,6 +149,7 @@ public class ContentStructure {
 		this.dateModified = dateModified;
 	}
 
+	@JsonIgnore
 	public void setDateModified(
 		UnsafeSupplier<Date, Exception> dateModifiedUnsafeSupplier) {
 
@@ -164,6 +171,7 @@ public class ContentStructure {
 		this.description = description;
 	}
 
+	@JsonIgnore
 	public void setDescription(
 		UnsafeSupplier<String, Exception> descriptionUnsafeSupplier) {
 
@@ -185,6 +193,7 @@ public class ContentStructure {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public void setId(UnsafeSupplier<Long, Exception> idUnsafeSupplier) {
 		try {
 			id = idUnsafeSupplier.get();
@@ -204,6 +213,7 @@ public class ContentStructure {
 		this.name = name;
 	}
 
+	@JsonIgnore
 	public void setName(UnsafeSupplier<String, Exception> nameUnsafeSupplier) {
 		try {
 			name = nameUnsafeSupplier.get();

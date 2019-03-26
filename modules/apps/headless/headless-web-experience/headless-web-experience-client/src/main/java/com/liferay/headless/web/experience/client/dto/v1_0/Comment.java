@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import java.util.Date;
@@ -35,6 +36,7 @@ public class Comment {
 		this.creator = creator;
 	}
 
+	@JsonIgnore
 	public void setCreator(
 		UnsafeSupplier<Creator, Exception> creatorUnsafeSupplier) {
 
@@ -56,6 +58,7 @@ public class Comment {
 		this.dateCreated = dateCreated;
 	}
 
+	@JsonIgnore
 	public void setDateCreated(
 		UnsafeSupplier<Date, Exception> dateCreatedUnsafeSupplier) {
 
@@ -77,6 +80,7 @@ public class Comment {
 		this.dateModified = dateModified;
 	}
 
+	@JsonIgnore
 	public void setDateModified(
 		UnsafeSupplier<Date, Exception> dateModifiedUnsafeSupplier) {
 
@@ -98,6 +102,7 @@ public class Comment {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public void setId(UnsafeSupplier<Long, Exception> idUnsafeSupplier) {
 		try {
 			id = idUnsafeSupplier.get();
@@ -117,6 +122,7 @@ public class Comment {
 		this.numberOfComments = numberOfComments;
 	}
 
+	@JsonIgnore
 	public void setNumberOfComments(
 		UnsafeSupplier<Number, Exception> numberOfCommentsUnsafeSupplier) {
 
@@ -138,6 +144,7 @@ public class Comment {
 		this.text = text;
 	}
 
+	@JsonIgnore
 	public void setText(UnsafeSupplier<String, Exception> textUnsafeSupplier) {
 		try {
 			text = textUnsafeSupplier.get();

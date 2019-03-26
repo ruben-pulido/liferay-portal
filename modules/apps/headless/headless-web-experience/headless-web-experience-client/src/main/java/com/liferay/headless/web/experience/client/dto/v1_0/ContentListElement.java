@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import javax.annotation.Generated;
@@ -33,6 +34,7 @@ public class ContentListElement {
 		this.contentType = contentType;
 	}
 
+	@JsonIgnore
 	public void setContentType(
 		UnsafeSupplier<String, Exception> contentTypeUnsafeSupplier) {
 
@@ -54,6 +56,7 @@ public class ContentListElement {
 		this.order = order;
 	}
 
+	@JsonIgnore
 	public void setOrder(
 		UnsafeSupplier<Number, Exception> orderUnsafeSupplier) {
 

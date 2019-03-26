@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import javax.annotation.Generated;
@@ -33,6 +34,7 @@ public class AggregateRating {
 		this.bestRating = bestRating;
 	}
 
+	@JsonIgnore
 	public void setBestRating(
 		UnsafeSupplier<Number, Exception> bestRatingUnsafeSupplier) {
 
@@ -54,6 +56,7 @@ public class AggregateRating {
 		this.ratingCount = ratingCount;
 	}
 
+	@JsonIgnore
 	public void setRatingCount(
 		UnsafeSupplier<Number, Exception> ratingCountUnsafeSupplier) {
 
@@ -75,6 +78,7 @@ public class AggregateRating {
 		this.ratingValue = ratingValue;
 	}
 
+	@JsonIgnore
 	public void setRatingValue(
 		UnsafeSupplier<Number, Exception> ratingValueUnsafeSupplier) {
 
@@ -96,6 +100,7 @@ public class AggregateRating {
 		this.worstRating = worstRating;
 	}
 
+	@JsonIgnore
 	public void setWorstRating(
 		UnsafeSupplier<Number, Exception> worstRatingUnsafeSupplier) {
 

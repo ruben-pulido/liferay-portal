@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import java.util.Date;
@@ -67,6 +68,7 @@ public class Document extends ContentListElement {
 		this.adaptedImages = adaptedImages;
 	}
 
+	@JsonIgnore
 	public void setAdaptedImages(
 		UnsafeSupplier<AdaptedImage[], Exception> adaptedImagesUnsafeSupplier) {
 
@@ -88,6 +90,7 @@ public class Document extends ContentListElement {
 		this.aggregateRating = aggregateRating;
 	}
 
+	@JsonIgnore
 	public void setAggregateRating(
 		UnsafeSupplier<AggregateRating, Exception>
 			aggregateRatingUnsafeSupplier) {
@@ -110,6 +113,7 @@ public class Document extends ContentListElement {
 		this.contentUrl = contentUrl;
 	}
 
+	@JsonIgnore
 	public void setContentUrl(
 		UnsafeSupplier<String, Exception> contentUrlUnsafeSupplier) {
 
@@ -131,6 +135,7 @@ public class Document extends ContentListElement {
 		this.creator = creator;
 	}
 
+	@JsonIgnore
 	public void setCreator(
 		UnsafeSupplier<Creator, Exception> creatorUnsafeSupplier) {
 
@@ -152,6 +157,7 @@ public class Document extends ContentListElement {
 		this.dateCreated = dateCreated;
 	}
 
+	@JsonIgnore
 	public void setDateCreated(
 		UnsafeSupplier<Date, Exception> dateCreatedUnsafeSupplier) {
 
@@ -173,6 +179,7 @@ public class Document extends ContentListElement {
 		this.dateModified = dateModified;
 	}
 
+	@JsonIgnore
 	public void setDateModified(
 		UnsafeSupplier<Date, Exception> dateModifiedUnsafeSupplier) {
 
@@ -194,6 +201,7 @@ public class Document extends ContentListElement {
 		this.description = description;
 	}
 
+	@JsonIgnore
 	public void setDescription(
 		UnsafeSupplier<String, Exception> descriptionUnsafeSupplier) {
 
@@ -215,6 +223,7 @@ public class Document extends ContentListElement {
 		this.encodingFormat = encodingFormat;
 	}
 
+	@JsonIgnore
 	public void setEncodingFormat(
 		UnsafeSupplier<String, Exception> encodingFormatUnsafeSupplier) {
 
@@ -236,6 +245,7 @@ public class Document extends ContentListElement {
 		this.fileExtension = fileExtension;
 	}
 
+	@JsonIgnore
 	public void setFileExtension(
 		UnsafeSupplier<String, Exception> fileExtensionUnsafeSupplier) {
 
@@ -257,6 +267,7 @@ public class Document extends ContentListElement {
 		this.folderId = folderId;
 	}
 
+	@JsonIgnore
 	public void setFolderId(
 		UnsafeSupplier<Long, Exception> folderIdUnsafeSupplier) {
 
@@ -278,6 +289,7 @@ public class Document extends ContentListElement {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public void setId(UnsafeSupplier<Long, Exception> idUnsafeSupplier) {
 		try {
 			id = idUnsafeSupplier.get();
@@ -297,6 +309,7 @@ public class Document extends ContentListElement {
 		this.keywords = keywords;
 	}
 
+	@JsonIgnore
 	public void setKeywords(
 		UnsafeSupplier<String[], Exception> keywordsUnsafeSupplier) {
 
@@ -318,6 +331,7 @@ public class Document extends ContentListElement {
 		this.numberOfComments = numberOfComments;
 	}
 
+	@JsonIgnore
 	public void setNumberOfComments(
 		UnsafeSupplier<Number, Exception> numberOfCommentsUnsafeSupplier) {
 
@@ -339,6 +353,7 @@ public class Document extends ContentListElement {
 		this.sizeInBytes = sizeInBytes;
 	}
 
+	@JsonIgnore
 	public void setSizeInBytes(
 		UnsafeSupplier<Number, Exception> sizeInBytesUnsafeSupplier) {
 
@@ -360,6 +375,7 @@ public class Document extends ContentListElement {
 		this.taxonomyCategories = taxonomyCategories;
 	}
 
+	@JsonIgnore
 	public void setTaxonomyCategories(
 		UnsafeSupplier<TaxonomyCategory[], Exception>
 			taxonomyCategoriesUnsafeSupplier) {
@@ -382,6 +398,7 @@ public class Document extends ContentListElement {
 		this.taxonomyCategoryIds = taxonomyCategoryIds;
 	}
 
+	@JsonIgnore
 	public void setTaxonomyCategoryIds(
 		UnsafeSupplier<Long[], Exception> taxonomyCategoryIdsUnsafeSupplier) {
 
@@ -403,6 +420,7 @@ public class Document extends ContentListElement {
 		this.title = title;
 	}
 
+	@JsonIgnore
 	public void setTitle(
 		UnsafeSupplier<String, Exception> titleUnsafeSupplier) {
 
@@ -432,6 +450,7 @@ public class Document extends ContentListElement {
 		this.viewableBy = viewableBy;
 	}
 
+	@JsonIgnore
 	public void setViewableBy(
 		UnsafeSupplier<ViewableBy, Exception> viewableByUnsafeSupplier) {
 

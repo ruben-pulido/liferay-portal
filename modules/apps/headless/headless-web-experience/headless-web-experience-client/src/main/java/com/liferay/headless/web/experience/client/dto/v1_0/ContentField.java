@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import javax.annotation.Generated;
@@ -33,6 +34,7 @@ public class ContentField {
 		this.dataType = dataType;
 	}
 
+	@JsonIgnore
 	public void setDataType(
 		UnsafeSupplier<String, Exception> dataTypeUnsafeSupplier) {
 
@@ -54,6 +56,7 @@ public class ContentField {
 		this.inputControl = inputControl;
 	}
 
+	@JsonIgnore
 	public void setInputControl(
 		UnsafeSupplier<String, Exception> inputControlUnsafeSupplier) {
 
@@ -75,6 +78,7 @@ public class ContentField {
 		this.label = label;
 	}
 
+	@JsonIgnore
 	public void setLabel(
 		UnsafeSupplier<String, Exception> labelUnsafeSupplier) {
 
@@ -96,6 +100,7 @@ public class ContentField {
 		this.name = name;
 	}
 
+	@JsonIgnore
 	public void setName(UnsafeSupplier<String, Exception> nameUnsafeSupplier) {
 		try {
 			name = nameUnsafeSupplier.get();
@@ -115,6 +120,7 @@ public class ContentField {
 		this.nestedFields = nestedFields;
 	}
 
+	@JsonIgnore
 	public void setNestedFields(
 		UnsafeSupplier<ContentField[], Exception> nestedFieldsUnsafeSupplier) {
 
@@ -136,6 +142,7 @@ public class ContentField {
 		this.repeatable = repeatable;
 	}
 
+	@JsonIgnore
 	public void setRepeatable(
 		UnsafeSupplier<Boolean, Exception> repeatableUnsafeSupplier) {
 
@@ -157,6 +164,7 @@ public class ContentField {
 		this.value = value;
 	}
 
+	@JsonIgnore
 	public void setValue(UnsafeSupplier<Value, Exception> valueUnsafeSupplier) {
 		try {
 			value = valueUnsafeSupplier.get();

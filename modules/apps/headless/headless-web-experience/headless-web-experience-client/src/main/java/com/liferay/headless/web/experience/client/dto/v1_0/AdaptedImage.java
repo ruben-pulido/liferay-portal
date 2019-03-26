@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import javax.annotation.Generated;
@@ -33,6 +34,7 @@ public class AdaptedImage {
 		this.contentUrl = contentUrl;
 	}
 
+	@JsonIgnore
 	public void setContentUrl(
 		UnsafeSupplier<String, Exception> contentUrlUnsafeSupplier) {
 
@@ -54,6 +56,7 @@ public class AdaptedImage {
 		this.height = height;
 	}
 
+	@JsonIgnore
 	public void setHeight(
 		UnsafeSupplier<Number, Exception> heightUnsafeSupplier) {
 
@@ -75,6 +78,7 @@ public class AdaptedImage {
 		this.resolutionName = resolutionName;
 	}
 
+	@JsonIgnore
 	public void setResolutionName(
 		UnsafeSupplier<String, Exception> resolutionNameUnsafeSupplier) {
 
@@ -96,6 +100,7 @@ public class AdaptedImage {
 		this.sizeInBytes = sizeInBytes;
 	}
 
+	@JsonIgnore
 	public void setSizeInBytes(
 		UnsafeSupplier<Number, Exception> sizeInBytesUnsafeSupplier) {
 
@@ -117,6 +122,7 @@ public class AdaptedImage {
 		this.width = width;
 	}
 
+	@JsonIgnore
 	public void setWidth(
 		UnsafeSupplier<Number, Exception> widthUnsafeSupplier) {
 

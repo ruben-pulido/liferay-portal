@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import java.util.Date;
@@ -67,7 +68,9 @@ public class StructuredContent extends ContentListElement {
 		this.aggregateRating = aggregateRating;
 	}
 
+	@JsonIgnore
 	public void setAggregateRating(
+
 		UnsafeSupplier<AggregateRating, Exception>
 			aggregateRatingUnsafeSupplier) {
 
@@ -89,6 +92,7 @@ public class StructuredContent extends ContentListElement {
 		this.availableLanguages = availableLanguages;
 	}
 
+	@JsonIgnore
 	public void setAvailableLanguages(
 		UnsafeSupplier<String[], Exception> availableLanguagesUnsafeSupplier) {
 
@@ -110,6 +114,7 @@ public class StructuredContent extends ContentListElement {
 		this.contentFields = contentFields;
 	}
 
+	@JsonIgnore
 	public void setContentFields(
 		UnsafeSupplier<ContentField[], Exception> contentFieldsUnsafeSupplier) {
 
@@ -131,6 +136,7 @@ public class StructuredContent extends ContentListElement {
 		this.contentSpaceId = contentSpaceId;
 	}
 
+	@JsonIgnore
 	public void setContentSpaceId(
 		UnsafeSupplier<Long, Exception> contentSpaceIdUnsafeSupplier) {
 
@@ -152,6 +158,7 @@ public class StructuredContent extends ContentListElement {
 		this.contentStructureId = contentStructureId;
 	}
 
+	@JsonIgnore
 	public void setContentStructureId(
 		UnsafeSupplier<Long, Exception> contentStructureIdUnsafeSupplier) {
 
@@ -173,6 +180,7 @@ public class StructuredContent extends ContentListElement {
 		this.creator = creator;
 	}
 
+	@JsonIgnore
 	public void setCreator(
 		UnsafeSupplier<Creator, Exception> creatorUnsafeSupplier) {
 
@@ -194,6 +202,7 @@ public class StructuredContent extends ContentListElement {
 		this.dateCreated = dateCreated;
 	}
 
+	@JsonIgnore
 	public void setDateCreated(
 		UnsafeSupplier<Date, Exception> dateCreatedUnsafeSupplier) {
 
@@ -215,6 +224,7 @@ public class StructuredContent extends ContentListElement {
 		this.dateModified = dateModified;
 	}
 
+	@JsonIgnore
 	public void setDateModified(
 		UnsafeSupplier<Date, Exception> dateModifiedUnsafeSupplier) {
 
@@ -236,6 +246,7 @@ public class StructuredContent extends ContentListElement {
 		this.datePublished = datePublished;
 	}
 
+	@JsonIgnore
 	public void setDatePublished(
 		UnsafeSupplier<Date, Exception> datePublishedUnsafeSupplier) {
 
@@ -257,6 +268,7 @@ public class StructuredContent extends ContentListElement {
 		this.description = description;
 	}
 
+	@JsonIgnore
 	public void setDescription(
 		UnsafeSupplier<String, Exception> descriptionUnsafeSupplier) {
 
@@ -278,6 +290,7 @@ public class StructuredContent extends ContentListElement {
 		this.id = id;
 	}
 
+@JsonIgnore
 	public void setId(UnsafeSupplier<Long, Exception> idUnsafeSupplier) {
 		try {
 			id = idUnsafeSupplier.get();
@@ -316,6 +329,7 @@ public class StructuredContent extends ContentListElement {
 		this.keywords = keywords;
 	}
 
+	@JsonIgnore
 	public void setKeywords(
 		UnsafeSupplier<String[], Exception> keywordsUnsafeSupplier) {
 
@@ -337,6 +351,7 @@ public class StructuredContent extends ContentListElement {
 		this.lastReviewed = lastReviewed;
 	}
 
+	@JsonIgnore
 	public void setLastReviewed(
 		UnsafeSupplier<Date, Exception> lastReviewedUnsafeSupplier) {
 
@@ -358,6 +373,7 @@ public class StructuredContent extends ContentListElement {
 		this.numberOfComments = numberOfComments;
 	}
 
+	@JsonIgnore
 	public void setNumberOfComments(
 		UnsafeSupplier<Number, Exception> numberOfCommentsUnsafeSupplier) {
 
@@ -379,7 +395,9 @@ public class StructuredContent extends ContentListElement {
 		this.renderedContents = renderedContents;
 	}
 
+	@JsonIgnore
 	public void setRenderedContents(
+
 		UnsafeSupplier<RenderedContent[], Exception>
 			renderedContentsUnsafeSupplier) {
 
@@ -401,7 +419,9 @@ public class StructuredContent extends ContentListElement {
 		this.taxonomyCategories = taxonomyCategories;
 	}
 
+	@JsonIgnore
 	public void setTaxonomyCategories(
+
 		UnsafeSupplier<TaxonomyCategory[], Exception>
 			taxonomyCategoriesUnsafeSupplier) {
 
@@ -423,6 +443,7 @@ public class StructuredContent extends ContentListElement {
 		this.taxonomyCategoryIds = taxonomyCategoryIds;
 	}
 
+	@JsonIgnore
 	public void setTaxonomyCategoryIds(
 		UnsafeSupplier<Long[], Exception> taxonomyCategoryIdsUnsafeSupplier) {
 
@@ -444,6 +465,7 @@ public class StructuredContent extends ContentListElement {
 		this.title = title;
 	}
 
+	@JsonIgnore
 	public void setTitle(
 		UnsafeSupplier<String, Exception> titleUnsafeSupplier) {
 
@@ -492,6 +514,7 @@ public class StructuredContent extends ContentListElement {
 		this.viewableBy = viewableBy;
 	}
 
+	@JsonIgnore
 	public void setViewableBy(
 		UnsafeSupplier<ViewableBy, Exception> viewableByUnsafeSupplier) {
 

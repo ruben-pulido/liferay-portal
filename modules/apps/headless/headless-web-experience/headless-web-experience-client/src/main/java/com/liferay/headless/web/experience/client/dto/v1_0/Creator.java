@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import javax.annotation.Generated;
@@ -33,6 +34,7 @@ public class Creator {
 		this.additionalName = additionalName;
 	}
 
+	@JsonIgnore
 	public void setAdditionalName(
 		UnsafeSupplier<String, Exception> additionalNameUnsafeSupplier) {
 
@@ -54,6 +56,7 @@ public class Creator {
 		this.familyName = familyName;
 	}
 
+	@JsonIgnore
 	public void setFamilyName(
 		UnsafeSupplier<String, Exception> familyNameUnsafeSupplier) {
 
@@ -75,6 +78,7 @@ public class Creator {
 		this.givenName = givenName;
 	}
 
+	@JsonIgnore
 	public void setGivenName(
 		UnsafeSupplier<String, Exception> givenNameUnsafeSupplier) {
 
@@ -96,6 +100,7 @@ public class Creator {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public void setId(UnsafeSupplier<Long, Exception> idUnsafeSupplier) {
 		try {
 			id = idUnsafeSupplier.get();
@@ -115,6 +120,7 @@ public class Creator {
 		this.image = image;
 	}
 
+	@JsonIgnore
 	public void setImage(
 		UnsafeSupplier<String, Exception> imageUnsafeSupplier) {
 
@@ -136,6 +142,7 @@ public class Creator {
 		this.name = name;
 	}
 
+	@JsonIgnore
 	public void setName(UnsafeSupplier<String, Exception> nameUnsafeSupplier) {
 		try {
 			name = nameUnsafeSupplier.get();
@@ -155,6 +162,7 @@ public class Creator {
 		this.profileURL = profileURL;
 	}
 
+	@JsonIgnore
 	public void setProfileURL(
 		UnsafeSupplier<String, Exception> profileURLUnsafeSupplier) {
 

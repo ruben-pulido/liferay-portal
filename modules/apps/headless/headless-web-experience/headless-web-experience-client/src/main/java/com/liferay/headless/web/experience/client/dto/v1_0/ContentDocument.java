@@ -14,6 +14,7 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.liferay.headless.web.experience.client.function.UnsafeSupplier;
 
 import javax.annotation.Generated;
@@ -33,6 +34,7 @@ public class ContentDocument {
 		this.contentUrl = contentUrl;
 	}
 
+	@JsonIgnore
 	public void setContentUrl(
 		UnsafeSupplier<String, Exception> contentUrlUnsafeSupplier) {
 
@@ -54,6 +56,7 @@ public class ContentDocument {
 		this.description = description;
 	}
 
+	@JsonIgnore
 	public void setDescription(
 		UnsafeSupplier<String, Exception> descriptionUnsafeSupplier) {
 
@@ -75,6 +78,7 @@ public class ContentDocument {
 		this.encodingFormat = encodingFormat;
 	}
 
+	@JsonIgnore
 	public void setEncodingFormat(
 		UnsafeSupplier<String, Exception> encodingFormatUnsafeSupplier) {
 
@@ -96,6 +100,7 @@ public class ContentDocument {
 		this.fileExtension = fileExtension;
 	}
 
+	@JsonIgnore
 	public void setFileExtension(
 		UnsafeSupplier<String, Exception> fileExtensionUnsafeSupplier) {
 
@@ -117,6 +122,7 @@ public class ContentDocument {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public void setId(UnsafeSupplier<Long, Exception> idUnsafeSupplier) {
 		try {
 			id = idUnsafeSupplier.get();
@@ -136,6 +142,7 @@ public class ContentDocument {
 		this.sizeInBytes = sizeInBytes;
 	}
 
+	@JsonIgnore
 	public void setSizeInBytes(
 		UnsafeSupplier<Number, Exception> sizeInBytesUnsafeSupplier) {
 
@@ -157,6 +164,7 @@ public class ContentDocument {
 		this.title = title;
 	}
 
+	@JsonIgnore
 	public void setTitle(
 		UnsafeSupplier<String, Exception> titleUnsafeSupplier) {
 
