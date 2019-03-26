@@ -1,0 +1,84 @@
+{
+	"items": [
+		{
+			"availableLanguages": [
+				"en-US"
+			],
+			"contentFields": [
+				{
+					"dataType": "html",
+					"name": "content",
+					"repeatable": false,
+					"value": {
+						"data": "<p>bwc1 content</p>"
+					}
+				}
+			],
+			"contentSpaceId": 20127,
+			"contentStructureId": 36401,
+			"creator": {
+				"familyName": "Test",
+				"givenName": "Test",
+				"id": 20140,
+				"name": "Test Test",
+				"profileURL": "/web/test"
+			},
+			"dateCreated": "2019-03-26T11:34:04Z",
+			"dateModified": "2019-03-26T11:34:04Z",
+			"datePublished": "2019-03-26T11:33:00Z",
+			"id": 44739,
+			"key": "44737",
+			"numberOfComments": 0,
+			"renderedContents": [
+				{
+					"renderedContentURL": "http://localhost:8080/o/headless-web-experience/v1.0/structured-contents/44739/rendered-content/36404",
+					"templateName": "Basic Web Content"
+				}
+			],
+			"title": "bwc1 title",
+			"uuid": "5bd4f415-7a7b-ea6d-7d61-013429911ed8"
+		},
+		{
+			"availableLanguages": [
+				"en-US"
+			],
+			"contentFields": [
+				{
+					"dataType": "html",
+					"name": "content",
+					"repeatable": false,
+					"value": {
+						"data": "null"
+					}
+				}
+			],
+			"contentSpaceId": 20127,
+			"contentStructureId": 36401,
+			"creator": {
+				"familyName": "Test",
+				"givenName": "Test",
+				"id": 20140,
+				"name": "Test Test",
+				"profileURL": "/web/test"
+			},
+			"dateCreated": "2019-03-26T11:36:50Z",
+			"dateModified": "2019-03-26T11:36:50Z",
+			"datePublished": "2019-03-26T11:36:00Z",
+			"id": 44756,
+			"key": "44754",
+			"numberOfComments": 0,
+			"renderedContents": [
+				{
+					"renderedContentURL": "http://localhost:8080/o/headless-web-experience/v1.0/structured-contents/44756/rendered-content/36404",
+					"templateName": "Basic Web Content"
+				}
+			],
+			"title": "t1",
+			"uuid": "d4d39ca6-3495-c6d4-ecf9-35465b49c911"
+		}
+	],
+	"lastPage": 1,
+	"page": 1,
+	"pageSize": 20,
+	"totalCount": 2
+}

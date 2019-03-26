@@ -1,0 +1,57 @@
+{
+	"items": [
+		{
+			"availableLanguages": [
+				"en-US"
+			],
+			"contentFields": [
+				{
+					"dataType": "html",
+					"name": "content",
+					"repeatable": false,
+					"value": {
+						"data": "<p>bwc1 content</p>"
+					}
+				}
+			],
+			"contentSpaceId": 20127,
+			"contentStructureId": 36401,
+			"contentType": "StructuredContent",
+			"creator": {
+				"familyName": "Test",
+				"givenName": "Test",
+				"id": 20140,
+				"name": "Test Test",
+				"profileURL": "/web/test"
+			},
+			"dateCreated": "2019-03-26T11:34:04Z",
+			"dateModified": "2019-03-26T11:34:04Z",
+			"datePublished": "2019-03-26T11:33:00Z",
+			"id": 44739,
+			"key": "44737",
+			"numberOfComments": 0,
+			"order": 1.2,
+			"renderedContents": [
+				{
+					"renderedContentURL": "http://localhost:8080/o/headless-web-experience/v1.0/structured-contents/44739/rendered-content/36404",
+					"templateName": "Basic Web Content"
+				}
+			],
+			"title": "bwc1 title",
+			"uuid": "5bd4f415-7a7b-ea6d-7d61-013429911ed8"
+		},
+		{
+			"contentSpaceId": 20127,
+			"contentType": "WikiPage",
+			"dateCreated": "2019-03-27T11:46:30Z",
+			"dateModified": "2019-03-27T11:46:30Z",
+			"id": 53265,
+			"order": -3.4,
+			"title": "WikiPage1 Title"
+		}
+	],
+	"lastPage": 1,
+	"page": 1,
+	"pageSize": 20,
+	"totalCount": 2
+}
