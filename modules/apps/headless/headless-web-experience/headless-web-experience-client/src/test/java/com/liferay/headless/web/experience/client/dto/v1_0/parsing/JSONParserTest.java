@@ -14,6 +14,10 @@
 
 package com.liferay.headless.web.experience.client.dto.v1_0.parsing;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.liferay.headless.web.experience.client.dto.v1_0.ContentListElement;
 import com.liferay.headless.web.experience.client.dto.v1_0.Creator;
 import com.liferay.headless.web.experience.client.dto.v1_0.Page;
@@ -32,6 +36,67 @@ import org.junit.Test;
  * @author Rubén Pulido
  */
 public class JSONParserTest extends BaseJSONParserTestCase {
+
+		private final static ObjectMapper _inputObjectMapper = new ObjectMapper() {
+		{
+			setFilterProvider(
+				new SimpleFilterProvider() {
+					{
+						addFilter(
+							"Liferay.Vulcan",
+//							SimpleBeanPropertyFilter.serializeAll()
+							SimpleBeanPropertyFilter.serializeAllExcept("childType")
+							);
+					}
+				});
+			setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		}
+	};
+	private final static ObjectMapper _outputObjectMapper = new ObjectMapper() {
+		{
+			setFilterProvider(
+				new SimpleFilterProvider() {
+					{
+						addFilter(
+							"Liferay.Vulcan",
+							SimpleBeanPropertyFilter.serializeAllExcept("childType"));
+//							SimpleBeanPropertyFilter.serializeAll());
+					}
+				});
+		}
+	};
+
+	//	If this works, then I'd also like to update BaseStructuredContentTestCase to test regular DTO -> JSON (via Jackson), send this JSON to client DTO parser which will make a client DTO, then have the client DTO parser take the client DTO to send it back as a JSON, and using that JSON, with jackson, wire it back to a DTO. The two DTOs should be the same. If so.. our serialization is good!
+
+	@Test
+	public void testDeserializeSerialize() throws Exception {
+		String fileContent = getFileContent("structured-content.json");
+
+		com.liferay.headless.web.experience.dto.v1_0.StructuredContent
+			structuredContent1 = _inputObjectMapper.readValue(
+				fileContent,
+				com.liferay.headless.web.experience.dto.v1_0.StructuredContent.class);
+
+		String json1 = _outputObjectMapper.writeValueAsString(
+			structuredContent1);
+
+		StructuredContent structuredContent2 =
+			StructuredContentSerDes.toDTO(json1);
+
+		Assert.assertEquals(
+			json1, _outputObjectMapper.writeValueAsString(structuredContent2));
+
+		String json2 = StructuredContentSerDes.toJSON(structuredContent2);
+
+		com.liferay.headless.web.experience.dto.v1_0.StructuredContent
+			structuredContent3 = _inputObjectMapper.readValue(
+			json2,
+			com.liferay.headless.web.experience.dto.v1_0.StructuredContent.class);
+
+		String json3 = _outputObjectMapper.writeValueAsString(structuredContent3);
+
+		Assert.assertEquals(json1, json3);
+	}
 
 	@Test
 	public void testToPageOfContentListElements() throws Exception {

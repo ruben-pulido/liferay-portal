@@ -14,14 +14,10 @@
 
 package com.liferay.headless.web.experience.resource.v1_0.test;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-
+import com.liferay.headless.web.experience.client.dto.v1_0.Page;
 import com.liferay.headless.web.experience.client.dto.v1_0.StructuredContent;
+import com.liferay.headless.web.experience.client.serdes.v1_0.StructuredContentSerDes;
+import com.liferay.headless.web.experience.client.serdes.v1_0.page.PageSerDes;
 import com.liferay.headless.web.experience.resource.v1_0.StructuredContentResource;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -40,7 +36,6 @@ import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
@@ -450,10 +445,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			_log.debug("HTTP response: " + string);
 		}
 
-		return _outputObjectMapper.readValue(
-			string,
-			new TypeReference<Page<StructuredContent>>() {
-			});
+		return PageSerDes.toPage(string, StructuredContentSerDes::toDTO);
 	}
 
 	protected Http.Response invokeGetContentSpaceStructuredContentsPageResponse(
@@ -513,7 +505,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 		Http.Options options = _createHttpOptions();
 
 		options.setBody(
-			_inputObjectMapper.writeValueAsString(structuredContent),
+			StructuredContentSerDes.toJSON(structuredContent),
 			ContentTypes.APPLICATION_JSON, StringPool.UTF8);
 
 		String location =
@@ -532,15 +524,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			_log.debug("HTTP response: " + string);
 		}
 
-		try {
-			return _outputObjectMapper.readValue(
-				string, StructuredContent.class);
-		}
-		catch (Exception e) {
-			_log.error("Unable to process HTTP response: " + string, e);
-
-			throw e;
-		}
+		return StructuredContentSerDes.toDTO(string);
 	}
 
 	protected Http.Response invokePostContentSpaceStructuredContentResponse(
@@ -550,7 +534,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 		Http.Options options = _createHttpOptions();
 
 		options.setBody(
-			_inputObjectMapper.writeValueAsString(structuredContent),
+			StructuredContentSerDes.toJSON(structuredContent),
 			ContentTypes.APPLICATION_JSON, StringPool.UTF8);
 
 		String location =
@@ -912,10 +896,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			_log.debug("HTTP response: " + string);
 		}
 
-		return _outputObjectMapper.readValue(
-			string,
-			new TypeReference<Page<StructuredContent>>() {
-			});
+		return PageSerDes.toPage(string, StructuredContentSerDes::toDTO);
 	}
 
 	protected Http.Response
@@ -990,15 +971,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			_log.debug("HTTP response: " + string);
 		}
 
-		try {
-			return _outputObjectMapper.readValue(
-				string, StructuredContent.class);
-		}
-		catch (Exception e) {
-			_log.error("Unable to process HTTP response: " + string, e);
-
-			throw e;
-		}
+		return StructuredContentSerDes.toDTO(string);
 	}
 
 	protected Http.Response invokeGetContentSpaceStructuredContentByKeyResponse(
@@ -1062,15 +1035,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			_log.debug("HTTP response: " + string);
 		}
 
-		try {
-			return _outputObjectMapper.readValue(
-				string, StructuredContent.class);
-		}
-		catch (Exception e) {
-			_log.error("Unable to process HTTP response: " + string, e);
-
-			throw e;
-		}
+		return StructuredContentSerDes.toDTO(string);
 	}
 
 	protected Http.Response
@@ -1196,15 +1161,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			_log.debug("HTTP response: " + string);
 		}
 
-		try {
-			return _outputObjectMapper.readValue(
-				string, StructuredContent.class);
-		}
-		catch (Exception e) {
-			_log.error("Unable to process HTTP response: " + string, e);
-
-			throw e;
-		}
+		return StructuredContentSerDes.toDTO(string);
 	}
 
 	protected Http.Response invokeGetStructuredContentResponse(
@@ -1265,7 +1222,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 		Http.Options options = _createHttpOptions();
 
 		options.setBody(
-			_inputObjectMapper.writeValueAsString(structuredContent),
+			StructuredContentSerDes.toJSON(structuredContent),
 			ContentTypes.APPLICATION_JSON, StringPool.UTF8);
 
 		String location =
@@ -1284,15 +1241,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			_log.debug("HTTP response: " + string);
 		}
 
-		try {
-			return _outputObjectMapper.readValue(
-				string, StructuredContent.class);
-		}
-		catch (Exception e) {
-			_log.error("Unable to process HTTP response: " + string, e);
-
-			throw e;
-		}
+		return StructuredContentSerDes.toDTO(string);
 	}
 
 	protected Http.Response invokePatchStructuredContentResponse(
@@ -1302,7 +1251,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 		Http.Options options = _createHttpOptions();
 
 		options.setBody(
-			_inputObjectMapper.writeValueAsString(structuredContent),
+			StructuredContentSerDes.toJSON(structuredContent),
 			ContentTypes.APPLICATION_JSON, StringPool.UTF8);
 
 		String location =
@@ -1354,7 +1303,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 		Http.Options options = _createHttpOptions();
 
 		options.setBody(
-			_inputObjectMapper.writeValueAsString(structuredContent),
+			StructuredContentSerDes.toJSON(structuredContent),
 			ContentTypes.APPLICATION_JSON, StringPool.UTF8);
 
 		String location =
@@ -1373,15 +1322,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			_log.debug("HTTP response: " + string);
 		}
 
-		try {
-			return _outputObjectMapper.readValue(
-				string, StructuredContent.class);
-		}
-		catch (Exception e) {
-			_log.error("Unable to process HTTP response: " + string, e);
-
-			throw e;
-		}
+		return StructuredContentSerDes.toDTO(string);
 	}
 
 	protected Http.Response invokePutStructuredContentResponse(
@@ -1391,7 +1332,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 		Http.Options options = _createHttpOptions();
 
 		options.setBody(
-			_inputObjectMapper.writeValueAsString(structuredContent),
+			StructuredContentSerDes.toJSON(structuredContent),
 			ContentTypes.APPLICATION_JSON, StringPool.UTF8);
 
 		String location =
@@ -1747,45 +1688,6 @@ public abstract class BaseStructuredContentResourceTestCase {
 	protected Group irrelevantGroup;
 	protected Group testGroup;
 
-	protected static class Page<T> {
-
-		public Collection<T> getItems() {
-			return new ArrayList<>(items);
-		}
-
-		public long getLastPage() {
-			return lastPage;
-		}
-
-		public long getPage() {
-			return page;
-		}
-
-		public long getPageSize() {
-			return pageSize;
-		}
-
-		public long getTotalCount() {
-			return totalCount;
-		}
-
-		@JsonProperty
-		protected Collection<T> items;
-
-		@JsonProperty
-		protected long lastPage;
-
-		@JsonProperty
-		protected long page;
-
-		@JsonProperty
-		protected long pageSize;
-
-		@JsonProperty
-		protected long totalCount;
-
-	}
-
 	private Http.Options _createHttpOptions() {
 		Http.Options options = new Http.Options();
 
@@ -1833,32 +1735,6 @@ public abstract class BaseStructuredContentResourceTestCase {
 
 	};
 	private static DateFormat _dateFormat;
-	private final static ObjectMapper _inputObjectMapper = new ObjectMapper() {
-		{
-			setFilterProvider(
-				new SimpleFilterProvider() {
-					{
-						addFilter(
-							"Liferay.Vulcan",
-							SimpleBeanPropertyFilter.serializeAll());
-					}
-				});
-			setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		}
-	};
-	private final static ObjectMapper _outputObjectMapper = new ObjectMapper() {
-		{
-			setFilterProvider(
-				new SimpleFilterProvider() {
-					{
-						addFilter(
-							"Liferay.Vulcan",
-							SimpleBeanPropertyFilter.serializeAll());
-					}
-				});
-		}
-	};
-
 	@Inject
 	private StructuredContentResource _structuredContentResource;
 

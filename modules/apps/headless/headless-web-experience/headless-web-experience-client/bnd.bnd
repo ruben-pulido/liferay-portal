@@ -1,4 +1,7 @@
 Bundle-Name: Liferay Headless Web Experience Client
 Bundle-SymbolicName: com.liferay.headless.web.experience.client
 Bundle-Version: 1.0.0
-Export-Package: com.liferay.headless.web.experience.client.dto.v1_0
+Export-Package:\
+	com.liferay.headless.web.experience.client.dto.v1_0,\
+	com.liferay.headless.web.experience.client.serdes.v1_0,\
+	com.liferay.headless.web.experience.client.serdes.v1_0.page
