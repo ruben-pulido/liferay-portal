@@ -420,6 +420,8 @@ public class DocumentResource {
 
 		HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
 
+		httpInvoker.multipart(_MULTIPART_BOUNDARY);
+
 		httpInvoker.part("document", DocumentSerDes.toJSON(document));
 
 		for (Map.Entry<String, File> entry : files.entrySet()) {
@@ -454,6 +456,8 @@ public class DocumentResource {
 			throw e;
 		}
 	}
+
+	public static final String _MULTIPART_BOUNDARY = "__MULTIPART_BOUNDARY__";
 
 	private static final Logger _logger = Logger.getLogger(
 		DocumentResource.class.getName());
