@@ -76,6 +76,8 @@ public class DocumentResource {
 
 		HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
 
+		httpInvoker.multipart(_MULTIPART_BOUNDARY);
+
 		httpInvoker.part("document", DocumentSerDes.toJSON(document));
 
 		for (Map.Entry<String, File> entry : files.entrySet()) {

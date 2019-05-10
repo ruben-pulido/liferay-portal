@@ -76,22 +76,4 @@ public class DocumentResourceTest extends BaseDocumentResourceTestCase {
 		return folder.getFolderId();
 	}
 
-	@Override
-	protected MultipartBody toMultipartBody(Document document) {
-		testContentType = "multipart/form-data;boundary=PART";
-
-		Map<String, BinaryFile> binaryFileMap = new HashMap<>();
-
-		String randomString = RandomTestUtil.randomString();
-
-		binaryFileMap.put(
-			"file",
-			new BinaryFile(
-				testContentType, RandomTestUtil.randomString(),
-				new ByteArrayInputStream(randomString.getBytes()), 0));
-
-		return MultipartBody.of(
-			binaryFileMap, __ -> null, DocumentSerDes.toMap(document));
-	}
-
 }
