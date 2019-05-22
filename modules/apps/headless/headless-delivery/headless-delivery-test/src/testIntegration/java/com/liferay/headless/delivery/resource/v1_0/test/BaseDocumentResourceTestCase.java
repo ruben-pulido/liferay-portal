@@ -46,7 +46,7 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
-import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.headless.delivery.client.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import java.io.File;
@@ -432,46 +432,12 @@ public abstract class BaseDocumentResourceTestCase {
 	}
 
 	protected Page<Document> invokeGetDocumentFolderDocumentsPage(
-			Long documentFolderId, String search, String filterString,
-			Pagination pagination, String sortString)
+		Long documentFolderId, String search, String filterString,
+		Pagination pagination, String sortString)
 		throws Exception {
 
-		Http.Options options = _createHttpOptions();
-
-		String location =
-			_resourceURL +
-				_toPath(
-					"/document-folders/{documentFolderId}/documents",
-					documentFolderId);
-
-		if (search != null) {
-			location = HttpUtil.addParameter(location, "search", search);
-		}
-
-		if (filterString != null) {
-			location = HttpUtil.addParameter(location, "filter", filterString);
-		}
-
-		if (pagination != null) {
-			location = HttpUtil.addParameter(
-				location, "page", pagination.getPage());
-			location = HttpUtil.addParameter(
-				location, "pageSize", pagination.getPageSize());
-		}
-
-		if (sortString != null) {
-			location = HttpUtil.addParameter(location, "sort", sortString);
-		}
-
-		options.setLocation(location);
-
-		String string = HttpUtil.URLtoString(options);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("HTTP response: " + string);
-		}
-
-		return Page.of(string, DocumentSerDes::toDTO);
+		return _clientDocumentResource.getDocumentFolderDocumentsPage(
+			documentFolderId, search, filterString, pagination, sortString);
 	}
 
 	protected Http.Response invokeGetDocumentFolderDocumentsPageResponse(
@@ -594,20 +560,7 @@ public abstract class BaseDocumentResourceTestCase {
 	}
 
 	protected void invokeDeleteDocument(Long documentId) throws Exception {
-		Http.Options options = _createHttpOptions();
-
-		options.setDelete(true);
-
-		String location =
-			_resourceURL + _toPath("/documents/{documentId}", documentId);
-
-		options.setLocation(location);
-
-		String string = HttpUtil.URLtoString(options);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("HTTP response: " + string);
-		}
+		_clientDocumentResource.deleteDocument(documentId);
 	}
 
 	protected Http.Response invokeDeleteDocumentResponse(Long documentId)
@@ -643,29 +596,7 @@ public abstract class BaseDocumentResourceTestCase {
 	}
 
 	protected Document invokeGetDocument(Long documentId) throws Exception {
-		Http.Options options = _createHttpOptions();
-
-		String location =
-			_resourceURL + _toPath("/documents/{documentId}", documentId);
-
-		options.setLocation(location);
-
-		String string = HttpUtil.URLtoString(options);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("HTTP response: " + string);
-		}
-
-		try {
-			return DocumentSerDes.toDTO(string);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Unable to process HTTP response: " + string, e);
-			}
-
-			throw e;
-		}
+		return _clientDocumentResource.getDocument(documentId);
 	}
 
 	protected Http.Response invokeGetDocumentResponse(Long documentId)
@@ -842,21 +773,7 @@ public abstract class BaseDocumentResourceTestCase {
 	protected void invokeDeleteDocumentMyRating(Long documentId)
 		throws Exception {
 
-		Http.Options options = _createHttpOptions();
-
-		options.setDelete(true);
-
-		String location =
-			_resourceURL +
-				_toPath("/documents/{documentId}/my-rating", documentId);
-
-		options.setLocation(location);
-
-		String string = HttpUtil.URLtoString(options);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("HTTP response: " + string);
-		}
+		_clientDocumentResource.deleteDocument(documentId);
 	}
 
 	protected Http.Response invokeDeleteDocumentMyRatingResponse(
@@ -886,31 +803,7 @@ public abstract class BaseDocumentResourceTestCase {
 	protected Rating invokeGetDocumentMyRating(Long documentId)
 		throws Exception {
 
-		Http.Options options = _createHttpOptions();
-
-		String location =
-			_resourceURL +
-				_toPath("/documents/{documentId}/my-rating", documentId);
-
-		options.setLocation(location);
-
-		String string = HttpUtil.URLtoString(options);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("HTTP response: " + string);
-		}
-
-		try {
-			return com.liferay.headless.delivery.client.serdes.v1_0.
-				RatingSerDes.toDTO(string);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Unable to process HTTP response: " + string, e);
-			}
-
-			throw e;
-		}
+		return _clientDocumentResource.getDocumentMyRating(documentId);
 	}
 
 	protected Http.Response invokeGetDocumentMyRatingResponse(Long documentId)
@@ -937,33 +830,7 @@ public abstract class BaseDocumentResourceTestCase {
 	protected Rating invokePostDocumentMyRating(Long documentId, Rating rating)
 		throws Exception {
 
-		Http.Options options = _createHttpOptions();
-
-		String location =
-			_resourceURL +
-				_toPath("/documents/{documentId}/my-rating", documentId);
-
-		options.setLocation(location);
-
-		options.setPost(true);
-
-		String string = HttpUtil.URLtoString(options);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("HTTP response: " + string);
-		}
-
-		try {
-			return com.liferay.headless.delivery.client.serdes.v1_0.
-				RatingSerDes.toDTO(string);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Unable to process HTTP response: " + string, e);
-			}
-
-			throw e;
-		}
+		return _clientDocumentResource.postDocumentMyRating(documentId, rating);
 	}
 
 	protected Http.Response invokePostDocumentMyRatingResponse(
@@ -993,33 +860,7 @@ public abstract class BaseDocumentResourceTestCase {
 	protected Rating invokePutDocumentMyRating(Long documentId, Rating rating)
 		throws Exception {
 
-		Http.Options options = _createHttpOptions();
-
-		String location =
-			_resourceURL +
-				_toPath("/documents/{documentId}/my-rating", documentId);
-
-		options.setLocation(location);
-
-		options.setPut(true);
-
-		String string = HttpUtil.URLtoString(options);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("HTTP response: " + string);
-		}
-
-		try {
-			return com.liferay.headless.delivery.client.serdes.v1_0.
-				RatingSerDes.toDTO(string);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Unable to process HTTP response: " + string, e);
-			}
-
-			throw e;
-		}
+		return _clientDocumentResource.putDocumentMyRating(documentId, rating);
 	}
 
 	protected Http.Response invokePutDocumentMyRatingResponse(
@@ -1285,43 +1126,8 @@ public abstract class BaseDocumentResourceTestCase {
 			Pagination pagination, String sortString)
 		throws Exception {
 
-		Http.Options options = _createHttpOptions();
-
-		String location =
-			_resourceURL + _toPath("/sites/{siteId}/documents", siteId);
-
-		if (flatten != null) {
-			location = HttpUtil.addParameter(location, "flatten", flatten);
-		}
-
-		if (search != null) {
-			location = HttpUtil.addParameter(location, "search", search);
-		}
-
-		if (filterString != null) {
-			location = HttpUtil.addParameter(location, "filter", filterString);
-		}
-
-		if (pagination != null) {
-			location = HttpUtil.addParameter(
-				location, "page", pagination.getPage());
-			location = HttpUtil.addParameter(
-				location, "pageSize", pagination.getPageSize());
-		}
-
-		if (sortString != null) {
-			location = HttpUtil.addParameter(location, "sort", sortString);
-		}
-
-		options.setLocation(location);
-
-		String string = HttpUtil.URLtoString(options);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("HTTP response: " + string);
-		}
-
-		return Page.of(string, DocumentSerDes::toDTO);
+		return _clientDocumentResource.getSiteDocumentsPage(
+			siteId, flatten, search, filterString, pagination, sortString);
 	}
 
 	protected Http.Response invokeGetSiteDocumentsPageResponse(
