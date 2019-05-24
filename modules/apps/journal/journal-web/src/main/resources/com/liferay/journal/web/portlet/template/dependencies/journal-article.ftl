@@ -1,7 +1,7 @@
 <#include "init.ftl">
 
 <#assign
-	variableData = name + ".getData()"
+	variableData = name + ".getData()?eval"
 	variableFriendlyUrl = name + ".getFriendlyUrl()"
 />
 
@@ -13,5 +13,5 @@
 </#if>
 
 <a href="${getVariableReferenceCode(variableFriendlyUrl)}">
-	${getVariableReferenceCode(variableData)}
+	${getVariableReferenceCode(variableData).title}
 </a>
