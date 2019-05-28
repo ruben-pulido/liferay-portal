@@ -53,10 +53,6 @@ public class AssetDisplayPageFormProcessorImpl
 
 		long classNameId = _portal.getClassNameId(className);
 
-		AssetDisplayPageEntry assetDisplayPageEntry =
-			_assetDisplayPageEntryLocalService.fetchAssetDisplayPageEntry(
-				themeDisplay.getScopeGroupId(), classNameId, classPK);
-
 		int displayPageType = ParamUtil.getInteger(
 			portletRequest, "displayPageType",
 			AssetDisplayPageConstants.TYPE_DEFAULT);
@@ -70,6 +66,14 @@ public class AssetDisplayPageFormProcessorImpl
 			assetDisplayPageId = _getDefaultLayoutPageTemplateEntryId(
 				className, classPK, themeDisplay);
 		}
+
+		if (assetDisplayPageId == 0) {
+			return;
+		}
+
+		AssetDisplayPageEntry assetDisplayPageEntry =
+			_assetDisplayPageEntryLocalService.fetchAssetDisplayPageEntry(
+				themeDisplay.getScopeGroupId(), classNameId, classPK);
 
 		if (displayPageType == AssetDisplayPageConstants.TYPE_NONE) {
 			if (assetDisplayPageEntry != null) {
