@@ -23,6 +23,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCachable;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
@@ -91,7 +92,13 @@ public class AssetCategoryLocalServiceImpl
 
 		User user = userLocalService.getUser(userId);
 
-		String name = titleMap.get(LocaleUtil.getSiteDefault());
+		Group group = groupLocalService.getGroup(groupId);
+
+		String defaultLanguageId = group.getDefaultLanguageId();
+
+		Locale locale = LocaleUtil.fromLanguageId(defaultLanguageId);
+
+		String name = titleMap.get(locale);
 
 		name = ModelHintsUtil.trimString(
 			AssetCategory.class.getName(), "name", name);
