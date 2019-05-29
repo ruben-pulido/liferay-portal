@@ -76,6 +76,14 @@ public class AssetCategoryLocalServiceTest {
 		Assert.assertEquals(title, assetCategory.getTitle(LocaleUtil.US));
 	}
 
+	@Before
+	public void setUp() throws Exception {
+		_group = GroupTestUtil.addGroup();
+
+		_assetVocabulary = _assetVocabularyLocalService.addDefaultVocabulary(
+			_group.getGroupId());
+	}
+
 	private AssetCategory _addCategory(String title, Locale locale)
 		throws Exception {
 
@@ -88,18 +96,46 @@ public class AssetCategoryLocalServiceTest {
 			titleMap, _assetVocabulary.getVocabularyId(), null,
 			new ServiceContext());
 	}
+
+	@Test
+	public void testUpdateCategoryWithSiteDefaultLocale() throws Exception {
+		Locale locale = LocaleUtil.SPAIN;
+
+		GroupTestUtil.updateDisplaySettings(
+			_group.getGroupId(), Collections.singletonList(locale), locale);
+
+		AssetCategory assetCategory = _addCategory(
+			RandomTestUtil.randomString(20), locale);
+
+		String title = RandomTestUtil.randomString(20);
+
+		AssetCategory updatedAssetCategory = _updateCategory(
+			assetCategory.getCategoryId(), title, locale);
+
+		Assert.assertEquals(title, updatedAssetCategory.getTitle(locale));
+		Assert.assertEquals(
+			title, updatedAssetCategory.getTitle(LocaleUtil.US));
+	}
+
+	private AssetCategory _updateCategory(
+			long categoryId, String title, Locale locale)
+		throws Exception {
+
+		Map<Locale, String> titleMap = new HashMap<>();
+
+		titleMap.put(locale, title);
+
+		return _assetCategoryLocalService.updateCategory(
+			TestPropsValues.getUserId(), categoryId, 0, titleMap, titleMap,
+			_assetVocabulary.getVocabularyId(), null, new ServiceContext());
+	}
+
 	private AssetVocabulary _assetVocabulary;
+
 	@Inject
 	private AssetVocabularyLocalService _assetVocabularyLocalService;
+
 	@DeleteAfterTestRun
 	private Group _group;
-
-	@Before
-	public void setUp() throws Exception {
-		_group = GroupTestUtil.addGroup();
-
-		_assetVocabulary = _assetVocabularyLocalService.addDefaultVocabulary(
-			_group.getGroupId());
-	}
 
 }
