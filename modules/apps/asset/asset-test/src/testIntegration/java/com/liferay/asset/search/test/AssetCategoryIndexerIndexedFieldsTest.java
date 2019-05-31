@@ -21,7 +21,6 @@ import com.liferay.asset.kernel.service.AssetCategoryService;
 import com.liferay.asset.kernel.service.AssetVocabularyService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Indexer;
@@ -48,9 +47,11 @@ import com.liferay.users.admin.test.util.search.GroupBlueprint;
 import com.liferay.users.admin.test.util.search.GroupSearchFixture;
 import com.liferay.users.admin.test.util.search.UserSearchFixture;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -178,7 +179,7 @@ public class AssetCategoryIndexerIndexedFieldsTest {
 	protected UserSearchFixture userSearchFixture;
 
 	private Map<String, String> _expectedFieldValues(
-			AssetCategory assetCategory)
+			AssetCategory assetCategory, Locale locale)
 		throws Exception {
 
 		Map<String, String> map = HashMapBuilder.put(
@@ -230,7 +231,8 @@ public class AssetCategoryIndexerIndexedFieldsTest {
 
 		_populateDates(assetCategory, map);
 		_populateRoles(assetCategory, map);
-		_populateTitles(assetCategory.getName(), map);
+		_populateTitles(
+			assetCategory.getName(), map, Collections.singleton(locale));
 
 		return map;
 	}
@@ -254,10 +256,12 @@ public class AssetCategoryIndexerIndexedFieldsTest {
 			map);
 	}
 
-	private void _populateTitles(String title, Map<String, String> map) {
+	private void _populateTitles(
+		String title, Map<String, String> map, Set<Locale> locales) {
+
 		map.put("localized_title", title);
 
-		for (Locale locale : LanguageUtil.getAvailableLocales()) {
+		for (Locale locale : locales) {
 			StringBundler sb = new StringBundler(5);
 
 			sb.append("localized_title_");
