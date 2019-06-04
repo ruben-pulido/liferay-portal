@@ -157,6 +157,42 @@ public class AssetDisplayPageFormProcessorTest {
 	}
 
 	@Test
+	public void testProcessWithDefaultNonexistingDisplayPage()
+		throws Exception {
+
+		long classNameId = _portal.getClassNameId(
+			DLFileEntryConstants.getClassName());
+
+		long defaultAssetDisplayPageEntryId = 0;
+
+		_withAndWithoutAssetEntry(
+			fileEntry -> {
+				_assetDisplayPageEntryFormProcessor.process(
+					DLFileEntryConstants.getClassName(),
+					fileEntry.getFileEntryId(),
+					new MockPortletRequest(
+						String.valueOf(AssetDisplayPageConstants.TYPE_DEFAULT),
+						String.valueOf(defaultAssetDisplayPageEntryId)));
+
+				AssetDisplayPageEntry assetDisplayPageEntry =
+					_assetDisplayPageEntryLocalService.
+						fetchAssetDisplayPageEntry(
+							_group.getGroupId(), classNameId,
+							fileEntry.getFileEntryId());
+
+				Assert.assertNotNull(assetDisplayPageEntry);
+
+				Assert.assertEquals(
+					defaultAssetDisplayPageEntryId,
+					assetDisplayPageEntry.getLayoutPageTemplateEntryId());
+
+				Assert.assertEquals(
+					assetDisplayPageEntry.getType(),
+					AssetDisplayPageConstants.TYPE_DEFAULT);
+			});
+	}
+
+	@Test
 	public void testProcessWithDefaultParameters() throws Exception {
 		long classNameId = _portal.getClassNameId(
 			DLFileEntryConstants.getClassName());
