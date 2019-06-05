@@ -151,8 +151,8 @@ public class AssetDisplayPageFormProcessorTest {
 					assetDisplayPageEntry.getLayoutPageTemplateEntryId());
 
 				Assert.assertEquals(
-					defaultLayoutPageTemplateEntry.getType(),
-					AssetDisplayPageConstants.TYPE_DEFAULT);
+					AssetDisplayPageConstants.TYPE_DEFAULT,
+					defaultLayoutPageTemplateEntry.getType());
 			});
 	}
 
@@ -231,8 +231,8 @@ public class AssetDisplayPageFormProcessorTest {
 					0, assetDisplayPageEntry.getLayoutPageTemplateEntryId());
 
 				Assert.assertEquals(
-					assetDisplayPageEntry.getType(),
-					AssetDisplayPageConstants.TYPE_NONE);
+					AssetDisplayPageConstants.TYPE_NONE,
+					assetDisplayPageEntry.getType());
 			});
 	}
 
