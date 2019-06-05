@@ -75,15 +75,6 @@ public class AssetDisplayPageFormProcessorImpl
 			_assetDisplayPageEntryLocalService.fetchAssetDisplayPageEntry(
 				themeDisplay.getScopeGroupId(), classNameId, classPK);
 
-		if (displayPageType == AssetDisplayPageConstants.TYPE_NONE) {
-			if (assetDisplayPageEntry != null) {
-				_assetDisplayPageEntryLocalService.deleteAssetDisplayPageEntry(
-					themeDisplay.getScopeGroupId(), classNameId, classPK);
-			}
-
-			return;
-		}
-
 		if (assetDisplayPageEntry == null) {
 			ServiceContext serviceContext = ServiceContextFactory.getInstance(
 				className, portletRequest);
