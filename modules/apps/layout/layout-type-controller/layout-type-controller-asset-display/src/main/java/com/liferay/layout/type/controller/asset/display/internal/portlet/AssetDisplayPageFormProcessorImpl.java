@@ -67,13 +67,20 @@ public class AssetDisplayPageFormProcessorImpl
 				className, classPK, themeDisplay);
 		}
 
-		if (assetDisplayPageId == 0) {
-			return;
-		}
-
 		AssetDisplayPageEntry assetDisplayPageEntry =
 			_assetDisplayPageEntryLocalService.fetchAssetDisplayPageEntry(
 				themeDisplay.getScopeGroupId(), classNameId, classPK);
+
+		if ((assetDisplayPageId == 0) &&
+			(displayPageType != AssetDisplayPageConstants.TYPE_NONE)) {
+
+			if (assetDisplayPageEntry != null) {
+				_assetDisplayPageEntryLocalService.deleteAssetDisplayPageEntry(
+					themeDisplay.getScopeGroupId(), classNameId, classPK);
+			}
+
+			return;
+		}
 
 		if (assetDisplayPageEntry == null) {
 			ServiceContext serviceContext = ServiceContextFactory.getInstance(
