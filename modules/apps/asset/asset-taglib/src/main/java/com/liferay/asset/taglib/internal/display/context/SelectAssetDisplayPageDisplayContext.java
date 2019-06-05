@@ -162,21 +162,16 @@ public class SelectAssetDisplayPageDisplayContext {
 			return _displayPageType;
 		}
 
-		if (_classPK == 0) {
+		AssetDisplayPageEntry assetDisplayPageEntry =
+			_getAssetDisplayPageEntry();
+
+		if ((_classPK == 0) || (assetDisplayPageEntry == null)) {
 			_displayPageType = AssetDisplayPageConstants.TYPE_DEFAULT;
 
 			return _displayPageType;
 		}
 
-		AssetDisplayPageEntry assetDisplayPageEntry =
-			_getAssetDisplayPageEntry();
-
-		if (assetDisplayPageEntry == null) {
-			_displayPageType = AssetDisplayPageConstants.TYPE_NONE;
-		}
-		else {
-			_displayPageType = assetDisplayPageEntry.getType();
-		}
+		_displayPageType = assetDisplayPageEntry.getType();
 
 		return _displayPageType;
 	}
