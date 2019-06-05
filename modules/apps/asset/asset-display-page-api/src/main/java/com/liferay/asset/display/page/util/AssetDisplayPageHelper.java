@@ -60,16 +60,9 @@ public class AssetDisplayPageHelper {
 			long groupId, AssetEntry assetEntry)
 		throws PortalException {
 
-		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			getAssetDisplayPageLayoutPageTemplateEntry(
-				groupId, assetEntry.getClassNameId(), assetEntry.getClassPK(),
-				assetEntry.getClassTypeId());
-
-		if (layoutPageTemplateEntry != null) {
-			return true;
-		}
-
-		return false;
+		return hasAssetDisplayPage(
+			groupId, assetEntry.getClassNameId(), assetEntry.getClassPK(),
+			assetEntry.getClassTypeId());
 	}
 
 	public static boolean hasAssetDisplayPage(
