@@ -6,6 +6,10 @@ package ${configYAML.apiPackagePath}.resource.${escapedVersion}.test;
 	import ${configYAML.apiPackagePath}.client.serdes.${escapedVersion}.${schemaName}SerDes;
 </#list>
 
+<#list subentities as subentityName>
+	import ${configYAML.apiPackagePath}.client.dto.${escapedVersion}.{subentityName};
+</#list>
+
 import ${configYAML.apiPackagePath}.client.http.HttpInvoker;
 import ${configYAML.apiPackagePath}.client.pagination.Page;
 import ${configYAML.apiPackagePath}.client.pagination.Pagination;
@@ -1005,6 +1009,19 @@ public abstract class Base${schemaName}ResourceTestCase {
 		}
 	}
 
+	<#list subentities as subentityName>
+		<#assign
+			subentityProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, subentityName)
+			subentityVarName = OpenAPIParserUtil.getSchemaVarName(subentityName)
+		/>
+
+		protected void assertEquals(${subentityName} ${subentityVarName}1, ${subentityName} ${subentityVarName}2) {
+
+			Assert.assertTrue(
+				${subentityVarName}1 + " does not equal " + ${subentityVarName}2, equals(${subentityVarName}1, ${subentityVarName}2));
+		}
+	</#list>
+
 	protected void assertEqualsIgnoringOrder(List<${schemaName}> ${schemaVarNames}1, List<${schemaName}> ${schemaVarNames}2) {
 		Assert.assertEquals(${schemaVarNames}1.size(), ${schemaVarNames}2.size());
 
@@ -1101,9 +1118,80 @@ public abstract class Base${schemaName}ResourceTestCase {
 		Assert.assertTrue(valid);
 	}
 
+	<#list subentities as subentityName>
+		<#assign
+			subentityProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, subentityName)
+			subentityVarName = OpenAPIParserUtil.getSchemaVarName(subentityName)
+		/>
+
+		protected void assertValid(${configYAML.apiPackagePath}.client.dto.${escapedVersion}.${subentityName} ${subentityVarName}) {
+			boolean valid = true;
+
+			<#if subentityProperties?keys?seq_contains("dateCreated")>
+				if (${subentityVarName}.getDateCreated() == null) {
+					valid = false;
+				}
+			</#if>
+
+			<#if subentityProperties?keys?seq_contains("dateModified")>
+				if (${subentityVarName}.getDateModified() == null) {
+					valid = false;
+				}
+			</#if>
+
+			<#if subentityProperties?keys?seq_contains("id")>
+				if (${subentityVarName}.getId() == null) {
+					valid = false;
+				}
+			</#if>
+
+			<#if subentityProperties?keys?seq_contains("siteId")>
+				if (!Objects.equals(${subentityVarName}.getSiteId(), testGroup.getGroupId())) {
+					valid = false;
+				}
+			</#if>
+
+			for (String additionalAssertFieldName : getAdditionalAssertFieldNames()) {
+				<#list subentityProperties?keys as propertyName>
+					<#if stringUtil.equals(propertyName, "dateCreated") ||
+						 stringUtil.equals(propertyName, "dateModified") ||
+						 stringUtil.equals(propertyName, "id") ||
+						 stringUtil.equals(propertyName, "siteId")>
+
+						 <#continue>
+					</#if>
+
+					if (Objects.equals("${propertyName}", additionalAssertFieldName)) {
+						<#assign capitalizedPropertyName = propertyName?cap_first />
+
+						<#if enumSchemas?keys?seq_contains(subentityProperties[propertyName])>
+							<#assign capitalizedPropertyName = subentityProperties[propertyName] />
+						</#if>
+
+						if (${subentityVarName}.get${capitalizedPropertyName}() == null) {
+							valid = false;
+						}
+
+						continue;
+					}
+				</#list>
+
+				throw new IllegalArgumentException("Invalid additional assert field name " + additionalAssertFieldName);
+			}
+
+			Assert.assertTrue(valid);
+		}
+	</#list>
+
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[0];
 	}
+
+	<#list subentities as subentityName>
+		protected String[] getAdditional${subentityName}AssertFieldNames() {
+			return new String[0];
+		}
+	</#list>
 
 	protected String[] getIgnoredEntityFieldNames() {
 		return new String[0];
@@ -1146,6 +1234,41 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 		return true;
 	}
+
+	<#list subentities as subentityName>
+		<#assign
+			subentityProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, subentityName)
+			subentityVarName = OpenAPIParserUtil.getSchemaVarName(subentityName)
+		/>
+
+		protected boolean equals(${subentityName} ${subentityVarName}1, ${subentityName} ${subentityVarName}2) {
+			if (${subentityVarName}1 == ${subentityVarName}2) {
+				return true;
+			}
+
+			for (String additionalAssertFieldName : getAdditional${subentityName}AssertFieldNames()) {
+				<#list subentityProperties?keys as propertyName>
+					if (Objects.equals("${propertyName}", additionalAssertFieldName)) {
+						<#assign capitalizedPropertyName = propertyName?cap_first />
+
+						<#if enumSchemas?keys?seq_contains(subentityProperties[propertyName])>
+							<#assign capitalizedPropertyName = subentityProperties[propertyName] />
+						</#if>
+
+						if (!Objects.deepEquals(${subentityVarName}1.get${capitalizedPropertyName}(), ${subentityVarName}2.get${capitalizedPropertyName}())) {
+							return false;
+						}
+
+						continue;
+					}
+				</#list>
+
+				throw new IllegalArgumentException("Invalid additional assert field name " + additionalAssertFieldName);
+			}
+
+			return true;
+		}
+	</#list>
 
 	protected java.util.Collection<EntityField> getEntityFields() throws Exception {
 		if (!(_${schemaVarName}Resource instanceof EntityModelResource)) {
@@ -1231,6 +1354,28 @@ public abstract class Base${schemaName}ResourceTestCase {
 			throw new UnsupportedOperationException("This method needs to be implemented");
 		}
 	</#if>
+
+	<#list subentities as subentityName>
+		protected ${subentityName} random${subentityName}() throws Exception {
+			return new ${subentityName}() {
+				{
+					<#assign
+						randomDataTypes = ["Boolean", "Double", "Long", "String"]
+						subentityProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, subentityName)
+					/>
+
+					<#list subentityProperties?keys as propertyName>
+						<#if randomDataTypes?seq_contains(subentityProperties[propertyName])>
+							${propertyName} = RandomTestUtil.random${subentityProperties[propertyName]}();
+						<#elseif stringUtil.equals(subentityProperties[propertyName], "Date")>
+							${propertyName} = RandomTestUtil.nextDate();
+						</#if>
+					</#list>
+				}
+			};
+		}
+
+	</#list>
 
 	protected ${schemaName} random${schemaName}() throws Exception {
 		return new ${schemaName}() {

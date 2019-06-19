@@ -139,6 +139,10 @@ public class OpenAPIParserUtil {
 		return StringUtil.lowerCase(clazz.getSimpleName());
 	}
 
+	public static OpenAPIParserUtil getInstance() {
+		return _instance;
+	}
+
 	public static String getJavaDataType(
 		Map<String, String> javaDataTypeMap, Schema schema) {
 
@@ -335,6 +339,11 @@ public class OpenAPIParserUtil {
 
 		return false;
 	}
+
+	private OpenAPIParserUtil() {
+	}
+
+	private static OpenAPIParserUtil _instance = new OpenAPIParserUtil();
 
 	private static final Map<Map.Entry<String, String>, String>
 		_openAPIDataTypeMap = new HashMap<Map.Entry<String, String>, String>() {
