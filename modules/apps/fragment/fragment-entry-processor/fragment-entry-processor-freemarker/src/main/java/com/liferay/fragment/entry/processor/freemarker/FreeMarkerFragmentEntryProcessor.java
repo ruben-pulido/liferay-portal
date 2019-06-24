@@ -33,11 +33,17 @@ import com.liferay.portal.kernel.template.StringTemplateResource;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateException;
+import com.liferay.portal.kernel.template.TemplateHandler;
+import com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil;
 import com.liferay.portal.kernel.template.TemplateManager;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
@@ -104,6 +110,18 @@ public class FreeMarkerFragmentEntryProcessor
 			TemplateManagerUtil.getTemplateManager(
 				TemplateConstants.LANG_TYPE_FTL);
 
+		// TODO This needs to be retrieved from info stored in db
+		Map<String, Object> contextObjects = new HashMap<>();
+
+		contextObjects.put(
+			"fragmentConfiguration", _getConfigurationInstance());
+
+//		TemplateHandler templateHandler =
+//			TemplateHandlerRegistryUtil.getTemplateHandler(
+//				ddmTemplate.getClassNameId());
+
+		templateManager.addContextObjects(template, contextObjects);
+
 		templateManager.addTaglibSupport(
 			template, fragmentEntryProcessorContext.getHttpServletRequest(),
 			fragmentEntryProcessorContext.getHttpServletResponse());
@@ -124,6 +142,45 @@ public class FreeMarkerFragmentEntryProcessor
 		}
 
 		return unsyncStringWriter.toString();
+	}
+
+	private Map<String, Object> _getConfigurationInstance() {
+
+		Map<String, Object> configurationInstanceMap = new HashMap<>();
+
+		List<Object> fieldSets = new ArrayList<>();
+
+		configurationInstanceMap.put("fieldSets", fieldSets);
+
+		Map<String, Object> fieldSet1 = new HashMap<>();
+
+		fieldSets.add(fieldSet1);
+
+		fieldSet1.put("name", "fieldSet1");
+		fieldSet1.put("label", "Field Set One");
+
+		List<Object> fields = new ArrayList<>();
+
+		fieldSet1.put("fields", fields);
+
+		Map<String, Object> field1 = new HashMap<>();
+
+		fields.add(field1);
+
+		field1.put("dataType", "string");
+		field1.put("defaultValue", "light");
+		field1.put("description", "this-is-the-style-that-will-be-applied");
+		field1.put("label", "applied-style");
+		field1.put("name", "appliedStyle");
+		field1.put("type", "select");
+
+		Map<String, Object> typeOption1 = new HashMap<>();
+
+		field1.put("typeOptions", typeOption1);
+
+		typeOption1.put("validValues", new String[]{"dark", "light"});
+
+		return configurationInstanceMap;
 	}
 
 	@Override
