@@ -20,8 +20,13 @@ import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.DefaultFragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessor;
 import com.liferay.fragment.processor.FragmentEntryProcessorContext;
+import com.liferay.fragment.service.FragmentEntryService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -37,7 +42,11 @@ import com.liferay.portal.kernel.template.TemplateManager;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
@@ -104,6 +113,38 @@ public class FreeMarkerFragmentEntryProcessor
 			TemplateManagerUtil.getTemplateManager(
 				TemplateConstants.LANG_TYPE_FTL);
 
+		Map<String, Object> contextObjects = new HashMap<>();
+
+		JSONObject editableValuesJSONObject = JSONFactoryUtil.createJSONObject(
+			fragmentEntryLink.getEditableValues());
+
+		Class<?> clazz = getClass();
+
+		String className = clazz.getName();
+
+		if (editableValuesJSONObject.get(className) == null) {
+
+			editableValuesJSONObject.put(
+				className,
+				_getDefaultFragmentConfigurationValuesJSONObject(
+					fragmentEntryLink));
+		}
+
+		long[] segmentsExperienceIds =
+			fragmentEntryProcessorContext.getSegmentsExperienceIds();
+
+		JSONObject fragmentConfigurationValuesJSONObject  =
+			(JSONObject)editableValuesJSONObject.get(className);
+
+		if (fragmentConfigurationValuesJSONObject != null) {
+			contextObjects.put(
+				"fragmentConfiguration",
+				fragmentConfigurationValuesJSONObject.get(
+					"segment-experience-id-" + segmentsExperienceIds[0]));
+		}
+
+		templateManager.addContextObjects(template, contextObjects);
+
 		templateManager.addTaglibSupport(
 			template, fragmentEntryProcessorContext.getHttpServletRequest(),
 			fragmentEntryProcessorContext.getHttpServletResponse());
@@ -124,6 +165,63 @@ public class FreeMarkerFragmentEntryProcessor
 		}
 
 		return unsyncStringWriter.toString();
+	}
+
+	// TODO Remove
+	private JSONObject _getDefaultFragmentConfigurationValuesJSONObject(
+		FragmentEntryLink fragmentEntryLink) {
+//		JSONObject originalJSONObject = JSONUtil.put(
+//			"filebrowserImageBrowseLinkUrl",
+//			"blogsItemSelectorCriterionFileEntryItemSelectorReturnType");
+//
+//		_fragmentEntryService.getFragmentEntries()
+//
+//		fragmentEntryLink.getFragmentEntryId()
+//
+//		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+//			originalJSONObject.toJSONString());
+
+
+		return null;
+	}
+
+	private Map<String, Object> _getConfigurationInstance() {
+
+		Map<String, Object> configurationInstanceMap = new HashMap<>();
+
+		List<Object> fieldSets = new ArrayList<>();
+
+		configurationInstanceMap.put("fieldSets", fieldSets);
+
+		Map<String, Object> fieldSet1 = new HashMap<>();
+
+		fieldSets.add(fieldSet1);
+
+		fieldSet1.put("name", "fieldSet1");
+		fieldSet1.put("label", "Field Set One");
+
+		List<Object> fields = new ArrayList<>();
+
+		fieldSet1.put("fields", fields);
+
+		Map<String, Object> field1 = new HashMap<>();
+
+		fields.add(field1);
+
+		field1.put("dataType", "string");
+		field1.put("defaultValue", "light");
+		field1.put("description", "this-is-the-style-that-will-be-applied");
+		field1.put("label", "applied-style");
+		field1.put("name", "appliedStyle");
+		field1.put("type", "select");
+
+		Map<String, Object> typeOption1 = new HashMap<>();
+
+		field1.put("typeOptions", typeOption1);
+
+		typeOption1.put("validValues", new String[]{"dark", "light"});
+
+		return configurationInstanceMap;
 	}
 
 	@Override
@@ -199,10 +297,28 @@ public class FreeMarkerFragmentEntryProcessor
 		}
 	}
 
+	public JSONObject getDefaultEditableValuesJSONObject(
+		String html, String config) {
+
+		try {
+			return _jsonFactory.createJSONObject(config);
+		}
+		catch (JSONException jsone) {
+			_log.error("Unable to parse config JSON object: " + config, jsone);
+		}
+
+		return null;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		FreeMarkerFragmentEntryProcessor.class);
 
 	@Reference
 	private ConfigurationProvider _configurationProvider;
 
+	@Reference
+	private FragmentEntryService _fragmentEntryService;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 }

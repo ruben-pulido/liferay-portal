@@ -37,7 +37,13 @@ public interface FragmentEntryProcessor {
 		return null;
 	}
 
+	@Deprecated
 	public default JSONObject getDefaultEditableValuesJSONObject(String html) {
+		return null;
+	}
+
+	public default JSONObject getDefaultEditableValuesJSONObject(
+		FragmentEntryLink fragmentEntryLink) {
 		return null;
 	}
 

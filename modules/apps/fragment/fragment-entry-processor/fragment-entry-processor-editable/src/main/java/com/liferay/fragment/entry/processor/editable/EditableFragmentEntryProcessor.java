@@ -19,6 +19,7 @@ import com.liferay.fragment.constants.FragmentEntryLinkConstants;
 import com.liferay.fragment.entry.processor.editable.parser.EditableElementParser;
 import com.liferay.fragment.entry.processor.util.FragmentEntryProcessorUtil;
 import com.liferay.fragment.exception.FragmentEntryContentException;
+import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.DefaultFragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessor;
@@ -113,7 +114,13 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 	}
 
 	@Override
-	public JSONObject getDefaultEditableValuesJSONObject(String html) {
+	public JSONObject getDefaultEditableValuesJSONObject(
+		FragmentEntryLink fragmentEntryLink) {
+
+		return _getDefaultEditableValuesJSONObject(fragmentEntryLink.getHtml());
+	}
+
+	private JSONObject _getDefaultEditableValuesJSONObject(String html) {
 		JSONObject defaultEditableValuesJSONObject =
 			JSONFactoryUtil.createJSONObject();
 
@@ -141,6 +148,11 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 	}
 
 	@Override
+	public JSONObject getDefaultEditableValuesJSONObject(String html) {
+		return _getDefaultEditableValuesJSONObject(html);
+	}
+
+	@Override
 	public String processFragmentEntryLinkHTML(
 			FragmentEntryLink fragmentEntryLink, String html,
 			FragmentEntryProcessorContext fragmentEntryProcessorContext)
@@ -154,8 +166,7 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 
 			jsonObject.put(
 				clazz.getName(),
-				getDefaultEditableValuesJSONObject(
-					fragmentEntryLink.getHtml()));
+				getDefaultEditableValuesJSONObject(fragmentEntryLink));
 		}
 
 		Document document = _getDocument(html);

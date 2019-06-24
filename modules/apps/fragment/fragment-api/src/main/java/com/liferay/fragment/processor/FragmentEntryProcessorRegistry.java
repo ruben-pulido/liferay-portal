@@ -16,6 +16,7 @@ package com.liferay.fragment.processor;
 
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.fragment.constants.FragmentEntryLinkConstants;
+import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -36,7 +37,14 @@ public interface FragmentEntryProcessorRegistry {
 		return null;
 	}
 
-	public JSONObject getDefaultEditableValuesJSONObject(String html);
+	@Deprecated
+	public default JSONObject getDefaultEditableValuesJSONObject(
+		String html) {
+		return null;
+	};
+
+	public JSONObject getDefaultEditableValuesJSONObject(
+		FragmentEntryLink fragmentEntryLink);
 
 	public default String processFragmentEntryLinkCSS(
 			FragmentEntryLink fragmentEntryLink,

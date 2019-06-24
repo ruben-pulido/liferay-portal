@@ -26,6 +26,8 @@ import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortlet
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -67,6 +69,75 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class AddFragmentEntryLinkMVCActionCommand extends BaseMVCActionCommand {
 
+	private Object _getFieldValue(String dataType, String value) {
+
+		if (dataType.equals("string")) {
+			return value;
+		}
+		else if (dataType.equals("int")) {
+			return Integer.parseInt(value);
+		}
+
+		return null;
+	}
+
+	private String _getDefaultEditableValues(String config) {
+		if (config == null) {
+			return null;
+		}
+
+		JSONObject configDefaultValuesJSONObject =
+			JSONFactoryUtil.createJSONObject();
+
+		JSONObject configJSONObject = null;
+
+		try {
+			configJSONObject = JSONFactoryUtil.createJSONObject(config);
+		}
+		catch (JSONException jsone) {
+			 _log.error("Unable to parse config JSON object: " + config, jsone);
+
+			return null;
+		}
+
+		JSONArray fieldSetsJSONArray = (JSONArray)configJSONObject.get(
+			"fieldSets");
+
+		for (int i = 0; i < fieldSetsJSONArray.length(); i++) {
+			JSONObject configFieldSetJSONObject =
+				(JSONObject) fieldSetsJSONArray.get(i);
+
+			String fieldSetName = configFieldSetJSONObject.getString("name");
+
+			JSONObject fieldSetDefaultValuesJSONObject =
+				JSONFactoryUtil.createJSONObject();
+
+			JSONArray fieldSetFieldsJSONArray =
+				(JSONArray) configFieldSetJSONObject.get("fields");
+
+			for (int j = 0; j < fieldSetFieldsJSONArray.length(); j++) {
+
+				JSONObject configDefaultValuesFieldSetJSONObject =
+					(JSONObject) fieldSetFieldsJSONArray.get(j);
+
+				Object fieldDefaultValue = _getFieldValue(
+					configDefaultValuesFieldSetJSONObject.getString("dataType"),
+					configDefaultValuesFieldSetJSONObject.getString(
+						"defaultValue"));
+
+				fieldSetDefaultValuesJSONObject.put(
+					configDefaultValuesFieldSetJSONObject.getString("name"),
+					fieldDefaultValue
+				);
+
+				configDefaultValuesJSONObject.put(
+					fieldSetName, fieldSetDefaultValuesJSONObject);
+			}
+		}
+
+		return configDefaultValuesJSONObject.toJSONString();
+	}
+
 	protected FragmentEntryLink addFragmentEntryLink(
 			ActionRequest actionRequest)
 		throws PortalException {
@@ -103,8 +174,9 @@ public class AddFragmentEntryLinkMVCActionCommand extends BaseMVCActionCommand {
 				serviceContext.getScopeGroupId(), 0,
 				fragmentEntry.getFragmentEntryId(), classNameId, classPK,
 				fragmentEntry.getCss(), fragmentEntry.getHtml(),
-				fragmentEntry.getJs(), null, StringPool.BLANK, 0,
-				contributedRendererKey, serviceContext);
+				fragmentEntry.getJs(),
+				_getDefaultEditableValues(fragmentEntry.getConfiguration()),
+				StringPool.BLANK, 0, contributedRendererKey, serviceContext);
 		}
 		else {
 			fragmentEntryLink = _fragmentEntryLinkService.addFragmentEntryLink(

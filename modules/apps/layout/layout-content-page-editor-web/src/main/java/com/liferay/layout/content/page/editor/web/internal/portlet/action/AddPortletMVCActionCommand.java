@@ -125,7 +125,7 @@ public class AddPortletMVCActionCommand extends BaseMVCActionCommand {
 
 			JSONObject editableValueJSONObject =
 				_fragmentEntryProcessorRegistry.
-					getDefaultEditableValuesJSONObject(html);
+					getDefaultEditableValuesJSONObject(html, null);
 
 			editableValueJSONObject.put(
 				"instanceId", instanceId
