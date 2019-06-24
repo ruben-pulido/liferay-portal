@@ -20,8 +20,13 @@ import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.DefaultFragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessor;
 import com.liferay.fragment.processor.FragmentEntryProcessorContext;
+import com.liferay.fragment.service.FragmentEntryService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -37,7 +42,11 @@ import com.liferay.portal.kernel.template.TemplateManager;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
@@ -103,6 +112,37 @@ public class FreeMarkerFragmentEntryProcessor
 		TemplateManager templateManager =
 			TemplateManagerUtil.getTemplateManager(
 				TemplateConstants.LANG_TYPE_FTL);
+
+		Map<String, Object> contextObjects = new HashMap<>();
+
+		JSONObject editableValuesJSONObject = JSONFactoryUtil.createJSONObject(
+			fragmentEntryLink.getEditableValues());
+
+		Class<?> clazz = getClass();
+
+		String className = clazz.getName();
+
+		if (editableValuesJSONObject.get(className) == null) {
+			editableValuesJSONObject.put(
+				className,
+				_getDefaultFragmentConfigurationValuesJSONObject(
+					fragmentEntryLink));
+		}
+
+		long[] segmentsExperienceIds =
+			fragmentEntryProcessorContext.getSegmentsExperienceIds();
+
+		JSONObject fragmentConfigurationValuesJSONObject =
+			(JSONObject)editableValuesJSONObject.get(className);
+
+		if (fragmentConfigurationValuesJSONObject != null) {
+			contextObjects.put(
+				"fragmentConfiguration",
+				fragmentConfigurationValuesJSONObject.get(
+					"segment-experience-id-" + segmentsExperienceIds[0]));
+		}
+
+		templateManager.addContextObjects(template, contextObjects);
 
 		templateManager.addTaglibSupport(
 			template, fragmentEntryProcessorContext.getHttpServletRequest(),
@@ -199,10 +239,34 @@ public class FreeMarkerFragmentEntryProcessor
 		}
 	}
 
+	private JSONObject _getDefaultFragmentConfigurationValuesJSONObject(
+		FragmentEntryLink fragmentEntryLink) {
+
+		//		JSONObject originalJSONObject = JSONUtil.put(
+		//			"filebrowserImageBrowseLinkUrl",
+		//			"blogsItemSelectorCriterionFileEntryItemSelectorReturnType");
+
+		//
+		//		_fragmentEntryService.getFragmentEntries()
+		//
+		//		fragmentEntryLink.getFragmentEntryId()
+		//
+		//		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+		//			originalJSONObject.toJSONString());
+
+		return null;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		FreeMarkerFragmentEntryProcessor.class);
 
 	@Reference
 	private ConfigurationProvider _configurationProvider;
+
+	@Reference
+	private FragmentEntryService _fragmentEntryService;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 }
