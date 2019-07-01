@@ -25,6 +25,7 @@ import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.service.base.FragmentEntryLocalServiceBaseImpl;
+import com.liferay.fragment.validator.FragmentEntryValidator;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -368,6 +369,8 @@ public class FragmentEntryLocalServiceImpl
 		validate(name);
 		validateFragmentEntryKey(groupId, fragmentEntryKey);
 
+		_fragmentEntryValidator.validateConfiguration(configuration);
+
 		if (WorkflowConstants.STATUS_APPROVED == status) {
 			validateContent(html);
 
@@ -640,6 +643,8 @@ public class FragmentEntryLocalServiceImpl
 
 		validate(name);
 
+		_fragmentEntryValidator.validateConfiguration(configuration);
+
 		if (WorkflowConstants.STATUS_APPROVED == status) {
 			validateContent(html);
 
@@ -785,5 +790,8 @@ public class FragmentEntryLocalServiceImpl
 
 	@Reference
 	private FragmentEntryProcessorRegistry _fragmentEntryProcessorRegistry;
+
+	@Reference
+	private FragmentEntryValidator _fragmentEntryValidator;
 
 }
