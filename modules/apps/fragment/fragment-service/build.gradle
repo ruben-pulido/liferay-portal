@@ -4,6 +4,13 @@ buildService {
 }
 
 dependencies {
+	compileInclude group: "com.ibm.icu", name: "icu4j", version: "64.2"
+	compileInclude group: "jakarta.json", name: "jakarta.json-api", version: "1.1.5"
+	compileInclude group: "jakarta.json.bind", name: "jakarta.json.bind-api", version: "1.0.1"
+	compileInclude group: "org.eclipse", name: "yasson", version: "1.0.4"
+	compileInclude group: "org.glassfish", name: "jakarta.json", version: "1.1.5"
+	compileInclude group: "org.leadpony.justify", name: "justify", version: "0.17.0"
+
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "default"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "default"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.util.taglib", version: "default"
