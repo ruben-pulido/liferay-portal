@@ -4,12 +4,12 @@ buildService {
 }
 
 dependencies {
-	compileInclude group: "com.ibm.icu", name: "icu4j", version: "64.2"
-	compileInclude group: "jakarta.json", name: "jakarta.json-api", version: "1.1.5"
-	compileInclude group: "jakarta.json.bind", name: "jakarta.json.bind-api", version: "1.0.1"
-	compileInclude group: "org.eclipse", name: "yasson", version: "1.0.4"
-	compileInclude group: "org.glassfish", name: "jakarta.json", version: "1.1.5"
-	compileInclude group: "org.leadpony.justify", name: "justify", version: "0.17.0"
+	compileInclude classifier: "classic", group: "org.joda", name: "joda-convert", version: "2.2.1"
+	compileInclude group: "com.damnhandy", name: "handy-uri-templates", version: "2.1.7"
+	compileInclude group: "com.github.everit-org.json-schema", name: "org.everit.json.schema", version: "1.11.1"
+	compileInclude group: "com.google.re2j", name: "re2j", version: "1.2"
+	compileInclude group: "joda-time", name: "joda-time", version: "2.9.1"
+	compileInclude group: "org.json", name: "json", version: "20180813"
 
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "default"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "default"
