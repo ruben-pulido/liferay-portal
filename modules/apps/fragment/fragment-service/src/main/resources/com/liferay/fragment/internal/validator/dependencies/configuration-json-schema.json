@@ -1,0 +1,158 @@
+{
+	"$id": "http://example.com/root.json",
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"definitions": {},
+	"properties": {
+		"fieldSets": {
+			"$id": "#/properties/fieldSets",
+			"items": {
+				"$id": "#/properties/fieldSets/items",
+				"properties": {
+					"fields": {
+						"$id": "#/properties/fieldSets/items/properties/fields",
+						"items": {
+							"$id": "#/properties/fieldSets/items/properties/fields/items",
+							"properties": {
+								"dataType": {
+									"$id": "#/properties/fieldSets/items/properties/fields/items/properties/dataType",
+									"default": "",
+									"examples": [
+										"double",
+										"int",
+										"string"
+									],
+									"pattern": "^(double|int|string)$",
+									"title": "The Datatype Schema",
+									"type": "string"
+								},
+								"defaultValue": {
+									"$id": "#/properties/fieldSets/items/properties/fields/items/properties/defaultValue",
+									"default": "",
+									"examples": [
+										"light"
+									],
+									"pattern": "^(.*)$",
+									"title": "The Defaultvalue Schema",
+									"type": "string"
+								},
+								"description": {
+									"$id": "#/properties/fieldSets/items/properties/fields/items/properties/description",
+									"default": "",
+									"examples": [
+										"this-is-the-style-that-will-be-applied"
+									],
+									"pattern": "^(.*)$",
+									"title": "The Description Schema",
+									"type": "string"
+								},
+								"label": {
+									"$id": "#/properties/fieldSets/items/properties/fields/items/properties/label",
+									"default": "",
+									"examples": [
+										"applied-style"
+									],
+									"pattern": "^(.*)$",
+									"title": "The Label Schema",
+									"type": "string"
+								},
+								"name": {
+									"$id": "#/properties/fieldSets/items/properties/fields/items/properties/name",
+									"default": "",
+									"examples": [
+										"appliedStyle"
+									],
+									"pattern": "^\\S+\\w$",
+									"title": "The Name Schema",
+									"type": "string"
+								},
+								"type": {
+									"$id": "#/properties/fieldSets/items/properties/fields/items/properties/type",
+									"default": "",
+									"examples": [
+										"select"
+									],
+									"pattern": "^(select)$",
+									"title": "The Type Schema",
+									"type": "string"
+								},
+								"typeOptions": {
+									"$id": "#/properties/fieldSets/items/properties/fields/items/properties/typeOptions",
+									"properties": {
+										"validValues": {
+											"$id": "#/properties/fieldSets/items/properties/fields/items/properties/typeOptions/properties/validValues",
+											"items": {
+												"$id": "#/properties/fieldSets/items/properties/fields/items/properties/typeOptions/properties/validValues/items",
+												"default": "",
+												"examples": [
+													"dark",
+													"light"
+												],
+												"pattern": "^(.*)$",
+												"title": "The Items Schema",
+												"type": "string"
+											},
+											"title": "The Validvalues Schema",
+											"type": "array"
+										}
+									},
+									"required": [
+										"validValues"
+									],
+									"title": "The Typeoptions Schema",
+									"type": "object"
+								}
+							},
+							"required": [
+								"name",
+								"label",
+								"description",
+								"type",
+								"dataType",
+								"typeOptions",
+								"defaultValue"
+							],
+							"title": "The Items Schema",
+							"type": "object"
+						},
+						"title": "The Fields Schema",
+						"type": "array"
+					},
+					"label": {
+						"$id": "#/properties/fieldSets/items/properties/label",
+						"default": "",
+						"examples": [
+							"Heading"
+						],
+						"pattern": "^(.*)$",
+						"title": "The Label Schema",
+						"type": "string"
+					},
+					"name": {
+						"$id": "#/properties/fieldSets/items/properties/name",
+						"default": "",
+						"examples": [
+							"heading"
+						],
+						"pattern": "^(.*)$",
+						"title": "The Name Schema",
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"label",
+					"fields"
+				],
+				"title": "The Items Schema",
+				"type": "object"
+			},
+			"title": "The Fieldsets Schema",
+			"type": "array"
+		}
+	},
+	"required": [
+		"fieldSets"
+	],
+	"title": "The Root Schema",
+	"type": "object"
+}
