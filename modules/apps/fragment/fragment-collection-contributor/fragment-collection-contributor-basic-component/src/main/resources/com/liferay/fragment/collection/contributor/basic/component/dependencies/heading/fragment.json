@@ -1,10 +1,10 @@
 {
 	"configurationPath": "configuration.json",
 	"cssPath": "index.css",
-	"fragmentEntryKey": "card",
+	"fragmentEntryKey": "heading",
 	"htmlPath": "index.html",
 	"jsPath": "index.js",
-	"name": "Card",
-	"thumbnail": "card.png",
+	"name": "Heading",
+	"thumbnail": "h1.png",
 	"type": "component"
 }

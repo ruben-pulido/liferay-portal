@@ -1,0 +1,28 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "h1",
+					"description": "Determines which type of heading to use",
+					"label": "size",
+					"name": "size",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
+					}
+				}
+			],
+			"label": "Heading",
+			"name": "heading"
+		}
+	]
+}
