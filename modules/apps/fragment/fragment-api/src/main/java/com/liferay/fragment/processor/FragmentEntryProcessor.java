@@ -17,6 +17,7 @@ package com.liferay.fragment.processor;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.fragment.constants.FragmentEntryLinkConstants;
 import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -155,6 +156,17 @@ public interface FragmentEntryProcessor {
 			int previewType)
 		throws PortalException;
 
-	public void validateFragmentEntryHTML(String html) throws PortalException;
+	/**
+	 * @deprecated As of Mueller (7.2.x)
+	 */
+	@Deprecated
+	public default void validateFragmentEntryHTML(String html)
+		throws PortalException {
+
+		validateFragmentEntryHTML(html, StringPool.BLANK);
+	}
+
+	public void validateFragmentEntryHTML(String html, String configuration)
+		throws PortalException;
 
 }
