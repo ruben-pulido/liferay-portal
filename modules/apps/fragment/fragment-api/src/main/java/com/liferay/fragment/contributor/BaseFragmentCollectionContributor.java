@@ -18,11 +18,13 @@ import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.constants.FragmentExportImportConstants;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -30,6 +32,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.net.URL;
 
@@ -91,13 +94,17 @@ public abstract class BaseFragmentCollectionContributor
 
 				FragmentEntry fragmentEntry = _getFragmentEntry(url);
 
-				_updateFragmentEntryLinks(fragmentEntry);
+				if (fragmentEntry.getStatus() ==
+						WorkflowConstants.STATUS_APPROVED) {
 
-				List<FragmentEntry> fragmentEntryList =
-					_fragmentEntries.computeIfAbsent(
-						fragmentEntry.getType(), type -> new ArrayList<>());
+					_updateFragmentEntryLinks(fragmentEntry);
 
-				fragmentEntryList.add(fragmentEntry);
+					List<FragmentEntry> fragmentEntryList =
+						_fragmentEntries.computeIfAbsent(
+							fragmentEntry.getType(), type -> new ArrayList<>());
+
+					fragmentEntryList.add(fragmentEntry);
+				}
 			}
 		}
 		catch (Exception e) {
@@ -157,6 +164,20 @@ public abstract class BaseFragmentCollectionContributor
 		String configuration = _getFileContent(
 			path, jsonObject.getString("configurationPath"));
 
+		int status = WorkflowConstants.STATUS_APPROVED;
+
+		try {
+			_fragmentEntryProcessorRegistry.validateFragmentEntryHTML(
+				html, configuration);
+		}
+		catch (PortalException pe) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(pe, pe);
+			}
+
+			status = WorkflowConstants.STATUS_DRAFT;
+		}
+
 		String thumbnailURL = _getImagePreviewURL(
 			jsonObject.getString("thumbnail"));
 		int type = FragmentConstants.getTypeFromLabel(
@@ -173,6 +194,7 @@ public abstract class BaseFragmentCollectionContributor
 		fragmentEntry.setConfiguration(configuration);
 		fragmentEntry.setType(type);
 		fragmentEntry.setImagePreviewURL(thumbnailURL);
+		fragmentEntry.setStatus(status);
 
 		return fragmentEntry;
 	}
@@ -213,6 +235,10 @@ public abstract class BaseFragmentCollectionContributor
 	private Bundle _bundle;
 	private final Map<Integer, List<FragmentEntry>> _fragmentEntries =
 		new HashMap<>();
+
+	@Reference
+	private FragmentEntryProcessorRegistry _fragmentEntryProcessorRegistry;
+
 	private String _name;
 
 }
