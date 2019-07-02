@@ -139,7 +139,14 @@ public class FragmentsImporterTest {
 				fragmentCollection.getFragmentCollectionId());
 
 		Assert.assertTrue(!fragmentEntries.isEmpty());
+
+		// TODO Add checks for html, css, js, configuration
+
 	}
+
+	// TODO Test import with invalid ftl
+
+	// TODO test import with valid ftl but invalid configuration
 
 	@Test
 	public void testImportFragmentsWithReservedNames() throws Exception {

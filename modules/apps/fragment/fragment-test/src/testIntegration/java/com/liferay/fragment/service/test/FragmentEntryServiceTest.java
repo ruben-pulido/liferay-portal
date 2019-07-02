@@ -241,6 +241,14 @@ public class FragmentEntryServiceTest {
 			WorkflowConstants.STATUS_APPROVED, serviceContext);
 	}
 
+	// TODO Test add Fragment with valid config
+	// TODO Test add Fragment with no config
+	// TODO Test add Fragment with invalid config
+
+	// TODO Test update Fragment with valid config
+	// TODO Test update Fragment with no config
+	// TODO Test update Fragment with invalid config
+
 	@Test
 	public void testAddFragmentEntryWithFragmentEntryKey() throws Exception {
 		ServiceContext serviceContext =
@@ -1430,6 +1438,8 @@ public class FragmentEntryServiceTest {
 			fragmentEntry.getFragmentEntryId(), "Fragment Name Updated");
 	}
 
+	// TODO Configuration
+
 	@Test
 	public void testUpdateFragmentEntryValues() throws Exception {
 		ServiceContext serviceContext =
@@ -1608,6 +1618,10 @@ public class FragmentEntryServiceTest {
 			fragmentEntry.getHtml(), copyFragmentEntry.getHtml());
 
 		Assert.assertEquals(fragmentEntry.getJs(), copyFragmentEntry.getJs());
+
+		Assert.assertEquals(
+			fragmentEntry.getConfiguration(),
+			copyFragmentEntry.getConfiguration());
 
 		Assert.assertEquals(
 			fragmentEntry.getStatus(), copyFragmentEntry.getStatus());

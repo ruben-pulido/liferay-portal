@@ -343,7 +343,7 @@ public class FragmentEntryLinkLocalServiceTest {
 				fragmentCollection.getFragmentCollectionId(), null,
 				"Fragment Name", RandomTestUtil.randomString(),
 				"<div>test</div>", RandomTestUtil.randomString(),
-				"{fieldSets:[]}", 0, FragmentConstants.TYPE_SECTION,
+				_getConfiguration(1), 0, FragmentConstants.TYPE_SECTION,
 				WorkflowConstants.STATUS_APPROVED, serviceContext);
 
 		FragmentEntryLink fragmentEntryLink =
@@ -360,7 +360,7 @@ public class FragmentEntryLinkLocalServiceTest {
 			TestPropsValues.getUserId(), fragmentEntry.getFragmentEntryId(),
 			fragmentEntry.getName(), StringPool.BLANK,
 			StringUtil.randomString(), StringUtil.randomString(),
-			StringUtil.randomString(), fragmentEntry.getPreviewFileEntryId(),
+			_getConfiguration(2), fragmentEntry.getPreviewFileEntryId(),
 			WorkflowConstants.STATUS_APPROVED);
 
 		fragmentEntryLink = _fragmentEntryLinkLocalService.getFragmentEntryLink(
@@ -399,6 +399,7 @@ public class FragmentEntryLinkLocalServiceTest {
 				TestPropsValues.getUserId(), _group.getGroupId(),
 				fragmentCollection.getFragmentCollectionId(), "Fragment Name",
 				StringPool.BLANK, StringUtil.randomString(), StringPool.BLANK,
+				StringPool.BLANK, _getConfiguration(1), 0, 0,
 				WorkflowConstants.STATUS_APPROVED, serviceContext);
 
 		FragmentEntryLink fragmentEntryLink =
@@ -408,12 +409,13 @@ public class FragmentEntryLinkLocalServiceTest {
 				PortalUtil.getClassNameId(Layout.class),
 				RandomTestUtil.randomLong(), fragmentEntry.getCss(),
 				fragmentEntry.getHtml(), fragmentEntry.getJs(),
-				StringPool.BLANK, StringPool.BLANK, 0, null, serviceContext);
+				fragmentEntry.getConfiguration(), StringPool.BLANK, 0, null,
+				serviceContext);
 
 		String newCSS = StringUtil.randomString();
 		String newHTML = StringUtil.randomString();
 		String newJS = StringUtil.randomString();
-		String newConfiguration = StringUtil.randomString();
+		String newConfiguration = _getConfiguration(2);
 
 		_fragmentEntryLocalService.updateFragmentEntry(
 			TestPropsValues.getUserId(), fragmentEntry.getFragmentEntryId(),
@@ -429,6 +431,13 @@ public class FragmentEntryLinkLocalServiceTest {
 		Assert.assertEquals(newJS, fragmentEntryLink.getJs());
 		Assert.assertEquals(
 			newConfiguration, fragmentEntryLink.getConfiguration());
+	}
+
+	private String _getConfiguration(int value) {
+
+		// TODO
+
+		return null;
 	}
 
 	@Inject
