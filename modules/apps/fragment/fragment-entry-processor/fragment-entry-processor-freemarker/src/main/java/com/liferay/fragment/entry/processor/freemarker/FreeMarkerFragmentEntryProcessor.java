@@ -212,8 +212,9 @@ public class FreeMarkerFragmentEntryProcessor
 			fragmentEntryLink, html, defaultFragmentEntryProcessorContext);
 	}
 
-	@Override
-	public void validateFragmentEntryHTML(String html) throws PortalException {
+	public void validateFragmentEntryHTML(String html, String configuration)
+		throws PortalException {
+
 		FreeMarkerFragmentEntryProcessorConfiguration
 			freeMarkerFragmentEntryProcessorConfiguration =
 				_configurationProvider.getCompanyConfiguration(
@@ -244,6 +245,14 @@ public class FreeMarkerFragmentEntryProcessor
 				TemplateManager templateManager =
 					TemplateManagerUtil.getTemplateManager(
 						TemplateConstants.LANG_TYPE_FTL);
+
+				Map<String, Object> contextObjects = new HashMap<>();
+
+				contextObjects.put(
+					"configuration",
+					_getConfigurationDefaultValuesJSONObject(configuration));
+
+				templateManager.addContextObjects(template, contextObjects);
 
 				templateManager.addTaglibSupport(
 					template, httpServletRequest, httpServletResponse);

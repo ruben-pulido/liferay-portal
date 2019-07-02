@@ -144,7 +144,7 @@ public class PortletFragmentEntryProcessor implements FragmentEntryProcessor {
 			FragmentEntryProcessorContext fragmentEntryProcessorContext)
 		throws PortalException {
 
-		validateFragmentEntryHTML(html);
+		validateFragmentEntryHTML(html, StringPool.BLANK);
 
 		String widgetHTML = _renderWidgetHTML(
 			fragmentEntryLink.getEditableValues(),
@@ -239,7 +239,9 @@ public class PortletFragmentEntryProcessor implements FragmentEntryProcessor {
 	}
 
 	@Override
-	public void validateFragmentEntryHTML(String html) throws PortalException {
+	public void validateFragmentEntryHTML(String html, String configuration)
+		throws PortalException {
+
 		Document document = _getDocument(html);
 
 		for (Element element : document.select("*")) {
