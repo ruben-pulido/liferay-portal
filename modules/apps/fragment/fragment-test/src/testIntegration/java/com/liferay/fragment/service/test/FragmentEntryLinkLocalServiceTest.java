@@ -26,6 +26,8 @@ import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -36,6 +38,7 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -43,6 +46,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
+import com.liferay.segments.constants.SegmentsConstants;
 
 import java.util.Dictionary;
 import java.util.List;
@@ -337,13 +341,17 @@ public class FragmentEntryLinkLocalServiceTest {
 				TestPropsValues.getUserId(), _group.getGroupId(),
 				"Fragment Collection", StringPool.BLANK, serviceContext);
 
+		String configurationFieldValue = "light";
+
+		String configuration = _getConfiguration(configurationFieldValue);
+
 		FragmentEntry fragmentEntry =
 			_fragmentEntryLocalService.addFragmentEntry(
 				TestPropsValues.getUserId(), _group.getGroupId(),
 				fragmentCollection.getFragmentCollectionId(), null,
 				"Fragment Name", RandomTestUtil.randomString(),
-				"<div>test</div>", RandomTestUtil.randomString(),
-				"{fieldSets:[]}", 0, FragmentConstants.TYPE_SECTION,
+				"<div>test</div>", RandomTestUtil.randomString(), configuration,
+				0, FragmentConstants.TYPE_SECTION,
 				WorkflowConstants.STATUS_APPROVED, serviceContext);
 
 		FragmentEntryLink fragmentEntryLink =
@@ -360,11 +368,32 @@ public class FragmentEntryLinkLocalServiceTest {
 			TestPropsValues.getUserId(), fragmentEntry.getFragmentEntryId(),
 			fragmentEntry.getName(), StringPool.BLANK,
 			StringUtil.randomString(), StringUtil.randomString(),
-			StringUtil.randomString(), fragmentEntry.getPreviewFileEntryId(),
+			_getConfiguration("dark"), fragmentEntry.getPreviewFileEntryId(),
 			WorkflowConstants.STATUS_APPROVED);
 
 		fragmentEntryLink = _fragmentEntryLinkLocalService.getFragmentEntryLink(
 			fragmentEntryLink.getFragmentEntryLinkId());
+
+		String editableValues = fragmentEntryLink.getEditableValues();
+
+		JSONObject editableValuesJSONObject = JSONFactoryUtil.createJSONObject(
+			editableValues);
+
+		JSONObject freemarkerFragmentEntryProcessorJSONObject =
+			editableValuesJSONObject.getJSONObject(
+				"com.liferay.fragment.entry.processor.freemarker." +
+					"FreeMarkerFragmentEntryProcessor");
+
+		JSONObject configValuesJSONObject =
+			freemarkerFragmentEntryProcessorJSONObject.getJSONObject(
+				SegmentsConstants.SEGMENTS_EXPERIENCE_ID_PREFIX +
+					SegmentsConstants.SEGMENTS_EXPERIENCE_ID_DEFAULT);
+
+		JSONObject expectedConfigurationDefaultValuesJSONObject =
+			JSONFactoryUtil.createJSONObject(
+				_getFileContent(
+					"expected-configuration-default-values-" +
+						configurationFieldValue + ".json"));
 
 		Assert.assertEquals(
 			fragmentEntry.getHtml(), fragmentEntryLink.getHtml());
@@ -373,6 +402,12 @@ public class FragmentEntryLinkLocalServiceTest {
 		Assert.assertEquals(
 			fragmentEntry.getConfiguration(),
 			fragmentEntryLink.getConfiguration());
+
+		Assert.assertEquals(
+			configuration, fragmentEntryLink.getConfiguration());
+		Assert.assertEquals(
+			expectedConfigurationDefaultValuesJSONObject.toJSONString(),
+			configValuesJSONObject.toJSONString());
 	}
 
 	@Test
@@ -397,8 +432,9 @@ public class FragmentEntryLinkLocalServiceTest {
 		FragmentEntry fragmentEntry =
 			_fragmentEntryLocalService.addFragmentEntry(
 				TestPropsValues.getUserId(), _group.getGroupId(),
-				fragmentCollection.getFragmentCollectionId(), "Fragment Name",
-				StringPool.BLANK, StringUtil.randomString(), StringPool.BLANK,
+				fragmentCollection.getFragmentCollectionId(), null,
+				"Fragment Name", StringPool.BLANK, StringUtil.randomString(),
+				StringPool.BLANK, _getConfiguration("light"), 0, 0,
 				WorkflowConstants.STATUS_APPROVED, serviceContext);
 
 		FragmentEntryLink fragmentEntryLink =
@@ -408,12 +444,16 @@ public class FragmentEntryLinkLocalServiceTest {
 				PortalUtil.getClassNameId(Layout.class),
 				RandomTestUtil.randomLong(), fragmentEntry.getCss(),
 				fragmentEntry.getHtml(), fragmentEntry.getJs(),
-				StringPool.BLANK, StringPool.BLANK, 0, null, serviceContext);
+				fragmentEntry.getConfiguration(), StringPool.BLANK,
+				StringPool.BLANK, 0, null, serviceContext);
 
 		String newCSS = StringUtil.randomString();
 		String newHTML = StringUtil.randomString();
 		String newJS = StringUtil.randomString();
-		String newConfiguration = StringUtil.randomString();
+
+		String newConfigurationFieldValue = "dark";
+
+		String newConfiguration = _getConfiguration(newConfigurationFieldValue);
 
 		_fragmentEntryLocalService.updateFragmentEntry(
 			TestPropsValues.getUserId(), fragmentEntry.getFragmentEntryId(),
@@ -424,11 +464,44 @@ public class FragmentEntryLinkLocalServiceTest {
 		fragmentEntryLink = _fragmentEntryLinkLocalService.getFragmentEntryLink(
 			fragmentEntryLink.getFragmentEntryLinkId());
 
+		String editableValues = fragmentEntryLink.getEditableValues();
+
+		JSONObject editableValuesJSONObject = JSONFactoryUtil.createJSONObject(
+			editableValues);
+
+		JSONObject freemarkerFragmentEntryProcessorJSONObject =
+			editableValuesJSONObject.getJSONObject(
+				"com.liferay.fragment.entry.processor.freemarker." +
+					"FreeMarkerFragmentEntryProcessor");
+
+		JSONObject configValuesJSONObject =
+			freemarkerFragmentEntryProcessorJSONObject.getJSONObject(
+				SegmentsConstants.SEGMENTS_EXPERIENCE_ID_PREFIX +
+					SegmentsConstants.SEGMENTS_EXPERIENCE_ID_DEFAULT);
+
+		JSONObject expectedConfigurationDefaultValuesJSONObject =
+			JSONFactoryUtil.createJSONObject(
+				_getFileContent(
+					"expected-configuration-default-values-" +
+						newConfigurationFieldValue + ".json"));
+
 		Assert.assertEquals(newCSS, fragmentEntryLink.getCss());
 		Assert.assertEquals(newHTML, fragmentEntryLink.getHtml());
 		Assert.assertEquals(newJS, fragmentEntryLink.getJs());
 		Assert.assertEquals(
 			newConfiguration, fragmentEntryLink.getConfiguration());
+		Assert.assertEquals(
+			expectedConfigurationDefaultValuesJSONObject.toJSONString(),
+			configValuesJSONObject.toJSONString());
+	}
+
+	private String _getConfiguration(String value) throws Exception {
+		return _getFileContent("dependencies/configuration-" + value + ".json");
+	}
+
+	private String _getFileContent(String fileName) throws Exception {
+		return new String(
+			FileUtil.getBytes(getClass(), "dependencies/" + fileName));
 	}
 
 	@Inject
