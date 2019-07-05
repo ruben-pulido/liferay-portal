@@ -24,8 +24,10 @@ import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
@@ -46,6 +48,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
+import com.liferay.portal.util.FileImpl;
 import com.liferay.segments.constants.SegmentsConstants;
 
 import java.util.Dictionary;
@@ -54,6 +57,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -71,6 +75,15 @@ public class FragmentEntryLinkLocalServiceTest {
 		new AggregateTestRule(
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
+
+	@BeforeClass
+	public static void setUpClass() {
+		JSONFactoryUtil jsonFactoryUtil = new JSONFactoryUtil();
+
+		jsonFactoryUtil.setJSONFactory(new JSONFactoryImpl());
+
+		new FileUtil().setFile(new FileImpl());
+	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -466,18 +479,7 @@ public class FragmentEntryLinkLocalServiceTest {
 
 		String editableValues = fragmentEntryLink.getEditableValues();
 
-		JSONObject editableValuesJSONObject = JSONFactoryUtil.createJSONObject(
-			editableValues);
-
-		JSONObject freemarkerFragmentEntryProcessorJSONObject =
-			editableValuesJSONObject.getJSONObject(
-				"com.liferay.fragment.entry.processor.freemarker." +
-					"FreeMarkerFragmentEntryProcessor");
-
-		JSONObject configValuesJSONObject =
-			freemarkerFragmentEntryProcessorJSONObject.getJSONObject(
-				SegmentsConstants.SEGMENTS_EXPERIENCE_ID_PREFIX +
-					SegmentsConstants.SEGMENTS_EXPERIENCE_ID_DEFAULT);
+		String configurationValues = _getConfigurationValues(editableValues);
 
 		JSONObject expectedConfigurationDefaultValuesJSONObject =
 			JSONFactoryUtil.createJSONObject(
@@ -490,13 +492,32 @@ public class FragmentEntryLinkLocalServiceTest {
 		Assert.assertEquals(newJS, fragmentEntryLink.getJs());
 		Assert.assertEquals(
 			newConfiguration, fragmentEntryLink.getConfiguration());
+
 		Assert.assertEquals(
 			expectedConfigurationDefaultValuesJSONObject.toJSONString(),
-			configValuesJSONObject.toJSONString());
+			configurationValues);
+	}
+
+	private String _getConfigurationValues(String editableValues)
+		throws JSONException {
+		JSONObject editableValuesJSONObject = JSONFactoryUtil.createJSONObject(
+			editableValues);
+
+		JSONObject freemarkerFragmentEntryProcessorJSONObject =
+			editableValuesJSONObject.getJSONObject(
+				"com.liferay.fragment.entry.processor.freemarker." +
+					"FreeMarkerFragmentEntryProcessor");
+
+		JSONObject configurationValuesJSONObject =
+			freemarkerFragmentEntryProcessorJSONObject.getJSONObject(
+				SegmentsConstants.SEGMENTS_EXPERIENCE_ID_PREFIX +
+				SegmentsConstants.SEGMENTS_EXPERIENCE_ID_DEFAULT);
+
+		return configurationValuesJSONObject.toJSONString();
 	}
 
 	private String _getConfiguration(String value) throws Exception {
-		return _getFileContent("dependencies/configuration-" + value + ".json");
+		return _getFileContent("configuration-" + value + ".json");
 	}
 
 	private String _getFileContent(String fileName) throws Exception {
