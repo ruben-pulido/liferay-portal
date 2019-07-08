@@ -16,10 +16,13 @@ package com.liferay.fragment.model.impl;
 
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
+import com.liferay.fragment.util.FragmentEntryConfigUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 
 import java.util.Date;
 
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.Validator;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -37,6 +40,20 @@ public class FragmentEntryLinkImpl extends FragmentEntryLinkBaseImpl {
 		Date fragmentEntryModifiedDate = fragmentEntry.getModifiedDate();
 
 		return fragmentEntryModifiedDate.before(getLastPropagationDate());
+	}
+
+	@Override
+	public String getEditableValues(boolean includeDefault) {
+		JSONObject editableValuesJSONObject =
+			FragmentEntryConfigUtil.getEditableValuesJSONObject(
+				getConfiguration(), getEditableValues(), includeDefault);
+
+		if (Validator.isNull(editableValuesJSONObject)) {
+			return null;
+		}
+		else {
+			return editableValuesJSONObject.toJSONString();
+		}
 	}
 
 }
