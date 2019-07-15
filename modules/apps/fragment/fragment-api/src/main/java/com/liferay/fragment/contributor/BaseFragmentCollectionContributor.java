@@ -72,11 +72,15 @@ public abstract class BaseFragmentCollectionContributor
 
 		return stream.map(
 			fragmentEntry -> {
-				Map<Locale, String> names = _fragmentEntryNames.get(
-					fragmentEntry.getFragmentEntryKey());
+				Map<Locale, String> names = _fragmentEntryNames.getOrDefault(
+					fragmentEntry.getFragmentEntryKey(),
+					Collections.emptyMap());
 
 				fragmentEntry.setName(
-					names.getOrDefault(locale, names.get(_defaultLanguageId)));
+					names.getOrDefault(
+						locale,
+						names.getOrDefault(
+							_defaultLanguageId, fragmentEntry.getName())));
 
 				return fragmentEntry;
 			}
@@ -224,6 +228,8 @@ public abstract class BaseFragmentCollectionContributor
 					LocaleUtil.fromLanguageId(languageId),
 					namesJSONObject.getString(languageId));
 			}
+
+			_fragmentEntryNames.put(fragmentEntryKey, names);
 
 			name = names.get(LocaleUtil.fromLanguageId(_defaultLanguageId));
 		}
