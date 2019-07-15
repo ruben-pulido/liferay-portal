@@ -28,6 +28,8 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -38,6 +40,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -60,7 +63,18 @@ public abstract class BaseFragmentCollectionContributor
 
 	@Override
 	public String getName() {
-		return _name;
+		return _names.get(LocaleUtil.fromLanguageId(_defaultLanguageId));
+	}
+
+	@Override
+	public String getName(Locale locale) {
+		String name = _names.get(locale);
+
+		if (Validator.isNotNull(name)) {
+			return name;
+		}
+
+		return getName();
 	}
 
 	public abstract ServletContext getServletContext();
@@ -74,17 +88,17 @@ public abstract class BaseFragmentCollectionContributor
 
 	protected void readAndCheckFragmentCollectionStructure() {
 		try {
-			String name = _getContributedCollectionName();
+			Map<Locale, String> names = _getContributedCollectionNames();
 
 			Enumeration<URL> enumeration = _bundle.findEntries(
 				StringPool.BLANK,
 				FragmentExportImportConstants.FILE_NAME_FRAGMENT_CONFIG, true);
 
-			if (Validator.isNull(name) || !enumeration.hasMoreElements()) {
+			if (MapUtil.isEmpty(names) || !enumeration.hasMoreElements()) {
 				return;
 			}
 
-			_name = name;
+			_names = names;
 
 			while (enumeration.hasMoreElements()) {
 				URL url = enumeration.nextElement();
@@ -113,7 +127,9 @@ public abstract class BaseFragmentCollectionContributor
 	@Reference
 	protected FragmentEntryLocalService fragmentEntryLocalService;
 
-	private String _getContributedCollectionName() throws Exception {
+	private Map<Locale, String> _getContributedCollectionNames()
+		throws Exception {
+
 		Class<?> clazz = getClass();
 
 		String json = StreamUtil.toString(
@@ -123,7 +139,30 @@ public abstract class BaseFragmentCollectionContributor
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
 
-		return jsonObject.getString("name");
+		Map<Locale, String> names = new HashMap<>();
+
+		JSONObject namesJSONObject = jsonObject.getJSONObject("name");
+
+		_defaultLanguageId = jsonObject.getString(
+			FragmentExportImportConstants.DEFAULT_LANGUAGE_ID,
+			LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
+
+		if (namesJSONObject != null) {
+			for (String languageId : namesJSONObject.keySet()) {
+				names.put(
+					LocaleUtil.fromLanguageId(languageId),
+					namesJSONObject.getString(languageId));
+			}
+		}
+		else {
+			String name = jsonObject.getString("name");
+
+			if (Validator.isNotNull(name)) {
+				names.put(LocaleUtil.fromLanguageId(_defaultLanguageId), name);
+			}
+		}
+
+		return names;
 	}
 
 	private String _getFileContent(String path, String fileName)
@@ -211,8 +250,9 @@ public abstract class BaseFragmentCollectionContributor
 		BaseFragmentCollectionContributor.class);
 
 	private Bundle _bundle;
+	private String _defaultLanguageId;
 	private final Map<Integer, List<FragmentEntry>> _fragmentEntries =
 		new HashMap<>();
-	private String _name;
+	private Map<Locale, String> _names;
 
 }
