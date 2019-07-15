@@ -15,6 +15,7 @@
 package com.liferay.fragment.contributor;
 
 import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.fragment.model.FragmentEntry;
 
 import java.util.List;
@@ -29,6 +30,12 @@ public interface FragmentCollectionContributor {
 	public String getFragmentCollectionKey();
 
 	public List<FragmentEntry> getFragmentEntries(int type);
+
+	public default List<FragmentEntry> getFragmentEntries(
+		int type, Locale locale) {
+
+		return getFragmentEntries(type);
+	}
 
 	public String getName();
 

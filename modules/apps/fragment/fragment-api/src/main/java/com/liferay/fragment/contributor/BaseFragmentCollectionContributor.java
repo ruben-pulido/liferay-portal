@@ -42,6 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletContext;
 
@@ -59,6 +61,28 @@ public abstract class BaseFragmentCollectionContributor
 	@Override
 	public List<FragmentEntry> getFragmentEntries(int type) {
 		return _fragmentEntries.getOrDefault(type, Collections.emptyList());
+	}
+
+	@Override
+	public List<FragmentEntry> getFragmentEntries(int type, Locale locale) {
+		List<FragmentEntry> fragmentEntries = _fragmentEntries.getOrDefault(
+			type, Collections.emptyList());
+
+		Stream<FragmentEntry> stream = fragmentEntries.stream();
+
+		return stream.map(
+			fragmentEntry -> {
+				Map<Locale, String> names = _fragmentEntryNames.get(
+					fragmentEntry.getFragmentEntryKey());
+
+				fragmentEntry.setName(
+					names.getOrDefault(locale, names.get(_defaultLanguageId)));
+
+				return fragmentEntry;
+			}
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	@Override
@@ -183,10 +207,33 @@ public abstract class BaseFragmentCollectionContributor
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			StreamUtil.toString(url.openStream()));
 
-		String name = jsonObject.getString("name");
+		JSONObject namesJSONObject = jsonObject.getJSONObject("name");
+
+		String name = StringPool.BLANK;
+
 		String fragmentEntryKey = StringBundler.concat(
 			getFragmentCollectionKey(), StringPool.DASH,
 			jsonObject.getString("fragmentEntryKey"));
+
+		Map<Locale, String> names = _fragmentEntryNames.getOrDefault(
+			fragmentEntryKey, new HashMap<>());
+
+		if (namesJSONObject != null) {
+			for (String languageId : namesJSONObject.keySet()) {
+				names.put(
+					LocaleUtil.fromLanguageId(languageId),
+					namesJSONObject.getString(languageId));
+			}
+
+			name = names.get(LocaleUtil.fromLanguageId(_defaultLanguageId));
+		}
+		else {
+			name = jsonObject.getString("name");
+
+			if (Validator.isNotNull(name)) {
+				names.put(LocaleUtil.fromLanguageId(_defaultLanguageId), name);
+			}
+		}
 
 		String path = FileUtil.getPath(url.getPath());
 
@@ -252,6 +299,8 @@ public abstract class BaseFragmentCollectionContributor
 	private Bundle _bundle;
 	private String _defaultLanguageId;
 	private final Map<Integer, List<FragmentEntry>> _fragmentEntries =
+		new HashMap<>();
+	private final Map<String, Map<Locale, String>> _fragmentEntryNames =
 		new HashMap<>();
 	private Map<Locale, String> _names;
 
