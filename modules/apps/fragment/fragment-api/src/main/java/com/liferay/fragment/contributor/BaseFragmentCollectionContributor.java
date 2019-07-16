@@ -25,11 +25,14 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.liferay.portal.kernel.util.ResourceBundleLoaderUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -42,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -103,6 +107,10 @@ public abstract class BaseFragmentCollectionContributor
 		}
 
 		return getName();
+	}
+
+	public ResourceBundleLoader getResourceBundleLoader() {
+		return ResourceBundleLoaderUtil.getPortalResourceBundleLoader();
 	}
 
 	public abstract ServletContext getServletContext();
@@ -175,18 +183,32 @@ public abstract class BaseFragmentCollectionContributor
 			FragmentExportImportConstants.DEFAULT_LANGUAGE_ID,
 			LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
 
+		ResourceBundleLoader resourceBundleLoader = getResourceBundleLoader();
+
 		if (namesJSONObject != null) {
 			for (String languageId : namesJSONObject.keySet()) {
+				ResourceBundle resourceBundle =
+					resourceBundleLoader.loadResourceBundle(
+						LocaleUtil.fromLanguageId(languageId));
+
 				names.put(
 					LocaleUtil.fromLanguageId(languageId),
-					namesJSONObject.getString(languageId));
+					LanguageUtil.get(
+						resourceBundle, namesJSONObject.getString(languageId),
+						namesJSONObject.getString(languageId)));
 			}
 		}
 		else {
 			String name = jsonObject.getString("name");
 
+			ResourceBundle resourceBundle =
+				resourceBundleLoader.loadResourceBundle(
+					LocaleUtil.fromLanguageId(_defaultLanguageId));
+
 			if (Validator.isNotNull(name)) {
-				names.put(LocaleUtil.fromLanguageId(_defaultLanguageId), name);
+				names.put(
+					LocaleUtil.fromLanguageId(_defaultLanguageId),
+					LanguageUtil.get(resourceBundle, name, name));
 			}
 		}
 
@@ -222,11 +244,19 @@ public abstract class BaseFragmentCollectionContributor
 		Map<Locale, String> names = _fragmentEntryNames.getOrDefault(
 			fragmentEntryKey, new HashMap<>());
 
+		ResourceBundleLoader resourceBundleLoader = getResourceBundleLoader();
+
 		if (namesJSONObject != null) {
 			for (String languageId : namesJSONObject.keySet()) {
+				ResourceBundle resourceBundle =
+					resourceBundleLoader.loadResourceBundle(
+						LocaleUtil.fromLanguageId(languageId));
+
 				names.put(
 					LocaleUtil.fromLanguageId(languageId),
-					namesJSONObject.getString(languageId));
+					LanguageUtil.get(
+						resourceBundle, namesJSONObject.getString(languageId),
+						namesJSONObject.getString(languageId)));
 			}
 
 			_fragmentEntryNames.put(fragmentEntryKey, names);
@@ -237,7 +267,13 @@ public abstract class BaseFragmentCollectionContributor
 			name = jsonObject.getString("name");
 
 			if (Validator.isNotNull(name)) {
-				names.put(LocaleUtil.fromLanguageId(_defaultLanguageId), name);
+				ResourceBundle resourceBundle =
+					resourceBundleLoader.loadResourceBundle(
+						LocaleUtil.fromLanguageId(_defaultLanguageId));
+
+				names.put(
+					LocaleUtil.fromLanguageId(_defaultLanguageId),
+					LanguageUtil.get(resourceBundle, name, name));
 			}
 		}
 
