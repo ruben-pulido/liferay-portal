@@ -1,0 +1,10 @@
+{
+	"configurationPath": "index.json",
+	"cssPath": "index.css",
+	"fragmentEntryKey": "configurable-2",
+	"htmlPath": "index.html",
+	"jsPath": "index.js",
+	"name": "Configurable 2c",
+	"thumbnail": "h2.png",
+	"type": "component"
+}
