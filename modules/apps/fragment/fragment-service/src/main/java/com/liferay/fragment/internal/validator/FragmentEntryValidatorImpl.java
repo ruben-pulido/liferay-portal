@@ -38,7 +38,7 @@ public class FragmentEntryValidatorImpl implements FragmentEntryValidator {
 	public void validateConfiguration(String configuration)
 		throws FragmentEntryConfigurationException {
 
-		if (Validator.isNull(configuration)) {
+		/*if (Validator.isNull(configuration)) {
 			return;
 		}
 
@@ -56,7 +56,7 @@ public class FragmentEntryValidatorImpl implements FragmentEntryValidator {
 		}
 		catch (Exception e) {
 			throw new FragmentEntryConfigurationException(e);
-		}
+		}*/
 	}
 
 }
