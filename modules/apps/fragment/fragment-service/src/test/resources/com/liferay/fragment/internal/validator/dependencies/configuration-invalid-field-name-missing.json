@@ -10,8 +10,12 @@
 					"type": "select",
 					"typeOptions": {
 						"validValues": [
-							"dark",
-							"light"
+							{
+								"value": "dark"
+							},
+							{
+								"value": "light"
+							}
 						]
 					}
 				}
