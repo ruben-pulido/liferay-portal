@@ -26,8 +26,21 @@
 												"properties": {
 													"validValues": {
 														"items": {
-															"title": "The Items Schema",
-															"type": "string"
+															"additionalProperties": false,
+															"properties": {
+																"label": {
+																	"title": "The Label Schema",
+																	"type": "string"
+																},
+																"value": {
+																	"title": "The Value Schema",
+																	"type": "string"
+																}
+															},
+															"required": [
+																"value"
+															],
+															"title": "The Validvalue Schema"
 														},
 														"minItems": 1,
 														"title": "The Validvalues Schema",

@@ -15,6 +15,7 @@
 								"value": "dark"
 							},
 							{
+								"label": "light-name",
 								"value": "light"
 							}
 						]
@@ -38,6 +39,7 @@
 								"value": "dark"
 							},
 							{
+								"label": "light-name",
 								"value": "light"
 							}
 						]
