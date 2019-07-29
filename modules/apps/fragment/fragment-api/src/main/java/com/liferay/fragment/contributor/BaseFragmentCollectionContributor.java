@@ -139,6 +139,7 @@ public abstract class BaseFragmentCollectionContributor
 	@Activate
 	protected void activate(BundleContext bundleContext) {
 		_bundle = bundleContext.getBundle();
+		_initialized = false;
 	}
 
 	protected void readAndCheckFragmentCollectionStructure() {
