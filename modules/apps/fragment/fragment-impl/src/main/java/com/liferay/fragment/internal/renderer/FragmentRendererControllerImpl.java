@@ -26,6 +26,7 @@ import com.liferay.fragment.renderer.constants.FragmentRendererConstants;
 import com.liferay.fragment.validator.FragmentEntryValidator;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
@@ -72,15 +73,20 @@ public class FragmentRendererControllerImpl
 			fragmentRendererContext.getFragmentEntryLink());
 
 		try {
+			String configuration = fragmentRenderer.getConfiguration(
+				fragmentRendererContext);
+
+			_fragmentEntryValidator.validateConfiguration(configuration);
+
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-				fragmentRenderer.getConfiguration(fragmentRendererContext));
+				configuration);
 
 			return _translateConfigurationFields(
 				jsonObject, fragmentRendererContext.getLocale());
 		}
-		catch (JSONException jsone) {
+		catch (PortalException pe) {
 			_log.error(
-				"Unable to parse fragment entry link configuration", jsone);
+				"Invalid fragment entry link configuration", pe);
 		}
 
 		return StringPool.BLANK;
@@ -293,6 +299,9 @@ public class FragmentRendererControllerImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		FragmentRendererControllerImpl.class);
+
+	@Reference
+	private FragmentEntryValidator _fragmentEntryValidator;
 
 	@Reference
 	private FragmentCollectionContributorTracker
