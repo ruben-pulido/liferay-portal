@@ -1307,6 +1307,31 @@ public class ContentPageEditorDisplayContext {
 			}
 		}
 
+		JSONObject layoutDataJSONObject = JSONFactoryUtil.createJSONObject(
+			_getLayoutData());
+
+		JSONArray structureJSONArray = layoutDataJSONObject.getJSONArray(
+			"structure");
+
+		Iterator<JSONObject> iteratorStructure = structureJSONArray.iterator();
+
+		iteratorStructure.forEachRemaining(
+			structureJSONObject -> {
+				JSONObject configJSONObject = structureJSONObject.getJSONObject(
+					"config");
+
+				if (configJSONObject != null) {
+					SoyContext mappedAssetEntrySoyContext =
+						_getMappedAssetEntrySoyContexts(
+							configJSONObject, mappedClassPKs);
+
+					if (mappedAssetEntrySoyContext != null) {
+						mappedAssetEntriesSoyContexts.add(
+							mappedAssetEntrySoyContext);
+					}
+				}
+			});
+
 		return mappedAssetEntriesSoyContexts;
 	}
 
