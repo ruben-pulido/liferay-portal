@@ -32,6 +32,8 @@ JSONArray structureJSONArray = (JSONArray)request.getAttribute("liferay-layout:r
 		try {
 			request.setAttribute(WebKeys.PORTLET_DECORATE, Boolean.FALSE);
 
+			InfoDisplayContributorTracker infoDisplayContributorTracker = (InfoDisplayContributorTracker)request.getAttribute(InfoDisplayWebKeys.INFO_DISPLAY_CONTRIBUTOR_TRACKER);
+
 			for (int i = 0; i < structureJSONArray.length(); i++) {
 				JSONObject rowJSONObject = structureJSONArray.getJSONObject(i);
 
@@ -50,6 +52,27 @@ JSONArray structureJSONArray = (JSONArray)request.getAttribute("liferay-layout:r
 					if (rowConfigJSONObject != null) {
 						backgroundColorCssClass = rowConfigJSONObject.getString("backgroundColorCssClass");
 						backgroundImage = rowConfigJSONObject.getString("backgroundImage");
+
+						long classNameId = rowConfigJSONObject.getLong("classNameId");
+						long classPK = rowConfigJSONObject.getLong("classPK");
+						String fieldId = rowConfigJSONObject.getString("fieldId");
+
+						if ((classNameId != 0L) && (classPK != 0L) && (fieldId != null)) {
+							InfoDisplayContributor infoDisplayContributor = infoDisplayContributorTracker.getInfoDisplayContributor(PortalUtil.getClassName(classNameId));
+
+							if (infoDisplayContributor != null) {
+								InfoDisplayObjectProvider infoDisplayObjectProvider = infoDisplayContributor.getInfoDisplayObjectProvider(classPK);
+
+								if (infoDisplayObjectProvider != null) {
+									Object object = infoDisplayObjectProvider.getDisplayObject();
+
+									JSONObject fieldValueJSONObject = (JSONObject)infoDisplayContributor.getInfoDisplayFieldValue(object, fieldId, LocaleUtil.getDefault());
+
+									backgroundImage = fieldValueJSONObject.getString("url");
+								}
+							}
+						}
+
 						columnSpacing = GetterUtil.getBoolean(rowConfigJSONObject.getString("columnSpacing"), true);
 						containerType = rowConfigJSONObject.getString("containerType");
 						paddingHorizontal = GetterUtil.getLong(rowConfigJSONObject.getString("paddingHorizontal"), paddingHorizontal);

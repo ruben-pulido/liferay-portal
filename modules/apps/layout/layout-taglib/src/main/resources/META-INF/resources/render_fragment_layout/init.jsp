@@ -22,8 +22,14 @@ page import="com.liferay.fragment.model.FragmentEntryLink" %><%@
 page import="com.liferay.fragment.renderer.DefaultFragmentRendererContext" %><%@
 page import="com.liferay.fragment.renderer.FragmentRendererController" %><%@
 page import="com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil" %><%@
+page import="com.liferay.info.constants.InfoDisplayWebKeys" %><%@
+page import="com.liferay.info.display.contributor.InfoDisplayContributor" %><%@
+page import="com.liferay.info.display.contributor.InfoDisplayContributorTracker" %><%@
+page import="com.liferay.info.display.contributor.InfoDisplayObjectProvider" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.json.JSONObject" %><%@
+page import="com.liferay.portal.kernel.util.LocaleUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %>
 
 <%@ page import="java.util.Map" %><%@
