@@ -21,6 +21,7 @@ Map<String, Object> fieldValues = (Map<String, Object>)request.getAttribute("lif
 String mode = (String)request.getAttribute("liferay-layout:render-fragment-layout:mode");
 long previewClassPK = (long)request.getAttribute("liferay-layout:render-fragment-layout:previewClassPK");
 int previewType = (int)request.getAttribute("liferay-layout:render-fragment-layout:previewType");
+RenderFragmentLayoutDisplayContext renderFragmentLayoutDisplayContext = new RenderFragmentLayoutDisplayContext(request);
 long[] segmentsExperienceIds = (long[])request.getAttribute("liferay-layout:render-fragment-layout:segmentsExperienceIds");
 JSONArray structureJSONArray = (JSONArray)request.getAttribute("liferay-layout:render-fragment-layout:structureJSONArray");
 %>
@@ -31,8 +32,6 @@ JSONArray structureJSONArray = (JSONArray)request.getAttribute("liferay-layout:r
 		<%
 		try {
 			request.setAttribute(WebKeys.PORTLET_DECORATE, Boolean.FALSE);
-
-			InfoDisplayContributorTracker infoDisplayContributorTracker = (InfoDisplayContributorTracker)request.getAttribute(InfoDisplayWebKeys.INFO_DISPLAY_CONTRIBUTOR_TRACKER);
 
 			for (int i = 0; i < structureJSONArray.length(); i++) {
 				JSONObject rowJSONObject = structureJSONArray.getJSONObject(i);
@@ -51,28 +50,7 @@ JSONArray structureJSONArray = (JSONArray)request.getAttribute("liferay-layout:r
 
 					if (rowConfigJSONObject != null) {
 						backgroundColorCssClass = rowConfigJSONObject.getString("backgroundColorCssClass");
-						backgroundImage = rowConfigJSONObject.getString("backgroundImage");
-
-						long classNameId = rowConfigJSONObject.getLong("classNameId");
-						long classPK = rowConfigJSONObject.getLong("classPK");
-						String fieldId = rowConfigJSONObject.getString("fieldId");
-
-						if ((classNameId != 0L) && (classPK != 0L) && (fieldId != null)) {
-							InfoDisplayContributor infoDisplayContributor = infoDisplayContributorTracker.getInfoDisplayContributor(PortalUtil.getClassName(classNameId));
-
-							if (infoDisplayContributor != null) {
-								InfoDisplayObjectProvider infoDisplayObjectProvider = infoDisplayContributor.getInfoDisplayObjectProvider(classPK);
-
-								if (infoDisplayObjectProvider != null) {
-									Object object = infoDisplayObjectProvider.getDisplayObject();
-
-									JSONObject fieldValueJSONObject = (JSONObject)infoDisplayContributor.getInfoDisplayFieldValue(object, fieldId, LocaleUtil.getDefault());
-
-									backgroundImage = fieldValueJSONObject.getString("url");
-								}
-							}
-						}
-
+						backgroundImage = renderFragmentLayoutDisplayContext.getBackgroundImage(rowConfigJSONObject);
 						columnSpacing = GetterUtil.getBoolean(rowConfigJSONObject.getString("columnSpacing"), true);
 						containerType = rowConfigJSONObject.getString("containerType");
 						paddingHorizontal = GetterUtil.getLong(rowConfigJSONObject.getString("paddingHorizontal"), paddingHorizontal);
