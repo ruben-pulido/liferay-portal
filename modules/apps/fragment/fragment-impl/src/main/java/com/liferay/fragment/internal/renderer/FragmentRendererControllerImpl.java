@@ -217,7 +217,9 @@ public class FragmentRendererControllerImpl
 
 		JSONArray fieldSetsJSONArray = jsonObject.getJSONArray("fieldSets");
 
-		if (fieldSetsJSONArray == null) {
+		if ((fieldSetsJSONArray == null) ||
+			(fieldSetsJSONArray.length() == 0)) {
+
 			return StringPool.BLANK;
 		}
 
