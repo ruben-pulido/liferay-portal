@@ -26,6 +26,8 @@ import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.layout.content.page.editor.web.internal.portlet.action.test.util.MockLiferayPortletRequest;
 import com.liferay.layout.content.page.editor.web.internal.portlet.action.test.util.TestFragmentRenderer;
+import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -55,6 +57,7 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 import com.liferay.registry.ServiceRegistration;
+import com.liferay.segments.constants.SegmentsExperienceConstants;
 
 import java.util.List;
 
@@ -233,6 +236,39 @@ public class AddFragmentEntryLinkMVCActionCommandTest {
 			new Class<?>[] {ActionRequest.class}, actionRequest);
 	}
 
+	@Test
+	public void testUpdateLayoutPageTemplateStructure() throws Exception {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext();
+
+		long classNameId = PortalUtil.getClassNameId(Layout.class.getName());
+		long classPK = _layout.getPlid();
+
+		_layoutPageTemplateStructureLocalService.addLayoutPageTemplateStructure(
+			TestPropsValues.getUserId(), _group.getGroupId(), classNameId,
+			classPK, null, serviceContext);
+
+		String originalData = RandomTestUtil.randomString();
+
+		MockLiferayPortletRequest actionRequest = _getMockActionRequest();
+
+		actionRequest.addParameter("data", originalData);
+
+		ReflectionTestUtil.invoke(
+			_mvcActionCommand, "updateLayoutPageTemplateStructure",
+			new Class<?>[] {ActionRequest.class}, actionRequest);
+
+		LayoutPageTemplateStructure persistedLayoutPageTemplateStructure =
+			_layoutPageTemplateStructureLocalService.
+				fetchLayoutPageTemplateStructure(
+					_group.getGroupId(), classNameId, classPK);
+
+		String persistedData = persistedLayoutPageTemplateStructure.getData(
+			SegmentsExperienceConstants.ID_DEFAULT);
+
+		Assert.assertEquals(originalData, persistedData);
+	}
+
 	private FragmentEntry _getFragmentEntry() throws PortalException {
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext();
@@ -304,6 +340,10 @@ public class AddFragmentEntryLinkMVCActionCommandTest {
 	private Group _group;
 
 	private Layout _layout;
+
+	@Inject
+	private LayoutPageTemplateStructureLocalService
+		_layoutPageTemplateStructureLocalService;
 
 	@Inject(filter = "mvc.command.name=/content_layout/add_fragment_entry_link")
 	private MVCActionCommand _mvcActionCommand;
