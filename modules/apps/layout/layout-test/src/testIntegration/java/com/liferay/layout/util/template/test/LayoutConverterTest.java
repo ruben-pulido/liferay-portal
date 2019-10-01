@@ -18,6 +18,9 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.layout.util.template.LayoutConverter;
 import com.liferay.layout.util.template.LayoutConverterRegistry;
+import com.liferay.layout.util.template.LayoutData;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
@@ -53,6 +56,33 @@ public class LayoutConverterTest {
 	@Before
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
+	}
+
+	@Test
+	public void testConvertOneColumnEmpty() throws Exception {
+		UnicodeProperties typeSettingsProperties = new UnicodeProperties();
+
+		typeSettingsProperties.setProperty(
+			LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID, "1_column");
+
+		Layout layout = LayoutTestUtil.addLayout(
+			_group.getGroupId(), typeSettingsProperties.toString());
+
+		LayoutConverter layoutConverter =
+			_layoutConverterRegistry.getLayoutConverter(
+				_getLayoutTemplateId(layout));
+
+		LayoutData layoutData = layoutConverter.convert(layout);
+
+		JSONObject layoutDataJSONObject = layoutData.getLayoutDataJSONObject();
+
+		JSONObject expectedLayoutDataJSONObject =
+			JSONFactoryUtil.createJSONObject(
+				_read("expected_layout_data_1column_empty.json"));
+
+		Assert.assertEquals(
+			expectedLayoutDataJSONObject.toJSONString(),
+			layoutDataJSONObject.toJSONString());
 	}
 
 	@Test
