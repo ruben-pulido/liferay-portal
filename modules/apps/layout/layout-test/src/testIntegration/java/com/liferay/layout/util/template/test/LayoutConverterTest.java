@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -82,29 +83,32 @@ public class LayoutConverterTest {
 	public void setUp() throws Exception {
 		ServiceTestUtil.setUser(TestPropsValues.getUser());
 
-		_company = CompanyTestUtil.addCompany();
+//		_company = CompanyTestUtil.addCompany();
 
-		_user = UserTestUtil.addCompanyAdminUser(_company);
+//		_user = UserTestUtil.addCompanyAdminUser(_company);
 
-		_group = GroupTestUtil.addGroup(
-			_company.getCompanyId(), _user.getUserId(),
-			GroupConstants.DEFAULT_PARENT_GROUP_ID);
-//		_group = GroupTestUtil.addGroup();
+//		_group = GroupTestUtil.addGroup(
+//			_company.getCompanyId(), _user.getUserId(),
+//			GroupConstants.DEFAULT_PARENT_GROUP_ID);
+		_group = GroupTestUtil.addGroup();
 
 		_serviceContext = ServiceContextTestUtil.getServiceContext(
-			_group, _user.getUserId());
+			_group,
+			TestPropsValues.getUserId()
+//			_user.getUserId()
+		);
 
-		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
+//		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
 	}
 
-	@After
-	public void tearDown() throws Exception {
+//	@After
+//	public void tearDown() throws Exception {
 //		GroupLocalServiceUtil.deleteGroup(_group);
 
 //		CompanyLocalServiceUtil.deleteCompany(_company);
 
-		ServiceContextThreadLocal.popServiceContext();
-	}
+//		ServiceContextThreadLocal.popServiceContext();
+//	}
 
 	@Test
 	public void testConvertOneColumn() throws Exception {
@@ -126,7 +130,9 @@ public class LayoutConverterTest {
 //		preferenceMap.put("assetLinkBehavior", new String[] {"viewInPortlet"});
 
 		LayoutTestUtil.addPortletToLayout(
-			_user.getUserId(), layout, portletId, "column-1",
+//			_user.getUserId(),
+			TestPropsValues.getUserId(),
+			layout, portletId, "column-1",
 			preferenceMap);
 
 		LayoutConverter layoutConverter =
@@ -135,16 +141,17 @@ public class LayoutConverterTest {
 
 		LayoutData layoutData = layoutConverter.convert(layout);
 
-		List<Layout> layouts = _layoutService.getLayouts(
-			_group.getGroupId(), false, LayoutConstants.TYPE_CONTENT);
-
-		Layout contentLayout = layouts.get(0);
+//		List<Layout> layouts = _layoutService.getLayouts(
+//			_group.getGroupId(), false, LayoutConstants.TYPE_CONTENT);
+//
+//		Layout contentLayout = layouts.get(0);
 
 		List<FragmentEntryLink> fragmentEntryLinks =
 			_fragmentEntryLinkLocalService.getFragmentEntryLinks(
 				_group.getGroupId(),
-				PortalUtil.getClassNameId(Layout.class.getName()),
-				contentLayout.getPlid());
+				_portal.getClassNameId(Layout.class.getName()),
+				layout.getPlid());
+//				contentLayout.getPlid());
 
 		FragmentEntryLink fragmentEntryLink = fragmentEntryLinks.get(0);
 
@@ -263,15 +270,18 @@ public class LayoutConverterTest {
 	@Inject
 	private LayoutConverterRegistry _layoutConverterRegistry;
 
-	@Inject
-	private LayoutService _layoutService;
+//	@Inject
+//	private LayoutService _layoutService;
 
 	@Inject
 	FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
 
-	private Company _company;
+	@Inject
+	private Portal _portal;
+
+//	private Company _company;
 	private ServiceContext _serviceContext;
-	private User _user;
+//	private User _user;
 
 
 }
