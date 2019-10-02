@@ -46,6 +46,8 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -86,25 +88,80 @@ public class LayoutConverterTest {
 
 	@Test
 	public void testConvertOneColumnMultiplePortlets() throws Exception {
-		_testConvertOneColumn(
-			new String[] {
+		Map portletIdsMap = new HashMap();
+
+		portletIdsMap.put(
+			"column-1",
+			new String[]{
 				"com_liferay_hello_velocity_web_portlet_HelloVelocityPortlet",
 				"com_liferay_hello_world_web_portlet_HelloWorldPortlet",
 				"hello_soy_portlet"
 			});
+
+		_testConvert("1_column", portletIdsMap);
 	}
 
 	@Test
 	public void testConvertOneColumnNoPortlets() throws Exception {
-		_testConvertOneColumn(new String[0]);
+		_testConvert("1_column", new HashMap());
+	}
+
+	@Test
+	public void testConvertTwoColumnsINoPortlets() throws Exception {
+		_testConvert("2_columns_i", new HashMap());
+	}
+
+	@Test
+	public void testConvertTwoColumnsIMultiplePortlets() throws Exception {
+		Map portletIdsMap = new HashMap();
+
+		portletIdsMap.put(
+			"column-1",
+			new String[]{
+				"com_liferay_hello_velocity_web_portlet_HelloVelocityPortlet",
+				"com_liferay_chart_sample_web_portlet_ChartSamplePortlet"
+			});
+
+		portletIdsMap.put(
+			"column-2",
+			new String[]{
+				"com_liferay_hello_world_web_portlet_HelloWorldPortlet",
+				"hello_soy_portlet"
+			});
+
+		_testConvert("2_columns_i", portletIdsMap);
+	}
+
+	@Test
+	public void testConvertTwoColumnsISinglePortlet() throws Exception {
+		Map portletIdsMap = new HashMap();
+
+		portletIdsMap.put(
+			"column-1",
+			new String[]{
+				"com_liferay_hello_velocity_web_portlet_HelloVelocityPortlet"
+			});
+
+		portletIdsMap.put(
+			"column-2",
+			new String[]{
+				"com_liferay_hello_world_web_portlet_HelloWorldPortlet"
+			});
+
+		_testConvert("2_columns_i", portletIdsMap);
 	}
 
 	@Test
 	public void testConvertOneColumnSinglePortlet() throws Exception {
-		_testConvertOneColumn(
-			new String[] {
+		Map portletIdsMap = new HashMap();
+
+		portletIdsMap.put(
+			"column-1",
+			new String[]{
 				"com_liferay_hello_world_web_portlet_HelloWorldPortlet"
 			});
+
+		_testConvert("1_column", portletIdsMap);
 	}
 
 	@Test
@@ -169,19 +226,27 @@ public class LayoutConverterTest {
 			FileUtil.getBytes(getClass(), "dependencies/" + fileName));
 	}
 
-	private void _testConvertOneColumn(String[] portletIds) throws Exception {
+	private void _testConvert(
+		String layoutTemplateId, Map<String, String[]> portletIdsMap)
+		throws Exception {
 		UnicodeProperties typeSettingsProperties = new UnicodeProperties();
 
 		typeSettingsProperties.setProperty(
-			LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID, "1_column");
+			LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID, layoutTemplateId);
 
 		Layout layout = LayoutTestUtil.addLayout(
 			_group.getGroupId(), typeSettingsProperties.toString());
 
-		for (String portletId : portletIds) {
-			LayoutTestUtil.addPortletToLayout(
-				TestPropsValues.getUserId(), layout,
-				PortletIdCodec.encode(portletId), "column-1", new HashMap<>());
+		Set<Map.Entry<String, String[]>> entries = portletIdsMap.entrySet();
+
+		for(Map.Entry<String, String[]> entry : entries) {
+
+			for (String portletId : entry.getValue()) {
+				LayoutTestUtil.addPortletToLayout(
+					TestPropsValues.getUserId(), layout,
+					PortletIdCodec.encode(
+						portletId), entry.getKey(), new HashMap<>());
+			}
 		}
 
 		LayoutConverter layoutConverter =
@@ -190,29 +255,45 @@ public class LayoutConverterTest {
 
 		LayoutData layoutData = layoutConverter.convert(layout);
 
+		JSONObject layoutDataJSONObject = layoutData.getLayoutDataJSONObject();
+
+		String expectedLayoutData = _read(
+			String.format("expected_layout_data_%s.json", layoutTemplateId));
+
 		List<FragmentEntryLink> fragmentEntryLinks =
 			_fragmentEntryLinkLocalService.getFragmentEntryLinks(
 				_group.getGroupId(),
 				_portal.getClassNameId(Layout.class.getName()),
 				layout.getPlid());
 
-		Stream<FragmentEntryLink> stream = fragmentEntryLinks.stream();
+		int fromIndex = 0;
 
-		String fragmentEntryLinkIdsJoined = stream.map(
-			fragmentEntryLink -> String.format(
-				"\"%s\"", fragmentEntryLink.getFragmentEntryLinkId())
-		).collect(
-			Collectors.joining(StringPool.COMMA_AND_SPACE)
-		);
+		for(Map.Entry<String, String[]> entry : entries) {
 
-		JSONObject layoutDataJSONObject = layoutData.getLayoutDataJSONObject();
+			String[] portletIds = entry.getValue();
 
-		String expectedLayoutData = _read(
-			"expected_layout_data_1column_empty.json");
+			int numberOfPortletsInColumn = portletIds.length;
 
-		expectedLayoutData = StringUtil.replace(
-			expectedLayoutData, "[]",
-			String.format("[%s]", fragmentEntryLinkIdsJoined));
+			List<FragmentEntryLink> fragmentEntryLinksInColumn =
+				fragmentEntryLinks.subList(
+					fromIndex, fromIndex + numberOfPortletsInColumn);
+
+			fromIndex = fromIndex + numberOfPortletsInColumn;
+
+			Stream<FragmentEntryLink> stream =
+				fragmentEntryLinksInColumn.stream();
+
+			String fragmentEntryLinkIdsJoined = stream.map(
+				fragmentEntryLink -> String.format(
+					"\"%s\"", fragmentEntryLink.getFragmentEntryLinkId())
+			).collect(
+				Collectors.joining(StringPool.COMMA_AND_SPACE)
+			);
+
+			expectedLayoutData = StringUtil.replaceFirst(
+				expectedLayoutData, "[]",
+				String.format("[%s]", fragmentEntryLinkIdsJoined));
+		}
 
 		JSONObject expectedLayoutDataJSONObject =
 			JSONFactoryUtil.createJSONObject(expectedLayoutData);
