@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.layout.admin.web.internal.configuration;
+package com.liferay.layout.page.template.admin.web.internal.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
@@ -23,11 +23,11 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
  */
 @ExtendedObjectClassDefinition(category = "pages")
 @Meta.OCD(
-	id = "com.liferay.layout.admin.web.internal.configuration.LayoutAdminWebConfiguration",
+	id = "com.liferay.layout.page.template.admin.web.internal.configuration.LayoutPageTemplateAdminWebConfiguration",
 	localization = "content/Language",
-	name = "layout-admin-web-configuration-name"
+	name = "layout-page-template-admin-web-configuration-name"
 )
-public interface LayoutAdminWebConfiguration {
+public interface LayoutPageTemplateAdminWebConfiguration {
 
 	@Meta.AD(
 		deflt = ".gif,.jpeg,.jpg,.png",

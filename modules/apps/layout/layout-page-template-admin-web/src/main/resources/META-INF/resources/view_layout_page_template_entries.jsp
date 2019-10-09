@@ -26,7 +26,7 @@ LayoutPageTemplateManagementToolbarDisplayContext layoutPageTemplateManagementTo
 	displayContext="<%= layoutPageTemplateManagementToolbarDisplayContext %>"
 />
 
-<portlet:actionURL name="/layout/delete_layout_page_template_entry" var="deleteLayoutPageTemplateEntryURL">
+<portlet:actionURL name="/layout_page_template/delete_layout_page_template_entry" var="deleteLayoutPageTemplateEntryURL">
 	<portlet:param name="redirect" value="<%= currentURL %>" />
 </portlet:actionURL>
 
@@ -67,7 +67,7 @@ LayoutPageTemplateManagementToolbarDisplayContext layoutPageTemplateManagementTo
 	</liferay-ui:search-container>
 </aui:form>
 
-<portlet:actionURL name="/layout/update_layout_page_template_entry_preview" var="updateLayoutPageTemplateEntryPreviewURL">
+<portlet:actionURL name="/layout_page_template/update_layout_page_template_entry_preview" var="updateLayoutPageTemplateEntryPreviewURL">
 	<portlet:param name="redirect" value="<%= currentURL %>" />
 </portlet:actionURL>
 
@@ -77,7 +77,7 @@ LayoutPageTemplateManagementToolbarDisplayContext layoutPageTemplateManagementTo
 </aui:form>
 
 <liferay-frontend:component
-	componentId="<%= LayoutAdminWebKeys.LAYOUT_PAGE_TEMPLATE_ENTRY_DROPDOWN_DEFAULT_EVENT_HANDLER %>"
+	componentId="<%= LayoutPageTemplateAdminWebKeys.LAYOUT_PAGE_TEMPLATE_ENTRY_DROPDOWN_DEFAULT_EVENT_HANDLER %>"
 	module="js/LayoutPageTemplateEntryDropdownDefaultEventHandler.es"
 />
 

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.layout.admin.web.internal.security.permission.resource;
+package com.liferay.layout.page.template.admin.web.internal.security.permission.resource;
 
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.portal.kernel.exception.PortalException;

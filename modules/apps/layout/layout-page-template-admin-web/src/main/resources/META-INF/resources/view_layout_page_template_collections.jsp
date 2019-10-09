@@ -24,7 +24,7 @@ List<LayoutPageTemplateCollection> layoutPageTemplateCollections = layoutPageTem
 
 <clay:navigation-bar
 	inverted="<%= true %>"
-	navigationItems="<%= layoutsAdminDisplayContext.getNavigationItems() %>"
+	navigationItems="<%= layoutPageTemplatesAdminDisplayContext.getNavigationItems() %>"
 />
 
 <liferay-ui:success key="layoutPageTemplatePublished" message="the-page-template-was-published-succesfully" />
@@ -36,7 +36,7 @@ List<LayoutPageTemplateCollection> layoutPageTemplateCollections = layoutPageTem
 				<ul class="nav nav-nested">
 					<li class="nav-item">
 						<portlet:renderURL var="editLayoutPageTemplateCollectionURL">
-							<portlet:param name="mvcRenderCommandName" value="/layout/edit_layout_page_template_collection" />
+							<portlet:param name="mvcRenderCommandName" value="/layout_page_template/edit_layout_page_template_collection" />
 							<portlet:param name="redirect" value="<%= currentURL %>" />
 						</portlet:renderURL>
 
@@ -174,7 +174,7 @@ List<LayoutPageTemplateCollection> layoutPageTemplateCollections = layoutPageTem
 												}
 											);
 
-											<liferay-portlet:actionURL copyCurrentRenderParameters="<%= false %>" name="/layout/delete_layout_page_template_collection" var="deleteLayoutPageTemplateCollectionURL">
+											<liferay-portlet:actionURL copyCurrentRenderParameters="<%= false %>" name="/layout_page_template/delete_layout_page_template_collection" var="deleteLayoutPageTemplateCollectionURL">
 												<portlet:param name="redirect" value="<%= currentURL %>" />
 											</liferay-portlet:actionURL>
 
@@ -185,7 +185,7 @@ List<LayoutPageTemplateCollection> layoutPageTemplateCollections = layoutPageTem
 							},
 							'strings.add': '<liferay-ui:message key="delete" />',
 							title: '<liferay-ui:message key="delete-collection" />',
-							url: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="mvcRenderCommandName" value="/layout/select_layout_page_template_collections" /></portlet:renderURL>'
+							url: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="mvcRenderCommandName" value="/layout_page_template/select_layout_page_template_collections" /></portlet:renderURL>'
 						}
 					);
 

@@ -78,7 +78,7 @@ LayoutPrototypeManagementToolbarDisplayContext layoutPrototypeManagementToolbarD
 </aui:form>
 
 <liferay-frontend:component
-	componentId="<%= LayoutTemplateAdminWebKeys.LAYOUT_PROTOTYPE_DROPDOWN_DEFAULT_EVENT_HANDLER %>"
+	componentId="<%= LayoutPageTemplateAdminWebKeys.LAYOUT_PROTOTYPE_DROPDOWN_DEFAULT_EVENT_HANDLER %>"
 	module="js/LayoutPrototypeDropdownDefaultEventHandler.es"
 />
 

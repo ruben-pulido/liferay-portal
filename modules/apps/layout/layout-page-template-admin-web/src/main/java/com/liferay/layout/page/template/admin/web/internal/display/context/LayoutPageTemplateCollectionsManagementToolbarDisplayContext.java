@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.layout.admin.web.internal.display.context;
+package com.liferay.layout.page.template.admin.web.internal.display.context;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.display.context.SearchContainerManagementToolbarDisplayContext;
 import com.liferay.petra.string.StringPool;
@@ -61,7 +61,7 @@ public class LayoutPageTemplateCollectionsManagementToolbarDisplayContext
 
 		searchActionURL.setParameter(
 			"mvcRenderCommandName",
-			"/layout/select_layout_page_template_collections");
+			"/layout_page_template/select_layout_page_template_collections");
 		searchActionURL.setParameter("redirect", themeDisplay.getURLCurrent());
 
 		return searchActionURL.toString();

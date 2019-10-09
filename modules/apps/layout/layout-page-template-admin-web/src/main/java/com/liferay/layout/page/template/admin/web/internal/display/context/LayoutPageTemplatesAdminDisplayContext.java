@@ -86,25 +86,6 @@ public class LayoutPageTemplatesAdminDisplayContext {
 									_httpServletRequest, "page-templates"));
 						});
 				}
-
-				if (!group.isCompany() &&
-					!(stagingGroupHelper.isLocalLiveGroup(group) ||
-					  stagingGroupHelper.isRemoteLiveGroup(group))) {
-
-					add(
-						navigationItem -> {
-							navigationItem.setActive(
-								Objects.equals(
-									getTabs1(), "display-page-templates"));
-							navigationItem.setHref(
-								getPortletURL(), "tabs1",
-								"display-page-templates");
-							navigationItem.setLabel(
-								LanguageUtil.get(
-									_httpServletRequest,
-									"display-page-templates"));
-						});
-				}
 			}
 		};
 	}

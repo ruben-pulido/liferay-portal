@@ -14,9 +14,13 @@
 
 package com.liferay.layout.page.template.admin.web.internal.portlet;
 
+import com.liferay.item.selector.ItemSelector;
 import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminPortletKeys;
+import com.liferay.layout.page.template.admin.web.internal.configuration.LayoutPageTemplateAdminWebConfiguration;
+import com.liferay.layout.page.template.admin.web.internal.constants.LayoutPageTemplateAdminWebKeys;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -30,19 +34,23 @@ import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import java.io.IOException;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Jürgen Kappler
  */
 @Component(
+	configurationPid = "com.liferay.layout.page.template.admin.web.configuration.LayoutPageTemplateAdminWebConfiguration",
 	immediate = true,
 	property = {
 		"com.liferay.portlet.add-default-resource=true",
@@ -65,6 +73,14 @@ import org.osgi.service.component.annotations.Reference;
 	service = Portlet.class
 )
 public class LayoutPageTemplatesPortlet extends MVCPortlet {
+
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		_layoutPageTemplateAdminWebConfiguration =
+			ConfigurableUtil.createConfigurable(
+				LayoutPageTemplateAdminWebConfiguration.class, properties);
+	}
 
 	@Override
 	protected void doDispatch(
@@ -99,11 +115,23 @@ public class LayoutPageTemplatesPortlet extends MVCPortlet {
 			}
 		}
 
+		renderRequest.setAttribute(
+			LayoutPageTemplateAdminWebConfiguration.class.getName(),
+			_layoutPageTemplateAdminWebConfiguration);
+		renderRequest.setAttribute(
+			LayoutPageTemplateAdminWebKeys.ITEM_SELECTOR, _itemSelector);
+
 		super.doDispatch(renderRequest, renderResponse);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutPageTemplatesPortlet.class);
+
+	@Reference
+	private ItemSelector _itemSelector;
+
+	private volatile LayoutPageTemplateAdminWebConfiguration
+		_layoutPageTemplateAdminWebConfiguration;
 
 	@Reference
 	private LayoutPageTemplateEntryLocalService
