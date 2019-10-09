@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.layout.admin.web.internal.servlet.taglib.util;
+package com.liferay.layout.page.template.admin.web.internal.servlet.taglib.util;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
@@ -21,9 +21,10 @@ import com.liferay.item.selector.ItemSelectorCriterion;
 import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.upload.criterion.UploadItemSelectorCriterion;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
-import com.liferay.layout.admin.web.internal.configuration.LayoutAdminWebConfiguration;
-import com.liferay.layout.admin.web.internal.constants.LayoutAdminWebKeys;
-import com.liferay.layout.admin.web.internal.security.permission.resource.LayoutPageTemplateEntryPermission;
+import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminPortletKeys;
+import com.liferay.layout.page.template.admin.web.internal.configuration.LayoutPageTemplateAdminWebConfiguration;
+import com.liferay.layout.page.template.admin.web.internal.constants.LayoutPageTemplateAdminWebKeys;
+import com.liferay.layout.page.template.admin.web.internal.security.permission.resource.LayoutPageTemplateEntryPermission;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.petra.function.UnsafeConsumer;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.portlet.ActionRequest;
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -66,10 +68,11 @@ public class LayoutPageTemplateEntryActionDropdownItemsProvider {
 		_httpServletRequest = PortalUtil.getHttpServletRequest(renderRequest);
 
 		_itemSelector = (ItemSelector)_httpServletRequest.getAttribute(
-			LayoutAdminWebKeys.ITEM_SELECTOR);
-		_layoutAdminWebConfiguration =
-			(LayoutAdminWebConfiguration)_httpServletRequest.getAttribute(
-				LayoutAdminWebConfiguration.class.getName());
+			LayoutPageTemplateAdminWebKeys.ITEM_SELECTOR);
+		_layoutPageTemplateAdminWebConfiguration =
+			(LayoutPageTemplateAdminWebConfiguration)
+				_httpServletRequest.getAttribute(
+					LayoutPageTemplateAdminWebConfiguration.class.getName());
 		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 	}
@@ -118,11 +121,14 @@ public class LayoutPageTemplateEntryActionDropdownItemsProvider {
 	private UnsafeConsumer<DropdownItem, Exception>
 		_getConfigureLayoutPageTemplateEntryActionUnsafeConsumer() {
 
+		PortletURL editPageURL = PortalUtil.getControlPanelPortletURL(
+			_httpServletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
+			PortletRequest.RENDER_PHASE);
+
 		return dropdownItem -> {
 			dropdownItem.setHref(
-				_renderResponse.createRenderURL(), "mvcRenderCommandName",
-				"/layout/edit_layout", "redirect",
-				_themeDisplay.getURLCurrent(), "backURL",
+				editPageURL, "mvcRenderCommandName", "/layout/edit_layout",
+				"redirect", _themeDisplay.getURLCurrent(), "backURL",
 				_themeDisplay.getURLCurrent(), "selPlid",
 				_layoutPageTemplateEntry.getPlid());
 
@@ -139,7 +145,7 @@ public class LayoutPageTemplateEntryActionDropdownItemsProvider {
 
 		deleteLayoutPageTemplateEntryURL.setParameter(
 			ActionRequest.ACTION_NAME,
-			"/layout/delete_layout_page_template_entry");
+			"/layout_page_template/delete_layout_page_template_entry");
 		deleteLayoutPageTemplateEntryURL.setParameter(
 			"redirect", _themeDisplay.getURLCurrent());
 		deleteLayoutPageTemplateEntryURL.setParameter(
@@ -165,7 +171,7 @@ public class LayoutPageTemplateEntryActionDropdownItemsProvider {
 
 		deleteLayoutPageTemplateEntryPreviewURL.setParameter(
 			ActionRequest.ACTION_NAME,
-			"/layout/delete_layout_page_template_entry_preview");
+			"/layout_page_template/delete_layout_page_template_entry_preview");
 
 		deleteLayoutPageTemplateEntryPreviewURL.setParameter(
 			"redirect", _themeDisplay.getURLCurrent());
@@ -194,7 +200,7 @@ public class LayoutPageTemplateEntryActionDropdownItemsProvider {
 
 		uploadURL.setParameter(
 			ActionRequest.ACTION_NAME,
-			"/layout/upload_layout_page_template_entry_preview");
+			"/layout_page_template/upload_layout_page_template_entry_preview");
 		uploadURL.setParameter(
 			"layoutPageTemplateEntryId",
 			String.valueOf(
@@ -202,10 +208,11 @@ public class LayoutPageTemplateEntryActionDropdownItemsProvider {
 
 		ItemSelectorCriterion itemSelectorCriterion =
 			new UploadItemSelectorCriterion(
-				LayoutAdminPortletKeys.GROUP_PAGES, uploadURL.toString(),
+				LayoutPageTemplateAdminPortletKeys.LAYOUT_PAGE_TEMPLATES,
+				uploadURL.toString(),
 				LanguageUtil.get(_themeDisplay.getLocale(), "page-template"),
 				UploadServletRequestConfigurationHelperUtil.getMaxSize(),
-				_layoutAdminWebConfiguration.thumbnailExtensions());
+				_layoutPageTemplateAdminWebConfiguration.thumbnailExtensions());
 
 		itemSelectorCriterion.setDesiredItemSelectorReturnTypes(
 			new FileEntryItemSelectorReturnType());
@@ -309,7 +316,7 @@ public class LayoutPageTemplateEntryActionDropdownItemsProvider {
 
 		updateLayoutPageTemplateEntryURL.setParameter(
 			ActionRequest.ACTION_NAME,
-			"/layout/update_layout_page_template_entry");
+			"/layout_page_template/update_layout_page_template_entry");
 		updateLayoutPageTemplateEntryURL.setParameter(
 			"redirect", _themeDisplay.getURLCurrent());
 		updateLayoutPageTemplateEntryURL.setParameter(
@@ -343,7 +350,8 @@ public class LayoutPageTemplateEntryActionDropdownItemsProvider {
 
 	private final HttpServletRequest _httpServletRequest;
 	private final ItemSelector _itemSelector;
-	private final LayoutAdminWebConfiguration _layoutAdminWebConfiguration;
+	private final LayoutPageTemplateAdminWebConfiguration
+		_layoutPageTemplateAdminWebConfiguration;
 	private final LayoutPageTemplateEntry _layoutPageTemplateEntry;
 	private final RenderResponse _renderResponse;
 	private final ThemeDisplay _themeDisplay;

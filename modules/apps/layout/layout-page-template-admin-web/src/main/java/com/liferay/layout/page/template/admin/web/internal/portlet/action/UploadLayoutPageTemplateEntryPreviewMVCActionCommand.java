@@ -12,13 +12,14 @@
  * details.
  */
 
-package com.liferay.layout.admin.web.internal.portlet.action;
+package com.liferay.layout.page.template.admin.web.internal.portlet.action;
 
-import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
-import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionService;
+import com.liferay.item.selector.ItemSelectorUploadResponseHandler;
+import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminPortletKeys;
+import com.liferay.layout.page.template.admin.web.internal.upload.LayoutPageTemplateEntryPreviewUploadFileEntryHandler;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
-import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.upload.UploadHandler;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -27,17 +28,17 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Jürgen Kappler
+ * @author Eudaldo Alonso
  */
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + LayoutAdminPortletKeys.GROUP_PAGES,
-		"mvc.command.name=/layout/delete_layout_page_template_collection"
+		"javax.portlet.name=" + LayoutPageTemplateAdminPortletKeys.LAYOUT_PAGE_TEMPLATES,
+		"mvc.command.name=/layout_page_template/upload_layout_page_template_entry_preview"
 	},
 	service = MVCActionCommand.class
 )
-public class DeleteLayoutPageTemplateCollectionMVCActionCommand
+public class UploadLayoutPageTemplateEntryPreviewMVCActionCommand
 	extends BaseMVCActionCommand {
 
 	@Override
@@ -45,28 +46,20 @@ public class DeleteLayoutPageTemplateCollectionMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		long[] deleteLayoutPageTemplateCollectionIds = null;
-
-		long layoutPageTemplateCollectionId = ParamUtil.getLong(
-			actionRequest, "layoutPageTemplateCollectionId");
-
-		if (layoutPageTemplateCollectionId > 0) {
-			deleteLayoutPageTemplateCollectionIds = new long[] {
-				layoutPageTemplateCollectionId
-			};
-		}
-		else {
-			deleteLayoutPageTemplateCollectionIds = ParamUtil.getLongValues(
-				actionRequest, "rowIds");
-		}
-
-		_layoutPageTemplateCollectionService.
-			deleteLayoutPageTemplateCollections(
-				deleteLayoutPageTemplateCollectionIds);
+		_uploadHandler.upload(
+			_layoutPageTemplateEntryPreviewUploadFileEntryHandler,
+			_itemSelectorUploadResponseHandler, actionRequest, actionResponse);
 	}
 
 	@Reference
-	private LayoutPageTemplateCollectionService
-		_layoutPageTemplateCollectionService;
+	private ItemSelectorUploadResponseHandler
+		_itemSelectorUploadResponseHandler;
+
+	@Reference
+	private LayoutPageTemplateEntryPreviewUploadFileEntryHandler
+		_layoutPageTemplateEntryPreviewUploadFileEntryHandler;
+
+	@Reference
+	private UploadHandler _uploadHandler;
 
 }
