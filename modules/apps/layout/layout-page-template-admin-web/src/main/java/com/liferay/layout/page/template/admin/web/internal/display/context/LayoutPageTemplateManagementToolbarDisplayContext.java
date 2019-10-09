@@ -12,13 +12,13 @@
  * details.
  */
 
-package com.liferay.layout.admin.web.internal.display.context;
+package com.liferay.layout.page.template.admin.web.internal.display.context;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.display.context.SearchContainerManagementToolbarDisplayContext;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
-import com.liferay.layout.admin.web.internal.security.permission.resource.LayoutPageTemplateEntryPermission;
+import com.liferay.layout.page.template.admin.web.internal.security.permission.resource.LayoutPageTemplateEntryPermission;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateActionKeys;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.petra.string.StringPool;
@@ -179,7 +179,7 @@ public class LayoutPageTemplateManagementToolbarDisplayContext
 
 		actionURL.setParameter(
 			ActionRequest.ACTION_NAME,
-			"/layout/add_layout_page_template_entry");
+			"/layout_page_template/add_layout_page_template_entry");
 		actionURL.setParameter("redirect", _themeDisplay.getURLCurrent());
 		actionURL.setParameter("backURL", _themeDisplay.getURLCurrent());
 		actionURL.setParameter(

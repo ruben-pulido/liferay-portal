@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.layout.admin.web.internal.display.context;
+package com.liferay.layout.page.template.admin.web.internal.display.context;
 
-import com.liferay.layout.admin.web.internal.util.LayoutPageTemplatePortletUtil;
+import com.liferay.layout.page.template.admin.web.internal.util.LayoutPageTemplatePortletUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionServiceUtil;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;

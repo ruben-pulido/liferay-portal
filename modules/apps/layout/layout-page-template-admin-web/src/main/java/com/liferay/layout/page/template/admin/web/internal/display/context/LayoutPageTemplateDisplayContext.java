@@ -12,13 +12,13 @@
  * details.
  */
 
-package com.liferay.layout.admin.web.internal.display.context;
+package com.liferay.layout.page.template.admin.web.internal.display.context;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
-import com.liferay.layout.admin.web.internal.security.permission.resource.LayoutPageTemplateCollectionPermission;
-import com.liferay.layout.admin.web.internal.security.permission.resource.LayoutPageTemplatePermission;
-import com.liferay.layout.admin.web.internal.util.LayoutPageTemplatePortletUtil;
+import com.liferay.layout.page.template.admin.web.internal.security.permission.resource.LayoutPageTemplateCollectionPermission;
+import com.liferay.layout.page.template.admin.web.internal.security.permission.resource.LayoutPageTemplatePermission;
+import com.liferay.layout.page.template.admin.web.internal.util.LayoutPageTemplatePortletUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionServiceUtil;
@@ -68,7 +68,8 @@ public class LayoutPageTemplateDisplayContext {
 						dropdownItem.setHref(
 							_renderResponse.createRenderURL(),
 							"mvcRenderCommandName",
-							"/layout/edit_layout_page_template_collection",
+							"/layout_page_template/edit_layout_page_template_" +
+								"collection",
 							"redirect", _themeDisplay.getURLCurrent());
 						dropdownItem.setLabel(
 							LanguageUtil.get(_httpServletRequest, "new"));
