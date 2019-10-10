@@ -91,6 +91,10 @@ public class ConvertLayoutMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		_convertLayout(actionRequest);
+	}
+
+	private void _convertLayout(ActionRequest actionRequest) throws Exception {
 		long selPlid = ParamUtil.getLong(actionRequest, "selPlid");
 
 		Layout layout = _layoutService.updateType(
