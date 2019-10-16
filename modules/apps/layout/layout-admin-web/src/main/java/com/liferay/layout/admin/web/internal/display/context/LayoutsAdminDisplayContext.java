@@ -763,47 +763,6 @@ public class LayoutsAdminDisplayContext {
 		return deleteLayoutURL.toString();
 	}
 
-	public List<NavigationItem> getNavigationItems() {
-		Group group = _themeDisplay.getScopeGroup();
-
-		StagingGroupHelper stagingGroupHelper =
-			StagingGroupHelperUtil.getStagingGroupHelper();
-
-		return new NavigationItemList() {
-			{
-				if (!group.isCompany()) {
-					add(
-						navigationItem -> {
-							navigationItem.setActive(
-								Objects.equals(getTabs1(), "pages"));
-							navigationItem.setHref(
-								getPortletURL(), "tabs1", "pages");
-							navigationItem.setLabel(
-								LanguageUtil.get(_httpServletRequest, "pages"));
-						});
-				}
-
-				if (!group.isCompany() &&
-					!(stagingGroupHelper.isLocalLiveGroup(group) ||
-					  stagingGroupHelper.isRemoteLiveGroup(group))) {
-
-					add(
-						navigationItem -> {
-							navigationItem.setActive(
-								Objects.equals(
-									getTabs1(), "display-page-templates"));
-							navigationItem.setHref(
-								getPortletURL(), "tabs1",
-								"display-page-templates");
-							navigationItem.setLabel(
-								LanguageUtil.get(
-									_httpServletRequest,
-									"display-page-templates"));
-						});
-				}
-			}
-		};
-	}
 
 	public String getOrphanPortletsURL(Layout layout) {
 		PortletURL orphanPortletsURL =
