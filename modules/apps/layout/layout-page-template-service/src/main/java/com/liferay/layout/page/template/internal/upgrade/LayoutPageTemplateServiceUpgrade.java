@@ -14,6 +14,7 @@
 
 package com.liferay.layout.page.template.internal.upgrade;
 
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.layout.page.template.internal.upgrade.v1_1_0.UpgradeLayoutPrototype;
 import com.liferay.layout.page.template.internal.upgrade.v1_1_1.UpgradeLayoutPageTemplateEntry;
@@ -22,6 +23,7 @@ import com.liferay.layout.page.template.internal.upgrade.v2_0_0.util.LayoutPageT
 import com.liferay.layout.page.template.internal.upgrade.v2_0_0.util.LayoutPageTemplateEntryTable;
 import com.liferay.layout.page.template.internal.upgrade.v2_1_0.UpgradeLayout;
 import com.liferay.layout.page.template.internal.upgrade.v3_0_1.util.LayoutPageTemplateStructureRelTable;
+import com.liferay.layout.page.template.internal.upgrade.v3_1_1.UpgradePreviewFileEntryId;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutPrototypeLocalService;
@@ -99,6 +101,10 @@ public class LayoutPageTemplateServiceUpgrade
 				}
 
 			});
+
+		registry.register(
+			"3.1.0", "3.1.1",
+			new UpgradePreviewFileEntryId(_dlFileEntryLocalService));
 	}
 
 	@Reference
@@ -106,6 +112,9 @@ public class LayoutPageTemplateServiceUpgrade
 
 	@Reference
 	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
+
+	@Reference
+	private DLFileEntryLocalService _dlFileEntryLocalService;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;
