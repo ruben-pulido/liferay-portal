@@ -43,6 +43,7 @@ import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.transaction.Transactional;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -50,6 +51,7 @@ import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -70,6 +72,7 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + LayoutAdminPortletKeys.GROUP_PAGES,
+		"mvc.command.name=/layout/convert_all_layouts",
 		"mvc.command.name=/layout/convert_layout"
 	},
 	service = AopService.class
@@ -102,9 +105,44 @@ public class ConvertLayoutMVCActionCommand
 			selPlids = ParamUtil.getLongValues(actionRequest, "rowIds");
 		}
 
+		if (ArrayUtil.isEmpty(selPlids)) {
+			selPlids = _getConvertibleLayoutsPlids(
+				ParamUtil.getLong(actionRequest, "groupId"));
+		}
+
 		for (long curSelPlid : selPlids) {
 			_convertLayout(curSelPlid, actionRequest);
 		}
+	}
+
+	private long[] _getConvertibleLayoutsPlids(long groupId) {
+
+		List<Long> convertibleLayoutsPlids = new ArrayList();
+
+		if (groupId > 0) {
+
+			List<Layout> layouts = _layoutLocalService.getLayouts(
+				groupId, false);
+
+			for (Layout layout : layouts) {
+
+				UnicodeProperties typeSettingsProperties =
+					layout.getTypeSettingsProperties();
+
+				String layoutTemplateId = typeSettingsProperties.getProperty(
+					LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID);
+
+				LayoutConverter layoutConverter =
+					_layoutConverterRegistry.getLayoutConverter(
+						layoutTemplateId);
+
+				if (layoutConverter.isConvertible(layout)) {
+					convertibleLayoutsPlids.add(layout.getPlid());
+				}
+			}
+		}
+
+		return ArrayUtil.toArray(convertibleLayoutsPlids.toArray(new Long[0]));
 	}
 
 	private void _convertLayout(long selPlid, ActionRequest actionRequest)

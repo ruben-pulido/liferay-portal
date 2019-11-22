@@ -352,6 +352,19 @@ public class LayoutsAdminDisplayContext {
 		return configureLayoutURL.toString();
 	}
 
+	public String getConvertAllLayoutsURL() {
+		PortletURL convertAllLayoutsURL = _liferayPortletResponse.createActionURL();
+
+		convertAllLayoutsURL.setParameter(
+			ActionRequest.ACTION_NAME, "/layout/convert_all_layouts");
+		convertAllLayoutsURL.setParameter(
+			"groupId", String.valueOf(_themeDisplay.getSiteGroupId()));
+		convertAllLayoutsURL.setParameter(
+			"redirect", _themeDisplay.getURLCurrent());
+
+		return convertAllLayoutsURL.toString();
+	}
+
 	public String getConvertLayoutURL(Layout layout) {
 		PortletURL convertLayoutURL = _liferayPortletResponse.createActionURL();
 
@@ -1127,7 +1140,7 @@ public class LayoutsAdminDisplayContext {
 		return _groupDisplayContextHelper.getSelGroup();
 	}
 
-	public long getSelGroupId() {
+	public long   getSelGroupId() {
 		Group selGroup = getSelGroup();
 
 		if (selGroup != null) {

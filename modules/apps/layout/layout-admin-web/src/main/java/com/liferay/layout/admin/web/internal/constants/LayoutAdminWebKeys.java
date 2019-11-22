@@ -21,6 +21,12 @@ public class LayoutAdminWebKeys {
 
 	public static final String ITEM_SELECTOR = "ITEM_SELECTOR";
 
+	public static final String CONVERTIBLE_LAYOUTS =
+		"CONVERTIBLE_LAYOUTS";
+
+	public static final String NON_CONVERTIBLE_LAYOUTS =
+		"NON_CONVERTIBLE_LAYOUTS";
+
 	public static final String LAYOUT_CONVERTER_REGISTRY =
 		"LAYOUT_CONVERTER_REGISTRY";
 

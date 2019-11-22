@@ -154,6 +154,8 @@ page import="java.util.TreeMap" %>
 
 <%@ page import="javax.portlet.PortletRequest" %><%@
 page import="javax.portlet.PortletURL" %>
+<%@ page
+	import="com.liferay.layout.admin.web.internal.display.context.ConvertAllLayoutsAdminManagementToolbarDisplayContext" %>
 
 <liferay-frontend:defineObjects />
 
@@ -165,6 +167,9 @@ page import="javax.portlet.PortletURL" %>
 LayoutsAdminDisplayContext layoutsAdminDisplayContext = (LayoutsAdminDisplayContext)request.getAttribute(LayoutAdminWebKeys.LAYOUT_PAGE_LAYOUT_ADMIN_DISPLAY_CONTEXT);
 
 portletDisplay.setShowExportImportIcon(false);
+
+ConvertAllLayoutsAdminManagementToolbarDisplayContext
+	convertAllLayoutsManagementToolbarDisplayContext = new ConvertAllLayoutsAdminManagementToolbarDisplayContext(liferayPortletRequest, liferayPortletResponse, request, layoutsAdminDisplayContext);
 %>
 
 <%@ include file="/init-ext.jsp" %>
