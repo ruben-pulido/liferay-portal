@@ -11,19 +11,22 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+// TODO move to com.liferay.layout.security.permission
 
-package com.liferay.layout.content.page.editor.web.internal.constants;
+package com.liferay.layout.util.permission;
+
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 
 /**
- * @author Jürgen Kappler
+ * @author Rubén Pulido
  */
-public class ContentPageEditorWebKeys {
+public interface LayoutClassedModelUsagePermission {
 
-	public static final String INFO_DISPLAY_OBJECT_PROVIDER =
-		"INFO_DISPLAY_OBJECT_PROVIDER";
+	public boolean contains(
+		PermissionChecker permissionChecker, long classNameId, long classPK,
+		String actionId);
 
-	public static final String
-		LIFERAY_SHARED_CONTENT_PAGE_EDITOR_DISPLAY_CONTEXT =
-			"LIFERAY_SHARED_CONTENT_PAGE_EDITOR_DISPLAY_CONTEXT";
+	public boolean contains(
+		PermissionChecker permissionChecker, long plid, String actionId);
 
 }
