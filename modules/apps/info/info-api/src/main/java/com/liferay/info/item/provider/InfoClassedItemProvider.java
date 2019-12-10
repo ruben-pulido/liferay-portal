@@ -12,18 +12,15 @@
  * details.
  */
 
-package com.liferay.layout.content.page.editor.web.internal.constants;
+package com.liferay.info.item.provider;
+
+import com.liferay.portal.kernel.exception.PortalException;
 
 /**
- * @author Jürgen Kappler
+ * @author Rubén Pulido
  */
-public class ContentPageEditorWebKeys {
+public interface InfoClassedItemProvider<T> {
 
-	public static final String INFO_DISPLAY_OBJECT_PROVIDER =
-		"INFO_DISPLAY_OBJECT_PROVIDER";
-
-	public static final String
-		LIFERAY_SHARED_CONTENT_PAGE_EDITOR_DISPLAY_CONTEXT =
-			"LIFERAY_SHARED_CONTENT_PAGE_EDITOR_DISPLAY_CONTEXT";
+	public T getInfoItem(long classPK) throws PortalException;
 
 }

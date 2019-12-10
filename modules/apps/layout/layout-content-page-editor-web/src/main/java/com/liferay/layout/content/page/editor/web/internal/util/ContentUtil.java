@@ -15,16 +15,17 @@
 package com.liferay.layout.content.page.editor.web.internal.util;
 
 import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
-import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
-import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.LabelItem;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
+import com.liferay.layout.content.page.editor.web.internal.permission.util.ClassedModelUsagePermissionUtil;
 import com.liferay.layout.model.LayoutClassedModelUsage;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
@@ -42,15 +43,14 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portlet.asset.service.permission.AssetEntryPermission;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.taglib.security.PermissionsURLTag;
 
@@ -104,7 +104,7 @@ public class ContentUtil {
 	}
 
 	public static JSONArray getPageContentsJSONArray(
-		long plid, String backURL, HttpServletRequest httpServletRequest) {
+		long plid, HttpServletRequest httpServletRequest) {
 
 		JSONArray mappedContentsJSONArray = JSONFactoryUtil.createJSONArray();
 
@@ -127,75 +127,85 @@ public class ContentUtil {
 
 				mappedContentsJSONArray.put(
 					_getPageContentJSONObject(
-						layoutClassedModelUsage, backURL, httpServletRequest));
+						layoutClassedModelUsage, httpServletRequest));
 
 				layoutClassedModelUsageIds.add(
 					layoutClassedModelUsage.getLayoutClassedModelUsageId());
 			}
 		}
 		catch (Exception e) {
-			_log.error("An error ocurred while getting mapped contents", e);
+			_log.error("An error occurred while getting mapped contents", e);
 		}
 
 		return mappedContentsJSONArray;
 	}
 
+	/**
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #getPageContentsJSONArray(long plid, HttpServletRequest httpServletRequest)}
+	 */
+	@Deprecated
+	public static JSONArray getPageContentsJSONArray(
+		long plid, String backURL, HttpServletRequest httpServletRequest) {
+
+		return getPageContentsJSONArray(plid, httpServletRequest);
+	}
+
 	private static JSONObject _getActionsJSONObject(
 			LayoutClassedModelUsage layoutClassedModelUsage,
-			ThemeDisplay themeDisplay, HttpServletRequest httpServletRequest,
-			String backURL)
+			ThemeDisplay themeDisplay, HttpServletRequest httpServletRequest)
 		throws Exception {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-		AssetRendererFactory<?> assetRendererFactory =
-			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
-				layoutClassedModelUsage.getClassName());
+		if (ClassedModelUsagePermissionUtil.contains(
+				themeDisplay.getPermissionChecker(),
+				layoutClassedModelUsage.getClassNameId(),
+				layoutClassedModelUsage.getClassPK(), ActionKeys.UPDATE)) {
 
-		if (assetRendererFactory != null) {
-			AssetRenderer<?> assetRenderer =
-				assetRendererFactory.getAssetRenderer(
+			String editURL = InfoEditURLUtil.getURLEdit(
+				layoutClassedModelUsage.getClassName(),
+				InfoClassedItemUtil.getItem(
+					PortalUtil.getClassName(
+						layoutClassedModelUsage.getClassNameId()),
+					layoutClassedModelUsage.getClassPK()),
+				httpServletRequest);
+
+			if (editURL != null) {
+				jsonObject.put("editURL", editURL);
+			}
+		}
+
+		if (ClassedModelUsagePermissionUtil.contains(
+				themeDisplay.getPermissionChecker(),
+				layoutClassedModelUsage.getClassNameId(),
+				layoutClassedModelUsage.getClassPK(), ActionKeys.PERMISSIONS)) {
+
+			String className = layoutClassedModelUsage.getClassName();
+
+			Object object = InfoClassedItemUtil.getItem(
+				PortalUtil.getClassName(
+					layoutClassedModelUsage.getClassNameId()),
+				layoutClassedModelUsage.getClassPK());
+
+			// TODO Consider changing getItem interface to return a wrapper with
+			// className and object
+
+			if (object instanceof FileEntry) {
+				FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(
 					layoutClassedModelUsage.getClassPK());
 
-			if (assetRenderer != null) {
-				AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(
-					layoutClassedModelUsage.getClassNameId(),
-					layoutClassedModelUsage.getClassPK());
-
-				if (assetEntry == null) {
-					return JSONFactoryUtil.createJSONObject();
+				if (fileEntry.getModel() instanceof DLFileEntry) {
+					className = DLFileEntry.class.getName();
 				}
+			}
 
-				if (AssetEntryPermission.contains(
-						themeDisplay.getPermissionChecker(), assetEntry,
-						ActionKeys.UPDATE)) {
+			String permissionsURL = PermissionsURLTag.doTag(
+				StringPool.BLANK, className, null, null,
+				String.valueOf(layoutClassedModelUsage.getClassPK()),
+				LiferayWindowState.POP_UP.toString(), null, httpServletRequest);
 
-					PortletURL portletURL = assetRenderer.getURLEdit(
-						httpServletRequest, LiferayWindowState.NORMAL, backURL);
-
-					if (portletURL != null) {
-						jsonObject.put("editURL", portletURL.toString());
-					}
-				}
-
-				if (AssetEntryPermission.contains(
-						themeDisplay.getPermissionChecker(), assetEntry,
-						ActionKeys.PERMISSIONS)) {
-
-					String permissionsURL = PermissionsURLTag.doTag(
-						StringPool.BLANK,
-						layoutClassedModelUsage.getClassName(),
-						HtmlUtil.escape(
-							assetEntry.getTitle(themeDisplay.getLocale())),
-						null,
-						String.valueOf(layoutClassedModelUsage.getClassPK()),
-						LiferayWindowState.POP_UP.toString(), null,
-						httpServletRequest);
-
-					if (Validator.isNotNull(permissionsURL)) {
-						jsonObject.put("permissionsURL", permissionsURL);
-					}
-				}
+			if (Validator.isNotNull(permissionsURL)) {
+				jsonObject.put("permissionsURL", permissionsURL);
 			}
 		}
 
@@ -444,7 +454,7 @@ public class ContentUtil {
 	}
 
 	private static JSONObject _getPageContentJSONObject(
-			LayoutClassedModelUsage layoutClassedModelUsage, String backURL,
+			LayoutClassedModelUsage layoutClassedModelUsage,
 			HttpServletRequest httpServletRequest)
 		throws Exception {
 
@@ -455,8 +465,7 @@ public class ContentUtil {
 		JSONObject mappedContentJSONObject = JSONUtil.put(
 			"actions",
 			_getActionsJSONObject(
-				layoutClassedModelUsage, themeDisplay, httpServletRequest,
-				backURL)
+				layoutClassedModelUsage, themeDisplay, httpServletRequest)
 		).put(
 			"className", layoutClassedModelUsage.getClassName()
 		).put(
