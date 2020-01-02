@@ -910,6 +910,71 @@ components:
             required:
                 - name
             type: object
+        FragmentCollection:
+            description:
+                ""
+            properties:
+                creator:
+                    allOf:
+                        - $ref: "#/components/schemas/Creator"
+                    readOnly: true
+                dateCreated:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateModified:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                description:
+                    type: string
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                name:
+                    type: string
+                siteId:
+                    format: int64
+                    readOnly: true
+                    type: integer
+        FragmentEntry:
+            description:
+                ""
+            properties:
+                configuration:
+                    type: object
+                content:
+                    type: string
+                creator:
+                    allOf:
+                        - $ref: "#/components/schemas/Creator"
+                    readOnly: true
+                css:
+                    type: string
+                dateCreated:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateModified:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                description:
+                    type: string
+                html:
+                    type: string
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                js:
+                    type: string
+                name:
+                    type: string
+                usageCount:
+                    readOnly: true
+                    type: integer
         KnowledgeBaseArticle:
             description:
                 Represents a Knowledge Base article (`KBArticle`), the main entity in the Knowledge Base API.
@@ -3384,6 +3449,90 @@ paths:
                     description:
                         ""
             tags: ["Document"]
+    "/fragment-collections/{fragmentCollectionId}":
+        get:
+            description:
+                ""
+            operationId: getFragmentCollection
+            parameters:
+                - in: path
+                  name: fragmentCollectionId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FragmentCollection"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/FragmentCollection"
+                    description:
+                        ""
+            tags: ["FragmentCollection"]
+    "/fragment-collections/{fragmentCollectionId}/fragment-entries":
+        get:
+            description:
+                ""
+            operationId: getFragmentCollectionFragmentEntriesPage
+            parameters:
+                - in: path
+                  name: fragmentCollectionId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/FragmentEntry"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/FragmentEntry"
+                                type: array
+                    description:
+                        ""
+            tags: ["FragmentEntry"]
+    "/fragment-entries/{fragmentEntryId}":
+        get:
+            description:
+                ""
+            operationId: getFragmentEntry
+            parameters:
+                - in: path
+                  name: fragmentEntryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FragmentEntry"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/FragmentEntry"
+                    description:
+                        ""
+            tags: ["FragmentEntry"]
     "/knowledge-base-articles/{knowledgeBaseArticleId}":
         delete:
             description:
@@ -5776,6 +5925,42 @@ paths:
                     description:
                         ""
             tags: ["Document"]
+    "/sites/{siteId}/fragment-collections":
+        get:
+            description:
+                ""
+            operationId: getSiteFragmentCollectionsPage
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/FragmentCollection"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/FragmentCollection"
+                                type: array
+                    description:
+                        ""
+            tags: ["FragmentCollection"]
     "/sites/{siteId}/knowledge-base-articles":
         get:
             description:
