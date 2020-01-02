@@ -21,6 +21,8 @@ import com.liferay.headless.delivery.dto.v1_0.ContentSetElement;
 import com.liferay.headless.delivery.dto.v1_0.ContentStructure;
 import com.liferay.headless.delivery.dto.v1_0.Document;
 import com.liferay.headless.delivery.dto.v1_0.DocumentFolder;
+import com.liferay.headless.delivery.dto.v1_0.FragmentCollection;
+import com.liferay.headless.delivery.dto.v1_0.FragmentEntry;
 import com.liferay.headless.delivery.dto.v1_0.KnowledgeBaseArticle;
 import com.liferay.headless.delivery.dto.v1_0.KnowledgeBaseAttachment;
 import com.liferay.headless.delivery.dto.v1_0.KnowledgeBaseFolder;
@@ -42,6 +44,8 @@ import com.liferay.headless.delivery.resource.v1_0.ContentSetElementResource;
 import com.liferay.headless.delivery.resource.v1_0.ContentStructureResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentFolderResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentResource;
+import com.liferay.headless.delivery.resource.v1_0.FragmentCollectionResource;
+import com.liferay.headless.delivery.resource.v1_0.FragmentEntryResource;
 import com.liferay.headless.delivery.resource.v1_0.KnowledgeBaseArticleResource;
 import com.liferay.headless.delivery.resource.v1_0.KnowledgeBaseAttachmentResource;
 import com.liferay.headless.delivery.resource.v1_0.KnowledgeBaseFolderResource;
@@ -142,6 +146,22 @@ public class Query {
 
 		_documentFolderResourceComponentServiceObjects =
 			documentFolderResourceComponentServiceObjects;
+	}
+
+	public static void setFragmentCollectionResourceComponentServiceObjects(
+		ComponentServiceObjects<FragmentCollectionResource>
+			fragmentCollectionResourceComponentServiceObjects) {
+
+		_fragmentCollectionResourceComponentServiceObjects =
+			fragmentCollectionResourceComponentServiceObjects;
+	}
+
+	public static void setFragmentEntryResourceComponentServiceObjects(
+		ComponentServiceObjects<FragmentEntryResource>
+			fragmentEntryResourceComponentServiceObjects) {
+
+		_fragmentEntryResourceComponentServiceObjects =
+			fragmentEntryResourceComponentServiceObjects;
 	}
 
 	public static void setKnowledgeBaseArticleResourceComponentServiceObjects(
@@ -777,6 +797,81 @@ public class Query {
 					Pagination.of(page, pageSize),
 					_sortsBiFunction.apply(
 						documentFolderResource, sortsString))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {fragmentCollection(fragmentCollectionId: ___){creator, dateCreated, dateModified, description, id, name, siteId}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(description = "")
+	public FragmentCollection fragmentCollection(
+			@GraphQLName("fragmentCollectionId") Long fragmentCollectionId)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_fragmentCollectionResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			fragmentCollectionResource ->
+				fragmentCollectionResource.getFragmentCollection(
+					fragmentCollectionId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {fragmentCollections(page: ___, pageSize: ___, siteKey: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(description = "")
+	public FragmentCollectionPage fragmentCollections(
+			@GraphQLName("siteKey") @NotEmpty String siteKey,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_fragmentCollectionResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			fragmentCollectionResource -> new FragmentCollectionPage(
+				fragmentCollectionResource.getSiteFragmentCollectionsPage(
+					Long.valueOf(siteKey), Pagination.of(page, pageSize))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {fragmentCollectionFragmentEntries(fragmentCollectionId: ___, page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(description = "")
+	public FragmentEntryPage fragmentCollectionFragmentEntries(
+			@GraphQLName("fragmentCollectionId") Long fragmentCollectionId,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_fragmentEntryResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			fragmentEntryResource -> new FragmentEntryPage(
+				fragmentEntryResource.getFragmentCollectionFragmentEntriesPage(
+					fragmentCollectionId, Pagination.of(page, pageSize))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {fragmentEntry(fragmentEntryId: ___){configuration, content, creator, css, dateCreated, dateModified, description, html, id, js, name, usageCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(description = "")
+	public FragmentEntry fragmentEntry(
+			@GraphQLName("fragmentEntryId") Long fragmentEntryId)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_fragmentEntryResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			fragmentEntryResource -> fragmentEntryResource.getFragmentEntry(
+				fragmentEntryId));
 	}
 
 	/**
@@ -2570,6 +2665,35 @@ public class Query {
 
 	}
 
+	@GraphQLTypeExtension(FragmentCollection.class)
+	public class GetFragmentCollectionFragmentEntriesPageTypeExtension {
+
+		public GetFragmentCollectionFragmentEntriesPageTypeExtension(
+			FragmentCollection fragmentCollection) {
+
+			_fragmentCollection = fragmentCollection;
+		}
+
+		@GraphQLField(description = "")
+		public FragmentEntryPage fragmentEntries(
+				@GraphQLName("pageSize") int pageSize,
+				@GraphQLName("page") int page)
+			throws Exception {
+
+			return _applyComponentServiceObjects(
+				_fragmentEntryResourceComponentServiceObjects,
+				Query.this::_populateResourceContext,
+				fragmentEntryResource -> new FragmentEntryPage(
+					fragmentEntryResource.
+						getFragmentCollectionFragmentEntriesPage(
+							_fragmentCollection.getId(),
+							Pagination.of(page, pageSize))));
+		}
+
+		private FragmentCollection _fragmentCollection;
+
+	}
+
 	@GraphQLTypeExtension(StructuredContentFolder.class)
 	public class
 		GetStructuredContentFolderStructuredContentFoldersPageTypeExtension {
@@ -3080,6 +3204,62 @@ public class Query {
 
 		@GraphQLField
 		protected java.util.Collection<DocumentFolder> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("FragmentCollectionPage")
+	public class FragmentCollectionPage {
+
+		public FragmentCollectionPage(Page fragmentCollectionPage) {
+			items = fragmentCollectionPage.getItems();
+			lastPage = fragmentCollectionPage.getLastPage();
+			page = fragmentCollectionPage.getPage();
+			pageSize = fragmentCollectionPage.getPageSize();
+			totalCount = fragmentCollectionPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected java.util.Collection<FragmentCollection> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("FragmentEntryPage")
+	public class FragmentEntryPage {
+
+		public FragmentEntryPage(Page fragmentEntryPage) {
+			items = fragmentEntryPage.getItems();
+			lastPage = fragmentEntryPage.getLastPage();
+			page = fragmentEntryPage.getPage();
+			pageSize = fragmentEntryPage.getPageSize();
+			totalCount = fragmentEntryPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected java.util.Collection<FragmentEntry> items;
 
 		@GraphQLField
 		protected long lastPage;
@@ -3621,6 +3801,33 @@ public class Query {
 	}
 
 	private void _populateResourceContext(
+			FragmentCollectionResource fragmentCollectionResource)
+		throws Exception {
+
+		fragmentCollectionResource.setContextAcceptLanguage(_acceptLanguage);
+		fragmentCollectionResource.setContextCompany(_company);
+		fragmentCollectionResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		fragmentCollectionResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		fragmentCollectionResource.setContextUriInfo(_uriInfo);
+		fragmentCollectionResource.setContextUser(_user);
+	}
+
+	private void _populateResourceContext(
+			FragmentEntryResource fragmentEntryResource)
+		throws Exception {
+
+		fragmentEntryResource.setContextAcceptLanguage(_acceptLanguage);
+		fragmentEntryResource.setContextCompany(_company);
+		fragmentEntryResource.setContextHttpServletRequest(_httpServletRequest);
+		fragmentEntryResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		fragmentEntryResource.setContextUriInfo(_uriInfo);
+		fragmentEntryResource.setContextUser(_user);
+	}
+
+	private void _populateResourceContext(
 			KnowledgeBaseArticleResource knowledgeBaseArticleResource)
 		throws Exception {
 
@@ -3813,6 +4020,10 @@ public class Query {
 		_documentResourceComponentServiceObjects;
 	private static ComponentServiceObjects<DocumentFolderResource>
 		_documentFolderResourceComponentServiceObjects;
+	private static ComponentServiceObjects<FragmentCollectionResource>
+		_fragmentCollectionResourceComponentServiceObjects;
+	private static ComponentServiceObjects<FragmentEntryResource>
+		_fragmentEntryResourceComponentServiceObjects;
 	private static ComponentServiceObjects<KnowledgeBaseArticleResource>
 		_knowledgeBaseArticleResourceComponentServiceObjects;
 	private static ComponentServiceObjects<KnowledgeBaseAttachmentResource>

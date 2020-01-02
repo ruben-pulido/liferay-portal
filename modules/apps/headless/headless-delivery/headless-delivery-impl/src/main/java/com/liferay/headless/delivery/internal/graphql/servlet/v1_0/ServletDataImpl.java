@@ -23,6 +23,8 @@ import com.liferay.headless.delivery.resource.v1_0.ContentSetElementResource;
 import com.liferay.headless.delivery.resource.v1_0.ContentStructureResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentFolderResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentResource;
+import com.liferay.headless.delivery.resource.v1_0.FragmentCollectionResource;
+import com.liferay.headless.delivery.resource.v1_0.FragmentEntryResource;
 import com.liferay.headless.delivery.resource.v1_0.KnowledgeBaseArticleResource;
 import com.liferay.headless.delivery.resource.v1_0.KnowledgeBaseAttachmentResource;
 import com.liferay.headless.delivery.resource.v1_0.KnowledgeBaseFolderResource;
@@ -106,6 +108,10 @@ public class ServletDataImpl implements ServletData {
 			_documentResourceComponentServiceObjects);
 		Query.setDocumentFolderResourceComponentServiceObjects(
 			_documentFolderResourceComponentServiceObjects);
+		Query.setFragmentCollectionResourceComponentServiceObjects(
+			_fragmentCollectionResourceComponentServiceObjects);
+		Query.setFragmentEntryResourceComponentServiceObjects(
+			_fragmentEntryResourceComponentServiceObjects);
 		Query.setKnowledgeBaseArticleResourceComponentServiceObjects(
 			_knowledgeBaseArticleResourceComponentServiceObjects);
 		Query.setKnowledgeBaseAttachmentResourceComponentServiceObjects(
@@ -224,6 +230,14 @@ public class ServletDataImpl implements ServletData {
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<ContentStructureResource>
 		_contentStructureResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<FragmentCollectionResource>
+		_fragmentCollectionResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<FragmentEntryResource>
+		_fragmentEntryResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<NavigationMenuResource>

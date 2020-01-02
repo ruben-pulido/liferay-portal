@@ -78,6 +78,10 @@ public class OpenAPIResourceImpl {
 
 			add(DocumentFolderResourceImpl.class);
 
+			add(FragmentCollectionResourceImpl.class);
+
+			add(FragmentEntryResourceImpl.class);
+
 			add(KnowledgeBaseArticleResourceImpl.class);
 
 			add(KnowledgeBaseAttachmentResourceImpl.class);
