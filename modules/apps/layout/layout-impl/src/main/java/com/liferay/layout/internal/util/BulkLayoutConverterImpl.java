@@ -121,6 +121,38 @@ public class BulkLayoutConverterImpl implements BulkLayoutConverter {
 	}
 
 	@Override
+	public LayoutConversionResult generatePreviewLayout(
+			long plid, Locale locale)
+		throws Exception {
+
+		Layout layout = _layoutLocalService.getLayout(plid);
+
+		Layout draftLayout = _generatePreviewLayout(plid);
+
+		LayoutConversionResult layoutConversionResult =
+			_getLayoutConversionResult(layout, locale);
+
+		return LayoutConversionResult.of(
+			layoutConversionResult.getLayoutData(),
+			layoutConversionResult.getConversionWarningMessages(), draftLayout);
+	}
+
+//	@Override
+//	public LayoutConversionResult generatePreviewLayout(
+//			long plid, Locale locale)
+//		throws Exception {
+//
+//		LayoutConversionResult layoutConversionResult =
+//			_getLayoutConversionResult(
+//				_layoutLocalService.getLayout(plid), locale);
+//
+//		return LayoutConversionResult.of(
+//			layoutConversionResult.getLayoutData(),
+//			layoutConversionResult.getConversionWarningMessages(),
+//			_generatePreviewLayout(plid));
+//	}
+
+	@Override
 	public long[] getConvertibleLayoutPlids(long groupId)
 		throws PortalException {
 

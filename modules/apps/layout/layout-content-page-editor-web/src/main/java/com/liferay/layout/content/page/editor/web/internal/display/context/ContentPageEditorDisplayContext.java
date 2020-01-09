@@ -87,6 +87,7 @@ import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
+import com.liferay.portal.kernel.servlet.MultiSessionMessages;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -152,13 +153,15 @@ public class ContentPageEditorDisplayContext {
 		HttpServletRequest httpServletRequest, RenderResponse renderResponse,
 		CommentManager commentManager,
 		List<ContentPageEditorSidebarPanel> contentPageEditorSidebarPanels,
-		FragmentRendererController fragmentRendererController) {
+		FragmentRendererController fragmentRendererController,
+		PortletRequest portletRequest) {
 
 		this.httpServletRequest = httpServletRequest;
 		_renderResponse = renderResponse;
 		_commentManager = commentManager;
 		_contentPageEditorSidebarPanels = contentPageEditorSidebarPanels;
 		_fragmentRendererController = fragmentRendererController;
+		_portletRequest = portletRequest;
 
 		infoDisplayContributorTracker =
 			(InfoDisplayContributorTracker)httpServletRequest.getAttribute(
@@ -454,6 +457,9 @@ public class ContentPageEditorDisplayContext {
 			"infoItemSelectorURL", _getInfoItemSelectorURL()
 		).put(
 			"languageId", themeDisplay.getLanguageId()
+		).put(
+			"layoutConversionWarningMessages",
+			_getLayoutConversionWarningMessages()
 		).put(
 			"layoutData", JSONFactoryUtil.createJSONObject(_getLayoutData())
 		).put(
@@ -1295,6 +1301,11 @@ public class ContentPageEditorDisplayContext {
 		return itemSelectorURL.toString();
 	}
 
+	private String[] _getLayoutConversionWarningMessages() {
+		return (String[])MultiSessionMessages.get(
+			_portletRequest, "layoutConversionWarningMessages");
+	}
+
 	private String _getLayoutData() throws PortalException {
 		if (_layoutData != null) {
 			return _layoutData;
@@ -1787,6 +1798,7 @@ public class ContentPageEditorDisplayContext {
 	private final ItemSelector _itemSelector;
 	private String _layoutData;
 	private Integer _pageType;
+	private final PortletRequest _portletRequest;
 	private Layout _publishedLayout;
 	private String _redirect;
 	private final RenderResponse _renderResponse;

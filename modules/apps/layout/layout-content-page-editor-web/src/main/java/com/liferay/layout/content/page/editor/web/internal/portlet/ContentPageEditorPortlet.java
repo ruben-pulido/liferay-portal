@@ -20,6 +20,7 @@ import com.liferay.layout.content.page.editor.web.internal.configuration.Content
 import com.liferay.layout.content.page.editor.web.internal.constants.ContentPageEditorWebKeys;
 import com.liferay.layout.content.page.editor.web.internal.display.context.ContentPageEditorDisplayContext;
 import com.liferay.layout.content.page.editor.web.internal.display.context.ContentPageEditorDisplayContextProvider;
+import com.liferay.layout.util.template.LayoutConverterRegistry;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;
@@ -106,7 +107,7 @@ public class ContentPageEditorPortlet extends MVCPortlet {
 			contentPageEditorDisplayContext =
 				_contentPageEditorDisplayContextProvider.
 					getContentPageEditorDisplayContext(
-						httpServletRequest, renderResponse);
+						httpServletRequest, renderResponse, renderRequest);
 
 			httpServletRequest.setAttribute(
 				ContentPageEditorWebKeys.
