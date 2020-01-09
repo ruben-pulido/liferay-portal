@@ -114,33 +114,7 @@ public class BulkLayoutConverterImpl implements BulkLayoutConverter {
 
 	@Override
 	public Layout generatePreviewLayout(long plid) throws Exception {
-		Layout layout = _layoutLocalService.getLayout(plid);
-
-		if (!Objects.equals(layout.getType(), LayoutConstants.TYPE_PORTLET)) {
-			throw new LayoutConvertException(
-				"Layout with PLID " + layout.getPlid() + " is not convertible");
-		}
-
-		ServiceContext serviceContext = Optional.ofNullable(
-			ServiceContextThreadLocal.getServiceContext()
-		).orElse(
-			new ServiceContext()
-		);
-
-		Layout draftLayout = _getOrCreateDraftLayout(layout, serviceContext);
-
-		_addOrUpdateLayoutPageTemplateStructure(
-			draftLayout, _getLayoutData(draftLayout), serviceContext);
-
-		draftLayout = _layoutLocalService.fetchLayout(draftLayout.getPlid());
-
-		draftLayout.setType(LayoutConstants.TYPE_CONTENT);
-
-		draftLayout = _layoutLocalService.updateLayout(draftLayout);
-
-		_updatePortletDecorator(draftLayout);
-
-		return draftLayout;
+		return _generatePreviewLayout(plid);
 	}
 
 	@Override
@@ -257,6 +231,36 @@ public class BulkLayoutConverterImpl implements BulkLayoutConverter {
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
 		}
+	}
+
+	private Layout _generatePreviewLayout(long plid) throws Exception {
+		Layout layout = _layoutLocalService.getLayout(plid);
+
+		if (!Objects.equals(layout.getType(), LayoutConstants.TYPE_PORTLET)) {
+			throw new LayoutConvertException(
+				"Layout with PLID " + layout.getPlid() + " is not convertible");
+		}
+
+		ServiceContext serviceContext = Optional.ofNullable(
+			ServiceContextThreadLocal.getServiceContext()
+		).orElse(
+			new ServiceContext()
+		);
+
+		Layout draftLayout = _getOrCreateDraftLayout(layout, serviceContext);
+
+		_addOrUpdateLayoutPageTemplateStructure(
+			draftLayout, _getLayoutData(layout), serviceContext);
+
+		draftLayout = _layoutLocalService.fetchLayout(draftLayout.getPlid());
+
+		draftLayout.setType(LayoutConstants.TYPE_CONTENT);
+
+		draftLayout = _layoutLocalService.updateLayout(draftLayout);
+
+		_updatePortletDecorator(draftLayout);
+
+		return draftLayout;
 	}
 
 	private String _getDefaultPortletDecoratorId(Layout layout)
