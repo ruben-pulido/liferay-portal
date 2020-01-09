@@ -19,6 +19,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.BulkLayoutConverter;
 import com.liferay.layout.util.LayoutCopyHelper;
+import com.liferay.layout.util.template.LayoutConversionResult;
 import com.liferay.layout.util.template.LayoutConverter;
 import com.liferay.layout.util.template.LayoutConverterRegistry;
 import com.liferay.layout.util.template.LayoutData;
@@ -50,6 +51,7 @@ import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -59,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -290,7 +293,8 @@ public class BulkLayoutConverterImpl implements BulkLayoutConverter {
 		return defaultPortletDecorator.getPortletDecoratorId();
 	}
 
-	private LayoutData _getLayoutData(Layout layout)
+	private LayoutConversionResult _getLayoutConversionResult(
+			Layout layout, Locale locale)
 		throws LayoutConvertException {
 
 		UnicodeProperties typeSettingsProperties =
@@ -312,7 +316,16 @@ public class BulkLayoutConverterImpl implements BulkLayoutConverter {
 				"Layout with PLID " + layout.getPlid() + " is not convertible");
 		}
 
-		return layoutConverter.convert(layout);
+		return layoutConverter.convert(layout, locale);
+	}
+
+	private LayoutData _getLayoutData(Layout layout)
+		throws LayoutConvertException {
+
+		LayoutConversionResult layoutConversionResult =
+			_getLayoutConversionResult(layout, LocaleUtil.getSiteDefault());
+
+		return layoutConversionResult.getLayoutData();
 	}
 
 	private Layout _getOrCreateDraftLayout(
