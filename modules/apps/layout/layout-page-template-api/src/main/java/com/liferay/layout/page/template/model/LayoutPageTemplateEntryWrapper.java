@@ -598,6 +598,14 @@ public class LayoutPageTemplateEntryWrapper
 	}
 
 	@Override
+	public void populateZipWriter(
+			com.liferay.portal.kernel.zip.ZipWriter zipWriter, String path)
+		throws Exception {
+
+		model.populateZipWriter(zipWriter, path);
+	}
+
+	@Override
 	public void setClassName(String className) {
 		model.setClassName(className);
 	}
