@@ -21,12 +21,15 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.zip.ZipWriter;
 
 import java.util.List;
 
@@ -89,6 +92,52 @@ public class LayoutPageTemplateEntryImpl
 		}
 
 		return StringPool.BLANK;
+	}
+
+	private FileEntry _getPreviewFileEntry() {
+		if (getPreviewFileEntryId() <= 0) {
+			return null;
+		}
+
+		try {
+			return PortletFileRepositoryUtil.getPortletFileEntry(
+				getPreviewFileEntryId());
+		}
+		catch (PortalException pe) {
+			if (_log.isDebugEnabled()) {
+				_log.debug("Unable to get file entry preview ", pe);
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public void populateZipWriter(ZipWriter zipWriter, String path)
+		throws Exception {
+
+		path = path + StringPool.SLASH + getName();
+
+		JSONObject jsonObject = JSONUtil.put(
+			"name", getName()
+		);
+
+		FileEntry previewFileEntry = _getPreviewFileEntry();
+
+		if (previewFileEntry != null) {
+			jsonObject.put(
+				"thumbnailPath",
+				"thumbnail." + previewFileEntry.getExtension());
+		}
+
+		zipWriter.addEntry(
+			path + "/layout-template.json", jsonObject.toString());
+
+		if (previewFileEntry != null) {
+			zipWriter.addEntry(
+				path + "/thumbnail." + previewFileEntry.getExtension(),
+				previewFileEntry.getContentStream());
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
