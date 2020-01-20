@@ -1,0 +1,284 @@
+{
+    "collectionName": "c1",
+    "pageFragments": [
+        {
+            "pageFragments": [],
+            "definition": {
+                "fragmentConfig": {},
+                "contentFields": [],
+                "fragmentCollectionName": "My fragment collection 1",
+                "fragmentName": "My fragment 1"
+            },
+            "type": "Fragment"
+        },
+        {
+            "pageFragments": [
+                {
+                    "pageFragments": [
+                        {
+                            "pageFragments": [],
+                            "definition": {
+                                "size": 8
+                            },
+                            "type": "Column"
+                        },
+                        {
+                            "pageFragments": [],
+                            "definition": {
+                                "size": 4
+                            },
+                            "type": "Column"
+                        }
+                    ],
+                    "definition": {
+                        "gutters": false,
+                        "numberOfColumns": 2
+                    },
+                    "type": "Row"
+                }
+            ],
+            "definition": {
+                "backgroundColorCssClass": "danger",
+                "backgroundImage": {
+                    "title": {
+                        "value": "https://media.gettyimages.com/photos/three-lions-running-zimbabwe-picture-id974056938"
+                    },
+                    "url": {
+                        "value": "https://media.gettyimages.com/photos/three-lions-running-zimbabwe-picture-id974056938"
+                    }
+                },
+                "paddingHorizontal": 4,
+                "paddingBottom": 4,
+                "paddingTop": 4,
+                "type": "Fluid"
+            },
+            "type": "Container"
+        },
+        {
+            "pageFragments": [
+                {
+                    "pageFragments": [
+                        {
+                            "pageFragments": [
+                                {
+                                    "pageFragments": [],
+                                    "definition": {
+                                        "backgroundImages": [
+                                            {
+                                                "id": "banner-left",
+                                                "title": {
+                                                    "value": "My title",
+                                                    "value_i18n": {
+                                                        "en-US": "My title"
+                                                    }
+                                                },
+                                                "url" : {
+                                                    "value": "http://blogs.rivetlogic.com/wp-content/uploads/2017/08/Liferay-DXP-features.png",
+                                                    "value_i18n": {
+                                                        "en-US": "http://blogs.rivetlogic.com/wp-content/uploads/2017/08/Liferay-DXP-features.png"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "id": "banner-right",
+                                                "title": {
+                                                    "fieldId": "displayPageURL",
+                                                    "classNameId": "28701",
+                                                    "classPK": "36620"
+                                                },
+                                                "url" : {
+                                                    "fieldId": "displayPageURL",
+                                                    "classNameId": "28701",
+                                                    "classPK": "36620"
+                                                }
+                                            }
+                                        ],
+                                        "fragmentConfig": {
+                                            "textAlign": "center",
+                                            "bottomSpacing": "5",
+                                            "headingLevel": "h2",
+                                            "textColor": {
+                                                "cssClass": "success",
+                                                "rgbValue": "rgb(28, 86, 42)"
+                                            }
+                                        },
+                                        "contentFields": [
+                                            {
+                                                "id": "01-title",
+                                                "text": {
+                                                    "value": "My title",
+                                                    "value_i18n": {
+                                                        "en-US": "My title"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "id": "02-subtitle",
+                                                "text": {
+                                                    "value": "My subtitle",
+                                                    "value_i18n": {
+                                                        "en-US": "My subtitle"
+                                                    }
+                                                },
+                                                "link" : {
+                                                    "fieldId": "displayPageURL",
+                                                    "classNameId": "28701",
+                                                    "classPK": "36620"
+                                                }
+                                            },
+                                            {
+                                                "id": "03-link",
+                                                "text": {
+                                                    "value": "Go to Liferay",
+                                                    "value_i18n": {
+                                                        "en-US": "Go to Liferay"
+                                                    }
+                                                },
+                                                "link" : {
+                                                    "href": "http://www.liferay.com",
+                                                    "target": "Blank"
+                                                }
+                                            },
+                                            {
+                                                "id": "04-link",
+                                                "text": {
+                                                    "fieldId": "title",
+                                                    "classNameId": "28701",
+                                                    "classPK": "36620"
+                                                },
+                                                "link" : {
+                                                    "fieldId": "displayPageURL",
+                                                    "classNameId": "28701",
+                                                    "classPK": "36620"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "fragmentCollectionName": "My fragment collection 1",
+                                    "fragmentName": "My fragment 1"
+                                }
+                            ],
+                            "definition": {
+                                "size": 6
+                            },
+                            "type": "Column"
+                        },
+                        {
+                            "pageFragments": [],
+                            "definition": {
+                                "size": 6
+                            },
+                            "type": "Column"
+                        }
+                    ],
+                    "definition": {
+                        "gutters": true,
+                        "numberOfColumns": 2
+                    },
+                    "type": "Row"
+                }
+            ],
+            "definition": {
+                "backgroundColorCssClass": "success",
+                "paddingHorizontal": 3,
+                "paddingVertical": 3
+            },
+            "type": "Container"
+        },
+        {
+            "pageFragments": [
+                {
+                    "pageFragments": [
+                        {
+                            "pageFragments": [
+                            ],
+                            "definition": {
+                                "size": 12
+                            },
+                            "type": "Column"
+                        }
+                    ],
+                    "definition": {
+                        "gutters": true,
+                        "numberOfColumns": 1
+                    },
+                    "type": "Row"
+                }
+            ],
+            "definition": {
+                "backgroundImage": {
+                    "title": {
+                        "value": "https://media.gettyimages.com/photos/three-lions-running-zimbabwe-picture-id974056938"
+                    },
+                    "url": {
+                        "value": "https://media.gettyimages.com/photos/three-lions-running-zimbabwe-picture-id974056938"
+                    }
+                },
+                "paddingHorizontal": 3,
+                "paddingVertical": 3
+            },
+            "type": "Container"
+        },
+        {
+            "pageFragments": [
+                {
+                    "pageFragments": [
+                        {
+                            "pageFragments": [
+                            ],
+                            "definition": {
+                                "size": 12
+                            },
+                            "type": "Column"
+                        }
+                    ],
+                    "definition": {
+                        "gutters": true,
+                        "numberOfColumns": 1
+                    },
+                    "type": "Row"
+                }
+            ],
+            "definition": {
+                "backgroundImage": {},
+                "paddingHorizontal": 3,
+                "paddingVertical": 3
+            },
+            "type": "Container"
+        }
+    ],
+    "creator": {
+        "additionalName": "",
+        "contentType": "UserAccount",
+        "familyName": "Test",
+        "givenName": "Test",
+        "id": 20125,
+        "name": "Test Test",
+        "profileURL": "/web/test"
+    },
+    "dateCreated": "2020-01-16T15:13:47Z",
+    "dateModified": "2020-01-16T15:13:47Z",
+    "description": "",
+    "friendlyURL": "",
+    "id": 35982,
+    "keywords": [
+        "k1",
+        "k2"
+    ],
+    "lookAndFeel": {
+        "colorSchemeName": "Day",
+        "css": "",
+        "javascript": "",
+        "masterPageName": "My master page 1",
+        "themeName": "Westeros Bank",
+        "themeSettings": {
+            "lfr-theme:regular:show-global-menu-on": "big-screens",
+            "lfr-theme:regular:show-main-search-on": "no-screen",
+            "lfr-theme:regular:show-recursive-menu-on": "small-screen"
+        }
+    },
+    "name": "pt1",
+    "type": "Content",
+    "siteId": 20119,
+    "uuid": "38a9eb4e-cd50-fbf5-d921-915481e051c4"
+}
