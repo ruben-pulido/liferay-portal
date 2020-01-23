@@ -79,13 +79,18 @@ String friendlyURLBase = StringPool.BLANK;
 
 <c:choose>
 	<c:when test="<%= !group.isLayoutPrototype() %>">
-		<c:if test="<%= !layoutsAdminDisplayContext.isDraft() && !selLayout.isSystem() %>">
-			<aui:input name="name" />
+		<c:choose>
+			<c:when test="<%= !layoutsAdminDisplayContext.isDraft() && !selLayout.isSystem() %>">
+				<aui:input name="name" />
 
-			<div class="form-group">
-				<aui:input helpMessage="hidden-from-navigation-menu-widget-help-message" label="hidden-from-navigation-menu-widget" name="hidden" type="toggle-switch" value="<%= selLayout.isHidden() %>" />
-			</div>
-		</c:if>
+				<div class="form-group">
+					<aui:input helpMessage="hidden-from-navigation-menu-widget-help-message" label="hidden-from-navigation-menu-widget" name="hidden" type="toggle-switch" value="<%= selLayout.isHidden() %>" />
+				</div>
+			</c:when>
+			<c:otherwise>
+				<aui:input name='<%= "name_" + defaultLanguageId %>' type="hidden" value="<%= selLayout.getName(defaultLocale) %>" />
+			</c:otherwise>
+		</c:choose>
 
 		<c:choose>
 			<c:when test="<%= selLayoutType.isURLFriendliable() && !layoutsAdminDisplayContext.isDraft() && !selLayout.isSystem() %>">
