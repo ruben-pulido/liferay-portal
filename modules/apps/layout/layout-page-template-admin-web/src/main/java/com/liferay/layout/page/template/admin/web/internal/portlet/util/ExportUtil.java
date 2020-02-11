@@ -152,7 +152,7 @@ public class ExportUtil {
 
 		sb.append(_ROOT_FOLDER + StringPool.SLASH);
 		sb.append(layoutPageTemplateCollectionKey + StringPool.SLASH);
-		sb.append(pageTemplate.getName());
+		sb.append(layoutPageTemplateEntry.getLayoutPageTemplateEntryKey());
 
 		String path = sb.toString();
 
