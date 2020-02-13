@@ -20,6 +20,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.base.LayoutPageTemplateCollectionLocalServiceBaseImpl;
+import com.liferay.layout.page.template.util.LayoutPageTemplateNormalizerUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -225,6 +226,10 @@ public class LayoutPageTemplateCollectionLocalServiceImpl
 
 		String layoutPageTemplateCollectionKey = StringUtil.toLowerCase(
 			name.trim());
+
+		layoutPageTemplateCollectionKey =
+			LayoutPageTemplateNormalizerUtil.normalizeModelKey(
+				layoutPageTemplateCollectionKey);
 
 		layoutPageTemplateCollectionKey = StringUtil.replace(
 			layoutPageTemplateCollectionKey, CharPool.SPACE, CharPool.DASH);

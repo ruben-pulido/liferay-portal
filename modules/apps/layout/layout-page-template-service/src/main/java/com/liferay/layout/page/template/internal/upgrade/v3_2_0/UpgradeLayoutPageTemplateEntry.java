@@ -15,6 +15,7 @@
 package com.liferay.layout.page.template.internal.upgrade.v3_2_0;
 
 import com.liferay.layout.page.template.internal.upgrade.v3_2_0.util.LayoutPageTemplateEntryTable;
+import com.liferay.layout.page.template.util.LayoutPageTemplateNormalizerUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
@@ -72,6 +73,10 @@ public class UpgradeLayoutPageTemplateEntry extends UpgradeProcess {
 
 	private String _generateLayoutPageTemplateEntryKey(String name) {
 		String layoutPageTemplateEntryKey = StringUtil.toLowerCase(name.trim());
+
+		layoutPageTemplateEntryKey =
+			LayoutPageTemplateNormalizerUtil.normalizeModelKey(
+				layoutPageTemplateEntryKey);
 
 		return StringUtil.replace(
 			layoutPageTemplateEntryKey, CharPool.SPACE, CharPool.DASH);

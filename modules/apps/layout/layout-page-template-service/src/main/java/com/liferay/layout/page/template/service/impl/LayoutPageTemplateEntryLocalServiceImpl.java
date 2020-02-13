@@ -27,6 +27,7 @@ import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeCon
 import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryNameException;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.base.LayoutPageTemplateEntryLocalServiceBaseImpl;
+import com.liferay.layout.page.template.util.LayoutPageTemplateNormalizerUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
@@ -944,6 +945,10 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 		long groupId, String name) {
 
 		String layoutPageTemplateEntryKey = StringUtil.toLowerCase(name.trim());
+
+		layoutPageTemplateEntryKey =
+			LayoutPageTemplateNormalizerUtil.normalizeModelKey(
+				layoutPageTemplateEntryKey);
 
 		layoutPageTemplateEntryKey = StringUtil.replace(
 			layoutPageTemplateEntryKey, CharPool.SPACE, CharPool.DASH);
