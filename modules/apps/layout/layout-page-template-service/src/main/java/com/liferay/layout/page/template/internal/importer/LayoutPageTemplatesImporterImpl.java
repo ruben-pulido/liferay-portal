@@ -14,14 +14,22 @@
 
 package com.liferay.layout.page.template.internal.importer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.liferay.headless.delivery.dto.v1_0.PageDefinition;
+import com.liferay.headless.delivery.dto.v1_0.PageTemplate;
+import com.liferay.headless.delivery.dto.v1_0.PageTemplateCollection;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateExportImportConstants;
 import com.liferay.layout.page.template.importer.LayoutPageTemplatesImporter;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -45,11 +53,11 @@ public class LayoutPageTemplatesImporterImpl
 		throws Exception {
 
 		try (ZipFile zipFile = new ZipFile(file)) {
-			Map<String, LayoutPageTemplateCollectionFolder>
-				layoutPageTemplateCollectionFolderMap =
-					_getLayoutPageTemplateCollectionFolderMap(zipFile);
+			Map<String, PageTemplateCollectionEntry>
+				pageTemplateCollectionEntryMap =
+					_getPageTemplateCollectionEntryMap(zipFile);
 
-			if (MapUtil.isEmpty(layoutPageTemplateCollectionFolderMap)) {
+			if (MapUtil.isEmpty(pageTemplateCollectionEntryMap)) {
 				if (_log.isDebugEnabled()) {
 					_log.debug(
 						"No valid layout page template entries found in " +
@@ -59,79 +67,167 @@ public class LayoutPageTemplatesImporterImpl
 		}
 	}
 
-	private Map<String, LayoutPageTemplateCollectionFolder>
-		_getLayoutPageTemplateCollectionFolderMap(ZipFile zipFile) {
+	private PageDefinition _getPageDefinition(String fileName, ZipFile zipFile)
+		throws IOException {
 
-		Map<String, LayoutPageTemplateCollectionFolder>
-			layoutPageTemplateCollectionFolderMap = new HashMap<>();
+		String path = fileName.substring(
+			0, fileName.lastIndexOf(StringPool.FORWARD_SLASH));
+
+		ZipEntry zipEntry = zipFile.getEntry(
+			path +
+				LayoutPageTemplateExportImportConstants.
+					FILE_NAME_PAGE_DEFINITION_CONFIG);
+
+		if (zipEntry == null) {
+			return null;
+		}
+
+		String content = StringUtil.read(zipFile.getInputStream(zipEntry));
+
+		return _objectMapper.readValue(content, PageDefinition.class);
+	}
+
+	private Map<String, PageTemplateCollectionEntry>
+			_getPageTemplateCollectionEntryMap(ZipFile zipFile)
+		throws IOException {
+
+		Map<String, PageTemplateCollectionEntry> pageTemplateCollectionMap =
+			new HashMap<>();
 
 		Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
 
 		while (enumeration.hasMoreElements()) {
 			ZipEntry zipEntry = enumeration.nextElement();
 
-			if (zipEntry.isDirectory()) {
-				continue;
-			}
-
-			String fileName = zipEntry.getName();
-
-			String[] pathParameters = StringUtil.split(
-				fileName, CharPool.SLASH);
-
-			if ((pathParameters.length != 4) ||
-				!Objects.equals(pathParameters[0], _ROOT_FOLDER) ||
-				!Objects.equals(pathParameters[3], _PAGE_TEMPLATE_FILE_NAME)) {
+			if ((zipEntry == null) ||
+				!_isPageTemplateCollectionFile(zipEntry.getName())) {
 
 				continue;
 			}
 
-			String layoutPageTemplateCollectionKey = pathParameters[1];
+			String[] path = StringUtil.split(
+				zipEntry.getName(), CharPool.SLASH);
 
-			String layoutPageTemplateEntryKey = pathParameters[2];
+			String pageTemplateCollectionKey = path[1];
 
-			LayoutPageTemplateCollectionFolder
-				layoutPageTemplateCollectionFolder =
-					layoutPageTemplateCollectionFolderMap.computeIfAbsent(
-						layoutPageTemplateCollectionKey,
-						key -> new LayoutPageTemplateCollectionFolder(key));
+			String content = StringUtil.read(zipFile.getInputStream(zipEntry));
 
-			layoutPageTemplateCollectionFolder.addLayoutPageTemplateEntry(
-				layoutPageTemplateEntryKey, fileName);
+			PageTemplateCollection pageTemplateCollection =
+				_objectMapper.readValue(content, PageTemplateCollection.class);
 
-			layoutPageTemplateCollectionFolderMap.put(
-				layoutPageTemplateCollectionKey,
-				layoutPageTemplateCollectionFolder);
+			pageTemplateCollectionMap.put(
+				pageTemplateCollectionKey,
+				new PageTemplateCollectionEntry(
+					pageTemplateCollectionKey, pageTemplateCollection));
 		}
 
-		return layoutPageTemplateCollectionFolderMap;
+		enumeration = zipFile.entries();
+
+		while (enumeration.hasMoreElements()) {
+			ZipEntry zipEntry = enumeration.nextElement();
+
+			if ((zipEntry == null) ||
+				!_isPageTemplateFile(zipEntry.getName())) {
+
+				continue;
+			}
+
+			String[] path = StringUtil.split(
+				zipEntry.getName(), CharPool.SLASH);
+
+			PageTemplateCollectionEntry pageTemplateCollectionEntry =
+				pageTemplateCollectionMap.get(path[1]);
+
+			if (pageTemplateCollectionEntry == null) {
+				continue;
+			}
+
+			String content = StringUtil.read(zipFile.getInputStream(zipEntry));
+
+			PageTemplate pageTemplate = _objectMapper.readValue(
+				content, PageTemplate.class);
+
+			pageTemplateCollectionEntry.addPageTemplateEntry(
+				path[2],
+				new PageTemplateEntry(
+					pageTemplate,
+					_getPageDefinition(zipEntry.getName(), zipFile)));
+		}
+
+		return pageTemplateCollectionMap;
 	}
 
-	private static final String _PAGE_TEMPLATE_FILE_NAME = "page-template.json";
+	private boolean _isPageTemplateCollectionFile(String fileName) {
+		String[] path = StringUtil.split(fileName, CharPool.SLASH);
+
+		if ((path.length == 3) && Objects.equals(path[0], _ROOT_FOLDER) &&
+			Objects.equals(
+				path[2],
+				LayoutPageTemplateExportImportConstants.
+					FILE_NAME_COLLECTION_CONFIG)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _isPageTemplateFile(String fileName) {
+		String[] path = StringUtil.split(fileName, CharPool.SLASH);
+
+		if ((path.length == 4) && Objects.equals(path[0], _ROOT_FOLDER) &&
+			Objects.equals(
+				path[3],
+				LayoutPageTemplateExportImportConstants.
+					FILE_NAME_PAGE_TEMPLATE_CONFIG)) {
+
+			return true;
+		}
+
+		return false;
+	}
 
 	private static final String _ROOT_FOLDER = "page-templates";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutPageTemplatesImporterImpl.class);
 
-	private class LayoutPageTemplateCollectionFolder {
+	private static final ObjectMapper _objectMapper = new ObjectMapper();
 
-		public LayoutPageTemplateCollectionFolder(String key) {
+	private class PageTemplateCollectionEntry {
+
+		public PageTemplateCollectionEntry(
+			String key, PageTemplateCollection pageTemplateCollection) {
+
 			_key = key;
+			_pageTemplateCollection = pageTemplateCollection;
 
-			_layoutPageTemplateEntries = new HashMap<>();
+			_pageTemplateEntries = new HashMap<>();
 		}
 
-		public void addLayoutPageTemplateEntry(String key, String fileName) {
-			_layoutPageTemplateEntries.put(key, fileName);
-		}
+		public void addPageTemplateEntry(
+			String key, PageTemplateEntry pageTemplateEntry) {
 
-		public String getKey() {
-			return _key;
+			_pageTemplateEntries.put(key, pageTemplateEntry);
 		}
 
 		private final String _key;
-		private final Map<String, String> _layoutPageTemplateEntries;
+		private final PageTemplateCollection _pageTemplateCollection;
+		private final Map<String, PageTemplateEntry> _pageTemplateEntries;
+
+	}
+
+	private class PageTemplateEntry {
+
+		public PageTemplateEntry(
+			PageTemplate pageTemplate, PageDefinition pageDefinition) {
+
+			_pageTemplate = pageTemplate;
+			_pageDefinition = pageDefinition;
+		}
+
+		private final PageDefinition _pageDefinition;
+		private final PageTemplate _pageTemplate;
 
 	}
 
