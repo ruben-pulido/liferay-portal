@@ -12,23 +12,36 @@
  * details.
  */
 
-package com.liferay.layout.page.template.admin.web.internal.validator;
+package com.liferay.layout.page.template.admin.validator.test;
 
-import com.liferay.layout.page.template.admin.web.internal.exception.PageDefinitionValidatorException;
+import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.layout.page.template.admin.exception.PageDefinitionValidatorException;
+import com.liferay.layout.page.template.admin.validator.PageDefinitionValidator;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.util.FileImpl;
-
 import org.hamcrest.core.StringStartsWith;
-
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 
 /**
  * @author Rubén Pulido
  */
+@RunWith(Arquillian.class)
 public class PageDefinitionValidatorTest {
+
+	@ClassRule
+	@Rule
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@Before
 	public void setUp() {
