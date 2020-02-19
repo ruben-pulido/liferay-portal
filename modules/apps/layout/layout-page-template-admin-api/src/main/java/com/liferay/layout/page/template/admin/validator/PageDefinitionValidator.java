@@ -12,21 +12,16 @@
  * details.
  */
 
-package com.liferay.layout.page.template.admin.web.internal.exception;
+package com.liferay.layout.page.template.admin.validator;
 
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.layout.page.template.admin.exception.PageDefinitionValidatorException;
 
 /**
  * @author Rubén Pulido
  */
-public class PageDefinitionValidatorException extends PortalException {
+public interface PageDefinitionValidator {
 
-	public PageDefinitionValidatorException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
-
-	public PageDefinitionValidatorException(Throwable cause) {
-		super(cause);
-	}
+	public void validatePageDefinition(String pageDefinitionJSON)
+		throws PageDefinitionValidatorException;
 
 }

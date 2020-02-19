@@ -14,19 +14,23 @@
 
 package com.liferay.layout.page.template.admin.web.internal.validator;
 
-import com.liferay.layout.page.template.admin.web.internal.exception.PageDefinitionValidatorException;
+import com.liferay.layout.page.template.admin.validator.PageDefinitionValidator;
+import com.liferay.layout.page.template.admin.exception.PageDefinitionValidatorException;
 import com.liferay.petra.json.validator.JSONValidator;
 import com.liferay.petra.json.validator.JSONValidatorException;
 import com.liferay.portal.kernel.util.Validator;
+import org.osgi.service.component.annotations.Component;
 
 import java.io.InputStream;
 
 /**
  * @author Rubén Pulido
  */
-public class PageDefinitionValidator {
+@Component(immediate = true, service = PageDefinitionValidator.class)
+public class PageDefinitionValidatorImpl implements PageDefinitionValidator {
 
-	public static void validatePageDefinition(String pageDefinitionJSON)
+	@Override
+	public void validatePageDefinition(String pageDefinitionJSON)
 		throws PageDefinitionValidatorException {
 
 		if (Validator.isNull(pageDefinitionJSON)) {
@@ -34,7 +38,7 @@ public class PageDefinitionValidator {
 		}
 
 		InputStream pageDefinitionJSONSchemaInputStream =
-			PageDefinitionValidator.class.getResourceAsStream(
+			PageDefinitionValidatorImpl.class.getResourceAsStream(
 				"dependencies/page_definition_json_schema.json");
 
 		try {

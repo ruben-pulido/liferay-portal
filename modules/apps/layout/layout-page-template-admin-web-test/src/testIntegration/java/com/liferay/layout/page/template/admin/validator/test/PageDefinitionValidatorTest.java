@@ -12,23 +12,37 @@
  * details.
  */
 
-package com.liferay.layout.page.template.admin.web.internal.validator;
+package com.liferay.layout.page.template.admin.validator.test;
 
-import com.liferay.layout.page.template.admin.web.internal.exception.PageDefinitionValidatorException;
+import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.layout.page.template.admin.exception.PageDefinitionValidatorException;
+import com.liferay.layout.page.template.admin.validator.PageDefinitionValidator;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.test.rule.Inject;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.util.FileImpl;
-
 import org.hamcrest.core.StringStartsWith;
-
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 
 /**
  * @author Rubén Pulido
  */
+@RunWith(Arquillian.class)
 public class PageDefinitionValidatorTest {
+
+	@ClassRule
+	@Rule
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@Before
 	public void setUp() {
@@ -45,7 +59,7 @@ public class PageDefinitionValidatorTest {
 				"/pageElement/pageElements/0/pageElements/0/definition: " +
 					"extraneous key [extra] is not permitted"));
 
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_invalid_column_extra_properties.json"));
 	}
 
@@ -57,7 +71,7 @@ public class PageDefinitionValidatorTest {
 		expectedException.expectMessage(
 			new StringStartsWith("extraneous key [extra] is not permitted"));
 
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_invalid_extra_properties.json"));
 	}
 
@@ -71,7 +85,7 @@ public class PageDefinitionValidatorTest {
 				"/pageElement/pageElements/0/definition: extraneous key " +
 					"[extra] is not permitted"));
 
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_invalid_fragment_extra_properties.json"));
 	}
 
@@ -84,7 +98,7 @@ public class PageDefinitionValidatorTest {
 			new StringStartsWith(
 				"/pageElement: extraneous key [extra] is not permitted"));
 
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read(
 				"page_definition_invalid_page_element_extra_properties.json"));
 	}
@@ -99,7 +113,7 @@ public class PageDefinitionValidatorTest {
 				"/pageElement/definition: extraneous key [extra] is not " +
 					"permitted"));
 
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_invalid_root_extra_properties.json"));
 	}
 
@@ -113,7 +127,7 @@ public class PageDefinitionValidatorTest {
 				"/pageElement/pageElements/0/definition: extraneous key " +
 					"[extra] is not permitted"));
 
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_invalid_section_extra_properties.json"));
 	}
 
@@ -121,7 +135,7 @@ public class PageDefinitionValidatorTest {
 	public void testValidatePageDefinitionValidColumnComplete()
 		throws Exception {
 
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_valid_column_complete.json"));
 	}
 
@@ -129,25 +143,25 @@ public class PageDefinitionValidatorTest {
 	public void testValidatePageDefinitionValidFragmentComplete()
 		throws Exception {
 
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_valid_fragment_complete.json"));
 	}
 
 	@Test
 	public void testValidatePageDefinitionValidRequired() throws Exception {
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_valid_required.json"));
 	}
 
 	@Test
 	public void testValidatePageDefinitionValidRootComplete() throws Exception {
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_valid_root_complete.json"));
 	}
 
 	@Test
 	public void testValidatePageDefinitionValidRowComplete() throws Exception {
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_valid_row_complete.json"));
 	}
 
@@ -155,7 +169,7 @@ public class PageDefinitionValidatorTest {
 	public void testValidatePageDefinitionValidSectionComplete()
 		throws Exception {
 
-		PageDefinitionValidator.validatePageDefinition(
+		_pageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_valid_section_complete.json"));
 	}
 
@@ -166,5 +180,8 @@ public class PageDefinitionValidatorTest {
 		return new String(
 			FileUtil.getBytes(getClass(), "dependencies/" + fileName));
 	}
+
+	@Inject
+	private PageDefinitionValidator _pageDefinitionValidator;
 
 }
