@@ -1,0 +1,42 @@
+{
+	"pageElement" : {
+		"pageElements" : [
+			{
+				"definition" : {
+					"layout" : {
+						"paddingBottom" : 3,
+						"paddingHorizontal" : 3,
+						"paddingTop" : 3
+					}
+				},
+				"pageElements" : [
+					{
+						"definition" : {
+							"fragment" : {
+								"fragmentCollectionName" : "Fragment Collection One",
+								"fragmentName" : "Richt Text Editable"
+							},
+							"fragmentConfig" : {
+							},
+							"fragmentFields" : [
+								{
+									"id" : "my-richt-text-editable",
+									"value" : {
+										"text" : {
+											"value_i18n" : {
+												"en_US" : "<em>This is editable text that I can<br />\nmake <strong>bold</strong> or italic!</em>"
+											}
+										}
+									}
+								}
+							]
+						},
+						"type" : "Fragment"
+					}
+				],
+				"type" : "Section"
+			}
+		],
+		"type" : "Root"
+	}
+}
