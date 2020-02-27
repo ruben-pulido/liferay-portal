@@ -432,15 +432,13 @@ public class FragmentInstanceDefinitionConverterUtil {
 	private static FragmentFieldImage _toFragmentFieldImage(
 		JSONObject jsonObject) {
 
-		Map<String, String> localeMap = _toLocaleMap(jsonObject);
-
 		return new FragmentFieldImage() {
 			{
 				fragmentImage = new FragmentImage() {
 					{
 						url = new InlineValue() {
 							{
-								value_i18n = localeMap;
+								value_i18n = _toLocaleMap(jsonObject);
 							}
 						};
 					}
@@ -515,6 +513,12 @@ public class FragmentInstanceDefinitionConverterUtil {
 				}
 			}
 		};
+	}
+
+	private static String _toTitle(JSONObject jsonObject) {
+		JSONObject configJSONObject = jsonObject.getJSONObject("config");
+
+		return configJSONObject.getString("imageTitle");
 	}
 
 	private static Map<String, String> _toMap(JSONObject jsonObject) {
