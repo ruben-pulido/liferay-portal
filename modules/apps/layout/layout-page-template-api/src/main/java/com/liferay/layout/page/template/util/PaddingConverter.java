@@ -24,25 +24,7 @@ import java.util.Set;
  */
 public class PaddingConverter {
 
-	public static Integer convertToExternalValue(Integer value) {
-		Set<Integer> externalValues = externalValueToInternalValueMap.keySet();
-
-		for (Integer externalValue : externalValues) {
-			if (value.equals(
-					externalValueToInternalValueMap.get(externalValue))) {
-
-				return externalValue;
-			}
-		}
-
-		return null;
-	}
-
-	public static Integer convertToInternalValue(Integer label) {
-		return externalValueToInternalValueMap.get(label);
-	}
-
-	private static final Map<Integer, Integer> externalValueToInternalValueMap =
+	public static final Map<Integer, Integer> externalToInternalValuesMap =
 		HashMapBuilder.put(
 			0, 0
 		).put(
@@ -58,5 +40,21 @@ public class PaddingConverter {
 		).put(
 			10, 8
 		).build();
+
+	public static Integer convertToExternalValue(Integer value) {
+		Set<Integer> externalValues = externalToInternalValuesMap.keySet();
+
+		for (Integer externalValue : externalValues) {
+			if (value.equals(externalToInternalValuesMap.get(externalValue))) {
+				return externalValue;
+			}
+		}
+
+		return null;
+	}
+
+	public static Integer convertToInternalValue(Integer label) {
+		return externalToInternalValuesMap.get(label);
+	}
 
 }
