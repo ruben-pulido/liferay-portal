@@ -20,13 +20,19 @@ import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
 import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
 import com.liferay.headless.delivery.dto.v1_0.Fragment;
+import com.liferay.headless.delivery.dto.v1_0.FragmentField;
+import com.liferay.headless.delivery.dto.v1_0.FragmentFieldText;
 import com.liferay.headless.delivery.dto.v1_0.FragmentInstanceDefinition;
+import com.liferay.headless.delivery.dto.v1_0.FragmentLink;
+import com.liferay.headless.delivery.dto.v1_0.InlineLink;
+import com.liferay.headless.delivery.dto.v1_0.InlineValue;
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -36,6 +42,9 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.util.Map;
 
 /**
  * @author Jürgen Kappler
@@ -99,7 +108,12 @@ public class FragmentLayoutStructureItemHelper
 
 		JSONObject jsonObject = JSONUtil.put(
 			_BACKGROUND_IMAGE_FRAGMENT_ENTRY_PROCESSOR,
-			JSONFactoryUtil.createJSONObject());
+			JSONFactoryUtil.createJSONObject()
+		).put(
+			_EDITABLE_FRAGMENT_ENTRY_PROCESSOR,
+			_createEditablesValuesJSONObject(
+				fragmentInstanceDefinition.getFragmentFields())
+		);
 
 		try {
 			return FragmentEntryLinkLocalServiceUtil.addFragmentEntryLink(
@@ -118,6 +132,96 @@ public class FragmentLayoutStructureItemHelper
 		}
 
 		return null;
+	}
+
+	private JSONObject _createEditablesValuesJSONObject(
+		FragmentField[] fragmentFields) {
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		if (fragmentFields == null) {
+			return jsonObject;
+		}
+
+		for (FragmentField fragmentField : fragmentFields) {
+			JSONObject fragmentFieldJSONObject =
+				JSONFactoryUtil.createJSONObject();
+
+			String fragmentFieldId = fragmentField.getId();
+
+			if (Validator.isNull(fragmentFieldId)) {
+				continue;
+			}
+
+			FragmentFieldText fragmentFieldText =
+				(FragmentFieldText)fragmentField.getValue();
+
+			if (fragmentFieldText == null) {
+				continue;
+			}
+
+			JSONObject fragmentLinkJSONObject = _createFragmentLinkJSONObject(
+				fragmentFieldText.getFragmentLink());
+
+			if (fragmentLinkJSONObject != null) {
+				fragmentFieldJSONObject.put("config", fragmentLinkJSONObject);
+			}
+
+			JSONObject localizationJSONObject = _createLocalizationJSONObject(
+				fragmentFieldText);
+
+			try {
+				jsonObject.put(
+					fragmentFieldId,
+					JSONUtil.merge(
+						fragmentFieldJSONObject, localizationJSONObject));
+			}
+			catch (JSONException jsonException) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(jsonException, jsonException);
+				}
+			}
+		}
+
+		return jsonObject;
+	}
+
+	private JSONObject _createFragmentLinkJSONObject(
+		FragmentLink fragmentLink) {
+
+		JSONObject fragmentLinkJSONObject = JSONFactoryUtil.createJSONObject();
+
+		if (fragmentLink == null) {
+			return fragmentLinkJSONObject;
+		}
+
+		fragmentLinkJSONObject.put("target", fragmentLink.getTarget());
+
+		InlineLink inlineLink = (InlineLink)fragmentLink.getValue();
+
+		if (inlineLink != null) {
+			fragmentLinkJSONObject.put("href", inlineLink.getHref());
+		}
+
+		return fragmentLinkJSONObject;
+	}
+
+	private JSONObject _createLocalizationJSONObject(
+		FragmentFieldText fragmentFieldText) {
+
+		JSONObject localizationJSONObject = JSONFactoryUtil.createJSONObject();
+
+		InlineValue inlineValue = (InlineValue)fragmentFieldText.getText();
+
+		Map<String, String> i18nMap = inlineValue.getValue_i18n();
+
+		if (i18nMap != null) {
+			for (Map.Entry<String, String> entry : i18nMap.entrySet()) {
+				localizationJSONObject.put(entry.getKey(), entry.getValue());
+			}
+		}
+
+		return localizationJSONObject;
 	}
 
 	private FragmentEntry _getFragmentEntry(
@@ -141,6 +245,10 @@ public class FragmentLayoutStructureItemHelper
 	private static final String _BACKGROUND_IMAGE_FRAGMENT_ENTRY_PROCESSOR =
 		"com.liferay.fragment.entry.processor.background.image." +
 			"BackgroundImageFragmentEntryProcessor";
+
+	private static final String _EDITABLE_FRAGMENT_ENTRY_PROCESSOR =
+		"com.liferay.fragment.entry.processor.editable." +
+			"EditableFragmentEntryProcessor";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		FragmentLayoutStructureItemHelper.class);
