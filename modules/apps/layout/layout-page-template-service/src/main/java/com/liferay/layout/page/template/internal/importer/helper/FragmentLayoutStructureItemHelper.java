@@ -44,6 +44,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -113,6 +114,10 @@ public class FragmentLayoutStructureItemHelper
 			_EDITABLE_FRAGMENT_ENTRY_PROCESSOR,
 			_createEditablesValuesJSONObject(
 				fragmentInstanceDefinition.getFragmentFields())
+		).put(
+			_FREEMARKER_FRAGMENT_ENTRY_PROCESSOR,
+			_createConfigurationValuesJSONObject(
+				fragmentInstanceDefinition.getFragmentConfig())
 		);
 
 		try {
@@ -132,6 +137,33 @@ public class FragmentLayoutStructureItemHelper
 		}
 
 		return null;
+	}
+
+	private JSONObject _createConfigurationValuesJSONObject(
+		Map<String, Object> fragmentConfigMap) {
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		if (fragmentConfigMap == null) {
+			return jsonObject;
+		}
+
+		for (Map.Entry<String, Object> entry : fragmentConfigMap.entrySet()) {
+			if (entry.getValue() instanceof String) {
+				jsonObject.put(entry.getKey(), entry.getValue());
+			}
+			else if (entry.getValue() instanceof HashMap) {
+				Map<String, Object> childFragmentConfigMap =
+					(Map<String, Object>)entry.getValue();
+
+				jsonObject.put(
+					entry.getKey(),
+					_createConfigurationValuesJSONObject(
+						childFragmentConfigMap));
+			}
+		}
+
+		return jsonObject;
 	}
 
 	private JSONObject _createEditablesValuesJSONObject(
@@ -249,6 +281,10 @@ public class FragmentLayoutStructureItemHelper
 	private static final String _EDITABLE_FRAGMENT_ENTRY_PROCESSOR =
 		"com.liferay.fragment.entry.processor.editable." +
 			"EditableFragmentEntryProcessor";
+
+	private static final String _FREEMARKER_FRAGMENT_ENTRY_PROCESSOR =
+		"com.liferay.fragment.entry.processor.freemarker." +
+			"FreeMarkerFragmentEntryProcessor";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		FragmentLayoutStructureItemHelper.class);
