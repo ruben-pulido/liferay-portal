@@ -56,6 +56,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
+import com.liferay.layout.page.template.util.PaddingConverter;
 import com.liferay.layout.util.constants.LayoutConverterTypeConstants;
 import com.liferay.layout.util.structure.DropZoneLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
@@ -282,6 +283,22 @@ public class ContentPageEditorDisplayContext {
 				"moveItemURL",
 				getFragmentEntryActionURL(
 					"/content_layout/move_fragment_entry_link")
+			).put(
+				"paddingOptions",
+				() -> {
+					Set<Map.Entry<Integer, Integer>> entrySet =
+						PaddingConverter.externalToInternalValuesMap.entrySet();
+
+					Map<String, String> labelToValueMap = new HashMap<>();
+
+					for (Map.Entry<Integer, Integer> entry : entrySet) {
+						labelToValueMap.put(
+							String.valueOf(entry.getKey()),
+							String.valueOf(entry.getValue()));
+					}
+
+					return labelToValueMap;
+				}
 			).put(
 				"pageType", String.valueOf(_getPageType())
 			).put(
