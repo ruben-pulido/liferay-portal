@@ -105,14 +105,13 @@ public class ContentPageEditorDisplayContextProvider {
 	}
 
 	@Activate
-	protected void activate(BundleContext bundleContext) {
+	@Modified
+	protected void activate(
+		BundleContext bundleContext, Map<String, Object> properties) {
+
 		_serviceTrackerList = ServiceTrackerListFactory.open(
 			bundleContext, ContentPageEditorSidebarPanel.class);
-	}
 
-	@Activate
-	@Modified
-	protected void activate(Map<String, Object> properties) {
 		_layoutContentPageEditorConfiguration =
 			ConfigurableUtil.createConfigurable(
 				LayoutContentPageEditorConfiguration.class, properties);
