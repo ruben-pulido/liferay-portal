@@ -16,13 +16,10 @@ package com.liferay.layout.page.template.admin.web.internal.portlet.action.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
-import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
-import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.petra.string.CharPool;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
@@ -74,7 +71,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
  * @author Rubén Pulido
  */
 @RunWith(Arquillian.class)
-public class ExportLayoutPageTemplateEntriesMVCResourceCommandTest {
+public class ExportMasterLayoutsMVCResourceCommandTest {
 
 	@ClassRule
 	@Rule
@@ -93,20 +90,11 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommandTest {
 
 	@Test
 	public void testGetFile() throws Exception {
-		LayoutPageTemplateCollection layoutPageTemplateCollection =
-			_layoutPageTemplateCollectionLocalService.
-				addLayoutPageTemplateCollection(
-					TestPropsValues.getUserId(), _group.getGroupId(),
-					"Page Template Collection One", StringPool.BLANK,
-					_serviceContext);
-
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 				_serviceContext.getUserId(), _serviceContext.getScopeGroupId(),
-				layoutPageTemplateCollection.
-					getLayoutPageTemplateCollectionId(),
-				"Page Template One",
-				LayoutPageTemplateEntryTypeConstants.TYPE_BASIC, 0,
+				0, "Master Page One",
+				LayoutPageTemplateEntryTypeConstants.TYPE_MASTER_LAYOUT, 0,
 				WorkflowConstants.STATUS_DRAFT, _serviceContext);
 
 		_layoutPageTemplateStructureLocalService.addLayoutPageTemplateStructure(
@@ -150,12 +138,12 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommandTest {
 				_validateZipEntry(zipEntry, zipFile);
 			}
 
-			Assert.assertEquals(4, zipFile.size());
+			Assert.assertEquals(3, zipFile.size());
 		}
 	}
 
 	@Test
-	public void testGetFileNameMultiplePageTemplates() {
+	public void testGetFileNameMultipleMasterPages() {
 		long[] layoutPageTemplateEntryIds = {
 			RandomTestUtil.randomLong(), RandomTestUtil.randomLong()
 		};
@@ -164,26 +152,17 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommandTest {
 			_mvcResourceCommand, "getFileName", new Class<?>[] {long[].class},
 			layoutPageTemplateEntryIds);
 
-		Assert.assertTrue(fileName.startsWith("page-templates-"));
+		Assert.assertTrue(fileName.startsWith("master-pages-"));
 		Assert.assertTrue(fileName.endsWith(".zip"));
 	}
 
 	@Test
-	public void testGetFileNameSinglePageTemplate() throws Exception {
-		LayoutPageTemplateCollection layoutPageTemplateCollection =
-			_layoutPageTemplateCollectionLocalService.
-				addLayoutPageTemplateCollection(
-					TestPropsValues.getUserId(), _group.getGroupId(),
-					"Page Template Collection One", StringPool.BLANK,
-					_serviceContext);
-
+	public void testGetFileNameSingleMasterPage() throws Exception {
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 				_serviceContext.getUserId(), _serviceContext.getScopeGroupId(),
-				layoutPageTemplateCollection.
-					getLayoutPageTemplateCollectionId(),
-				"Page Template One",
-				LayoutPageTemplateEntryTypeConstants.TYPE_BASIC, 0,
+				0, "Master Page One",
+				LayoutPageTemplateEntryTypeConstants.TYPE_MASTER_LAYOUT, 0,
 				WorkflowConstants.STATUS_DRAFT, _serviceContext);
 
 		long[] layoutPageTemplateEntryIds = {
@@ -196,14 +175,14 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommandTest {
 
 		Assert.assertTrue(
 			fileName.startsWith(
-				"page-template-" +
+				"master-page-" +
 					layoutPageTemplateEntry.getLayoutPageTemplateEntryKey() +
 						"-"));
 		Assert.assertTrue(fileName.endsWith(".zip"));
 	}
 
 	@Test
-	public void testGetLayoutPageTemplateEntryIdsSinglePageTemplate() {
+	public void testGetLayoutPageTemplateEntryIdsSingleMasterPage() {
 		long expectedLayoutPageTemplateEntryId = RandomTestUtil.randomLong();
 
 		long[] actualLayoutPageTemplateEntryIds = ReflectionTestUtil.invoke(
@@ -231,25 +210,12 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommandTest {
 		return mockResourceRequest;
 	}
 
-	private boolean _isPageDefinitionFile(String path) {
-		String[] pathParts = StringUtil.split(path, CharPool.SLASH);
-
-		if ((pathParts.length == 4) &&
-			Objects.equals(pathParts[0], "page-templates") &&
-			Objects.equals(pathParts[3], "page-definition.json")) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean _isPageTemplateCollectionFile(String path) {
+	private boolean _isMasterPageFile(String path) {
 		String[] pathParts = StringUtil.split(path, CharPool.SLASH);
 
 		if ((pathParts.length == 3) &&
-			Objects.equals(pathParts[0], "page-templates") &&
-			Objects.equals(pathParts[2], "page-template-collection.json")) {
+			Objects.equals(pathParts[0], "master-pages") &&
+			Objects.equals(pathParts[2], "master-page.json")) {
 
 			return true;
 		}
@@ -257,25 +223,25 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommandTest {
 		return false;
 	}
 
-	private boolean _isPageTemplateFile(String path) {
-		String[] pathParts = StringUtil.split(path, CharPool.SLASH);
-
-		if ((pathParts.length == 4) &&
-			Objects.equals(pathParts[0], "page-templates") &&
-			Objects.equals(pathParts[3], "page-template.json")) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean _isPageTemplateThumbnailFile(String fileName) {
+	private boolean _isMasterPageThumbnailFile(String fileName) {
 		String[] pathParts = StringUtil.split(fileName, CharPool.SLASH);
 
-		if ((pathParts.length == 4) &&
-			Objects.equals(pathParts[0], "page-templates") &&
-			Objects.equals(pathParts[3], "thumbnail.png")) {
+		if ((pathParts.length == 3) &&
+			Objects.equals(pathParts[0], "master-pages") &&
+			Objects.equals(pathParts[2], "thumbnail.png")) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _isPageDefinitionFile(String path) {
+		String[] pathParts = StringUtil.split(path, CharPool.SLASH);
+
+		if ((pathParts.length == 3) &&
+			Objects.equals(pathParts[0], "master-pages") &&
+			Objects.equals(pathParts[2], "page-definition.json")) {
 
 			return true;
 		}
@@ -306,22 +272,16 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommandTest {
 		if (_isPageDefinitionFile(zipEntry.getName())) {
 			_validateContent(
 				StringUtil.read(zipFile.getInputStream(zipEntry)),
-				"expected_page_template_page_definition.json");
+				"expected_master_page_page_definition.json");
 		}
 
-		if (_isPageTemplateCollectionFile(zipEntry.getName())) {
+		if (_isMasterPageFile(zipEntry.getName())) {
 			_validateContent(
 				StringUtil.read(zipFile.getInputStream(zipEntry)),
-				"expected_page_template_collection.json");
+				"expected_master_page.json");
 		}
 
-		if (_isPageTemplateFile(zipEntry.getName())) {
-			_validateContent(
-				StringUtil.read(zipFile.getInputStream(zipEntry)),
-				"expected_page_template.json");
-		}
-
-		if (_isPageTemplateThumbnailFile(zipEntry.getName())) {
+		if (_isMasterPageThumbnailFile(zipEntry.getName())) {
 			Assert.assertArrayEquals(
 				FileUtil.getBytes(getClass(), "dependencies/thumbnail.png"),
 				FileUtil.getBytes(zipFile.getInputStream(zipEntry)));
@@ -332,10 +292,6 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommandTest {
 	private Group _group;
 
 	@Inject
-	private LayoutPageTemplateCollectionLocalService
-		_layoutPageTemplateCollectionLocalService;
-
-	@Inject
 	private LayoutPageTemplateEntryLocalService
 		_layoutPageTemplateEntryLocalService;
 
@@ -344,7 +300,7 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommandTest {
 		_layoutPageTemplateStructureLocalService;
 
 	@Inject(
-		filter = "mvc.command.name=/layout_page_template/export_layout_page_template_entry"
+		filter = "mvc.command.name=/layout_page_template/export_master_layout"
 	)
 	private MVCResourceCommand _mvcResourceCommand;
 

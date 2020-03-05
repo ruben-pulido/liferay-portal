@@ -12,21 +12,22 @@
  * details.
  */
 
-package com.liferay.layout.page.template.constants;
+package com.liferay.layout.page.template.admin.web.internal.configuration;
+
+import aQute.bnd.annotation.metatype.Meta;
+
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
- * @author Jürgen Kappler
+ * @author Rubén Pulido
  */
-public class LayoutPageTemplateExportImportConstants {
+@ExtendedObjectClassDefinition(generateUI = false)
+@Meta.OCD(
+	id = "com.liferay.layout.page.template.admin.web.internal.configuration.ExportImportMasterLayoutConfiguration"
+)
+public interface ExportImportMasterLayoutConfiguration {
 
-	public static final String FILE_NAME_MASTER_LAYOUT = "master-page.json";
-
-	public static final String FILE_NAME_PAGE_DEFINITION =
-		"page-definition.json";
-
-	public static final String FILE_NAME_PAGE_TEMPLATE = "page-template.json";
-
-	public static final String FILE_NAME_PAGE_TEMPLATE_COLLECTION =
-		"page-template-collection.json";
+	@Meta.AD(deflt = "false", required = false)
+	public boolean enabled();
 
 }

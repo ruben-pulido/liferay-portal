@@ -12,21 +12,24 @@
  * details.
  */
 
-package com.liferay.layout.page.template.constants;
+package com.liferay.layout.page.template.headless.delivery.dto.v1_0;
+
+import com.liferay.headless.delivery.dto.v1_0.MasterPage;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 
 /**
- * @author Jürgen Kappler
+ * @author Rubén Pulido
  */
-public class LayoutPageTemplateExportImportConstants {
+public class MasterPageConverterUtil {
 
-	public static final String FILE_NAME_MASTER_LAYOUT = "master-page.json";
+	public static MasterPage toMasterPage(
+		LayoutPageTemplateEntry layoutPageTemplateEntry) {
 
-	public static final String FILE_NAME_PAGE_DEFINITION =
-		"page-definition.json";
-
-	public static final String FILE_NAME_PAGE_TEMPLATE = "page-template.json";
-
-	public static final String FILE_NAME_PAGE_TEMPLATE_COLLECTION =
-		"page-template-collection.json";
+		return new MasterPage() {
+			{
+				name = layoutPageTemplateEntry.getName();
+			}
+		};
+	}
 
 }

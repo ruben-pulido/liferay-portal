@@ -44,11 +44,11 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + LayoutPageTemplateAdminPortletKeys.LAYOUT_PAGE_TEMPLATES,
-		"mvc.command.name=/layout_page_template/export_layout_page_template_entry"
+		"mvc.command.name=/layout_page_template/export_master_layout"
 	},
 	service = MVCResourceCommand.class
 )
-public class ExportLayoutPageTemplateEntriesMVCResourceCommand
+public class ExportMasterLayoutsMVCResourceCommand
 	implements MVCResourceCommand {
 
 	public File getFile(long[] layoutPageTemplateEntryIds)
@@ -66,7 +66,7 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommand
 				layoutPageTemplateEntries.add(layoutPageTemplateEntry);
 			}
 
-			return _exportHelper.exportPageTemplates(layoutPageTemplateEntries);
+			return _exportHelper.exportMasterLayouts(layoutPageTemplateEntries);
 		}
 		catch (Exception exception) {
 			throw new PortletException(exception);
@@ -74,7 +74,7 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommand
 	}
 
 	public String getFileName(long[] layoutPageTemplateEntryIds) {
-		String fileNamePrefix = "page-templates-";
+		String fileNamePrefix = "master-pages-";
 
 		if (layoutPageTemplateEntryIds.length == 1) {
 			LayoutPageTemplateEntry layoutPageTemplateEntry =
@@ -82,7 +82,7 @@ public class ExportLayoutPageTemplateEntriesMVCResourceCommand
 					fetchLayoutPageTemplateEntry(layoutPageTemplateEntryIds[0]);
 
 			fileNamePrefix =
-				"page-template-" +
+				"master-page-" +
 					layoutPageTemplateEntry.getLayoutPageTemplateEntryKey() +
 						"-";
 		}
