@@ -202,6 +202,27 @@ public class LayoutPageTemplatesImporterTest {
 	}
 
 	@Test
+	public void testImportLayoutPageTemplateEntryImageFragment()
+		throws Exception {
+
+		String html =
+			"<lfr-editable id=\"element-text\" type=\"image\"><img src=\"#\"" +
+				"</lfr-editable>";
+
+		_createFragmentEntry(
+			"test-image-fragment", "Test Image Fragment", html);
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			_getImportLayoutPageTemplateEntry("image-fragment");
+
+		FragmentEntryLink fragmentEntryLink = _getFragmentEntryLink(
+			layoutPageTemplateEntry);
+
+		_validateImageFragmentEntryLinkEditableValues(
+			fragmentEntryLink.getEditableValues());
+	}
+
+	@Test
 	public void testImportLayoutPageTemplateEntryTextFragment()
 		throws Exception {
 
@@ -417,6 +438,54 @@ public class LayoutPageTemplatesImporterTest {
 
 			_addZipWriterEntry(zipWriter, elementUrl);
 		}
+	}
+
+	private void _validateImageFragmentEntryLinkEditableValues(
+			String editableValues)
+		throws JSONException {
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+			editableValues);
+
+		JSONObject editableFragmentEntryProcessorJSONObject =
+			jsonObject.getJSONObject(
+				"com.liferay.fragment.entry.processor.editable." +
+					"EditableFragmentEntryProcessor");
+
+		Assert.assertNotNull(editableFragmentEntryProcessorJSONObject);
+
+		JSONObject elementJSONObject =
+			editableFragmentEntryProcessorJSONObject.getJSONObject(
+				"element-image");
+
+		Assert.assertNotNull(elementJSONObject);
+
+		JSONObject configJSONObject = elementJSONObject.getJSONObject("config");
+
+		Assert.assertNotNull(configJSONObject);
+
+		Assert.assertEquals("www.test.com", configJSONObject.getString("href"));
+
+		Assert.assertEquals("Blank", configJSONObject.getString("target"));
+
+		JSONObject freeMarkerFragmentEntryProcessorJSONObject =
+			jsonObject.getJSONObject(
+				"com.liferay.fragment.entry.processor.freemarker." +
+					"FreeMarkerFragmentEntryProcessor");
+
+		Assert.assertNotNull(freeMarkerFragmentEntryProcessorJSONObject);
+
+		Assert.assertEquals(
+			"4",
+			freeMarkerFragmentEntryProcessorJSONObject.getString(
+				"bottomSpacing"));
+		Assert.assertEquals(
+			"w-0",
+			freeMarkerFragmentEntryProcessorJSONObject.getString(
+				"imageSize"));
+		Assert.assertEquals(
+			"center",
+			freeMarkerFragmentEntryProcessorJSONObject.getString("imageAlign"));
 	}
 
 	private void _validateTextFragmentEntryLinkEditableValues(
