@@ -481,8 +481,7 @@ public class LayoutPageTemplatesImporterTest {
 				"bottomSpacing"));
 		Assert.assertEquals(
 			"w-0",
-			freeMarkerFragmentEntryProcessorJSONObject.getString(
-				"imageSize"));
+			freeMarkerFragmentEntryProcessorJSONObject.getString("imageSize"));
 		Assert.assertEquals(
 			"center",
 			freeMarkerFragmentEntryProcessorJSONObject.getString("imageAlign"));
