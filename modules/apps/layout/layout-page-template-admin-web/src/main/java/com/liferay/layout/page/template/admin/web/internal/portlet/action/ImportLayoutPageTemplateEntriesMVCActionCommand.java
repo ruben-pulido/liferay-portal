@@ -120,7 +120,11 @@ public class ImportLayoutPageTemplateEntriesMVCActionCommand
 					notImportedLayoutPageTemplateImporterResultEntries);
 			}
 			else {
-				SessionMessages.add(actionRequest, "success");
+				if (notImportedLayoutPageTemplateImporterResultEntries.size() !=
+						layoutPageTemplateImporterResultEntries.size()) {
+
+					SessionMessages.add(actionRequest, "success");
+				}
 			}
 		}
 		catch (Exception exception) {
