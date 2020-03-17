@@ -125,6 +125,14 @@ public class ImportLayoutPageTemplateEntriesMVCActionCommand
 
 					SessionMessages.add(actionRequest, "success");
 				}
+				else {
+					String errorMessage = LanguageUtil.get(
+						_portal.getHttpServletRequest(actionRequest),
+						"none-of-the-files-were-imported-correctly");
+
+					SessionErrors.add(
+						actionRequest, "requestProcessed", errorMessage);
+				}
 			}
 		}
 		catch (Exception exception) {
