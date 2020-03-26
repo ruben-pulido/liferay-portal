@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -448,6 +449,31 @@ public class FragmentLayoutStructureItemHelper
 				(Map<String, Object>)fragmentFieldMap.get("value");
 
 			if (valueMap == null) {
+				continue;
+			}
+
+			if (valueMap.containsKey("mappedEntryField") &&
+				valueMap.containsKey("mappedEntryKey")) {
+
+				String mappedEntryField = GetterUtil.getString(
+					valueMap.get("mappedEntryField"));
+
+				String mappedEntryKey = GetterUtil.getString(
+					valueMap.get("mappedEntryKey"));
+
+				String[] classedModelFields = mappedEntryKey.split(
+					StringPool.POUND);
+
+				jsonObject.put(
+					fragmentFieldId,
+					JSONUtil.put(
+						"classNameId", classedModelFields[0]
+					).put(
+						"classPK", classedModelFields[1]
+					).put(
+						"fieldId", mappedEntryField
+					));
+
 				continue;
 			}
 
