@@ -1343,6 +1343,20 @@ components:
             required:
                 - name
             type: object
+        MappedValue:
+            description:
+                ""
+            properties:
+                defaultValue:
+                    $ref: "#/components/schemas/InlineValue"
+                mapping:
+                    properties:
+                        fieldKey:
+                            type: string
+                        itemKey:
+                            type: string
+                    type: object
+            type: object
         MasterPage:
             description:
                 ""
