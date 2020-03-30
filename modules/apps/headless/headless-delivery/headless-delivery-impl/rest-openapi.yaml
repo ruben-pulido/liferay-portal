@@ -1015,18 +1015,22 @@ components:
                 text:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
+                        - $ref: "#/components/schemas/MappedValue"
             type: object
         FragmentImage:
             properties:
                 description:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
+                        - $ref: "#/components/schemas/MappedValue"
                 title:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
+                        - $ref: "#/components/schemas/MappedValue"
                 url:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
+                        - $ref: "#/components/schemas/MappedValue"
             type: object
         FragmentInstanceDefinition:
             properties:
