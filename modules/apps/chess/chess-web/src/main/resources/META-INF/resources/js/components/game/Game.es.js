@@ -12,34 +12,30 @@
  * details.
  */
 
-import React, {Component} from 'react';
+import React from 'react';
 
-class Game extends Component {
-	render() {
-		return (
-			<div>
-				<h1>Chess Game</h1>
-				<table>
-					<thead>
-						<tr>
-							<th>Player</th>
-							<th>Move</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>White</td>
-							<td>e2e4</td>
-						</tr>
-						<tr>
-							<td>Black</td>
-							<td>e7e5</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		);
-	}
+export default function Game() {
+	return (
+		<div>
+			<h1>Chess Game</h1>
+			<table>
+				<thead>
+					<tr>
+						<th>Player</th>
+						<th>Move</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>White</td>
+						<td>e2e4</td>
+					</tr>
+					<tr>
+						<td>Black</td>
+						<td>e7e5</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	);
 }
-
-export default Game;
