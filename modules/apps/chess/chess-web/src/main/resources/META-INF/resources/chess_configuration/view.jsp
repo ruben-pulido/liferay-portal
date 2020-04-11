@@ -1,4 +1,5 @@
-<%--
+<%@ page import="java.util.Map" %>
+<%@ page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -16,4 +17,26 @@
 
 <%@ include file="/init.jsp" %>
 
-Chess Configuration
+	<%
+	String segmentEditRootElementId = "a" + "-segment-edit-root";
+
+	Map<String, Object> _data = HashMapBuilder.<String, Object>put(
+			"context", null
+		).put(
+			"props", null
+		).build();
+
+	%>
+
+	<div id="<%= segmentEditRootElementId %>">
+		<div class="inline-item my-5 p-5 w-100">
+			<span aria-hidden="true" class="loading-animation"></span>
+		</div>
+
+		<react:component
+			data="<%= _data %>"
+			module="js/ChessApp.es"
+		/>
+	</div>
+
+

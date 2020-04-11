@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,16 +11,26 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+import React, {Component} from 'react';
 
-<%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
-taglib uri="http://liferay.com/tld/react" prefix="react" %><%@
-taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
+class Board extends Component {
+	constructor(props) {
+		super(props);
+	}
 
-<liferay-frontend:defineObjects />
+	render() {
+		return (
+			<div className="board">
+					<h1>Shopping List</h1>
+					<ul>
+					  <li>Instagram</li>
+					  <li>WhatsApp</li>
+					  <li>Oculus</li>
+					</ul>
+			</div>
+		);
+	}
+}
 
-<liferay-theme:defineObjects />
-
-<portlet:defineObjects />
+export default Board;
