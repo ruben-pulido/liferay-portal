@@ -12,14 +12,35 @@
  * details.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 
 import Game from './components/game/Game.es';
+import {initializeConfig} from './config/index';
 
-export default function() {
+/**
+ * Container component that sets up context that is global to the entire app.
+ *
+ * This is a separate functional component instead of being directly inlined in
+ * this module's default export because hooks can only be used inside functional
+ * components (the default export is not a functional component but rather a
+ * function that returns a component).
+ */
+function Container({state}) {
 	return (
 		<div className="chess-root">
 			<Game />
 		</div>
 	);
+}
+
+/**
+ * Default application export.
+ *
+ * We should define contexts here instead of Container component, as Container
+ * is re-rendered when hooks change.
+ */
+export default function(data) {
+	initializeConfig(data.config);
+
+	return <Container state={data.state} />;
 }
