@@ -1,0 +1,17 @@
+{
+	"com.liferay.fragment.entry.processor.background.image.BackgroundImageFragmentEntryProcessor": {},
+	"com.liferay.fragment.entry.processor.editable.EditableFragmentEntryProcessor": {
+		"element-text": {
+			"defaultValue": "\n\tHeading Example\n",
+			"mappedField": "title",
+			"config": {
+				"mapperType": "link",
+				"mappedField": "displayPageURL"
+			}
+		}
+	},
+	"com.liferay.fragment.entry.processor.freemarker.FreeMarkerFragmentEntryProcessor": {},
+	"com.liferay.fragment.entry.processor.drop.zone.DropZoneFragmentEntryProcessor": {
+		"dropZones": []
+	}
+}
