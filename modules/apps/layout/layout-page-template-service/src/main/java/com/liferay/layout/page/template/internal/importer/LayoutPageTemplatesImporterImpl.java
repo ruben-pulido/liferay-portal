@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
+import com.liferay.fragment.renderer.FragmentRendererTracker;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.validator.FragmentEntryValidator;
 import com.liferay.headless.delivery.dto.v1_0.MasterPage;
@@ -884,7 +885,8 @@ public class LayoutPageTemplatesImporterImpl
 			layoutStructureItemHelper.addLayoutStructureItem(
 				_fragmentCollectionContributorTracker,
 				_fragmentEntryProcessorRegistry, _fragmentEntryValidator,
-				layout, layoutStructure, pageElement, parentItemId, position);
+				_fragmentRendererTracker, layout, layoutStructure, pageElement,
+				parentItemId, position);
 
 		if ((layoutStructureItem == null) ||
 			(pageElement.getPageElements() == null)) {
@@ -1074,6 +1076,9 @@ public class LayoutPageTemplatesImporterImpl
 
 	@Reference
 	private FragmentEntryValidator _fragmentEntryValidator;
+
+	@Reference
+	private FragmentRendererTracker _fragmentRendererTracker;
 
 	@Reference
 	private Language _language;
