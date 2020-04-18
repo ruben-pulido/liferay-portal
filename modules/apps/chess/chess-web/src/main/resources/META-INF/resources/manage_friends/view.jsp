@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,21 +12,11 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+--%>
 
-package com.liferay.chess.web.internal.constants;
+<%@ include file="/manage_friends/init.jsp" %>
 
-/**
- * @author Rubén Pulido
- */
-public class ChessPortletKeys {
-
-	public static final String CHESS =
-		"com_liferay_chess_web_internal_portlet_ChessPortlet";
-
-	public static final String CHESS_CONFIGURATION =
-		"com_liferay_chess_web_internal_portlet_ChessConfigurationPortlet";
-
-	public static final String MANAGE_FRIENDS =
-		"com_liferay_chess_web_internal_portlet_ManageFriendsPortlet";
-
-}
+<react:component
+	data="<%= (Map<String, Object>)request.getAttribute(ChessWebKeys.CHESS_REACT_DATA) %>"
+	module="manage_friends/js/ManageFriends.es"
+/>

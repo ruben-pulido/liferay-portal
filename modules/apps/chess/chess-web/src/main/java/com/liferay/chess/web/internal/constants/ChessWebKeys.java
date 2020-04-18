@@ -21,4 +21,6 @@ public class ChessWebKeys {
 
 	public static final String CHESS_DISPLAY_CONTEXT = "CHESS_DISPLAY_CONTEXT";
 
+	public static final String CHESS_REACT_DATA = "chessReactData";
+
 }
