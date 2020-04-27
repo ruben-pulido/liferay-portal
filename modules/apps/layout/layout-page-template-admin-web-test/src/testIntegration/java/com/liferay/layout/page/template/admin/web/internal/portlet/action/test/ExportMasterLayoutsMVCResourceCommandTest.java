@@ -89,7 +89,7 @@ public class ExportMasterLayoutsMVCResourceCommandTest {
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 				_serviceContext.getUserId(), _serviceContext.getScopeGroupId(),
-				0, "Master Page One",
+				0, StringUtil.randomString(),
 				LayoutPageTemplateEntryTypeConstants.TYPE_MASTER_LAYOUT, 0,
 				WorkflowConstants.STATUS_APPROVED, _serviceContext);
 
