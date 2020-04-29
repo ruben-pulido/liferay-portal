@@ -19,6 +19,7 @@ import com.liferay.fragment.renderer.FragmentRendererTracker;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.headless.delivery.dto.v1_0.PageFragmentInstanceDefinition;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageFragmentInstanceDefinitionDTOConverter;
 import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 
 import org.osgi.framework.Bundle;
@@ -28,7 +29,7 @@ import org.osgi.util.tracker.ServiceTracker;
 /**
  * @author Rubén Pulido
  * @deprecated As of Athanasius (7.3.x), replaced by {@link
- *			PageFragmentInstanceDefinitionConverter}
+ *            PageFragmentInstanceDefinitionDTOConverter}
  */
 @Deprecated
 public class PageFragmentInstanceDefinitionConverterUtil {
@@ -43,13 +44,12 @@ public class PageFragmentInstanceDefinitionConverterUtil {
 			InfoDisplayContributorTracker infoDisplayContributorTracker,
 			boolean saveInlineContent, boolean saveMapping) {
 
-		PageFragmentInstanceDefinitionConverter
-			pageFragmentInstanceDefinitionConverter =
+		PageFragmentInstanceDefinitionDTOConverter
+			pageFragmentInstanceDefinitionDTOConverter =
 				_serviceTracker.getService();
 
-		return pageFragmentInstanceDefinitionConverter.
-			toPageFragmentInstanceDefinition(
-				fragmentLayoutStructureItem, saveInlineContent, saveMapping);
+		return pageFragmentInstanceDefinitionDTOConverter.toDTO(
+			fragmentLayoutStructureItem, saveInlineContent, saveMapping);
 	}
 
 	public static PageFragmentInstanceDefinition
@@ -63,13 +63,12 @@ public class PageFragmentInstanceDefinitionConverterUtil {
 			boolean saveInlineContent, boolean saveMapping,
 			long segmentsExperienceId) {
 
-		PageFragmentInstanceDefinitionConverter
-			pageFragmentInstanceDefinitionConverter =
+		PageFragmentInstanceDefinitionDTOConverter
+			pageFragmentInstanceDefinitionDTOConverter =
 				_serviceTracker.getService();
 
-		return pageFragmentInstanceDefinitionConverter.
-			toPageFragmentInstanceDefinition(
-				fragmentLayoutStructureItem, saveInlineContent, saveMapping);
+		return pageFragmentInstanceDefinitionDTOConverter.toDTO(
+			fragmentLayoutStructureItem, saveInlineContent, saveMapping);
 	}
 
 	public static PageFragmentInstanceDefinition
@@ -81,29 +80,28 @@ public class PageFragmentInstanceDefinitionConverterUtil {
 			InfoDisplayContributorTracker infoDisplayContributorTracker,
 			FragmentRendererTracker fragmentRendererTracker) {
 
-		PageFragmentInstanceDefinitionConverter
-			pageFragmentInstanceDefinitionConverter =
+		PageFragmentInstanceDefinitionDTOConverter
+			pageFragmentInstanceDefinitionDTOConverter =
 				_serviceTracker.getService();
 
-		return pageFragmentInstanceDefinitionConverter.
-			toPageFragmentInstanceDefinition(
-				fragmentLayoutStructureItem, true, true);
+		return pageFragmentInstanceDefinitionDTOConverter.toDTO(
+			fragmentLayoutStructureItem, true, true);
 	}
 
 	private static final ServiceTracker
-		<PageFragmentInstanceDefinitionConverter,
-		 PageFragmentInstanceDefinitionConverter> _serviceTracker;
+		<PageFragmentInstanceDefinitionDTOConverter,
+		 PageFragmentInstanceDefinitionDTOConverter> _serviceTracker;
 
 	static {
 		Bundle bundle = FrameworkUtil.getBundle(
-			PageFragmentInstanceDefinitionConverter.class);
+			PageFragmentInstanceDefinitionDTOConverter.class);
 
 		ServiceTracker
-			<PageFragmentInstanceDefinitionConverter,
-			 PageFragmentInstanceDefinitionConverter> serviceTracker =
+			<PageFragmentInstanceDefinitionDTOConverter,
+			 PageFragmentInstanceDefinitionDTOConverter> serviceTracker =
 				new ServiceTracker<>(
 					bundle.getBundleContext(),
-					PageFragmentInstanceDefinitionConverter.class, null);
+					PageFragmentInstanceDefinitionDTOConverter.class, null);
 
 		serviceTracker.open();
 

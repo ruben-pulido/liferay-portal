@@ -27,7 +27,7 @@ import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.layout.content.page.editor.web.internal.constants.ContentPageEditorConstants;
 import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.PageElementConverter;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageElementDTOConverter;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -119,7 +119,7 @@ public class AddFragmentCompositionMVCActionCommand
 
 		String layoutStructureJSON =
 			LayoutStructureUtil.getLayoutStructureItemJSON(
-				itemId, _pageElementConverter, themeDisplay.getPlid(),
+				itemId, _pageElementDTOConverter, themeDisplay.getPlid(),
 				saveInlineContent, saveMappingConfiguration,
 				segmentsExperienceId);
 
@@ -247,7 +247,7 @@ public class AddFragmentCompositionMVCActionCommand
 	private InfoDisplayContributorTracker _infoDisplayContributorTracker;
 
 	@Reference
-	private PageElementConverter _pageElementConverter;
+	private PageElementDTOConverter _pageElementDTOConverter;
 
 	@Reference
 	private Portal _portal;

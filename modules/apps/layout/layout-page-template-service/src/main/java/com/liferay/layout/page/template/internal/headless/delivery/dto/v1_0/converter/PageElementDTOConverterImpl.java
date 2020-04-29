@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0;
+package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter;
 
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.PageElementConverter;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageElementDTOConverter;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporter;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporterTracker;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
@@ -36,11 +36,11 @@ import org.osgi.service.component.annotations.Reference;
  * @author Rubén Pulido
  * @author Jürgen Kappler
  */
-@Component(service = PageElementConverter.class)
-public class PageElementConverterImpl implements PageElementConverter {
+@Component(service = PageElementDTOConverter.class)
+public class PageElementDTOConverterImpl implements PageElementDTOConverter {
 
 	@Override
-	public PageElement toPageElement(
+	public PageElement toDTO(
 		Layout layout, String layoutStructureItemId, boolean saveInlineContent,
 		boolean saveMappingConfiguration, long segmentsExperienceId) {
 

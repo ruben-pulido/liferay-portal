@@ -40,7 +40,7 @@ import com.liferay.headless.delivery.dto.v1_0.PageRowDefinition;
 import com.liferay.headless.delivery.dto.v1_0.PageSectionDefinition;
 import com.liferay.headless.delivery.dto.v1_0.Settings;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.PageDefinitionConverter;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageDefinitionDTOConverter;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLocalService;
@@ -83,7 +83,7 @@ import org.junit.runner.RunWith;
  * @author Rubén Pulido
  */
 @RunWith(Arquillian.class)
-public class PageDefinitionConverterUtilTest {
+public class PageDefinitionDTOConverterUtilTest {
 
 	@ClassRule
 	@Rule
@@ -132,8 +132,8 @@ public class PageDefinitionConverterUtilTest {
 		Layout layout = _layoutLocalService.fetchLayout(
 			_layoutPageTemplateEntry.getPlid());
 
-		PageDefinition pageDefinition =
-			_pageDefinitionConverter.toPageDefinition(layout);
+		PageDefinition pageDefinition = _pageDefinitionDTOConverter.toDTO(
+			layout);
 
 		PageElement rootPageElement = pageDefinition.getPageElement();
 
@@ -182,8 +182,8 @@ public class PageDefinitionConverterUtilTest {
 		Layout layout = _layoutLocalService.fetchLayout(
 			_layoutPageTemplateEntry.getPlid());
 
-		PageDefinition pageDefinition =
-			_pageDefinitionConverter.toPageDefinition(layout);
+		PageDefinition pageDefinition = _pageDefinitionDTOConverter.toDTO(
+			layout);
 
 		PageElement rootPageElement = pageDefinition.getPageElement();
 
@@ -350,8 +350,8 @@ public class PageDefinitionConverterUtilTest {
 
 		Theme theme = layout.getTheme();
 
-		PageDefinition pageDefinition =
-			_pageDefinitionConverter.toPageDefinition(layout);
+		PageDefinition pageDefinition = _pageDefinitionDTOConverter.toDTO(
+			layout);
 
 		Settings settings = pageDefinition.getSettings();
 
@@ -378,8 +378,8 @@ public class PageDefinitionConverterUtilTest {
 		Layout layout = _layoutLocalService.fetchLayout(
 			_layoutPageTemplateEntry.getPlid());
 
-		PageDefinition pageDefinition =
-			_pageDefinitionConverter.toPageDefinition(layout);
+		PageDefinition pageDefinition = _pageDefinitionDTOConverter.toDTO(
+			layout);
 
 		PageElement rootPageElement = pageDefinition.getPageElement();
 
@@ -434,8 +434,8 @@ public class PageDefinitionConverterUtilTest {
 		Layout layout = _layoutLocalService.fetchLayout(
 			_layoutPageTemplateEntry.getPlid());
 
-		PageDefinition pageDefinition =
-			_pageDefinitionConverter.toPageDefinition(layout);
+		PageDefinition pageDefinition = _pageDefinitionDTOConverter.toDTO(
+			layout);
 
 		PageElement rootPageElement = pageDefinition.getPageElement();
 
@@ -582,8 +582,8 @@ public class PageDefinitionConverterUtilTest {
 				String.valueOf(fragmentEntryLink.getFragmentEntryLinkId())
 			).build());
 
-		PageDefinition pageDefinition =
-			_pageDefinitionConverter.toPageDefinition(layout);
+		PageDefinition pageDefinition = _pageDefinitionDTOConverter.toDTO(
+			layout);
 
 		PageElement rootPageElement = pageDefinition.getPageElement();
 
@@ -764,7 +764,7 @@ public class PageDefinitionConverterUtilTest {
 		_layoutPageTemplateStructureLocalService;
 
 	@Inject
-	private PageDefinitionConverter _pageDefinitionConverter;
+	private PageDefinitionDTOConverter _pageDefinitionDTOConverter;
 
 	@Inject
 	private Portal _portal;

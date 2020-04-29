@@ -12,13 +12,13 @@
  * details.
  */
 
-package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0;
+package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter;
 
 import com.liferay.headless.delivery.dto.v1_0.MasterPage;
 import com.liferay.headless.delivery.dto.v1_0.PageDefinition;
 import com.liferay.headless.delivery.dto.v1_0.Settings;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.PageDefinitionConverter;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.PageElementConverter;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageDefinitionDTOConverter;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageElementDTOConverter;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporterTracker;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
@@ -44,16 +44,17 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Jürgen Kappler
  */
-@Component(service = PageDefinitionConverter.class)
-public class PageDefinitionConverterImpl implements PageDefinitionConverter {
+@Component(service = PageDefinitionDTOConverter.class)
+public class PageDefinitionDTOConverterImpl
+	implements PageDefinitionDTOConverter {
 
 	@Override
-	public PageDefinition toPageDefinition(Layout layout) {
-		return toPageDefinition(layout, true, true);
+	public PageDefinition toDTO(Layout layout) {
+		return toDTO(layout, true, true);
 	}
 
 	@Override
-	public PageDefinition toPageDefinition(
+	public PageDefinition toDTO(
 		Layout layout, boolean saveInlineContent,
 		boolean saveMappingConfiguration) {
 
@@ -71,7 +72,7 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 
 		return new PageDefinition() {
 			{
-				pageElement = _pageElementConverter.toPageElement(
+				pageElement = _pageElementDTOConverter.toDTO(
 					layout, mainLayoutStructureItem.getItemId(),
 					saveInlineContent, saveMappingConfiguration, 0);
 				settings = _toSettings(layout);
@@ -182,7 +183,7 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		PageDefinitionConverterImpl.class);
+		PageDefinitionDTOConverterImpl.class);
 
 	@Reference
 	private LayoutPageTemplateEntryLocalService
@@ -197,7 +198,7 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 		_layoutStructureItemExporterTracker;
 
 	@Reference
-	private PageElementConverter _pageElementConverter;
+	private PageElementDTOConverter _pageElementDTOConverter;
 
 	@Reference
 	private Portal _portal;

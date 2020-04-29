@@ -17,10 +17,10 @@ package com.liferay.layout.page.template.headless.delivery.dto.v1_0;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
 import com.liferay.fragment.renderer.FragmentRendererTracker;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
-import com.liferay.headless.delivery.dto.v1_0.Layout;
 import com.liferay.headless.delivery.dto.v1_0.PageDefinition;
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageDefinitionDTOConverter;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 
@@ -31,7 +31,7 @@ import org.osgi.util.tracker.ServiceTracker;
 /**
  * @author Rubén Pulido
  * @deprecated As of Athanasius (7.3.x), replaced by {@link
- *			PageDefinitionConverter}
+ *            PageDefinitionDTOConverter}
  */
 @Deprecated
 public class PageDefinitionConverterUtil {
@@ -41,10 +41,10 @@ public class PageDefinitionConverterUtil {
 		boolean saveInlineContent, boolean saveMappingConfiguration,
 		long segmentsExperienceId) {
 
-		PageDefinitionConverter pageDefinitionConverter =
+		PageDefinitionDTOConverter pageDefinitionDTOConverter =
 			_serviceTracker.getService();
 
-		return pageDefinitionConverter.toPageDefinition(
+		return pageDefinitionDTOConverter.toDTO(
 			layout, saveInlineContent, saveMappingConfiguration);
 	}
 
@@ -56,10 +56,10 @@ public class PageDefinitionConverterUtil {
 		InfoDisplayContributorTracker infoDisplayContributorTracker,
 		com.liferay.portal.kernel.model.Layout layout) {
 
-		PageDefinitionConverter pageDefinitionConverter =
+		PageDefinitionDTOConverter pageDefinitionDTOConverter =
 			_serviceTracker.getService();
 
-		return pageDefinitionConverter.toPageDefinition(layout);
+		return pageDefinitionDTOConverter.toDTO(layout);
 	}
 
 	public static PageDefinition toPageDefinition(
@@ -71,10 +71,10 @@ public class PageDefinitionConverterUtil {
 		com.liferay.portal.kernel.model.Layout layout,
 		boolean saveInlineContent, boolean saveMappingConfiguration) {
 
-		PageDefinitionConverter pageDefinitionConverter =
+		PageDefinitionDTOConverter pageDefinitionDTOConverter =
 			_serviceTracker.getService();
 
-		return pageDefinitionConverter.toPageDefinition(
+		return pageDefinitionDTOConverter.toDTO(
 			layout, saveInlineContent, saveMappingConfiguration);
 	}
 
@@ -132,14 +132,17 @@ public class PageDefinitionConverterUtil {
 	}
 
 	private static final ServiceTracker
-		<PageDefinitionConverter, PageDefinitionConverter> _serviceTracker;
+		<PageDefinitionDTOConverter, PageDefinitionDTOConverter>
+			_serviceTracker;
 
 	static {
-		Bundle bundle = FrameworkUtil.getBundle(PageDefinitionConverter.class);
+		Bundle bundle = FrameworkUtil.getBundle(
+			PageDefinitionDTOConverter.class);
 
-		ServiceTracker<PageDefinitionConverter, PageDefinitionConverter>
+		ServiceTracker<PageDefinitionDTOConverter, PageDefinitionDTOConverter>
 			serviceTracker = new ServiceTracker<>(
-				bundle.getBundleContext(), PageDefinitionConverter.class, null);
+				bundle.getBundleContext(), PageDefinitionDTOConverter.class,
+				null);
 
 		serviceTracker.open();
 

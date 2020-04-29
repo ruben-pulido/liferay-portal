@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.layout.page.template.headless.delivery.dto.v1_0;
+package com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter;
 
-import com.liferay.headless.delivery.dto.v1_0.PageFragmentInstanceDefinition;
-import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
+import com.liferay.headless.delivery.dto.v1_0.PageDefinition;
+import com.liferay.portal.kernel.model.Layout;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -23,13 +23,12 @@ import org.osgi.annotation.versioning.ProviderType;
  * @author Jürgen Kappler
  */
 @ProviderType
-public interface PageFragmentInstanceDefinitionConverter {
+public interface PageDefinitionDTOConverter {
 
-	public PageFragmentInstanceDefinition toPageFragmentInstanceDefinition(
-		FragmentLayoutStructureItem fragmentLayoutStructureItem);
+	public PageDefinition toDTO(Layout layout);
 
-	public PageFragmentInstanceDefinition toPageFragmentInstanceDefinition(
-		FragmentLayoutStructureItem fragmentLayoutStructureItem,
-		boolean saveInlineContent, boolean saveMapping);
+	public PageDefinition toDTO(
+		Layout layout, boolean saveInlineContent,
+		boolean saveMappingConfiguration);
 
 }

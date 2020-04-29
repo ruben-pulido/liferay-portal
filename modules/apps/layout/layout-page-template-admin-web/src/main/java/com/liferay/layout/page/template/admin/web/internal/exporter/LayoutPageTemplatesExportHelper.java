@@ -30,9 +30,9 @@ import com.liferay.headless.delivery.dto.v1_0.PageDefinition;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateExportImportConstants;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.DisplayPageTemplateConverterUtil;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.MasterPageConverterUtil;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.PageDefinitionConverter;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.PageTemplateCollectionConverterUtil;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.PageTemplateConverterUtil;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageDefinitionDTOConverter;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLocalService;
@@ -191,8 +191,8 @@ public class LayoutPageTemplatesExportHelper {
 			layoutPageTemplateEntry.getPlid());
 
 		if (layout != null) {
-			PageDefinition pageDefinition =
-				_pageDefinitionConverter.toPageDefinition(layout);
+			PageDefinition pageDefinition = _pageDefinitionDTOConverter.toDTO(
+				layout);
 
 			zipWriter.addEntry(
 				displayPagePath + "/page-definition.json",
@@ -258,8 +258,8 @@ public class LayoutPageTemplatesExportHelper {
 			layoutPageTemplateEntry.getPlid());
 
 		if (layout != null) {
-			PageDefinition pageDefinition =
-				_pageDefinitionConverter.toPageDefinition(layout);
+			PageDefinition pageDefinition = _pageDefinitionDTOConverter.toDTO(
+				layout);
 
 			zipWriter.addEntry(
 				masterLayoutPath + "/page-definition.json",
@@ -325,8 +325,8 @@ public class LayoutPageTemplatesExportHelper {
 			layoutPageTemplateEntry.getPlid());
 
 		if (layout != null) {
-			PageDefinition pageDefinition =
-				_pageDefinitionConverter.toPageDefinition(layout);
+			PageDefinition pageDefinition = _pageDefinitionDTOConverter.toDTO(
+				layout);
 
 			zipWriter.addEntry(
 				layoutPageTemplateEntryPath + "/page-definition.json",
@@ -369,6 +369,6 @@ public class LayoutPageTemplatesExportHelper {
 		_layoutPageTemplateCollectionLocalService;
 
 	@Reference
-	private PageDefinitionConverter _pageDefinitionConverter;
+	private PageDefinitionDTOConverter _pageDefinitionDTOConverter;
 
 }
