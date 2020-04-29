@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0;
+package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter;
 
 import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
@@ -42,7 +42,7 @@ import com.liferay.headless.delivery.dto.v1_0.PageFragmentInstanceDefinition;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.PageFragmentInstanceDefinitionConverter;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageFragmentInstanceDefinitionDTOConverter;
 import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -80,21 +80,20 @@ import org.osgi.service.component.annotations.Reference;
  * @author Rubén Pulido
  */
 @Component(
-	immediate = true, service = PageFragmentInstanceDefinitionConverter.class
+	immediate = true, service = PageFragmentInstanceDefinitionDTOConverter.class
 )
-public class PageFragmentInstanceDefinitionConverterImpl
-	implements PageFragmentInstanceDefinitionConverter {
+public class PageFragmentInstanceDefinitionDTOConverterImpl
+	implements PageFragmentInstanceDefinitionDTOConverter {
 
 	@Override
-	public PageFragmentInstanceDefinition toPageFragmentInstanceDefinition(
+	public PageFragmentInstanceDefinition toDTO(
 		FragmentLayoutStructureItem fragmentLayoutStructureItem) {
 
-		return toPageFragmentInstanceDefinition(
-			fragmentLayoutStructureItem, true, true);
+		return toDTO(fragmentLayoutStructureItem, true, true);
 	}
 
 	@Override
-	public PageFragmentInstanceDefinition toPageFragmentInstanceDefinition(
+	public PageFragmentInstanceDefinition toDTO(
 		FragmentLayoutStructureItem fragmentLayoutStructureItem,
 		boolean saveInlineContent, boolean saveMapping) {
 
@@ -797,7 +796,7 @@ public class PageFragmentInstanceDefinitionConverterImpl
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		PageFragmentInstanceDefinitionConverterImpl.class);
+		PageFragmentInstanceDefinitionDTOConverterImpl.class);
 
 	@Reference
 	private FragmentCollectionContributorTracker

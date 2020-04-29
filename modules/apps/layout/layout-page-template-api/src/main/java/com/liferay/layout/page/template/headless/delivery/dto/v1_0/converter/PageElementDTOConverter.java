@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.layout.page.template.headless.delivery.dto.v1_0;
+package com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter;
 
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
 import com.liferay.portal.kernel.model.Layout;
@@ -24,9 +24,9 @@ import org.osgi.annotation.versioning.ProviderType;
  * @author Jürgen Kappler
  */
 @ProviderType
-public interface PageElementConverter {
+public interface PageElementDTOConverter {
 
-	public PageElement toPageElement(
+	public PageElement toDTO(
 		Layout layout, String layoutStructureItemId, boolean saveInlineContent,
 		boolean saveMappingConfiguration, long segmentsExperienceId);
 
