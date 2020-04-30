@@ -42,7 +42,6 @@ import com.liferay.headless.delivery.dto.v1_0.PageFragmentInstanceDefinition;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageFragmentInstanceDefinitionDTOConverter;
 import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -79,20 +78,15 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Rubén Pulido
  */
-@Component(
-	immediate = true, service = PageFragmentInstanceDefinitionDTOConverter.class
-)
-public class PageFragmentInstanceDefinitionDTOConverterImpl
-	implements PageFragmentInstanceDefinitionDTOConverter {
+@Component(service = PageFragmentInstanceDefinitionDTOConverter.class)
+public class PageFragmentInstanceDefinitionDTOConverter {
 
-	@Override
 	public PageFragmentInstanceDefinition toDTO(
 		FragmentLayoutStructureItem fragmentLayoutStructureItem) {
 
 		return toDTO(fragmentLayoutStructureItem, true, true);
 	}
 
-	@Override
 	public PageFragmentInstanceDefinition toDTO(
 		FragmentLayoutStructureItem fragmentLayoutStructureItem,
 		boolean saveInlineContent, boolean saveMapping) {
@@ -796,7 +790,7 @@ public class PageFragmentInstanceDefinitionDTOConverterImpl
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		PageFragmentInstanceDefinitionDTOConverterImpl.class);
+		PageFragmentInstanceDefinitionDTOConverter.class);
 
 	@Reference
 	private FragmentCollectionContributorTracker
