@@ -16,7 +16,6 @@ package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.str
 
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
 import com.liferay.headless.delivery.dto.v1_0.PageRowDefinition;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporter;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.layout.util.structure.RowLayoutStructureItem;
 

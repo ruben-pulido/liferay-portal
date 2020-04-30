@@ -12,14 +12,20 @@
  * details.
  */
 
-package com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure;
+package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.structure;
+
+import com.liferay.headless.delivery.dto.v1_0.PageElement;
+import com.liferay.layout.util.structure.LayoutStructureItem;
 
 /**
  * @author Jürgen Kappler
  */
-public interface LayoutStructureItemExporterTracker {
+public interface LayoutStructureItemExporter {
 
-	public LayoutStructureItemExporter getLayoutStructureItemExporter(
-		String className);
+	public String getClassName();
+
+	public PageElement getPageElement(
+		long groupId, LayoutStructureItem layoutStructureItem,
+		boolean saveInlineContent, boolean saveMappingConfiguration);
 
 }

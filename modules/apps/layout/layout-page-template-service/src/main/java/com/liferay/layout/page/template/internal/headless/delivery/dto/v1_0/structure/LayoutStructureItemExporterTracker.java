@@ -14,9 +14,6 @@
 
 package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.structure;
 
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporter;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporterTracker;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,10 +26,8 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  * @author Jürgen Kappler
  */
 @Component(service = LayoutStructureItemExporterTracker.class)
-public class LayoutStructureItemExporterTrackerImpl
-	implements LayoutStructureItemExporterTracker {
+public class LayoutStructureItemExporterTracker {
 
-	@Override
 	public LayoutStructureItemExporter getLayoutStructureItemExporter(
 		String className) {
 

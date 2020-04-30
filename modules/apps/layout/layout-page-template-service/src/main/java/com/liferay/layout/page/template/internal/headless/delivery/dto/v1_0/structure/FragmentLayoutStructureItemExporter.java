@@ -17,7 +17,6 @@ package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.str
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporter;
 import com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter.PageFragmentInstanceDefinitionDTOConverter;
 import com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter.PageWidgetInstanceDefinitionDTOConverter;
 import com.liferay.layout.util.structure.FragmentLayoutStructureItem;

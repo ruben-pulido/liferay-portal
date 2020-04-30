@@ -19,7 +19,7 @@ import com.liferay.headless.delivery.dto.v1_0.PageDefinition;
 import com.liferay.headless.delivery.dto.v1_0.Settings;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageDefinitionDTOConverter;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageElementDTOConverter;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporterTracker;
+import com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporterTracker;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
