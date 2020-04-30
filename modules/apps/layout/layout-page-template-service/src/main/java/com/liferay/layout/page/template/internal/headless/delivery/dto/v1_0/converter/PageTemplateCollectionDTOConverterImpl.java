@@ -12,18 +12,24 @@
  * details.
  */
 
-package com.liferay.layout.page.template.headless.delivery.dto.v1_0;
+package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter;
 
 import com.liferay.headless.delivery.dto.v1_0.PageTemplateCollection;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageTemplateCollectionDTOConverter;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.portal.kernel.util.Validator;
+
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Jürgen Kappler
  */
-public class PageTemplateCollectionConverterUtil {
+@Component(service = PageTemplateCollectionDTOConverter.class)
+public class PageTemplateCollectionDTOConverterImpl
+	implements PageTemplateCollectionDTOConverter {
 
-	public static PageTemplateCollection toPageTemplateCollection(
+	@Override
+	public PageTemplateCollection toDTO(
 		LayoutPageTemplateCollection layoutPageTemplateCollection) {
 
 		return new PageTemplateCollection() {

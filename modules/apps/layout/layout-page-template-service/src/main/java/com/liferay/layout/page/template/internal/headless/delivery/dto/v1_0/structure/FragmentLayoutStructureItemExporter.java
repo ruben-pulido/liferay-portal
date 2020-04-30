@@ -17,8 +17,8 @@ package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.str
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.PageWidgetInstanceDefinitionConverterUtil;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageFragmentInstanceDefinitionDTOConverter;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageWidgetInstanceDefinitionDTOConverter;
 import com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporter;
 import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructureItem;
@@ -87,11 +87,9 @@ public class FragmentLayoutStructureItemExporter
 
 		return new PageElement() {
 			{
-				definition =
-					PageWidgetInstanceDefinitionConverterUtil.
-						toWidgetInstanceDefinition(
-							fragmentEntryLink.getClassPK(),
-							PortletIdCodec.encode(portletId, instanceId));
+				definition = _pageWidgetInstanceDefinitionDTOConverter.toDTO(
+					fragmentEntryLink.getClassPK(),
+					PortletIdCodec.encode(portletId, instanceId));
 				type = PageElement.Type.WIDGET;
 			}
 		};
@@ -103,5 +101,9 @@ public class FragmentLayoutStructureItemExporter
 	@Reference
 	private PageFragmentInstanceDefinitionDTOConverter
 		_pageFragmentInstanceDefinitionDTOConverter;
+
+	@Reference
+	private PageWidgetInstanceDefinitionDTOConverter
+		_pageWidgetInstanceDefinitionDTOConverter;
 
 }

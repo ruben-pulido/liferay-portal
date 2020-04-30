@@ -12,25 +12,31 @@
  * details.
  */
 
-package com.liferay.layout.page.template.headless.delivery.dto.v1_0;
+package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter;
 
 import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.model.ClassType;
 import com.liferay.asset.kernel.model.ClassTypeReader;
 import com.liferay.headless.delivery.dto.v1_0.DisplayPageTemplate;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.DisplayPageTemplateDTOConverter;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Rubén Pulido
  */
-public class DisplayPageTemplateConverterUtil {
+@Component(service = DisplayPageTemplateDTOConverter.class)
+public class DisplayPageTemplateDTOConverterImpl
+	implements DisplayPageTemplateDTOConverter {
 
-	public static DisplayPageTemplate toDisplayPageTemplate(
+	@Override
+	public DisplayPageTemplate toDTO(
 		LayoutPageTemplateEntry layoutPageTemplateEntry) {
 
 		return new DisplayPageTemplate() {
@@ -42,7 +48,7 @@ public class DisplayPageTemplateConverterUtil {
 		};
 	}
 
-	private static String _getClassTypeName(
+	private String _getClassTypeName(
 		LayoutPageTemplateEntry layoutPageTemplateEntry) {
 
 		AssetRendererFactory assetRendererFactory =
@@ -79,6 +85,6 @@ public class DisplayPageTemplateConverterUtil {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		DisplayPageTemplateConverterUtil.class);
+		DisplayPageTemplateDTOConverterImpl.class);
 
 }

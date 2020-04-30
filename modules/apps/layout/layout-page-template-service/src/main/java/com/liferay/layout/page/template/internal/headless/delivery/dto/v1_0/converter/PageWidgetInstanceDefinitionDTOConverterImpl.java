@@ -12,11 +12,12 @@
  * details.
  */
 
-package com.liferay.layout.page.template.headless.delivery.dto.v1_0;
+package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter;
 
 import com.liferay.headless.delivery.dto.v1_0.PageWidgetInstanceDefinition;
 import com.liferay.headless.delivery.dto.v1_0.Widget;
 import com.liferay.headless.delivery.dto.v1_0.WidgetPermission;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageWidgetInstanceDefinitionDTOConverter;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -28,12 +29,12 @@ import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
-import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
-import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
-import com.liferay.portal.kernel.service.ResourceActionLocalServiceUtil;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil;
-import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
-import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.PortletLocalService;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
+import com.liferay.portal.kernel.service.permission.PortletPermission;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
@@ -48,14 +49,18 @@ import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Jürgen Kappler
  */
-public class PageWidgetInstanceDefinitionConverterUtil {
+@Component(service = PageWidgetInstanceDefinitionDTOConverter.class)
+public class PageWidgetInstanceDefinitionDTOConverterImpl
+	implements PageWidgetInstanceDefinitionDTOConverter {
 
-	public static PageWidgetInstanceDefinition toWidgetInstanceDefinition(
-		long plid, String portletId) {
-
+	@Override
+	public PageWidgetInstanceDefinition toDTO(long plid, String portletId) {
 		if (Validator.isNull(portletId)) {
 			return null;
 		}
@@ -73,10 +78,8 @@ public class PageWidgetInstanceDefinitionConverterUtil {
 		};
 	}
 
-	private static Map<String, Object> _getWidgetConfig(
-		long plid, String portletId) {
-
-		Layout layout = LayoutLocalServiceUtil.fetchLayout(plid);
+	private Map<String, Object> _getWidgetConfig(long plid, String portletId) {
+		Layout layout = _layoutLocalService.fetchLayout(plid);
 
 		if (layout == null) {
 			return null;
@@ -84,7 +87,7 @@ public class PageWidgetInstanceDefinitionConverterUtil {
 
 		String portletName = PortletIdCodec.decodePortletName(portletId);
 
-		Portlet portlet = PortletLocalServiceUtil.getPortletById(portletName);
+		Portlet portlet = _portletLocalService.getPortletById(portletName);
 
 		if (portlet == null) {
 			return null;
@@ -121,10 +124,10 @@ public class PageWidgetInstanceDefinitionConverterUtil {
 		return widgetConfigMap;
 	}
 
-	private static WidgetPermission[] _getWidgetPermissions(
+	private WidgetPermission[] _getWidgetPermissions(
 		long plid, String portletId) {
 
-		Layout layout = LayoutLocalServiceUtil.fetchLayout(plid);
+		Layout layout = _layoutLocalService.fetchLayout(plid);
 
 		if (layout == null) {
 			return null;
@@ -132,17 +135,17 @@ public class PageWidgetInstanceDefinitionConverterUtil {
 
 		String portletName = PortletIdCodec.decodePortletName(portletId);
 
-		Portlet portlet = PortletLocalServiceUtil.getPortletById(portletName);
+		Portlet portlet = _portletLocalService.getPortletById(portletName);
 
 		if (portlet == null) {
 			return null;
 		}
 
-		String resourcePrimKey = PortletPermissionUtil.getPrimaryKey(
+		String resourcePrimKey = _portletPermission.getPrimaryKey(
 			plid, portletId);
 
 		List<ResourcePermission> resourcePermissions =
-			ResourcePermissionLocalServiceUtil.getResourcePermissions(
+			_resourcePermissionLocalService.getResourcePermissions(
 				layout.getCompanyId(), portletName,
 				ResourceConstants.SCOPE_INDIVIDUAL, resourcePrimKey);
 
@@ -151,7 +154,7 @@ public class PageWidgetInstanceDefinitionConverterUtil {
 		}
 
 		List<ResourceAction> resourceActions =
-			ResourceActionLocalServiceUtil.getResourceActions(portletName);
+			_resourceActionLocalService.getResourceActions(portletName);
 
 		if (ListUtil.isEmpty(resourceActions)) {
 			return null;
@@ -160,7 +163,7 @@ public class PageWidgetInstanceDefinitionConverterUtil {
 		List<WidgetPermission> widgetPermissions = new ArrayList<>();
 
 		for (ResourcePermission resourcePermission : resourcePermissions) {
-			Role role = RoleLocalServiceUtil.fetchRole(
+			Role role = _roleLocalService.fetchRole(
 				resourcePermission.getRoleId());
 
 			if (role == null) {
@@ -201,6 +204,24 @@ public class PageWidgetInstanceDefinitionConverterUtil {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		PageWidgetInstanceDefinitionConverterUtil.class);
+		PageWidgetInstanceDefinitionDTOConverterImpl.class);
+
+	@Reference
+	private LayoutLocalService _layoutLocalService;
+
+	@Reference
+	private PortletLocalService _portletLocalService;
+
+	@Reference
+	private PortletPermission _portletPermission;
+
+	@Reference
+	private ResourceActionLocalService _resourceActionLocalService;
+
+	@Reference
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Reference
+	private RoleLocalService _roleLocalService;
 
 }

@@ -12,20 +12,23 @@
  * details.
  */
 
-package com.liferay.layout.page.template.headless.delivery.dto.v1_0;
+package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter;
 
-import com.liferay.headless.delivery.dto.v1_0.MasterPage;
+import com.liferay.headless.delivery.dto.v1_0.PageTemplate;
+import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageTemplateDTOConverter;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
+
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Rubén Pulido
  */
-public class MasterPageConverterUtil {
+@Component(service = PageTemplateDTOConverter.class)
+public class PageTemplateDTOConverterImpl implements PageTemplateDTOConverter {
 
-	public static MasterPage toMasterPage(
-		LayoutPageTemplateEntry layoutPageTemplateEntry) {
-
-		return new MasterPage() {
+	@Override
+	public PageTemplate toDTO(LayoutPageTemplateEntry layoutPageTemplateEntry) {
+		return new PageTemplate() {
 			{
 				name = layoutPageTemplateEntry.getName();
 			}
