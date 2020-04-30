@@ -15,7 +15,6 @@
 package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter;
 
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageElementDTOConverter;
 import com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporter;
 import com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.structure.LayoutStructureItemExporterTracker;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
@@ -37,9 +36,8 @@ import org.osgi.service.component.annotations.Reference;
  * @author Jürgen Kappler
  */
 @Component(service = PageElementDTOConverter.class)
-public class PageElementDTOConverterImpl implements PageElementDTOConverter {
+public class PageElementDTOConverter {
 
-	@Override
 	public PageElement toDTO(
 		Layout layout, String layoutStructureItemId, boolean saveInlineContent,
 		boolean saveMappingConfiguration, long segmentsExperienceId) {
