@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter;
+package com.liferay.layout.page.template.serializer;
 
-import com.liferay.headless.delivery.dto.v1_0.PageElement;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -24,10 +24,12 @@ import org.osgi.annotation.versioning.ProviderType;
  * @author Jürgen Kappler
  */
 @ProviderType
-public interface PageElementDTOConverter {
+public interface LayoutStructureItemJSONSerializer {
 
-	public PageElement toDTO(
-		Layout layout, String layoutStructureItemId, boolean saveInlineContent,
-		boolean saveMappingConfiguration, long segmentsExperienceId);
+	public String toJSONString(
+			Layout layout, String layoutStructureItemId,
+			boolean saveInlineContent, boolean saveMappingConfiguration,
+			long segmentsExperienceId)
+		throws PortalException;
 
 }

@@ -14,20 +14,6 @@
 
 package com.liferay.layout.content.page.editor.web.internal.util.layout.structure;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
-
-import com.liferay.headless.delivery.dto.v1_0.PageElement;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageElementDTOConverter;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureServiceUtil;
@@ -38,7 +24,6 @@ import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 
@@ -88,32 +73,6 @@ public class LayoutStructureUtil {
 			layoutPageTemplateStructure.getData(segmentsExperienceId));
 	}
 
-	public static String getLayoutStructureItemJSON(
-			String itemId, PageElementDTOConverter pageElementDTOConverter,
-			long plid, boolean saveInlineContent,
-			boolean saveMappingConfiguration, long segmentsExperienceId)
-		throws PortalException {
-
-		PageElement pageElement = pageElementDTOConverter.toDTO(
-			LayoutLocalServiceUtil.getLayout(plid), itemId, saveInlineContent,
-			saveMappingConfiguration, segmentsExperienceId);
-
-		try {
-			SimpleFilterProvider simpleFilterProvider =
-				new SimpleFilterProvider();
-
-			FilterProvider filterProvider = simpleFilterProvider.addFilter(
-				"Liferay.Vulcan", SimpleBeanPropertyFilter.serializeAll());
-
-			ObjectWriter objectWriter = _objectMapper.writer(filterProvider);
-
-			return objectWriter.writeValueAsString(pageElement);
-		}
-		catch (Exception exception) {
-			throw new PortalException(exception);
-		}
-	}
-
 	public static JSONObject updateLayoutPageTemplateData(
 			long groupId, long segmentsExperienceId, long plid,
 			UnsafeConsumer<LayoutStructure, PortalException> unsafeConsumer)
@@ -139,18 +98,5 @@ public class LayoutStructureUtil {
 
 		return dataJSONObject;
 	}
-
-	private static final ObjectMapper _objectMapper = new ObjectMapper() {
-		{
-			configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-			configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
-			setDateFormat(new ISO8601DateFormat());
-			setSerializationInclusion(JsonInclude.Include.NON_NULL);
-			setVisibility(
-				PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-			setVisibility(
-				PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
-		}
-	};
 
 }

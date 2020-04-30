@@ -26,8 +26,7 @@ import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.layout.content.page.editor.web.internal.constants.ContentPageEditorConstants;
-import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
-import com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter.PageElementDTOConverter;
+import com.liferay.layout.page.template.serializer.LayoutStructureItemJSONSerializer;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -40,6 +39,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -118,8 +118,8 @@ public class AddFragmentCompositionMVCActionCommand
 			SegmentsExperienceConstants.ID_DEFAULT);
 
 		String layoutStructureJSON =
-			LayoutStructureUtil.getLayoutStructureItemJSON(
-				itemId, _pageElementDTOConverter, themeDisplay.getPlid(),
+			_layoutStructureItemJSONSerializer.toJSONString(
+				_layoutLocalService.getLayout(themeDisplay.getPlid()), itemId,
 				saveInlineContent, saveMappingConfiguration,
 				segmentsExperienceId);
 
@@ -247,7 +247,11 @@ public class AddFragmentCompositionMVCActionCommand
 	private InfoDisplayContributorTracker _infoDisplayContributorTracker;
 
 	@Reference
-	private PageElementDTOConverter _pageElementDTOConverter;
+	private LayoutLocalService _layoutLocalService;
+
+	@Reference
+	private LayoutStructureItemJSONSerializer
+		_layoutStructureItemJSONSerializer;
 
 	@Reference
 	private Portal _portal;
