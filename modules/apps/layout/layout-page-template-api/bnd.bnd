@@ -4,7 +4,6 @@ Bundle-Version: 4.0.0
 Export-Package:\
 	com.liferay.layout.page.template.constants,\
 	com.liferay.layout.page.template.exception,\
-	com.liferay.layout.page.template.headless.delivery.dto.v1_0,\
 	com.liferay.layout.page.template.headless.delivery.dto.v1_0.converter,\
 	com.liferay.layout.page.template.headless.delivery.dto.v1_0.structure,\
 	com.liferay.layout.page.template.importer,\
