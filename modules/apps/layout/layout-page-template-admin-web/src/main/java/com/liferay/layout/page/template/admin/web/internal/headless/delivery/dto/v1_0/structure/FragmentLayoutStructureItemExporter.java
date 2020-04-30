@@ -12,13 +12,13 @@
  * details.
  */
 
-package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.structure;
+package com.liferay.layout.page.template.admin.web.internal.headless.delivery.dto.v1_0.structure;
 
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
-import com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter.PageFragmentInstanceDefinitionDTOConverter;
-import com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter.PageWidgetInstanceDefinitionDTOConverter;
+import com.liferay.layout.page.template.admin.web.internal.headless.delivery.dto.v1_0.converter.PageFragmentInstanceDefinitionDTOConverter;
+import com.liferay.layout.page.template.admin.web.internal.headless.delivery.dto.v1_0.converter.PageWidgetInstanceDefinitionDTOConverter;
 import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.portal.kernel.json.JSONException;

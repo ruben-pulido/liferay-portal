@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.layout.page.template.internal.serializer;
+package com.liferay.layout.page.template.admin.web.internal.serializer;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
-import com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter.PageElementDTOConverter;
+import com.liferay.layout.page.template.admin.web.internal.headless.delivery.dto.v1_0.converter.PageElementDTOConverter;
 import com.liferay.layout.page.template.serializer.LayoutStructureItemJSONSerializer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.layout.page.template.internal.headless.delivery.dto.v1_0.converter;
+package com.liferay.layout.page.template.admin.web.internal.headless.delivery.dto.v1_0.converter;
 
 import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
