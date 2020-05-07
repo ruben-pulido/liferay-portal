@@ -35,6 +35,20 @@
 			"title": "The CollectionItemDefinition Schema",
 			"type": "object"
 		},
+		"CollectionItemMapping": {
+			"additionalProperties": false,
+			"properties": {
+				"collectionItemFieldKey": {
+					"title": "The collectionItemFieldKey Schema",
+					"type": "string"
+				}
+			},
+			"required": [
+				"collectionItemFieldKey"
+			],
+			"title": "The CollectionItemMapping Schema",
+			"type": "object"
+		},
 		"ColumnDefinition": {
 			"additionalProperties": false,
 			"properties": {
@@ -46,6 +60,20 @@
 				}
 			},
 			"title": "The ColumnDefinition Schema",
+			"type": "object"
+		},
+		"DisplayPageTemplateItemMapping": {
+			"additionalProperties": false,
+			"properties": {
+				"fieldKey": {
+					"title": "The fieldKey Schema",
+					"type": "string"
+				}
+			},
+			"required": [
+				"fieldKey"
+			],
+			"title": "The DisplayPageTemplateItemMapping Schema",
 			"type": "object"
 		},
 		"DropZoneDefinition": {
@@ -292,24 +320,17 @@
 				},
 				"mapping": {
 					"additionalProperties": false,
-					"properties": {
-						"collectionItemFieldKey": {
-							"title": "The collectionItemFieldKey Schema",
-							"type": "string"
+					"oneOf": [
+						{
+							"$ref": "#/definitions/CollectionItemMapping"
 						},
-						"fieldKey": {
-							"title": "The fieldKey Schema",
-							"type": "string"
+						{
+							"$ref": "#/definitions/DisplayPageTemplateItemMapping"
 						},
-						"itemClassName": {
-							"title": "The itemClassName Schema",
-							"type": "string"
-						},
-						"itemClassPK": {
-							"title": "The itemClassPK Schema",
-							"type": "integer"
+						{
+							"$ref": "#/definitions/ItemMapping"
 						}
-					},
+					],
 					"title": "The mapping Schema",
 					"type": "object"
 				}
@@ -352,6 +373,30 @@
 				"unallowedFragments"
 			],
 			"title": "The FragmentSettingsUnallowed Schema",
+			"type": "object"
+		},
+		"ItemMapping": {
+			"additionalProperties": false,
+			"properties": {
+				"itemClassName": {
+					"title": "The itemClassName Schema",
+					"type": "string"
+				},
+				"itemClassPK": {
+					"title": "The itemClassPK Schema",
+					"type": "integer"
+				},
+				"itemFieldKey": {
+					"title": "The itemFieldKey Schema",
+					"type": "string"
+				}
+			},
+			"required": [
+				"itemFieldKey",
+				"itemClassName",
+				"itemClassPK"
+			],
+			"title": "The ItemMapping Schema",
 			"type": "object"
 		},
 		"PageElement": {
