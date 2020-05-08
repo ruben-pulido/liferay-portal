@@ -157,6 +157,7 @@ public class PageFragmentInstanceDefinitionDTOConverter {
 				new FragmentField() {
 					{
 						id = backgroundImageId;
+						type = Type.BACKGROUND_IMAGE;
 						value = _toFragmentFieldBackgroundImage(
 							imageJSONObject, localeMap, saveMapping);
 					}
@@ -544,6 +545,22 @@ public class PageFragmentInstanceDefinitionDTOConverter {
 		return new FragmentField() {
 			{
 				id = textId;
+
+				setType(
+					() -> {
+						String type = editableTypes.getOrDefault(
+							textId, "text");
+
+						if (Objects.equals(type, "html")) {
+							return Type.HTML;
+						}
+
+						if (Objects.equals(type, "image")) {
+							return Type.IMAGE;
+						}
+
+						return Type.TEXT;
+					});
 
 				setValue(
 					() -> {
