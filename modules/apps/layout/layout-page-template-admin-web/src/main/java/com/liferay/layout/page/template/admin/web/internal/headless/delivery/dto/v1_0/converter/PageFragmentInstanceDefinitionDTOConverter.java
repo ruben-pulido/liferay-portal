@@ -14,12 +14,15 @@
 
 package com.liferay.layout.page.template.admin.web.internal.headless.delivery.dto.v1_0.converter;
 
+import com.liferay.fragment.constants.FragmentEntryLinkConstants;
 import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
 import com.liferay.fragment.entry.processor.util.EditableFragmentEntryProcessorUtil;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.fragment.processor.DefaultFragmentEntryProcessorContext;
+import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.processor.PortletRegistry;
 import com.liferay.fragment.renderer.FragmentRenderer;
 import com.liferay.fragment.renderer.FragmentRendererTracker;
@@ -46,12 +49,15 @@ import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
 import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -299,13 +305,41 @@ public class PageFragmentInstanceDefinitionDTOConverter {
 						"BackgroundImageFragmentEntryProcessor"),
 				saveMapping));
 
-		Map<String, String> editableTypes =
-			EditableFragmentEntryProcessorUtil.getEditableTypes(
-				fragmentEntryLink.getHtml());
+		String html = fragmentEntryLink.getHtml();
+
+		if (Validator.isNotNull(html) ||
+			Validator.isNotNull(fragmentEntryLink.getEditableValues())) {
+
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			DefaultFragmentEntryProcessorContext
+				defaultFragmentEntryProcessorContext =
+					new DefaultFragmentEntryProcessorContext(
+						serviceContext.getRequest(),
+						serviceContext.getResponse(),
+						FragmentEntryLinkConstants.VIEW,
+						LocaleUtil.getSiteDefault());
+
+			try {
+				html =
+					_fragmentEntryProcessorRegistry.
+						processFragmentEntryLinkHTML(
+							fragmentEntryLink,
+							defaultFragmentEntryProcessorContext);
+			}
+			catch (PortalException portalException) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(portalException, portalException);
+				}
+
+				return null;
+			}
+		}
 
 		fragmentFields.addAll(
 			_getTextFragmentFields(
-				editableTypes,
+				EditableFragmentEntryProcessorUtil.getEditableTypes(html),
 				editableValuesJSONObject.getJSONObject(
 					"com.liferay.fragment.entry.processor.editable." +
 						"EditableFragmentEntryProcessor"),
@@ -906,6 +940,9 @@ public class PageFragmentInstanceDefinitionDTOConverter {
 
 	@Reference
 	private FragmentEntryLocalService _fragmentEntryLocalService;
+
+	@Reference
+	private FragmentEntryProcessorRegistry _fragmentEntryProcessorRegistry;
 
 	@Reference
 	private FragmentRendererTracker _fragmentRendererTracker;
