@@ -16,7 +16,6 @@ package com.liferay.layout.page.template.admin.web.internal.headless.delivery.dt
 
 import com.liferay.document.library.util.DLURLHelperUtil;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
-import com.liferay.fragment.entry.processor.util.EditableFragmentEntryProcessorUtil;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
@@ -126,9 +125,6 @@ public class FragmentLayoutStructureItemImporter
 			_fragmentEntryProcessorRegistry.getDefaultEditableValuesJSONObject(
 				_replaceResources(fragmentCollection, html), configuration);
 
-		Map<String, String> editableTypes =
-			EditableFragmentEntryProcessorUtil.getEditableTypes(html);
-
 		JSONObject fragmentEntryProcessorValuesJSONObject = JSONUtil.put(
 			"com.liferay.fragment.entry.processor.background.image." +
 				"BackgroundImageFragmentEntryProcessor",
@@ -136,7 +132,6 @@ public class FragmentLayoutStructureItemImporter
 
 		JSONObject editableFragmentEntryProcessorJSONObject =
 			_toEditableFragmentEntryProcessorJSONObject(
-				editableTypes,
 				(List<Object>)definitionMap.get("fragmentFields"));
 
 		if (editableFragmentEntryProcessorJSONObject.length() > 0) {
@@ -465,7 +460,7 @@ public class FragmentLayoutStructureItemImporter
 	}
 
 	private JSONObject _toEditableFragmentEntryProcessorJSONObject(
-		Map<String, String> editableTypes, List<Object> fragmentFields) {
+		List<Object> fragmentFields) {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -493,6 +488,12 @@ public class FragmentLayoutStructureItemImporter
 				continue;
 			}
 
+			String fragmentFieldType = (String)fragmentFieldMap.get("type");
+
+			if (fragmentFieldType == null) {
+				continue;
+			}
+
 			JSONObject editableFieldConfigJSONObject =
 				_createFragmentLinkConfigJSONObject(
 					(Map<String, Object>)valueMap.get("fragmentLink"));
@@ -501,13 +502,13 @@ public class FragmentLayoutStructureItemImporter
 				_createBaseFragmentFieldJSONObject(
 					(Map<String, Object>)valueMap.get("text"));
 
-			if (Objects.equals(editableTypes.get(fragmentFieldId), "html")) {
+			if (Objects.equals(fragmentFieldType, "html")) {
 				baseFragmentFieldJSONObject =
 					_createBaseFragmentFieldJSONObject(
 						(Map<String, Object>)valueMap.get("html"));
 			}
 
-			if (Objects.equals(editableTypes.get(fragmentFieldId), "image")) {
+			if (Objects.equals(fragmentFieldType, "image")) {
 				Map<String, Object> fragmentImageMap =
 					(Map<String, Object>)valueMap.get("fragmentImage");
 
