@@ -994,12 +994,18 @@ components:
             properties:
                 id:
                     type: string
+                type:
+                    enum: [BackgroundImage, HTML, Image, Text]
+                    type: string
                 value:
                     anyOf:
                         - $ref: "#/components/schemas/FragmentFieldBackgroundImage"
                         - $ref: "#/components/schemas/FragmentFieldHTML"
                         - $ref: "#/components/schemas/FragmentFieldImage"
                         - $ref: "#/components/schemas/FragmentFieldText"
+            required:
+                - id
+                - type
             type: object
         FragmentFieldBackgroundImage:
             properties:
