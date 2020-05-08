@@ -28,6 +28,38 @@ import javax.annotation.Generated;
 @Generated("")
 public class FragmentField implements Cloneable {
 
+	public static enum Type {
+
+		BACKGROUND_IMAGE("BackgroundImage"), HTML("HTML"), IMAGE("Image"),
+		TEXT("Text");
+
+		public static Type create(String value) {
+			for (Type type : values()) {
+				if (Objects.equals(type.getValue(), value)) {
+					return type;
+				}
+			}
+
+			return null;
+		}
+
+		public String getValue() {
+			return _value;
+		}
+
+		@Override
+		public String toString() {
+			return _value;
+		}
+
+		private Type(String value) {
+			_value = value;
+		}
+
+		private final String _value;
+
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -46,6 +78,33 @@ public class FragmentField implements Cloneable {
 	}
 
 	protected String id;
+
+	public Type getType() {
+		return type;
+	}
+
+	public String getTypeAsString() {
+		if (type == null) {
+			return null;
+		}
+
+		return type.toString();
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public void setType(UnsafeSupplier<Type, Exception> typeUnsafeSupplier) {
+		try {
+			type = typeUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Type type;
 
 	public Object getValue() {
 		return value;

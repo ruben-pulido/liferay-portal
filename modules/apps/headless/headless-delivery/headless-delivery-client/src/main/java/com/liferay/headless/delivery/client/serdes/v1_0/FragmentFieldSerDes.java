@@ -69,6 +69,20 @@ public class FragmentFieldSerDes {
 			sb.append("\"");
 		}
 
+		if (fragmentField.getType() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"type\": ");
+
+			sb.append("\"");
+
+			sb.append(fragmentField.getType());
+
+			sb.append("\"");
+		}
+
 		if (fragmentField.getValue() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -109,6 +123,13 @@ public class FragmentFieldSerDes {
 			map.put("id", String.valueOf(fragmentField.getId()));
 		}
 
+		if (fragmentField.getType() == null) {
+			map.put("type", null);
+		}
+		else {
+			map.put("type", String.valueOf(fragmentField.getType()));
+		}
+
 		if (fragmentField.getValue() == null) {
 			map.put("value", null);
 		}
@@ -140,6 +161,13 @@ public class FragmentFieldSerDes {
 			if (Objects.equals(jsonParserFieldName, "id")) {
 				if (jsonParserFieldValue != null) {
 					fragmentField.setId((String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "type")) {
+				if (jsonParserFieldValue != null) {
+					fragmentField.setType(
+						FragmentField.Type.create(
+							(String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "value")) {
