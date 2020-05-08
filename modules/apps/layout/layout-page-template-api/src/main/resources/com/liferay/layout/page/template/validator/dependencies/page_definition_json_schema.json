@@ -241,12 +241,23 @@
 								"title": "The id Schema",
 								"type": "string"
 							},
+							"type": {
+								"enum": [
+									"BackgroundImage",
+									"HTML",
+									"Image",
+									"Text"
+								],
+								"title": "The type Schema",
+								"type": "string"
+							},
 							"value": {
 								"$ref": "#/definitions/FragmentField"
 							}
 						},
 						"required": [
-							"id"
+							"id",
+							"type"
 						],
 						"type": "object"
 					},
