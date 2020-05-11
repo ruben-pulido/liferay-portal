@@ -14,9 +14,7 @@
 
 package com.liferay.layout.page.template.admin.web.internal.headless.delivery.dto.v1_0.structure.importer;
 
-import com.liferay.document.library.util.DLURLHelperUtil;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
-import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
@@ -29,7 +27,6 @@ import com.liferay.layout.page.template.admin.web.internal.headless.delivery.dto
 import com.liferay.layout.page.template.admin.web.internal.headless.delivery.dto.v1_0.structure.importer.util.PortletPermissionsImporterHelper;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
@@ -42,7 +39,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
-import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -58,8 +54,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -151,19 +145,19 @@ public class FragmentLayoutStructureItemImporter
 			return null;
 		}
 
-		long fragmentEntryId = fragmentEntry.getFragmentEntryId();
-		String html = fragmentEntry.getHtml();
-		String js = fragmentEntry.getJs();
-		String css = fragmentEntry.getCss();
-		String configuration = fragmentEntry.getConfiguration();
-
-		FragmentCollection fragmentCollection =
-			_fragmentCollectionService.fetchFragmentCollection(
-				fragmentEntry.getFragmentCollectionId());
+		FragmentEntryLink fragmentEntryLink =
+			_fragmentEntryLinkLocalService.addFragmentEntryLink(
+				layout.getUserId(), layout.getGroupId(), 0,
+				fragmentEntry.getFragmentEntryId(), 0,
+				_portal.getClassNameId(Layout.class), layout.getPlid(),
+				fragmentEntry.getCss(), fragmentEntry.getHtml(),
+				fragmentEntry.getJs(), fragmentEntry.getConfiguration(), null,
+				StringUtil.randomId(), position, fragmentKey,
+				ServiceContextThreadLocal.getServiceContext());
 
 		JSONObject defaultEditableValuesJSONObject =
-			_fragmentEntryProcessorRegistry.getDefaultEditableValuesJSONObject(
-				_replaceResources(fragmentCollection, html), configuration);
+			JSONFactoryUtil.createJSONObject(
+				fragmentEntryLink.getEditableValues());
 
 		JSONObject fragmentEntryProcessorValuesJSONObject = JSONUtil.put(
 			"com.liferay.fragment.entry.processor.background.image." +
@@ -182,7 +176,7 @@ public class FragmentLayoutStructureItemImporter
 		}
 
 		Map<String, String> configurationTypes = _getConfigurationTypes(
-			configuration);
+			fragmentEntryLink.getConfiguration());
 
 		JSONObject freeMarkerFragmentEntryProcessorJSONObject =
 			_toFreeMarkerFragmentEntryProcessorJSONObject(
@@ -190,7 +184,8 @@ public class FragmentLayoutStructureItemImporter
 				(Map<String, Object>)definitionMap.get("fragmentConfig"));
 
 		_fragmentEntryValidator.validateConfigurationValues(
-			configuration, fragmentEntryProcessorValuesJSONObject);
+			fragmentEntryLink.getConfiguration(),
+			fragmentEntryProcessorValuesJSONObject);
 
 		if (freeMarkerFragmentEntryProcessorJSONObject.length() > 0) {
 			fragmentEntryProcessorValuesJSONObject.put(
@@ -203,13 +198,16 @@ public class FragmentLayoutStructureItemImporter
 			defaultEditableValuesJSONObject,
 			fragmentEntryProcessorValuesJSONObject);
 
-		FragmentEntryLink fragmentEntryLink =
-			_fragmentEntryLinkLocalService.addFragmentEntryLink(
-				layout.getUserId(), layout.getGroupId(), 0, fragmentEntryId, 0,
+		fragmentEntryLink =
+			_fragmentEntryLinkLocalService.updateFragmentEntryLink(
+				layout.getUserId(), fragmentEntryLink.getFragmentEntryLinkId(),
+				0, fragmentEntry.getFragmentEntryId(),
 				_portal.getClassNameId(Layout.class.getName()),
-				layout.getPlid(), css, html, js, configuration,
-				jsonObject.toString(), StringUtil.randomId(), position,
-				fragmentKey, ServiceContextThreadLocal.getServiceContext());
+				layout.getPlid(), fragmentEntryLink.getCss(),
+				fragmentEntryLink.getHtml(), fragmentEntryLink.getJs(),
+				fragmentEntryLink.getConfiguration(), jsonObject.toString(),
+				StringUtil.randomId(), position,
+				ServiceContextThreadLocal.getServiceContext());
 
 		List<Object> widgetInstances = (List<Object>)definitionMap.get(
 			"widgetInstances");
@@ -536,35 +534,6 @@ public class FragmentLayoutStructureItemImporter
 		}
 	}
 
-	private String _replaceResources(
-			FragmentCollection fragmentCollection, String html)
-		throws PortalException {
-
-		if (fragmentCollection == null) {
-			return html;
-		}
-
-		Matcher matcher = _pattern.matcher(html);
-
-		while (matcher.find()) {
-			FileEntry fileEntry = _portletFileRepository.fetchPortletFileEntry(
-				fragmentCollection.getGroupId(),
-				fragmentCollection.getResourcesFolderId(), matcher.group(1));
-
-			String fileEntryURL = StringPool.BLANK;
-
-			if (fileEntry != null) {
-				fileEntryURL = DLURLHelperUtil.getDownloadURL(
-					fileEntry, fileEntry.getFileVersion(), null,
-					StringPool.BLANK, false, false);
-			}
-
-			html = StringUtil.replace(html, matcher.group(), fileEntryURL);
-		}
-
-		return html;
-	}
-
 	private JSONObject _toEditableFragmentEntryProcessorJSONObject(
 		List<Object> fragmentFields) {
 
@@ -699,9 +668,6 @@ public class FragmentLayoutStructureItemImporter
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		FragmentLayoutStructureItemImporter.class);
-
-	private static final Pattern _pattern = Pattern.compile(
-		"\\[resources:(.+?)\\]");
 
 	@Reference
 	private FragmentCollectionContributorTracker
