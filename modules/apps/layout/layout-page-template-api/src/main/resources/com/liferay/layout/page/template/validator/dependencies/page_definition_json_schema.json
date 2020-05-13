@@ -3,6 +3,20 @@
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"additionalProperties": false,
 	"definitions": {
+		"ClassNameReference": {
+			"additionalProperties": false,
+			"properties": {
+				"className": {
+					"title": "The className Schema",
+					"type": "string"
+				}
+			},
+			"required": [
+				"className"
+			],
+			"title": "The ClassNameReference Schema",
+			"type": "object"
+		},
 		"ClassPKItemReference": {
 			"additionalProperties": false,
 			"properties": {
