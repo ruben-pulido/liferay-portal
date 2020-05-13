@@ -3,10 +3,65 @@
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"additionalProperties": false,
 	"definitions": {
+		"ClassNameReference": {
+			"additionalProperties": false,
+			"properties": {
+				"className": {
+					"title": "The className Schema",
+					"type": "string"
+				}
+			},
+			"required": [
+				"className"
+			],
+			"title": "The ClassNameReference Schema",
+			"type": "object"
+		},
+		"ClassPKItemReference": {
+			"additionalProperties": false,
+			"properties": {
+				"itemClassName": {
+					"title": "The itemClassName Schema",
+					"type": "string"
+				},
+				"itemClassPK": {
+					"title": "The itemClassPK Schema",
+					"type": "integer"
+				}
+			},
+			"required": [
+				"itemClassName",
+				"itemClassPK"
+			],
+			"title": "The ClassPKItemReference Schema",
+			"type": "object"
+		},
 		"CollectionDefinition": {
 			"additionalProperties": false,
 			"properties": {
 				"collectionConfig": {
+					"properties": {
+						"collectionReference": {
+							"oneOf": [
+								{
+									"$ref": "#/definitions/ClassNameReference"
+								},
+								{
+									"$ref": "#/definitions/ClassPKItemReference"
+								}
+							],
+							"title": "The collectionReference Schema",
+							"type": "object"
+						},
+						"collectionType" : {
+							"enum": [
+								"Collection",
+								"CollectionProvider"
+							],
+							"title": "The collectionType Schema",
+							"type": "object"
+						}
+					},
 					"title": "The collectionConfig Schema",
 					"type": "object"
 				},
@@ -33,6 +88,24 @@
 				}
 			},
 			"title": "The CollectionItemDefinition Schema",
+			"type": "object"
+		},
+		"ContextItemReference": {
+			"additionalProperties": false,
+			"properties": {
+				"contextSource": {
+					"enum": [
+						"CollectionItem",
+						"DisplayPageItem"
+					],
+					"title": "The contextSource Schema",
+					"type": "string"
+				}
+			},
+			"required": [
+				"contextSource"
+			],
+			"title": "The ContextItemReference Schema",
 			"type": "object"
 		},
 		"ColumnDefinition": {
@@ -300,25 +373,23 @@
 				"mapping": {
 					"additionalProperties": false,
 					"properties": {
-						"collectionItemFieldKey": {
-							"title": "The collectionItemFieldKey Schema",
-							"type": "string"
-						},
 						"fieldKey": {
 							"title": "The fieldKey Schema",
 							"type": "string"
 						},
-						"itemClassName": {
-							"title": "The itemClassName Schema",
-							"type": "string"
-						},
-						"itemClassPK": {
-							"title": "The itemClassPK Schema",
-							"type": "integer"
+						"itemReference": {
+							"oneOf": [
+								{
+									"$ref": "#/definitions/ClassPKItemReference"
+								},
+								{
+									"$ref": "#/definitions/ContextItemReference"
+								}
+							],
+							"title": "The itemReference Schema",
+							"type": "object"
 						}
-					},
-					"title": "The mapping Schema",
-					"type": "object"
+					}
 				}
 			},
 			"required": [
