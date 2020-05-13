@@ -40,6 +40,31 @@
 			"additionalProperties": false,
 			"properties": {
 				"collectionConfig": {
+					"properties": {
+						"collectionReference": {
+							"oneOf": [
+								{
+									"$ref": "#/definitions/ClassNameReference"
+								},
+								{
+									"$ref": "#/definitions/ClassPKItemReference"
+								}
+							],
+							"title": "The collectionReference Schema",
+							"type": "object"
+						},
+						"collectionType" : {
+							"enum": [
+								"Collection",
+								"CollectionProvider"
+							],
+							"title": "The collectionType Schema",
+							"type": "object"
+						}
+					},
+					"required": [
+						"collectionReference", "collectionType"
+					],
 					"title": "The collectionConfig Schema",
 					"type": "object"
 				},
