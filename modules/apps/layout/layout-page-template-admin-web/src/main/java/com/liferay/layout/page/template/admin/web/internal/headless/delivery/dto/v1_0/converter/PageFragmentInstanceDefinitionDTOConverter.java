@@ -425,7 +425,11 @@ public class PageFragmentInstanceDefinitionDTOConverter {
 			return true;
 		}
 
-		return saveMapping && jsonObject.has("mappedField");
+		if (saveMapping && jsonObject.has("mappedField")) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private FragmentInlineValue _toDefaultMappingValue(
