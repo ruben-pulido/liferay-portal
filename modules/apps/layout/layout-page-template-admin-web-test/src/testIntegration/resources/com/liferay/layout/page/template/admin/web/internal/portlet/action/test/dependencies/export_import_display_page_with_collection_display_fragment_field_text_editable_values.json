@@ -1,0 +1,14 @@
+{
+  "com.liferay.fragment.entry.processor.background.image.BackgroundImageFragmentEntryProcessor": {},
+  "com.liferay.fragment.entry.processor.editable.EditableFragmentEntryProcessor": {
+    "element-text": {
+      "config": {
+        "alt": ""
+      },
+      "defaultValue": "\\n\\tA paragraph is a self-contained unit of a discourse in writing dealing with\\n\\ta particular point or idea. Paragrap
+hs are usually an expected part of\\n\\tformal writing, used to organize longer prose.\\n",
+      "collectionFieldId": "content"
+    }
+  },
+  "com.liferay.fragment.entry.processor.freemarker.FreeMarkerFragmentEntryProcessor": {}
+}

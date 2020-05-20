@@ -1,0 +1,57 @@
+{
+  "deletedItems": [],
+  "rootItems": {
+    "dropZone": "",
+    "main": "020800b3-0504-48d6-a1e9-04542a4d66b1"
+  },
+  "items": {
+    "020800b3-0504-48d6-a1e9-04542a4d66b1": {
+      "itemId": "020800b3-0504-48d6-a1e9-04542a4d66b1",
+      "children": [
+        "a213b89b-ad13-496f-af51-eb750ecf09f7"
+      ],
+      "type": "root",
+      "config": {},
+      "parentId": ""
+    },
+    "a213b89b-ad13-496f-af51-eb750ecf09f7": {
+      "itemId": "a213b89b-ad13-496f-af51-eb750ecf09f7",
+      "children": [
+        "703d258a-ed93-4c3f-b34f-b9c99d1f5d9b"
+      ],
+      "type": "collection",
+      "config": {
+        "numberOfColumns": 1,
+        "numberOfItems": 5,
+        "collection": {
+          "classPK": "\"${CLASS_PK}\"",
+          "itemType": "com.liferay.journal.model.JournalArticle",
+          "itemSubtype": "\"${ITEM_SUBTYPE}\"",
+          "classNameId": "${CLASS_NAME_ID}",
+          "title": "Collection One",
+          "type": "com.liferay.item.selector.criteria.InfoListItemSelectorReturnType"
+        }
+      },
+      "parentId": "020800b3-0504-48d6-a1e9-04542a4d66b1"
+    },
+    "2d3342c3-9eb9-4433-82e9-3df527e8becd": {
+      "itemId": "2d3342c3-9eb9-4433-82e9-3df527e8becd",
+      "children": [],
+      "type": "fragment",
+      "config": {
+        "fragmentEntryLinkId": "\"${FRAGMENT_ENTRY_LINK1_ID}\""
+      },
+      "parentId": "703d258a-ed93-4c3f-b34f-b9c99d1f5d9b"
+    },
+    "703d258a-ed93-4c3f-b34f-b9c99d1f5d9b": {
+      "itemId": "703d258a-ed93-4c3f-b34f-b9c99d1f5d9b",
+      "children": [
+        "2d3342c3-9eb9-4433-82e9-3df527e8becd"
+      ],
+      "type": "collection-item",
+      "config": {},
+      "parentId": "a213b89b-ad13-496f-af51-eb750ecf09f7"
+    }
+  },
+  "version": 1
+}
