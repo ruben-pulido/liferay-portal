@@ -54,6 +54,49 @@ const FragmentEditor = ({
 
 	const isMounted = useIsMounted();
 
+	const publish = () => {
+		const formData = new FormData();
+
+		formData.append(
+			`${namespace}fragmentCollectionId`,
+			fragmentCollectionId
+		);
+		formData.append(`${namespace}fragmentEntryId`, fragmentEntryId);
+		formData.append(`${namespace}name`, name);
+
+		fetch(urls.edit, {
+			body: formData,
+			method: 'POST',
+		})
+			.then((response) => response.json())
+			.then((response) => {
+				if (response.error) {
+					throw response.error;
+				}
+
+				return response;
+			})
+			.then(() => {
+				setIsSaving(false);
+			})
+			.catch((error) => {
+				if (isMounted()) {
+					setIsSaving(false);
+				}
+
+				const message =
+					typeof error === 'string'
+						? error
+						: Liferay.Language.get('error');
+
+				openToast({
+					message,
+					title: Liferay.Language.get('error'),
+					type: 'danger',
+				});
+			});
+	};
+
 	const saveDraft = useCallback(
 		debounce(() => {
 			setIsSaving(true);
@@ -226,6 +269,7 @@ const FragmentEditor = ({
 										<button
 											className="btn btn-primary btn-sm"
 											disabled={isSaving}
+											onClick={publish}
 											type="button"
 										>
 											<span className="lfr-btn-label">
