@@ -122,7 +122,7 @@ const FragmentEditor = ({
 
 	return (
 		<div className="fragment-editor-container">
-			<div className="nav-bar-container">
+			<div className="fragment-editor__toolbar nav-bar-container">
 				<div className="navbar navbar-default">
 					<div className="container">
 						<div className="navbar navbar-collapse-absolute navbar-expand-md navbar-underline navigation-bar navigation-bar-light">
@@ -179,7 +179,19 @@ const FragmentEditor = ({
 										</span>
 									)}
 
-									<div className="btn-group-item custom-checkbox custom-control ml-2 mr-4 mt-1">
+									<div className="btn-group-item mb-1 ml-2 mr-4 mt-1">
+										<span className="my-0 navbar-text">
+											{isSaving
+												? Liferay.Language.get(
+														'saving-changes'
+												  )
+												: Liferay.Language.get(
+														'changes-saved'
+												  )}
+										</span>
+									</div>
+
+									<div className="btn-group-item custom-checkbox custom-control mb-1 mr-4 mt-1">
 										<label
 											className="lfr-portal-tooltip"
 											data-title={Liferay.Language.get(
@@ -210,7 +222,7 @@ const FragmentEditor = ({
 										</label>
 									</div>
 
-									<div className="btn-group-item">
+									<div className="btn-group-item pl-2">
 										<button
 											className="btn btn-primary btn-sm"
 											disabled={isSaving}
