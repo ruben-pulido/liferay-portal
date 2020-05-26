@@ -78,6 +78,57 @@ const FragmentEditor = ({
 		js,
 	]);
 
+	const publish = () => {
+		const formData = new FormData();
+
+		formData.append(`${namespace}cacheable`, isCacheable);
+		formData.append(`${namespace}configurationContent`, configuration);
+		formData.append(`${namespace}cssContent`, css);
+		formData.append(`${namespace}htmlContent`, html);
+		formData.append(
+			`${namespace}fragmentCollectionId`,
+			fragmentCollectionId
+		);
+		formData.append(`${namespace}fragmentEntryId`, fragmentEntryId);
+		formData.append(`${namespace}jsContent`, js);
+		formData.append(`${namespace}name`, name);
+		formData.append(`${namespace}status`, status);
+
+		fetch(urls.publish, {
+			body: formData,
+			method: 'POST',
+		})
+			.then((response) => response.json())
+			.then((response) => {
+				if (response.error) {
+					throw response.error;
+				}
+
+				return response;
+			})
+			.then((response) => {
+				const redirectURL = response.redirect || urls.redirect;
+
+				Liferay.Util.navigate(redirectURL);
+			})
+			.catch((error) => {
+				if (isMounted()) {
+					setChangesStatus(CHANGES_STATUS.unsaved);
+				}
+
+				const message =
+					typeof error === 'string'
+						? error
+						: Liferay.Language.get('error');
+
+				openToast({
+					message,
+					title: Liferay.Language.get('error'),
+					type: 'danger',
+				});
+			});
+	};
+
 	const saveDraft = useCallback(
 		debounce(() => {
 			setChangesStatus(CHANGES_STATUS.saving);
@@ -250,6 +301,7 @@ const FragmentEditor = ({
 												changesStatus ===
 												CHANGES_STATUS.saving
 											}
+											onClick={publish}
 											type="button"
 										>
 											<span className="lfr-btn-label">
