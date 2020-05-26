@@ -63,6 +63,20 @@ public class FragmentEntryServiceUtil {
 
 	public static com.liferay.fragment.model.FragmentEntry addFragmentEntry(
 			long groupId, long fragmentCollectionId, String fragmentEntryKey,
+			String name, String css, String html, String js, boolean cacheable,
+			String configuration, long previewFileEntryId,
+			long publishedFragmentEntryId, int type, int status,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().addFragmentEntry(
+			groupId, fragmentCollectionId, fragmentEntryKey, name, css, html,
+			js, cacheable, configuration, previewFileEntryId,
+			publishedFragmentEntryId, type, status, serviceContext);
+	}
+
+	public static com.liferay.fragment.model.FragmentEntry addFragmentEntry(
+			long groupId, long fragmentCollectionId, String fragmentEntryKey,
 			String name, String css, String html, String js,
 			String configuration, long previewFileEntryId, int type, int status,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -94,6 +108,14 @@ public class FragmentEntryServiceUtil {
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().deleteFragmentEntry(fragmentEntryId);
+	}
+
+	public static com.liferay.fragment.model.FragmentEntry
+		fetchFragmentEntriesByPublishedFragmentEntryId(
+			long publishedFragmentEntryId) {
+
+		return getService().fetchFragmentEntriesByPublishedFragmentEntryId(
+			publishedFragmentEntryId);
 	}
 
 	public static com.liferay.fragment.model.FragmentEntry fetchFragmentEntry(

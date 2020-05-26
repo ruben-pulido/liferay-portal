@@ -2494,6 +2494,223 @@ public class FragmentEntryPersistenceImpl
 		_FINDER_COLUMN_FRAGMENTCOLLECTIONID_FRAGMENTCOLLECTIONID_2 =
 			"fragmentEntry.fragmentCollectionId = ?";
 
+	private FinderPath _finderPathFetchByPublishedFragmentEntryId;
+	private FinderPath _finderPathCountByPublishedFragmentEntryId;
+
+	/**
+	 * Returns the fragment entry where publishedFragmentEntryId = &#63; or throws a <code>NoSuchEntryException</code> if it could not be found.
+	 *
+	 * @param publishedFragmentEntryId the published fragment entry ID
+	 * @return the matching fragment entry
+	 * @throws NoSuchEntryException if a matching fragment entry could not be found
+	 */
+	@Override
+	public FragmentEntry findByPublishedFragmentEntryId(
+			long publishedFragmentEntryId)
+		throws NoSuchEntryException {
+
+		FragmentEntry fragmentEntry = fetchByPublishedFragmentEntryId(
+			publishedFragmentEntryId);
+
+		if (fragmentEntry == null) {
+			StringBundler sb = new StringBundler(4);
+
+			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			sb.append("publishedFragmentEntryId=");
+			sb.append(publishedFragmentEntryId);
+
+			sb.append("}");
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(sb.toString());
+			}
+
+			throw new NoSuchEntryException(sb.toString());
+		}
+
+		return fragmentEntry;
+	}
+
+	/**
+	 * Returns the fragment entry where publishedFragmentEntryId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param publishedFragmentEntryId the published fragment entry ID
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	@Override
+	public FragmentEntry fetchByPublishedFragmentEntryId(
+		long publishedFragmentEntryId) {
+
+		return fetchByPublishedFragmentEntryId(publishedFragmentEntryId, true);
+	}
+
+	/**
+	 * Returns the fragment entry where publishedFragmentEntryId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param publishedFragmentEntryId the published fragment entry ID
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	@Override
+	public FragmentEntry fetchByPublishedFragmentEntryId(
+		long publishedFragmentEntryId, boolean useFinderCache) {
+
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {publishedFragmentEntryId};
+		}
+
+		Object result = null;
+
+		if (useFinderCache) {
+			result = finderCache.getResult(
+				_finderPathFetchByPublishedFragmentEntryId, finderArgs, this);
+		}
+
+		if (result instanceof FragmentEntry) {
+			FragmentEntry fragmentEntry = (FragmentEntry)result;
+
+			if (publishedFragmentEntryId !=
+					fragmentEntry.getPublishedFragmentEntryId()) {
+
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler sb = new StringBundler(3);
+
+			sb.append(_SQL_SELECT_FRAGMENTENTRY_WHERE);
+
+			sb.append(
+				_FINDER_COLUMN_PUBLISHEDFRAGMENTENTRYID_PUBLISHEDFRAGMENTENTRYID_2);
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(publishedFragmentEntryId);
+
+				List<FragmentEntry> list = query.list();
+
+				if (list.isEmpty()) {
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByPublishedFragmentEntryId,
+							finderArgs, list);
+					}
+				}
+				else {
+					FragmentEntry fragmentEntry = list.get(0);
+
+					result = fragmentEntry;
+
+					cacheResult(fragmentEntry);
+				}
+			}
+			catch (Exception exception) {
+				if (useFinderCache) {
+					finderCache.removeResult(
+						_finderPathFetchByPublishedFragmentEntryId, finderArgs);
+				}
+
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (FragmentEntry)result;
+		}
+	}
+
+	/**
+	 * Removes the fragment entry where publishedFragmentEntryId = &#63; from the database.
+	 *
+	 * @param publishedFragmentEntryId the published fragment entry ID
+	 * @return the fragment entry that was removed
+	 */
+	@Override
+	public FragmentEntry removeByPublishedFragmentEntryId(
+			long publishedFragmentEntryId)
+		throws NoSuchEntryException {
+
+		FragmentEntry fragmentEntry = findByPublishedFragmentEntryId(
+			publishedFragmentEntryId);
+
+		return remove(fragmentEntry);
+	}
+
+	/**
+	 * Returns the number of fragment entries where publishedFragmentEntryId = &#63;.
+	 *
+	 * @param publishedFragmentEntryId the published fragment entry ID
+	 * @return the number of matching fragment entries
+	 */
+	@Override
+	public int countByPublishedFragmentEntryId(long publishedFragmentEntryId) {
+		FinderPath finderPath = _finderPathCountByPublishedFragmentEntryId;
+
+		Object[] finderArgs = new Object[] {publishedFragmentEntryId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler sb = new StringBundler(2);
+
+			sb.append(_SQL_COUNT_FRAGMENTENTRY_WHERE);
+
+			sb.append(
+				_FINDER_COLUMN_PUBLISHEDFRAGMENTENTRYID_PUBLISHEDFRAGMENTENTRYID_2);
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(publishedFragmentEntryId);
+
+				count = (Long)query.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception exception) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String
+		_FINDER_COLUMN_PUBLISHEDFRAGMENTENTRYID_PUBLISHEDFRAGMENTENTRYID_2 =
+			"fragmentEntry.publishedFragmentEntryId = ?";
+
 	private FinderPath _finderPathWithPaginationFindByG_FCI;
 	private FinderPath _finderPathWithoutPaginationFindByG_FCI;
 	private FinderPath _finderPathCountByG_FCI;
@@ -6448,6 +6665,11 @@ public class FragmentEntryPersistenceImpl
 			fragmentEntry);
 
 		finderCache.putResult(
+			_finderPathFetchByPublishedFragmentEntryId,
+			new Object[] {fragmentEntry.getPublishedFragmentEntryId()},
+			fragmentEntry);
+
+		finderCache.putResult(
 			_finderPathFetchByG_FEK,
 			new Object[] {
 				fragmentEntry.getGroupId(), fragmentEntry.getFragmentEntryKey()
@@ -6553,6 +6775,17 @@ public class FragmentEntryPersistenceImpl
 			_finderPathFetchByUUID_G, args, fragmentEntryModelImpl, false);
 
 		args = new Object[] {
+			fragmentEntryModelImpl.getPublishedFragmentEntryId()
+		};
+
+		finderCache.putResult(
+			_finderPathCountByPublishedFragmentEntryId, args, Long.valueOf(1),
+			false);
+		finderCache.putResult(
+			_finderPathFetchByPublishedFragmentEntryId, args,
+			fragmentEntryModelImpl, false);
+
+		args = new Object[] {
 			fragmentEntryModelImpl.getGroupId(),
 			fragmentEntryModelImpl.getFragmentEntryKey()
 		};
@@ -6586,6 +6819,31 @@ public class FragmentEntryPersistenceImpl
 
 			finderCache.removeResult(_finderPathCountByUUID_G, args);
 			finderCache.removeResult(_finderPathFetchByUUID_G, args);
+		}
+
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+				fragmentEntryModelImpl.getPublishedFragmentEntryId()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByPublishedFragmentEntryId, args);
+			finderCache.removeResult(
+				_finderPathFetchByPublishedFragmentEntryId, args);
+		}
+
+		if ((fragmentEntryModelImpl.getColumnBitmask() &
+			 _finderPathFetchByPublishedFragmentEntryId.getColumnBitmask()) !=
+				 0) {
+
+			Object[] args = new Object[] {
+				fragmentEntryModelImpl.getOriginalPublishedFragmentEntryId()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByPublishedFragmentEntryId, args);
+			finderCache.removeResult(
+				_finderPathFetchByPublishedFragmentEntryId, args);
 		}
 
 		if (clearCurrent) {
@@ -7451,6 +7709,18 @@ public class FragmentEntryPersistenceImpl
 			entityCacheEnabled, finderCacheEnabled, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByFragmentCollectionId", new String[] {Long.class.getName()});
+
+		_finderPathFetchByPublishedFragmentEntryId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, FragmentEntryImpl.class,
+			FINDER_CLASS_NAME_ENTITY, "fetchByPublishedFragmentEntryId",
+			new String[] {Long.class.getName()},
+			FragmentEntryModelImpl.PUBLISHEDFRAGMENTENTRYID_COLUMN_BITMASK);
+
+		_finderPathCountByPublishedFragmentEntryId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByPublishedFragmentEntryId",
+			new String[] {Long.class.getName()});
 
 		_finderPathWithPaginationFindByG_FCI = new FinderPath(
 			entityCacheEnabled, finderCacheEnabled, FragmentEntryImpl.class,

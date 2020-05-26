@@ -677,6 +677,54 @@ public interface FragmentEntryPersistence
 	public int countByFragmentCollectionId(long fragmentCollectionId);
 
 	/**
+	 * Returns the fragment entry where publishedFragmentEntryId = &#63; or throws a <code>NoSuchEntryException</code> if it could not be found.
+	 *
+	 * @param publishedFragmentEntryId the published fragment entry ID
+	 * @return the matching fragment entry
+	 * @throws NoSuchEntryException if a matching fragment entry could not be found
+	 */
+	public FragmentEntry findByPublishedFragmentEntryId(
+			long publishedFragmentEntryId)
+		throws NoSuchEntryException;
+
+	/**
+	 * Returns the fragment entry where publishedFragmentEntryId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param publishedFragmentEntryId the published fragment entry ID
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	public FragmentEntry fetchByPublishedFragmentEntryId(
+		long publishedFragmentEntryId);
+
+	/**
+	 * Returns the fragment entry where publishedFragmentEntryId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param publishedFragmentEntryId the published fragment entry ID
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	public FragmentEntry fetchByPublishedFragmentEntryId(
+		long publishedFragmentEntryId, boolean useFinderCache);
+
+	/**
+	 * Removes the fragment entry where publishedFragmentEntryId = &#63; from the database.
+	 *
+	 * @param publishedFragmentEntryId the published fragment entry ID
+	 * @return the fragment entry that was removed
+	 */
+	public FragmentEntry removeByPublishedFragmentEntryId(
+			long publishedFragmentEntryId)
+		throws NoSuchEntryException;
+
+	/**
+	 * Returns the number of fragment entries where publishedFragmentEntryId = &#63;.
+	 *
+	 * @param publishedFragmentEntryId the published fragment entry ID
+	 * @return the number of matching fragment entries
+	 */
+	public int countByPublishedFragmentEntryId(long publishedFragmentEntryId);
+
+	/**
 	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63;.
 	 *
 	 * @param groupId the group ID
