@@ -47,6 +47,7 @@ const FragmentEditor = ({
 	const [activeTabKeyValue, setActiveTabKeyValue] = useState(0);
 	const [isCacheable, setIsCacheable] = useState(cacheable);
 	const [isSaving, setIsSaving] = useState(false);
+	const [lastFetch, setLastFetch] = useState(null);
 	const [configuration, setConfiguration] = useState(initialConfiguration);
 	const [css, setCss] = useState(initialCSS);
 	const [html, setHtml] = useState(initialHTML);
@@ -54,48 +55,7 @@ const FragmentEditor = ({
 
 	const isMounted = useIsMounted();
 
-	const publish = () => {
-		const formData = new FormData();
-
-		formData.append(
-			`${namespace}fragmentCollectionId`,
-			fragmentCollectionId
-		);
-		formData.append(`${namespace}fragmentEntryId`, fragmentEntryId);
-		formData.append(`${namespace}name`, name);
-
-		fetch(urls.edit, {
-			body: formData,
-			method: 'POST',
-		})
-			.then((response) => response.json())
-			.then((response) => {
-				if (response.error) {
-					throw response.error;
-				}
-
-				return response;
-			})
-			.then(() => {
-				setIsSaving(false);
-			})
-			.catch((error) => {
-				if (isMounted()) {
-					setIsSaving(false);
-				}
-
-				const message =
-					typeof error === 'string'
-						? error
-						: Liferay.Language.get('error');
-
-				openToast({
-					message,
-					title: Liferay.Language.get('error'),
-					type: 'danger',
-				});
-			});
-	};
+	const publish = () => {};
 
 	const saveDraft = useCallback(
 		debounce(() => {
@@ -130,6 +90,7 @@ const FragmentEditor = ({
 				})
 				.then(() => {
 					setIsSaving(false);
+					setLastFetch(new Date());
 				})
 				.catch((error) => {
 					if (isMounted()) {
@@ -166,7 +127,7 @@ const FragmentEditor = ({
 	return (
 		<div className="fragment-editor-container">
 			<div className="fragment-editor__toolbar nav-bar-container">
-				<div className="navbar navbar-default">
+				<div className="navbar navbar-default pb-2 pt-2">
 					<div className="container">
 						<div className="navbar navbar-collapse-absolute navbar-expand-md navbar-underline navigation-bar navigation-bar-light">
 							<ClayTabs modern>
@@ -222,15 +183,16 @@ const FragmentEditor = ({
 										</span>
 									)}
 
-									<div className="btn-group-item mb-1 ml-2 mr-4 mt-1">
+									<div className="btn-group-item ml-2 mr-4">
 										<span className="my-0 navbar-text">
-											{isSaving
-												? Liferay.Language.get(
-														'saving-changes'
-												  )
-												: Liferay.Language.get(
-														'changes-saved'
-												  )}
+											{lastFetch &&
+												(isSaving
+													? Liferay.Language.get(
+															'saving-changes'
+													  )
+													: Liferay.Language.get(
+															'changes-saved'
+													  ))}
 										</span>
 									</div>
 
