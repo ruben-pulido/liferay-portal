@@ -632,12 +632,6 @@ public class FragmentEntryPersistenceTest {
 				existingFragmentEntry, "getOriginalGroupId", new Class<?>[0]));
 
 		Assert.assertEquals(
-			Long.valueOf(existingFragmentEntry.getPublishedFragmentEntryId()),
-			ReflectionTestUtil.<Long>invoke(
-				existingFragmentEntry, "getOriginalPublishedFragmentEntryId",
-				new Class<?>[0]));
-
-		Assert.assertEquals(
 			Long.valueOf(existingFragmentEntry.getGroupId()),
 			ReflectionTestUtil.<Long>invoke(
 				existingFragmentEntry, "getOriginalGroupId", new Class<?>[0]));

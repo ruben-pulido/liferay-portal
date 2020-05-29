@@ -17,7 +17,9 @@ package com.liferay.fragment.model.impl;
 import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.constants.FragmentExportImportConstants;
+import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
+import com.liferay.fragment.service.FragmentEntryServiceUtil;
 import com.liferay.fragment.util.FragmentEntryRenderUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -29,6 +31,7 @@ import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.zip.ZipWriter;
 
 /**
@@ -39,6 +42,16 @@ public class FragmentEntryImpl extends FragmentEntryBaseImpl {
 	@Override
 	public String getContent() {
 		return FragmentEntryRenderUtil.renderFragmentEntry(this);
+	}
+
+	public FragmentEntry getDraftFragmentEntry() {
+		if (getStatus() == WorkflowConstants.STATUS_DRAFT) {
+			return null;
+		}
+
+		return FragmentEntryServiceUtil.
+			fetchFragmentEntriesByPublishedFragmentEntryId(
+				getFragmentEntryId());
 	}
 
 	@Override

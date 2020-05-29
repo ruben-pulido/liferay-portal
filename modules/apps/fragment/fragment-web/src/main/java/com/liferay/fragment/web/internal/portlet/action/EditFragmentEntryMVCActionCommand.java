@@ -14,6 +14,7 @@
 
 package com.liferay.fragment.web.internal.portlet.action;
 
+import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.exception.FragmentEntryConfigurationException;
 import com.liferay.fragment.exception.FragmentEntryContentException;
@@ -24,10 +25,13 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Repository;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -60,39 +64,8 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class EditFragmentEntryMVCActionCommand extends BaseMVCActionCommand {
 
-	private String _getFragmentEntryKey(long groupId, String fragmentEntryKey) {
-		if (fragmentEntryKey == null) {
-			fragmentEntryKey = StringPool.BLANK;
-		}
-		else {
-			fragmentEntryKey = fragmentEntryKey.trim();
-			fragmentEntryKey = StringUtil.toLowerCase(fragmentEntryKey);
-		}
-
-		FragmentEntry fragmentEntry =
-			_fragmentEntryLocalService.fetchFragmentEntry(
-				groupId, fragmentEntryKey);
-
-		if (fragmentEntry == null) {
-			return fragmentEntryKey;
-		}
-
-		String newFragmentEntryKey = null;
-
-		for (int i = 1;; i++) {
-			newFragmentEntryKey = fragmentEntryKey + i;
-
-			fragmentEntry = _fragmentEntryLocalService.fetchFragmentEntry(
-				groupId, newFragmentEntryKey);
-
-			if (fragmentEntry == null) {
-				return newFragmentEntryKey;
-			}
-		}
-	}
-
 	@Reference
-	private FragmentEntryLocalService _fragmentEntryLocalService;
+	private DLAppLocalService _dlAppLocalService;
 
 	@Override
 	protected void doProcessAction(
@@ -107,45 +80,98 @@ public class EditFragmentEntryMVCActionCommand extends BaseMVCActionCommand {
 		// In both cases what we want to edit is the draft, not the published
 		// fragment
 
-		FragmentEntry fragmentEntry =
-			_fragmentEntryService.fetchFragmentEntry(fragmentEntryId);
+		FragmentEntry fragmentEntry = _fragmentEntryService.fetchFragmentEntry(
+			fragmentEntryId);
 
 		// TODO Handle null
 
 		long draftFragmentEntryId = 0;
 
-		if (fragmentEntry.getStatus() == WorkflowConstants.STATUS_DRAFT) {
-			// fragmentEntry is a draft
+		if (fragmentEntry.isDraft()) {
 			draftFragmentEntryId = fragmentEntryId;
 		}
 		else {
 			// fragmentEntry is published
 
-			FragmentEntry draftFragmentEntry = null;
-
-			draftFragmentEntry =
-				_fragmentEntryService.fetchFragmentEntriesByPublishedFragmentEntryId(
-					fragmentEntry.getFragmentEntryId());
+			FragmentEntry draftFragmentEntry =
+				fragmentEntry.getDraftFragmentEntry();
 
 			if (draftFragmentEntry == null) {
+
 				ServiceContext serviceContext =
 					ServiceContextFactory.getInstance(actionRequest);
 
-				draftFragmentEntry =
-					_fragmentEntryService.addFragmentEntry(
+				draftFragmentEntry = _fragmentEntryService.addFragmentEntry(
+					fragmentEntry.getGroupId(),
+					fragmentEntry.getFragmentCollectionId(),
+					_getFragmentEntryKey(
 						fragmentEntry.getGroupId(),
-						fragmentEntry.getFragmentCollectionId(),
-						_getFragmentEntryKey(
-							fragmentEntry.getGroupId(),
-							fragmentEntry.getFragmentEntryKey() + "_draft"),
-						fragmentEntry.getName(), fragmentEntry.getCss(),
-						fragmentEntry.getHtml(), fragmentEntry.getJs(),
-						fragmentEntry.isCacheable(),
-						fragmentEntry.getConfiguration(),
-						fragmentEntry.getPreviewFileEntryId(),
-						fragmentEntry.getFragmentEntryId(),
-						fragmentEntry.getType(), WorkflowConstants.STATUS_DRAFT,
-						serviceContext);
+						fragmentEntry.getFragmentEntryKey() + "_draft"),
+					fragmentEntry.getName(), fragmentEntry.getCss(),
+					fragmentEntry.getHtml(), fragmentEntry.getJs(),
+					fragmentEntry.isCacheable(),
+					fragmentEntry.getConfiguration(),
+					0,
+					fragmentEntry.getFragmentEntryId(), fragmentEntry.getType(),
+					WorkflowConstants.STATUS_DRAFT, serviceContext);
+
+				if (fragmentEntry.getPreviewFileEntryId() != 0) {
+					FileEntry publishedFragmentFileEntry = _dlAppLocalService.getFileEntry(
+						fragmentEntry.getPreviewFileEntryId());
+
+//					FileEntry tempFileEntry = fileEntry;
+
+					ThemeDisplay themeDisplay =
+						(ThemeDisplay)actionRequest.getAttribute(
+							WebKeys.THEME_DISPLAY);
+
+					Repository repository =
+						PortletFileRepositoryUtil.fetchPortletRepository(
+							themeDisplay.getScopeGroupId(),
+							FragmentPortletKeys.FRAGMENT);
+
+					if (repository == null) {
+						ServiceContext addPortletRepositoryServiceContext =
+							new ServiceContext();
+
+						addPortletRepositoryServiceContext.setAddGroupPermissions(true);
+						addPortletRepositoryServiceContext.setAddGuestPermissions(true);
+
+						repository =
+							PortletFileRepositoryUtil.addPortletRepository(
+								themeDisplay.getScopeGroupId(),
+								FragmentPortletKeys.FRAGMENT,
+								addPortletRepositoryServiceContext);
+					}
+
+					String fileName =
+						draftFragmentEntry.getFragmentEntryId() +
+							"_preview." + publishedFragmentFileEntry.getExtension();
+
+//					FileEntry oldFileEntry =
+//						PortletFileRepositoryUtil.fetchPortletFileEntry(
+//							themeDisplay.getScopeGroupId(),
+//							repository.getDlFolderId(), fileName);
+
+//					if (oldFileEntry != null) {
+//						PortletFileRepositoryUtil.deletePortletFileEntry(
+//							oldFileEntry.getFileEntryId());
+//					}
+
+					FileEntry draftFragmentFileEntry = PortletFileRepositoryUtil.addPortletFileEntry(
+						themeDisplay.getScopeGroupId(), themeDisplay.getUserId(),
+						FragmentEntry.class.getName(),
+						draftFragmentEntry.getFragmentEntryId(),
+						FragmentPortletKeys.FRAGMENT, repository.getDlFolderId(),
+						publishedFragmentFileEntry.getContentStream(), fileName, publishedFragmentFileEntry.getMimeType(),
+						false);
+
+					_fragmentEntryService.updateFragmentEntry(
+						draftFragmentEntry.getFragmentEntryId(),
+						draftFragmentFileEntry.getFileEntryId());
+
+//					TempFileEntryUtil.deleteTempFileEntry(tempFileEntry.getFileEntryId());
+				}
 			}
 
 			draftFragmentEntryId = draftFragmentEntry.getFragmentEntryId();
@@ -203,6 +229,37 @@ public class EditFragmentEntryMVCActionCommand extends BaseMVCActionCommand {
 			actionRequest, actionResponse, jsonObject);
 	}
 
+	private String _getFragmentEntryKey(long groupId, String fragmentEntryKey) {
+		if (fragmentEntryKey == null) {
+			fragmentEntryKey = StringPool.BLANK;
+		}
+		else {
+			fragmentEntryKey = fragmentEntryKey.trim();
+			fragmentEntryKey = StringUtil.toLowerCase(fragmentEntryKey);
+		}
+
+		FragmentEntry fragmentEntry =
+			_fragmentEntryLocalService.fetchFragmentEntry(
+				groupId, fragmentEntryKey);
+
+		if (fragmentEntry == null) {
+			return fragmentEntryKey;
+		}
+
+		String newFragmentEntryKey = null;
+
+		for (int i = 1;; i++) {
+			newFragmentEntryKey = fragmentEntryKey + i;
+
+			fragmentEntry = _fragmentEntryLocalService.fetchFragmentEntry(
+				groupId, newFragmentEntryKey);
+
+			if (fragmentEntry == null) {
+				return newFragmentEntryKey;
+			}
+		}
+	}
+
 	private String _getSaveAndContinueRedirect(
 		ActionRequest actionRequest, FragmentEntry fragmentEntry) {
 
@@ -221,6 +278,9 @@ public class EditFragmentEntryMVCActionCommand extends BaseMVCActionCommand {
 
 		return portletURL.toString();
 	}
+
+	@Reference
+	private FragmentEntryLocalService _fragmentEntryLocalService;
 
 	@Reference
 	private FragmentEntryService _fragmentEntryService;

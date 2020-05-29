@@ -36,11 +36,11 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + FragmentPortletKeys.FRAGMENT,
-		"mvc.command.name=/fragment/delete_fragment_entries"
+		"mvc.command.name=/fragment/delete_draft_fragment_entries"
 	},
 	service = MVCActionCommand.class
 )
-public class DeleteFragmentEntriesMVCActionCommand
+public class DeleteDraftFragmentEntriesMVCActionCommand
 	extends BaseMVCActionCommand {
 
 	@Override
@@ -58,18 +58,19 @@ public class DeleteFragmentEntriesMVCActionCommand
 			return;
 		}
 
-		FragmentEntry draftFragmentEntry =
-			fragmentEntry.getDraftFragmentEntry();
-
-		// TODO Make both delete statements a tx
-
 		try {
+			if (fragmentEntry.isDraft()) {
+				_fragmentEntryService.deleteFragmentEntry(
+					fragmentEntry.getFragmentEntryId());
+			}
+
+			FragmentEntry draftFragmentEntry =
+				fragmentEntry.getDraftFragmentEntry();
+
 			if (draftFragmentEntry != null) {
 				_fragmentEntryService.deleteFragmentEntry(
 					draftFragmentEntry.getFragmentEntryId());
 			}
-
-			_fragmentEntryService.deleteFragmentEntry(fragmentEntryId);
 		}
 		catch (RequiredFragmentEntryException requiredFragmentEntryException) {
 			SessionErrors.add(

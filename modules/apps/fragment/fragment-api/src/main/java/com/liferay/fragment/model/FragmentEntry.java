@@ -69,6 +69,8 @@ public interface FragmentEntry extends FragmentEntryModel, PersistedModel {
 
 	public int getUsageCount();
 
+	public FragmentEntry getDraftFragmentEntry();
+
 	public void populateZipWriter(
 			com.liferay.portal.kernel.zip.ZipWriter zipWriter, String path)
 		throws Exception;

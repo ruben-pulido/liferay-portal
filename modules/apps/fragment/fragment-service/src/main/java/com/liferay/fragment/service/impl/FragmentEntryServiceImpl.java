@@ -165,7 +165,8 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 	public FragmentEntry fetchFragmentEntriesByPublishedFragmentEntryId(
 		long publishedFragmentEntryId) {
 
-		return fragmentEntryPersistence.fetchByPFEI(publishedFragmentEntryId);
+		return fragmentEntryPersistence.fetchByPublishedFragmentEntryId_First(
+			publishedFragmentEntryId, null);
 	}
 
 	@Override

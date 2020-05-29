@@ -245,6 +245,16 @@ public class FragmentEntryLocalServiceImpl
 
 		// Preview image
 
+		// TODO Remove
+//		if ((fragmentEntry.getPreviewFileEntryId() > 0) &&
+//			(!fragmentEntry.isDraft() ||
+//			 (fragmentEntry.isDraft() &&
+//			  (fragmentEntry.getPublishedFragmentEntryId() == 0)))) {
+//
+//			PortletFileRepositoryUtil.deletePortletFileEntry(
+//				fragmentEntry.getPreviewFileEntryId());
+//		}
+
 		if (fragmentEntry.getPreviewFileEntryId() > 0) {
 			PortletFileRepositoryUtil.deletePortletFileEntry(
 				fragmentEntry.getPreviewFileEntryId());

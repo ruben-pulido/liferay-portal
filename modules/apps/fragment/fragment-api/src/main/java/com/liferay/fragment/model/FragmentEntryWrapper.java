@@ -290,6 +290,11 @@ public class FragmentEntryWrapper
 		return model.getCss();
 	}
 
+	@Override
+	public FragmentEntry getDraftFragmentEntry() {
+		return model.getDraftFragmentEntry();
+	}
+
 	/**
 	 * Returns the fragment collection ID of this fragment entry.
 	 *
