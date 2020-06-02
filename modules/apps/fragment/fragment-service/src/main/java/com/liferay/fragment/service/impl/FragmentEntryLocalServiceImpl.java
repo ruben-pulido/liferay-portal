@@ -256,8 +256,8 @@ public class FragmentEntryLocalServiceImpl
 	public FragmentEntry fetchFragmentEntry(
 		long groupId, String fragmentEntryKey) {
 
-		return fragmentEntryPersistence.fetchByG_FEK(
-			groupId, _getFragmentEntryKey(fragmentEntryKey));
+		return fragmentEntryPersistence.fetchByG_FEK_Head(
+			groupId, _getFragmentEntryKey(fragmentEntryKey), true);
 	}
 
 	@Override
@@ -272,8 +272,9 @@ public class FragmentEntryLocalServiceImpl
 		int count = 0;
 
 		while (true) {
-			FragmentEntry fragmentEntry = fragmentEntryPersistence.fetchByG_FEK(
-				groupId, curFragmentEntryKey);
+			FragmentEntry fragmentEntry =
+				fragmentEntryPersistence.fetchByG_FEK_Head(
+					groupId, curFragmentEntryKey, true);
 
 			if (fragmentEntry == null) {
 				return curFragmentEntryKey;
@@ -505,8 +506,9 @@ public class FragmentEntryLocalServiceImpl
 
 		fragmentEntryKey = _getFragmentEntryKey(fragmentEntryKey);
 
-		FragmentEntry fragmentEntry = fragmentEntryPersistence.fetchByG_FEK(
-			groupId, fragmentEntryKey);
+		FragmentEntry fragmentEntry =
+			fragmentEntryPersistence.fetchByG_FEK_Head(
+				groupId, fragmentEntryKey, true);
 
 		if (fragmentEntry != null) {
 			throw new DuplicateFragmentEntryKeyException();
