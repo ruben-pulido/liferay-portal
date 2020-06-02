@@ -157,11 +157,11 @@ public class FragmentEntryLinkStagedModelDataHandler
 					fragmentEntryLink.getFragmentEntryId());
 
 			if (fragmentEntry != null) {
-				FragmentEntry targetFragmentEntry =
-					_fragmentEntryLocalService.
-						fetchFragmentEntryByUuidAndGroupId(
-							fragmentEntry.getUuid(),
-							portletDataContext.getGroupId());
+				FragmentEntry targetFragmentEntry = null;
+				//					_fragmentEntryLocalService.
+				//						fetchFragmentEntryByUuidAndGroupId(
+				//							fragmentEntry.getUuid(),
+				//							portletDataContext.getGroupId());
 
 				if (targetFragmentEntry != null) {
 					fragmentEntryId = targetFragmentEntry.getFragmentEntryId();

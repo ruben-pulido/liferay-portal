@@ -15,13 +15,11 @@
 package com.liferay.fragment.internal.exportimport.staged.model.repository;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
-import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.exportimport.staged.model.repository.StagedModelRepository;
 import com.liferay.exportimport.staged.model.repository.StagedModelRepositoryHelper;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 
@@ -101,17 +99,23 @@ public class FragmentEntryStagedModelRepository
 	public FragmentEntry fetchStagedModelByUuidAndGroupId(
 		String uuid, long groupId) {
 
-		return _fragmentEntryLocalService.fetchFragmentEntryByUuidAndGroupId(
-			uuid, groupId);
+		//return _fragmentEntryLocalService.fetchFragmentEntryByUuidAndGroupId(
+		//	uuid, groupId);
+
+		return null;
 	}
 
 	@Override
 	public List<FragmentEntry> fetchStagedModelsByUuidAndCompanyId(
 		String uuid, long companyId) {
 
-		return _fragmentEntryLocalService.getFragmentEntriesByUuidAndCompanyId(
-			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			new StagedModelModifiedDateComparator<FragmentEntry>());
+		return null;
+		//return _fragmentEntryLocalService.
+
+		// getFragmentEntriesByUuidAndCompanyId(
+
+		//	uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+		//	new StagedModelModifiedDateComparator<FragmentEntry>());
 	}
 
 	@Override
