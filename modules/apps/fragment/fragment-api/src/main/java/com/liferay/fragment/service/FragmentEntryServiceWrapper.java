@@ -98,11 +98,25 @@ public class FragmentEntryServiceWrapper
 	}
 
 	@Override
+	public com.liferay.fragment.model.FragmentEntry fetchDraft(
+		long primaryKey) {
+
+		return _fragmentEntryService.fetchDraft(primaryKey);
+	}
+
+	@Override
 	public com.liferay.fragment.model.FragmentEntry fetchFragmentEntry(
 			long fragmentEntryId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _fragmentEntryService.fetchFragmentEntry(fragmentEntryId);
+	}
+
+	@Override
+	public com.liferay.fragment.model.FragmentEntry getDraft(long primaryKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _fragmentEntryService.getDraft(primaryKey);
 	}
 
 	@Override
@@ -324,6 +338,22 @@ public class FragmentEntryServiceWrapper
 
 		return _fragmentEntryService.moveFragmentEntry(
 			fragmentEntryId, fragmentCollectionId);
+	}
+
+	@Override
+	public com.liferay.fragment.model.FragmentEntry publishDraft(
+			com.liferay.fragment.model.FragmentEntry draftFragmentEntry)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _fragmentEntryService.publishDraft(draftFragmentEntry);
+	}
+
+	@Override
+	public com.liferay.fragment.model.FragmentEntry updateDraft(
+			com.liferay.fragment.model.FragmentEntry draftFragmentEntry)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _fragmentEntryService.updateDraft(draftFragmentEntry);
 	}
 
 	@Override
