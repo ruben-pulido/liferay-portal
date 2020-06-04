@@ -103,12 +103,7 @@ public class FragmentEntryLocalServiceImpl
 
 		User user = userLocalService.getUser(userId);
 
-		long companyId = user.getCompanyId();
-
-		if (serviceContext != null) {
-			companyId = serviceContext.getCompanyId();
-		}
-		else {
+		if (serviceContext == null) {
 			serviceContext = new ServiceContext();
 		}
 
@@ -127,35 +122,37 @@ public class FragmentEntryLocalServiceImpl
 			validateContent(html, configuration);
 		}
 
-		long fragmentEntryId = counterLocalService.increment();
+		FragmentEntry draftFragmentEntry = create();
 
-		FragmentEntry fragmentEntry = fragmentEntryPersistence.create(
-			fragmentEntryId);
-
-		fragmentEntry.setUuid(serviceContext.getUuid());
-		fragmentEntry.setGroupId(groupId);
-		fragmentEntry.setCompanyId(companyId);
-		fragmentEntry.setUserId(user.getUserId());
-		fragmentEntry.setUserName(user.getFullName());
-		fragmentEntry.setCreateDate(serviceContext.getCreateDate(new Date()));
-		fragmentEntry.setModifiedDate(
+		draftFragmentEntry.setGroupId(groupId);
+		draftFragmentEntry.setUserId(user.getUserId());
+		draftFragmentEntry.setUserName(user.getFullName());
+		draftFragmentEntry.setCreateDate(
+			serviceContext.getCreateDate(new Date()));
+		draftFragmentEntry.setModifiedDate(
 			serviceContext.getModifiedDate(new Date()));
-		fragmentEntry.setFragmentCollectionId(fragmentCollectionId);
-		fragmentEntry.setFragmentEntryKey(fragmentEntryKey);
-		fragmentEntry.setName(name);
-		fragmentEntry.setCss(css);
-		fragmentEntry.setHtml(html);
-		fragmentEntry.setJs(js);
-		fragmentEntry.setCacheable(cacheable);
-		fragmentEntry.setConfiguration(configuration);
-		fragmentEntry.setPreviewFileEntryId(previewFileEntryId);
-		fragmentEntry.setType(type);
-		fragmentEntry.setStatus(status);
-		fragmentEntry.setStatusByUserId(userId);
-		fragmentEntry.setStatusByUserName(user.getFullName());
-		fragmentEntry.setStatusDate(new Date());
+		draftFragmentEntry.setFragmentCollectionId(fragmentCollectionId);
+		draftFragmentEntry.setFragmentEntryKey(fragmentEntryKey);
+		draftFragmentEntry.setName(name);
+		draftFragmentEntry.setCss(css);
+		draftFragmentEntry.setHtml(html);
+		draftFragmentEntry.setJs(js);
+		draftFragmentEntry.setCacheable(cacheable);
+		draftFragmentEntry.setConfiguration(configuration);
+		draftFragmentEntry.setPreviewFileEntryId(previewFileEntryId);
+		draftFragmentEntry.setType(type);
+		draftFragmentEntry.setStatus(status);
+		draftFragmentEntry.setStatusByUserId(userId);
+		draftFragmentEntry.setStatusByUserName(user.getFullName());
+		draftFragmentEntry.setStatusDate(new Date());
 
-		return fragmentEntryPersistence.update(fragmentEntry);
+		FragmentEntry savedDraftFragmentEntry = updateDraft(draftFragmentEntry);
+
+		if (WorkflowConstants.STATUS_APPROVED == status) {
+			return publishDraft(savedDraftFragmentEntry);
+		}
+
+		return savedDraftFragmentEntry;
 	}
 
 	@Override
@@ -257,7 +254,7 @@ public class FragmentEntryLocalServiceImpl
 		long groupId, String fragmentEntryKey) {
 
 		return fragmentEntryPersistence.fetchByG_FEK_Head(
-			groupId, _getFragmentEntryKey(fragmentEntryKey), true);
+			groupId, _getFragmentEntryKey(fragmentEntryKey), false);
 	}
 
 	@Override
@@ -274,7 +271,7 @@ public class FragmentEntryLocalServiceImpl
 		while (true) {
 			FragmentEntry fragmentEntry =
 				fragmentEntryPersistence.fetchByG_FEK_Head(
-					groupId, curFragmentEntryKey, true);
+					groupId, curFragmentEntryKey, false);
 
 			if (fragmentEntry == null) {
 				return curFragmentEntryKey;
@@ -508,7 +505,7 @@ public class FragmentEntryLocalServiceImpl
 
 		FragmentEntry fragmentEntry =
 			fragmentEntryPersistence.fetchByG_FEK_Head(
-				groupId, fragmentEntryKey, true);
+				groupId, fragmentEntryKey, false);
 
 		if (fragmentEntry != null) {
 			throw new DuplicateFragmentEntryKeyException();
