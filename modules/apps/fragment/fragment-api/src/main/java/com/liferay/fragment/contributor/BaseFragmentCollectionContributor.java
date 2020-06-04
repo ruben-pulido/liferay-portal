@@ -292,8 +292,7 @@ public abstract class BaseFragmentCollectionContributor
 		int type = FragmentConstants.getTypeFromLabel(
 			jsonObject.getString("type"));
 
-		FragmentEntry fragmentEntry =
-			fragmentEntryLocalService.createFragmentEntry(0L);
+		FragmentEntry fragmentEntry = fragmentEntryLocalService.create();
 
 		fragmentEntry.setFragmentEntryKey(fragmentEntryKey);
 		fragmentEntry.setName(name);
