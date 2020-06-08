@@ -26,7 +26,12 @@ import com.liferay.headless.delivery.dto.v1_0.PageSectionDefinition;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
+import com.liferay.layout.page.template.util.AlignConverter;
+import com.liferay.layout.page.template.util.BorderRadiusConverter;
+import com.liferay.layout.page.template.util.JustifyConverter;
+import com.liferay.layout.page.template.util.MarginConverter;
 import com.liferay.layout.page.template.util.PaddingConverter;
+import com.liferay.layout.page.template.util.ShadowConverter;
 import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
@@ -79,32 +84,93 @@ public class ContainerLayoutStructureItemExporter
 							saveMappingConfiguration);
 						layout = new Layout() {
 							{
+								align = Align.create(
+									AlignConverter.convertToExternalValue(
+										containerLayoutStructureItem.
+											getAlign()));
+								borderColor = GetterUtil.getString(
+									containerLayoutStructureItem.
+										getBorderColor(),
+									null);
+								borderRadius = BorderRadius.create(
+									BorderRadiusConverter.
+										convertToExternalValue(
+											containerLayoutStructureItem.
+												getBorderRadius()));
+								borderWidth =
+									containerLayoutStructureItem.
+										getBorderWidth();
+								justify = Justify.create(
+									JustifyConverter.convertToExternalValue(
+										containerLayoutStructureItem.
+											getJustify()));
+								marginBottom =
+									MarginConverter.convertToExternalValue(
+										containerLayoutStructureItem.
+											getMarginBottom());
+								marginLeft =
+									MarginConverter.convertToExternalValue(
+										containerLayoutStructureItem.
+											getMarginLeft());
+								marginRight =
+									MarginConverter.convertToExternalValue(
+										containerLayoutStructureItem.
+											getMarginRight());
+								marginTop =
+									MarginConverter.convertToExternalValue(
+										containerLayoutStructureItem.
+											getMarginTop());
+								opacity =
+									containerLayoutStructureItem.getOpacity();
 								paddingBottom =
 									PaddingConverter.convertToExternalValue(
 										containerLayoutStructureItem.
 											getPaddingBottom());
-								paddingHorizontal =
+								paddingLeft =
 									PaddingConverter.convertToExternalValue(
 										containerLayoutStructureItem.
-											getPaddingHorizontal());
+											getPaddingLeft());
+								paddingRight =
+									PaddingConverter.convertToExternalValue(
+										containerLayoutStructureItem.
+											getPaddingRight());
 								paddingTop =
 									PaddingConverter.convertToExternalValue(
 										containerLayoutStructureItem.
 											getPaddingTop());
+								shadow = Shadow.create(
+									ShadowConverter.convertToExternalValue(
+										containerLayoutStructureItem.
+											getShadow()));
 
-								setContainerType(
+								setContainerWidth(
 									() -> {
-										String containerType =
+										String containerWidth =
 											containerLayoutStructureItem.
-												getContainerType();
+												getContainerWidth();
+
+										if (Validator.isNull(containerWidth)) {
+											return null;
+										}
+
+										return ContainerWidth.create(
+											StringUtil.upperCaseFirstLetter(
+												containerWidth));
+									});
+
+								setContentDisplay(
+									() -> {
+										String contentDisplay =
+											containerLayoutStructureItem.
+												getContentDisplay();
 
 										if (Validator.isNull(containerType)) {
 											return null;
 										}
 
-										return ContainerType.create(
+										return ContentDisplay.create(
 											StringUtil.upperCaseFirstLetter(
-												containerType));
+												contentDisplay));
 									});
 							}
 						};
