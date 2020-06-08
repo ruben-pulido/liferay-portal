@@ -118,38 +118,118 @@ for (String childrenItemId : childrenItemIds) {
 
 			String backgroundImage = renderFragmentLayoutDisplayContext.getBackgroundImage(containerLayoutStructureItem.getBackgroundImageJSONObject());
 
-			StringBundler sb = new StringBundler();
+			StringBundler classSb = new StringBundler();
+			StringBundler styleSb = new StringBundler();
+
+			styleSb.append("box-sizing: border-box;");
+
+			if (Validator.isNotNull(containerLayoutStructureItem.getAlign())) {
+				classSb.append(" ");
+				classSb.append(containerLayoutStructureItem.getAlign());
+			}
 
 			if (Validator.isNotNull(containerLayoutStructureItem.getBackgroundColorCssClass())) {
-				sb.append("bg-");
-				sb.append(containerLayoutStructureItem.getBackgroundColorCssClass());
+				classSb.append(" bg-");
+				classSb.append(containerLayoutStructureItem.getBackgroundColorCssClass());
+			}
+
+			if (Validator.isNotNull(backgroundImage)) {
+				styleSb.append("background-position: 50% 50%; background-repeat: no-repeat; background-size: cover; background-image: ");
+				styleSb.append(backgroundImage);
+				styleSb.append(";");
+			}
+
+			if (Validator.isNotNull(containerLayoutStructureItem.getBorderColor())) {
+				classSb.append(" border-");
+				classSb.append(containerLayoutStructureItem.getBorderColor());
+			}
+
+			if (Validator.isNotNull(containerLayoutStructureItem.getBorderRadius())) {
+				classSb.append(" ");
+				classSb.append(containerLayoutStructureItem.getBorderRadius());
+			}
+
+			if (containerLayoutStructureItem.getBorderWidth() != -1L) {
+				styleSb.append("border-style: solid; border-width: ");
+				styleSb.append(containerLayoutStructureItem.getBorderWidth());
+				styleSb.append("px;");
+			}
+
+			if (Objects.equals(containerLayoutStructureItem.getContainerWidth(), "fixed")) {
+				classSb.append(" container");
+			}
+
+			if (Objects.equals(containerLayoutStructureItem.getContentDisplay(), "block")) {
+				classSb.append(" d-block");
+			}
+
+			if (Objects.equals(containerLayoutStructureItem.getContentDisplay(), "flex")) {
+				classSb.append(" d-flex");
+			}
+
+			if (Validator.isNotNull(containerLayoutStructureItem.getJustify())) {
+				classSb.append(" ");
+				classSb.append(containerLayoutStructureItem.getJustify());
+			}
+
+			if (containerLayoutStructureItem.getMarginBottom() != -1L) {
+				classSb.append(" mb-");
+				classSb.append(containerLayoutStructureItem.getMarginBottom());
+			}
+
+			if (containerLayoutStructureItem.getMarginLeft() != -1L) {
+				classSb.append(" ml-");
+				classSb.append(containerLayoutStructureItem.getMarginLeft());
+			}
+
+			if (containerLayoutStructureItem.getMarginRight() != -1L) {
+				classSb.append(" mr-");
+				classSb.append(containerLayoutStructureItem.getMarginRight());
+			}
+
+			if (containerLayoutStructureItem.getMarginTop() != -1L) {
+				classSb.append(" mt-");
+				classSb.append(containerLayoutStructureItem.getMarginTop());
+			}
+
+			if (containerLayoutStructureItem.getOpacity() != -1L) {
+				styleSb.append("opacity: ");
+				styleSb.append(containerLayoutStructureItem.getOpacity() / 100.0);
+				styleSb.append(";");
 			}
 
 			if (containerLayoutStructureItem.getPaddingBottom() != -1L) {
-				sb.append(" pb-");
-				sb.append(containerLayoutStructureItem.getPaddingBottom());
+				classSb.append(" pb-");
+				classSb.append(containerLayoutStructureItem.getPaddingBottom());
 			}
 
-			if (containerLayoutStructureItem.getPaddingHorizontal() != -1L) {
-				sb.append(" px-");
-				sb.append(containerLayoutStructureItem.getPaddingHorizontal());
+			if (containerLayoutStructureItem.getPaddingLeft() != -1L) {
+				classSb.append(" pl-");
+				classSb.append(containerLayoutStructureItem.getPaddingLeft());
+			}
+
+			if (containerLayoutStructureItem.getPaddingRight() != -1L) {
+				classSb.append(" pr-");
+				classSb.append(containerLayoutStructureItem.getPaddingRight());
 			}
 
 			if (containerLayoutStructureItem.getPaddingTop() != -1L) {
-				sb.append(" pt-");
-				sb.append(containerLayoutStructureItem.getPaddingTop());
+				classSb.append(" pt-");
+				classSb.append(containerLayoutStructureItem.getPaddingTop());
+			}
+
+			if (Validator.isNotNull(containerLayoutStructureItem.getShadow())) {
+				classSb.append(" ");
+				classSb.append(containerLayoutStructureItem.getShadow());
 			}
 			%>
 
-			<div class="<%= sb.toString() %>" style='<%= Validator.isNotNull(backgroundImage) ? "background-image: url(" + backgroundImage + "); background-position: 50% 50%; background-repeat: no-repeat; background-size: cover;" : "" %>'>
-				<div class='<%= Objects.equals(containerLayoutStructureItem.getContainerType(), "fluid") ? "container-fluid" : "container" %>'>
+			<div class="<%= classSb.toString() %>" style="<%= styleSb.toString() %>">
+				<%
+				request.setAttribute("render_layout_structure.jsp-childrenItemIds", layoutStructureItem.getChildrenItemIds());
+				%>
 
-					<%
-					request.setAttribute("render_layout_structure.jsp-childrenItemIds", layoutStructureItem.getChildrenItemIds());
-					%>
-
-					<liferay-util:include page="/render_fragment_layout/render_layout_structure.jsp" servletContext="<%= application %>" />
-				</div>
+				<liferay-util:include page="/render_fragment_layout/render_layout_structure.jsp" servletContext="<%= application %>" />
 			</div>
 		</c:when>
 		<c:when test="<%= layoutStructureItem instanceof DropZoneLayoutStructureItem %>">
