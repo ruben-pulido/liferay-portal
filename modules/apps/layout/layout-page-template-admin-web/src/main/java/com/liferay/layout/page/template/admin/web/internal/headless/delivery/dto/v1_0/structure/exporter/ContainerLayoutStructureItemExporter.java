@@ -164,7 +164,7 @@ public class ContainerLayoutStructureItemExporter
 											containerLayoutStructureItem.
 												getContentDisplay();
 
-										if (Validator.isNull(containerType)) {
+										if (Validator.isNull(contentDisplay)) {
 											return null;
 										}
 
