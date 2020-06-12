@@ -263,10 +263,14 @@ public class LayoutPageTemplatesImporterTest {
 			containerLayoutStructureItem.getBackgroundColorCssClass());
 		Assert.assertEquals(
 			"fluid", containerLayoutStructureItem.getContainerType());
-		Assert.assertEquals(5, containerLayoutStructureItem.getPaddingBottom());
+		Assert.assertEquals(0, containerLayoutStructureItem.getPaddingBottom());
 		Assert.assertEquals(
-			5, containerLayoutStructureItem.getPaddingHorizontal());
-		Assert.assertEquals(5, containerLayoutStructureItem.getPaddingTop());
+			0, containerLayoutStructureItem.getPaddingHorizontal());
+		Assert.assertEquals(0, containerLayoutStructureItem.getPaddingLeft());
+		Assert.assertEquals(0, containerLayoutStructureItem.getMarginRight());
+		Assert.assertEquals(0, containerLayoutStructureItem.getPaddingTop());
+		Assert.assertEquals(
+			"fluid", containerLayoutStructureItem.getWidthType());
 
 		JSONObject jsonObject =
 			containerLayoutStructureItem.getBackgroundImageJSONObject();

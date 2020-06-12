@@ -557,6 +557,7 @@ public class PageDefinitionDTOConverterTest {
 			pageSectionDefinition1.getLayout();
 
 		Assert.assertEquals("Fluid", sectionLayout.getContainerTypeAsString());
+		Assert.assertEquals("Fluid", sectionLayout.getWidthTypeAsString());
 		Assert.assertEquals(
 			Integer.valueOf(8), sectionLayout.getPaddingBottom());
 		Assert.assertEquals(
