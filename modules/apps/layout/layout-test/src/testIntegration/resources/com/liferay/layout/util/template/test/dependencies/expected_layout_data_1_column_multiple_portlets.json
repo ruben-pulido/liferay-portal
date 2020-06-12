@@ -18,9 +18,10 @@
 				"backgroundImage": {
 				},
 				"paddingBottom": 3,
-				"paddingHorizontal": 3,
+				"paddingLeft": 3,
+				"paddingRight": 3,
 				"paddingTop": 3,
-				"type": "fixed"
+				"widthType": "fluid"
 			},
 			"itemId": "ROOT-CONTAINER0",
 			"parentId": "ROOT",
