@@ -15,7 +15,7 @@
 package com.liferay.headless.delivery.client.dto.v1_0;
 
 import com.liferay.headless.delivery.client.function.UnsafeSupplier;
-import com.liferay.headless.delivery.client.serdes.v1_0.PageColumnDefinitionSerDes;
+import com.liferay.headless.delivery.client.serdes.v1_0.ViewportColumnConfigurationDefinitionSerDes;
 
 import java.util.Objects;
 
@@ -26,10 +26,10 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class PageColumnDefinition implements Cloneable {
+public class ViewportColumnConfigurationDefinition implements Cloneable {
 
-	public static PageColumnDefinition toDTO(String json) {
-		return PageColumnDefinitionSerDes.toDTO(json);
+	public static ViewportColumnConfigurationDefinition toDTO(String json) {
+		return ViewportColumnConfigurationDefinitionSerDes.toDTO(json);
 	}
 
 	public Integer getSize() {
@@ -51,34 +51,11 @@ public class PageColumnDefinition implements Cloneable {
 
 	protected Integer size;
 
-	public ViewportColumnConfiguration getViewportColumnConfiguration() {
-		return viewportColumnConfiguration;
-	}
-
-	public void setViewportColumnConfiguration(
-		ViewportColumnConfiguration viewportColumnConfiguration) {
-
-		this.viewportColumnConfiguration = viewportColumnConfiguration;
-	}
-
-	public void setViewportColumnConfiguration(
-		UnsafeSupplier<ViewportColumnConfiguration, Exception>
-			viewportColumnConfigurationUnsafeSupplier) {
-
-		try {
-			viewportColumnConfiguration =
-				viewportColumnConfigurationUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected ViewportColumnConfiguration viewportColumnConfiguration;
-
 	@Override
-	public PageColumnDefinition clone() throws CloneNotSupportedException {
-		return (PageColumnDefinition)super.clone();
+	public ViewportColumnConfigurationDefinition clone()
+		throws CloneNotSupportedException {
+
+		return (ViewportColumnConfigurationDefinition)super.clone();
 	}
 
 	@Override
@@ -87,14 +64,16 @@ public class PageColumnDefinition implements Cloneable {
 			return true;
 		}
 
-		if (!(object instanceof PageColumnDefinition)) {
+		if (!(object instanceof ViewportColumnConfigurationDefinition)) {
 			return false;
 		}
 
-		PageColumnDefinition pageColumnDefinition =
-			(PageColumnDefinition)object;
+		ViewportColumnConfigurationDefinition
+			viewportColumnConfigurationDefinition =
+				(ViewportColumnConfigurationDefinition)object;
 
-		return Objects.equals(toString(), pageColumnDefinition.toString());
+		return Objects.equals(
+			toString(), viewportColumnConfigurationDefinition.toString());
 	}
 
 	@Override
@@ -105,7 +84,7 @@ public class PageColumnDefinition implements Cloneable {
 	}
 
 	public String toString() {
-		return PageColumnDefinitionSerDes.toJSON(this);
+		return ViewportColumnConfigurationDefinitionSerDes.toJSON(this);
 	}
 
 }

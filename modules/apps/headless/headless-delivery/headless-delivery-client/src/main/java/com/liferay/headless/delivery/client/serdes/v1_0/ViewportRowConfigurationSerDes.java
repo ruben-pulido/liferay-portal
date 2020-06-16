@@ -14,7 +14,7 @@
 
 package com.liferay.headless.delivery.client.serdes.v1_0;
 
-import com.liferay.headless.delivery.client.dto.v1_0.PageColumnDefinition;
+import com.liferay.headless.delivery.client.dto.v1_0.ViewportRowConfiguration;
 import com.liferay.headless.delivery.client.json.BaseJSONParser;
 
 import java.util.Iterator;
@@ -30,24 +30,26 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class PageColumnDefinitionSerDes {
+public class ViewportRowConfigurationSerDes {
 
-	public static PageColumnDefinition toDTO(String json) {
-		PageColumnDefinitionJSONParser pageColumnDefinitionJSONParser =
-			new PageColumnDefinitionJSONParser();
+	public static ViewportRowConfiguration toDTO(String json) {
+		ViewportRowConfigurationJSONParser viewportRowConfigurationJSONParser =
+			new ViewportRowConfigurationJSONParser();
 
-		return pageColumnDefinitionJSONParser.parseToDTO(json);
+		return viewportRowConfigurationJSONParser.parseToDTO(json);
 	}
 
-	public static PageColumnDefinition[] toDTOs(String json) {
-		PageColumnDefinitionJSONParser pageColumnDefinitionJSONParser =
-			new PageColumnDefinitionJSONParser();
+	public static ViewportRowConfiguration[] toDTOs(String json) {
+		ViewportRowConfigurationJSONParser viewportRowConfigurationJSONParser =
+			new ViewportRowConfigurationJSONParser();
 
-		return pageColumnDefinitionJSONParser.parseToDTOs(json);
+		return viewportRowConfigurationJSONParser.parseToDTOs(json);
 	}
 
-	public static String toJSON(PageColumnDefinition pageColumnDefinition) {
-		if (pageColumnDefinition == null) {
+	public static String toJSON(
+		ViewportRowConfiguration viewportRowConfiguration) {
+
+		if (viewportRowConfiguration == null) {
 			return "null";
 		}
 
@@ -55,26 +57,36 @@ public class PageColumnDefinitionSerDes {
 
 		sb.append("{");
 
-		if (pageColumnDefinition.getSize() != null) {
+		if (viewportRowConfiguration.getLandscapeMobile() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"size\": ");
-
-			sb.append(pageColumnDefinition.getSize());
-		}
-
-		if (pageColumnDefinition.getViewportColumnConfiguration() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"viewportColumnConfiguration\": ");
+			sb.append("\"landscapeMobile\": ");
 
 			sb.append(
-				String.valueOf(
-					pageColumnDefinition.getViewportColumnConfiguration()));
+				String.valueOf(viewportRowConfiguration.getLandscapeMobile()));
+		}
+
+		if (viewportRowConfiguration.getPortraitMobile() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"portraitMobile\": ");
+
+			sb.append(
+				String.valueOf(viewportRowConfiguration.getPortraitMobile()));
+		}
+
+		if (viewportRowConfiguration.getTablet() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"tablet\": ");
+
+			sb.append(String.valueOf(viewportRowConfiguration.getTablet()));
 		}
 
 		sb.append("}");
@@ -83,71 +95,86 @@ public class PageColumnDefinitionSerDes {
 	}
 
 	public static Map<String, Object> toMap(String json) {
-		PageColumnDefinitionJSONParser pageColumnDefinitionJSONParser =
-			new PageColumnDefinitionJSONParser();
+		ViewportRowConfigurationJSONParser viewportRowConfigurationJSONParser =
+			new ViewportRowConfigurationJSONParser();
 
-		return pageColumnDefinitionJSONParser.parseToMap(json);
+		return viewportRowConfigurationJSONParser.parseToMap(json);
 	}
 
 	public static Map<String, String> toMap(
-		PageColumnDefinition pageColumnDefinition) {
+		ViewportRowConfiguration viewportRowConfiguration) {
 
-		if (pageColumnDefinition == null) {
+		if (viewportRowConfiguration == null) {
 			return null;
 		}
 
 		Map<String, String> map = new TreeMap<>();
 
-		if (pageColumnDefinition.getSize() == null) {
-			map.put("size", null);
-		}
-		else {
-			map.put("size", String.valueOf(pageColumnDefinition.getSize()));
-		}
-
-		if (pageColumnDefinition.getViewportColumnConfiguration() == null) {
-			map.put("viewportColumnConfiguration", null);
+		if (viewportRowConfiguration.getLandscapeMobile() == null) {
+			map.put("landscapeMobile", null);
 		}
 		else {
 			map.put(
-				"viewportColumnConfiguration",
-				String.valueOf(
-					pageColumnDefinition.getViewportColumnConfiguration()));
+				"landscapeMobile",
+				String.valueOf(viewportRowConfiguration.getLandscapeMobile()));
+		}
+
+		if (viewportRowConfiguration.getPortraitMobile() == null) {
+			map.put("portraitMobile", null);
+		}
+		else {
+			map.put(
+				"portraitMobile",
+				String.valueOf(viewportRowConfiguration.getPortraitMobile()));
+		}
+
+		if (viewportRowConfiguration.getTablet() == null) {
+			map.put("tablet", null);
+		}
+		else {
+			map.put(
+				"tablet", String.valueOf(viewportRowConfiguration.getTablet()));
 		}
 
 		return map;
 	}
 
-	public static class PageColumnDefinitionJSONParser
-		extends BaseJSONParser<PageColumnDefinition> {
+	public static class ViewportRowConfigurationJSONParser
+		extends BaseJSONParser<ViewportRowConfiguration> {
 
 		@Override
-		protected PageColumnDefinition createDTO() {
-			return new PageColumnDefinition();
+		protected ViewportRowConfiguration createDTO() {
+			return new ViewportRowConfiguration();
 		}
 
 		@Override
-		protected PageColumnDefinition[] createDTOArray(int size) {
-			return new PageColumnDefinition[size];
+		protected ViewportRowConfiguration[] createDTOArray(int size) {
+			return new ViewportRowConfiguration[size];
 		}
 
 		@Override
 		protected void setField(
-			PageColumnDefinition pageColumnDefinition,
+			ViewportRowConfiguration viewportRowConfiguration,
 			String jsonParserFieldName, Object jsonParserFieldValue) {
 
-			if (Objects.equals(jsonParserFieldName, "size")) {
+			if (Objects.equals(jsonParserFieldName, "landscapeMobile")) {
 				if (jsonParserFieldValue != null) {
-					pageColumnDefinition.setSize(
-						Integer.valueOf((String)jsonParserFieldValue));
+					viewportRowConfiguration.setLandscapeMobile(
+						ViewportRowConfigurationDefinitionSerDes.toDTO(
+							(String)jsonParserFieldValue));
 				}
 			}
-			else if (Objects.equals(
-						jsonParserFieldName, "viewportColumnConfiguration")) {
-
+			else if (Objects.equals(jsonParserFieldName, "portraitMobile")) {
 				if (jsonParserFieldValue != null) {
-					pageColumnDefinition.setViewportColumnConfiguration(
-						ViewportColumnConfigurationSerDes.toDTO(
+					viewportRowConfiguration.setPortraitMobile(
+						ViewportRowConfigurationDefinitionSerDes.toDTO(
+							(String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "tablet")) {
+				if (jsonParserFieldValue != null) {
+					viewportRowConfiguration.setTablet(
+						ViewportRowConfigurationDefinitionSerDes.toDTO(
 							(String)jsonParserFieldValue));
 				}
 			}

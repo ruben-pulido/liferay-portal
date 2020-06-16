@@ -109,6 +109,18 @@ public class PageRowDefinitionSerDes {
 			sb.append("\"");
 		}
 
+		if (pageRowDefinition.getViewportRowConfiguration() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"viewportRowConfiguration\": ");
+
+			sb.append(
+				String.valueOf(
+					pageRowDefinition.getViewportRowConfiguration()));
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -173,6 +185,16 @@ public class PageRowDefinitionSerDes {
 				String.valueOf(pageRowDefinition.getVerticalAlignment()));
 		}
 
+		if (pageRowDefinition.getViewportRowConfiguration() == null) {
+			map.put("viewportRowConfiguration", null);
+		}
+		else {
+			map.put(
+				"viewportRowConfiguration",
+				String.valueOf(
+					pageRowDefinition.getViewportRowConfiguration()));
+		}
+
 		return map;
 	}
 
@@ -221,6 +243,15 @@ public class PageRowDefinitionSerDes {
 				if (jsonParserFieldValue != null) {
 					pageRowDefinition.setVerticalAlignment(
 						(String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "viewportRowConfiguration")) {
+
+				if (jsonParserFieldValue != null) {
+					pageRowDefinition.setViewportRowConfiguration(
+						ViewportRowConfigurationSerDes.toDTO(
+							(String)jsonParserFieldValue));
 				}
 			}
 			else {

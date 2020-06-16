@@ -33,8 +33,6 @@ import java.util.Set;
 
 import javax.annotation.Generated;
 
-import javax.validation.Valid;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -42,42 +40,15 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 @Generated("")
-@GraphQLName("PageRowDefinition")
+@GraphQLName("ViewportRowConfigurationDefinition")
 @JsonFilter("Liferay.Vulcan")
-@XmlRootElement(name = "PageRowDefinition")
-public class PageRowDefinition {
+@XmlRootElement(name = "ViewportRowConfigurationDefinition")
+public class ViewportRowConfigurationDefinition {
 
-	public static PageRowDefinition toDTO(String json) {
-		return ObjectMapperUtil.readValue(PageRowDefinition.class, json);
+	public static ViewportRowConfigurationDefinition toDTO(String json) {
+		return ObjectMapperUtil.readValue(
+			ViewportRowConfigurationDefinition.class, json);
 	}
-
-	@Schema
-	public Boolean getGutters() {
-		return gutters;
-	}
-
-	public void setGutters(Boolean gutters) {
-		this.gutters = gutters;
-	}
-
-	@JsonIgnore
-	public void setGutters(
-		UnsafeSupplier<Boolean, Exception> guttersUnsafeSupplier) {
-
-		try {
-			gutters = guttersUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Boolean gutters;
 
 	@Schema
 	public Integer getModulesPerRow() {
@@ -106,34 +77,6 @@ public class PageRowDefinition {
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer modulesPerRow;
-
-	@Schema
-	public Integer getNumberOfColumns() {
-		return numberOfColumns;
-	}
-
-	public void setNumberOfColumns(Integer numberOfColumns) {
-		this.numberOfColumns = numberOfColumns;
-	}
-
-	@JsonIgnore
-	public void setNumberOfColumns(
-		UnsafeSupplier<Integer, Exception> numberOfColumnsUnsafeSupplier) {
-
-		try {
-			numberOfColumns = numberOfColumnsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Integer numberOfColumns;
 
 	@Schema
 	public Boolean getReverseOrder() {
@@ -191,52 +134,21 @@ public class PageRowDefinition {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String verticalAlignment;
 
-	@Schema
-	@Valid
-	public ViewportRowConfiguration getViewportRowConfiguration() {
-		return viewportRowConfiguration;
-	}
-
-	public void setViewportRowConfiguration(
-		ViewportRowConfiguration viewportRowConfiguration) {
-
-		this.viewportRowConfiguration = viewportRowConfiguration;
-	}
-
-	@JsonIgnore
-	public void setViewportRowConfiguration(
-		UnsafeSupplier<ViewportRowConfiguration, Exception>
-			viewportRowConfigurationUnsafeSupplier) {
-
-		try {
-			viewportRowConfiguration =
-				viewportRowConfigurationUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected ViewportRowConfiguration viewportRowConfiguration;
-
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
 		}
 
-		if (!(object instanceof PageRowDefinition)) {
+		if (!(object instanceof ViewportRowConfigurationDefinition)) {
 			return false;
 		}
 
-		PageRowDefinition pageRowDefinition = (PageRowDefinition)object;
+		ViewportRowConfigurationDefinition viewportRowConfigurationDefinition =
+			(ViewportRowConfigurationDefinition)object;
 
-		return Objects.equals(toString(), pageRowDefinition.toString());
+		return Objects.equals(
+			toString(), viewportRowConfigurationDefinition.toString());
 	}
 
 	@Override
@@ -251,16 +163,6 @@ public class PageRowDefinition {
 
 		sb.append("{");
 
-		if (gutters != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"gutters\": ");
-
-			sb.append(gutters);
-		}
-
 		if (modulesPerRow != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -269,16 +171,6 @@ public class PageRowDefinition {
 			sb.append("\"modulesPerRow\": ");
 
 			sb.append(modulesPerRow);
-		}
-
-		if (numberOfColumns != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"numberOfColumns\": ");
-
-			sb.append(numberOfColumns);
 		}
 
 		if (reverseOrder != null) {
@@ -305,23 +197,13 @@ public class PageRowDefinition {
 			sb.append("\"");
 		}
 
-		if (viewportRowConfiguration != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"viewportRowConfiguration\": ");
-
-			sb.append(String.valueOf(viewportRowConfiguration));
-		}
-
 		sb.append("}");
 
 		return sb.toString();
 	}
 
 	@Schema(
-		defaultValue = "com.liferay.headless.delivery.dto.v1_0.PageRowDefinition",
+		defaultValue = "com.liferay.headless.delivery.dto.v1_0.ViewportRowConfigurationDefinition",
 		name = "x-class-name"
 	)
 	public String xClassName;

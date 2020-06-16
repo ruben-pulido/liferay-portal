@@ -34,8 +34,6 @@ import java.util.Set;
 import javax.annotation.Generated;
 
 import javax.validation.Valid;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -44,63 +42,34 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 @Generated("")
-@GraphQLName("PageColumnDefinition")
+@GraphQLName("ViewportRowConfiguration")
 @JsonFilter("Liferay.Vulcan")
-@XmlRootElement(name = "PageColumnDefinition")
-public class PageColumnDefinition {
+@XmlRootElement(name = "ViewportRowConfiguration")
+public class ViewportRowConfiguration {
 
-	public static PageColumnDefinition toDTO(String json) {
-		return ObjectMapperUtil.readValue(PageColumnDefinition.class, json);
+	public static ViewportRowConfiguration toDTO(String json) {
+		return ObjectMapperUtil.readValue(ViewportRowConfiguration.class, json);
 	}
-
-	@DecimalMax("12")
-	@DecimalMin("1")
-	@Schema
-	public Integer getSize() {
-		return size;
-	}
-
-	public void setSize(Integer size) {
-		this.size = size;
-	}
-
-	@JsonIgnore
-	public void setSize(UnsafeSupplier<Integer, Exception> sizeUnsafeSupplier) {
-		try {
-			size = sizeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Integer size;
 
 	@Schema
 	@Valid
-	public ViewportColumnConfiguration getViewportColumnConfiguration() {
-		return viewportColumnConfiguration;
+	public ViewportRowConfigurationDefinition getLandscapeMobile() {
+		return landscapeMobile;
 	}
 
-	public void setViewportColumnConfiguration(
-		ViewportColumnConfiguration viewportColumnConfiguration) {
+	public void setLandscapeMobile(
+		ViewportRowConfigurationDefinition landscapeMobile) {
 
-		this.viewportColumnConfiguration = viewportColumnConfiguration;
+		this.landscapeMobile = landscapeMobile;
 	}
 
 	@JsonIgnore
-	public void setViewportColumnConfiguration(
-		UnsafeSupplier<ViewportColumnConfiguration, Exception>
-			viewportColumnConfigurationUnsafeSupplier) {
+	public void setLandscapeMobile(
+		UnsafeSupplier<ViewportRowConfigurationDefinition, Exception>
+			landscapeMobileUnsafeSupplier) {
 
 		try {
-			viewportColumnConfiguration =
-				viewportColumnConfigurationUnsafeSupplier.get();
+			landscapeMobile = landscapeMobileUnsafeSupplier.get();
 		}
 		catch (RuntimeException re) {
 			throw re;
@@ -112,7 +81,69 @@ public class PageColumnDefinition {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected ViewportColumnConfiguration viewportColumnConfiguration;
+	protected ViewportRowConfigurationDefinition landscapeMobile;
+
+	@Schema
+	@Valid
+	public ViewportRowConfigurationDefinition getPortraitMobile() {
+		return portraitMobile;
+	}
+
+	public void setPortraitMobile(
+		ViewportRowConfigurationDefinition portraitMobile) {
+
+		this.portraitMobile = portraitMobile;
+	}
+
+	@JsonIgnore
+	public void setPortraitMobile(
+		UnsafeSupplier<ViewportRowConfigurationDefinition, Exception>
+			portraitMobileUnsafeSupplier) {
+
+		try {
+			portraitMobile = portraitMobileUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected ViewportRowConfigurationDefinition portraitMobile;
+
+	@Schema
+	@Valid
+	public ViewportRowConfigurationDefinition getTablet() {
+		return tablet;
+	}
+
+	public void setTablet(ViewportRowConfigurationDefinition tablet) {
+		this.tablet = tablet;
+	}
+
+	@JsonIgnore
+	public void setTablet(
+		UnsafeSupplier<ViewportRowConfigurationDefinition, Exception>
+			tabletUnsafeSupplier) {
+
+		try {
+			tablet = tabletUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected ViewportRowConfigurationDefinition tablet;
 
 	@Override
 	public boolean equals(Object object) {
@@ -120,14 +151,14 @@ public class PageColumnDefinition {
 			return true;
 		}
 
-		if (!(object instanceof PageColumnDefinition)) {
+		if (!(object instanceof ViewportRowConfiguration)) {
 			return false;
 		}
 
-		PageColumnDefinition pageColumnDefinition =
-			(PageColumnDefinition)object;
+		ViewportRowConfiguration viewportRowConfiguration =
+			(ViewportRowConfiguration)object;
 
-		return Objects.equals(toString(), pageColumnDefinition.toString());
+		return Objects.equals(toString(), viewportRowConfiguration.toString());
 	}
 
 	@Override
@@ -142,24 +173,34 @@ public class PageColumnDefinition {
 
 		sb.append("{");
 
-		if (size != null) {
+		if (landscapeMobile != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"size\": ");
+			sb.append("\"landscapeMobile\": ");
 
-			sb.append(size);
+			sb.append(String.valueOf(landscapeMobile));
 		}
 
-		if (viewportColumnConfiguration != null) {
+		if (portraitMobile != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"viewportColumnConfiguration\": ");
+			sb.append("\"portraitMobile\": ");
 
-			sb.append(String.valueOf(viewportColumnConfiguration));
+			sb.append(String.valueOf(portraitMobile));
+		}
+
+		if (tablet != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"tablet\": ");
+
+			sb.append(String.valueOf(tablet));
 		}
 
 		sb.append("}");
@@ -168,7 +209,7 @@ public class PageColumnDefinition {
 	}
 
 	@Schema(
-		defaultValue = "com.liferay.headless.delivery.dto.v1_0.PageColumnDefinition",
+		defaultValue = "com.liferay.headless.delivery.dto.v1_0.ViewportRowConfiguration",
 		name = "x-class-name"
 	)
 	public String xClassName;

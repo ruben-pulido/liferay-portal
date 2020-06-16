@@ -15,7 +15,7 @@
 package com.liferay.headless.delivery.client.dto.v1_0;
 
 import com.liferay.headless.delivery.client.function.UnsafeSupplier;
-import com.liferay.headless.delivery.client.serdes.v1_0.PageRowDefinitionSerDes;
+import com.liferay.headless.delivery.client.serdes.v1_0.ViewportRowConfigurationDefinitionSerDes;
 
 import java.util.Objects;
 
@@ -26,32 +26,11 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class PageRowDefinition implements Cloneable {
+public class ViewportRowConfigurationDefinition implements Cloneable {
 
-	public static PageRowDefinition toDTO(String json) {
-		return PageRowDefinitionSerDes.toDTO(json);
+	public static ViewportRowConfigurationDefinition toDTO(String json) {
+		return ViewportRowConfigurationDefinitionSerDes.toDTO(json);
 	}
-
-	public Boolean getGutters() {
-		return gutters;
-	}
-
-	public void setGutters(Boolean gutters) {
-		this.gutters = gutters;
-	}
-
-	public void setGutters(
-		UnsafeSupplier<Boolean, Exception> guttersUnsafeSupplier) {
-
-		try {
-			gutters = guttersUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected Boolean gutters;
 
 	public Integer getModulesPerRow() {
 		return modulesPerRow;
@@ -73,27 +52,6 @@ public class PageRowDefinition implements Cloneable {
 	}
 
 	protected Integer modulesPerRow;
-
-	public Integer getNumberOfColumns() {
-		return numberOfColumns;
-	}
-
-	public void setNumberOfColumns(Integer numberOfColumns) {
-		this.numberOfColumns = numberOfColumns;
-	}
-
-	public void setNumberOfColumns(
-		UnsafeSupplier<Integer, Exception> numberOfColumnsUnsafeSupplier) {
-
-		try {
-			numberOfColumns = numberOfColumnsUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected Integer numberOfColumns;
 
 	public Boolean getReverseOrder() {
 		return reverseOrder;
@@ -137,34 +95,11 @@ public class PageRowDefinition implements Cloneable {
 
 	protected String verticalAlignment;
 
-	public ViewportRowConfiguration getViewportRowConfiguration() {
-		return viewportRowConfiguration;
-	}
-
-	public void setViewportRowConfiguration(
-		ViewportRowConfiguration viewportRowConfiguration) {
-
-		this.viewportRowConfiguration = viewportRowConfiguration;
-	}
-
-	public void setViewportRowConfiguration(
-		UnsafeSupplier<ViewportRowConfiguration, Exception>
-			viewportRowConfigurationUnsafeSupplier) {
-
-		try {
-			viewportRowConfiguration =
-				viewportRowConfigurationUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected ViewportRowConfiguration viewportRowConfiguration;
-
 	@Override
-	public PageRowDefinition clone() throws CloneNotSupportedException {
-		return (PageRowDefinition)super.clone();
+	public ViewportRowConfigurationDefinition clone()
+		throws CloneNotSupportedException {
+
+		return (ViewportRowConfigurationDefinition)super.clone();
 	}
 
 	@Override
@@ -173,13 +108,15 @@ public class PageRowDefinition implements Cloneable {
 			return true;
 		}
 
-		if (!(object instanceof PageRowDefinition)) {
+		if (!(object instanceof ViewportRowConfigurationDefinition)) {
 			return false;
 		}
 
-		PageRowDefinition pageRowDefinition = (PageRowDefinition)object;
+		ViewportRowConfigurationDefinition viewportRowConfigurationDefinition =
+			(ViewportRowConfigurationDefinition)object;
 
-		return Objects.equals(toString(), pageRowDefinition.toString());
+		return Objects.equals(
+			toString(), viewportRowConfigurationDefinition.toString());
 	}
 
 	@Override
@@ -190,7 +127,7 @@ public class PageRowDefinition implements Cloneable {
 	}
 
 	public String toString() {
-		return PageRowDefinitionSerDes.toJSON(this);
+		return ViewportRowConfigurationDefinitionSerDes.toJSON(this);
 	}
 
 }
