@@ -2000,6 +2000,15 @@ components:
                     maximum: 12
                     minimum: 1
                     type: integer
+                viewportColumnConfiguration:
+                    properties:
+                        landscapeMobile:
+                            $ref: "#/components/schemas/ViewportColumnConfigurationDefinition"
+                        portraitMobile:
+                            $ref: "#/components/schemas/ViewportColumnConfigurationDefinition"
+                        tablet:
+                            $ref: "#/components/schemas/ViewportColumnConfigurationDefinition"
+                    type: object
             type: object
         PageDefinition:
             description:
@@ -2082,6 +2091,15 @@ components:
                     type: boolean
                 verticalAlignment:
                     type: string
+                viewportRowConfiguration:
+                    properties:
+                        landscapeMobile:
+                            $ref: "#/components/schemas/ViewportRowConfigurationDefinition"
+                        portraitMobile:
+                            $ref: "#/components/schemas/ViewportRowConfigurationDefinition"
+                        tablet:
+                            $ref: "#/components/schemas/ViewportRowConfigurationDefinition"
+                    type: object
             type: object
         PageSectionDefinition:
             properties:
@@ -2542,6 +2560,24 @@ components:
                         type: string
                     readOnly: true
                     type: object
+            type: object
+        ViewportColumnConfigurationDefinition:
+            # @review
+            properties:
+                size:
+                    maximum: 12
+                    minimum: 1
+                    type: integer
+            type: object
+        ViewportRowConfigurationDefinition:
+            # @review
+            properties:
+                modulesPerRow:
+                    type: integer
+                reverseOrder:
+                    type: boolean
+                verticalAlignment:
+                    type: string
             type: object
         WidgetInstance:
             properties:
