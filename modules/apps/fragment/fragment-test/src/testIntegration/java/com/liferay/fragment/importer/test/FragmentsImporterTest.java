@@ -138,7 +138,7 @@ public class FragmentsImporterTest {
 			_fragmentEntryLocalService.getFragmentEntries(
 				fragmentCollection.getFragmentCollectionId());
 
-		Assert.assertTrue(!fragmentEntries.isEmpty());
+		Assert.assertFalse(fragmentEntries.isEmpty());
 	}
 
 	@Test
