@@ -728,6 +728,11 @@
 					"title": "The backgroundImage Schema",
 					"type": "object"
 				},
+				"link": {
+					"$ref": "#/definitions/FragmentLink",
+					"title": "The link Schema",
+					"type": "object"
+				},
 				"layout": {
 					"additionalProperties": false,
 					"properties": {
