@@ -1,5 +1,5 @@
 {
-	"tokenSetCategories" : [
+	"tokenSetCategories": [
 		{
 			"label": {
 				"key": "general"
@@ -45,6 +45,22 @@
 							"type": "Boolean"
 						}
 					]
+				},
+				{
+					"label": {
+						"key": "spacing"
+					},
+					"tokens": [
+						{
+							"cssVariable": "$spacer",
+							"label": {
+								"key": "spacer"
+							},
+							"name": "spacer",
+							"repeatable": true,
+							"type": "String"
+						}
+					]
 				}
 			]
 		},
@@ -88,19 +104,59 @@
 									"label": {
 										"key": "fixed-width"
 									},
-									"value" : "FixedWidth"
+									"value": "FixedWidth"
 								},
 								{
 									"label": {
 										"key": "fluid"
 									},
-									"value" : "Fluid"
+									"value": "Fluid"
 								}
 							]
+						}
+					]
+				},
+				{
+					"label": {
+						"key": "responsiveConfiguration"
+					},
+					"tokens": [
+						{
+							"columnsConfig": {
+								"columns": [
+									{
+										"label": {
+											"key": "breakpoint-min-width-pixels"
+										},
+										"name": "breakpointMinWidthPixels",
+										"type": "Number"
+									},
+									{
+										"label": {
+											"key": "container-max-width-pixels"
+										},
+										"name": "containerMaxWidthPixels",
+										"type": "Number"
+									},
+									{
+										"label": {
+											"key": "default-layout"
+										},
+										"name": "defaultLayout",
+										"type": "String"
+									}
+								]
+							},
+							"label": {
+								"key": "view-port-sizes"
+							},
+							"name": "viewPortSizes",
+							"rowsConfig": {
+								"repeatable": true
+							},
+							"type": "Matrix"
 						}
 					]
 				}
 			]
 		}
-	]
-}

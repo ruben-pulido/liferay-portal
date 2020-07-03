@@ -4,28 +4,71 @@
 	"additionalProperties": false,
 	"definitions": {
 		"Label" : {
+			"additionalProperties": false,
 			"properties": {
 				"key": {
 					"description": "Language Key for the label",
 					"title": "Key",
 					"type": "string"
-				},
+				}
+			},
+			"type": "object"
+		},
+		"ElementaryToken": {
+			"additionalProperties": false,
+			"properties": {
 				"value": {
-					"description": "Value returned when a specific locale is requested",
-					"title": "Value",
-					"type": "string"
-				},
-				"value_i18n": {
-					"description": "Localized Values returned when multiple locales are requested",
-					"additionalProperties": {
-						"type": "string"
+					"oneOf": [
+						{
+							"$ref": "#/definitions/RepeatableElementaryToken"
+						},
+						{
+							"$ref": "#/definitions/UniqueElementaryToken"
+						}
+					]
+				}
+			},
+			"title": "Token",
+			"type": "object"
+		},
+		"Token": {
+			"additionalProperties": false,
+			"properties": {
+				"value": {
+					"oneOf": [
+						{
+							"$ref": "#/definitions/ElementaryToken"
+						},
+						{
+							"$ref": "#/definitions/CompositeToken"
+						}
+					]
+				}
+			},
+			"title": "Token",
+			"type": "object"
+		},
+		"CompositeToken": {
+			"additionalProperties": false,
+			"properties": {
+				"tokens": {
+					"items": {
+						"$ref": "#/definitions/UniqueElementaryToken"
 					},
-					"title": "Localized Value",
-					"type": "object"
+					"type": "array"
+				}
+				,
+				"recordsConfig": {
+					"properties": {
+						"repeatable": {
+							"type": "boolean"
+						}
+					},
+					"type" : "object"
 				}
 			}
 		},
-		"Token" : {
+		"BasicToken" : {
 			"additionalProperties": false,
 			"properties": {
 				"repeatable": {
@@ -50,7 +93,7 @@
 						"Number",
 						"String"
 					],
-					"title": "The Type of the Token",
+					"title": "Type of the Token",
 					"type": "string"
 				},
 				"validValues": {
@@ -101,7 +144,8 @@
 			"required": [
 				"tokenSets"
 			],
-			"title": "Token Set Category"
+			"title": "Token Set Category",
+			"type": "object"
 		},
 		"TokenSet" : {
 			"additionalProperties": false,
@@ -121,7 +165,8 @@
 			"required": [
 				"tokens"
 			],
-			"title": "Token Set"
+			"title": "Token Set",
+			"type": "object"
 		}
 	},
 	"properties": {
@@ -136,6 +181,6 @@
 	"required": [
 		"tokenSetCategories"
 	],
-	"title": "The Design Tokens Schema",
+	"title": "The Design Tokens Definition Schema",
 	"type": "object"
 }

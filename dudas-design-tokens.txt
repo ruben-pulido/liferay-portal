@@ -1,0 +1,10 @@
+Dudas Design Tokens:
+- Repeatable? Is there an example on when we use this -> Viewports
+- Layout (see designs)
+
+- Related CSS variable (or custom style template?)
+	-> What are we referring to by "custom style template"
+
+- This definition format assumes that token names are unique (following the same approach we took for configuration fields)
+
+- Do we foresee having tokens whose numeric value is not an integer?
