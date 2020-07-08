@@ -787,10 +787,42 @@
 					"title": "The backgroundColor Schema",
 					"type": "string"
 				},
-				"backgroundImage": {
+				"backgroundFragmentImage": {
 					"$ref": "#/definitions/FragmentImage",
-					"title": "The backgroundImage Schema",
+					"title": "The backgroundFragmentImage Schema",
 					"type": "object"
+				},
+				"backgroundImage": {
+					"additionalProperties": false,
+					"deprecationMessage": "Deprecated as of Athanasius (7.3.x), replaced by backgroundFragmentImage",
+					"properties": {
+						"description": {
+							"oneOf": [
+								{
+									"$ref": "#/definitions/FragmentInlineValue"
+								}
+							]
+						},
+						"title": {
+							"oneOf": [
+								{
+									"$ref": "#/definitions/FragmentInlineValue"
+								}
+							]
+						},
+						"url": {
+							"oneOf": [
+								{
+									"$ref": "#/definitions/FragmentInlineValue"
+								},
+								{
+									"$ref": "#/definitions/FragmentMappedValue"
+								}
+							]
+						}
+					},
+					"title": "The backgroundImage Schema",
+					"type": "object",
 				},
 				"fragmentLink": {
 					"$ref": "#/definitions/FragmentLink",

@@ -2124,6 +2124,20 @@ components:
                 backgroundColor:
                     type: string
                 backgroundImage:
+                    deprecated: true
+                    properties:
+                        description:
+                            oneOf:
+                                - $ref: "#/components/schemas/FragmentInlineValue"
+                        title:
+                            oneOf:
+                                - $ref: "#/components/schemas/FragmentInlineValue"
+                        url:
+                            oneOf:
+                                - $ref: "#/components/schemas/FragmentInlineValue"
+                                - $ref: "#/components/schemas/FragmentMappedValue"
+                    type: object
+                backgroundFragmentImage:
                     $ref: "#/components/schemas/FragmentImage"
                 fragmentLink:
                     $ref: "#/components/schemas/FragmentLink"
