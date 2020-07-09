@@ -1,0 +1,141 @@
+{
+	"$id": "http://example.com/root.json",
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"additionalProperties": false,
+	"definitions": {
+		"Label" : {
+			"properties": {
+				"key": {
+					"description": "Language Key for the label",
+					"title": "Key",
+					"type": "string"
+				},
+				"value": {
+					"description": "Value returned when a specific locale is requested",
+					"title": "Value",
+					"type": "string"
+				},
+				"value_i18n": {
+					"description": "Localized Values returned when multiple locales are requested",
+					"additionalProperties": {
+						"type": "string"
+					},
+					"title": "Localized Value",
+					"type": "object"
+				}
+			}
+		},
+		"Token" : {
+			"additionalProperties": false,
+			"properties": {
+				"repeatable": {
+					"title": "Repeatable Flag",
+					"type": "boolean"
+				},
+				"cssVariable": {
+					"title": "Associated CSS Variable",
+					"type": "string"
+				},
+				"name": {
+					"title": "Name of the Token",
+					"type": "string"
+				},
+				"label": {
+					"$ref": "#/definitions/Label"
+				},
+				"type": {
+					"enum": [
+						"Boolean",
+						"Color",
+						"Number",
+						"String"
+					],
+					"title": "The Type of the Token",
+					"type": "string"
+				},
+				"validValues": {
+					"items": {
+						"additionalProperties": false,
+						"not": {
+							"type": "null"
+						},
+						"properties": {
+							"label": {
+								"$ref": "#/definitions/Label"
+							},
+							"value": {
+								"title": "Value",
+								"type": "string"
+							}
+						},
+						"required": [
+							"value"
+						],
+						"title": "Valid Value",
+						"type": "object"
+					},
+					"minItems": 1,
+					"title": "Valid Values",
+					"type": "array"
+				}
+			},
+			"required": [
+				"name"
+			]
+		},
+		"TokenSetCategory" : {
+			"additionalProperties": false,
+			"description": "Grouping of Token Sets",
+			"properties": {
+				"label": {
+					"$ref": "#/definitions/Label"
+				},
+				"tokenSets": {
+					"items": {
+						"$ref": "#/definitions/TokenSet"
+					},
+					"title": "Token Sets",
+					"type": "array"
+				}
+			},
+			"required": [
+				"tokenSets"
+			],
+			"title": "Token Set Category"
+		},
+		"TokenSet" : {
+			"additionalProperties": false,
+			"description": "Grouping of Tokens",
+			"properties": {
+				"label": {
+					"$ref": "#/definitions/Label"
+				},
+				"tokens": {
+					"items": {
+						"$ref": "#/definitions/Token"
+					},
+					"title": "Tokens",
+					"type": "array"
+				}
+			},
+			"required": [
+				"tokens"
+			],
+			"title": "Token Set"
+		}
+	},
+	"properties": {
+		"tokenSetCategories": {
+			"items": {
+				"$ref": "#/definitions/TokenSetCategory"
+			},
+			"title": "Token Set Categories",
+			"type": "array"
+		}
+	},
+	"required": [
+		"tokenSetCategories"
+	],
+	"title": "The Design Tokens Schema",
+	"type": "object"
+}
