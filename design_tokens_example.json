@@ -1,0 +1,106 @@
+{
+	"tokenSetCategories" : [
+		{
+			"label": {
+				"key": "general"
+			},
+			"tokenSets": [
+				{
+					"label": {
+						"key": "links"
+					},
+					"tokens": [
+						{
+							"cssVariable": "$link-color",
+							"label": {
+								"key": "link-color"
+							},
+							"name": "linkColor",
+							"type": "Color"
+						},
+						{
+							"cssVariable": "$link-text-decoration",
+							"label": {
+								"key": "text-underline"
+							},
+							"name": "linkTextUnderline",
+							"type": "Boolean"
+						},
+						{
+							"cssVariable": "$link-hover-color",
+							"label": {
+								"value_i18n": {
+									"en_US": "Link Hover Color"
+								}
+							},
+							"name": "linkHoverColor",
+							"type": "Color"
+						},
+						{
+							"cssVariable": "$link-hover-text-decoration",
+							"label": {
+								"key": "text-underline"
+							},
+							"name": "linkHoverTextUnderline",
+							"type": "Boolean"
+						}
+					]
+				}
+			]
+		},
+		{
+			"label": {
+				"key": "layout"
+			},
+			"tokenSets": [
+				{
+					"label": {
+						"key": "grid"
+					},
+					"tokens": [
+						{
+							"cssVariable": "$grid-columns",
+							"label": {
+								"key": "number-of-columns"
+							},
+							"name": "gridNumberOfColumns",
+							"type": "Number"
+						},
+						{
+							"cssVariable": "$grid-gutter-width",
+							"label": {
+								"key": "gutter"
+							},
+							"name": "gridGutterNumberOfPixels",
+							"type": "Number"
+						},
+						{
+							"cssVariable": "$some-container-related-variable",
+							"label": {
+								"value_i18n": {
+									"key": "default-container"
+								}
+							},
+							"name": "gridDefaultContainer",
+							"type": "String",
+							"validValues": [
+								{
+									"label": {
+										"key": "fixed-width"
+									},
+									"value" : "FixedWidth"
+								},
+								{
+									"label": {
+										"key": "fluid"
+									},
+									"value" : "Fluid"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}
