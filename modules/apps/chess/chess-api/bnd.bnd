@@ -1,0 +1,7 @@
+Bundle-Name: Liferay Chess API
+Bundle-SymbolicName: com.liferay.chess.api
+Bundle-Version: 2.3.0
+Export-Package:\
+	com.liferay.chess.exception,\
+	com.liferay.chess.model,\
+	com.liferay.chess.service
