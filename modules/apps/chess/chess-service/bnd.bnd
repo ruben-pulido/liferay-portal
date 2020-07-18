@@ -1,0 +1,13 @@
+Bundle-Name: Liferay Chess Service
+Bundle-SymbolicName: com.liferay.chess.service
+Bundle-Version: 1.0.0
+Liferay-Require-SchemaVersion: 1.0.0
+Liferay-Service: true
+Provide-Capability:\
+	liferay.resource.bundle;\
+		resource.bundle.aggregate:String="(bundle.symbolic.name=com.liferay.chess.lang)";\
+		resource.bundle.base.name="content.Language"
+Require-Capability:\
+	liferay.resource.bundle;\
+		filter:="(bundle.symbolic.name=com.liferay.chess.lang)"
+-dsannotations-options: inherit
