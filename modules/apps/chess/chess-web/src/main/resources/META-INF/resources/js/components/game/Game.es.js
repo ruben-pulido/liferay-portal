@@ -12,7 +12,10 @@
  * details.
  */
 
+import {ClayButtonWithIcon, default as ClayButton} from '@clayui/button';
 import React from 'react';
+
+import {config} from '../../config/index';
 
 export default function Game() {
 	return (
@@ -36,6 +39,14 @@ export default function Game() {
 					</tr>
 				</tbody>
 			</table>
+
+			<form action={config.addMoveURL} method="POST">
+				<input name="move" type="text" />
+
+				<ClayButton displayType="primary" small type="submit">
+					{Liferay.Language.get('add-move')}
+				</ClayButton>
+			</form>
 		</div>
 	);
 }

@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,20 +11,24 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+const DEFAULT_CONFIG = {
+	toolbarId: 'pageEditorToolbar',
+};
 
-<%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
-taglib uri="http://liferay.com/tld/react" prefix="react" %><%@
-taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
+export let config = null;
 
-<%@ page
-	import="com.liferay.chess.web.internal.display.context.ChessDisplayContext" %>
-<%@ page import="com.liferay.chess.web.internal.constants.ChessWebKeys" %>
+/**
+ * Extracts the immutable parts from the server data.
+ *
+ * Unlike data in the store, this config does not change over the lifetime of
+ * the app, so we can safely store is as a variable.
+ */
+export function initializeConfig(backendConfig) {
+	config = {
+		...DEFAULT_CONFIG,
+		...backendConfig,
+	};
 
-<liferay-frontend:defineObjects />
-
-<liferay-theme:defineObjects />
-
-<portlet:defineObjects />
+	return config;
+}

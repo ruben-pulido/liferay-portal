@@ -15,11 +15,18 @@
 package com.liferay.chess.web.internal.portlet;
 
 import com.liferay.chess.web.internal.constants.ChessPortletKeys;
+import com.liferay.chess.web.internal.constants.ChessWebKeys;
+import com.liferay.chess.web.internal.display.context.ChessDisplayContext;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 
 import javax.portlet.Portlet;
+import javax.portlet.PortletException;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
+
+import java.io.IOException;
 
 /**
  * @author Rubén Pulido
@@ -41,4 +48,17 @@ import org.osgi.service.component.annotations.Component;
 	service = Portlet.class
 )
 public class ChessConfigurationPortlet extends MVCPortlet {
+
+	@Override
+	protected void doDispatch(
+		RenderRequest renderRequest, RenderResponse renderResponse)
+		throws IOException, PortletException {
+
+		renderRequest.setAttribute(
+			ChessWebKeys.CHESS_DISPLAY_CONTEXT,
+			new ChessDisplayContext(renderRequest, renderResponse));
+
+		super.doDispatch(renderRequest, renderResponse);
+	}
+
 }

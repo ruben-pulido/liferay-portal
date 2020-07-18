@@ -16,9 +16,13 @@
 
 <%@ include file="/init.jsp" %>
 
+<%
+ChessDisplayContext chessDisplayContext = (ChessDisplayContext)request.getAttribute(ChessWebKeys.CHESS_DISPLAY_CONTEXT);
+%>
+
 <div>
 	<react:component
-		data="<%= new HashMap<String, Object>() %>"
+		data="<%= chessDisplayContext.getContext() %>"
 		module="js/ChessApp.es"
 	/>
 </div>
