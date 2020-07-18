@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,21 +12,21 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+--%>
 
-package com.liferay.chess.web.internal.constants;
 
-/**
- * @author Rubén Pulido
- */
-public class ChessPortletKeys {
+<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
-	public static final String CHESS =
-		"com_liferay_chess_web_internal_portlet_ChessPortlet";
+<%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
+taglib uri="http://liferay.com/tld/react" prefix="react" %><%@
+taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 
-	public static final String CHESS_CONFIGURATION =
-		"com_liferay_chess_web_internal_portlet_ChessConfigurationPortlet";
+<%@ page import="com.liferay.chess.web.internal.constants.ChessWebKeys" %>
 
-	public static final String MANAGE_FRIENDS =
-		"com_liferay_chess_web_internal_portlet_ManageFriendsPortlet";
+<%@ page import="java.util.Map" %>
 
-}
+<liferay-frontend:defineObjects />
+
+<liferay-theme:defineObjects />
+
+<portlet:defineObjects />
