@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,20 +11,14 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
-
-<%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
-taglib uri="http://liferay.com/tld/react" prefix="react" %><%@
-taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
-
-<%@ page
-	import="com.liferay.chess.web.internal.display.context.ChessDisplayContext" %>
-<%@ page import="com.liferay.chess.web.internal.constants.ChessWebKeys" %>
-
-<liferay-frontend:defineObjects />
-
-<liferay-theme:defineObjects />
-
-<portlet:defineObjects />
+/**
+ * Available page types
+ * @type {import('../../../types/PageTypes').PageTypes}
+ */
+export const PAGE_TYPES = {
+	content: '0',
+	conversion: '4',
+	display: '1',
+	master: '3',
+};
