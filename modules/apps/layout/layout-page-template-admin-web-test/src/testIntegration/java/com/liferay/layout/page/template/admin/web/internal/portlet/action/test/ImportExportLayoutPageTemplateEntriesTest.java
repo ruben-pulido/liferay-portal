@@ -217,6 +217,28 @@ public class ImportExportLayoutPageTemplateEntriesTest {
 	}
 
 	@Test
+	public void testImportExportLayoutPageTemplateEntryContainerInternalLink()
+		throws Exception {
+
+		Map<String, String> valuesMap = HashMapBuilder.put(
+			"CLASS_PK",
+			() -> {
+				JournalArticle journalArticle = _addJournalArticle(
+					_group.getGroupId(),"wc1");
+
+				return String.valueOf(journalArticle.getResourcePrimKey());
+			}
+		).build();
+		
+		File expectedFile = _generateZipFile(
+			"container/internal_link/expected", valuesMap);
+		File inputFile = _generateZipFile(
+			"container/internal_link/input", valuesMap);
+
+		_validateImportExport(expectedFile, inputFile);
+	}
+
+	@Test
 	public void testImportExportLayoutPageTemplateEntryFragmentTextFieldFragmentAvailableMappedContentAvailable()
 		throws Exception {
 
@@ -487,6 +509,31 @@ public class ImportExportLayoutPageTemplateEntriesTest {
 	private JournalArticle _addJournalArticle(long groupId) throws Exception {
 		Map<Locale, String> titleMap = HashMapBuilder.put(
 			LocaleUtil.getDefault(), RandomTestUtil.randomString()
+		).build();
+		Map<Locale, String> contentMap = HashMapBuilder.put(
+			LocaleUtil.getDefault(), RandomTestUtil.randomString()
+		).build();
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				groupId, TestPropsValues.getUserId());
+
+		JournalArticle journalArticle = JournalTestUtil.addArticle(
+			groupId, 0,
+			_portal.getClassNameId("com.liferay.journal.model.JournalArticle"),
+			titleMap, null, contentMap, LocaleUtil.getSiteDefault(), false,
+			true, serviceContext);
+
+		journalArticle.setSmallImage(true);
+		journalArticle.setSmallImageURL(
+			"https://avatars1.githubusercontent.com/u/131436");
+
+		return JournalTestUtil.updateArticle(journalArticle);
+	}
+
+	private JournalArticle _addJournalArticle(long groupId, String title) throws Exception {
+		Map<Locale, String> titleMap = HashMapBuilder.put(
+			LocaleUtil.getDefault(), title
 		).build();
 		Map<Locale, String> contentMap = HashMapBuilder.put(
 			LocaleUtil.getDefault(), RandomTestUtil.randomString()
@@ -801,6 +848,10 @@ public class ImportExportLayoutPageTemplateEntriesTest {
 
 	private Bundle _bundle;
 	private Company _company;
+
+	@Inject
+	private AssetDisplayPageEntryLocalService
+		_assetDisplayPageEntryLocalService;
 
 	@Inject
 	private CompanyLocalService _companyLocalService;
