@@ -12,7 +12,7 @@
  * details.
  */
 
-import ClayForm, {ClaySelectWithOption} from '@clayui/form';
+import ClayForm, {ClaySelect, ClaySelectWithOption} from '@clayui/form';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
@@ -70,10 +70,7 @@ function loadFields({
 	if (promise) {
 		return promise.then((response) => {
 			if (Array.isArray(response)) {
-				return response.filter(
-					(field) =>
-						COMPATIBLE_TYPES[fieldType].indexOf(field.type) !== -1
-				);
+				return response;
 			}
 
 			return [];
@@ -324,24 +321,39 @@ function MappingFieldSelect({fieldType, fields, onValueSelect, value}) {
 			<label htmlFor="mappingSelectorFieldSelect">
 				{Liferay.Language.get('field')}
 			</label>
-			<ClaySelectWithOption
+			<ClaySelect
 				aria-label={Liferay.Language.get('field')}
 				disabled={!(fields && fields.length)}
 				id={mappingSelectorFieldSelectId}
 				onChange={onValueSelect}
-				options={
-					fields && fields.length
-						? [
-								UNMAPPED_OPTION,
-								...fields.map(({key, label}) => ({
-									label,
-									value: key,
-								})),
-						  ]
-						: [UNMAPPED_OPTION]
-				}
 				value={value}
-			/>
+			>
+				{fields && fields.length && (
+					<>
+						<ClaySelect.Option
+							label={UNMAPPED_OPTION.label}
+							value={UNMAPPED_OPTION.value}
+						/>
+						{fields.map((fieldSet, index) => {
+							const Wrapper = fieldSet.label
+								? ClaySelect.OptGroup
+								: React.Fragment;
+
+							return (
+								<Wrapper key={index} label={fieldSet.label}>
+									{fieldSet.fields.map((field) => (
+										<ClaySelect.Option
+											key={field.key}
+											label={field.label}
+											value={field.key}
+										/>
+									))}
+								</Wrapper>
+							);
+						})}
+					</>
+				)}
+			</ClaySelect>
 			{hasWarnings && (
 				<ClayForm.FeedbackGroup>
 					<ClayForm.FeedbackItem>
