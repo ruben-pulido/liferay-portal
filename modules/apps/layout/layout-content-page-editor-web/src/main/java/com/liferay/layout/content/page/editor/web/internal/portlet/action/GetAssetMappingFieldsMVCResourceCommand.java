@@ -15,6 +15,8 @@
 package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 
 import com.liferay.info.field.InfoField;
+import com.liferay.info.field.InfoFieldSet;
+import com.liferay.info.field.InfoFieldSetEntry;
 import com.liferay.info.form.InfoForm;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceTracker;
@@ -40,6 +42,8 @@ import javax.portlet.ResourceResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.util.List;
 
 /**
  * @author Pavel Savinov
@@ -118,18 +122,44 @@ public class GetAssetMappingFieldsMVCResourceCommand
 
 		InfoForm infoForm = infoItemFormProvider.getInfoForm(infoItemObject);
 
-		for (InfoField infoField : infoForm.getAllInfoFields()) {
-			JSONObject jsonObject = JSONUtil.put(
-				"key", infoField.getName()
-			).put(
-				"label", infoField.getLabel(themeDisplay.getLocale())
-			).put(
-				"type",
-				infoField.getInfoFieldType(
-				).getName()
-			);
+		for (InfoFieldSetEntry infoFieldSetEntry : infoForm.getInfoFieldSetEntries()) {
 
-			jsonArray.put(jsonObject);
+			if (infoFieldSetEntry instanceof InfoField) {
+				InfoField infoField = (InfoField)infoFieldSetEntry;
+
+				JSONObject jsonObject = JSONUtil.put(
+					"key", infoField.getName()
+				).put(
+					"label", infoField.getLabel(themeDisplay.getLocale())
+				).put(
+					"type",
+					infoField.getInfoFieldType(
+					).getName()
+				);
+
+				jsonArray.put(jsonObject);
+			}
+			else if (infoFieldSetEntry instanceof InfoFieldSet) {
+				InfoFieldSet infoFieldSet = (InfoFieldSet)infoFieldSetEntry;
+
+				for (InfoField infoField : infoFieldSet.getAllInfoFields()) {
+
+					JSONObject jsonObject = JSONUtil.put(
+						"fieldSetLabel",
+						infoFieldSet.getLabel(themeDisplay.getLocale())
+					).put(
+						"key", infoField.getName()
+					).put(
+						"label", infoField.getLabel(themeDisplay.getLocale())
+					).put(
+						"type",
+						infoField.getInfoFieldType(
+						).getName()
+					);
+
+					jsonArray.put(jsonObject);
+				}
+			}
 		}
 
 		JSONPortletResponseUtil.writeJSON(

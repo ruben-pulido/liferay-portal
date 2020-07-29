@@ -316,6 +316,71 @@ function MappingFieldSelect({fieldType, fields, onValueSelect, value}) {
 
 	const hasWarnings = fields && fields.length === 0;
 
+	const fieldsByFieldSetLabel1 =
+	  fields.reduce((objectsByKeyValue, obj) => {
+		const value = obj['fieldSetLabel'];
+		objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
+
+		return objectsByKeyValue;
+	  }, {});
+
+	// TODO Compute fields fieldsByFieldSetLabel2 from fieldsByFieldSetLabel1 so that they match the right format:
+// 	const fieldsByFieldSetLabel2 =
+// 		{
+// 			label: 'My field set',
+// 			options: [
+// 				...fields.map(({key, label}) => ({
+// 					label,
+// 					value: key,
+// 				})),
+// 			],
+// 			type: 'group',
+// 		};
+
+	const fieldsByFieldSetLabel2 = [];
+
+	//
+	// RIGHT FORMAT:
+	// const fieldsByFieldSetLabel2 =
+	// [
+	// {
+	//  label: "My field without field set one"
+	//  value: "fieldWithoutFieldSetOne"
+	// },
+	// {
+	//  label: "My field without field set two"
+	//  value: "fieldWithoutFieldSetTwo"
+	// }
+	// {
+	//  label: 'My field set One',
+	//  options: [
+	//   {
+	//    label: "My field one"
+	//    value: "fieldOne"
+	//   },
+	//   {
+	//    label: "My field two"
+	//    value: "fieldTwo"
+	//   }
+	//  ],
+	//  type: 'group',
+	// },
+	// {
+	//  label: 'My field set Two',
+	//  options: [
+	//   {
+	//    label: "My field three"
+	//    value: "fieldThree"
+	//   },
+	//   {
+	//    label: "My field four"
+	//    value: "fieldFour"
+	//   }
+	//  ],
+	//  type: 'group',
+	// }
+	// ]
+
 	return (
 		<ClayForm.Group
 			className={classNames({'has-warning': hasWarnings})}
@@ -333,10 +398,7 @@ function MappingFieldSelect({fieldType, fields, onValueSelect, value}) {
 					fields && fields.length
 						? [
 								UNMAPPED_OPTION,
-								...fields.map(({key, label}) => ({
-									label,
-									value: key,
-								})),
+								...fieldsByFieldSetLabel2,
 						  ]
 						: [UNMAPPED_OPTION]
 				}
