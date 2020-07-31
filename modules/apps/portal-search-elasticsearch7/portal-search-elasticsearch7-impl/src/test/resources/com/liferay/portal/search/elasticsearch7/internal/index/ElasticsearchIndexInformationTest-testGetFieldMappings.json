@@ -504,6 +504,14 @@
 					"store": true,
 					"type": "keyword"
 				},
+				"assetPublicCategoryId": {
+					"store": true,
+					"type": "keyword"
+				},
+				"assetPublicCategoryIds": {
+					"store": true,
+					"type": "keyword"
+				},
 				"assetTagId": {
 					"store": true,
 					"type": "keyword"
