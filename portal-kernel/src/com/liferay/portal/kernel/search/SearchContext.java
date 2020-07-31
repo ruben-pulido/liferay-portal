@@ -227,6 +227,10 @@ public class SearchContext implements Serializable {
 		return _commitImmediately;
 	}
 
+	public boolean isIncludeAssetCategoriesInInternalVocabularies() {
+		return _includeAssetCategoriesInInternalVocabularies;
+	}
+
 	public boolean isIncludeAttachments() {
 		return _includeAttachments;
 	}
@@ -335,6 +339,13 @@ public class SearchContext implements Serializable {
 		_groupIds = groupIds;
 	}
 
+	public void setIncludeAssetCategoriesInInternalVocabularies(
+		boolean includeAssetCategoriesInInternalVocabularies) {
+
+		_includeAssetCategoriesInInternalVocabularies =
+			includeAssetCategoriesInInternalVocabularies;
+	}
+
 	public void setIncludeAttachments(boolean includeAttachments) {
 		_includeAttachments = includeAttachments;
 	}
@@ -435,6 +446,7 @@ public class SearchContext implements Serializable {
 	private Set<String> _fullQueryEntryClassNames;
 	private GroupBy _groupBy;
 	private long[] _groupIds;
+	private boolean _includeAssetCategoriesInInternalVocabularies;
 	private boolean _includeAttachments;
 	private boolean _includeDiscussions;
 	private boolean _includeFolders = true;

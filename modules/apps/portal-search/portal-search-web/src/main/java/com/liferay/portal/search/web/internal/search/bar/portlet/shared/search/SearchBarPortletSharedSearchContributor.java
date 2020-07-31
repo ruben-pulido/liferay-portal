@@ -73,6 +73,12 @@ public class SearchBarPortletSharedSearchContributor
 			return;
 		}
 
+		searchRequestBuilder.withSearchContext(
+			searchContext ->
+				searchContext.setIncludeAssetCategoriesInInternalVocabularies(
+					searchBarPortletPreferences.
+						isSearchCategoriesOfInternalVocabularies()));
+
 		setKeywords(
 			searchRequestBuilder, searchBarPortletPreferences,
 			portletSharedSearchSettings);

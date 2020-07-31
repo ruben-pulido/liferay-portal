@@ -489,6 +489,7 @@ public class JournalArticleItemSelectorViewDisplayContext {
 		searchContext.setEnd(end);
 		searchContext.setFolderIds(folderIds);
 		searchContext.setGroupIds(_getGroupIds());
+		searchContext.setIncludeAssetCategoriesInInternalVocabularies(true);
 		searchContext.setKeywords(getKeywords());
 
 		QueryConfig queryConfig = searchContext.getQueryConfig();
