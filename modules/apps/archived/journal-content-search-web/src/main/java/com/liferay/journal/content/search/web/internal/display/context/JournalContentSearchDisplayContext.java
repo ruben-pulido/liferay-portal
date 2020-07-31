@@ -80,6 +80,7 @@ public class JournalContentSearchDisplayContext {
 			_httpServletRequest);
 
 		searchContext.setGroupIds(null);
+		searchContext.setIncludeAssetCategoriesInInternalVocabularies(true);
 		searchContext.setKeywords(getKeywords());
 
 		QueryConfig queryConfig = searchContext.getQueryConfig();
