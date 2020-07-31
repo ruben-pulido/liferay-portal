@@ -35,19 +35,19 @@ public class AssetCategoryIdsQueryPreFilterContributor
 	public void contribute(
 		BooleanFilter fullQueryBooleanFilter, SearchContext searchContext) {
 
-//		if (searchContext.isIncludeAssetCategoriesInInternalVocabularies()) {
-			long[] assetCategoryIds = searchContext.getAssetCategoryIds();
+		//		if (searchContext.isIncludeAssetCategoriesInInternalVocabularies()) {
+		long[] assetCategoryIds = searchContext.getAssetCategoryIds();
 
-			if (ArrayUtil.isEmpty(assetCategoryIds)) {
-				return;
-			}
+		if (ArrayUtil.isEmpty(assetCategoryIds)) {
+			return;
+		}
 
-			TermsFilter termsFilter = new TermsFilter(Field.ASSET_CATEGORY_IDS);
+		TermsFilter termsFilter = new TermsFilter(Field.ASSET_CATEGORY_IDS);
 
-			termsFilter.addValues(ArrayUtil.toStringArray(assetCategoryIds));
+		termsFilter.addValues(ArrayUtil.toStringArray(assetCategoryIds));
 
-			fullQueryBooleanFilter.add(termsFilter, BooleanClauseOccur.MUST);
-//		}
+		fullQueryBooleanFilter.add(termsFilter, BooleanClauseOccur.MUST);
+		//		}
 	}
 
 }
