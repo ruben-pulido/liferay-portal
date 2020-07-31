@@ -28,10 +28,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Michael C. Han
+ * @author Rubén Pulido
  */
 @Component(immediate = true, service = KeywordQueryContributor.class)
-public class AssetCategoryTitlesKeywordQueryContributor
+public class AssetPublicCategoryTitlesKeywordQueryContributor
 	implements KeywordQueryContributor {
 
 	@Override
@@ -42,16 +42,14 @@ public class AssetCategoryTitlesKeywordQueryContributor
 		SearchContext searchContext =
 			keywordQueryContributorHelper.getSearchContext();
 
-		if (searchContext.isIncludeAssetCategoriesInInternalVocabularies()) {
-			Localization localization = getLocalization();
+		Localization localization = getLocalization();
 
-			queryHelper.addSearchTerm(
-				booleanQuery, searchContext,
-				localization.getLocalizedName(
-					Field.ASSET_CATEGORY_TITLES,
-					LocaleUtil.toLanguageId(searchContext.getLocale())),
-				false);
-		}
+		queryHelper.addSearchTerm(
+			booleanQuery, searchContext,
+			localization.getLocalizedName(
+				Field.ASSET_PUBLIC_CATEGORY_TITLES,
+				LocaleUtil.toLanguageId(searchContext.getLocale())),
+			false);
 	}
 
 	protected Localization getLocalization() {
