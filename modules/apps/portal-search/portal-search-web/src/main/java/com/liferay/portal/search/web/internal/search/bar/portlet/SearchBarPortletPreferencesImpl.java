@@ -100,6 +100,14 @@ public class SearchBarPortletPreferencesImpl
 	}
 
 	@Override
+	public boolean isSearchCategoriesOfInternalVocabularies() {
+		return _portletPreferencesHelper.getBoolean(
+			SearchBarPortletPreferences.
+				PREFERENCE_KEY_SEARCH_CATEGORIES_OF_INTERNAL_VOCABULARIES,
+			false);
+	}
+
+	@Override
 	public boolean isShowStagedResults() {
 		return _portletPreferencesHelper.getBoolean(
 			SearchBarPortletPreferences.PREFERENCE_KEY_SHOW_STAGED_RESULTS,

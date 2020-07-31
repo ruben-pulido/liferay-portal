@@ -36,6 +36,10 @@ public interface SearchBarPortletPreferences {
 	public static final String PREFERENCE_KEY_SCOPE_PARAMETER_NAME =
 		"scopeParameterName";
 
+	public static final String
+		PREFERENCE_KEY_SEARCH_CATEGORIES_OF_INTERNAL_VOCABULARIES =
+			"searchCategoriesOfInternalVocabularies";
+
 	public static final String PREFERENCE_KEY_SEARCH_SCOPE = "searchScope";
 
 	public static final String PREFERENCE_KEY_SHOW_STAGED_RESULTS =
@@ -61,6 +65,8 @@ public interface SearchBarPortletPreferences {
 	public String getSearchScopePreferenceString();
 
 	public boolean isInvisible();
+
+	public boolean isSearchCategoriesOfInternalVocabularies();
 
 	public boolean isShowStagedResults();
 

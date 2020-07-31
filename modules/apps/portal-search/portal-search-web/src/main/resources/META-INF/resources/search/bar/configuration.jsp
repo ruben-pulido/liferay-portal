@@ -87,6 +87,8 @@ SearchBarPortletPreferences searchBarPortletPreferences = new SearchBarPortletPr
 
 				<aui:input helpMessage="show-results-from-staged-sites-help" label="show-results-from-staged-sites" name="<%= PortletPreferencesJspUtil.getInputName(SearchBarPortletPreferences.PREFERENCE_KEY_SHOW_STAGED_RESULTS) %>" type="checkbox" value="<%= searchBarPortletPreferences.isShowStagedResults() %>" />
 
+				<aui:input helpMessage="search-categories-of-internal-vocabularies-help" label="search-categories-of-internal-vocabularies" name="<%= PortletPreferencesJspUtil.getInputName(SearchBarPortletPreferences.PREFERENCE_KEY_SEARCH_CATEGORIES_OF_INTERNAL_VOCABULARIES) %>" type="checkbox" value="<%= searchBarPortletPreferences.isSearchCategoriesOfInternalVocabularies() %>" />
+
 				<aui:input helpMessage="federated-search-key-help" label="federated-search-key" name="<%= PortletPreferencesJspUtil.getInputName(SearchBarPortletPreferences.PREFERENCE_KEY_FEDERATED_SEARCH_KEY) %>" type="text" value="<%= searchBarPortletPreferences.getFederatedSearchKeyString() %>" />
 			</liferay-frontend:fieldset>
 		</liferay-frontend:fieldset-group>
