@@ -122,6 +122,8 @@ public class CategoryFacetPortlet extends MVCPortlet {
 		assetCategoriesSearchFacetDisplayBuilder.setFacet(facet);
 		assetCategoriesSearchFacetDisplayBuilder.setFrequenciesVisible(
 			categoryFacetPortletPreferences.isFrequenciesVisible());
+		assetCategoriesSearchFacetDisplayBuilder.setInternalAssetCategoriesVisible(
+			categoryFacetPortletPreferences.isDisplayCategoriesOfInternalVocabularies());
 		assetCategoriesSearchFacetDisplayBuilder.setFrequencyThreshold(
 			assetCategoriesFacetConfiguration.getFrequencyThreshold());
 		assetCategoriesSearchFacetDisplayBuilder.setMaxTerms(

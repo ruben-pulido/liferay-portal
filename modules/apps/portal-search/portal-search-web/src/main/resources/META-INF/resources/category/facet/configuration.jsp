@@ -80,6 +80,8 @@ CategoryFacetPortletPreferences categoryFacetPortletPreferences = new CategoryFa
 				<aui:input label="frequency-threshold" name="<%= PortletPreferencesJspUtil.getInputName(CategoryFacetPortletPreferences.PREFERENCE_KEY_FREQUENCY_THRESHOLD) %>" value="<%= categoryFacetPortletPreferences.getFrequencyThreshold() %>" />
 
 				<aui:input label="display-frequencies" name="<%= PortletPreferencesJspUtil.getInputName(CategoryFacetPortletPreferences.PREFERENCE_KEY_FREQUENCIES_VISIBLE) %>" type="checkbox" value="<%= categoryFacetPortletPreferences.isFrequenciesVisible() %>" />
+
+				<aui:input helpMessage="display-categories-of-internal-vocabularies-help" label="display-categories-of-internal-vocabularies" name="<%= PortletPreferencesJspUtil.getInputName(SearchBarPortletPreferences.PREFERENCE_KEY_SEARCH_CATEGORIES_OF_INTERNAL_VOCABULARIES) %>" type="checkbox" value="<%= searchBarPortletPreferences.isSearchCategoriesOfInternalVocabularies() %>" />
 			</liferay-frontend:fieldset>
 		</liferay-frontend:fieldset-group>
 	</liferay-frontend:edit-form-body>

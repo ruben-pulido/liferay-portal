@@ -111,6 +111,11 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 		_frequencyThreshold = frequencyThreshold;
 	}
 
+	public void setInternalAssetCategoriesVisible(
+		boolean internalAssetCategoriesVisible) {
+		_internalAssetCategoriesVisible = internalAssetCategoriesVisible;
+	}
+
 	public void setLocale(Locale locale) {
 		_locale = locale;
 	}
@@ -336,6 +341,10 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 		return false;
 	}
 
+	public boolean isInternalAssetCategoriesVisible() {
+		return _internalAssetCategoriesVisible;
+	}
+
 	protected boolean isNothingSelected() {
 		if (_selectedCategoryIds.isEmpty()) {
 			return true;
@@ -403,6 +412,7 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 	private Facet _facet;
 	private boolean _frequenciesVisible;
 	private int _frequencyThreshold;
+	private boolean _internalAssetCategoriesVisible;
 	private Locale _locale;
 	private int _maxTerms;
 	private String _parameterName;

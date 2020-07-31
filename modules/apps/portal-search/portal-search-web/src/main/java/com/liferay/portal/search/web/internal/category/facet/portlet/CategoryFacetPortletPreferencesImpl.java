@@ -61,6 +61,13 @@ public class CategoryFacetPortletPreferencesImpl
 	}
 
 	@Override
+	public boolean isDisplayCategoriesOfInternalVocabularies() {
+		return _portletPreferencesHelper.getBoolean(
+			CategoryFacetPortletPreferences.PREFERENCE_KEY_DISPLAY_CATEGORIES_OF_INTERNAL_VOCABULARIES,
+			false);
+	}
+
+	@Override
 	public boolean isFrequenciesVisible() {
 		return _portletPreferencesHelper.getBoolean(
 			CategoryFacetPortletPreferences.PREFERENCE_KEY_FREQUENCIES_VISIBLE,
