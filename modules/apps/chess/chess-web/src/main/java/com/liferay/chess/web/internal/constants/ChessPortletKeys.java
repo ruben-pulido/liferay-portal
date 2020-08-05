@@ -25,4 +25,7 @@ public class ChessPortletKeys {
 	public static final String CHESS_CONFIGURATION =
 		"com_liferay_chess_web_internal_portlet_ChessConfigurationPortlet";
 
+	public static final String CHESS_PLAY_GAME =
+		"com_liferay_chess_web_internal_portlet_ChessPlayGamePortlet";
+
 }
