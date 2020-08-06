@@ -173,6 +173,7 @@ const Collection = React.forwardRef(({children, item}, ref) => {
 	useEffect(() => {
 		if (collectionConfig.collection) {
 			CollectionService.getCollectionMappingFields({
+				fieldType: 'TODO - How can I get fieldType here?',
 				itemSubtype: collectionConfig.collection.itemSubtype || '',
 				itemType: collectionConfig.collection.itemType,
 				onNetworkStatus: dispatch,
