@@ -27,6 +27,7 @@ import com.liferay.asset.kernel.service.AssetVocabularyLocalServiceUtil;
 import com.liferay.asset.test.util.AssetTestUtil;
 import com.liferay.info.field.InfoFieldSet;
 import com.liferay.info.field.InfoFieldSetEntry;
+import com.liferay.info.field.InfoFieldValue;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -41,6 +42,7 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -104,6 +106,10 @@ public class AssetEntryInfoItemFieldSetProviderTest {
 			vocabulary.getName());
 
 		Assert.assertNull(infoFieldSetEntry);
+
+		Assert.assertNull(
+			_assetEntryInfoItemFieldSetProvider.getInfoFieldValues(
+				AssetEntry.class.getName(), assetEntry.getEntryId()));
 	}
 
 	@Test
@@ -137,6 +143,12 @@ public class AssetEntryInfoItemFieldSetProviderTest {
 			vocabulary.getName());
 
 		Assert.assertEquals(vocabulary.getName(), infoFieldSetEntry.getName());
+
+		List<InfoFieldValue<Object>> infoFieldValues =
+			_assetEntryInfoItemFieldSetProvider.getInfoFieldValues(
+				AssetEntry.class.getName(), assetEntry.getEntryId());
+
+		Assert.assertEquals(category.getName(), infoFieldValues.get(0));
 	}
 
 	@Test
