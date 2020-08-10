@@ -107,6 +107,39 @@ public class AssetEntryInfoItemFieldSetProviderTest {
 	}
 
 	@Test
+	public void testGetInfoFieldSetWithPublicVocabularyWithCategory()
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		AssetVocabulary vocabulary =
+			AssetVocabularyLocalServiceUtil.addVocabulary(
+				TestPropsValues.getUserId(), serviceContext.getScopeGroupId(),
+				RandomTestUtil.randomString(), serviceContext);
+
+		AssetCategory category = AssetCategoryLocalServiceUtil.addCategory(
+			TestPropsValues.getUserId(), serviceContext.getScopeGroupId(),
+			"Category 1", vocabulary.getVocabularyId(), serviceContext);
+
+		AssetEntry assetEntry = AssetTestUtil.addAssetEntry(
+			_group.getGroupId());
+
+		_assetEntryLocalService.addAssetCategoryAssetEntry(
+			category.getCategoryId(), assetEntry);
+
+		InfoFieldSet infoFieldSet =
+			_assetEntryInfoItemFieldSetProvider.getInfoFieldSet(
+				AssetEntry.class.getName(), 0,
+				serviceContext.getScopeGroupId());
+
+		InfoFieldSetEntry infoFieldSetEntry = infoFieldSet.getInfoFieldSetEntry(
+			vocabulary.getName());
+
+		Assert.assertEquals(vocabulary.getName(), infoFieldSetEntry.getName());
+	}
+
+	@Test
 	public void testVocabularyWithCategoryIsAvailableInInfoFieldSet()
 		throws Exception {
 
