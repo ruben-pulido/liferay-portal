@@ -434,6 +434,7 @@ public class TrashEntryLocalServiceImpl extends TrashEntryLocalServiceBaseImpl {
 		searchContext.setCompanyId(companyId);
 		searchContext.setEnd(end);
 		searchContext.setKeywords(keywords);
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setGroupIds(new long[] {groupId});
 
 		if (sort != null) {

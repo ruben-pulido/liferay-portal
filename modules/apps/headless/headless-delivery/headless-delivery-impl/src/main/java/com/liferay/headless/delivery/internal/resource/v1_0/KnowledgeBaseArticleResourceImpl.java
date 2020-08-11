@@ -417,6 +417,7 @@ public class KnowledgeBaseArticleResourceImpl
 					Field.STATUS, WorkflowConstants.STATUS_APPROVED);
 				searchContext.setCompanyId(contextCompany.getCompanyId());
 				searchContext.setGroupIds(new long[] {siteId});
+				searchContext.setIncludeInternalAssetCategories(true);
 
 				if (keywords == null) {
 					searchContext.setKeywords("");

@@ -920,6 +920,8 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 			}
 		}
 
+		searchContext.setIncludeInternalAssetCategories(true);
+
 		if (sort != null) {
 			searchContext.setSorts(sort);
 		}

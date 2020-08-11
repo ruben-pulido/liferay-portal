@@ -383,6 +383,7 @@ public class PollsDisplayContext {
 		searchContext.setEnd(pollsQuestionSearch.getEnd());
 		searchContext.setGroupIds(
 			new long[] {_pollsRequestHelper.getScopeGroupId()});
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setKeywords(getKeywords());
 
 		OrderByComparator<PollsQuestion> orderByComparator =

@@ -139,6 +139,7 @@ public class SearchDisplayContext {
 		}
 
 		searchContext.setKeywords(_keywords.getKeywords());
+		searchContext.setIncludeInternalAssetCategories(true);
 
 		searchContext.setEntryClassNames(
 			AssetEntriesSearchFacet.getEntryClassNames(

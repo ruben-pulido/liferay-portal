@@ -2176,6 +2176,8 @@ public class OrganizationLocalServiceImpl
 			}
 		}
 
+		searchContext.setIncludeInternalAssetCategories(true);
+
 		if (sort != null) {
 			searchContext.setSorts(_getSorts(sort));
 		}

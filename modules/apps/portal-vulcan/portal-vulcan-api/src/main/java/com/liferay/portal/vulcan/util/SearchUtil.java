@@ -255,6 +255,7 @@ public class SearchUtil {
 			searchContext.setEnd(pagination.getEndPosition());
 		}
 
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setKeywords(keywords);
 		searchContext.setSorts(sorts);
 

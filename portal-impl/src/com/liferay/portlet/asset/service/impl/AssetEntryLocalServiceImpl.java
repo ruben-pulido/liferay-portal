@@ -1065,6 +1065,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 		searchContext.setCompanyId(companyId);
 		searchContext.setEnd(end);
 		searchContext.setGroupIds(groupIds);
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setStart(start);
 		searchContext.setSorts(sort);
 		searchContext.setUserId(userId);

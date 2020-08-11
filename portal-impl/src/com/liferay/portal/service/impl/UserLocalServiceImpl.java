@@ -6012,6 +6012,8 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			}
 		}
 
+		searchContext.setIncludeInternalAssetCategories(true);
+
 		if (sorts != null) {
 			searchContext.setSorts(sorts);
 		}

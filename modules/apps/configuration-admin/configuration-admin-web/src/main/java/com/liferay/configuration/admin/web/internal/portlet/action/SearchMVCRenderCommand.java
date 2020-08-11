@@ -82,6 +82,7 @@ public class SearchMVCRenderCommand implements MVCRenderCommand {
 		searchContext.setAndSearch(false);
 		searchContext.setCompanyId(CompanyConstants.SYSTEM);
 		searchContext.setLocale(renderRequest.getLocale());
+		searchContext.setIncludeInternalAssetCategories(true);
 
 		String keywords = renderRequest.getParameter("keywords");
 

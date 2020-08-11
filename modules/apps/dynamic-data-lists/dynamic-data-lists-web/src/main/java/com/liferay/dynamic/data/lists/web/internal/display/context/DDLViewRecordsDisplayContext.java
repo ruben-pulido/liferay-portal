@@ -543,6 +543,7 @@ public class DDLViewRecordsDisplayContext {
 			"recordSetId", _ddlRecordSet.getRecordSetId());
 		searchContext.setAttribute("recordSetScope", _ddlRecordSet.getScope());
 		searchContext.setEnd(recordSearch.getEnd());
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setKeywords(getKeywords());
 		searchContext.setStart(recordSearch.getStart());
 

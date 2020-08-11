@@ -671,6 +671,7 @@ public class AssetCategoryLocalServiceImpl
 		searchContext.setCompanyId(companyId);
 		searchContext.setEnd(end);
 		searchContext.setGroupIds(groupIds);
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setKeywords(title);
 		searchContext.setSorts(sort);
 		searchContext.setStart(start);

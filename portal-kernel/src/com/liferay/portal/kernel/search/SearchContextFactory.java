@@ -101,6 +101,7 @@ public class SearchContextFactory {
 
 		searchContext.setAssetCategoryIds(assetCategoryIds);
 		searchContext.setAssetTagNames(assetTagNames);
+		searchContext.setIncludeInternalAssetCategories(true);
 
 		// Keywords
 

@@ -738,6 +738,7 @@ public class AssetTagLocalServiceImpl extends AssetTagLocalServiceBaseImpl {
 		searchContext.setCompanyId(companyId);
 		searchContext.setEnd(end);
 		searchContext.setGroupIds(groupIds);
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setKeywords(name);
 		searchContext.setStart(start);
 

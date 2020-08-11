@@ -171,6 +171,7 @@ public class ContentElementResourceImpl extends BaseContentElementResourceImpl {
 		}
 
 		searchContext.setGroupIds(new long[] {groupId});
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setKeywords(search);
 		searchContext.setLocale(contextAcceptLanguage.getPreferredLocale());
 

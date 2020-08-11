@@ -1116,6 +1116,7 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 			searchContext.setGroupIds(new long[] {groupId});
 		}
 
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setKeywords(keywords);
 
 		if (Validator.isNotNull(portletId)) {

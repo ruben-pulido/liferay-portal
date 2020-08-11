@@ -6911,6 +6911,8 @@ public class JournalArticleLocalServiceImpl
 			}
 		}
 
+		searchContext.setIncludeInternalAssetCategories(true);
+
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
 		queryConfig.setHighlightEnabled(false);

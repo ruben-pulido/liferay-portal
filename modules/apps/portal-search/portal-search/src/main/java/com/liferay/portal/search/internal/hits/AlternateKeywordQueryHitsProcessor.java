@@ -67,6 +67,8 @@ public class AlternateKeywordQueryHitsProcessor implements HitsProcessor {
 			searchContext.setKeywords(querySuggestions[0]);
 		}
 
+		searchContext.setIncludeInternalAssetCategories(true);
+
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
 		queryConfig.setHitsProcessingEnabled(false);

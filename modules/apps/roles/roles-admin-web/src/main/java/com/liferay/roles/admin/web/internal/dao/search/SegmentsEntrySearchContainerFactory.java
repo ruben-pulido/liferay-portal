@@ -130,6 +130,8 @@ public class SegmentsEntrySearchContainerFactory {
 			searchContext.setKeywords(keywords);
 		}
 
+		searchContext.setIncludeInternalAssetCategories(true);
+
 		if (sort != null) {
 			searchContext.setSorts(sort);
 		}

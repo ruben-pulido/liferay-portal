@@ -531,6 +531,7 @@ public class AssetVocabularyLocalServiceImpl
 		searchContext.setCompanyId(companyId);
 		searchContext.setEnd(end);
 		searchContext.setGroupIds(new long[] {groupId});
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setKeywords(title);
 		searchContext.setSorts(sort);
 		searchContext.setStart(start);

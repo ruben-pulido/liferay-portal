@@ -467,6 +467,7 @@ public class KaleoFormsViewRecordsDisplayContext {
 		searchContext.setAttribute("recordSetScope", _ddlRecordSet.getScope());
 		searchContext.setEnd(searchContainer.getEnd());
 		searchContext.setKeywords(getKeywords());
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setSorts(getSort());
 		searchContext.setStart(searchContainer.getStart());
 

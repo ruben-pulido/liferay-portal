@@ -491,6 +491,7 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 		searchContext.setAttribute(
 			"formInstanceId", _ddmFormInstance.getFormInstanceId());
 		searchContext.setEnd(searchContext.getEnd());
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setKeywords(getKeywords());
 		searchContext.setStart(searchContext.getStart());
 

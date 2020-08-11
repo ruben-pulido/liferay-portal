@@ -99,6 +99,7 @@ public abstract class HitsOpenSearchImpl extends BaseOpenSearchImpl {
 			}
 
 			searchContext.setKeywords(keywords);
+			searchContext.setIncludeInternalAssetCategories(true);
 			searchContext.setScopeStrict(false);
 
 			int start = (startPage * itemsPerPage) - itemsPerPage;

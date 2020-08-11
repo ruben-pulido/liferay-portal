@@ -3771,6 +3771,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		searchContext.setEnd(end);
 		searchContext.setGroupIds(new long[] {groupId});
 		searchContext.setKeywords(keywords);
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setStart(start);
 
 		if (orderByComparator != null) {

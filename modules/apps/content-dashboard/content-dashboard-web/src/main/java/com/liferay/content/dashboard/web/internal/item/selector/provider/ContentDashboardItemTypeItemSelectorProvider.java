@@ -178,6 +178,7 @@ public class ContentDashboardItemTypeItemSelectorProvider {
 					searchContext.setCompanyId(
 						_portal.getCompanyId(portletRequest));
 					searchContext.setEnd(end);
+					searchContext.setIncludeInternalAssetCategories(true);
 					searchContext.setKeywords(_getKeywords(portletRequest));
 					searchContext.setSorts(_getSort(portletRequest));
 					searchContext.setStart(start);
