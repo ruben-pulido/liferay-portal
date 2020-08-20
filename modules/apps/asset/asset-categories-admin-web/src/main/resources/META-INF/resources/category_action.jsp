@@ -134,7 +134,7 @@ AssetCategory category = (AssetCategory)row.getObject();
 					selectEventName: '<portlet:namespace />selectCategory',
 					title:
 						'<liferay-ui:message arguments="<%= category.getTitle(locale) %>" key="move-x" />',
-					url: '<%= assetCategoriesDisplayContext.getSelectCategoryURL() %>',
+					url: '<%= assetCategoriesDisplayContext.getSelectCategoryURL(category.getVocabularyId()) %>',
 				});
 			});
 		}
