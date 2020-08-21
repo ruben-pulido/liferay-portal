@@ -252,6 +252,14 @@ public class AssetVocabularyServiceImpl extends AssetVocabularyServiceBaseImpl {
 
 	@Override
 	public List<AssetVocabulary> getGroupVocabularies(
+		long groupId, int visibilityType) {
+
+		return assetVocabularyLocalService.getGroupVocabularies(
+			groupId, visibilityType);
+	}
+
+	@Override
+	public List<AssetVocabulary> getGroupVocabularies(
 		long groupId, String name, int start, int end,
 		OrderByComparator<AssetVocabulary> orderByComparator) {
 
