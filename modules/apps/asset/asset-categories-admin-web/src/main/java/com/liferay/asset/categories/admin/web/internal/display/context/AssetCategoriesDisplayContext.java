@@ -499,17 +499,8 @@ public class AssetCategoriesDisplayContext {
 
 		List<AssetVocabulary> vocabularies =
 			AssetVocabularyServiceUtil.getGroupVocabularies(
-				_themeDisplay.getScopeGroupId());
-
-		Stream<AssetVocabulary> stream = vocabularies.stream();
-
-		List<AssetVocabulary> targetVocabularies = stream.filter(
-			targetVocabulary ->
-				targetVocabulary.getVisibilityType() ==
-					sourceVocabulary.getVisibilityType()
-		).collect(
-			Collectors.toList()
-		);
+				_themeDisplay.getScopeGroupId(),
+				sourceVocabulary.getVisibilityType());
 
 		PortletURL selectCategoryURL = PortletProviderUtil.getPortletURL(
 			_httpServletRequest, AssetCategory.class.getName(),
@@ -524,7 +515,7 @@ public class AssetCategoriesDisplayContext {
 		selectCategoryURL.setParameter(
 			"vocabularyIds",
 			ListUtil.toString(
-				targetVocabularies, AssetVocabulary.VOCABULARY_ID_ACCESSOR));
+				vocabularies, AssetVocabulary.VOCABULARY_ID_ACCESSOR));
 		selectCategoryURL.setWindowState(LiferayWindowState.POP_UP);
 
 		_selectCategoryURL = selectCategoryURL.toString();
