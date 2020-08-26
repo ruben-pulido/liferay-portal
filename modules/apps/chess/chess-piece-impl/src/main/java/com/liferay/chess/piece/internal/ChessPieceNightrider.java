@@ -14,19 +14,29 @@
 
 package com.liferay.chess.piece.internal;
 
-import com.liferay.chess.piece.BaseChessPiece;
 import com.liferay.chess.piece.ChessPiece;
+import com.liferay.chess.quote.ChessQuoteProvider;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Rubén Pulido
  */
 @Component(immediate = true, service = ChessPiece.class)
-public class ChessPieceNightrider extends BaseChessPiece implements ChessPiece {
+public class ChessPieceNightrider implements ChessPiece {
 
+	@Override
+	public String getCathphrase() {
+		return _chessQuoteProvider.getQuote();
+	}
+
+	@Override
 	public String getName() {
 		return "nightrider";
 	}
+
+	@Reference
+	private ChessQuoteProvider _chessQuoteProvider;
 
 }
