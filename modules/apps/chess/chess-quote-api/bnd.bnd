@@ -1,0 +1,4 @@
+Bundle-Name: Liferay Chess Quote API
+Bundle-SymbolicName: com.liferay.chess.quote.api
+Bundle-Version: 1.0.0
+Export-Package: com.liferay.chess.quote
