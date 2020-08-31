@@ -18,7 +18,9 @@ import React from 'react';
 
 export default function ChessAddMove() {
 	const handleAddMoveClick = () => {
-		alert('Add Move button clicked.');
+		const moveTextInput = document.getElementById('moveTextInput');
+
+		alert('Add Move button clicked with move: ' + moveTextInput.value);
 	};
 
 	return (
