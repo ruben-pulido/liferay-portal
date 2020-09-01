@@ -30,6 +30,7 @@ const ChessGame = ({config}) => {
 			<ChessAddMove
 				actionUrl={config.urls.addMoveURL}
 				chessGameId={config.chessGameId}
+				initialChessMoves={config.initialChessMoves}
 				portletNamespace={config.portletNamespace}
 			/>
 		</div>
