@@ -22,10 +22,22 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 
 import java.util.Map;
 
+import javax.portlet.ActionRequest;
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletURL;
+import javax.portlet.RenderResponse;
+
 /**
  * @author Rubén Pulido
  */
 public class ChessPlayGameDisplayContext {
+
+	public ChessPlayGameDisplayContext(
+		PortletRequest portletRequest, RenderResponse renderResponse) {
+
+		_portletRequest = portletRequest;
+		_renderResponse = renderResponse;
+	}
 
 	public Map<String, Object> getContext() {
 		return HashMapBuilder.<String, Object>put(
@@ -47,6 +59,11 @@ public class ChessPlayGameDisplayContext {
 				).put(
 					"chessGameId", chessGame.getChessGameId()
 				).put(
+					"urls",
+					() -> HashMapBuilder.<String, Object>put(
+						"addMoveURL", () -> getAddMoveActionURL()
+					).build()
+				).put(
 					"whitePlayer",
 					() -> HashMapBuilder.<String, Object>put(
 						"emailAddress",
@@ -62,6 +79,17 @@ public class ChessPlayGameDisplayContext {
 		).build();
 	}
 
+	protected String getAddMoveActionURL() {
+		PortletURL actionURL = _renderResponse.createActionURL();
+
+		actionURL.setParameter(
+			ActionRequest.ACTION_NAME, "/chess_play_game/add_move");
+
+		actionURL.setParameter("move", _portletRequest.getParameter("move"));
+
+		return actionURL.toString();
+	}
+
 	private ChessGame _getChessGame() {
 		if (_chessGame != null) {
 			return _chessGame;
@@ -73,5 +101,7 @@ public class ChessPlayGameDisplayContext {
 	}
 
 	private ChessGame _chessGame;
+	private final PortletRequest _portletRequest;
+	private final RenderResponse _renderResponse;
 
 }
