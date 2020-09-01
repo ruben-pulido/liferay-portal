@@ -16,13 +16,20 @@ import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
 import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {useState} from 'react';
+
+const PLAYER_COLOR = {
+	BLACK: 'Black',
+	WHITE: 'White',
+};
 
 export default function ChessAddMove({
 	actionUrl,
 	chessGameId,
 	portletNamespace,
 }) {
+	const [currentTurn, setCurrentTurn] = useState(PLAYER_COLOR.WHITE);
+
 	const handleAddMoveClick = () => {
 		const moveTextInput = document.getElementById('moveTextInput');
 
@@ -39,11 +46,19 @@ export default function ChessAddMove({
 			body: formData,
 			method: 'POST',
 		});
+
+		if (currentTurn === PLAYER_COLOR.WHITE) {
+			setCurrentTurn(PLAYER_COLOR.BLACK);
+		}
+		else {
+			setCurrentTurn(PLAYER_COLOR.WHITE);
+		}
 	};
 
 	return (
 		<div className="chess-game__chess-add-move">
 			Chess Add Move
+			<div>Current turn: {currentTurn}</div>
 			<ClayForm.Group>
 				<label htmlFor="moveTextInput">Move</label>
 				<ClayInput id="moveTextInput" placeholder="e2e4" type="text" />
