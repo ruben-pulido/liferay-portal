@@ -14,7 +14,7 @@
 
 import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
-import {fetch} from 'frontend-js-web';
+import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -33,11 +33,7 @@ export default function ChessAddMove({
 			chessMove,
 		});
 
-		const formData = new FormData();
-
-		Object.keys(data).forEach((key) => {
-			formData.set(key, data[key]);
-		});
+		const formData = objectToFormData(data);
 
 		fetch(actionUrl, {
 			body: formData,
