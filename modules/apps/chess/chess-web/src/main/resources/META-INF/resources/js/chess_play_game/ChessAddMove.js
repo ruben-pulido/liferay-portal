@@ -26,9 +26,10 @@ const PLAYER_COLOR = {
 export default function ChessAddMove({
 	actionUrl,
 	chessGameId,
+	initialChessMoves,
 	portletNamespace,
 }) {
-	const [chessMoves, setChessMoves] = useState([]);
+	const [chessMoves, setChessMoves] = useState(initialChessMoves);
 	const [currentTurn, setCurrentTurn] = useState(PLAYER_COLOR.WHITE);
 
 	const handleAddMoveClick = () => {
@@ -84,5 +85,7 @@ export default function ChessAddMove({
 ChessAddMove.propTypes = {
 	actionUrl: PropTypes.string.isRequired,
 	chessGameId: PropTypes.number.isRequired,
+	initialChessMoves: PropTypes.arrayOf(PropTypes.string.isRequired)
+		.isRequired,
 	portletNamespace: PropTypes.string,
 };
