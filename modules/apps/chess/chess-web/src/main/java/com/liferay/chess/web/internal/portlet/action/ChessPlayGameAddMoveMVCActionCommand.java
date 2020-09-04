@@ -15,11 +15,12 @@
 package com.liferay.chess.web.internal.portlet.action;
 
 import com.liferay.announcements.kernel.exception.NoSuchEntryException;
+import com.liferay.chess.arbiter.ChessArbiter;
 import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.ChessGameLocalService;
 import com.liferay.chess.web.internal.constants.ChessPortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
@@ -67,7 +68,9 @@ public class ChessPlayGameAddMoveMVCActionCommand extends BaseMVCActionCommand {
 
 			JSONPortletResponseUtil.writeJSON(
 				actionRequest, actionResponse,
-				JSONFactoryUtil.createJSONObject());
+				JSONUtil.put(
+					"chessGameResult",
+					_chessArbiter.getChessGameResult(chessGameId)));
 		}
 		catch (PortalException portalException) {
 			_log.error(portalException, portalException);
@@ -76,6 +79,9 @@ public class ChessPlayGameAddMoveMVCActionCommand extends BaseMVCActionCommand {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ChessPlayGameAddMoveMVCActionCommand.class);
+
+	@Reference
+	private ChessArbiter _chessArbiter;
 
 	@Reference
 	private ChessGameLocalService _chessGameLocalService;
