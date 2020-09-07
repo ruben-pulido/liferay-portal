@@ -18,6 +18,7 @@ import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 
+import ChessMoves from './ChessMoves';
 import LoggedInUserContext from './LoggedInUserContext';
 
 const GAME_RESULT = {
@@ -89,14 +90,7 @@ export default function ChessAddMove({
 			<div>Logged in user: {loggedInUser.emailAddress}</div>
 			<div>Current turn: {currentTurn}</div>
 			{gameResult && <div>Game result: {GAME_RESULT[gameResult]}</div>}
-			<div>
-				Moves:
-				<ul>
-					{chessMoves.map((chessMove, i) => (
-						<li key={i}>{chessMove}</li>
-					))}
-				</ul>
-			</div>
+			<ChessMoves chessMoves={chessMoves} />
 			<ClayForm.Group>
 				<label htmlFor="moveTextInput">Move</label>
 				<ClayInput
