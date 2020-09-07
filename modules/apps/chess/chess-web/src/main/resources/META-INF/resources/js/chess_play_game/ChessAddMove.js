@@ -14,20 +14,12 @@
 
 import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
-import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useContext, useRef} from 'react';
 
 import LoggedInUserContext from './LoggedInUserContext';
 
-export default function ChessAddMove({
-	actionUrl,
-	addChessMove,
-	chessGameId,
-	portletNamespace,
-	setGameResult,
-	updateCurrentTurn,
-}) {
+export default function ChessAddMove({handleAddChessMove}) {
 	const loggedInUser = useContext(LoggedInUserContext);
 
 	const handleAddMoveClick = () => {
@@ -35,24 +27,7 @@ export default function ChessAddMove({
 
 		const chessMove = moveTextInput.value;
 
-		const data = Liferay.Util.ns(portletNamespace, {
-			chessGameId,
-			chessMove,
-		});
-
-		const formData = objectToFormData(data);
-
-		fetch(actionUrl, {
-			body: formData,
-			method: 'POST',
-		})
-			.then((response) => response.json())
-			.then((json) => {
-				setGameResult(json?.chessGameResult ?? null);
-			});
-
-		addChessMove(chessMove);
-		updateCurrentTurn();
+		handleAddChessMove(chessMove);
 
 		moveTextInputRef.current.focus();
 		moveTextInputRef.current.value = '';
@@ -81,10 +56,5 @@ export default function ChessAddMove({
 }
 
 ChessAddMove.propTypes = {
-	actionUrl: PropTypes.string.isRequired,
-	addChessMove: PropTypes.func.isRequired,
-	chessGameId: PropTypes.number.isRequired,
-	portletNamespace: PropTypes.string,
-	setGameResult: PropTypes.func.isRequired,
-	updateCurrentTurn: PropTypes.func.isRequired,
+	handleAddChessMove: PropTypes.func.isRequired,
 };
