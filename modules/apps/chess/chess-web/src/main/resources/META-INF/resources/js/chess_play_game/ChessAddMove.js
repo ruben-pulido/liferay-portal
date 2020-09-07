@@ -19,16 +19,14 @@ import PropTypes from 'prop-types';
 import React, {useContext, useRef} from 'react';
 
 import LoggedInUserContext from './LoggedInUserContext';
-import {PLAYER_COLOR} from './constants';
 
 export default function ChessAddMove({
 	actionUrl,
 	addChessMove,
 	chessGameId,
-	currentTurn,
 	portletNamespace,
-	setCurrentTurn,
 	setGameResult,
+	updateCurrentTurn,
 }) {
 	const loggedInUser = useContext(LoggedInUserContext);
 
@@ -54,13 +52,7 @@ export default function ChessAddMove({
 			});
 
 		addChessMove(chessMove);
-
-		if (currentTurn === PLAYER_COLOR.WHITE) {
-			setCurrentTurn(PLAYER_COLOR.BLACK);
-		}
-		else {
-			setCurrentTurn(PLAYER_COLOR.WHITE);
-		}
+		updateCurrentTurn();
 
 		moveTextInputRef.current.focus();
 		moveTextInputRef.current.value = '';
@@ -92,8 +84,7 @@ ChessAddMove.propTypes = {
 	actionUrl: PropTypes.string.isRequired,
 	addChessMove: PropTypes.func.isRequired,
 	chessGameId: PropTypes.number.isRequired,
-	currentTurn: PropTypes.string,
 	portletNamespace: PropTypes.string,
-	setCurrentTurn: PropTypes.func.isRequired,
 	setGameResult: PropTypes.func.isRequired,
+	updateCurrentTurn: PropTypes.func.isRequired,
 };
