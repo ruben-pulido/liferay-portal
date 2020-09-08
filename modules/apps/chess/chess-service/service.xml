@@ -42,5 +42,6 @@
 		</finder>
 	</entity>
 	<exceptions>
+		<exception>InvalidChessMove</exception>
 	</exceptions>
 </service-builder>
