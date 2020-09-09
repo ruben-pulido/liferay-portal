@@ -87,8 +87,6 @@ public class ChessPlayGameDisplayContext {
 		actionURL.setParameter(
 			ActionRequest.ACTION_NAME, "/chess_play_game/add_move");
 
-		actionURL.setParameter("move", _portletRequest.getParameter("move"));
-
 		return actionURL.toString();
 	}
 
