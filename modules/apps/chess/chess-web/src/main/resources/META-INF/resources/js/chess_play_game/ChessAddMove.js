@@ -16,7 +16,9 @@ import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
 import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
+
+import LoggedInUserContext from './LoggedInUserContext';
 
 const GAME_RESULT = {
 	BLACK_WINS: 'Black wins',
@@ -38,6 +40,8 @@ export default function ChessAddMove({
 	const [chessMoves, setChessMoves] = useState(initialChessMoves);
 	const [currentTurn, setCurrentTurn] = useState(PLAYER_COLOR.WHITE);
 	const [gameResult, setGameResult] = useState(null);
+
+	const loggedInUser = useContext(LoggedInUserContext);
 
 	const handleAddMoveClick = () => {
 		const moveTextInput = document.getElementById('moveTextInput');
@@ -77,6 +81,7 @@ export default function ChessAddMove({
 	return (
 		<div className="chess-game__chess-add-move">
 			Chess Add Move
+			<div>Logged in user: {loggedInUser.emailAddress}</div>
 			<div>Current turn: {currentTurn}</div>
 			{gameResult && <div>Game result: {GAME_RESULT[gameResult]}</div>}
 			<div>
