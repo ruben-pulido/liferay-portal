@@ -1,0 +1,4 @@
+Bundle-Name: Liferay Chess Piece API
+Bundle-SymbolicName: com.liferay.chess.piece.api
+Bundle-Version: 1.0.0
+Export-Package: com.liferay.chess.piece
