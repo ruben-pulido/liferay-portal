@@ -17,9 +17,12 @@ package com.liferay.chess.piece.internal;
 import com.liferay.chess.piece.BaseChessPiece;
 import com.liferay.chess.piece.ChessPiece;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Rubén Pulido
  */
+@Component(immediate = true, service = ChessPiece.class)
 public class ChessPieceNightrider extends BaseChessPiece implements ChessPiece {
 
 	public String getName() {
