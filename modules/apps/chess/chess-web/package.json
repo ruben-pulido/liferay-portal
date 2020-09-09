@@ -1,0 +1,23 @@
+{
+	"dependencies": {
+		"react": "16.12.0"
+	},
+	"description": "",
+	"jest": {
+		"testPathIgnorePatterns": [
+			"<rootDir>/test/js/[^/]+\\.js"
+		]
+	},
+	"main": "js/index.es.js",
+	"name": "chess-web",
+	"private": true,
+	"scripts": {
+		"build": "liferay-npm-scripts build",
+		"checkFormat": "liferay-npm-scripts check",
+		"csf": "liferay-npm-scripts fix",
+		"format": "liferay-npm-scripts fix",
+		"test": "env TZ=utc liferay-npm-scripts test",
+		"test:watch": "env TZ=utc liferay-npm-scripts test --watch"
+	},
+	"version": "1.0.0"
+}
