@@ -80,6 +80,9 @@ const ChessGame = ({config}) => {
 			})
 			.then(() => {
 				updateCurrentTurn();
+			})
+			.catch((error) => {
+				showNotification(error.message, true);
 			});
 	};
 
