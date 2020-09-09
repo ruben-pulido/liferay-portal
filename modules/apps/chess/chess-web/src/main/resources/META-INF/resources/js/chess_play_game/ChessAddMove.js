@@ -16,32 +16,21 @@ import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
 import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useRef} from 'react';
 
-import ChessMoves from './ChessMoves';
 import LoggedInUserContext from './LoggedInUserContext';
-
-const GAME_RESULT = {
-	BLACK_WINS: 'Black wins',
-	DRAW: 'Draw',
-	WHITE_WINS: 'White wins',
-};
-
-const PLAYER_COLOR = {
-	BLACK: 'Black',
-	WHITE: 'White',
-};
+import {PLAYER_COLOR} from './constants';
 
 export default function ChessAddMove({
 	actionUrl,
 	chessGameId,
-	initialChessMoves,
+	chessMoves,
+	currentTurn,
 	portletNamespace,
+	setChessMoves,
+	setCurrentTurn,
+	setGameResult,
 }) {
-	const [chessMoves, setChessMoves] = useState(initialChessMoves);
-	const [currentTurn, setCurrentTurn] = useState(PLAYER_COLOR.WHITE);
-	const [gameResult, setGameResult] = useState(null);
-
 	const loggedInUser = useContext(LoggedInUserContext);
 
 	const handleAddMoveClick = () => {
@@ -78,19 +67,12 @@ export default function ChessAddMove({
 		moveTextInputRef.current.value = '';
 	};
 
-	useEffect(() => {
-		document.title = `Current turn: ${currentTurn}`;
-	}, [currentTurn]);
-
 	const moveTextInputRef = useRef(null);
 
 	return (
 		<div className="chess-game__chess-add-move">
 			Chess Add Move
 			<div>Logged in user: {loggedInUser.emailAddress}</div>
-			<div>Current turn: {currentTurn}</div>
-			{gameResult && <div>Game result: {GAME_RESULT[gameResult]}</div>}
-			<ChessMoves chessMoves={chessMoves} />
 			<ClayForm.Group>
 				<label htmlFor="moveTextInput">Move</label>
 				<ClayInput
@@ -110,7 +92,10 @@ export default function ChessAddMove({
 ChessAddMove.propTypes = {
 	actionUrl: PropTypes.string.isRequired,
 	chessGameId: PropTypes.number.isRequired,
-	initialChessMoves: PropTypes.arrayOf(PropTypes.string.isRequired)
-		.isRequired,
+	chessMoves: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+	currentTurn: PropTypes.string,
 	portletNamespace: PropTypes.string,
+	setChessMoves: PropTypes.func.isRequired,
+	setCurrentTurn: PropTypes.func.isRequired,
+	setGameResult: PropTypes.func.isRequired,
 };
