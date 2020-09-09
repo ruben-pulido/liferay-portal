@@ -19,7 +19,7 @@ import com.liferay.chess.arbiter.ChessArbiter;
 import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.ChessGameLocalService;
 import com.liferay.chess.web.internal.constants.ChessPortletKeys;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.chess.web.internal.handler.ChessGameExceptionRequestHandler;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -72,8 +72,13 @@ public class ChessPlayGameAddMoveMVCActionCommand extends BaseMVCActionCommand {
 					"chessGameResult",
 					_chessArbiter.getChessGameResult(chessGameId)));
 		}
-		catch (PortalException portalException) {
-			_log.error(portalException, portalException);
+		catch (Exception exception) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(exception, exception);
+			}
+
+			_chessGameExceptionRequestHandler.handleException(
+				actionRequest, actionResponse, exception);
 		}
 	}
 
@@ -82,6 +87,9 @@ public class ChessPlayGameAddMoveMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	private ChessArbiter _chessArbiter;
+
+	@Reference
+	private ChessGameExceptionRequestHandler _chessGameExceptionRequestHandler;
 
 	@Reference
 	private ChessGameLocalService _chessGameLocalService;
