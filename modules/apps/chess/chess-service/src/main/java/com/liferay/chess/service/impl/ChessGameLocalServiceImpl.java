@@ -18,12 +18,15 @@ import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.base.ChessGameLocalServiceBaseImpl;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.util.Date;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The implementation of the chess game local service.
@@ -80,5 +83,33 @@ public class ChessGameLocalServiceImpl extends ChessGameLocalServiceBaseImpl {
 
 		return chessGamePersistence.update(chessGame);
 	}
+
+	/**
+	 * NOTE FOR DEVELOPERS:
+	 * <p>
+	 * Never reference this class directly. Use <code>com.liferay.chess.service.ChessGameLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.liferay.chess.service.ChessGameLocalServiceUtil</code>.
+	 */
+	@Override
+	public ChessGame updateChessGame(long chessGameId, String move)
+		throws PortalException {
+
+		ChessGame chessGame = fetchChessGame(chessGameId);
+
+		if (chessGame == null) {
+			return null;
+		}
+
+		JSONArray movesJSONArray = _jsonFactory.createJSONArray(
+			chessGame.getMoves());
+
+		movesJSONArray.put(move);
+
+		chessGame.setMoves(movesJSONArray.toJSONString());
+
+		return chessGamePersistence.update(chessGame);
+	}
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 }
