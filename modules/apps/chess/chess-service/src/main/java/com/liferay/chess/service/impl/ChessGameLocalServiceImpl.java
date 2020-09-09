@@ -14,8 +14,14 @@
 
 package com.liferay.chess.service.impl;
 
+import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.base.ChessGameLocalServiceBaseImpl;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ServiceContext;
+
+import java.util.Date;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -40,8 +46,39 @@ public class ChessGameLocalServiceImpl extends ChessGameLocalServiceBaseImpl {
 
 	/**
 	 * NOTE FOR DEVELOPERS:
-	 *
+	 * <p>
 	 * Never reference this class directly. Use <code>com.liferay.chess.service.ChessGameLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.liferay.chess.service.ChessGameLocalServiceUtil</code>.
 	 */
+	@Override
+	public ChessGame addChessGame(
+			long userId, long groupId, long whiteBlackPlayerId,
+			long blackPlayerId, ServiceContext serviceContext)
+		throws PortalException {
+
+		User user = userLocalService.getUser(userId);
+
+		long companyId = user.getCompanyId();
+
+		if (serviceContext != null) {
+			companyId = serviceContext.getCompanyId();
+		}
+		else {
+			serviceContext = new ServiceContext();
+		}
+
+		ChessGame chessGame = createChessGame(
+			counterLocalService.increment(ChessGame.class.getName()));
+
+		chessGame.setGroupId(groupId);
+		chessGame.setCompanyId(companyId);
+		chessGame.setUserId(user.getUserId());
+		chessGame.setUserName(user.getFullName());
+		chessGame.setCreateDate(serviceContext.getCreateDate(new Date()));
+		chessGame.setWhitePlayerId(whiteBlackPlayerId);
+		chessGame.setBlackPlayerId(blackPlayerId);
+		chessGame.setMoves("[]");
+
+		return chessGamePersistence.update(chessGame);
+	}
 
 }
