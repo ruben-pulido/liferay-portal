@@ -44,9 +44,17 @@ const showNotification = (message, error) => {
 	parentOpenToast(openToastParams);
 };
 
+const getInitialCurrentTurn = (initialChessMoves) => {
+	return initialChessMoves.length % 2 === 0
+		? PLAYER_COLOR.WHITE
+		: PLAYER_COLOR.BLACK;
+};
+
 const ChessGame = ({config}) => {
 	const [chessMoves, setChessMoves] = useState(config.initialChessMoves);
-	const [currentTurn, setCurrentTurn] = useState(PLAYER_COLOR.WHITE);
+	const [currentTurn, setCurrentTurn] = useState(
+		getInitialCurrentTurn(config.initialChessMoves)
+	);
 	const [gameResult, setGameResult] = useState(null);
 
 	const addChessMove = (
