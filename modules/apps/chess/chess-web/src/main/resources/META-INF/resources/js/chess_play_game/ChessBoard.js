@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,15 +11,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ include file="/init.jsp" %>
+import React from 'react';
 
-Play Chess Game
-
-<div>
-	<react:component
-		data="<%= new HashMap<String, Object>() %>"
-		module="js/chess_play_game/ChessGame"
-	/>
-</div>
+export default function ChessBoard() {
+	return <div className="chess-game__chess-board">Chess Board</div>;
+}

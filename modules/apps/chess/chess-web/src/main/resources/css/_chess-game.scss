@@ -1,0 +1,11 @@
+.chess-game-root {
+	&__chess-moves {
+		.row-black-player {
+			background-color: $blackPlayerBackgroundColor;
+		}
+
+		.row-white-player {
+			background-color: $whitePlayerBackgroundColor;
+		}
+	}
+}
