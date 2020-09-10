@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -45,7 +46,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.junit.After;
@@ -471,18 +471,61 @@ public class ChessGamePersistenceTest {
 
 		_persistence.clearCache();
 
-		ChessGame existingChessGame = _persistence.findByPrimaryKey(
-			newChessGame.getPrimaryKey());
+		_assertOriginalValues(
+			_persistence.findByPrimaryKey(newChessGame.getPrimaryKey()));
+	}
 
-		Assert.assertTrue(
-			Objects.equals(
-				existingChessGame.getUuid(),
-				ReflectionTestUtil.invoke(
-					existingChessGame, "getOriginalUuid", new Class<?>[0])));
+	@Test
+	public void testResetOriginalValuesWithDynamicQueryLoadFromDatabase()
+		throws Exception {
+
+		_testResetOriginalValuesWithDynamicQuery(true);
+	}
+
+	@Test
+	public void testResetOriginalValuesWithDynamicQueryLoadFromSession()
+		throws Exception {
+
+		_testResetOriginalValuesWithDynamicQuery(false);
+	}
+
+	private void _testResetOriginalValuesWithDynamicQuery(boolean clearSession)
+		throws Exception {
+
+		ChessGame newChessGame = addChessGame();
+
+		if (clearSession) {
+			Session session = _persistence.openSession();
+
+			session.flush();
+
+			session.clear();
+		}
+
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
+			ChessGame.class, _dynamicQueryClassLoader);
+
+		dynamicQuery.add(
+			RestrictionsFactoryUtil.eq(
+				"chessGameId", newChessGame.getChessGameId()));
+
+		List<ChessGame> result = _persistence.findWithDynamicQuery(
+			dynamicQuery);
+
+		_assertOriginalValues(result.get(0));
+	}
+
+	private void _assertOriginalValues(ChessGame chessGame) {
 		Assert.assertEquals(
-			Long.valueOf(existingChessGame.getGroupId()),
+			chessGame.getUuid(),
+			ReflectionTestUtil.invoke(
+				chessGame, "getColumnOriginalValue",
+				new Class<?>[] {String.class}, "uuid_"));
+		Assert.assertEquals(
+			Long.valueOf(chessGame.getGroupId()),
 			ReflectionTestUtil.<Long>invoke(
-				existingChessGame, "getOriginalGroupId", new Class<?>[0]));
+				chessGame, "getColumnOriginalValue",
+				new Class<?>[] {String.class}, "groupId"));
 	}
 
 	protected ChessGame addChessGame() throws Exception {
