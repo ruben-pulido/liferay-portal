@@ -51,7 +51,7 @@ public class FragmentPortletRendererImpl implements FragmentPortletRenderer {
 				portletName, instanceId, StringPool.BLANK,
 				PortletPreferencesFactoryConstants.
 					SETTINGS_SCOPE_PORTLET_INSTANCE,
-				defaultPreferences, false, null, httpServletRequest,
+				defaultPreferences, true, null, httpServletRequest,
 				pipingServletResponse);
 		}
 		catch (Exception exception) {
