@@ -88,9 +88,7 @@ export function ImagePropertiesPanel({item}) {
 		editableConfig.imageTitle ||
 		(imageUrl === editableValue.defaultValue ? '' : imageUrl);
 
-	const [imageDescription, setImageDescription] = useState(
-		editableConfig.alt || ''
-	);
+	const [imageDescription, setImageDescription] = useState('');
 
 	useEffect(() => {
 		const {maxWidth, minWidth} = config.availableViewportSizes[
@@ -155,13 +153,20 @@ export function ImagePropertiesPanel({item}) {
 
 	useEffect(() => {
 		setImageDescription((imageDescription) => {
-			if (imageDescription !== editableConfig.alt) {
-				return editableConfig.alt || '';
+			const currentImageDescription =
+				typeof editableConfig.alt === 'object'
+					? editableConfig.alt[languageId] ||
+					  editableConfig.alt[config.defaultLanguageId] ||
+					  ''
+					: editableConfig.alt || '';
+
+			if (imageDescription !== currentImageDescription) {
+				return currentImageDescription;
 			}
 
 			return imageDescription;
 		});
-	}, [editableConfig.alt]);
+	}, [editableConfig.alt, languageId]);
 
 	const updateEditableConfig = (
 		newConfig = {},
@@ -328,11 +333,28 @@ export function ImagePropertiesPanel({item}) {
 					<ClayInput
 						id={imageDescriptionInputId}
 						onBlur={() => {
-							const previousValue = editableConfig.alt || '';
+							const previousValue =
+								typeof editableConfig.alt === 'object'
+									? editableConfig.alt[languageId] ||
+									  editableConfig.alt[
+											config.defaultLanguageId
+									  ] ||
+									  ''
+									: editableConfig.alt || '';
 
 							if (previousValue !== imageDescription) {
 								updateEditableConfig(
-									{alt: imageDescription},
+									{
+										alt: {
+											...(typeof editableConfig.alt ===
+											'object'
+												? editableConfig.alt
+												: {
+														[config.defaultLanguageId]: previousValue,
+												  }),
+											[languageId]: imageDescription,
+										},
+									},
 									editableValues,
 									editableId,
 									processorKey
