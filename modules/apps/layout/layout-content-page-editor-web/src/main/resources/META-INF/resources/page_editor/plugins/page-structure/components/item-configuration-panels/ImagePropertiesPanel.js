@@ -151,17 +151,17 @@ export function ImagePropertiesPanel({item}) {
 		}
 	}, [dispatch, editableContent.fileEntryId]);
 
+	const translatedImageDescription =
+		typeof editableConfig.alt === 'object'
+			? editableConfig.alt[languageId] ||
+			  editableConfig.alt[config.defaultLanguageId] ||
+			  ''
+			: editableConfig.alt || '';
+
 	useEffect(() => {
 		setImageDescription((imageDescription) => {
-			const currentImageDescription =
-				typeof editableConfig.alt === 'object'
-					? editableConfig.alt[languageId] ||
-					  editableConfig.alt[config.defaultLanguageId] ||
-					  ''
-					: editableConfig.alt || '';
-
-			if (imageDescription !== currentImageDescription) {
-				return currentImageDescription;
+			if (imageDescription !== translatedImageDescription) {
+				return translatedImageDescription;
 			}
 
 			return imageDescription;
@@ -333,25 +333,20 @@ export function ImagePropertiesPanel({item}) {
 					<ClayInput
 						id={imageDescriptionInputId}
 						onBlur={() => {
-							const previousValue =
-								typeof editableConfig.alt === 'object'
-									? editableConfig.alt[languageId] ||
-									  editableConfig.alt[
-											config.defaultLanguageId
-									  ] ||
-									  ''
-									: editableConfig.alt || '';
+							if (
+								translatedImageDescription !== imageDescription
+							) {
+								const altValue =
+									typeof editableConfig.alt === 'object'
+										? editableConfig.alt
+										: {
+												[config.defaultLanguageId]: translatedImageDescription,
+										  };
 
-							if (previousValue !== imageDescription) {
 								updateEditableConfig(
 									{
 										alt: {
-											...(typeof editableConfig.alt ===
-											'object'
-												? editableConfig.alt
-												: {
-														[config.defaultLanguageId]: previousValue,
-												  }),
+											...altValue,
 											[languageId]: imageDescription,
 										},
 									},
