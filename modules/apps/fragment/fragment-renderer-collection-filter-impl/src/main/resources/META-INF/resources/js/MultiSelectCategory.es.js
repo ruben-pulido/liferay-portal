@@ -12,8 +12,46 @@
  * details.
  */
 
-import React from 'react';
+import ClayButton from '@clayui/button';
+import {ClayDropDownWithItems} from '@clayui/drop-down';
+import React, {useState} from 'react';
 
-export default function MultiSelectCategory() {
-	return <div>MultiSelectCategory</div>;
-}
+const MultiSelectCategory = () => {
+  const items = [
+	{
+	  checked: false,
+	  label: "Practice",
+	  onChange: () => {
+	  	alert("Practice changed");
+	  },
+	  type: "checkbox",
+	  value: "39128"
+	},
+	{
+	  checked: false,
+	  label: "Competition",
+	  onChange: () => {
+	  	alert("Competition changed");
+	  },
+	  type: "checkbox",
+	  value: "39131"
+	}
+  ];
+  const [categories, setCategories] = useState({"39128": false, "39131": false});
+
+  return (
+    <ClayDropDownWithItems
+      footerContent={
+        <>
+          <ClayButton>{"Apply"}</ClayButton>
+        </>
+      }
+      items={items}
+      trigger={<ClayButton>{"Select"}</ClayButton>}
+    />
+  );
+};
+
+export default () => (
+	<MultiSelectCategory />
+);
