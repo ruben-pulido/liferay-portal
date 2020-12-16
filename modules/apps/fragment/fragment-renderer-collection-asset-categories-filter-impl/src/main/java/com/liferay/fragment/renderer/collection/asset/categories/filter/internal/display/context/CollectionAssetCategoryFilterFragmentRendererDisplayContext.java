@@ -155,7 +155,7 @@ public class CollectionAssetCategoryFilterFragmentRendererDisplayContext {
 				);
 			}
 		).put(
-			"fragmentEntryLinkId",
+			"parameterNameSuffix",
 			String.valueOf(
 				GetterUtil.getLong(
 					_httpServletRequest.getAttribute(

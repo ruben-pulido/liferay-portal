@@ -19,7 +19,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 
 export default function MultiSelectCategory({
 	assetCategories,
-	fragmentEntryLinkId,
+	parameterNameSuffix,
 	selectedAssetCategoryIds: initialSelectedCategoryIds,
 }) {
 	const [selectedCategoryIds, setSelectedCategoryIds] = useState(() => {
@@ -74,7 +74,7 @@ export default function MultiSelectCategory({
 
 	const onApply = () => {
 		if (!editMode) {
-			const queryParamName = `categoryId_${fragmentEntryLinkId}`;
+			const queryParamName = `categories_${parameterNameSuffix}`;
 			const search = new URLSearchParams(window.location.search);
 
 			search.delete(queryParamName);
@@ -133,6 +133,6 @@ MultiSelectCategory.propTypes = {
 			label: PropTypes.string.isRequired,
 		}).isRequired
 	),
-	fragmentEntryLinkId: PropTypes.string.isRequired,
+	parameterNameSuffix: PropTypes.string.isRequired,
 	selectedAssetCategoryIds: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
