@@ -27,11 +27,19 @@ export const useBackgroundImageMediaQueries = (elementId, backgroundImage) => {
 	useEffect(() => {
 		setBackgroundImageMediaQueries('');
 
-		if (!backgroundImage?.fileEntryId) {
+		if (
+			!backgroundImage?.fileEntryId &&
+			(!backgroundImage?.classPK ||
+				!backgroundImage?.className ||
+				!backgroundImage?.fieldId)
+		) {
 			return;
 		}
 
 		ImageService.getAvailableImageConfigurations({
+			className: backgroundImage.className,
+			classPK: backgroundImage.classPK,
+			fieldId: backgroundImage.fieldId,
 			fileEntryId: backgroundImage.fileEntryId,
 			onNetworkStatus: () => {},
 		}).then((imageSizes) => {
