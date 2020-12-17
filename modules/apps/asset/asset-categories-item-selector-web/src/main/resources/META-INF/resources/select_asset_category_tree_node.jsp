@@ -33,6 +33,7 @@ SelectAssetCategoryTreeNodeDisplayContext selectAssetCategoryTreeNodeDisplayCont
 		<clay:button
 			cssClass="asset-category-tree-node-selector"
 			data-category-tree-node-id="<%= selectAssetCategoryTreeNodeDisplayContext.getAssetCategoryTreeNodeId() %>"
+			data-category-tree-node-parameter-suffix="<%= selectAssetCategoryTreeNodeDisplayContext.getAssetCategoryTreeNodeParameterSuffix() %>"
 			data-category-tree-node-type="<%= selectAssetCategoryTreeNodeDisplayContext.getAssetCategoryTreeNodeType() %>"
 			data-title="<%= selectAssetCategoryTreeNodeDisplayContext.getAssetCategoryTreeNodeName() %>"
 			displayType="primary"

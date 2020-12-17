@@ -132,6 +132,18 @@ public class SelectAssetCategoryTreeNodeDisplayContext {
 		return _assetCategoryTreeNodeType;
 	}
 
+	public String getAssetCategoryTreeNodeParameterSuffix() {
+		if (_assetCategoryTreeNodeParameterSuffix != null) {
+			return _assetCategoryTreeNodeParameterSuffix;
+		}
+
+		_assetCategoryTreeNodeParameterSuffix = ParamUtil.get(
+			_httpServletRequest, "assetCategoryTreeNodeParameterSuffix",
+			StringPool.BLANK);
+
+		return _assetCategoryTreeNodeParameterSuffix;
+	}
+
 	public String getAssetCategoryURL(long assetCategoryId)
 		throws PortletException {
 
@@ -326,6 +338,7 @@ public class SelectAssetCategoryTreeNodeDisplayContext {
 	}
 
 	private Long _assetCategoryTreeNodeId;
+	private String _assetCategoryTreeNodeParameterSuffix;
 	private String _assetCategoryTreeNodeType;
 	private final HttpServletRequest _httpServletRequest;
 	private final String _itemSelectedEventName;
