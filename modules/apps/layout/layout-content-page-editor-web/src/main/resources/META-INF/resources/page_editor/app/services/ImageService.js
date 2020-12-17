@@ -20,15 +20,24 @@ export default {
 	/**
 	 * Get available image configurations
 	 * @param {object} options
+	 * @param {string} options.className class name
+	 * @param {string} options.classPK class PK
 	 * @param {string} options.fileEntryId File entry ID
 	 * @param {function} options.onNetworkStatus
 	 */
-	getAvailableImageConfigurations({fileEntryId, onNetworkStatus}) {
+	getAvailableImageConfigurations({
+		className,
+		classPK,
+		fieldId,
+		onNetworkStatus,
+	}) {
 		return serviceFetch(
 			config.getAvailableImageConfigurationsURL,
 			{
 				body: {
-					fileEntryId,
+					className,
+					classPK,
+					fieldId,
 				},
 			},
 			onNetworkStatus
