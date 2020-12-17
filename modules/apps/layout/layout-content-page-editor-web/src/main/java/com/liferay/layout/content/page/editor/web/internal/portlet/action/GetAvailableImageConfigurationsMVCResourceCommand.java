@@ -23,6 +23,15 @@ import com.liferay.adaptive.media.image.model.AMImageEntry;
 import com.liferay.adaptive.media.image.service.AMImageEntryLocalService;
 import com.liferay.adaptive.media.image.url.AMImageURLFactory;
 import com.liferay.document.library.kernel.service.DLAppService;
+import com.liferay.info.exception.NoSuchInfoItemException;
+import com.liferay.info.field.InfoFieldValue;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.InfoItemIdentifier;
+import com.liferay.info.item.InfoItemReference;
+import com.liferay.info.item.InfoItemServiceTracker;
+import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
+import com.liferay.info.type.WebImage;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -31,6 +40,8 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Image;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
@@ -75,6 +86,10 @@ public class GetAvailableImageConfigurationsMVCResourceCommand
 		throws Exception {
 
 		long fileEntryId = ParamUtil.getLong(resourceRequest, "fileEntryId");
+
+		if (fileEntryId == 0) {
+			fileEntryId = _getFileEntryId(resourceRequest);
+		}
 
 		FileEntry fileEntry = _dlAppService.getFileEntry(fileEntryId);
 
@@ -162,6 +177,100 @@ public class GetAvailableImageConfigurationsMVCResourceCommand
 			resourceRequest, resourceResponse, jsonArray);
 	}
 
+	private long _getFileEntryId(ResourceRequest resourceRequest) {
+		String className = ParamUtil.getString(resourceRequest, "className");
+
+		InfoItemFieldValuesProvider<Object> infoItemFieldValuesProvider =
+			_infoItemServiceTracker.getFirstInfoItemService(
+				InfoItemFieldValuesProvider.class, className);
+
+		if (infoItemFieldValuesProvider == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to get info item form provider for class " +
+						className);
+			}
+
+			return 0;
+		}
+
+		long classPK = ParamUtil.getLong(resourceRequest, "classPK");
+
+		InfoItemIdentifier infoItemIdentifier = new ClassPKInfoItemIdentifier(
+			classPK);
+
+		InfoItemObjectProvider<Object> infoItemObjectProvider =
+			_infoItemServiceTracker.getFirstInfoItemService(
+				InfoItemObjectProvider.class, className,
+				infoItemIdentifier.getInfoItemServiceFilter());
+
+		if (infoItemObjectProvider == null) {
+			return 0;
+		}
+
+		Object object = null;
+
+		try {
+			object = infoItemObjectProvider.getInfoItem(infoItemIdentifier);
+		}
+		catch (NoSuchInfoItemException noSuchInfoItemException) {
+			_log.warn(
+				"Unable to get info item for info item identifier " +
+					infoItemIdentifier);
+		}
+
+		if (object == null) {
+			return 0;
+		}
+
+		String fieldId = ParamUtil.getString(resourceRequest, "fieldId");
+
+		InfoFieldValue<Object> infoFieldValue =
+			infoItemFieldValuesProvider.getInfoItemFieldValue(object, fieldId);
+
+		if (infoFieldValue == null) {
+			return 0;
+		}
+
+		Object value = infoFieldValue.getValue();
+
+		if (value == null) {
+			return 0;
+		}
+
+		if (value instanceof WebImage) {
+			WebImage webImage = (WebImage)value;
+
+			InfoItemReference infoItemReference =
+				webImage.getInfoItemReference();
+
+			if (infoItemReference == null) {
+				return 0;
+			}
+
+			InfoItemIdentifier webImageInfoItemIdentifier =
+				infoItemReference.getInfoItemIdentifier();
+
+			if (webImageInfoItemIdentifier == null) {
+				return 0;
+			}
+
+			if (webImageInfoItemIdentifier instanceof
+					ClassPKInfoItemIdentifier) {
+
+				ClassPKInfoItemIdentifier classPKInfoItemIdentifier =
+					(ClassPKInfoItemIdentifier)webImageInfoItemIdentifier;
+
+				return classPKInfoItemIdentifier.getClassPK();
+			}
+		}
+
+		return 0;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		GetAvailableImageConfigurationsMVCResourceCommand.class);
+
 	@Reference
 	private AMImageConfigurationHelper _amImageConfigurationHelper;
 
@@ -173,6 +282,9 @@ public class GetAvailableImageConfigurationsMVCResourceCommand
 
 	@Reference
 	private DLAppService _dlAppService;
+
+	@Reference
+	private InfoItemServiceTracker _infoItemServiceTracker;
 
 	@Reference
 	private MediaQueryProvider _mediaQueryProvider;
