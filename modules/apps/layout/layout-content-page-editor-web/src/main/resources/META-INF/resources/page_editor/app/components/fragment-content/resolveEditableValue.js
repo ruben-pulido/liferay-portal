@@ -12,8 +12,10 @@
  * details.
  */
 
+import {BACKGROUND_IMAGE_FRAGMENT_ENTRY_PROCESSOR} from '../../config/constants/backgroundImageFragmentEntryProcessor';
 import {config} from '../../config/index';
 import InfoItemService from '../../services/InfoItemService';
+import {getImageQueries} from '../../utils/useBackgroundImageQueries';
 
 export default function (
 	editableValues,
@@ -33,9 +35,28 @@ export default function (
 			collectionFieldId: editableValue.collectionFieldId,
 			fieldId: editableValue.fieldId,
 			languageId,
-		}).catch(() => {
-			return selectEditableValueContent(editableValue, languageId);
-		});
+		})
+			.then((value) => {
+				if (
+					processorType === BACKGROUND_IMAGE_FRAGMENT_ENTRY_PROCESSOR
+				) {
+					return getImageQueries('randomId', editableValue)
+						.then((mediaQueries) => {
+							return {
+								...value,
+								mediaQueries,
+							};
+						})
+						.catch(() => {
+							return value;
+						});
+				}
+
+				return value;
+			})
+			.catch(() => {
+				return selectEditableValueContent(editableValue, languageId);
+			});
 	}
 	else {
 		valuePromise = Promise.resolve(
