@@ -17,6 +17,35 @@ import {useEffect, useState} from 'react';
 
 import ImageService from '../services/ImageService';
 
+export const getImageQueries = (
+	elementId,
+	{className, classPK, fieldId, fileEntryId}
+) =>
+	ImageService.getAvailableImageConfigurations({
+		className,
+		classPK,
+		fieldId,
+		fileEntryId,
+		onNetworkStatus: () => {},
+	}).then((imageSizes) => {
+		if (!imageSizes || !imageSizes.length) {
+			return '';
+		}
+
+		return imageSizes
+			.filter((imageSize) => {
+				return imageSize.mediaQuery && imageSize.url;
+			})
+			.map((imageSize) => {
+				return `@media ${imageSize.mediaQuery} {
+						#${elementId} {
+							background-image: url(${imageSize.url}) !important;
+						}
+					}`;
+			})
+			.join('\n');
+	});
+
 export const useBackgroundImageMediaQueries = (elementId, backgroundImage) => {
 	const [
 		backgroundImageMediaQueries,
@@ -36,32 +65,13 @@ export const useBackgroundImageMediaQueries = (elementId, backgroundImage) => {
 			return;
 		}
 
-		ImageService.getAvailableImageConfigurations({
-			className: backgroundImage.className,
-			classPK: backgroundImage.classPK,
-			fieldId: backgroundImage.fieldId,
-			fileEntryId: backgroundImage.fileEntryId,
-			onNetworkStatus: () => {},
-		}).then((imageSizes) => {
-			if (!imageSizes || !imageSizes.length || !isMounted()) {
-				return;
+		getImageQueries(elementId, backgroundImage).then(
+			(backgroundImageMediaQueries) => {
+				if (isMounted()) {
+					setBackgroundImageMediaQueries(backgroundImageMediaQueries);
+				}
 			}
-
-			setBackgroundImageMediaQueries(
-				imageSizes
-					.filter((imageSize) => {
-						return imageSize.mediaQuery && imageSize.url;
-					})
-					.map((imageSize) => {
-						return `@media ${imageSize.mediaQuery} {
-							#${elementId} {
-								background-image: url(${imageSize.url}) !important;
-							}
-						}`;
-					})
-					.join('\n')
-			);
-		});
+		);
 	}, [backgroundImage, elementId, isMounted]);
 
 	return backgroundImageMediaQueries;
