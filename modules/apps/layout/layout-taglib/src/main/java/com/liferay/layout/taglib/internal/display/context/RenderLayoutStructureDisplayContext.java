@@ -949,6 +949,14 @@ public class RenderLayoutStructureDisplayContext {
 			}
 		}
 
+		String collectionFieldId = rowConfigJSONObject.getString(
+			"collectionFieldId");
+
+		if (Validator.isNotNull(collectionFieldId)) {
+			return _getMappedCollectionValue(
+				collectionFieldId, _getDisplayObjectClassedModel());
+		}
+
 		String backgroundImageURL = rowConfigJSONObject.getString("url");
 
 		if (Validator.isNotNull(backgroundImageURL)) {
@@ -956,6 +964,17 @@ public class RenderLayoutStructureDisplayContext {
 		}
 
 		return StringPool.BLANK;
+	}
+
+	private ClassedModel _getDisplayObjectClassedModel() {
+		Object displayObject = _httpServletRequest.getAttribute(
+			InfoDisplayWebKeys.INFO_LIST_DISPLAY_OBJECT);
+
+		if (!(displayObject instanceof ClassedModel)) {
+			return null;
+		}
+
+		return (ClassedModel)displayObject;
 	}
 
 	private long _getFileEntryId(long classNameId, long classPK, String fieldId)
@@ -1207,17 +1226,14 @@ public class RenderLayoutStructureDisplayContext {
 	}
 
 	private long _getMappedCollectionFileEntryId(String fieldId) {
-		Object displayObject = _httpServletRequest.getAttribute(
-			InfoDisplayWebKeys.INFO_LIST_DISPLAY_OBJECT);
+		ClassedModel classedModel = _getDisplayObjectClassedModel();
 
-		if (!(displayObject instanceof ClassedModel)) {
+		if (classedModel == null) {
 			return 0;
 		}
 
-		ClassedModel classedModel = (ClassedModel)displayObject;
-
 		return _getFileEntryId(
-			classedModel.getModelClassName(), displayObject, fieldId);
+			classedModel.getModelClassName(), classedModel, fieldId);
 	}
 
 	private String _getMappedCollectionValue(
@@ -1258,6 +1274,8 @@ public class RenderLayoutStructureDisplayContext {
 		if (infoFieldValue == null) {
 			return StringPool.BLANK;
 		}
+
+		// Sacar value de InfoLocalizedValue > WebImage
 
 		Object value = infoFieldValue.getValue();
 
