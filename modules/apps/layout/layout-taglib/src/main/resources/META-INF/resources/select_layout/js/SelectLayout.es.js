@@ -59,6 +59,8 @@ const SelectLayout = ({
 		visit(nodes, (node) => {
 			if (selectedNodeIds.has(node.id)) {
 				data.push({
+					className: node.className,
+					classPK: node.classPK,
 					groupId: node.groupId,
 					id: node.id,
 					layoutId: node.layoutId,
