@@ -152,8 +152,10 @@ export default function LinkField({field, onValueSelect, value}) {
 
 			{source === SOURCE_OPTIONS.fromLayout.value && (
 				<LayoutSelector
-					mappedLayout={nextValue?.layout}
-					onLayoutSelect={(layout) => handleChange({layout})}
+					layoutReference={nextValue}
+					onLayoutSelect={(nextLayoutReference) =>
+						handleChange(nextLayoutReference)
+					}
 				/>
 			)}
 

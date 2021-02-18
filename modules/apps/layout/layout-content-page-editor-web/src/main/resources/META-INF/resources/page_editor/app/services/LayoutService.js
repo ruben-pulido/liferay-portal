@@ -114,20 +114,14 @@ export default {
 	},
 
 	/**
-	 * @param {string} groupId
-	 * @param {string} layoutId
-	 * @param {boolean} privateLayout
+	 * @param {object} layoutReference
 	 * @returns {Promise<{error: Error, friendlyURL: string}>}
 	 */
-	getLayoutFriendlyURL({groupId, layoutId, privateLayout}) {
+	getLayoutFriendlyURL(layoutReference) {
 		return layoutServiceFetch(
 			config.getLayoutFriendlyURL,
 			{
-				body: {
-					groupId,
-					layoutId,
-					privateLayout,
-				},
+				body: layoutReference,
 			},
 			() => {}
 		);
