@@ -55,14 +55,16 @@ public class GetLayoutFriendlyURLMVCResourceCommand
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {
 
-		long groupId = ParamUtil.getLong(resourceRequest, "groupId");
-		boolean privateLayout = ParamUtil.getBoolean(
-			resourceRequest, "privateLayout");
-		long layoutId = ParamUtil.getLong(resourceRequest, "layoutId");
+		String className = ParamUtil.getString(resourceRequest, "className");
+		long classPK = ParamUtil.getLong(resourceRequest, "classPK");
 
 		try {
-			Layout layout = _layoutLocalService.getLayout(
-				groupId, privateLayout, layoutId);
+			Layout layout = _layoutLocalService.fetchLayout(
+				_portal.getClassNameId(className), classPK);
+
+			if (layout == null) {
+				throw new PortalException("NOOOOOOOO");
+			}
 
 			JSONPortletResponseUtil.writeJSON(
 				resourceRequest, resourceResponse,
