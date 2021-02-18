@@ -139,7 +139,7 @@ const useGetFieldValue = () => {
 		}
 
 		if (isMappedToLayout(editable)) {
-			return LayoutService.getLayoutFriendlyURL(editable.layout).then(
+			return LayoutService.getLayoutFriendlyURL(editable).then(
 				(response) => response.friendlyURL || ''
 			);
 		}

@@ -13,5 +13,5 @@
  */
 
 export default function isMappedToLayout(editable) {
-	return !!(editable?.layout?.layoutId && editable?.layout?.groupId);
+	return editable?.className === 'com.liferay.portal.kernel.model.layout';
 }

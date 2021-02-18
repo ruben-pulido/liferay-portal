@@ -19,18 +19,23 @@ import React from 'react';
 import {config} from '../../app/config/index';
 import ItemSelector from './ItemSelector';
 
-export const LayoutSelector = ({mappedLayout, onLayoutSelect}) => {
+export const LayoutSelector = ({layoutReference, onLayoutSelect}) => {
 	return (
 		<div className="mb-3">
 			<ItemSelector
 				eventName={`${config.portletNamespace}selectLayout`}
 				itemSelectorURL={config.layoutItemSelectorURL}
-				onItemSelect={(layout) => onLayoutSelect(layout)}
-				selectedItemTitle={mappedLayout?.name || ''}
+				onItemSelect={(nextLayoutReference) =>
+					onLayoutSelect({
+						className: nextLayoutReference.className,
+						classPK: nextLayoutReference.classPK,
+					})
+				}
+				selectedItemTitle={layoutReference?.name || ''}
 			/>
 			<ClayButton
 				className="mt-2"
-				disabled={!mappedLayout}
+				disabled={!layoutReference}
 				displayType="secondary"
 				onClick={() => onLayoutSelect(null)}
 				small
@@ -42,11 +47,8 @@ export const LayoutSelector = ({mappedLayout, onLayoutSelect}) => {
 };
 
 LayoutSelector.propTypes = {
-	mappedLayout: PropTypes.shape({
-		groupId: PropTypes.string.isRequired,
-		layoutId: PropTypes.string.isRequired,
+	layoutReference: PropTypes.shape({
 		name: PropTypes.string.isRequired,
-		privateLayout: PropTypes.bool.isRequired,
 	}),
 	onLayoutSelect: PropTypes.func.isRequired,
 };
