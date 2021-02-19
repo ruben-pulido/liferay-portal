@@ -258,6 +258,19 @@ components:
                 - className
                 - classPK
             type: object
+        PrimaryKeyReference:
+            properties:
+                className:
+                    type: string
+                fieldName:
+                    type: string
+                fieldValue:
+                    type: string
+            required:
+                - className
+                - fieldName
+                - fieldValue
+            type: object
         ColumnViewport:
             additionalProperties: false
             properties:
@@ -1399,6 +1412,7 @@ components:
                             oneOf:
                                 - $ref: "#/components/schemas/ClassPKReference"
                                 - $ref: "#/components/schemas/ContextReference"
+                                - $ref: "#/components/schemas/PrimaryKeyReference"
                     type: object
             type: object
         FragmentSettingsAllowed:

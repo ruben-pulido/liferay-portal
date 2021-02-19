@@ -673,10 +673,6 @@ public class FragmentLayoutStructureItemImporter
 
 		String fieldKey = (String)map.get("fieldKey");
 
-		if (Validator.isNull(fieldKey)) {
-			return;
-		}
-
 		Map<String, Object> itemReferenceMap = (Map<String, Object>)map.get(
 			"itemReference");
 
@@ -704,7 +700,9 @@ public class FragmentLayoutStructureItemImporter
 			return;
 		}
 
-		jsonObject.put("fieldId", fieldKey);
+		if (Validator.isNotNull(fieldKey)) {
+			jsonObject.put("fieldId", fieldKey);
+		}
 
 		String classNameId = null;
 
