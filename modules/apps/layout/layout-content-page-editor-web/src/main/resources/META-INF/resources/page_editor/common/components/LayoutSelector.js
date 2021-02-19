@@ -29,6 +29,7 @@ export const LayoutSelector = ({layoutReference, onLayoutSelect}) => {
 					onLayoutSelect({
 						className: nextLayoutReference.className,
 						classPK: nextLayoutReference.classPK,
+						name: nextLayoutReference.name,
 					})
 				}
 				selectedItemTitle={layoutReference?.name || ''}
@@ -48,6 +49,8 @@ export const LayoutSelector = ({layoutReference, onLayoutSelect}) => {
 
 LayoutSelector.propTypes = {
 	layoutReference: PropTypes.shape({
+		className: PropTypes.string.isRequired,
+		classPK: PropTypes.string.isRequired,
 		name: PropTypes.string.isRequired,
 	}),
 	onLayoutSelect: PropTypes.func.isRequired,

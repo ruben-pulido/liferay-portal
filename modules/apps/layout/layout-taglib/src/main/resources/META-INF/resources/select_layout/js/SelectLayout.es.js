@@ -64,7 +64,7 @@ const SelectLayout = ({
 					groupId: node.groupId,
 					id: node.id,
 					layoutId: node.layoutId,
-					name: node.value,
+					name: node.name,
 					privateLayout: node.privateLayout,
 					value: node.url,
 				});

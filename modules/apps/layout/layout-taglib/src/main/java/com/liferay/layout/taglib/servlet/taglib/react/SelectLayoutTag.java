@@ -289,9 +289,9 @@ public class SelectLayoutTag extends IncludeTag {
 			}
 
 			jsonObject.put(
-				"className", layout.getClassName()
+				"className", Layout.class.getName()
 			).put(
-				"classPK", String.valueOf(layout.getClassPK())
+				"classPK", String.valueOf(layout.getPlid())
 			).put(
 				"groupId", layout.getGroupId()
 			).put(

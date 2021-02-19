@@ -15,6 +15,7 @@
 package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
+import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -55,14 +56,15 @@ public class GetLayoutFriendlyURLMVCResourceCommand
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {
 
-		long groupId = ParamUtil.getLong(resourceRequest, "groupId");
-		boolean privateLayout = ParamUtil.getBoolean(
-			resourceRequest, "privateLayout");
-		long layoutId = ParamUtil.getLong(resourceRequest, "layoutId");
+		long classPK = ParamUtil.getLong(resourceRequest, "classPK");
 
 		try {
-			Layout layout = _layoutLocalService.getLayout(
-				groupId, privateLayout, layoutId);
+			Layout layout = _layoutLocalService.fetchLayout(
+				classPK);
+
+			if (layout == null) {
+				throw new NoSuchLayoutException();
+			}
 
 			JSONPortletResponseUtil.writeJSON(
 				resourceRequest, resourceResponse,
