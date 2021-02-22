@@ -14,6 +14,7 @@
 
 package com.liferay.headless.delivery.internal.dto.v1_0.mapper;
 
+import com.liferay.headless.delivery.dto.v1_0.ClassFieldReference;
 import com.liferay.headless.delivery.dto.v1_0.ClassPKReference;
 import com.liferay.headless.delivery.dto.v1_0.ContextReference;
 import com.liferay.headless.delivery.dto.v1_0.FragmentImage;
@@ -30,9 +31,12 @@ import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.layout.responsive.ViewportSize;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -112,6 +116,10 @@ public abstract class BaseStyledLayoutStructureItemMapper
 		}
 
 		if (saveMapping && jsonObject.has("collectionFieldId")) {
+			return true;
+		}
+
+		if (saveMapping && jsonObject.has("layout")) {
 			return true;
 		}
 
@@ -418,12 +426,42 @@ public abstract class BaseStyledLayoutStructureItemMapper
 	protected Object toItemReference(JSONObject jsonObject) {
 		String collectionFieldId = jsonObject.getString("collectionFieldId");
 		String fieldId = jsonObject.getString("fieldId");
+		JSONObject layoutJSONObject = jsonObject.getJSONObject("layout");
 		String mappedField = jsonObject.getString("mappedField");
 
 		if (Validator.isNull(collectionFieldId) && Validator.isNull(fieldId) &&
-			Validator.isNull(mappedField)) {
+			(layoutJSONObject == null) && Validator.isNull(mappedField)) {
 
 			return null;
+		}
+
+		if (layoutJSONObject != null) {
+			final Layout layout;
+
+			try {
+				layout = layoutLocalService.getLayout(
+					layoutJSONObject.getLong("groupId"),
+					layoutJSONObject.getBoolean("privateLayout"),
+					layoutJSONObject.getLong("layoutId"));
+			}
+			catch (PortalException portalException) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Item reference could not be set since no layout " +
+							"could be obtained",
+						portalException);
+				}
+
+				return null;
+			}
+
+			return new ClassFieldReference() {
+				{
+					className = Layout.class.getName();
+					fieldName = "plid";
+					fieldValue = String.valueOf(layout.getPlid());
+				}
+			};
 		}
 
 		if (Validator.isNotNull(collectionFieldId)) {
@@ -468,6 +506,9 @@ public abstract class BaseStyledLayoutStructureItemMapper
 
 	@Reference
 	protected InfoItemServiceTracker infoItemServiceTracker;
+
+	@Reference
+	protected LayoutLocalService layoutLocalService;
 
 	@Reference
 	protected Portal portal;
