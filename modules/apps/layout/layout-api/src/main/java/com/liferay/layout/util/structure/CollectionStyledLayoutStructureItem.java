@@ -82,6 +82,8 @@ public class CollectionStyledLayoutStructureItem
 		).put(
 			"numberOfItems", _numberOfItems
 		).put(
+			"paginationType", _paginationType
+		).put(
 			"templateKey", _templateKey
 		);
 	}
@@ -113,6 +115,10 @@ public class CollectionStyledLayoutStructureItem
 
 	public int getNumberOfItems() {
 		return _numberOfItems;
+	}
+
+	public String getPaginationType() {
+		return _paginationType;
 	}
 
 	public String getTemplateKey() {
@@ -151,6 +157,10 @@ public class CollectionStyledLayoutStructureItem
 		_numberOfItems = numberOfItems;
 	}
 
+	public void setPaginationType(String paginationType) {
+		_paginationType = paginationType;
+	}
+
 	public void setTemplateKey(String templateKey) {
 		_templateKey = templateKey;
 	}
@@ -180,6 +190,10 @@ public class CollectionStyledLayoutStructureItem
 			setNumberOfItems(itemConfigJSONObject.getInt("numberOfItems"));
 		}
 
+		if (itemConfigJSONObject.has("paginationType")) {
+			setPaginationType(itemConfigJSONObject.getString("paginationType"));
+		}
+
 		if (itemConfigJSONObject.has("templateKey")) {
 			setTemplateKey(itemConfigJSONObject.getString("templateKey"));
 		}
@@ -190,6 +204,7 @@ public class CollectionStyledLayoutStructureItem
 	private String _listStyle;
 	private int _numberOfColumns = 1;
 	private int _numberOfItems = 5;
+	private String _paginationType;
 	private String _templateKey;
 
 }
