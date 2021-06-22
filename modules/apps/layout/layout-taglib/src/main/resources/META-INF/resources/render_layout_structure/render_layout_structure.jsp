@@ -37,6 +37,11 @@ for (String childrenItemId : childrenItemIds) {
 			%>
 
 			<div class="<%= renderLayoutStructureDisplayContext.getCssClass(collectionStyledLayoutStructureItem) %>" style="<%= renderLayoutStructureDisplayContext.getStyle(collectionStyledLayoutStructureItem) %>">
+				<div>
+					<react:component
+						module="render_layout_structure/Test"
+					/>
+				</div>
 				<c:choose>
 					<c:when test="<%= infoListRenderer != null %>">
 
@@ -100,6 +105,7 @@ for (String childrenItemId : childrenItemIds) {
 
 					</c:otherwise>
 				</c:choose>
+				
 			</div>
 		</c:when>
 		<c:when test="<%= layoutStructureItem instanceof ColumnLayoutStructureItem %>">
