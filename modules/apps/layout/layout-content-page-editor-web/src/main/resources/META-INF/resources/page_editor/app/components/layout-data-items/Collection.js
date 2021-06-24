@@ -12,6 +12,7 @@
  * details.
  */
 
+import ClayButton from '@clayui/button';
 import ClayLayout from '@clayui/layout';
 import {ClayPaginationWithBasicItems} from '@clayui/pagination';
 import ClayPaginationBar from '@clayui/pagination-bar';
@@ -186,6 +187,12 @@ const CollectionPagination = ({
 		TOTAL_ENTRIES / collectionConfig.numberOfItems
 	);
 
+	const onActivePage = (direction) => {
+		setActivePage(
+			direction === 'previous' ? activePage - 1 : activePage + 1
+		);
+	};
+
 	return (
 		<div
 			className={classNames('page-editor__collection__pagination', {
@@ -194,7 +201,7 @@ const CollectionPagination = ({
 				),
 			})}
 		>
-			{paginationType === 'regular' && (
+			{paginationType === 'regular' ? (
 				<ClayPaginationBar>
 					<ClayPaginationBar.Results>
 						{Liferay.Util.sub(
@@ -214,6 +221,30 @@ const CollectionPagination = ({
 						totalPages={totalPages}
 					/>
 				</ClayPaginationBar>
+			) : (
+				<div className="page-editor__collection__pagination--simple">
+					<ClayButton
+						disabled={activePage === 1}
+						displayType="unstyled"
+					>
+						<span
+							className="c-inner"
+							onClick={() => onActivePage('previous')}
+							tabIndex="-1"
+						>
+							{Liferay.Language.get('previous')}
+						</span>
+					</ClayButton>
+					<ClayButton
+						disabled={activePage === totalPages}
+						displayType="unstyled"
+						onClick={() => onActivePage('next')}
+					>
+						<span className="c-inner" tabIndex="-1">
+							{Liferay.Language.get('next')}
+						</span>
+					</ClayButton>
+				</div>
 			)}
 		</div>
 	);
