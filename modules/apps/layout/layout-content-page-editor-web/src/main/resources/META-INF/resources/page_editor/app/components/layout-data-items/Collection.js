@@ -13,6 +13,9 @@
  */
 
 import ClayLayout from '@clayui/layout';
+import {ClayPaginationWithBasicItems} from '@clayui/pagination';
+import ClayPaginationBar from '@clayui/pagination-bar';
+import classNames from 'classnames';
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 
 import {COLUMN_SIZE_MODULE_PER_ROW_SIZES} from '../../config/constants/columnSizes';
@@ -21,6 +24,7 @@ import {
 	CollectionItemContextProvider,
 	useToControlsId,
 } from '../../contexts/CollectionItemContext';
+import {useIsActive} from '../../contexts/ControlsContext';
 import {useDisplayPagePreviewItem} from '../../contexts/DisplayPagePreviewItemContext';
 import {useDispatch, useSelector} from '../../contexts/StoreContext';
 import selectLanguageId from '../../selectors/selectLanguageId';
@@ -28,6 +32,7 @@ import CollectionService from '../../services/CollectionService';
 import UnsafeHTML from '../UnsafeHTML';
 
 const COLLECTION_ID_DIVIDER = '$';
+const TOTAL_ENTRIES = 20;
 
 function collectionIsMapped(collectionConfig) {
 	return collectionConfig.collection;
@@ -169,6 +174,51 @@ const DEFAULT_COLLECTION = {
 	length: 1,
 };
 
+const CollectionPagination = ({
+	collectionConfig,
+	collectionId,
+	paginationType,
+}) => {
+	const [activePage, setActivePage] = useState(1);
+	const isActive = useIsActive();
+
+	const totalPages = Math.ceil(
+		TOTAL_ENTRIES / collectionConfig.numberOfItems
+	);
+
+	return (
+		<div
+			className={classNames('page-editor__collection__pagination', {
+				'page-editor__collection__pagination__overlay': !isActive(
+					collectionId
+				),
+			})}
+		>
+			{paginationType === 'regular' && (
+				<ClayPaginationBar>
+					<ClayPaginationBar.Results>
+						{Liferay.Util.sub(
+							Liferay.Language.get('showing-x-to-x-of-x-entries'),
+							[
+								collectionConfig.numberOfItems *
+									(activePage - 1) || 1,
+								collectionConfig.numberOfItems * activePage,
+								TOTAL_ENTRIES,
+							]
+						)}
+					</ClayPaginationBar.Results>
+
+					<ClayPaginationWithBasicItems
+						activePage={activePage}
+						onPageChange={setActivePage}
+						totalPages={totalPages}
+					/>
+				</ClayPaginationBar>
+			)}
+		</div>
+	);
+};
+
 const Collection = React.forwardRef(({children, item}, ref) => {
 	const child = React.Children.toArray(children)[0];
 	const collectionConfig = item.config;
@@ -246,6 +296,14 @@ const Collection = React.forwardRef(({children, item}, ref) => {
 					customCollectionSelectorURL={
 						collection.customCollectionSelectorURL
 					}
+				/>
+			)}
+
+			{collectionConfig.paginationType && (
+				<CollectionPagination
+					collectionConfig={collectionConfig}
+					collectionId={item.itemId}
+					paginationType={collectionConfig.paginationType}
 				/>
 			)}
 		</div>
