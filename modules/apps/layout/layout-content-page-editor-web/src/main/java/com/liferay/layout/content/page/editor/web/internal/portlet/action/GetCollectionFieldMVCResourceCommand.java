@@ -298,6 +298,10 @@ public class GetCollectionFieldMVCResourceCommand
 					"length",
 					layoutListRetriever.getListCount(
 						listObjectReference, defaultLayoutListRetrieverContext)
+				).put(
+					"totalNumberOfItems",
+					layoutListRetriever.getListCount(
+						listObjectReference, defaultLayoutListRetrieverContext)
 				);
 			}
 		}

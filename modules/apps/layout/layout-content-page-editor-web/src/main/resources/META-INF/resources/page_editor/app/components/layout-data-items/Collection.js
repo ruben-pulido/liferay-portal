@@ -169,15 +169,20 @@ const DEFAULT_COLLECTION = {
 };
 
 const CollectionPagination = ({
+	activePage,
 	collectionConfig,
 	collectionId,
+	collectionSize,
+	maxNumberOfItems,
 	paginationType,
+	setActivePage,
 }) => {
-	const [activePage, setActivePage] = useState(1);
 	const isActive = useIsActive();
 
+	const totalEntries = Math.min(collectionSize, maxNumberOfItems);
+
 	const totalPages = Math.ceil(
-		TOTAL_ENTRIES / collectionConfig.numberOfItemsPerPage
+		totalEntries / collectionConfig.numberOfItemsPerPage
 	);
 
 	const onActivePage = (direction) => {
@@ -218,7 +223,7 @@ const CollectionPagination = ({
 			) : (
 				<div className="page-editor__collection__pagination--simple">
 					<ClayButton
-						disabled={activePage === 1}
+						xdDisabled={activePage === 1}
 						displayType="unstyled"
 					>
 						<span
@@ -245,7 +250,8 @@ const CollectionPagination = ({
 };
 
 const Collection = React.forwardRef(({children, item}, ref) => {
-	const activePage = 1;
+	const [activePage, setActivePage] = useState(1);
+
 	const child = React.Children.toArray(children)[0];
 	const collectionConfig = item.config;
 
@@ -328,9 +334,13 @@ const Collection = React.forwardRef(({children, item}, ref) => {
 
 			{collectionConfig.paginationType && (
 				<CollectionPagination
+					activePage={activePage}
 					collectionConfig={collectionConfig}
 					collectionId={item.itemId}
+					collectionSize={collectionSize}
+					maxNumberOfItems={collectionConfig.maxNumberOfItems}
 					paginationType={collectionConfig.paginationType}
+					setActivePage={setActivePage}
 				/>
 			)}
 		</div>
