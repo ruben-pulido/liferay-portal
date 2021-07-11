@@ -14,6 +14,7 @@
 
 package com.liferay.chess.service.impl;
 
+import com.liferay.chess.internal.validator.ChessMoveValidator;
 import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.base.ChessGameLocalServiceBaseImpl;
 import com.liferay.portal.aop.AopService;
@@ -93,6 +94,8 @@ public class ChessGameLocalServiceImpl extends ChessGameLocalServiceBaseImpl {
 	public ChessGame updateChessGame(long chessGameId, String move)
 		throws PortalException {
 
+		_chessMoveValidator.validateChessMove(chessGameId, move);
+
 		ChessGame chessGame = fetchChessGame(chessGameId);
 
 		if (chessGame == null) {
@@ -108,6 +111,9 @@ public class ChessGameLocalServiceImpl extends ChessGameLocalServiceBaseImpl {
 
 		return chessGamePersistence.update(chessGame);
 	}
+
+	@Reference
+	private ChessMoveValidator _chessMoveValidator;
 
 	@Reference
 	private JSONFactory _jsonFactory;
