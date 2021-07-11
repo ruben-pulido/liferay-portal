@@ -21,4 +21,7 @@ public class ChessPanelCategoryKeys {
 
 	public static final String CONTROL_PANEL_CHESS = "control_panel.chess";
 
+	public static final String SITE_ADMINISTRATION_CHESS_GAMES =
+		"site_administration.chess_games";
+
 }
