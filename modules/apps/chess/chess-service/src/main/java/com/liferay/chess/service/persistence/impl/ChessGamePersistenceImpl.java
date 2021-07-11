@@ -2432,23 +2432,23 @@ public class ChessGamePersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (chessGame.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				chessGame.setCreateDate(now);
+				chessGame.setCreateDate(date);
 			}
 			else {
-				chessGame.setCreateDate(serviceContext.getCreateDate(now));
+				chessGame.setCreateDate(serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!chessGameModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				chessGame.setModifiedDate(now);
+				chessGame.setModifiedDate(date);
 			}
 			else {
-				chessGame.setModifiedDate(serviceContext.getModifiedDate(now));
+				chessGame.setModifiedDate(serviceContext.getModifiedDate(date));
 			}
 		}
 
@@ -2967,6 +2967,13 @@ public class ChessGamePersistenceImpl
 						chessGameModelImpl.getColumnBitmask(columnName);
 				}
 
+				if (finderPath.isBaseModelResult() &&
+					(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION ==
+						finderPath.getCacheName())) {
+
+					finderPathColumnBitmask |= _ORDER_BY_COLUMNS_BITMASK;
+				}
+
 				_finderPathColumnBitmasksCache.put(
 					finderPath, finderPathColumnBitmask);
 			}
@@ -2978,17 +2985,7 @@ public class ChessGamePersistenceImpl
 			return null;
 		}
 
-		@Override
-		public String getClassName() {
-			return null;
-		}
-
-		@Override
-		public String getTableName() {
-			return null;
-		}
-
-		private Object[] _getValue(
+		private static Object[] _getValue(
 			ChessGameModelImpl chessGameModelImpl, String[] columnNames,
 			boolean original) {
 
@@ -3010,8 +3007,19 @@ public class ChessGamePersistenceImpl
 			return arguments;
 		}
 
-		private static Map<FinderPath, Long> _finderPathColumnBitmasksCache =
-			new ConcurrentHashMap<>();
+		private static final Map<FinderPath, Long>
+			_finderPathColumnBitmasksCache = new ConcurrentHashMap<>();
+
+		private static final long _ORDER_BY_COLUMNS_BITMASK;
+
+		static {
+			long orderByColumnsBitmask = 0;
+
+			orderByColumnsBitmask |= ChessGameModelImpl.getColumnBitmask(
+				"modifiedDate");
+
+			_ORDER_BY_COLUMNS_BITMASK = orderByColumnsBitmask;
+		}
 
 	}
 

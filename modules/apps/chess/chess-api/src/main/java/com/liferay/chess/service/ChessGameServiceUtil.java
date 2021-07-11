@@ -14,10 +14,6 @@
 
 package com.liferay.chess.service;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
-
 /**
  * Provides the remote service utility for ChessGame. This utility wraps
  * <code>com.liferay.chess.service.impl.ChessGameServiceImpl</code> and is an
@@ -43,27 +39,14 @@ public class ChessGameServiceUtil {
 	 *
 	 * @return the OSGi service identifier
 	 */
-	public static String getOSGiServiceIdentifier() {
+	public static java.lang.String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
 	}
 
 	public static ChessGameService getService() {
-		return _serviceTracker.getService();
+		return _service;
 	}
 
-	private static ServiceTracker<ChessGameService, ChessGameService>
-		_serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(ChessGameService.class);
-
-		ServiceTracker<ChessGameService, ChessGameService> serviceTracker =
-			new ServiceTracker<ChessGameService, ChessGameService>(
-				bundle.getBundleContext(), ChessGameService.class, null);
-
-		serviceTracker.open();
-
-		_serviceTracker = serviceTracker;
-	}
+	private static volatile ChessGameService _service;
 
 }
