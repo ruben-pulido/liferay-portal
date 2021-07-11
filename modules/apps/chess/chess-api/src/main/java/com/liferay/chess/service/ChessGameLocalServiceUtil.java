@@ -55,6 +55,21 @@ public class ChessGameLocalServiceUtil {
 	}
 
 	/**
+	 * NOTE FOR DEVELOPERS:
+	 * <p>
+	 * Never reference this class directly. Use <code>ChessGameLocalService</code> via injection or a <code>ServiceTracker</code> or use <code>ChessGameLocalServiceUtil</code>.
+	 */
+	public static com.liferay.chess.model.ChessGame addChessGame(
+			long userId, long groupId, long whiteBlackPlayerId,
+			long blackPlayerId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().addChessGame(
+			userId, groupId, whiteBlackPlayerId, blackPlayerId, serviceContext);
+	}
+
+	/**
 	 * Creates a new chess game with the primary key. Does not add the chess game to the database.
 	 *
 	 * @param chessGameId the primary key for the new chess game
@@ -373,6 +388,18 @@ public class ChessGameLocalServiceUtil {
 		com.liferay.chess.model.ChessGame chessGame) {
 
 		return getService().updateChessGame(chessGame);
+	}
+
+	/**
+	 * NOTE FOR DEVELOPERS:
+	 * <p>
+	 * Never reference this class directly. Use <code>ChessGameLocalService</code> via injection or a <code>ServiceTracker</code> or use <code>ChessGameLocalServiceUtil</code>.
+	 */
+	public static com.liferay.chess.model.ChessGame updateChessGame(
+			long chessGameId, String move)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().updateChessGame(chessGameId, move);
 	}
 
 	public static ChessGameLocalService getService() {
