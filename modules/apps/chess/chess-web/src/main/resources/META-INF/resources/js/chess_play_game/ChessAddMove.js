@@ -16,7 +16,7 @@ import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
 import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 
 import LoggedInUserContext from './LoggedInUserContext';
 
@@ -72,11 +72,16 @@ export default function ChessAddMove({
 		else {
 			setCurrentTurn(PLAYER_COLOR.WHITE);
 		}
+
+		moveTextInputRef.current.focus();
+		moveTextInputRef.current.value = '';
 	};
 
 	useEffect(() => {
 		document.title = `Current turn: ${currentTurn}`;
 	}, [currentTurn]);
+
+	const moveTextInputRef = useRef(null);
 
 	return (
 		<div className="chess-game__chess-add-move">
@@ -94,7 +99,12 @@ export default function ChessAddMove({
 			</div>
 			<ClayForm.Group>
 				<label htmlFor="moveTextInput">Move</label>
-				<ClayInput id="moveTextInput" placeholder="e2e4" type="text" />
+				<ClayInput
+					id="moveTextInput"
+					placeholder="e2e4"
+					ref={moveTextInputRef}
+					type="text"
+				/>
 			</ClayForm.Group>
 			<ClayButton displayType="primary" onClick={handleAddMoveClick}>
 				Add Move
