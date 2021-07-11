@@ -28,6 +28,7 @@ export default function ChessAddMove({
 	chessGameId,
 	portletNamespace,
 }) {
+	const [chessMoves, setChessMoves] = useState([]);
 	const [currentTurn, setCurrentTurn] = useState(PLAYER_COLOR.WHITE);
 
 	const handleAddMoveClick = () => {
@@ -47,6 +48,8 @@ export default function ChessAddMove({
 			method: 'POST',
 		});
 
+		setChessMoves(chessMoves.concat(chessMove));
+
 		if (currentTurn === PLAYER_COLOR.WHITE) {
 			setCurrentTurn(PLAYER_COLOR.BLACK);
 		}
@@ -59,6 +62,14 @@ export default function ChessAddMove({
 		<div className="chess-game__chess-add-move">
 			Chess Add Move
 			<div>Current turn: {currentTurn}</div>
+			<div>
+				Moves:
+				<ul>
+					{chessMoves.map((chessMove, i) => (
+						<li key={i}>{chessMove}</li>
+					))}
+				</ul>
+			</div>
 			<ClayForm.Group>
 				<label htmlFor="moveTextInput">Move</label>
 				<ClayInput id="moveTextInput" placeholder="e2e4" type="text" />
