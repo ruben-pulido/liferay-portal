@@ -17,6 +17,10 @@ import ClayForm, {ClayInput} from '@clayui/form';
 import React from 'react';
 
 export default function ChessAddMove() {
+	const handleAddMoveClick = () => {
+		alert('Add Move button clicked.');
+	};
+
 	return (
 		<div className="chess-game__chess-add-move">
 			Chess Add Move
@@ -24,7 +28,9 @@ export default function ChessAddMove() {
 				<label htmlFor="moveTextInput">Move</label>
 				<ClayInput id="moveTextInput" placeholder="e2e4" type="text" />
 			</ClayForm.Group>
-			<ClayButton displayType="primary">Add Move</ClayButton>
+			<ClayButton displayType="primary" onClick={handleAddMoveClick}>
+				Add Move
+			</ClayButton>
 		</div>
 	);
 }
