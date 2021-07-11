@@ -1,5 +1,6 @@
 @import 'variables';
 
 .chess-root {
+	@import 'chess-game';
 	@import 'game';
 }
