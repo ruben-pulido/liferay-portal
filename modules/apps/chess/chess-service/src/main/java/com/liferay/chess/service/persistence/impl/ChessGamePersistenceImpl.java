@@ -2985,6 +2985,16 @@ public class ChessGamePersistenceImpl
 			return null;
 		}
 
+		@Override
+		public String getClassName() {
+			return ChessGameImpl.class.getName();
+		}
+
+		@Override
+		public String getTableName() {
+			return ChessGameTable.INSTANCE.getTableName();
+		}
+
 		private static Object[] _getValue(
 			ChessGameModelImpl chessGameModelImpl, String[] columnNames,
 			boolean original) {
