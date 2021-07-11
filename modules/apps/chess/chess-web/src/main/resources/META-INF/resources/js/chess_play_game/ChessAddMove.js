@@ -16,7 +16,7 @@ import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
 import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 const GAME_RESULT = {
 	BLACK_WINS: 'Black wins',
@@ -69,6 +69,10 @@ export default function ChessAddMove({
 			setCurrentTurn(PLAYER_COLOR.WHITE);
 		}
 	};
+
+	useEffect(() => {
+		document.title = `Current turn: ${currentTurn}`;
+	}, [currentTurn]);
 
 	return (
 		<div className="chess-game__chess-add-move">
