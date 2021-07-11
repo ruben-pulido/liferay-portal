@@ -12,6 +12,7 @@
  * details.
  */
 
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import ChessAddMove from './ChessAddMove';
@@ -43,3 +44,24 @@ const ChessGame = ({config}) => {
 export default function ({config}) {
 	return <ChessGame config={config} />;
 }
+
+ChessGame.propTypes = {
+	config: PropTypes.shape({
+		blackPlayer: PropTypes.shape({
+			emailAddress: PropTypes.string.isRequired,
+		}),
+		chessGameId: PropTypes.number.isRequired,
+		initialChessMoves: PropTypes.arrayOf(PropTypes.string.isRequired)
+			.isRequired,
+		loggedInUser: PropTypes.shape({
+			emailAddress: PropTypes.string.isRequired,
+		}),
+		portletNamespace: PropTypes.string.isRequired,
+		urls: PropTypes.shape({
+			addMoveURL: PropTypes.string.isRequired,
+		}),
+		whitePlayer: PropTypes.shape({
+			emailAddress: PropTypes.string.isRequired,
+		}),
+	}),
+};
