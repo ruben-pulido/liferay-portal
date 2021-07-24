@@ -27,6 +27,7 @@
 		<column name="whitePlayerId" type="long" />
 		<column name="blackPlayerId" type="long" />
 		<column name="moves" type="String" />
+		<column name="position" type="String" />
 		<column name="winnerPlayerId" type="long" />
 
 		<!-- Order -->
