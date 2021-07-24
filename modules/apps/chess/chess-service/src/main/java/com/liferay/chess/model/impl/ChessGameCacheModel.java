@@ -76,7 +76,7 @@ public class ChessGameCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(29);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
@@ -102,6 +102,8 @@ public class ChessGameCacheModel
 		sb.append(blackPlayerId);
 		sb.append(", moves=");
 		sb.append(moves);
+		sb.append(", position=");
+		sb.append(position);
 		sb.append(", winnerPlayerId=");
 		sb.append(winnerPlayerId);
 		sb.append("}");
@@ -158,6 +160,13 @@ public class ChessGameCacheModel
 			chessGameImpl.setMoves(moves);
 		}
 
+		if (position == null) {
+			chessGameImpl.setPosition("");
+		}
+		else {
+			chessGameImpl.setPosition(position);
+		}
+
 		chessGameImpl.setWinnerPlayerId(winnerPlayerId);
 
 		chessGameImpl.resetOriginalValues();
@@ -185,6 +194,7 @@ public class ChessGameCacheModel
 
 		blackPlayerId = objectInput.readLong();
 		moves = objectInput.readUTF();
+		position = objectInput.readUTF();
 
 		winnerPlayerId = objectInput.readLong();
 	}
@@ -229,6 +239,13 @@ public class ChessGameCacheModel
 			objectOutput.writeUTF(moves);
 		}
 
+		if (position == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(position);
+		}
+
 		objectOutput.writeLong(winnerPlayerId);
 	}
 
@@ -244,6 +261,7 @@ public class ChessGameCacheModel
 	public long whitePlayerId;
 	public long blackPlayerId;
 	public String moves;
+	public String position;
 	public long winnerPlayerId;
 
 }
