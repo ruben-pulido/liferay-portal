@@ -18,7 +18,7 @@ import Game from './components/game/Game.es';
 
 export default function () {
 	return (
-		<div className="chess-root">
+		<div>
 			<Game />
 		</div>
 	);
