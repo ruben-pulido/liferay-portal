@@ -20,6 +20,7 @@ import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.ChessGameLocalService;
 import com.liferay.chess.web.internal.constants.ChessPortletKeys;
 import com.liferay.chess.web.internal.handler.ChessGameExceptionRequestHandler;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -64,13 +65,19 @@ public class ChessPlayGameAddMoveMVCActionCommand extends BaseMVCActionCommand {
 				throw new NoSuchEntryException();
 			}
 
-			_chessGameLocalService.updateChessGame(chessGameId, chessMove);
+			ChessGame updatedChessGame = _chessGameLocalService.updateChessGame(
+				chessGameId, chessMove);
 
 			JSONPortletResponseUtil.writeJSON(
 				actionRequest, actionResponse,
 				JSONUtil.put(
 					"chessGameResult",
-					_chessArbiter.getChessGameResult(chessGameId)));
+					_chessArbiter.getChessGameResult(chessGameId)
+				).put(
+					"position",
+					JSONFactoryUtil.createJSONObject(
+						updatedChessGame.getPosition())
+				));
 		}
 		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {
