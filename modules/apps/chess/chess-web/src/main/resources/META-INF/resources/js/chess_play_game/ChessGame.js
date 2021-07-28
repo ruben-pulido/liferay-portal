@@ -56,6 +56,9 @@ const ChessGame = ({config}) => {
 		getInitialCurrentTurn(config.initialChessMoves)
 	);
 	const [gameResult, setGameResult] = useState(null);
+	const [piecePlacement, setPiecePlacement] = useState(
+		config.initialPiecePlacement
+	);
 
 	const addChessMove = (
 		addMoveURL,
@@ -81,6 +84,7 @@ const ChessGame = ({config}) => {
 					: Promise.reject(new Error(json.error));
 			})
 			.then((json) => {
+				setPiecePlacement(json?.position?.piecePlacement ?? null);
 				setGameResult(json?.chessGameResult ?? null);
 			})
 			.then(() => {
@@ -123,7 +127,7 @@ const ChessGame = ({config}) => {
 		<div>
 			Chess Game Id: {config.chessGameId}
 			<LoggedInUserContext.Provider value={config.loggedInUser}>
-				<ChessBoard />
+				<ChessBoard piecePlacement={piecePlacement} />
 				<ChessGameInfo
 					blackPlayer={config.blackPlayer}
 					whitePlayer={config.whitePlayer}
@@ -151,6 +155,7 @@ ChessGame.propTypes = {
 		chessGameId: PropTypes.number.isRequired,
 		initialChessMoves: PropTypes.arrayOf(PropTypes.string.isRequired)
 			.isRequired,
+		initialPiecePlacement: PropTypes.object.isRequired,
 		loggedInUser: PropTypes.shape({
 			emailAddress: PropTypes.string.isRequired,
 		}),
