@@ -21,6 +21,9 @@ import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
@@ -141,6 +144,64 @@ public abstract class BasePortletIdUpgradeProcess extends UpgradeProcess {
 
 	protected String[] getUninstanceablePortletIds() {
 		return new String[0];
+	}
+
+	protected void updateFragmentEntryLinks(
+			String oldRootPortletId, String newRootPortletId)
+		throws Exception {
+
+		String sql1 = StringBundler.concat(
+			"select fragmentEntryLinkId, editableValues from ",
+			"FragmentEntryLink where editableValues like '%", oldRootPortletId,
+			"%'");
+
+		String sql2 =
+			"update FragmentEntryLink set editableValues = ? where " +
+				"fragmentEntryLinkId = ?";
+
+		try (PreparedStatement preparedStatement1 = connection.prepareStatement(
+				sql1);
+			PreparedStatement preparedStatement2 =
+				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
+					connection, sql2);
+			ResultSet resultSet = preparedStatement1.executeQuery()) {
+
+			while (resultSet.next()) {
+				String editableValues = resultSet.getString("editableValues");
+
+				String newEditableValues = editableValues;
+
+				try {
+					JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+						editableValues);
+
+					String portletId = jsonObject.getString("portletId");
+
+					if (Objects.equals(portletId, oldRootPortletId)) {
+						jsonObject.put("portletId", newRootPortletId);
+
+						newEditableValues = jsonObject.toString();
+					}
+				}
+				catch (JSONException jsonException) {
+					_log.error(
+						"Unable to create a JSON object from: " +
+							editableValues,
+						jsonException);
+				}
+
+				if (!Objects.equals(editableValues, newEditableValues)) {
+					preparedStatement2.setString(1, newEditableValues);
+
+					preparedStatement2.setLong(
+						2, resultSet.getLong("fragmentEntryLinkId"));
+
+					preparedStatement2.addBatch();
+				}
+			}
+
+			preparedStatement2.executeBatch();
+		}
 	}
 
 	/**
@@ -670,6 +731,7 @@ public abstract class BasePortletIdUpgradeProcess extends UpgradeProcess {
 				updateLayoutRevisions(
 					oldRootPortletId, newRootPortletId, false);
 				updateLayouts(oldRootPortletId, newRootPortletId, false);
+				updateFragmentEntryLinks(oldRootPortletId, newRootPortletId);
 			}
 		}
 	}
