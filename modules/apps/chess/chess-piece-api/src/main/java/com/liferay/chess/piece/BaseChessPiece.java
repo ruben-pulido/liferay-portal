@@ -14,6 +14,10 @@
 
 package com.liferay.chess.piece;
 
+import com.liferay.portal.kernel.util.Portal;
+
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Rubén Pulido
  */
@@ -23,5 +27,8 @@ public abstract class BaseChessPiece implements ChessPiece {
 	public String getCathphrase() {
 		return "I'm still thinking about my catchphrase.";
 	}
+
+	@Reference
+	private Portal _portal;
 
 }
