@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,13 +11,35 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ include file="/init.jsp" %>
+import React, {Component} from 'react';
 
-<div>
-	<react:component
-		data="<%= new HashMap<String, Object>() %>"
-		module="js/ChessApp.es"
-	/>
-</div>
+class Game extends Component {
+	render() {
+		return (
+			<div>
+				<h1>Chess Game</h1>
+				<table>
+					<thead>
+						<tr>
+							<th>Player</th>
+							<th>Move</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>White</td>
+							<td>e2e4</td>
+						</tr>
+						<tr>
+							<td>Black</td>
+							<td>e7e5</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		);
+	}
+}
+
+export default Game;
