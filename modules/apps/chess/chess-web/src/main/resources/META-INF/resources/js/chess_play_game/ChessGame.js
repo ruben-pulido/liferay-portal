@@ -33,6 +33,10 @@ const ChessGame = ({config}) => {
 	const [currentTurn, setCurrentTurn] = useState(PLAYER_COLOR.WHITE);
 	const [gameResult, setGameResult] = useState(null);
 
+	function addChessMove(chessMove) {
+		setChessMoves(chessMoves.concat(chessMove));
+	}
+
 	useEffect(() => {
 		document.title = `Current turn: ${currentTurn}`;
 	}, [currentTurn]);
@@ -53,11 +57,10 @@ const ChessGame = ({config}) => {
 				<ChessMoves chessMoves={chessMoves} />
 				<ChessAddMove
 					actionUrl={config.urls.addMoveURL}
+					addChessMove={addChessMove}
 					chessGameId={config.chessGameId}
-					chessMoves={chessMoves}
 					currentTurn={currentTurn}
 					portletNamespace={config.portletNamespace}
-					setChessMoves={setChessMoves}
 					setCurrentTurn={setCurrentTurn}
 					setGameResult={setGameResult}
 				/>
