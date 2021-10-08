@@ -21,6 +21,7 @@ import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -178,6 +179,25 @@ public class ChessGameLocalServiceImpl extends ChessGameLocalServiceBaseImpl {
 		movesJSONArray.put(move);
 
 		chessGame.setMoves(movesJSONArray.toJSONString());
+
+		JSONObject positionJSONObject = _jsonFactory.createJSONObject(
+			chessGame.getPosition());
+
+		JSONObject piecePlacementJSONObject = positionJSONObject.getJSONObject(
+			"piecePlacement");
+
+		String[] squares = move.split("-");
+
+		String sourceSquare = squares[0];
+		String targetSquare = squares[1];
+
+		String piece = piecePlacementJSONObject.getString(sourceSquare);
+
+		piecePlacementJSONObject.remove(sourceSquare);
+
+		piecePlacementJSONObject.put(targetSquare, piece);
+
+		chessGame.setPosition(positionJSONObject.toString());
 
 		return chessGamePersistence.update(chessGame);
 	}
