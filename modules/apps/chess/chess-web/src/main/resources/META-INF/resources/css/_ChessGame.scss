@@ -1,11 +1,13 @@
-.chess-game-root {
-	&__chess-moves {
-		.row-black-player {
-			background-color: $blackPlayerBackgroundColor;
-		}
+.square-black {
+	background-color: $blackPlayerBackgroundColor;
+	border: 1px solid;
+	height: 50px;
+	width: 50px;
+}
 
-		.row-white-player {
-			background-color: $whitePlayerBackgroundColor;
-		}
-	}
+.square-white {
+	background-color: $whitePlayerBackgroundColor;
+	border: 1px solid;
+	height: 50px;
+	width: 50px;
 }
