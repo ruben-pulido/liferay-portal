@@ -2907,15 +2907,6 @@ public class ChessGamePersistenceImpl
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
-	static {
-		try {
-			Class.forName(ChessPersistenceConstants.class.getName());
-		}
-		catch (ClassNotFoundException classNotFoundException) {
-			throw new ExceptionInInitializerError(classNotFoundException);
-		}
-	}
-
 	private FinderPath _createFinderPath(
 		String cacheName, String methodName, String[] params,
 		String[] columnNames, boolean baseModelResult) {
@@ -2933,10 +2924,10 @@ public class ChessGamePersistenceImpl
 		return finderPath;
 	}
 
-	private ServiceRegistration<ArgumentsResolver>
-		_argumentsResolverServiceRegistration;
 	private Set<ServiceRegistration<FinderPath>> _serviceRegistrations =
 		new HashSet<>();
+	private ServiceRegistration<ArgumentsResolver>
+		_argumentsResolverServiceRegistration;
 
 	private static class ChessGameModelArgumentsResolver
 		implements ArgumentsResolver {
@@ -2984,6 +2975,16 @@ public class ChessGamePersistenceImpl
 				return _getValue(chessGameModelImpl, columnNames, original);
 			}
 
+			return null;
+		}
+
+		@Override
+		public String getClassName() {
+			return null;
+		}
+
+		@Override
+		public String getTableName() {
 			return null;
 		}
 
