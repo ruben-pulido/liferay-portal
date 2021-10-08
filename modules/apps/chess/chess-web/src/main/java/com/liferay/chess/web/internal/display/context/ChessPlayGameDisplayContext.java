@@ -19,7 +19,9 @@ import com.liferay.chess.service.ChessGameLocalServiceUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Map;
 
@@ -68,6 +70,20 @@ public class ChessPlayGameDisplayContext {
 					"urls",
 					() -> HashMapBuilder.<String, Object>put(
 						"addMoveURL", () -> getAddMoveActionURL()
+					).build()
+				).put(
+					"loggedInUser",
+					() -> HashMapBuilder.<String, Object>put(
+						"emailAddress",
+						() -> {
+							ThemeDisplay themeDisplay =
+								(ThemeDisplay)_portletRequest.getAttribute(
+									WebKeys.THEME_DISPLAY);
+
+							User user = themeDisplay.getUser();
+
+							return user.getDisplayEmailAddress();
+						}
 					).build()
 				).put(
 					"whitePlayer",
