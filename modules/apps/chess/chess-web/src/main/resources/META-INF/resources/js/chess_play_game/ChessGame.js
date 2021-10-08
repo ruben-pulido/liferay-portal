@@ -17,22 +17,25 @@ import React from 'react';
 import ChessAddMove from './ChessAddMove';
 import ChessBoard from './ChessBoard';
 import ChessGameInfo from './ChessGameInfo';
+import LoggedInUserContext from './LoggedInUserContext';
 
 const ChessGame = ({config}) => {
 	return (
 		<div>
 			Chess Game Id: {config.chessGameId}
-			<ChessBoard />
-			<ChessGameInfo
-				blackPlayer={config.blackPlayer}
-				whitePlayer={config.whitePlayer}
-			/>
-			<ChessAddMove
-				actionUrl={config.urls.addMoveURL}
-				chessGameId={config.chessGameId}
-				initialChessMoves={config.initialChessMoves}
-				portletNamespace={config.portletNamespace}
-			/>
+			<LoggedInUserContext.Provider value={config.loggedInUser}>
+				<ChessBoard />
+				<ChessGameInfo
+					blackPlayer={config.blackPlayer}
+					whitePlayer={config.whitePlayer}
+				/>
+				<ChessAddMove
+					actionUrl={config.urls.addMoveURL}
+					chessGameId={config.chessGameId}
+					initialChessMoves={config.initialChessMoves}
+					portletNamespace={config.portletNamespace}
+				/>
+			</LoggedInUserContext.Provider>
 		</div>
 	);
 };
