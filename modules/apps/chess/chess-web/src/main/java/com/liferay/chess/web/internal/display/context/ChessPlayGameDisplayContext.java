@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
 import javax.portlet.RenderResponse;
 
 /**
@@ -112,13 +111,11 @@ public class ChessPlayGameDisplayContext {
 	}
 
 	protected String getAddMoveActionURL() {
-		PortletURL actionURL = PortletURLBuilder.createActionURL(
+		return PortletURLBuilder.createActionURL(
 			_renderResponse
 		).setActionName(
 			"/chess_play_game/add_move"
-		).build();
-
-		return actionURL.toString();
+		).buildString();
 	}
 
 	private ChessGame _getChessGame() {
