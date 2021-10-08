@@ -24,8 +24,10 @@ import java.util.List;
  * This class is used by SOAP remote services, specifically {@link com.liferay.chess.service.http.ChessGameServiceSoap}.
  *
  * @author Rubén Pulido
+ * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
+@Deprecated
 public class ChessGameSoap implements Serializable {
 
 	public static ChessGameSoap toSoapModel(ChessGame model) {
