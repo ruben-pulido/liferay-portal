@@ -17,7 +17,7 @@
 <%@ include file="/chess_play_game/init.jsp" %>
 
 <%
-ChessPlayGameDisplayContext chessPlayGameDisplayContext = new ChessPlayGameDisplayContext();
+ChessPlayGameDisplayContext chessPlayGameDisplayContext = new ChessPlayGameDisplayContext(portletRequest, renderResponse);
 %>
 
 Play Chess Game
