@@ -1,5 +1,5 @@
 dependencies {
-	compileOnly group: "com.liferay", name: "com.liferay.chess.piece.api", version: "1.0.0"
 	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.3.0"
+	compileOnly project(":apps:chess:chess-piece-api")
 	compileOnly project(":apps:chess:chess-quote-api")
 }
