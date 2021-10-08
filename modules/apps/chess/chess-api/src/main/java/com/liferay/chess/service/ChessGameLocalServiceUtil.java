@@ -14,9 +14,16 @@
 
 package com.liferay.chess.service;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
+import com.liferay.chess.model.ChessGame;
+import com.liferay.petra.sql.dsl.query.DSLQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.util.OrderByComparator;
+
+import java.io.Serializable;
+
+import java.util.List;
 
 /**
  * Provides the local service utility for ChessGame. This utility wraps
@@ -48,22 +55,20 @@ public class ChessGameLocalServiceUtil {
 	 * @param chessGame the chess game
 	 * @return the chess game that was added
 	 */
-	public static com.liferay.chess.model.ChessGame addChessGame(
-		com.liferay.chess.model.ChessGame chessGame) {
-
+	public static ChessGame addChessGame(ChessGame chessGame) {
 		return getService().addChessGame(chessGame);
 	}
 
 	/**
 	 * NOTE FOR DEVELOPERS:
 	 * <p>
-	 * Never reference this class directly. Use <code>ChessGameLocalService</code> via injection or a <code>ServiceTracker</code> or use <code>ChessGameLocalServiceUtil</code>.
+	 * Never reference this class directly. Use <code>ChessGameLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>ChessGameLocalServiceUtil</code>.
 	 */
-	public static com.liferay.chess.model.ChessGame addChessGame(
+	public static ChessGame addChessGame(
 			long userId, long groupId, long whiteBlackPlayerId,
 			long blackPlayerId,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws PortalException {
 
 		return getService().addChessGame(
 			userId, groupId, whiteBlackPlayerId, blackPlayerId, serviceContext);
@@ -75,18 +80,16 @@ public class ChessGameLocalServiceUtil {
 	 * @param chessGameId the primary key for the new chess game
 	 * @return the new chess game
 	 */
-	public static com.liferay.chess.model.ChessGame createChessGame(
-		long chessGameId) {
-
+	public static ChessGame createChessGame(long chessGameId) {
 		return getService().createChessGame(chessGameId);
 	}
 
 	/**
 	 * @throws PortalException
 	 */
-	public static com.liferay.portal.kernel.model.PersistedModel
-			createPersistedModel(java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static PersistedModel createPersistedModel(
+			Serializable primaryKeyObj)
+		throws PortalException {
 
 		return getService().createPersistedModel(primaryKeyObj);
 	}
@@ -101,9 +104,7 @@ public class ChessGameLocalServiceUtil {
 	 * @param chessGame the chess game
 	 * @return the chess game that was removed
 	 */
-	public static com.liferay.chess.model.ChessGame deleteChessGame(
-		com.liferay.chess.model.ChessGame chessGame) {
-
+	public static ChessGame deleteChessGame(ChessGame chessGame) {
 		return getService().deleteChessGame(chessGame);
 	}
 
@@ -118,9 +119,8 @@ public class ChessGameLocalServiceUtil {
 	 * @return the chess game that was removed
 	 * @throws PortalException if a chess game with the primary key could not be found
 	 */
-	public static com.liferay.chess.model.ChessGame deleteChessGame(
-			long chessGameId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static ChessGame deleteChessGame(long chessGameId)
+		throws PortalException {
 
 		return getService().deleteChessGame(chessGameId);
 	}
@@ -128,23 +128,22 @@ public class ChessGameLocalServiceUtil {
 	/**
 	 * @throws PortalException
 	 */
-	public static com.liferay.portal.kernel.model.PersistedModel
-			deletePersistedModel(
-				com.liferay.portal.kernel.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static PersistedModel deletePersistedModel(
+			PersistedModel persistedModel)
+		throws PortalException {
 
 		return getService().deletePersistedModel(persistedModel);
 	}
 
-	public static <T> T dslQuery(
-		com.liferay.petra.sql.dsl.query.DSLQuery dslQuery) {
-
+	public static <T> T dslQuery(DSLQuery dslQuery) {
 		return getService().dslQuery(dslQuery);
 	}
 
-	public static com.liferay.portal.kernel.dao.orm.DynamicQuery
-		dynamicQuery() {
+	public static int dslQueryCount(DSLQuery dslQuery) {
+		return getService().dslQueryCount(dslQuery);
+	}
 
+	public static DynamicQuery dynamicQuery() {
 		return getService().dynamicQuery();
 	}
 
@@ -154,9 +153,7 @@ public class ChessGameLocalServiceUtil {
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
 	 */
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
-
+	public static <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -172,9 +169,8 @@ public class ChessGameLocalServiceUtil {
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
 	 */
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+	public static <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end) {
 
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
@@ -192,10 +188,9 @@ public class ChessGameLocalServiceUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
 	 */
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+	public static <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator<T> orderByComparator) {
 
 		return getService().dynamicQuery(
 			dynamicQuery, start, end, orderByComparator);
@@ -207,9 +202,7 @@ public class ChessGameLocalServiceUtil {
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows matching the dynamic query
 	 */
-	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
-
+	public static long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -221,15 +214,13 @@ public class ChessGameLocalServiceUtil {
 	 * @return the number of rows matching the dynamic query
 	 */
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
+		DynamicQuery dynamicQuery,
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static com.liferay.chess.model.ChessGame fetchChessGame(
-		long chessGameId) {
-
+	public static ChessGame fetchChessGame(long chessGameId) {
 		return getService().fetchChessGame(chessGameId);
 	}
 
@@ -240,8 +231,8 @@ public class ChessGameLocalServiceUtil {
 	 * @param groupId the primary key of the group
 	 * @return the matching chess game, or <code>null</code> if a matching chess game could not be found
 	 */
-	public static com.liferay.chess.model.ChessGame
-		fetchChessGameByUuidAndGroupId(String uuid, long groupId) {
+	public static ChessGame fetchChessGameByUuidAndGroupId(
+		String uuid, long groupId) {
 
 		return getService().fetchChessGameByUuidAndGroupId(uuid, groupId);
 	}
@@ -259,9 +250,8 @@ public class ChessGameLocalServiceUtil {
 	 * @return the chess game
 	 * @throws PortalException if a chess game with the primary key could not be found
 	 */
-	public static com.liferay.chess.model.ChessGame getChessGame(
-			long chessGameId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static ChessGame getChessGame(long chessGameId)
+		throws PortalException {
 
 		return getService().getChessGame(chessGameId);
 	}
@@ -274,9 +264,9 @@ public class ChessGameLocalServiceUtil {
 	 * @return the matching chess game
 	 * @throws PortalException if a matching chess game could not be found
 	 */
-	public static com.liferay.chess.model.ChessGame
-			getChessGameByUuidAndGroupId(String uuid, long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static ChessGame getChessGameByUuidAndGroupId(
+			String uuid, long groupId)
+		throws PortalException {
 
 		return getService().getChessGameByUuidAndGroupId(uuid, groupId);
 	}
@@ -292,9 +282,7 @@ public class ChessGameLocalServiceUtil {
 	 * @param end the upper bound of the range of chess games (not inclusive)
 	 * @return the range of chess games
 	 */
-	public static java.util.List<com.liferay.chess.model.ChessGame>
-		getChessGames(int start, int end) {
-
+	public static List<ChessGame> getChessGames(int start, int end) {
 		return getService().getChessGames(start, end);
 	}
 
@@ -305,8 +293,8 @@ public class ChessGameLocalServiceUtil {
 	 * @param companyId the primary key of the company
 	 * @return the matching chess games, or an empty list if no matches were found
 	 */
-	public static java.util.List<com.liferay.chess.model.ChessGame>
-		getChessGamesByUuidAndCompanyId(String uuid, long companyId) {
+	public static List<ChessGame> getChessGamesByUuidAndCompanyId(
+		String uuid, long companyId) {
 
 		return getService().getChessGamesByUuidAndCompanyId(uuid, companyId);
 	}
@@ -321,11 +309,9 @@ public class ChessGameLocalServiceUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the range of matching chess games, or an empty list if no matches were found
 	 */
-	public static java.util.List<com.liferay.chess.model.ChessGame>
-		getChessGamesByUuidAndCompanyId(
-			String uuid, long companyId, int start, int end,
-			com.liferay.portal.kernel.util.OrderByComparator
-				<com.liferay.chess.model.ChessGame> orderByComparator) {
+	public static List<ChessGame> getChessGamesByUuidAndCompanyId(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<ChessGame> orderByComparator) {
 
 		return getService().getChessGamesByUuidAndCompanyId(
 			uuid, companyId, start, end, orderByComparator);
@@ -367,9 +353,8 @@ public class ChessGameLocalServiceUtil {
 	/**
 	 * @throws PortalException
 	 */
-	public static com.liferay.portal.kernel.model.PersistedModel
-			getPersistedModel(java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException {
 
 		return getService().getPersistedModel(primaryKeyObj);
 	}
@@ -384,44 +369,25 @@ public class ChessGameLocalServiceUtil {
 	 * @param chessGame the chess game
 	 * @return the chess game that was updated
 	 */
-	public static com.liferay.chess.model.ChessGame updateChessGame(
-		com.liferay.chess.model.ChessGame chessGame) {
-
+	public static ChessGame updateChessGame(ChessGame chessGame) {
 		return getService().updateChessGame(chessGame);
 	}
 
 	/**
 	 * NOTE FOR DEVELOPERS:
 	 * <p>
-	 * Never reference this class directly. Use <code>ChessGameLocalService</code> via injection or a <code>ServiceTracker</code> or use <code>ChessGameLocalServiceUtil</code>.
+	 * Never reference this class directly. Use <code>ChessGameLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>ChessGameLocalServiceUtil</code>.
 	 */
-	public static com.liferay.chess.model.ChessGame updateChessGame(
-			long chessGameId, String move)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static ChessGame updateChessGame(long chessGameId, String move)
+		throws PortalException {
 
 		return getService().updateChessGame(chessGameId, move);
 	}
 
 	public static ChessGameLocalService getService() {
-		return _serviceTracker.getService();
+		return _service;
 	}
 
-	private static ServiceTracker<ChessGameLocalService, ChessGameLocalService>
-		_serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(ChessGameLocalService.class);
-
-		ServiceTracker<ChessGameLocalService, ChessGameLocalService>
-			serviceTracker =
-				new ServiceTracker
-					<ChessGameLocalService, ChessGameLocalService>(
-						bundle.getBundleContext(), ChessGameLocalService.class,
-						null);
-
-		serviceTracker.open();
-
-		_serviceTracker = serviceTracker;
-	}
+	private static volatile ChessGameLocalService _service;
 
 }
