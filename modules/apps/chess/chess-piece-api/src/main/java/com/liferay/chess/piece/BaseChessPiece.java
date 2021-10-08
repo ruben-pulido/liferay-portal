@@ -25,10 +25,10 @@ public abstract class BaseChessPiece implements ChessPiece {
 
 	@Override
 	public String getCathphrase() {
-		return "My computer name is " + _portal.getComputerName();
+		return "My computer name is " + portal.getComputerName();
 	}
 
 	@Reference
-	private Portal _portal;
+	protected Portal portal;
 
 }
