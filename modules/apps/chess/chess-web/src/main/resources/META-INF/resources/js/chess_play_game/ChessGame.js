@@ -54,10 +54,13 @@ const ChessGame = ({config}) => {
 			.then((response) => response.json())
 			.then((json) => {
 				setGameResult(json?.chessGameResult ?? null);
+			})
+			.then(() => {
+				setChessMoves(chessMoves.concat(chessMove));
+			})
+			.then(() => {
+				updateCurrentTurn();
 			});
-
-		setChessMoves(chessMoves.concat(chessMove));
-		updateCurrentTurn();
 	};
 
 	const handleAddChessMove = (chessMove) => {
