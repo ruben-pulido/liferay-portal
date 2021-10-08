@@ -81,6 +81,9 @@ const ChessGame = ({config}) => {
 			.then(() => {
 				updateCurrentTurn();
 			})
+			.then(() => {
+				showNotification(`${currentTurn} moved ${chessMove}`, false);
+			})
 			.catch((error) => {
 				showNotification(error.message, true);
 			});
