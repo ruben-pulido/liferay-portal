@@ -146,6 +146,8 @@ public class ChessGamePersistenceTest {
 
 		newChessGame.setMoves(RandomTestUtil.randomString());
 
+		newChessGame.setPosition(RandomTestUtil.randomString());
+
 		newChessGame.setWinnerPlayerId(RandomTestUtil.nextLong());
 
 		_chessGames.add(_persistence.update(newChessGame));
@@ -181,6 +183,8 @@ public class ChessGamePersistenceTest {
 			newChessGame.getBlackPlayerId());
 		Assert.assertEquals(
 			existingChessGame.getMoves(), newChessGame.getMoves());
+		Assert.assertEquals(
+			existingChessGame.getPosition(), newChessGame.getPosition());
 		Assert.assertEquals(
 			existingChessGame.getWinnerPlayerId(),
 			newChessGame.getWinnerPlayerId());
@@ -253,7 +257,8 @@ public class ChessGamePersistenceTest {
 			"ChessGame", "mvccVersion", true, "uuid", true, "chessGameId", true,
 			"groupId", true, "companyId", true, "userId", true, "userName",
 			true, "createDate", true, "modifiedDate", true, "whitePlayerId",
-			true, "blackPlayerId", true, "moves", true, "winnerPlayerId", true);
+			true, "blackPlayerId", true, "moves", true, "position", true,
+			"winnerPlayerId", true);
 	}
 
 	@Test
@@ -554,6 +559,8 @@ public class ChessGamePersistenceTest {
 		chessGame.setBlackPlayerId(RandomTestUtil.nextLong());
 
 		chessGame.setMoves(RandomTestUtil.randomString());
+
+		chessGame.setPosition(RandomTestUtil.randomString());
 
 		chessGame.setWinnerPlayerId(RandomTestUtil.nextLong());
 
