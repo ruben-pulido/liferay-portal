@@ -37,6 +37,15 @@ const ChessGame = ({config}) => {
 		setChessMoves(chessMoves.concat(chessMove));
 	}
 
+	function updateCurrentTurn() {
+		if (currentTurn === PLAYER_COLOR.WHITE) {
+			setCurrentTurn(PLAYER_COLOR.BLACK);
+		}
+		else {
+			setCurrentTurn(PLAYER_COLOR.WHITE);
+		}
+	}
+
 	useEffect(() => {
 		document.title = `Current turn: ${currentTurn}`;
 	}, [currentTurn]);
@@ -63,6 +72,7 @@ const ChessGame = ({config}) => {
 					portletNamespace={config.portletNamespace}
 					setCurrentTurn={setCurrentTurn}
 					setGameResult={setGameResult}
+					updateCurrentTurn={updateCurrentTurn}
 				/>
 			</LoggedInUserContext.Provider>
 		</div>
