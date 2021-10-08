@@ -27,7 +27,11 @@ const ChessGame = ({config}) => {
 				blackPlayer={config.blackPlayer}
 				whitePlayer={config.whitePlayer}
 			/>
-			<ChessAddMove />
+			<ChessAddMove
+				actionUrl={config.urls.addMoveURL}
+				chessGameId={config.chessGameId}
+				portletNamespace={config.portletNamespace}
+			/>
 		</div>
 	);
 };
