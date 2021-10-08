@@ -16,6 +16,7 @@ package com.liferay.chess.web.internal.display.context;
 
 import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.ChessGameLocalServiceUtil;
+import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
@@ -25,7 +26,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Map;
 
-import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderResponse;
@@ -102,10 +102,11 @@ public class ChessPlayGameDisplayContext {
 	}
 
 	protected String getAddMoveActionURL() {
-		PortletURL actionURL = _renderResponse.createActionURL();
-
-		actionURL.setParameter(
-			ActionRequest.ACTION_NAME, "/chess_play_game/add_move");
+		PortletURL actionURL = PortletURLBuilder.createActionURL(
+			_renderResponse
+		).setActionName(
+			"/chess_play_game/add_move"
+		).build();
 
 		return actionURL.toString();
 	}
