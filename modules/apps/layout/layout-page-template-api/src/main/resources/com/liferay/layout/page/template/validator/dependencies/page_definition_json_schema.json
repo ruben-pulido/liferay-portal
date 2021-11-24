@@ -767,6 +767,7 @@
 				"paginationType": {
 					"enum": [
 						"None",
+						"Numeric",
 						"Regular",
 						"Simple"
 					],
