@@ -2,6 +2,7 @@
 	"configurationPath": "configuration.json",
 	"cssPath": "styles.css",
 	"htmlPath": "index.html",
+	"icon": "pencil",
 	"jsPath": "main.js",
 	"name": "Fragment",
 	"type": "section"

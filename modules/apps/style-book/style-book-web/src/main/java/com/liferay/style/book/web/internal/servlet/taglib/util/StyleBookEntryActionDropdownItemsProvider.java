@@ -14,6 +14,8 @@
 
 package com.liferay.style.book.web.internal.servlet.taglib.util;
 
+import com.liferay.fragment.collection.item.selector.FragmentCollectionItemSelectorReturnType;
+import com.liferay.fragment.collection.item.selector.criterion.FragmentCollectionItemSelectorCriterion;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
 import com.liferay.item.selector.ItemSelector;
@@ -96,6 +98,8 @@ public class StyleBookEntryActionDropdownItemsProvider {
 						_getMarkAsDefaultStyleBookEntryActionUnsafeConsumer()
 					).add(
 						_getRenameStyleBookEntrytActionUnsafeConsumer()
+					).add(
+						_getSelectFragmentCollectionActionUnsafeConsumer()
 					).build());
 				dropdownGroupItem.setSeparator(true);
 			}
@@ -264,6 +268,21 @@ public class StyleBookEntryActionDropdownItemsProvider {
 		return itemSelectorURL.toString();
 	}
 
+	private String _getFragmentCollectionItemSelectorURL() {
+		ItemSelectorCriterion itemSelectorCriterion =
+			new FragmentCollectionItemSelectorCriterion();
+
+		itemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			new FragmentCollectionItemSelectorReturnType());
+
+		PortletURL itemSelectorURL = _itemSelector.getItemSelectorURL(
+			RequestBackedPortletURLFactoryUtil.create(_httpServletRequest),
+			_renderResponse.getNamespace() + "selectFragmentCollection",
+			itemSelectorCriterion);
+
+		return itemSelectorURL.toString();
+	}
+
 	private UnsafeConsumer<DropdownItem, Exception>
 		_getMarkAsDefaultStyleBookEntryActionUnsafeConsumer() {
 
@@ -342,6 +361,20 @@ public class StyleBookEntryActionDropdownItemsProvider {
 				).buildString());
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "rename"));
+		};
+	}
+
+	private UnsafeConsumer<DropdownItem, Exception>
+		_getSelectFragmentCollectionActionUnsafeConsumer() {
+
+		return dropdownItem -> {
+			dropdownItem.putData("action", "selectFragmentCollection");
+			dropdownItem.putData(
+				"selectFragmentCollectionURL",
+				_getFragmentCollectionItemSelectorURL()
+			);
+			dropdownItem.setLabel(
+				LanguageUtil.get(_httpServletRequest, "select-fragment-collection"));
 		};
 	}
 
