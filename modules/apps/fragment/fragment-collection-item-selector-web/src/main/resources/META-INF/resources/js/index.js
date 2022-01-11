@@ -12,6 +12,24 @@
  * details.
  */
 
-export default function (data) {
-	console.log(data);
+import {delegate} from 'frontend-js-web';
+
+export default function ({portletNamespace}) {
+	const parentElement = document.getElementById(`${portletNamespace}wrapper`);
+
+	if (!parentElement) {
+		return;
+	}
+
+	return delegate(parentElement, 'click', '.card-interactive', (event) => {
+		const {name, previewUrl: previewURL} = event.delegateTarget.dataset;
+		const opener = Liferay.Util.getOpener();
+
+		opener.Liferay.fire(
+			'_com_liferay_style_book_web_internal_portlet_StyleBookPortlet_selectPreviewItem',
+			{value: JSON.stringify({name, previewURL})}
+		);
+
+		opener.Liferay.fire('closeModal');
+	});
 }
