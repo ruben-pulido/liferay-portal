@@ -15,6 +15,16 @@
 import {openSelectionModal, openSimpleInputModal} from 'frontend-js-web';
 
 const ACTIONS = {
+	selectFragmentCollection({selectFragmentCollectionURL, portletNamespace}) {
+		openSelectionModal(
+			{
+				selectEventName: `${portletNamespace}selectFragmentCollection`,
+				title: Liferay.Language.get('select-fragment-collection'),
+				url: selectFragmentCollectionURL
+			}
+		);
+	},
+
 	copyStyleBookEntry({copyStyleBookEntryURL}) {
 		submitForm(document.hrefFm, copyStyleBookEntryURL);
 	},
