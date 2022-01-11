@@ -34,5 +34,7 @@ public class FragmentCollectionItemSelectorWebKeys {
 
 	public static final String FRAGMENT_COLLECTION_TYPE =
 		"fragmentCollectionType";
+	public static final String FRAGMENT_COLLECTION_ITEM_SELECTOR_DEFAULT_EVENT_HANDLER =
+		"FRAGMENT_COLLECTION_ITEM_SELECTOR_DEFAULT_EVENT_HANDLER";
 
 }
