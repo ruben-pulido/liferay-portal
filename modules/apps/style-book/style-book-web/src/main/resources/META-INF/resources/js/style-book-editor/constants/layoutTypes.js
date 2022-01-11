@@ -14,6 +14,7 @@
 
 export const LAYOUT_TYPES = {
 	displayPageTemplate: 'displayPageTemplate',
+	fragmentCollection: 'fragmentCollection',
 	master: 'master',
 	page: 'page',
 	pageTemplate: 'pageTemplate',
