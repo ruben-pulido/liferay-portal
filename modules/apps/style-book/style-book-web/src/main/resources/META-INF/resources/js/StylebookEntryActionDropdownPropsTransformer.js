@@ -14,15 +14,52 @@
 
 import {openSelectionModal, openSimpleInputModal} from 'frontend-js-web';
 
+// (selectedItems) => {
+// 	if (!selectedItems?.length) {
+// 		return;
+// 	}
+//
+// 	const form = document.getElementById(`${portletNamespace}fm`);
+//
+// 	if (!form) {
+// 		return;
+// 	}
+//
+// 	if (
+// 		confirm(
+// 			Liferay.Language.get(
+// 				'are-you-sure-you-want-to-delete-the-selected-entries'
+// 			)
+// 		)
+// 	) {
+// 		const input = document.createElement('input');
+//
+// 		input.name = `${portletNamespace}rowIds`;
+// 		input.value = selectedItems.map((item) => item.value);
+//
+// 		form.appendChild(input);
+// 	}
+//
+// 	submitForm(form, deleteFragmentCollectionURL);
+// }
+
 const ACTIONS = {
-	selectFragmentCollection({selectFragmentCollectionURL, portletNamespace}) {
-		openSelectionModal(
-			{
-				selectEventName: `${portletNamespace}selectFragmentCollection`,
-				title: Liferay.Language.get('select-fragment-collection'),
-				url: selectFragmentCollectionURL
-			}
-		);
+	selectFragmentCollection({portletNamespace, selectFragmentCollectionURL}) {
+		openSelectionModal({
+			selectEventName: `${portletNamespace}selectFragmentCollection`,
+			title: Liferay.Language.get('select-fragment-collection'),
+			url: selectFragmentCollectionURL,
+
+			// ,
+			// multiple: false,
+			// onClose,
+			// onSelect: (selectedItem) => {
+			// 	if (selectedItem) {
+			// 		callback(selectedItem);
+			// 	}
+			// },
+
+		});
 	},
 
 	copyStyleBookEntry({copyStyleBookEntryURL}) {
