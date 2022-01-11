@@ -138,6 +138,11 @@ public class EditStyleBookEntryDisplayContext {
 					"type", "displayPageTemplate"
 				),
 				JSONUtil.put(
+					"data", _getFragmentCollectionOptionJSONObject()
+				).put(
+					"type", "fragmentCollection"
+				),
+				JSONUtil.put(
 					"data",
 					_getOptionJSONObject(
 						LayoutPageTemplateEntryTypeConstants.TYPE_MASTER_LAYOUT)
@@ -179,6 +184,26 @@ public class EditStyleBookEntryDisplayContext {
 		).setActionName(
 			actionName
 		).buildString();
+	}
+
+	private JSONObject _getFragmentCollectionOptionJSONObject() {
+		return JSONUtil.put(
+			"itemSelectorURL", "https://pablomolina.me/fragment_selector"
+		).put(
+			"recentLayouts",
+			JSONFactoryUtil.createJSONArray(
+			).put(
+				JSONUtil.put(
+					"name", "Home"
+				).put(
+					"private", false
+				).put(
+					"url", "https://pablomolina.me/"
+				)
+			)
+		).put(
+			"totalLayouts", 2
+		);
 	}
 
 	private JSONObject _getFrontendTokenDefinitionJSONObject()
