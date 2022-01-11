@@ -123,6 +123,10 @@ public class FragmentCollectionItemSelectorDisplayContext {
 		return itemSelectorURL.toString();
 	}
 
+	private String _getFragmentCollectionPreviewURL(FragmentCollection fragmentCollection) {
+		return "http://www.liferay.com";
+	}
+
 	public SearchContainer<FragmentCollection>
 		getFragmentCollectionSearchContainer() {
 
@@ -192,12 +196,10 @@ public class FragmentCollectionItemSelectorDisplayContext {
 
 	public String getPayload(FragmentCollection fragmentCollection) {
 		return JSONUtil.put(
-			"fragmentCollectionId", fragmentCollection.getFragmentCollectionId()
+			"previewURL",
+			_getFragmentCollectionPreviewURL(fragmentCollection)
 		).put(
-			"fragmentCollectionKey",
-			fragmentCollection.getFragmentCollectionKey()
-		).put(
-			"title", fragmentCollection.getName()
+			"name", fragmentCollection.getName()
 		).toString();
 	}
 

@@ -243,6 +243,21 @@ public class StyleBookEntryActionDropdownItemsProvider {
 		};
 	}
 
+	private String _getFragmentCollectionItemSelectorURL() {
+		ItemSelectorCriterion itemSelectorCriterion =
+			new FragmentCollectionItemSelectorCriterion();
+
+		itemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			new FragmentCollectionItemSelectorReturnType());
+
+		PortletURL itemSelectorURL = _itemSelector.getItemSelectorURL(
+			RequestBackedPortletURLFactoryUtil.create(_httpServletRequest),
+			_renderResponse.getNamespace() + "selectFragmentCollection",
+			itemSelectorCriterion);
+
+		return itemSelectorURL.toString();
+	}
+
 	private String _getItemSelectorURL() {
 		ItemSelectorCriterion itemSelectorCriterion =
 			new UploadItemSelectorCriterion(
@@ -263,21 +278,6 @@ public class StyleBookEntryActionDropdownItemsProvider {
 		PortletURL itemSelectorURL = _itemSelector.getItemSelectorURL(
 			RequestBackedPortletURLFactoryUtil.create(_httpServletRequest),
 			_renderResponse.getNamespace() + "changePreview",
-			itemSelectorCriterion);
-
-		return itemSelectorURL.toString();
-	}
-
-	private String _getFragmentCollectionItemSelectorURL() {
-		ItemSelectorCriterion itemSelectorCriterion =
-			new FragmentCollectionItemSelectorCriterion();
-
-		itemSelectorCriterion.setDesiredItemSelectorReturnTypes(
-			new FragmentCollectionItemSelectorReturnType());
-
-		PortletURL itemSelectorURL = _itemSelector.getItemSelectorURL(
-			RequestBackedPortletURLFactoryUtil.create(_httpServletRequest),
-			_renderResponse.getNamespace() + "selectFragmentCollection",
 			itemSelectorCriterion);
 
 		return itemSelectorURL.toString();
@@ -371,10 +371,10 @@ public class StyleBookEntryActionDropdownItemsProvider {
 			dropdownItem.putData("action", "selectFragmentCollection");
 			dropdownItem.putData(
 				"selectFragmentCollectionURL",
-				_getFragmentCollectionItemSelectorURL()
-			);
+				_getFragmentCollectionItemSelectorURL());
 			dropdownItem.setLabel(
-				LanguageUtil.get(_httpServletRequest, "select-fragment-collection"));
+				LanguageUtil.get(
+					_httpServletRequest, "select-fragment-collection"));
 		};
 	}
 

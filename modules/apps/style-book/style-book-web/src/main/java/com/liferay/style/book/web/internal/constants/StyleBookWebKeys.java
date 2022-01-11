@@ -21,4 +21,7 @@ public class StyleBookWebKeys {
 
 	public static final String ITEM_SELECTOR = "ITEM_SELECTOR";
 
+	public static final String PREVIEW_FRAGMENT_COLLECTION_DISPLAY_CONTEXT =
+		"PREVIEW_FRAGMENT_COLLECTION_DISPLAY_CONTEXT";
+
 }

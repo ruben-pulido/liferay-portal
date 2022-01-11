@@ -1,5 +1,3 @@
-
-
 <%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
@@ -19,13 +17,10 @@
 <%@ include file="/init.jsp" %>
 
 <%
-EditStyleBookEntryDisplayContext editStyleBookEntryDisplayContext = new EditStyleBookEntryDisplayContext(request,
-	liferayPortletResponse, renderRequest, renderResponse);
+PreviewFragmentCollectionDisplayContext
+			previewFragmentCollectionDisplayContext =
+				new PreviewFragmentCollectionDisplayContext(
+					request, renderRequest, renderResponse);
 %>
 
-<div>
-	<react:component
-		module="js/style-book-editor/StyleBookEditor"
-		props="<%= editStyleBookEntryDisplayContext.getStyleBookEditorData() %>"
-	/>
-</div>
+<%= previewFragmentCollectionDisplayContext.getFragmentCollectionKey() %>

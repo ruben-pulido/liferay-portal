@@ -136,6 +136,7 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 
 					<c:if test="<%= fragmentCollectionItemSelectorDisplayContext.getGroupId() != CompanyConstants.SYSTEM %>">
 						<clay:container-fluid>
+<%--							<aui:form cssClass="container-fluid container-fluid-max-xl" name="selectFragmentCollectionFm">--%>
 								<liferay-ui:search-container
 									searchContainer="<%= fragmentCollectionItemSelectorDisplayContext.getFragmentCollectionSearchContainer() %>"
 								>
@@ -155,9 +156,12 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 										%>
 
 										<liferay-ui:search-container-column-text>
-											<clay:vertical-card
-												verticalCard="<%= new FragmentCollectionVerticalCard(fragmentCollection, searchContainer.getRowChecker()) %>"
-											/>
+												<clay:navigation-card
+													navigationCard="<%= new FragmentCollectionNavigationCard(fragmentCollection) %>"
+												/>
+<%--											<clay:vertical-card--%>
+<%--												verticalCard="<%= new FragmentCollectionVerticalCard(fragmentCollection, searchContainer.getRowChecker()) %>"--%>
+<%--											/>--%>
 										</liferay-ui:search-container-column-text> </liferay-ui:search-container-row>
 
 									<liferay-ui:search-iterator
@@ -165,6 +169,7 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 										markupView="lexicon"
 									/>
 								</liferay-ui:search-container>
+<%--							</aui:form>--%>
 						</clay:container-fluid>
 					</c:if>
 
@@ -206,3 +211,14 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 		</clay:col>
 	</clay:row>
 </clay:container-fluid>
+
+<liferay-frontend:component
+	module="js/index"
+/>
+
+
+
+<%--<liferay-frontend:component--%>
+<%--	componentId="<%= FragmentCollectionItemSelectorWebKeys.FRAGMENT_COLLECTION_ITEM_SELECTOR_DEFAULT_EVENT_HANDLER %>"--%>
+<%--	module="js/FragmentCollectionNavigationCardPropsTransformer"--%>
+<%--/>--%>
