@@ -15,10 +15,9 @@
 package com.liferay.fragment.collection.item.selector.web.internal.servlet.taglib.clay;
 
 import com.liferay.fragment.collection.item.selector.web.internal.constants.FragmentCollectionItemSelectorWebKeys;
-import com.liferay.fragment.model.FragmentCollection;
+import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.frontend.taglib.clay.servlet.taglib.soy.NavigationCard;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
-import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -28,14 +27,15 @@ import java.util.Map;
 /**
  * @author Eudaldo Alonso
  */
-public class FragmentCollectionNavigationCard implements NavigationCard {
+public class FragmentCollectionContributorNavigationCard
+	implements NavigationCard {
 
-	public FragmentCollectionNavigationCard(
-		BaseModel<?> baseModel, LiferayPortletResponse liferayPortletResponse) {
+	public FragmentCollectionContributorNavigationCard(
+		FragmentCollectionContributor fragmentCollectionContributor,
+		LiferayPortletResponse liferayPortletResponse) {
 
+		_fragmentCollectionContributor = fragmentCollectionContributor;
 		_liferayPortletResponse = liferayPortletResponse;
-
-		_fragmentCollection = (FragmentCollection)baseModel;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class FragmentCollectionNavigationCard implements NavigationCard {
 	@Override
 	public Map<String, String> getDynamicAttributes() {
 		return HashMapBuilder.put(
-			"data-name", _fragmentCollection.getName()
+			"data-name", _fragmentCollectionContributor.getName()
 		).put(
 			"data-preview-url",
 			PortletURLBuilder.createRenderURL(
@@ -61,7 +61,7 @@ public class FragmentCollectionNavigationCard implements NavigationCard {
 				"/style_book/preview_fragment_collection"
 			).setParameter(
 				"fragmentCollectionKey",
-				_fragmentCollection.getFragmentCollectionKey()
+				_fragmentCollectionContributor.getFragmentCollectionKey()
 			).buildString()
 		).build();
 	}
@@ -73,7 +73,7 @@ public class FragmentCollectionNavigationCard implements NavigationCard {
 
 	@Override
 	public String getTitle() {
-		return HtmlUtil.escape(_fragmentCollection.getName());
+		return HtmlUtil.escape(_fragmentCollectionContributor.getName());
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class FragmentCollectionNavigationCard implements NavigationCard {
 		return true;
 	}
 
-	private final FragmentCollection _fragmentCollection;
+	private final FragmentCollectionContributor _fragmentCollectionContributor;
 	private final LiferayPortletResponse _liferayPortletResponse;
 
 }

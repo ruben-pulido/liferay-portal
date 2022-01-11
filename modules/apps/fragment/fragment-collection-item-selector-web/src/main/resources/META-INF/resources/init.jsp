@@ -16,30 +16,27 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+
 <%@ taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
-taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.fragment.collection.item.selector.web.internal.constants.FragmentCollectionItemSelectorWebKeys" %><%@
 page import="com.liferay.fragment.collection.item.selector.web.internal.display.context.FragmentCollectionItemSelectorDisplayContext" %><%@
-page import="com.liferay.fragment.collection.item.selector.web.internal.servlet.taglib.clay.FragmentCollectionContributorVerticalCard" %><%@
+page import="com.liferay.fragment.collection.item.selector.web.internal.servlet.taglib.clay.FragmentCollectionContributorNavigationCard" %><%@
 page import="com.liferay.fragment.collection.item.selector.web.internal.servlet.taglib.clay.FragmentCollectionNavigationCard" %><%@
-page import="com.liferay.fragment.collection.item.selector.web.internal.servlet.taglib.clay.FragmentCollectionVerticalCard" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.model.CompanyConstants" %><%@
 page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
-page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
-page import="com.liferay.portal.kernel.util.ListUtil" %>
-
-<liferay-frontend:defineObjects />
+page import="com.liferay.portal.kernel.util.HtmlUtil" %>
 
 <liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
 
-<liferay-theme:defineObjects />
+<portlet:defineObjects />
 
 <%
 FragmentCollectionItemSelectorDisplayContext fragmentCollectionItemSelectorDisplayContext = (FragmentCollectionItemSelectorDisplayContext)request.getAttribute(FragmentCollectionItemSelectorWebKeys.FRAGMENT_COLLECTION_ITEM_SELECTOR_DISPLAY_CONTEXT);

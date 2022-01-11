@@ -123,10 +123,6 @@ public class FragmentCollectionItemSelectorDisplayContext {
 		return itemSelectorURL.toString();
 	}
 
-	private String _getFragmentCollectionPreviewURL(FragmentCollection fragmentCollection) {
-		return "http://www.liferay.com";
-	}
-
 	public SearchContainer<FragmentCollection>
 		getFragmentCollectionSearchContainer() {
 
@@ -196,10 +192,9 @@ public class FragmentCollectionItemSelectorDisplayContext {
 
 	public String getPayload(FragmentCollection fragmentCollection) {
 		return JSONUtil.put(
-			"previewURL",
-			_getFragmentCollectionPreviewURL(fragmentCollection)
-		).put(
 			"name", fragmentCollection.getName()
+		).put(
+			"previewURL", _getFragmentCollectionPreviewURL(fragmentCollection)
 		).toString();
 	}
 
@@ -230,6 +225,12 @@ public class FragmentCollectionItemSelectorDisplayContext {
 				_themeDisplay.getLocale()));
 
 		return fragmentCollectionContributors;
+	}
+
+	private String _getFragmentCollectionPreviewURL(
+		FragmentCollection fragmentCollection) {
+
+		return "http://www.liferay.com";
 	}
 
 	private PortletRequest _getPortletRequest() {

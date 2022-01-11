@@ -24,6 +24,7 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 
 <clay:container-fluid
 	cssClass="container-view"
+	id="<portlet:namespace />wrapper"
 >
 	<clay:row>
 		<clay:col
@@ -100,16 +101,6 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 								</c:if>
 							</c:when>
 							<c:otherwise>
-<%-- <liferay-frontend:empty-result-message--%>
-<%-- actionDropdownItems="<%= FragmentPermission.contains(permissionChecker, scopeGroupId, FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES) ? fragmentDisplayContext.getActionDropdownItems() : null %>"--%>
-<%-- additionalProps="<%= fragmentDisplayContext.getFragmentCollectionsViewContext() %>"--%>
-<%-- animationType="<%= EmptyResultMessageKeys.AnimationType.NONE %>"--%>
-<%-- buttonPropsTransformer="js/FragmentCollectionViewButtonPropsTransformer"--%>
-<%-- description='<%= LanguageUtil.get(request, "collections-are-needed-to-create-fragments") %>'--%>
-<%-- elementType='<%= LanguageUtil.get(request, "collections") %>'--%>
-<%-- propsTransformer="js/FragmentCollectionViewDefaultPropsTransformer"--%>
-<%-- propsTransformerServletContext="<%= application %>"--%>
-<%-- />--%>
 							</c:otherwise>
 						</c:choose>
 				</ul>
@@ -120,7 +111,6 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 			lg="9"
 		>
 
-<%-- <c:if test="<%= (fragmentDisplayContext.getFragmentCollection() != null) || (fragmentDisplayContext.getFragmentCollectionContributor() != null) %>">--%>
 				<clay:sheet
 					size="full"
 				>
@@ -136,7 +126,6 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 
 					<c:if test="<%= fragmentCollectionItemSelectorDisplayContext.getGroupId() != CompanyConstants.SYSTEM %>">
 						<clay:container-fluid>
-<%--							<aui:form cssClass="container-fluid container-fluid-max-xl" name="selectFragmentCollectionFm">--%>
 								<liferay-ui:search-container
 									searchContainer="<%= fragmentCollectionItemSelectorDisplayContext.getFragmentCollectionSearchContainer() %>"
 								>
@@ -157,19 +146,14 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 
 										<liferay-ui:search-container-column-text>
 												<clay:navigation-card
-													navigationCard="<%= new FragmentCollectionNavigationCard(fragmentCollection) %>"
+													navigationCard="<%= new FragmentCollectionNavigationCard(fragmentCollection, liferayPortletResponse) %>"
 												/>
-<%--											<clay:vertical-card--%>
-<%--												verticalCard="<%= new FragmentCollectionVerticalCard(fragmentCollection, searchContainer.getRowChecker()) %>"--%>
-<%--											/>--%>
 										</liferay-ui:search-container-column-text> </liferay-ui:search-container-row>
-
 									<liferay-ui:search-iterator
 										displayStyle="icon"
 										markupView="lexicon"
 									/>
 								</liferay-ui:search-container>
-<%--							</aui:form>--%>
 						</clay:container-fluid>
 					</c:if>
 
@@ -184,8 +168,8 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 										modelVar="fragmentCollectionContributor"
 									>
 										<liferay-ui:search-container-column-text>
-											<clay:vertical-card
-												verticalCard="<%= new FragmentCollectionContributorVerticalCard(fragmentCollectionContributor) %>"
+											<clay:navigation-card
+												navigationCard="<%= new FragmentCollectionContributorNavigationCard(fragmentCollectionContributor, liferayPortletResponse) %>"
 											/>
 										</liferay-ui:search-container-column-text>
 									</liferay-ui:search-container-row>
@@ -197,28 +181,16 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 								</liferay-ui:search-container>
 						</clay:container-fluid>
 					</c:if>
-
-<%-- <clay:sheet-section>--%>
-<%-- <c:if test="<%= !ListUtil.isEmpty(fragmentDisplayContext.getNavigationItems()) %>">--%>
-<%-- <clay:navigation-bar--%>
-<%-- navigationItems="<%= fragmentDisplayContext.getNavigationItems() %>"--%>
-<%-- />--%>
-<%-- </c:if>--%>
-
-<%-- </clay:sheet-section>--%>
 				</clay:sheet>
-<%-- </c:if>--%>
 		</clay:col>
 	</clay:row>
 </clay:container-fluid>
 
 <liferay-frontend:component
+	context='<%=
+		HashMapBuilder.<String, Object>put(
+			"portletNamespace", "<portlet:namespace />"
+		).build()
+	%>'
 	module="js/index"
 />
-
-
-
-<%--<liferay-frontend:component--%>
-<%--	componentId="<%= FragmentCollectionItemSelectorWebKeys.FRAGMENT_COLLECTION_ITEM_SELECTOR_DEFAULT_EVENT_HANDLER %>"--%>
-<%--	module="js/FragmentCollectionNavigationCardPropsTransformer"--%>
-<%--/>--%>
