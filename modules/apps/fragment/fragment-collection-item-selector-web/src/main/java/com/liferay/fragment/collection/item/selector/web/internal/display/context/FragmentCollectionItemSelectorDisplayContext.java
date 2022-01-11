@@ -190,24 +190,6 @@ public class FragmentCollectionItemSelectorDisplayContext {
 		return group.getDescriptiveName(_themeDisplay.getLocale());
 	}
 
-	public String getPayload(FragmentCollection fragmentCollection) {
-		return JSONUtil.put(
-			"name", fragmentCollection.getName()
-		).put(
-			"previewURL", _getFragmentCollectionPreviewURL(fragmentCollection)
-		).toString();
-	}
-
-	public String getReturnType() {
-		ItemSelectorReturnType itemSelectorReturnType =
-			new FragmentCollectionItemSelectorReturnType();
-
-		Class<? extends ItemSelectorReturnType> itemSelectorReturnTypeClass =
-			itemSelectorReturnType.getClass();
-
-		return itemSelectorReturnTypeClass.getName();
-	}
-
 	private List<FragmentCollectionContributor>
 		_getFragmentCollectionContributors() {
 
@@ -225,12 +207,6 @@ public class FragmentCollectionItemSelectorDisplayContext {
 				_themeDisplay.getLocale()));
 
 		return fragmentCollectionContributors;
-	}
-
-	private String _getFragmentCollectionPreviewURL(
-		FragmentCollection fragmentCollection) {
-
-		return "http://www.liferay.com";
 	}
 
 	private PortletRequest _getPortletRequest() {

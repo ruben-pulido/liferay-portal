@@ -135,18 +135,9 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 										modelVar="fragmentCollection"
 									>
 
-										<%
-										row.setData(
-											HashMapBuilder.<String, Object>put(
-												"return-type", fragmentCollectionItemSelectorDisplayContext.getReturnType()
-											).put(
-												"value", fragmentCollectionItemSelectorDisplayContext.getPayload(fragmentCollection)
-											).build());
-										%>
-
 										<liferay-ui:search-container-column-text>
 												<clay:navigation-card
-													navigationCard="<%= new FragmentCollectionNavigationCard(fragmentCollection, liferayPortletResponse) %>"
+													navigationCard="<%= new FragmentCollectionNavigationCard(fragmentCollection, request, liferayPortletResponse) %>"
 												/>
 										</liferay-ui:search-container-column-text> </liferay-ui:search-container-row>
 									<liferay-ui:search-iterator
@@ -169,7 +160,7 @@ int groupFragmentCollectionsCount = fragmentCollectionItemSelectorDisplayContext
 									>
 										<liferay-ui:search-container-column-text>
 											<clay:navigation-card
-												navigationCard="<%= new FragmentCollectionContributorNavigationCard(fragmentCollectionContributor, liferayPortletResponse) %>"
+												navigationCard="<%= new FragmentCollectionContributorNavigationCard(fragmentCollectionContributor, request, liferayPortletResponse) %>"
 											/>
 										</liferay-ui:search-container-column-text>
 									</liferay-ui:search-container-row>

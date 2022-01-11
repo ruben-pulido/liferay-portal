@@ -22,7 +22,10 @@ import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 
+import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -31,9 +34,10 @@ import java.util.Map;
 public class FragmentCollectionNavigationCard implements NavigationCard {
 
 	public FragmentCollectionNavigationCard(
-		BaseModel<?> baseModel, LiferayPortletResponse liferayPortletResponse) {
+		BaseModel<?> baseModel, HttpServletRequest httpServletRequest, LiferayPortletResponse liferayPortletResponse) {
 
 		_liferayPortletResponse = liferayPortletResponse;
+		_httpServletRequest = httpServletRequest;
 
 		_fragmentCollection = (FragmentCollection)baseModel;
 	}
@@ -55,8 +59,12 @@ public class FragmentCollectionNavigationCard implements NavigationCard {
 			"data-name", _fragmentCollection.getName()
 		).put(
 			"data-preview-url",
-			PortletURLBuilder.createRenderURL(
-				_liferayPortletResponse
+			PortletURLBuilder.create(
+				PortalUtil.getControlPanelPortletURL(
+				_httpServletRequest, "com_liferay_style_book_web_internal_portlet_StyleBookPortlet",
+				PortletRequest.RENDER_PHASE)
+//			PortletURLBuilder.createRenderURL(
+//				_liferayPortletResponse
 			).setMVCRenderCommandName(
 				"/style_book/preview_fragment_collection"
 			).setParameter(
@@ -87,6 +95,7 @@ public class FragmentCollectionNavigationCard implements NavigationCard {
 	}
 
 	private final FragmentCollection _fragmentCollection;
+	private final HttpServletRequest _httpServletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
 
 }
