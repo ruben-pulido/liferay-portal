@@ -25,6 +25,10 @@ import openItemSelector from './openItemSelector';
 
 const LAYOUT_TYPES_OPTIONS = [
 	{
+		label: Liferay.Language.get('fragments'),
+		type: LAYOUT_TYPES.fragmentCollection,
+	},
+	{
 		label: Liferay.Language.get('masters'),
 		type: LAYOUT_TYPES.master,
 	},
