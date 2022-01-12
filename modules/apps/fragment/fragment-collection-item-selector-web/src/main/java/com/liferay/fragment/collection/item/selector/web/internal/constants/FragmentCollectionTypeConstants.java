@@ -12,35 +12,19 @@
  * details.
  */
 
-package com.liferay.fragment.collection.item.selector.criterion;
-
-import com.liferay.item.selector.BaseItemSelectorCriterion;
-
-import java.util.Map;
-import java.util.function.Function;
+package com.liferay.fragment.collection.item.selector.web.internal.constants;
 
 /**
  * @author Rubén Pulido
  */
-public class FragmentCollectionItemSelectorCriterion
-	extends BaseItemSelectorCriterion {
+public class FragmentCollectionTypeConstants {
 
-	public long getGroupId() {
-		return _groupId;
-	}
+	public static final String FRAGMENT_COLLECTIONS = "FRAGMENT_COLLECTIONS";
 
-	public void setGroupId(long groupId) {
-		_groupId = groupId;
-	}
+	public static final String INHERITED_FRAGMENT_COLLECTIONS =
+		"INHERITED_FRAGMENT_COLLECTIONS";
 
-	public String getPreviewURL() {return _previewURL; }
-
-	private long _groupId;
-
-	public void setPreviewURL(String previewURL) {
-		_previewURL = previewURL;
-	}
-
-	private String _previewURL;
+	public static final String SYSTEM_FRAGMENT_COLLECTIONS =
+		"SYSTEM_FRAGMENT_COLLECTIONS";
 
 }
