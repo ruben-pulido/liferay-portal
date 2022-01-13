@@ -38,6 +38,7 @@ page import="com.liferay.style.book.exception.DuplicateStyleBookEntryKeyExceptio
 page import="com.liferay.style.book.exception.StyleBookEntryFileException" %><%@
 page import="com.liferay.style.book.web.internal.display.context.EditStyleBookEntryDisplayContext" %><%@
 page import="com.liferay.style.book.web.internal.display.context.ImportStyleBookDisplayContext" %><%@
+page import="com.liferay.style.book.web.internal.display.context.PreviewFragmentCollectionDisplayContext" %><%@
 page import="com.liferay.style.book.web.internal.display.context.StyleBookDisplayContext" %><%@
 page import="com.liferay.style.book.web.internal.display.context.StyleBookManagementToolbarDisplayContext" %><%@
 page import="com.liferay.style.book.web.internal.servlet.taglib.clay.StyleBookVerticalCard" %><%@

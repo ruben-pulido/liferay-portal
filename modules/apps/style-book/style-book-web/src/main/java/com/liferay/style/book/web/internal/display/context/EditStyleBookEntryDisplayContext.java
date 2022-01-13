@@ -15,6 +15,8 @@
 package com.liferay.style.book.web.internal.display.context;
 
 import com.liferay.exportimport.kernel.staging.StagingUtil;
+import com.liferay.fragment.collection.item.selector.FragmentCollectionItemSelectorReturnType;
+import com.liferay.fragment.collection.item.selector.criterion.FragmentCollectionItemSelectorCriterion;
 import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
 import com.liferay.item.selector.ItemSelector;
@@ -41,6 +43,7 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.Theme;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
@@ -56,6 +59,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.style.book.constants.StyleBookPortletKeys;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalServiceUtil;
 import com.liferay.style.book.web.internal.configuration.FFStyleBookConfigurationUtil;
@@ -78,10 +82,12 @@ import javax.servlet.http.HttpServletRequest;
 public class EditStyleBookEntryDisplayContext {
 
 	public EditStyleBookEntryDisplayContext(
-		HttpServletRequest httpServletRequest, RenderRequest renderRequest,
-		RenderResponse renderResponse) {
+		HttpServletRequest httpServletRequest,
+		LiferayPortletResponse liferayPortletResponse,
+		RenderRequest renderRequest, RenderResponse renderResponse) {
 
 		_httpServletRequest = httpServletRequest;
+		_liferayPortletResponse = liferayPortletResponse;
 		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
 
@@ -138,6 +144,11 @@ public class EditStyleBookEntryDisplayContext {
 					"type", "displayPageTemplate"
 				),
 				JSONUtil.put(
+					"data", _getFragmentCollectionOptionJSONObject()
+				).put(
+					"type", "fragmentCollection"
+				),
+				JSONUtil.put(
 					"data",
 					_getOptionJSONObject(
 						LayoutPageTemplateEntryTypeConstants.TYPE_MASTER_LAYOUT)
@@ -182,6 +193,65 @@ public class EditStyleBookEntryDisplayContext {
 		).setActionName(
 			actionName
 		).buildString();
+	}
+
+	private String _getFragmentCollectionItemSelectorURL() {
+		FragmentCollectionItemSelectorCriterion
+			fragmentCollectionItemSelectorCriterion =
+				new FragmentCollectionItemSelectorCriterion();
+
+		fragmentCollectionItemSelectorCriterion.setPreviewURLTemplate(
+			PortletURLBuilder.createRenderURL(
+				_liferayPortletResponse, StyleBookPortletKeys.STYLE_BOOK
+			).setMVCRenderCommandName(
+				"/style_book/preview_fragment_collection"
+			).setParameter(
+				"fragmentCollectionKey", "_fragmentCollectionKey_"
+			).buildString());
+
+		// TODO replace this with valid groupID
+
+		fragmentCollectionItemSelectorCriterion.setGroupId(
+			_themeDisplay.getSiteGroupId());
+
+		fragmentCollectionItemSelectorCriterion.
+			setDesiredItemSelectorReturnTypes(
+				new FragmentCollectionItemSelectorReturnType());
+
+		PortletURL itemSelectorURL = _itemSelector.getItemSelectorURL(
+			RequestBackedPortletURLFactoryUtil.create(_httpServletRequest),
+			_renderResponse.getNamespace() + "selectPreviewItem",
+			fragmentCollectionItemSelectorCriterion);
+
+		return itemSelectorURL.toString();
+	}
+
+	private JSONObject _getFragmentCollectionOptionJSONObject() {
+		return JSONUtil.put(
+			"itemSelectorURL", _getFragmentCollectionItemSelectorURL()
+		).put(
+			"recentLayouts",
+			JSONFactoryUtil.createJSONArray(
+			).put(
+				JSONUtil.put(
+					"name", "Fake Fragment Collection C4"
+				).put(
+					"private", false
+				).put(
+					"url", _getPreviewFragmentCollectionURL("c4")
+				)
+			).put(
+				JSONUtil.put(
+					"name", "Fake Fragment Collection C5"
+				).put(
+					"private", false
+				).put(
+					"url", _getPreviewFragmentCollectionURL("c5")
+				)
+			)
+		).put(
+			"totalLayouts", 3
+		);
 	}
 
 	private JSONObject _getFrontendTokenDefinitionJSONObject()
@@ -347,6 +417,18 @@ public class EditStyleBookEntryDisplayContext {
 		);
 	}
 
+	private String _getPreviewFragmentCollectionURL(
+		String fragmentCollectionKey) {
+
+		return PortletURLBuilder.createRenderURL(
+			_liferayPortletResponse
+		).setMVCRenderCommandName(
+			"/style_book/preview_fragment_collection"
+		).setParameter(
+			"fragmentCollectionKey", fragmentCollectionKey
+		).buildString();
+	}
+
 	private long _getPreviewItemsGroupId() {
 		if (_previewItemsGroupId != null) {
 			return _previewItemsGroupId;
@@ -491,6 +573,7 @@ public class EditStyleBookEntryDisplayContext {
 		_frontendTokenDefinitionRegistry;
 	private final HttpServletRequest _httpServletRequest;
 	private final ItemSelector _itemSelector;
+	private final LiferayPortletResponse _liferayPortletResponse;
 	private Long _previewItemsGroupId;
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;
