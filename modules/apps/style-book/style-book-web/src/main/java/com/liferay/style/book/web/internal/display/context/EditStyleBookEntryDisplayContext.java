@@ -37,7 +37,6 @@ import com.liferay.layout.page.template.util.comparator.LayoutPageTemplateEntryM
 import com.liferay.layout.util.comparator.LayoutModifiedDateComparator;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.petra.portlet.url.builder.ResourceURLBuilder;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -64,7 +63,6 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -564,6 +562,13 @@ public class EditStyleBookEntryDisplayContext {
 		}
 
 		return null;
+	}
+
+	private String _getPreviewURL(String fragmentCollectionKey) {
+		String url = _getFragmentCollectionPreviewURL();
+
+		return HttpUtil.addParameter(
+			url, "fragmentCollectionKey", fragmentCollectionKey);
 	}
 
 	private String _getRedirect() {
