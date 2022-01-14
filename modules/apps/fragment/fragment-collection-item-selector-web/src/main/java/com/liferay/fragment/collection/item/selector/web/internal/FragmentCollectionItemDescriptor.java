@@ -14,13 +14,9 @@
 
 package com.liferay.fragment.collection.item.selector.web.internal;
 
-import com.liferay.fragment.collection.item.selector.criterion.FragmentCollectionItemSelectorCriterion;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.item.selector.ItemSelectorViewDescriptor;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Locale;
 
@@ -31,13 +27,9 @@ public class FragmentCollectionItemDescriptor
 	implements ItemSelectorViewDescriptor.ItemDescriptor {
 
 	public FragmentCollectionItemDescriptor(
-		FragmentCollection fragmentCollection,
-		FragmentCollectionItemSelectorCriterion
-			fragmentCollectionItemSelectorCriterion) {
+		FragmentCollection fragmentCollection) {
 
 		_fragmentCollection = fragmentCollection;
-		_fragmentCollectionItemSelectorCriterion =
-			fragmentCollectionItemSelectorCriterion;
 	}
 
 	@Override
@@ -53,17 +45,12 @@ public class FragmentCollectionItemDescriptor
 	@Override
 	public String getPayload() {
 		return JSONUtil.put(
-			"name", _fragmentCollection.getName()
+			"fragmentCollectionKey",
+			_fragmentCollection.getFragmentCollectionKey()
 		).put(
-			"previewURL",
-			StringUtil.replace(
-				_fragmentCollectionItemSelectorCriterion.
-					getPreviewURLTemplate(),
-				StringPool.UNDERLINE, StringPool.UNDERLINE,
-				HashMapBuilder.put(
-					"fragmentCollectionKey",
-					_fragmentCollection.getFragmentCollectionKey()
-				).build())
+			"groupId", _fragmentCollection.getGroupId()
+		).put(
+			"name", _fragmentCollection.getName()
 		).toString();
 	}
 
@@ -78,7 +65,5 @@ public class FragmentCollectionItemDescriptor
 	}
 
 	private final FragmentCollection _fragmentCollection;
-	private final FragmentCollectionItemSelectorCriterion
-		_fragmentCollectionItemSelectorCriterion;
 
 }
