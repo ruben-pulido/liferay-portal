@@ -43,6 +43,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
@@ -115,7 +116,12 @@ public class EditStyleBookEntryDisplayContext {
 
 	public Map<String, Object> getStyleBookEditorData() throws Exception {
 		return HashMapBuilder.<String, Object>put(
-			"fragmentCollectionPreviewURL", _getFragmentCollectionPreviewURL()
+			"fragmentCollectionPreviewURL",
+			PortletURLBuilder.createRenderURL(
+				_liferayPortletResponse, StyleBookPortletKeys.STYLE_BOOK
+			).setMVCRenderCommandName(
+				"/style_book/preview_fragment_collection"
+			).buildString()
 		).put(
 			"frontendTokenDefinition", _getFrontendTokenDefinitionJSONObject()
 		).put(
@@ -269,9 +275,18 @@ public class EditStyleBookEntryDisplayContext {
 								"private", false
 							).put(
 								"url",
-								_getPreviewURL(
+								PortletURLBuilder.createRenderURL(
+									_liferayPortletResponse,
+									StyleBookPortletKeys.STYLE_BOOK
+								).setMVCRenderCommandName(
+									"/style_book/preview_fragment_collection"
+								).setParameter(
+									"fragmentCollectionKey",
 									fragmentCollectionContributor.
-										getFragmentCollectionKey())
+										getFragmentCollectionKey()
+								).setParameter(
+									"groupId", CompanyConstants.SYSTEM
+								).buildString()
 							)
 						).toArray(
 							JSONObject[]::new
@@ -290,9 +305,18 @@ public class EditStyleBookEntryDisplayContext {
 								"private", false
 							).put(
 								"url",
-								_getPreviewURL(
+								PortletURLBuilder.createRenderURL(
+									_liferayPortletResponse,
+									StyleBookPortletKeys.STYLE_BOOK
+								).setMVCRenderCommandName(
+									"/style_book/preview_fragment_collection"
+								).setParameter(
+									"fragmentCollectionKey",
 									fragmentCollection.
-										getFragmentCollectionKey())
+										getFragmentCollectionKey()
+								).setParameter(
+									"groupId", fragmentCollection.getGroupId()
+								).buildString()
 							)
 						).toArray(
 							JSONObject[]::new
@@ -302,14 +326,6 @@ public class EditStyleBookEntryDisplayContext {
 		).put(
 			"totalLayouts", fragmentCollectionsCount
 		);
-	}
-
-	private String _getFragmentCollectionPreviewURL() {
-		return PortletURLBuilder.createRenderURL(
-			_liferayPortletResponse, StyleBookPortletKeys.STYLE_BOOK
-		).setMVCRenderCommandName(
-			"/style_book/preview_fragment_collection"
-		).buildString();
 	}
 
 	private int _getFragmentCollectionsCount() {
@@ -562,13 +578,6 @@ public class EditStyleBookEntryDisplayContext {
 		}
 
 		return null;
-	}
-
-	private String _getPreviewURL(String fragmentCollectionKey) {
-		String url = _getFragmentCollectionPreviewURL();
-
-		return HttpUtil.addParameter(
-			url, "fragmentCollectionKey", fragmentCollectionKey);
 	}
 
 	private String _getRedirect() {
