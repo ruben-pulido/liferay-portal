@@ -14,13 +14,11 @@
 
 package com.liferay.fragment.collection.item.selector.web.internal;
 
-import com.liferay.fragment.collection.item.selector.criterion.FragmentCollectionItemSelectorCriterion;
 import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.item.selector.ItemSelectorViewDescriptor;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.model.CompanyConstants;
 
 import java.util.Locale;
 
@@ -31,13 +29,9 @@ public class FragmentCollectionContributorItemDescriptor
 	implements ItemSelectorViewDescriptor.ItemDescriptor {
 
 	public FragmentCollectionContributorItemDescriptor(
-		FragmentCollectionContributor fragmentCollectionContributor,
-		FragmentCollectionItemSelectorCriterion
-			fragmentCollectionItemSelectorCriterion) {
+		FragmentCollectionContributor fragmentCollectionContributor) {
 
 		_fragmentCollectionContributor = fragmentCollectionContributor;
-		_fragmentCollectionItemSelectorCriterion =
-			fragmentCollectionItemSelectorCriterion;
 	}
 
 	@Override
@@ -53,17 +47,12 @@ public class FragmentCollectionContributorItemDescriptor
 	@Override
 	public String getPayload() {
 		return JSONUtil.put(
-			"name", _fragmentCollectionContributor.getName()
+			"fragmentCollectionKey",
+			_fragmentCollectionContributor.getFragmentCollectionKey()
 		).put(
-			"previewURL",
-			StringUtil.replace(
-				_fragmentCollectionItemSelectorCriterion.
-					getPreviewURLTemplate(),
-				StringPool.UNDERLINE, StringPool.UNDERLINE,
-				HashMapBuilder.put(
-					"fragmentCollectionKey",
-					_fragmentCollectionContributor.getFragmentCollectionKey()
-				).build())
+			"groupId", CompanyConstants.SYSTEM
+		).put(
+			"name", _fragmentCollectionContributor.getName()
 		).toString();
 	}
 
@@ -78,7 +67,5 @@ public class FragmentCollectionContributorItemDescriptor
 	}
 
 	private final FragmentCollectionContributor _fragmentCollectionContributor;
-	private final FragmentCollectionItemSelectorCriterion
-		_fragmentCollectionItemSelectorCriterion;
 
 }
