@@ -117,6 +117,8 @@ public class EditStyleBookEntryDisplayContext {
 
 	public Map<String, Object> getStyleBookEditorData() throws Exception {
 		return HashMapBuilder.<String, Object>put(
+			"fragmentCollectionPreviewURL", _getFragmentCollectionPreviewURL()
+		).put(
 			"frontendTokenDefinition", _getFrontendTokenDefinitionJSONObject()
 		).put(
 			"frontendTokensValues",
@@ -213,9 +215,6 @@ public class EditStyleBookEntryDisplayContext {
 			fragmentCollectionItemSelectorCriterion =
 				new FragmentCollectionItemSelectorCriterion();
 
-		fragmentCollectionItemSelectorCriterion.setPreviewURLTemplate(
-			_getFragmentCollectionPreviewURLTemplate());
-
 		fragmentCollectionItemSelectorCriterion.
 			setDesiredItemSelectorReturnTypes(
 				new FragmentCollectionItemSelectorReturnType());
@@ -307,13 +306,11 @@ public class EditStyleBookEntryDisplayContext {
 		);
 	}
 
-	private String _getFragmentCollectionPreviewURLTemplate() {
+	private String _getFragmentCollectionPreviewURL() {
 		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse, StyleBookPortletKeys.STYLE_BOOK
 		).setMVCRenderCommandName(
 			"/style_book/preview_fragment_collection"
-		).setParameter(
-			"fragmentCollectionKey", "_fragmentCollectionKey_"
 		).buildString();
 	}
 
@@ -567,15 +564,6 @@ public class EditStyleBookEntryDisplayContext {
 		}
 
 		return null;
-	}
-
-	private String _getPreviewURL(String fragmentCollectionKey) {
-		return StringUtil.replace(
-			_getFragmentCollectionPreviewURLTemplate(), StringPool.UNDERLINE,
-			StringPool.UNDERLINE,
-			HashMapBuilder.put(
-				"fragmentCollectionKey", fragmentCollectionKey
-			).build());
 	}
 
 	private String _getRedirect() {

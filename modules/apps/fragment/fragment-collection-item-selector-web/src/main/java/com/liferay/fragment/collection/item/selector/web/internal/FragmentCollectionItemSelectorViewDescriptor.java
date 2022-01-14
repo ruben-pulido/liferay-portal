@@ -51,8 +51,7 @@ public class FragmentCollectionItemSelectorViewDescriptor
 	public ItemDescriptor getItemDescriptor(
 		FragmentCollection fragmentCollection) {
 
-		return new FragmentCollectionItemDescriptor(
-			fragmentCollection, _fragmentCollectionItemSelectorCriterion);
+		return new FragmentCollectionItemDescriptor(fragmentCollection);
 	}
 
 	@Override

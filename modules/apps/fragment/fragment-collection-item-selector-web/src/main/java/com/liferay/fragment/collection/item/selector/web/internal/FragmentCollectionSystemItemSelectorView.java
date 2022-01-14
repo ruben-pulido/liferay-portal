@@ -83,7 +83,6 @@ public class FragmentCollectionSystemItemSelectorView
 			itemSelectedEventName, search,
 			new FragmentCollectionContributorItemSelectorViewDescriptor(
 				_fragmentCollectionContributorTracker,
-				fragmentCollectionItemSelectorCriterion,
 				(HttpServletRequest)servletRequest, portletURL));
 	}
 
