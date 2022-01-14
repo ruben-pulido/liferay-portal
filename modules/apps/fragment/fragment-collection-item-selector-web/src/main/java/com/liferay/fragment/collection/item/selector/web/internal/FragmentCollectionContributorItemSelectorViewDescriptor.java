@@ -15,7 +15,6 @@
 package com.liferay.fragment.collection.item.selector.web.internal;
 
 import com.liferay.fragment.collection.item.selector.FragmentCollectionItemSelectorReturnType;
-import com.liferay.fragment.collection.item.selector.criterion.FragmentCollectionItemSelectorCriterion;
 import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
 import com.liferay.fragment.util.comparator.FragmentCollectionContributorNameComparator;
@@ -45,14 +44,10 @@ public class FragmentCollectionContributorItemSelectorViewDescriptor
 	public FragmentCollectionContributorItemSelectorViewDescriptor(
 		FragmentCollectionContributorTracker
 			fragmentCollectionContributorTracker,
-		FragmentCollectionItemSelectorCriterion
-			fragmentCollectionItemSelectorCriterion,
 		HttpServletRequest httpServletRequest, PortletURL portletURL) {
 
 		_fragmentCollectionContributorTracker =
 			fragmentCollectionContributorTracker;
-		_fragmentCollectionItemSelectorCriterion =
-			fragmentCollectionItemSelectorCriterion;
 		_httpServletRequest = httpServletRequest;
 		_portletURL = portletURL;
 	}
@@ -62,8 +57,7 @@ public class FragmentCollectionContributorItemSelectorViewDescriptor
 		FragmentCollectionContributor fragmentCollectionContributor) {
 
 		return new FragmentCollectionContributorItemDescriptor(
-			fragmentCollectionContributor,
-			_fragmentCollectionItemSelectorCriterion);
+			fragmentCollectionContributor);
 	}
 
 	@Override
@@ -132,8 +126,6 @@ public class FragmentCollectionContributorItemSelectorViewDescriptor
 
 	private final FragmentCollectionContributorTracker
 		_fragmentCollectionContributorTracker;
-	private final FragmentCollectionItemSelectorCriterion
-		_fragmentCollectionItemSelectorCriterion;
 	private final HttpServletRequest _httpServletRequest;
 	private final PortletURL _portletURL;
 
