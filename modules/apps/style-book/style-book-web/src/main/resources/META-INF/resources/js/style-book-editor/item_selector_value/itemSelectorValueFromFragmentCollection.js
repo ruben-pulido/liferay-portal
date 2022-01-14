@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,17 +11,21 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ include file="/init.jsp" %>
+import {config} from '../config';
 
-<%
-EditStyleBookEntryDisplayContext editStyleBookEntryDisplayContext = new EditStyleBookEntryDisplayContext(request, liferayPortletResponse, renderRequest, renderResponse);
-%>
+export function itemSelectorValueFromFragmentCollection(value) {
+	const url = new URL(config.fragmentCollectionPreviewURL);
 
-<div>
-	<react:component
-		module="js/style-book-editor/StyleBookEditor"
-		props="<%= editStyleBookEntryDisplayContext.getStyleBookEditorData() %>"
-	/>
-</div>
+	url.searchParams.set(
+		`${config.namespace}fragmentCollectionKey`,
+		value.fragmentCollectionKey
+	);
+	url.searchParams.set(`${config.groupId}groupId`, value.groupId);
+
+	return {
+		name: value.name,
+		private: false,
+		url: url.toString(),
+	};
+}

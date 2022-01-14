@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,17 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ include file="/init.jsp" %>
+export function itemSelectorValueFromLayout(value) {
+	const url = new URL(value.previewURL);
 
-<%
-EditStyleBookEntryDisplayContext editStyleBookEntryDisplayContext = new EditStyleBookEntryDisplayContext(request, liferayPortletResponse, renderRequest, renderResponse);
-%>
+	url.searchParams.set('styleBookEntryPreview', 'true');
 
-<div>
-	<react:component
-		module="js/style-book-editor/StyleBookEditor"
-		props="<%= editStyleBookEntryDisplayContext.getStyleBookEditorData() %>"
-	/>
-</div>
+	return {
+		name: value.name,
+		private: value.private,
+		url: url.toString(),
+	};
+}
