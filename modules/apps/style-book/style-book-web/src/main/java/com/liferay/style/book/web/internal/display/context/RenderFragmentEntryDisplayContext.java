@@ -16,16 +16,18 @@ package com.liferay.style.book.web.internal.display.context;
 
 import com.liferay.fragment.constants.FragmentEntryLinkConstants;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
-import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.renderer.DefaultFragmentRendererContext;
-import com.liferay.fragment.service.FragmentCollectionLocalServiceUtil;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
 import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.bean.BeanParamUtil;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,17 +51,9 @@ public class RenderFragmentEntryDisplayContext {
 
 	}
 
-	public DefaultFragmentRendererContext getDefaultFragmentRendererContext() {
+	public DefaultFragmentRendererContext getDefaultFragmentRendererContext()
+		throws JSONException {
 		FragmentEntry fragmentEntry = _getFragmentEntry();
-
-//		String css = BeanParamUtil.getString(
-//			fragmentEntry, _httpServletRequest, "css");
-//		String html = BeanParamUtil.getString(
-//			fragmentEntry, _httpServletRequest, "html");
-//		String js = BeanParamUtil.getString(
-//			fragmentEntry, _httpServletRequest, "js");
-//		String configuration = BeanParamUtil.getString(
-//			fragmentEntry, _httpServletRequest, "configuration");
 
 		FragmentEntryLink fragmentEntryLink =
 			FragmentEntryLinkLocalServiceUtil.createFragmentEntryLink(0);
@@ -80,10 +74,24 @@ public class RenderFragmentEntryDisplayContext {
 		DefaultFragmentRendererContext defaultFragmentRendererContext =
 			new DefaultFragmentRendererContext(fragmentEntryLink);
 
-		defaultFragmentRendererContext.setEditableValues(
-			ParamUtil.get(
-				_httpServletRequest, "editableValues", StringPool.BLANK)
-		);
+		String configurationValues = ParamUtil.get(
+			_httpServletRequest, "configurationValues", StringPool.BLANK);
+
+		defaultFragmentRendererContext.setUseCachedContent(false);
+
+		if (Validator.isNotNull(configurationValues)) {
+			JSONObject configurationValuesJSONObject =
+				JSONFactoryUtil.createJSONObject(configurationValues);
+
+			JSONObject editableValuesJSONObject = JSONUtil.put(
+				"com.liferay.fragment.entry.processor.freemarker.FreeMarkerFragmentEntryProcessor",
+				configurationValuesJSONObject
+			);
+
+			defaultFragmentRendererContext.setEditableValues(
+				editableValuesJSONObject.toString());
+		}
+
 		defaultFragmentRendererContext.setMode(FragmentEntryLinkConstants.VIEW);
 
 		return defaultFragmentRendererContext;
