@@ -15,6 +15,7 @@
 package com.liferay.style.book.web.internal.portlet;
 
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
+import com.liferay.fragment.renderer.FragmentRendererController;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.style.book.constants.StyleBookPortletKeys;
@@ -61,6 +62,11 @@ public class StyleBookPortlet extends MVCPortlet {
 		throws IOException, PortletException {
 
 		renderRequest.setAttribute(
+			"FRAGMENT_RENDERER_CONTROLLER",
+//			FragmentActionKeys.FRAGMENT_RENDERER_CONTROLLER,
+			_fragmentRendererController);
+
+		renderRequest.setAttribute(
 			StyleBookWebKeys.ITEM_SELECTOR, _itemSelector);
 
 		renderRequest.setAttribute(
@@ -76,6 +82,9 @@ public class StyleBookPortlet extends MVCPortlet {
 	@Reference
 	private FragmentCollectionContributorTracker
 		_fragmentCollectionContributorTracker;
+
+	@Reference
+	private FragmentRendererController _fragmentRendererController;
 
 	@Reference
 	private ItemSelector _itemSelector;

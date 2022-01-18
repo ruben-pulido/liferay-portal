@@ -120,10 +120,19 @@ public class FreeMarkerFragmentEntryProcessor
 
 		template.put(TemplateConstants.WRITER, unsyncStringWriter);
 
+		String editableValues = fragmentEntryLink.getEditableValues();
+
+		Optional<String> editableValuesOptional =
+			fragmentEntryProcessorContext.getEditableValuesOptional();
+
+		if (editableValuesOptional.isPresent()) {
+			editableValues = editableValuesOptional.get();
+		}
+
 		JSONObject configurationValuesJSONObject =
 			_fragmentEntryConfigurationParser.getConfigurationJSONObject(
 				fragmentEntryLink.getConfiguration(),
-				fragmentEntryLink.getEditableValues(),
+				editableValues,
 				fragmentEntryProcessorContext.getLocale());
 		String fragmentEntryLinkNamespace = _getFragmentEntryLinkNamespace(
 			fragmentEntryLink);

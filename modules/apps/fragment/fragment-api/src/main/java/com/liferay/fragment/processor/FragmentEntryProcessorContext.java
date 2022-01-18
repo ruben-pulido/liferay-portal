@@ -31,6 +31,8 @@ public interface FragmentEntryProcessorContext {
 
 	public Optional<Object> getDisplayObjectOptional();
 
+	public Optional<String> getEditableValuesOptional();
+
 	public Optional<Map<String, Object>> getFieldValuesOptional();
 
 	public String getFragmentElementId();
