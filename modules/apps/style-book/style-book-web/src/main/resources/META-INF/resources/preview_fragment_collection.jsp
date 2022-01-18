@@ -17,12 +17,11 @@
 <%@ include file="/init.jsp" %>
 
 <%
-EditStyleBookEntryDisplayContext editStyleBookEntryDisplayContext = new EditStyleBookEntryDisplayContext(request, liferayPortletResponse, renderRequest, renderResponse);
+PreviewFragmentCollectionDisplayContext previewFragmentCollectionDisplayContext = new PreviewFragmentCollectionDisplayContext(renderRequest);
 %>
 
-<div>
-	<react:component
-		module="js/style-book-editor/StyleBookEditor"
-		props="<%= editStyleBookEntryDisplayContext.getStyleBookEditorData() %>"
-	/>
-</div>
+<%= previewFragmentCollectionDisplayContext.getFragmentCollectionKey() %>
+
+<liferay-frontend:component
+	module="js/fragment-collection-preview/FragmentCollectionPreview.js"
+/>
