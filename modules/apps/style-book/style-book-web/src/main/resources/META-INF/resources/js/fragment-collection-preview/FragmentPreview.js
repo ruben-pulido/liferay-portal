@@ -22,12 +22,14 @@ export function FragmentPreview({fragment, namespace, previewURL}) {
 		fragment,
 	]);
 
+	console.log({fragment, variations})
+
 	return (
 		<section>
-			<h4>{fragment.label}</h4>
+			<h4>{fragment.name}</h4>
 
 			{variations.map((variation) => {
-				const label = `${fragment.label} ${variation
+				const label = `${fragment.name} ${variation
 					.map((part) => part.label)
 					.join(' ')}`;
 
@@ -37,7 +39,7 @@ export function FragmentPreview({fragment, namespace, previewURL}) {
 						key={label}
 						label={label}
 						namespace={namespace}
-						previewURL={previewURL}
+						previewURL={fragment.previewURL}
 						variation={fragment.variation}
 					/>
 				);

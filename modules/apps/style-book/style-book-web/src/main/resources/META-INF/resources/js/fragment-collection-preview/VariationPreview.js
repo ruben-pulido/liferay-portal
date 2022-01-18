@@ -12,7 +12,7 @@
  * details.
  */
 
-import {fetch} from 'frontend-js-web';
+import {fetch, objectToFormData} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
 export function VariationPreview({
@@ -25,11 +25,24 @@ export function VariationPreview({
 	const [html, setHTML] = useState('');
 
 	useEffect(() => {
+		const editableValues = {
+		"com.liferay.fragment.entry.processor.background.image.BackgroundImageFragmentEntryProcessor": {},
+		"com.liferay.fragment.entry.processor.editable.EditableFragmentEntryProcessor": {},
+		"com.liferay.fragment.entry.processor.freemarker.FreeMarkerFragmentEntryProcessor": {
+			"buttonType": "outline-primary",
+			"buttonSize": "lg"
+			}
+		};
+
+		// const data = new URLSearchParams();
+		// data.append(`${namespace}editableValues`, JSON.stringify(editableValues));
+
 		fetch(previewURL, {
-			body: {
-				[`${namespace}fragmentEntryKey`]: fragmentEntryKey,
-				[`${namespace}configuration`]: variation,
-			},
+			body: objectToFormData({
+				[`${namespace}editableValues`]: JSON.stringify(editableValues),
+			}),
+			// body: data,
+			method: 'POST',
 		})
 			.then((response) => response.json())
 			.then((data) => {

@@ -151,4 +151,7 @@ public class DefaultFragmentEntryProcessorContext
 	private String _previewVersion = InfoItemIdentifier.VERSION_LATEST_APPROVED;
 	private long[] _segmentsEntryIds = new long[0];
 
+	public void setEditableValues(String editableValues) {
+		_editableValues = editableValues;
+	}
 }
