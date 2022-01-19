@@ -19,13 +19,12 @@ import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentCollectionLocalServiceUtil;
 import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
-import com.liferay.fragment.service.FragmentEntryService;
-import com.liferay.fragment.service.FragmentEntryServiceUtil;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
+import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.style.book.constants.StyleBookPortletKeys;
 
@@ -80,6 +79,8 @@ public class PreviewFragmentCollectionDisplayContext {
 			"groupId", _getGroupId()
 		).setParameter(
 			"fragmentEntryKey", fragmentEntryKey
+		).setParameter(
+			"p_l_mode", Constants.PREVIEW
 		).buildString();
 	}
 
