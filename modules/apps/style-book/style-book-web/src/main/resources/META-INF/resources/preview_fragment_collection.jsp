@@ -1,4 +1,4 @@
-<%--
+<%@ page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -17,11 +17,20 @@
 <%@ include file="/init.jsp" %>
 
 <%
-PreviewFragmentCollectionDisplayContext previewFragmentCollectionDisplayContext = new PreviewFragmentCollectionDisplayContext(renderRequest);
+PreviewFragmentCollectionDisplayContext previewFragmentCollectionDisplayContext = new PreviewFragmentCollectionDisplayContext(request, renderRequest);
 %>
 
 <%= previewFragmentCollectionDisplayContext.getFragmentCollectionKey() %>
 
-<liferay-frontend:component
-	module="js/fragment-collection-preview/FragmentCollectionPreview.js"
-/>
+<div>
+	<react:component
+		module="js/fragment-collection-preview/FragmentCollectionPreview"
+		props='<%=
+			HashMapBuilder.<String, Object>put(
+				"fragments", previewFragmentCollectionDisplayContext.getFragmentsArray()
+			).put(
+				"namespace", previewFragmentCollectionDisplayContext.getStyleBookPortletNamespace()
+			).build()
+		%>'
+	/>
+</div>

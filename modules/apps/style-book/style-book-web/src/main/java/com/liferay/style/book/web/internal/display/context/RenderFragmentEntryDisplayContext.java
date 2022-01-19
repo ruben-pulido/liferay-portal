@@ -23,6 +23,7 @@ import com.liferay.fragment.renderer.DefaultFragmentRendererContext;
 import com.liferay.fragment.service.FragmentCollectionLocalServiceUtil;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
 import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 
@@ -51,14 +52,14 @@ public class RenderFragmentEntryDisplayContext {
 	public DefaultFragmentRendererContext getDefaultFragmentRendererContext() {
 		FragmentEntry fragmentEntry = _getFragmentEntry();
 
-		String css = BeanParamUtil.getString(
-			fragmentEntry, _httpServletRequest, "css");
-		String html = BeanParamUtil.getString(
-			fragmentEntry, _httpServletRequest, "html");
-		String js = BeanParamUtil.getString(
-			fragmentEntry, _httpServletRequest, "js");
-		String configuration = BeanParamUtil.getString(
-			fragmentEntry, _httpServletRequest, "configuration");
+//		String css = BeanParamUtil.getString(
+//			fragmentEntry, _httpServletRequest, "css");
+//		String html = BeanParamUtil.getString(
+//			fragmentEntry, _httpServletRequest, "html");
+//		String js = BeanParamUtil.getString(
+//			fragmentEntry, _httpServletRequest, "js");
+//		String configuration = BeanParamUtil.getString(
+//			fragmentEntry, _httpServletRequest, "configuration");
 
 		FragmentEntryLink fragmentEntryLink =
 			FragmentEntryLinkLocalServiceUtil.createFragmentEntryLink(0);
@@ -71,38 +72,32 @@ public class RenderFragmentEntryDisplayContext {
 
 		fragmentEntryLink.setFragmentEntryId(fragmentEntryId);
 
-		fragmentEntryLink.setCss(css);
-		fragmentEntryLink.setHtml(html);
-		fragmentEntryLink.setJs(js);
-		fragmentEntryLink.setConfiguration(configuration);
+		fragmentEntryLink.setCss(fragmentEntry.getCss());
+		fragmentEntryLink.setHtml(fragmentEntry.getHtml());
+		fragmentEntryLink.setJs(fragmentEntry.getJs());
+		fragmentEntryLink.setConfiguration(fragmentEntry.getConfiguration());
 
 		DefaultFragmentRendererContext defaultFragmentRendererContext =
 			new DefaultFragmentRendererContext(fragmentEntryLink);
 
+		defaultFragmentRendererContext.setEditableValues(
+			ParamUtil.get(
+				_httpServletRequest, "editableValues", StringPool.BLANK)
+		);
 		defaultFragmentRendererContext.setMode(FragmentEntryLinkConstants.VIEW);
 
 		return defaultFragmentRendererContext;
 	}
 
 	private FragmentEntry _getFragmentEntry() {
-		long fragmentCollectionId = ParamUtil.getLong(
-			_httpServletRequest, "fragmentCollectionId");
-		long fragmentEntryId = ParamUtil.getLong(
-			_httpServletRequest, "fragmentEntryId");
+		long groupId = ParamUtil.getLong(
+			_httpServletRequest, "groupId");
 		String fragmentEntryKey = ParamUtil.getString(
 			_httpServletRequest, "fragmentEntryKey");
 
 		FragmentEntry fragmentEntry =
-			FragmentEntryLocalServiceUtil.fetchFragmentEntry(fragmentEntryId);
-
-		FragmentCollection fragmentCollection =
-			FragmentCollectionLocalServiceUtil.fetchFragmentCollection(
-				fragmentCollectionId);
-
-		if ((fragmentEntry == null) && (fragmentCollection != null)) {
-			fragmentEntry = FragmentEntryLocalServiceUtil.fetchFragmentEntry(
-				fragmentCollection.getGroupId(), fragmentEntryKey);
-		}
+			FragmentEntryLocalServiceUtil.fetchFragmentEntry(
+				groupId, fragmentEntryKey);
 
 		if (fragmentEntry == null) {
 			fragmentEntry =

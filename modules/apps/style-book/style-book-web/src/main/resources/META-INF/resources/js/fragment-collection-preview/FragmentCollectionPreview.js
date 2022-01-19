@@ -21,12 +21,16 @@ export default function FragmentCollectionPreview({
 	namespace,
 	previewURL,
 }) {
+	console.log(
+		{fragments, namespace}
+	);
+
 	return (
 		<>
 			{fragments.map((fragment) => (
 				<FragmentPreview
 					fragment={fragment}
-					key={fragment.label}
+					key={fragment.name}
 					namespace={namespace}
 					previewURL={previewURL}
 				/>

@@ -14,9 +14,25 @@
 
 package com.liferay.style.book.web.internal.display.context;
 
+import com.liferay.fragment.constants.FragmentPortletKeys;
+import com.liferay.fragment.model.FragmentCollection;
+import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.service.FragmentCollectionLocalServiceUtil;
+import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
+import com.liferay.fragment.service.FragmentEntryService;
+import com.liferay.fragment.service.FragmentEntryServiceUtil;
+import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.style.book.constants.StyleBookPortletKeys;
 
+import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author Rubén Pulido
@@ -24,9 +40,20 @@ import javax.portlet.RenderRequest;
 public class PreviewFragmentCollectionDisplayContext {
 
 	public PreviewFragmentCollectionDisplayContext(
-		RenderRequest renderRequest) {
+		HttpServletRequest httpServletRequest, RenderRequest renderRequest) {
 
+		_httpServletRequest = httpServletRequest;
 		_renderRequest = renderRequest;
+	}
+
+	private long _getGroupId() {
+		if (_groupId != null) {
+			return _groupId;
+		}
+
+		_groupId = ParamUtil.getLong(_renderRequest, "groupId");
+
+		return _groupId;
 	}
 
 	public String getFragmentCollectionKey() {
@@ -40,7 +67,61 @@ public class PreviewFragmentCollectionDisplayContext {
 		return _fragmentCollectionKey;
 	}
 
+	private String _getFragmentEntryRenderURL(String fragmentEntryKey)
+		throws Exception {
+
+		return PortletURLBuilder.create(
+			PortletURLFactoryUtil.create(
+				_httpServletRequest, StyleBookPortletKeys.STYLE_BOOK,
+				PortletRequest.RENDER_PHASE)
+		).setMVCRenderCommandName(
+			"/style_book/render_fragment_entry"
+		).setParameter(
+			"groupId", _getGroupId()
+		).setParameter(
+			"fragmentEntryKey", fragmentEntryKey
+		).buildString();
+	}
+
+	public JSONArray getFragmentsArray() throws Exception {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		FragmentCollection fragmentCollection =
+			FragmentCollectionLocalServiceUtil.fetchFragmentCollection(
+				_getGroupId(), getFragmentCollectionKey());
+
+		if (fragmentCollection == null) {
+			return jsonArray;
+		}
+
+		List<FragmentEntry> fragmentEntries =
+			FragmentEntryLocalServiceUtil.getFragmentEntries(
+				fragmentCollection.getFragmentCollectionId());
+
+		for (FragmentEntry fragmentEntry : fragmentEntries) {
+
+			jsonArray.put(
+				JSONUtil.put(
+					"name", fragmentEntry.getName()
+				).put(
+					"configuration",
+					JSONFactoryUtil.createJSONObject(fragmentEntry.getConfiguration())
+				).put(
+					"previewURL", _getFragmentEntryRenderURL(fragmentEntry.getFragmentEntryKey())
+				)
+			);
+		}
+
+		return jsonArray;
+	}
+
+	public String getStyleBookPortletNamespace() {
+		return StyleBookPortletKeys.STYLE_BOOK;
+	}
+
 	private String _fragmentCollectionKey;
+	private Long _groupId;
+	private final HttpServletRequest _httpServletRequest;
 	private final RenderRequest _renderRequest;
 
 }
