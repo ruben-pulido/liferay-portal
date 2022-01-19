@@ -25,33 +25,30 @@ export function VariationPreview({
 	const [html, setHTML] = useState('');
 
 	useEffect(() => {
-		const editableValues = {
-		"com.liferay.fragment.entry.processor.background.image.BackgroundImageFragmentEntryProcessor": {},
-		"com.liferay.fragment.entry.processor.editable.EditableFragmentEntryProcessor": {},
-		"com.liferay.fragment.entry.processor.freemarker.FreeMarkerFragmentEntryProcessor": {
-			"buttonType": "outline-primary",
-			"buttonSize": "lg"
-			}
-		};
 
-		// const data = new URLSearchParams();
-		// data.append(`${namespace}editableValues`, JSON.stringify(editableValues));
+		console.log({variation});
+
+		const configurationValues = Object.assign(...variation.map((x) => {
+			const {name, value} = x;
+			return {[name]: value};
+		}))
+
+		console.log({configurationValues});
 
 		fetch(previewURL, {
 			body: objectToFormData({
-				[`${namespace}editableValues`]: JSON.stringify(editableValues),
+				[`_${namespace}_configurationValues`]: JSON.stringify(configurationValues)
 			}),
-			// body: data,
 			method: 'POST',
 		})
-			.then((response) => response.json())
-			.then((data) => {
-				setHTML(data.html);
-			})
-			.catch((error) => {
-				console.error(error);
-				setHTML('ERROR');
-			});
+		.then((response) => response.text())
+		.then((data) => {
+			setHTML(data);
+		})
+		.catch((error) => {
+			console.error(error);
+			setHTML('ERROR');
+		});
 	}, [fragmentEntryKey, namespace, previewURL, variation]);
 
 	return (

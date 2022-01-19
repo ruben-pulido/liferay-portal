@@ -17,7 +17,7 @@ import React, {useMemo} from 'react';
 import {VariationPreview} from './VariationPreview';
 import {combine} from './combine';
 
-export function FragmentPreview({fragment, namespace, previewURL}) {
+export function FragmentPreview({fragment, namespace}) {
 	const variations = useMemo(() => getFragmentVariations(fragment), [
 		fragment,
 	]);
@@ -40,7 +40,7 @@ export function FragmentPreview({fragment, namespace, previewURL}) {
 						label={label}
 						namespace={namespace}
 						previewURL={fragment.previewURL}
-						variation={fragment.variation}
+						variation={variation}
 					/>
 				);
 			})}
@@ -59,6 +59,7 @@ function getFragmentVariations(fragment) {
 				)
 				.map((field) =>
 					field.typeOptions.validValues.map((validValue) => ({
+						name: field.name,
 						label: validValue.label || validValue.value,
 						value: validValue.value,
 					}))
