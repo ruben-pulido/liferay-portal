@@ -1,3 +1,5 @@
+<%@ page import="com.liferay.portal.kernel.util.HashMapBuilder" %>
+
 <%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
@@ -17,12 +19,18 @@
 <%@ include file="/init.jsp" %>
 
 <%
-EditStyleBookEntryDisplayContext editStyleBookEntryDisplayContext = new EditStyleBookEntryDisplayContext(request, liferayPortletResponse, renderRequest, renderResponse);
+PreviewFragmentCollectionDisplayContext previewFragmentCollectionDisplayContext = new PreviewFragmentCollectionDisplayContext(request, renderRequest);
 %>
 
 <div>
 	<react:component
-		module="js/style-book-editor/StyleBookEditor"
-		props="<%= editStyleBookEntryDisplayContext.getStyleBookEditorData() %>"
+		module="js/fragment-collection-preview/FragmentCollectionPreview"
+		props='<%=
+			HashMapBuilder.<String, Object>put(
+				"fragments", previewFragmentCollectionDisplayContext.getFragmentsArray()
+			).put(
+				"namespace", previewFragmentCollectionDisplayContext.getStyleBookPortletNamespace()
+			).build()
+		%>'
 	/>
 </div>

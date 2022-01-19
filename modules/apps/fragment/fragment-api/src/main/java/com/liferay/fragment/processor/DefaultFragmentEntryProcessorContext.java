@@ -41,6 +41,11 @@ public class DefaultFragmentEntryProcessorContext
 	}
 
 	@Override
+	public Optional<String> getEditableValuesOptional() {
+		return Optional.ofNullable(_editableValues);
+	}
+
+	@Override
 	public Optional<Object> getDisplayObjectOptional() {
 		return Optional.ofNullable(_displayObject);
 	}
@@ -133,6 +138,7 @@ public class DefaultFragmentEntryProcessorContext
 	}
 
 	private Object _displayObject;
+	private String _editableValues;
 	private Map<String, Object> _fieldValues;
 	private String _fragmentElementId;
 	private final HttpServletRequest _httpServletRequest;
@@ -145,4 +151,7 @@ public class DefaultFragmentEntryProcessorContext
 	private String _previewVersion = InfoItemIdentifier.VERSION_LATEST_APPROVED;
 	private long[] _segmentsEntryIds = new long[0];
 
+	public void setEditableValues(String editableValues) {
+		_editableValues = editableValues;
+	}
 }

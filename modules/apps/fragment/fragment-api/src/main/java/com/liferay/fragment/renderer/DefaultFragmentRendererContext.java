@@ -168,6 +168,7 @@ public class DefaultFragmentRendererContext implements FragmentRendererContext {
 
 	private int _collectionElementIndex = -1;
 	private List<String> _collectionStyledLayoutStructureItemIds;
+	private String _editableValues;
 	private Object _displayObject;
 	private Map<String, Object> _fieldValues;
 	private final FragmentEntryLink _fragmentEntryLink;
@@ -180,4 +181,12 @@ public class DefaultFragmentRendererContext implements FragmentRendererContext {
 	private long[] _segmentsSegmentsEntryIds = new long[0];
 	private boolean _useCachedContent = true;
 
+	@Override
+	public Optional<String> getEditableValuesOptional() {
+		return Optional.ofNullable(_editableValues);
+	}
+
+	public void setEditableValues(String editableValues) {
+		_editableValues = editableValues;
+	}
 }

@@ -280,6 +280,14 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 		defaultFragmentEntryProcessorContext.setFieldValues(
 			fieldValuesOptional.orElse(null));
 
+		Optional<String> editableValuesOptional =
+			fragmentRendererContext.getEditableValuesOptional();
+
+		if (editableValuesOptional.isPresent()) {
+			defaultFragmentEntryProcessorContext.setEditableValues(
+				editableValuesOptional.get());
+		}
+
 		defaultFragmentEntryProcessorContext.setFragmentElementId(
 			fragmentRendererContext.getFragmentElementId());
 		defaultFragmentEntryProcessorContext.setPreviewClassNameId(
