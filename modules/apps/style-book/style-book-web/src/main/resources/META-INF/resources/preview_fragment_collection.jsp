@@ -1,4 +1,6 @@
 <%@ page import="com.liferay.portal.kernel.util.HashMapBuilder" %>
+<%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %>
+<%@ page import="com.liferay.portal.kernel.util.PortalUtil" %>
 
 <%--
 /**
@@ -19,7 +21,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-PreviewFragmentCollectionDisplayContext previewFragmentCollectionDisplayContext = new PreviewFragmentCollectionDisplayContext(request, renderRequest);
+PreviewFragmentCollectionDisplayContext previewFragmentCollectionDisplayContext = new PreviewFragmentCollectionDisplayContext(request, resourceResponse);
 %>
 
 <div>

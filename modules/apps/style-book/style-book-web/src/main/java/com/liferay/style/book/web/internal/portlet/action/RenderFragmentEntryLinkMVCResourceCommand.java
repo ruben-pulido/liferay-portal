@@ -1,0 +1,183 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.style.book.web.internal.portlet.action;
+
+import com.liferay.fragment.constants.FragmentEntryLinkConstants;
+import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
+import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.fragment.renderer.DefaultFragmentRendererContext;
+import com.liferay.fragment.renderer.FragmentRendererController;
+import com.liferay.fragment.service.FragmentEntryLinkLocalService;
+import com.liferay.fragment.service.FragmentEntryLocalService;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.portlet.PortletResponseUtil;
+import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
+import com.liferay.portal.kernel.service.LayoutSetLocalService;
+import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.style.book.constants.StyleBookPortletKeys;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+/**
+ * @author Pablo Molina
+ */
+@Component(
+	immediate = true,
+	property = {
+		"javax.portlet.name=" + StyleBookPortletKeys.STYLE_BOOK,
+		"mvc.command.name=/style_book/render_fragment_entry_link"
+	},
+	service = MVCResourceCommand.class
+)
+public class RenderFragmentEntryLinkMVCResourceCommand
+	extends BaseMVCResourceCommand {
+
+	private FragmentEntry _getFragmentEntry(ResourceRequest resourceRequest) {
+		long groupId = ParamUtil.getLong(resourceRequest, "groupId");
+
+		String fragmentEntryKey = ParamUtil.getString(
+			resourceRequest, "fragmentEntryKey");
+
+		FragmentEntry fragmentEntry =
+			_fragmentEntryLocalService.fetchFragmentEntry(
+				groupId, fragmentEntryKey);
+
+		if (fragmentEntry == null) {
+			fragmentEntry =
+				_fragmentCollectionContributorTracker.getFragmentEntry(
+					fragmentEntryKey);
+		}
+
+		return fragmentEntry;
+	}
+
+
+	@Override
+	protected void doServeResource(
+			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
+		throws Exception {
+
+		String content = StringPool.BLANK;
+
+		FragmentEntry fragmentEntry = _getFragmentEntry(resourceRequest);
+
+		if (fragmentEntry == null) {
+			return;
+		}
+
+		FragmentEntryLink fragmentEntryLink =
+			_fragmentEntryLinkLocalService.createFragmentEntryLink(0);
+
+		fragmentEntryLink.setFragmentEntryId(fragmentEntry.getFragmentEntryId());
+		fragmentEntryLink.setCss(fragmentEntry.getCss());
+		fragmentEntryLink.setHtml(fragmentEntry.getHtml());
+		fragmentEntryLink.setJs(fragmentEntry.getJs());
+		fragmentEntryLink.setConfiguration(fragmentEntry.getConfiguration());
+
+		DefaultFragmentRendererContext defaultFragmentRendererContext =
+			new DefaultFragmentRendererContext(fragmentEntryLink);
+
+		String configurationValues = ParamUtil.get(
+			resourceRequest, "configurationValues", StringPool.BLANK);
+
+		defaultFragmentRendererContext.setUseCachedContent(false);
+
+		if (Validator.isNotNull(configurationValues)) {
+			JSONObject configurationValuesJSONObject =
+				JSONFactoryUtil.createJSONObject(configurationValues);
+
+			JSONObject editableValuesJSONObject = JSONUtil.put(
+				"com.liferay.fragment.entry.processor.freemarker.FreeMarkerFragmentEntryProcessor",
+				configurationValuesJSONObject);
+
+			defaultFragmentRendererContext.setEditableValues(
+				editableValuesJSONObject.toString());
+		}
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)resourceRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		String languageId = ParamUtil.getString(
+			resourceRequest, "languageId", themeDisplay.getLanguageId());
+
+		defaultFragmentRendererContext.setLocale(
+			LocaleUtil.fromLanguageId(languageId));
+
+		defaultFragmentRendererContext.setMode(
+			FragmentEntryLinkConstants.EDIT); //TODO Test with VIEW
+
+		HttpServletRequest httpServletRequest =
+			_portal.getHttpServletRequest(resourceRequest);
+
+		boolean isolated = themeDisplay.isIsolated();
+
+		themeDisplay.setIsolated(true);
+
+		try {
+			content = _fragmentRendererController.render(
+				defaultFragmentRendererContext, httpServletRequest,
+				_portal.getHttpServletResponse(resourceResponse));
+		}
+		finally {
+			themeDisplay.setIsolated(isolated);
+		}
+
+		if (SessionErrors.contains(
+				httpServletRequest, "fragmentEntryContentInvalid")) {
+
+			SessionErrors.clear(httpServletRequest);
+		}
+
+		InputStream inputStream = new ByteArrayInputStream(content.getBytes());
+
+		PortletResponseUtil.write(resourceResponse, inputStream);
+	}
+
+	@Reference
+	private FragmentCollectionContributorTracker
+		_fragmentCollectionContributorTracker;
+
+	@Reference
+	private FragmentEntryLocalService _fragmentEntryLocalService;
+
+	@Reference
+	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
+
+	@Reference
+	private FragmentRendererController _fragmentRendererController;
+
+	@Reference
+	private Portal _portal;
+
+}

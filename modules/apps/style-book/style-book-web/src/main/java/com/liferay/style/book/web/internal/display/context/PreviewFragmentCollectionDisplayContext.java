@@ -14,24 +14,25 @@
 
 package com.liferay.style.book.web.internal.display.context;
 
+import com.liferay.fragment.contributor.FragmentCollectionContributor;
+import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentCollectionLocalServiceUtil;
 import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
-import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
+import com.liferay.petra.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
-import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.style.book.constants.StyleBookPortletKeys;
+import com.liferay.style.book.web.internal.constants.StyleBookWebKeys;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.RenderRequest;
-
+import javax.portlet.ResourceResponse;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -40,10 +41,18 @@ import javax.servlet.http.HttpServletRequest;
 public class PreviewFragmentCollectionDisplayContext {
 
 	public PreviewFragmentCollectionDisplayContext(
-		HttpServletRequest httpServletRequest, RenderRequest renderRequest) {
+		HttpServletRequest httpServletRequest,
+//		RenderRequest renderRequest,
+		ResourceResponse resourceResponse) {
 
 		_httpServletRequest = httpServletRequest;
-		_renderRequest = renderRequest;
+//		_resourceRequest = resourceRequest;
+//		_renderRequest = renderRequest;
+		_resourceResponse = resourceResponse;
+
+		_fragmentCollectionContributorTracker =
+			(FragmentCollectionContributorTracker)httpServletRequest.getAttribute(
+				StyleBookWebKeys.FRAGMENT_COLLECTION_CONTRIBUTOR_TRACKER);
 	}
 
 	public String getFragmentCollectionKey() {
@@ -52,7 +61,7 @@ public class PreviewFragmentCollectionDisplayContext {
 		}
 
 		_fragmentCollectionKey = ParamUtil.getString(
-			_renderRequest, "fragmentCollectionKey");
+			_httpServletRequest, "fragmentCollectionKey");
 
 		return _fragmentCollectionKey;
 	}
@@ -60,19 +69,42 @@ public class PreviewFragmentCollectionDisplayContext {
 	private String _getFragmentEntryRenderURL(String fragmentEntryKey)
 		throws Exception {
 
-		return PortletURLBuilder.create(
-			PortletURLFactoryUtil.create(
-				_httpServletRequest, StyleBookPortletKeys.STYLE_BOOK,
-				PortletRequest.RENDER_PHASE)
-		).setMVCRenderCommandName(
-			"/style_book/render_fragment_entry"
-		).setParameter(
-			"groupId", _getGroupId()
-		).setParameter(
-			"fragmentEntryKey", fragmentEntryKey
-		).setParameter(
-			"p_l_mode", Constants.PREVIEW
-		).buildString();
+		String renderFragmentEntryLinkUrl =
+			(String)_httpServletRequest.getAttribute(
+				"RENDER_FRAGMENT_ENTRY_LINK_URL"
+			);
+
+		return HttpUtil.addParameter(
+			renderFragmentEntryLinkUrl,
+//			"_"+ StyleBookPortletKeys.STYLE_BOOK +  "_fragmentEntryKey",
+			"_com_liferay_style_book_web_internal_portlet_StyleBookPortlet_fragmentEntryKey",
+			fragmentEntryKey);
+
+//		return ResourceURLBuilder.createResourceURL(
+//			_resourceResponse
+////		).setCMD(
+////			Constants.SAVE
+//		).setParameter(
+//			"groupId", _getGroupId()
+//		).setParameter(
+//			"fragmentEntryKey", fragmentEntryKey
+//		).setResourceID(
+//			"/style_book/render_fragment_entry_link"
+//		).buildString();
+
+//		return PortletURLBuilder.create(
+//			PortletURLFactoryUtil.create(
+//				_httpServletRequest, StyleBookPortletKeys.STYLE_BOOK,
+//				PortletRequest.RENDER_PHASE)
+//		).setMVCRenderCommandName(
+//			"/style_book/render_fragment_entry"
+//		).setParameter(
+//			"groupId", _getGroupId()
+//		).setParameter(
+//			"fragmentEntryKey", fragmentEntryKey
+//		).setParameter(
+//			"p_l_mode", Constants.PREVIEW
+//		).buildString();
 	}
 
 	public JSONArray getFragmentsArray() throws Exception {
@@ -82,13 +114,21 @@ public class PreviewFragmentCollectionDisplayContext {
 			FragmentCollectionLocalServiceUtil.fetchFragmentCollection(
 				_getGroupId(), getFragmentCollectionKey());
 
-		if (fragmentCollection == null) {
-			return jsonArray;
+		List<FragmentEntry> fragmentEntries = new ArrayList<>();
+
+		if (fragmentCollection != null) {
+			fragmentEntries =
+				FragmentEntryLocalServiceUtil.getFragmentEntries(
+					fragmentCollection.getFragmentCollectionId());
 		}
 
-		List<FragmentEntry> fragmentEntries =
-			FragmentEntryLocalServiceUtil.getFragmentEntries(
-				fragmentCollection.getFragmentCollectionId());
+		FragmentCollectionContributor fragmentCollectionContributor =
+			_fragmentCollectionContributorTracker.getFragmentCollectionContributor(
+				getFragmentCollectionKey());
+
+		if (fragmentCollectionContributor != null) {
+			fragmentEntries = fragmentCollectionContributor.getFragmentEntries();
+		}
 
 		for (FragmentEntry fragmentEntry : fragmentEntries) {
 			jsonArray.put(
@@ -117,14 +157,17 @@ public class PreviewFragmentCollectionDisplayContext {
 			return _groupId;
 		}
 
-		_groupId = ParamUtil.getLong(_renderRequest, "groupId");
+		_groupId = ParamUtil.getLong(_httpServletRequest, "groupId");
 
 		return _groupId;
 	}
 
 	private String _fragmentCollectionKey;
+	private final FragmentCollectionContributorTracker _fragmentCollectionContributorTracker;
 	private Long _groupId;
 	private final HttpServletRequest _httpServletRequest;
-	private final RenderRequest _renderRequest;
+//	private final RenderRequest _renderRequest;
+//	private final ResourceRequest _resourceRequest;
+	private final ResourceResponse _resourceResponse;
 
 }
