@@ -15,6 +15,9 @@
 import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
+import {DndProvider} from 'react-dnd';
+import {HTML5Backend} from 'react-dnd-html5-backend';
+import { useDrag } from 'react-dnd'
 
 import ChessAddMove from './ChessAddMove';
 import ChessBoard from './ChessBoard';
@@ -49,6 +52,48 @@ const getInitialCurrentTurn = (initialChessMoves) => {
 		? PLAYER_COLOR.WHITE
 		: PLAYER_COLOR.BLACK;
 };
+
+function Bucket() {
+  const [{ canDrop, isOver }, drop] = useDrop(() => ({
+    // The type (or types) to accept - strings or symbols
+    accept: 'BOX',
+    // Props to collect
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop()
+    })
+  }))
+
+  return (
+    <div
+      ref={drop}
+      role={'Dustbin'}
+      style={{ backgroundColor: isOver ? 'red' : 'white' }}
+    >
+      {canDrop ? 'Release to drop' : 'Drag a box here'}
+    </div>
+  )
+}
+
+function Box() {
+  const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
+		// "type" is required. It is used by the "accept" specification of drop targets.
+    type: 'BOX',
+		// The collect function utilizes a "monitor" instance (see the Overview for what this is)
+		// to pull important pieces of state from the DnD system.
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging()
+    })
+  }))
+
+  return (
+    {/* This is optional. The dragPreview will be attached to the dragSource by default */}
+    <div ref={dragPreview} style={{ opacity: isDragging ? 0.5 : 1}}>
+        {/* The drag ref marks this node as being the "pick-up" node */}
+        <div role="Handle" ref={drag} />
+    </div>
+  )
+}
 
 const ChessGame = ({config}) => {
 	const [chessMoves, setChessMoves] = useState(config.initialChessMoves);
@@ -126,11 +171,15 @@ const ChessGame = ({config}) => {
 	return (
 		<div>
 			Chess Game Id: {config.chessGameId}
+			<Box/>
+			<Bucket/>
 			<LoggedInUserContext.Provider value={config.loggedInUser}>
-				<ChessBoard
-					handleAddChessMove={handleAddChessMove}
-					piecePlacement={piecePlacement}
-				/>
+				<DndProvider backend={HTML5Backend}>
+					<ChessBoard
+						handleAddChessMove={handleAddChessMove}
+						piecePlacement={piecePlacement}
+					/>
+				</DndProvider>
 				<ChessGameInfo
 					blackPlayer={config.blackPlayer}
 					whitePlayer={config.whitePlayer}

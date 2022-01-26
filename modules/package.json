@@ -26,5 +26,8 @@
 			"dxp/apps/*/*/*",
 			"dxp/apps/osb/*/*/*"
 		]
+	},
+	"dependencies": {
+		"node-fetch": "^3.0.0"
 	}
 }
