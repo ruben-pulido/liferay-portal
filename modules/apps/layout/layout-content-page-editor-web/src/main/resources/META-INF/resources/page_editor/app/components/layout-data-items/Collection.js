@@ -17,6 +17,7 @@ import ClayLoadingIndicator from '@clayui/loading-indicator';
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 
 import {COLUMN_SIZE_MODULE_PER_ROW_SIZES} from '../../config/constants/columnSizes';
+import {config} from '../../config/index';
 import {
 	CollectionItemContext,
 	CollectionItemContextProvider,
@@ -384,7 +385,10 @@ const Collection = React.memo(
 Collection.displayName = 'Collection';
 
 function getNumberOfItems(collection, collectionConfig) {
-	return collectionConfig.paginationType && collectionConfig.showAllItems
+	return (collectionConfig.paginationType ||
+		(config.paginationImprovementsEnabled &&
+			!collectionConfig.paginationType)) &&
+		collectionConfig.showAllItems
 		? collection.totalNumberOfItems
 		: Math.min(
 				collectionConfig.numberOfItems,
