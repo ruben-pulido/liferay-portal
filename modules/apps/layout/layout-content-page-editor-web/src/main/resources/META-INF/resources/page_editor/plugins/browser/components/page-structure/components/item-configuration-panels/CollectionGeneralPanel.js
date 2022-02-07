@@ -87,8 +87,10 @@ export function CollectionGeneralPanel({item}) {
 		numberOfColumns,
 		numberOfItems: initialNumberOfItems,
 		numberOfItemsPerPage: initialNumberOfItemsPerPage,
+		numberOfPages: initialNumberOfPages,
 		paginationType,
 		showAllItems,
+		showAllPages,
 	} = item.config;
 
 	const [availableListItemStyles, setAvailableListItemStyles] = useState([]);
@@ -113,6 +115,9 @@ export function CollectionGeneralPanel({item}) {
 	);
 	const [numberOfItemsPerPage, setNumberOfItemsPerPage] = useControlledState(
 		initialNumberOfItemsPerPage
+	);
+	const [numberOfPages, setNumberOfPages] = useControlledState(
+		initialNumberOfPages
 	);
 	const segmentsExperienceId = useSelector(selectSegmentsExperienceId);
 
@@ -426,6 +431,7 @@ export function CollectionGeneralPanel({item}) {
 							initialNumberOfItemsPerPage={
 								initialNumberOfItemsPerPage
 							}
+							initialNumberOfPages={initialNumberOfPages}
 							isMaximumValuePerPageError={
 								isMaximumValuePerPageError
 							}
@@ -433,7 +439,10 @@ export function CollectionGeneralPanel({item}) {
 							numberOfItemsPerPageError={
 								numberOfItemsPerPageError
 							}
+							numberOfPages={numberOfPages}
 							setNumberOfItemsPerPage={setNumberOfItemsPerPage}
+							setNumberOfPages={setNumberOfPages}
+							showAllPages={showAllPages}
 						/>
 					) : (
 						<NoPaginationOptions
@@ -565,12 +574,17 @@ NoPaginationOptions.propTypes = {
 function PaginationOptions({
 	handleConfigurationChanged,
 	initialNumberOfItemsPerPage,
+	initialNumberOfPages,
 	isMaximumValuePerPageError,
 	numberOfItemsPerPage,
 	numberOfItemsPerPageError,
+	numberOfPages,
 	setNumberOfItemsPerPage,
+	setNumberOfPages,
+	showAllPages,
 }) {
 	const collectionNumberOfItemsPerPageId = useId();
+	const collectionNumberOfPagesId = useId();
 
 	const handleCollectionNumberOfItemsPerPageBlurred = (event) => {
 		if (Number(numberOfItemsPerPage) !== initialNumberOfItemsPerPage) {
@@ -580,63 +594,118 @@ function PaginationOptions({
 		}
 	};
 
+	const handleCollectionNumberOfPagesBlurred = (event) => {
+		if (Number(numberOfPages) !== initialNumberOfPages) {
+			handleConfigurationChanged({
+				numberOfItems: Number(event.target.value),
+			});
+		}
+	};
+
+	const handleShowAllPagesChanged = (event) =>
+		handleConfigurationChanged({
+			showAllPages: event.target.checked,
+		});
+
 	return (
-		<ClayForm.Group
-			className={classNames({
-				'has-warning': numberOfItemsPerPageError,
-			})}
-			small
-		>
-			<label htmlFor={collectionNumberOfItemsPerPageId}>
-				{Liferay.Language.get('maximum-number-of-items-per-page')}
-			</label>
-
-			<ClayInput
-				id={collectionNumberOfItemsPerPageId}
-				min="1"
-				onBlur={handleCollectionNumberOfItemsPerPageBlurred}
-				onChange={(event) =>
-					setNumberOfItemsPerPage(Number(event.target.value))
-				}
-				type="number"
-				value={numberOfItemsPerPage || ''}
-			/>
-
-			<div className="mb-2 mt-2">
-				<span
-					className={classNames(
-						'mr-1 small',
-						isMaximumValuePerPageError && numberOfItemsPerPageError
-							? 'text-warning'
-							: 'text-secondary',
-						{
-							'font-weight-bold':
-								isMaximumValuePerPageError &&
-								numberOfItemsPerPageError,
-						}
-					)}
-				>
-					{Liferay.Util.sub(
-						Liferay.Language.get('x-items-maximum'),
-						config.searchContainerPageMaxDelta
-					)}
-				</span>
-
-				{numberOfItemsPerPageError && (
-					<FeedbackMessage message={numberOfItemsPerPageError} />
-				)}
+		<>
+			<div className="mb-2 pt-1">
+				<ClayCheckbox
+					checked={showAllPages}
+					label={Liferay.Language.get('display-all-pages')}
+					onChange={handleShowAllPagesChanged}
+				/>
 			</div>
-		</ClayForm.Group>
+
+			{!showAllPages && (
+				<ClayForm.Group small>
+					<label htmlFor={collectionNumberOfPagesId}>
+						{Liferay.Language.get(
+							'maximum-number-of-pages-to-display'
+						)}
+					</label>
+
+					<ClayInput
+						id={collectionNumberOfPagesId}
+						min="0"
+						onBlur={handleCollectionNumberOfPagesBlurred}
+						onChange={(event) =>
+							setNumberOfPages(Number(event.target.value))
+						}
+						type="number"
+						value={numberOfPages || ''}
+					/>
+
+					<p className="mt-1 small text-secondary">
+						{Liferay.Language.get(
+							'if-empty-or-0-all-pages-will-be-displayed'
+						)}
+					</p>
+				</ClayForm.Group>
+			)}
+
+			<ClayForm.Group
+				className={classNames({
+					'has-warning': numberOfItemsPerPageError,
+				})}
+				small
+			>
+				<label htmlFor={collectionNumberOfItemsPerPageId}>
+					{Liferay.Language.get('maximum-number-of-items-per-page')}
+				</label>
+
+				<ClayInput
+					id={collectionNumberOfItemsPerPageId}
+					min="1"
+					onBlur={handleCollectionNumberOfItemsPerPageBlurred}
+					onChange={(event) =>
+						setNumberOfItemsPerPage(Number(event.target.value))
+					}
+					type="number"
+					value={numberOfItemsPerPage || ''}
+				/>
+
+				<div className="mb-2 mt-1">
+					<span
+						className={classNames(
+							'mr-1 small',
+							isMaximumValuePerPageError &&
+								numberOfItemsPerPageError
+								? 'text-warning'
+								: 'text-secondary',
+							{
+								'font-weight-bold':
+									isMaximumValuePerPageError &&
+									numberOfItemsPerPageError,
+							}
+						)}
+					>
+						{Liferay.Util.sub(
+							Liferay.Language.get('x-items-maximum'),
+							config.searchContainerPageMaxDelta
+						)}
+					</span>
+
+					{numberOfItemsPerPageError && (
+						<FeedbackMessage message={numberOfItemsPerPageError} />
+					)}
+				</div>
+			</ClayForm.Group>
+		</>
 	);
 }
 
 PaginationOptions.propTypes = {
 	handleConfigurationChanged: PropTypes.func.isRequired,
 	initialNumberOfItemsPerPage: PropTypes.number.isRequired,
+	initialNumberOfPages: PropTypes.number.isRequired,
 	isMaximumValuePerPageError: PropTypes.bool.isRequired,
 	numberOfItemsPerPage: PropTypes.number.isRequired,
 	numberOfItemsPerPageError: PropTypes.string,
+	numberOfPages: PropTypes.number.isRequired,
 	setNumberOfItemsPerPage: PropTypes.func.isRequired,
+	setNumberOfPages: PropTypes.func.isRequired,
+	showAllPages: PropTypes.bool.isRequired,
 };
 
 function ListItemStylesOptions({item, listItemStyles}) {
