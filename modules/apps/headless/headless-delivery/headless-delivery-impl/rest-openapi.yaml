@@ -3153,6 +3153,7 @@ components:
                         Simple]
                     type: string
                 showAllItems:
+                    # "Deprecated as of Cavanaugh (7.4.x), replaced by displayAllPages"
                     # @review
                     description:
                         Whether to show all items when pagination is enabled.
