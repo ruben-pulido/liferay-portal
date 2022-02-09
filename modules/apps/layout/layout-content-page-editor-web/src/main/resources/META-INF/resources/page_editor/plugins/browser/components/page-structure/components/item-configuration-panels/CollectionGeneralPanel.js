@@ -83,6 +83,7 @@ const ERROR_MESSAGES = {
 export function CollectionGeneralPanel({item}) {
 	const {
 		collection,
+		displayAllItems,
 		displayAllPages,
 		listStyle,
 		numberOfColumns,
@@ -90,7 +91,6 @@ export function CollectionGeneralPanel({item}) {
 		numberOfItemsPerPage: initialNumberOfItemsPerPage,
 		numberOfPages: initialNumberOfPages,
 		paginationType,
-		showAllItems,
 	} = item.config;
 
 	const [availableListItemStyles, setAvailableListItemStyles] = useState([]);
@@ -446,6 +446,7 @@ export function CollectionGeneralPanel({item}) {
 						/>
 					) : (
 						<NoPaginationOptions
+							displayAllItems={displayAllItems}
 							handleConfigurationChanged={
 								handleConfigurationChanged
 							}
@@ -453,7 +454,6 @@ export function CollectionGeneralPanel({item}) {
 							numberOfItems={numberOfItems}
 							numberOfItemsError={numberOfItemsError}
 							setNumberOfItems={setNumberOfItems}
-							showAllItems={showAllItems}
 						/>
 					)}
 				</>
@@ -477,18 +477,18 @@ CollectionGeneralPanel.propTypes = {
 };
 
 function NoPaginationOptions({
+	displayAllItems,
 	handleConfigurationChanged,
 	initialNumberOfItems,
 	numberOfItems,
 	numberOfItemsError,
 	setNumberOfItems,
-	showAllItems,
 }) {
 	const collectionNumberOfItemsId = useId();
 
-	const handleShowAllItemsChanged = (event) =>
+	const handleDisplayAllItemsChanged = (event) =>
 		handleConfigurationChanged({
-			showAllItems: event.target.checked,
+			displayAllItems: event.target.checked,
 		});
 
 	const handleCollectionNumberOfItemsBlurred = (event) => {
@@ -503,13 +503,13 @@ function NoPaginationOptions({
 		<>
 			<div className="mb-2 pt-1">
 				<ClayCheckbox
-					checked={showAllItems}
+					checked={displayAllItems}
 					label={Liferay.Language.get('display-all-collection-items')}
-					onChange={handleShowAllItemsChanged}
+					onChange={handleDisplayAllItemsChanged}
 				/>
 			</div>
 
-			{showAllItems && (
+			{displayAllItems && (
 				<p className="mt-1 small text-secondary">
 					{Liferay.Util.sub(
 						Liferay.Language.get(
@@ -520,7 +520,7 @@ function NoPaginationOptions({
 				</p>
 			)}
 
-			{!showAllItems && (
+			{!displayAllItems && (
 				<ClayForm.Group
 					className={classNames({
 						'has-warning': numberOfItemsError,
@@ -563,12 +563,12 @@ function NoPaginationOptions({
 }
 
 NoPaginationOptions.propTypes = {
+	displayAllItems: PropTypes.bool.isRequired,
 	handleConfigurationChanged: PropTypes.func.isRequired,
 	initialNumberOfItems: PropTypes.number.isRequired,
 	numberOfItems: PropTypes.number.isRequired,
 	numberOfItemsError: PropTypes.string,
 	setNumberOfItems: PropTypes.func.isRequired,
-	showAllItems: PropTypes.bool.isRequired,
 };
 
 function PaginationOptions({
