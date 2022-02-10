@@ -77,6 +77,8 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 
 	public static final String PAGINATION_TYPE_NUMERIC = "numeric";
 
+	public static final String PAGINATION_TYPE_REGULAR = "regular";
+
 	public static final String PAGINATION_TYPE_SIMPLE = "simple";
 
 	public RenderCollectionLayoutStructureItemDisplayContext(
@@ -223,8 +225,7 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 		}
 
 		_maxNumberOfItemsPerPage = Math.min(
-			getCollectionCount(),
-			_collectionStyledLayoutStructureItem.getNumberOfItemsPerPage());
+			getCollectionCount(), _getNumberOfItemsPerPage());
 
 		return _maxNumberOfItemsPerPage;
 	}
@@ -260,15 +261,10 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 
 		int numberOfItemsToDisplay = getTotalNumberOfItems();
 
-		if (Validator.isNotNull(
-				_collectionStyledLayoutStructureItem.getPaginationType()) &&
-			!Objects.equals(
-				_collectionStyledLayoutStructureItem.getPaginationType(),
-				"none")) {
+		if (_isPaginationEnabled()) {
 
 			numberOfItemsToDisplay = Math.min(
-				numberOfItemsToDisplay,
-				_collectionStyledLayoutStructureItem.getNumberOfItemsPerPage());
+				numberOfItemsToDisplay, _getNumberOfItemsPerPage());
 		}
 
 		_numberOfRows = (int)Math.ceil(
@@ -549,7 +545,7 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 
 			numberOfItemsToDisplay = Math.min(
 				numberOfItemsToDisplay,
-				_collectionStyledLayoutStructureItem.getNumberOfItemsPerPage());
+				_getNumberOfItemsPerPage());
 		}
 
 		return numberOfItemsToDisplay;
@@ -631,12 +627,7 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 		int end = _collectionStyledLayoutStructureItem.getNumberOfItems();
 		int start = 0;
 
-		String paginationType =
-			_collectionStyledLayoutStructureItem.getPaginationType();
-
-		if (Objects.equals(paginationType, PAGINATION_TYPE_NUMERIC) ||
-			Objects.equals(paginationType, PAGINATION_TYPE_SIMPLE)) {
-
+		if (_isPaginationEnabled()) {
 			int maxNumberOfItems =
 				_collectionStyledLayoutStructureItem.getNumberOfItems();
 
@@ -661,12 +652,7 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 		int end = _collectionStyledLayoutStructureItem.getNumberOfItems();
 		int start = 0;
 
-		String paginationType =
-			_collectionStyledLayoutStructureItem.getPaginationType();
-
-		if (Objects.equals(paginationType, PAGINATION_TYPE_NUMERIC) ||
-			Objects.equals(paginationType, PAGINATION_TYPE_SIMPLE)) {
-
+		if (_isPaginationEnabled()) {
 			int maxNumberOfItems = getCollectionCount();
 
 			int numberOfItemsPerPage = _getNumberOfItemsPerPage();
@@ -685,6 +671,9 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 				getCollectionCount());
 
 			start = (getActivePage() - 1) * numberOfItemsPerPage;
+		}
+		else if (_collectionStyledLayoutStructureItem.isDisplayAllItems()) {
+			end = getCollectionCount();
 		}
 
 		return Pagination.of(end, start);
@@ -709,12 +698,7 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 	}
 
 	private int _getTotalNumberOfItemsWithPaginationImprovementsDisabled() {
-		if ((Objects.equals(
-				_collectionStyledLayoutStructureItem.getPaginationType(),
-				PAGINATION_TYPE_NUMERIC) ||
-			 Objects.equals(
-				 _collectionStyledLayoutStructureItem.getPaginationType(),
-				 PAGINATION_TYPE_SIMPLE)) &&
+		if (_isPaginationEnabled() &&
 			_collectionStyledLayoutStructureItem.isShowAllItems()) {
 
 			return getCollectionCount();
@@ -726,24 +710,43 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 	}
 
 	private int _getTotalNumberOfItemsWithPaginationImprovementsEnabled() {
-		if (((Objects.equals(
-				_collectionStyledLayoutStructureItem.getPaginationType(),
-				PAGINATION_TYPE_NUMERIC) ||
-			  Objects.equals(
-				  _collectionStyledLayoutStructureItem.getPaginationType(),
-				  PAGINATION_TYPE_SIMPLE)) &&
-			 _collectionStyledLayoutStructureItem.isDisplayAllPages()) ||
+		if (!_isPaginationEnabled()) {
+			if (_collectionStyledLayoutStructureItem.isDisplayAllItems()) {
+				return getCollectionCount();
+			}
+
+			return Math.min(
+				getCollectionCount(),
+				_collectionStyledLayoutStructureItem.getNumberOfItems());
+		}
+
+		if (_collectionStyledLayoutStructureItem.isDisplayAllPages() ||
 			(_collectionStyledLayoutStructureItem.getNumberOfPages() <= 0)) {
 
 			return getCollectionCount();
 		}
 
-		int numberOfItemsPerPage = _getNumberOfItemsPerPage();
-
 		return Math.min(
 			getCollectionCount(),
 			_collectionStyledLayoutStructureItem.getNumberOfPages() *
-				numberOfItemsPerPage);
+				_getNumberOfItemsPerPage());
+	}
+
+	private boolean _isPaginationEnabled() {
+		if (Objects.equals(
+				_collectionStyledLayoutStructureItem.getPaginationType(),
+				PAGINATION_TYPE_NUMERIC) ||
+			Objects.equals(
+				_collectionStyledLayoutStructureItem.getPaginationType(),
+				PAGINATION_TYPE_REGULAR) ||
+			Objects.equals(
+				_collectionStyledLayoutStructureItem.getPaginationType(),
+				PAGINATION_TYPE_SIMPLE)) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private Integer _activePage;
