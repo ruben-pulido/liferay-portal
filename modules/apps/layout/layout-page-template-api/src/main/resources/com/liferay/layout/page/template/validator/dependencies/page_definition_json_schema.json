@@ -1357,6 +1357,24 @@
 					"title": "The fragmentViewports Schema",
 					"type": "array"
 				},
+				"htmlProperties": {
+					"properties": {
+						"htmlTag": {
+							"enum": [
+								"Article",
+								"Aside",
+								"Div",
+								"Footer",
+								"Header",
+								"Main",
+								"Nav",
+								"Section"
+							],
+							"title": "The htmlTag Schema",
+							"type": "string"
+						}
+					}
+				},
 				"layout": {
 					"additionalProperties": false,
 					"properties": {
@@ -1407,20 +1425,6 @@
 								"FlexRow"
 							],
 							"title": "The contentDisplay Schema",
-							"type": "string"
-						},
-						"htmlTag": {
-							"enum": [
-								"Article",
-								"Aside",
-								"Div",
-								"Footer",
-								"Header",
-								"Main",
-								"Nav",
-								"Section"
-							],
-							"title": "The htmlTag Schema",
 							"type": "string"
 						},
 						"justify": {
