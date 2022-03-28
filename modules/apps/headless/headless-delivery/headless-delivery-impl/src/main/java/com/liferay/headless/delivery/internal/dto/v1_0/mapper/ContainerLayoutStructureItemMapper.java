@@ -66,6 +66,8 @@ public class ContainerLayoutStructureItemMapper
 							containerStyledLayoutStructureItem.
 								getLinkJSONObject(),
 							saveMappingConfiguration);
+						htmlProperties = _toHtmlProperties(
+							containerStyledLayoutStructureItem);
 						layout = _toLayout(containerStyledLayoutStructureItem);
 
 						setFragmentStyle(
@@ -151,6 +153,27 @@ public class ContainerLayoutStructureItemMapper
 		};
 	}
 
+	private Layout _toHtmlProperties(
+		ContainerStyledLayoutStructureItem containerStyledLayoutStructureItem) {
+
+		return new HtmlProperties() {
+			{
+				setHtmlTag(
+					() -> {
+						String htmlTag =
+							containerStyledLayoutStructureItem.getHtmlTag();
+
+						if (Validator.isNull(htmlTag)) {
+							return null;
+						}
+
+						return HtmlTag.create(
+							HtmlTagConverter.convertToExternalValue(htmlTag));
+					});
+			}
+		};
+	}
+
 	private Layout _toLayout(
 		ContainerStyledLayoutStructureItem containerStyledLayoutStructureItem) {
 
@@ -217,18 +240,6 @@ public class ContainerLayoutStructureItemMapper
 						return ContentDisplay.create(
 							ContentDisplayConverter.convertToExternalValue(
 								contentDisplay));
-					});
-				setHtmlTag(
-					() -> {
-						String htmlTag =
-							containerStyledLayoutStructureItem.getHtmlTag();
-
-						if (Validator.isNull(htmlTag)) {
-							return null;
-						}
-
-						return HtmlTag.create(
-							HtmlTagConverter.convertToExternalValue(htmlTag));
 					});
 				setJustify(
 					() -> {

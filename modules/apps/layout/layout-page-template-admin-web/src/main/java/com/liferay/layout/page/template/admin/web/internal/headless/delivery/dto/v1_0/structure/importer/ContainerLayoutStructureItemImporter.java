@@ -107,6 +107,19 @@ public class ContainerLayoutStructureItemImporter
 				stylesJSONObject.put("backgroundImage", jsonObject);
 			}
 
+			Map<String, Object> containerHtmlProperties =
+				(Map<String, Object>)definitionMap.get("htmlProperties");
+
+			if (containerHtmlProperties != null) {
+				String htmlTag = String.valueOf(
+					containerLayout.getOrDefault("htmlTag", StringPool.BLANK));
+
+				if (Validator.isNotNull(htmlTag)) {
+					containerStyledLayoutStructureItem.setHtmlTag(
+						HtmlTagConverter.convertToInternalValue(htmlTag));
+				}
+			}
+
 			Map<String, Object> containerLayout =
 				(Map<String, Object>)definitionMap.get("layout");
 
@@ -143,14 +156,6 @@ public class ContainerLayoutStructureItemImporter
 					containerStyledLayoutStructureItem.setContentDisplay(
 						ContentDisplayConverter.convertToInternalValue(
 							contentDisplay));
-				}
-
-				String htmlTag = String.valueOf(
-					containerLayout.getOrDefault("htmlTag", StringPool.BLANK));
-
-				if (Validator.isNotNull(htmlTag)) {
-					containerStyledLayoutStructureItem.setHtmlTag(
-						HtmlTagConverter.convertToInternalValue(htmlTag));
 				}
 
 				String justify = String.valueOf(
