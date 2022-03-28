@@ -3478,6 +3478,14 @@ components:
                     items:
                         $ref: "#/components/schemas/FragmentViewport"
                     type: array
+                htmlProperties:
+                    # @review
+                    description:
+                        The page section's html properties
+                    properties:
+                        htmlTag:
+                            enum: [Article, Aside, Div, Footer, Header, Main, Nav, Section]
+                            type: string
                 layout:
                     # @review
                     description:
@@ -3506,9 +3514,6 @@ components:
                         contentDisplay:
                             deprecated: true
                             enum: [Block, FlexColumn, FlexRow]
-                            type: string
-                        htmlTag:
-                            enum: [Article, Aside, Div, Footer, Header, Main, Nav, Section]
                             type: string
                         justify:
                             deprecated: true
