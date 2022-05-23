@@ -122,6 +122,7 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 	 *         com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil#normalize(
 	 *         String)}.
 	 * @param  masterLayoutPlid the primary key of the master layout
+	 * @param  faviconFileEntryId the file entry ID of the layout's new favicon
 	 * @param  serviceContext the service context to be applied. Must set the
 	 *         UUID for the layout. Can set the creation date, modification
 	 *         date, and expando bridge attributes for the layout. For layouts
@@ -139,7 +140,8 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 			Map<Locale, String> descriptionMap, Map<Locale, String> keywordsMap,
 			Map<Locale, String> robotsMap, String type, String typeSettings,
 			boolean hidden, boolean system, Map<Locale, String> friendlyURLMap,
-			long masterLayoutPlid, ServiceContext serviceContext)
+			long masterLayoutPlid, long faviconFileEntryId,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		PermissionChecker permissionChecker = getPermissionChecker();
@@ -158,7 +160,8 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 			getUserId(), groupId, privateLayout, parentLayoutId, classNameId,
 			classPK, localeNamesMap, localeTitlesMap, descriptionMap,
 			keywordsMap, robotsMap, type, typeSettings, hidden, system,
-			friendlyURLMap, masterLayoutPlid, serviceContext);
+			friendlyURLMap, masterLayoutPlid, faviconFileEntryId,
+			serviceContext);
 
 		checkLayoutTypeSettings(layout, StringPool.BLANK, typeSettings);
 

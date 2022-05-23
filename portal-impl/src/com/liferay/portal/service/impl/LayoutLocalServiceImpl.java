@@ -2846,7 +2846,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 			long groupId, boolean privateLayout, long layoutId,
 			String typeSettings, byte[] iconBytes, String themeId,
 			String colorSchemeId, long styleBookEntryId, String css,
-			long masterLayoutPlid)
+			long masterLayoutPlid, long faviconFileEntryId)
 		throws PortalException {
 
 		Layout layout = layoutPersistence.findByG_P_L(
@@ -2868,6 +2868,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		layout.setStyleBookEntryId(styleBookEntryId);
 		layout.setCss(css);
 		layout.setMasterLayoutPlid(masterLayoutPlid);
+		layout.setFaviconFileEntryId(faviconFileEntryId);
 
 		PortalUtil.updateImageId(
 			layout, iconBytes != null, iconBytes, "iconImageId", 0, 0, 0);
