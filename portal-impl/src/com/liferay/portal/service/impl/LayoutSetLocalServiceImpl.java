@@ -236,6 +236,20 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 		return _layoutPersistence.countByG_P(groupId, privateLayout);
 	}
 
+	@Override
+	public LayoutSet updateFaviconFileEntryId(
+			long groupId, boolean privateLayout, long faviconFileEntryId)
+		throws PortalException {
+
+		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
+			groupId, privateLayout);
+
+		layoutSet.setFaviconFileEntryId(faviconFileEntryId);
+		layoutSet.setModifiedDate(new Date());
+
+		return layoutSetPersistence.update(layoutSet);
+	}
+
 	/**
 	 * Updates the state of the layout set prototype link.
 	 *
