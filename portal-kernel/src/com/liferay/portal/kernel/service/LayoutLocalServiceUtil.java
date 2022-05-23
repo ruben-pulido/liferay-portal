@@ -1688,12 +1688,13 @@ public class LayoutLocalServiceUtil {
 			long groupId, boolean privateLayout, long layoutId,
 			String typeSettings, byte[] iconBytes, String themeId,
 			String colorSchemeId, long styleBookEntryId, String css,
-			long masterLayoutPlid)
+			long masterLayoutPlid, long faviconFileEntryId)
 		throws PortalException {
 
 		return getService().updateLayout(
 			groupId, privateLayout, layoutId, typeSettings, iconBytes, themeId,
-			colorSchemeId, styleBookEntryId, css, masterLayoutPlid);
+			colorSchemeId, styleBookEntryId, css, masterLayoutPlid,
+			faviconFileEntryId);
 	}
 
 	/**

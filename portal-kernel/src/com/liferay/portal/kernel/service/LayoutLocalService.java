@@ -1407,7 +1407,7 @@ public interface LayoutLocalService
 			long groupId, boolean privateLayout, long layoutId,
 			String typeSettings, byte[] iconBytes, String themeId,
 			String colorSchemeId, long styleBookEntryId, String css,
-			long masterLayoutPlid)
+			long masterLayoutPlid, long faviconFileEntryId)
 		throws PortalException;
 
 	/**

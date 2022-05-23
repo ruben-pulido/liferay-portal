@@ -1831,12 +1831,13 @@ public class LayoutLocalServiceWrapper
 			long groupId, boolean privateLayout, long layoutId,
 			String typeSettings, byte[] iconBytes, String themeId,
 			String colorSchemeId, long styleBookEntryId, String css,
-			long masterLayoutPlid)
+			long masterLayoutPlid, long faviconFileEntryId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _layoutLocalService.updateLayout(
 			groupId, privateLayout, layoutId, typeSettings, iconBytes, themeId,
-			colorSchemeId, styleBookEntryId, css, masterLayoutPlid);
+			colorSchemeId, styleBookEntryId, css, masterLayoutPlid,
+			faviconFileEntryId);
 	}
 
 	/**
