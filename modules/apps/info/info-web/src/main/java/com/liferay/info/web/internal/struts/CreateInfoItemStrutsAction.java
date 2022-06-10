@@ -12,36 +12,37 @@
  * details.
  */
 
-package com.liferay.info.internal.struts;
+package com.liferay.info.web.internal.struts;
 
+import com.liferay.info.exception.InfoFormValidationException;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.creator.InfoItemCreator;
+import com.liferay.info.web.internal.helper.InfoRequestFieldValuesProviderHelper;
+import com.liferay.info.web.internal.portlet.action.AddInfoItemMVCActionCommand;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.struts.StrutsAction;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @author Rubén Pulido
  */
 @Component(
-	immediate = true, property = "path=/not_used/portal/info/info-item/create",
+	immediate = true, property = "path=/info/add_info_item",
 	service = StrutsAction.class
 )
 public class CreateInfoItemStrutsAction implements StrutsAction {
-
-//	immediate = true, property = "path=/portal/info/info-item/create",
 
 	@Override
 	public String execute(
@@ -53,20 +54,30 @@ public class CreateInfoItemStrutsAction implements StrutsAction {
 			_portal.getOriginalServletRequest(httpServletRequest);
 
 		try {
-			String className = _portal.getClassName(
-				ParamUtil.getLong(originalHttpServletRequest, "classNameId"));
-
 			InfoItemCreator<Object> infoItemCreator =
 				_infoItemServiceTracker.getFirstInfoItemService(
-					InfoItemCreator.class, className);
+					InfoItemCreator.class,
+					_portal.getClassName(
+						ParamUtil.getLong(
+							originalHttpServletRequest, "classNameId")));
 
 			infoItemCreator.createFromInfoItemFieldValues(
 				InfoItemFieldValues.builder(
 				).infoFieldValues(
-					null
-//					_infoRequestFieldValuesProviderHelper.getInfoFieldValues(
-//						httpServletRequest)
+					_infoRequestFieldValuesProviderHelper.getInfoFieldValues(
+						httpServletRequest)
 				).build());
+		}
+		catch (InfoFormValidationException infoFormValidationException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Info item validation failed", infoFormValidationException);
+			}
+
+			SessionErrors.add(
+				originalHttpServletRequest,
+				infoFormValidationException.getInfoFieldUniqueId(),
+				infoFormValidationException);
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
@@ -80,21 +91,21 @@ public class CreateInfoItemStrutsAction implements StrutsAction {
 		return null;
 	}
 
-//	@Activate
-//	@Modified
-//	protected void activate() {
-//		_infoRequestFieldValuesProviderHelper =
-//			new InfoRequestFieldValuesProviderHelper(_infoItemServiceTracker);
-//	}
+	@Activate
+	@Modified
+	protected void activate() {
+		_infoRequestFieldValuesProviderHelper =
+			new InfoRequestFieldValuesProviderHelper(_infoItemServiceTracker);
+	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		CreateInfoItemStrutsAction.class);
+		AddInfoItemMVCActionCommand.class);
 
 	@Reference
 	private InfoItemServiceTracker _infoItemServiceTracker;
 
-//	private volatile InfoRequestFieldValuesProviderHelper
-//		_infoRequestFieldValuesProviderHelper;
+	private volatile InfoRequestFieldValuesProviderHelper
+		_infoRequestFieldValuesProviderHelper;
 
 	@Reference
 	private Portal _portal;

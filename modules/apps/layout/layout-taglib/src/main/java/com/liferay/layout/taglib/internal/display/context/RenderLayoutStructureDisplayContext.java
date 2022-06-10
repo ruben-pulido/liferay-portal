@@ -23,6 +23,7 @@ import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
 import com.liferay.frontend.token.definition.FrontendTokenMapping;
 import com.liferay.info.constants.InfoDisplayWebKeys;
+import com.liferay.info.constants.InfoPortletKeys;
 import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.form.InfoForm;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
@@ -41,6 +42,7 @@ import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructureItemUtil;
 import com.liferay.layout.util.structure.StyledLayoutStructureItem;
+import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -53,6 +55,8 @@ import com.liferay.portal.kernel.model.ClassedModel;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
@@ -97,6 +101,27 @@ public class RenderLayoutStructureDisplayContext {
 
 		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
+	}
+
+	public String getAddInfoItemActionURL() {
+
+		StringBundler sb = new StringBundler(3);
+
+		sb.append(PortalUtil.getPortalURL(_httpServletRequest));
+		sb.append(PortalUtil.getPathContext());
+		sb.append("/c/info/add_info_item");
+
+		return sb.toString();
+
+//		RequestBackedPortletURLFactory requestBackedPortletURLFactory =
+//			RequestBackedPortletURLFactoryUtil.create(_httpServletRequest);
+//
+//		return PortletURLBuilder.create(
+//			requestBackedPortletURLFactory.createActionURL(
+//				InfoPortletKeys.INFO_ITEM)
+//		).setActionName(
+//			"/info/add_info_item"
+//		).buildString();
 	}
 
 	public List<String> getCollectionStyledLayoutStructureItemIds() {
