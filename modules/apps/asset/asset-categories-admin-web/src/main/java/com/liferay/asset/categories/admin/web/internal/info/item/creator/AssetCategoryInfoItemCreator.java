@@ -24,7 +24,6 @@ import com.liferay.info.exception.InfoFormException;
 import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.creator.InfoItemCreator;
-import com.liferay.info.localized.InfoLocalizedValue;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -41,7 +40,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Rubén Pulido
  */
-@Component(enabled = false, immediate = true, service = InfoItemCreator.class)
+@Component(enabled = true, immediate = true, service = InfoItemCreator.class)
 public class AssetCategoryInfoItemCreator
 	implements InfoItemCreator<AssetCategory> {
 
@@ -70,13 +69,11 @@ public class AssetCategoryInfoItemCreator
 			return null;
 		}
 
-		InfoLocalizedValue<String> vocabularyInfoLocalizedValue =
-			(InfoLocalizedValue)vocabularyInfoFieldValue.getValue();
-
 		AssetVocabulary assetVocabulary =
 			_assetVocabularyLocalService.fetchGroupVocabulary(
 				themeDisplay.getScopeGroupId(),
-				vocabularyInfoLocalizedValue.getValue());
+				(String)vocabularyInfoFieldValue.getValue(
+					themeDisplay.getLocale()));
 
 		if (assetVocabulary == null) {
 			return null;
@@ -90,14 +87,27 @@ public class AssetCategoryInfoItemCreator
 			return null;
 		}
 
-		InfoLocalizedValue<String> nameInfoLocalizedValue =
-			(InfoLocalizedValue)nameInfoFieldValue.getValue();
-
 		try {
-			return _assetCategoryLocalService.addCategory(
-				themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
-				nameInfoLocalizedValue.getValue(),
-				assetVocabulary.getVocabularyId(), new ServiceContext());
+			AssetCategory assetCategory =
+				_assetCategoryLocalService.addCategory(
+					themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
+					(String)nameInfoFieldValue.getValue(
+						themeDisplay.getLocale()),
+					assetVocabulary.getVocabularyId(), new ServiceContext());
+
+			InfoFieldValue<Object> descriptionInfoFieldValue =
+				infoItemFieldValues.getInfoFieldValue(
+					AssetCategoryInfoItemFields.descriptionInfoField.getName());
+
+			if (descriptionInfoFieldValue != null) {
+				assetCategory.setDescription(
+					(String) descriptionInfoFieldValue.getValue(
+						themeDisplay.getLocale()));
+
+				_assetCategoryLocalService.updateAssetCategory(assetCategory);
+			}
+
+			return assetCategory;
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
