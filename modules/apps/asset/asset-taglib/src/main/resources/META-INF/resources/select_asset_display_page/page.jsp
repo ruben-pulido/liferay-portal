@@ -105,15 +105,17 @@
 
 				pagesContainerInput.value = '';
 
-				if (selectedItem) {
-					if (selectedItem.type === 'asset-display-page') {
-						assetDisplayPageIdInput.value = selectedItem.id;
+				const itemValue = JSON.parse(selectedItem.value);
+
+				if (itemValue) {
+					if (itemValue.type === 'asset-display-page') {
+						assetDisplayPageIdInput.value = itemValue.id;
 					}
 					else {
-						pagesContainerInput.value = selectedItem.id;
+						pagesContainerInput.value = itemValue.id;
 					}
 
-					specificDisplayPageNameInput.value = selectedItem.name;
+					specificDisplayPageNameInput.value = itemValue.name;
 
 					if (previewSpecificDisplayPageButton) {
 						previewSpecificDisplayPageButton.parentNode.remove();
