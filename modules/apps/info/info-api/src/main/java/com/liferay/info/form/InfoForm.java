@@ -189,6 +189,8 @@ public class InfoForm {
 		}
 
 		public Builder infoFieldSetEntry(InfoFieldSetEntry infoFieldSetEntry) {
+					_infoFieldSetEntriesById.put(
+				infoFieldSetEntry.getUniqueId(), infoFieldSetEntry);
 			_infoFieldSetEntriesByName.put(
 				infoFieldSetEntry.getName(), infoFieldSetEntry);
 
@@ -220,6 +222,8 @@ public class InfoForm {
 		}
 
 		private InfoLocalizedValue<String> _descriptionInfoLocalizedValue;
+		private final Map<String, InfoFieldSetEntry> _infoFieldSetEntriesById =
+			new LinkedHashMap<>();
 		private final Map<String, InfoFieldSetEntry>
 			_infoFieldSetEntriesByName = new LinkedHashMap<>();
 		private InfoLocalizedValue<String> _labelInfoLocalizedValue;
