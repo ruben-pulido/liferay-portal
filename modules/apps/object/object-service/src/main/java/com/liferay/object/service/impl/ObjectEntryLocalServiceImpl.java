@@ -2389,7 +2389,8 @@ public class ObjectEntryLocalServiceImpl
 				if (!StringUtil.equals(
 						String.valueOf(value), entryValue.toString())) {
 
-					throw new ObjectEntryValuesException.ExceedsLongSize();
+					throw new ObjectEntryValuesException.ExceedsLongSize(
+						16, objectField.getName());
 				}
 				else if (value > 9007199254740991L) {
 					throw new ObjectEntryValuesException.ExceedsLongMaxSize();
