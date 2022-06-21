@@ -174,20 +174,25 @@ public class InfoForm {
 				InfoFieldSet existingInfoFieldSet =
 					(InfoFieldSet)existingInfoFieldSetEntry;
 
+				InfoFieldSet newInfoFieldSet = InfoFieldSet.builder(
+				).infoFieldSetEntries(
+					existingInfoFieldSet.getInfoFieldSetEntries()
+				).infoFieldSetEntries(
+					infoFieldSet.getInfoFieldSetEntries()
+				).labelInfoLocalizedValue(
+					existingInfoFieldSet.getLabelInfoLocalizedValue()
+				).name(
+					existingInfoFieldSet.getName()
+				).build();
+
+				_infoFieldSetEntriesById.put(
+					infoFieldSet.getUniqueId(), newInfoFieldSet);
 				_infoFieldSetEntriesByName.put(
-					infoFieldSet.getName(),
-					InfoFieldSet.builder(
-					).infoFieldSetEntries(
-						existingInfoFieldSet.getInfoFieldSetEntries()
-					).infoFieldSetEntries(
-						infoFieldSet.getInfoFieldSetEntries()
-					).labelInfoLocalizedValue(
-						existingInfoFieldSet.getLabelInfoLocalizedValue()
-					).name(
-						existingInfoFieldSet.getName()
-					).build());
+					infoFieldSet.getName(), newInfoFieldSet);
 			}
 			else {
+				_infoFieldSetEntriesById.put(
+					infoFieldSet.getUniqueId(), infoFieldSet);
 				_infoFieldSetEntriesByName.put(
 					infoFieldSet.getName(), infoFieldSet);
 			}
@@ -196,7 +201,7 @@ public class InfoForm {
 		}
 
 		public Builder infoFieldSetEntry(InfoFieldSetEntry infoFieldSetEntry) {
-					_infoFieldSetEntriesById.put(
+			_infoFieldSetEntriesById.put(
 				infoFieldSetEntry.getUniqueId(), infoFieldSetEntry);
 			_infoFieldSetEntriesByName.put(
 				infoFieldSetEntry.getName(), infoFieldSetEntry);
