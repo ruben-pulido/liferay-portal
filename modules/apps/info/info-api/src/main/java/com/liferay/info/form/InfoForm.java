@@ -90,6 +90,13 @@ public class InfoForm {
 	}
 
 	public InfoField getInfoField(String name) {
+		InfoField infoField = _getInfoFieldByName(
+			_builder._infoFieldSetEntriesById.values(), name);
+
+		if (infoField != null) {
+			return infoField;
+		}
+
 		return _getInfoFieldByName(
 			_builder._infoFieldSetEntriesByName.values(), name);
 	}
