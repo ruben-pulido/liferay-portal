@@ -90,28 +90,8 @@ public class InfoForm {
 	}
 
 	public InfoField getInfoField(String name) {
-		for (InfoFieldSetEntry infoFieldSetEntry :
-				_builder._infoFieldSetEntriesByName.values()) {
-
-			InfoField infoField = null;
-
-			if (infoFieldSetEntry instanceof InfoField) {
-				infoField = (InfoField)infoFieldSetEntry;
-			}
-			else if (infoFieldSetEntry instanceof InfoFieldSet) {
-				InfoFieldSet infoFieldSet = (InfoFieldSet)infoFieldSetEntry;
-
-				infoField = infoFieldSet.getInfoField(name);
-			}
-
-			if ((infoField != null) &&
-				Objects.equals(infoField.getUniqueId(), name)) {
-
-				return infoField;
-			}
-		}
-
-		return null;
+		return _getInfoFieldByName(
+			_builder._infoFieldSetEntriesByName.values(), name);
 	}
 
 	public List<InfoFieldSetEntry> getInfoFieldSetEntries() {
@@ -249,6 +229,31 @@ public class InfoForm {
 
 	private InfoForm(Builder builder) {
 		_builder = builder;
+	}
+
+	private InfoField _getInfoFieldByName(
+		Collection<InfoFieldSetEntry> infoFieldSetEntries, String name) {
+
+		for (InfoFieldSetEntry infoFieldSetEntry : infoFieldSetEntries) {
+			InfoField infoField = null;
+
+			if (infoFieldSetEntry instanceof InfoField) {
+				infoField = (InfoField)infoFieldSetEntry;
+			}
+			else if (infoFieldSetEntry instanceof InfoFieldSet) {
+				InfoFieldSet infoFieldSet = (InfoFieldSet)infoFieldSetEntry;
+
+				infoField = infoFieldSet.getInfoField(name);
+			}
+
+			if ((infoField != null) &&
+				Objects.equals(infoField.getUniqueId(), name)) {
+
+				return infoField;
+			}
+		}
+
+		return null;
 	}
 
 	private final Builder _builder;
