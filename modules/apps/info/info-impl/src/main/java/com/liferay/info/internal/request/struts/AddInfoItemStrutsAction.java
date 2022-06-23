@@ -66,7 +66,7 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 			ParamUtil.getLong(originalHttpServletRequest, "classNameId"));
 
 		try {
-			CaptchaUtil.check(httpServletRequest);
+//			CaptchaUtil.check(httpServletRequest);
 
 			InfoItemCreator<Object> infoItemCreator =
 				_infoItemServiceTracker.getFirstInfoItemService(
@@ -90,16 +90,16 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 					new InfoItemReference(className, 0)
 				).build());
 		}
-		catch (CaptchaException captchaException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(captchaException);
-			}
-
-			SessionErrors.add(
-				originalHttpServletRequest,
-				ParamUtil.getString(httpServletRequest, "formItemId"),
-				new InfoFormValidationException.InvalidCaptcha());
-		}
+//		catch (CaptchaException captchaException) {
+//			if (_log.isDebugEnabled()) {
+//				_log.debug(captchaException);
+//			}
+//
+//			SessionErrors.add(
+//				originalHttpServletRequest,
+//				ParamUtil.getString(httpServletRequest, "formItemId"),
+//				new InfoFormValidationException.InvalidCaptcha());
+//		}
 		catch (InfoFormValidationException infoFormValidationException) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(infoFormValidationException);
