@@ -1,9 +1,12 @@
-const input = fragmentElement.querySelector(
+console.log("FragmentElement: " + fragmentElement);
+
+const numericInput = fragmentElement.querySelector(
 	`#${fragmentNamespace}-numeric-input`
 );
-const isInteger = input.getAttribute('data-type') === 'integer';
 
 function handleOnKeydown(event) {
+	const isInteger = numericInput.getAttribute('data-type') === 'integer';
+
 	if (isInteger && (event.key === ',' || event.key === '.')) {
 		event.preventDefault();
 	}
@@ -17,18 +20,18 @@ function handleOnKeydown(event) {
 
 			if (decimalPart.length > numDecimals) {
 				event.target.setCustomValidity(
-					input.getAttribute('data-validation-message-text')
+					numericInput.getAttribute('data-validation-message-text')
 				);
 			}
 		}
 	}
 }
 
-if (input) {
+if (numericInput) {
 	if (layoutMode === 'edit') {
-		input.setAttribute('disabled', true);
+		numericInput.setAttribute('disabled', true);
 	}
 	else {
-		input.addEventListener('keydown', handleOnKeydown);
+		numericInput.addEventListener('keydown', handleOnKeydown);
 	}
 }
