@@ -117,41 +117,14 @@ public class AddInfoItemStrutsActionTest {
 
 	}
 
-	private HttpServletRequest _getMultipartHttpServletRequest(
-		byte[] bytes, String fileNameParameter) {
-
-		MockMultipartHttpServletRequest mockMultipartHttpServletRequest =
-			new MockMultipartHttpServletRequest();
-
-		mockMultipartHttpServletRequest.addFile(
-			new MockMultipartFile(fileNameParameter, bytes));
-		mockMultipartHttpServletRequest.setContent(bytes);
-		mockMultipartHttpServletRequest.setContentType(
-			"multipart/form-data;boundary=" + System.currentTimeMillis());
-		mockMultipartHttpServletRequest.setCharacterEncoding("UTF-8");
-
-		MockHttpSession mockHttpSession = new MockHttpSession();
-
-		mockHttpSession.setAttribute(ProgressTracker.PERCENT, new Object());
-
-		mockMultipartHttpServletRequest.setSession(mockHttpSession);
-
-		return mockMultipartHttpServletRequest;
-	}
-
 	@Test
 	public void testAddInfoItem() throws Exception {
 		_user = UserTestUtil.addOmniAdminUser();
 
 		UserTestUtil.setUser(_user);
 
-//		byte[] bytes = "A".getBytes();
-		byte[] bytes = null;
-
-		HttpServletRequest httpServletRequest = _getMultipartHttpServletRequest(
-			bytes, "file");
-
-		Map<String, FileItem[]> fileParameters = new HashMap<>();
+		HttpServletRequest httpServletRequest =
+			new MockMultipartHttpServletRequest();
 
 		long plid = 47;
 
@@ -160,10 +133,8 @@ public class AddInfoItemStrutsActionTest {
 		UploadPortletRequest uploadPortletRequest =
 			new UploadPortletRequestImpl(
 				new UploadServletRequestImpl(
-					httpServletRequest, fileParameters,
+					httpServletRequest, null,
 					HashMapBuilder.put(
-							"groupId", Collections.singletonList(String.valueOf(_group.getGroupId()))
-						).put(
 							"classNameId", Collections.singletonList("56634")
 						).put(
 							"classTypeId", Collections.singletonList("0")
@@ -172,11 +143,19 @@ public class AddInfoItemStrutsActionTest {
 						).put(
 							"groupId", Collections.singletonList(String.valueOf(_group.getGroupId()))
 						).put(
+							"myDecimal", Collections.singletonList("99999999999999.9999999999999999")
+						).put(
+							"myBigDecimal", Collections.singletonList("99999999999999.9999999999999999")
+						).put(
+							"myInteger", Collections.singletonList("999999999")
+						).put(
+							"myLongInteger", Collections.singletonList("9007199254740991")
+						).put(
+							"myText", Collections.singletonList("t1")
+						).put(
 							"plid", Collections.singletonList(String.valueOf(plid))
 						).put(
 							"segmentsExperienceId", Collections.singletonList("0")
-						).put(
-							"myText", Collections.singletonList("t1")
 						).put(
 							"redirect", Collections.singletonList(layout.getFriendlyURL())
 						).build()),
@@ -193,7 +172,8 @@ public class AddInfoItemStrutsActionTest {
 
 		_processEvents(uploadPortletRequest, mockHttpServletResponse, _user);
 
-		_addInfoItemStrutsAction.execute(uploadPortletRequest, pipingServletResponse);
+		_addInfoItemStrutsAction.execute(
+			uploadPortletRequest, pipingServletResponse);
 
 		List<ObjectEntry> objectEntries =
 			_objectEntryLocalService.getObjectEntries(
@@ -210,19 +190,18 @@ public class AddInfoItemStrutsActionTest {
 	}
 
 	private void _processEvents(
-//			MockHttpServletRequest mockHttpServletRequest,
-			UploadPortletRequest mockHttpServletRequest,
+			UploadPortletRequest uploadPortletRequest,
 			MockHttpServletResponse mockHttpServletResponse, User user)
 		throws Exception {
 
-		mockHttpServletRequest.setAttribute(
+		uploadPortletRequest.setAttribute(
 			WebKeys.CURRENT_URL, "/portal/add_info_item");
 
-		mockHttpServletRequest.setAttribute(WebKeys.USER, user);
+		uploadPortletRequest.setAttribute(WebKeys.USER, user);
 
 		EventsProcessorUtil.process(
 			PropsKeys.SERVLET_SERVICE_EVENTS_PRE,
-			PropsValues.SERVLET_SERVICE_EVENTS_PRE, mockHttpServletRequest,
+			PropsValues.SERVLET_SERVICE_EVENTS_PRE, uploadPortletRequest,
 			mockHttpServletResponse);
 	}
 
@@ -242,13 +221,11 @@ public class AddInfoItemStrutsActionTest {
 
 	@Inject
 	private ObjectEntryLocalService _objectEntryLocalService;
+
 	@Inject
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
-	@Inject
-	private ObjectFieldLocalService _objectFieldLocalService;
-
-	@DeleteAfterTestRun
+//	@DeleteAfterTestRun
 	private User _user;
 
 }
