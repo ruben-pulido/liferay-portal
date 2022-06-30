@@ -14,11 +14,28 @@
 
 package com.liferay.info.internal.request.struts.test;
 
+import com.liferay.object.model.ObjectEntry;
+import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.servlet.HttpHeaders;
+
+import com.liferay.petra.string.StringPool;
+
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.util.LocalizedMapUtil;
+import com.liferay.object.util.ObjectFieldUtil;
 import com.liferay.petra.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.events.EventsProcessorUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.servlet.PipingServletResponse;
 import com.liferay.portal.kernel.struts.StrutsAction;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -27,17 +44,23 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.upload.FileItem;
+import com.liferay.portal.kernel.upload.UploadPortletRequest;
+import com.liferay.portal.kernel.util.*;
 import com.liferay.portal.sharepoint.methods.Method;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.upload.UploadPortletRequestImpl;
+import com.liferay.portal.upload.UploadServletRequestImpl;
 import com.liferay.portal.util.PropsValues;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -54,8 +77,9 @@ import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Rubén Pulido
@@ -70,13 +94,14 @@ public class AddInfoItemStrutsActionTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_bundle = FrameworkUtil.getBundle(getClass());
+//		_group = GroupTestUtil.addGroup();
+		_group = _groupLocalService.fetchGroup(56319);
 
-		_group = GroupTestUtil.addGroup();
+		createObjectDefinition();
 	}
 
-//	private void createObjectDefinition() {
-//		_objectDefinition =
+	private void createObjectDefinition() throws PortalException {
+		_objectDefinition = _objectDefinitionLocalService.fetchObjectDefinition(56626);
 //			_objectDefinitionLocalService.addCustomObjectDefinition(
 //				TestPropsValues.getUserId(),
 //				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -89,14 +114,30 @@ public class AddInfoItemStrutsActionTest {
 //						"Text", "String", "Able", "able", false),
 //					ObjectFieldUtil.createObjectField(
 //						"Text", "String", "Baker", "baker", false)));
-//
-//		_objectFieldLocalService.addCustomObjectField(
-//			TestPropsValues.getUserId(), 0,
-//			objectDefinition.getObjectDefinitionId(), "Text", "String", null,
-//			false, false, null, LocalizedMapUtil.getLocalizedMap("Charlie"),
-//			"charlie", true, Collections.emptyList());
-//
-//	}
+
+	}
+
+	private HttpServletRequest _getMultipartHttpServletRequest(
+		byte[] bytes, String fileNameParameter) {
+
+		MockMultipartHttpServletRequest mockMultipartHttpServletRequest =
+			new MockMultipartHttpServletRequest();
+
+		mockMultipartHttpServletRequest.addFile(
+			new MockMultipartFile(fileNameParameter, bytes));
+		mockMultipartHttpServletRequest.setContent(bytes);
+		mockMultipartHttpServletRequest.setContentType(
+			"multipart/form-data;boundary=" + System.currentTimeMillis());
+		mockMultipartHttpServletRequest.setCharacterEncoding("UTF-8");
+
+		MockHttpSession mockHttpSession = new MockHttpSession();
+
+		mockHttpSession.setAttribute(ProgressTracker.PERCENT, new Object());
+
+		mockMultipartHttpServletRequest.setSession(mockHttpSession);
+
+		return mockMultipartHttpServletRequest;
+	}
 
 	@Test
 	public void testAddInfoItem() throws Exception {
@@ -104,9 +145,43 @@ public class AddInfoItemStrutsActionTest {
 
 		UserTestUtil.setUser(_user);
 
-		MockHttpServletRequest mockHttpServletRequest =
-			new MockHttpServletRequest(
-				Method.POST, "/portal/add_info_item");
+//		byte[] bytes = "A".getBytes();
+		byte[] bytes = null;
+
+		HttpServletRequest httpServletRequest = _getMultipartHttpServletRequest(
+			bytes, "file");
+
+		Map<String, FileItem[]> fileParameters = new HashMap<>();
+
+		long plid = 47;
+
+		Layout layout = _layoutLocalService.fetchLayout(plid);
+
+		UploadPortletRequest uploadPortletRequest =
+			new UploadPortletRequestImpl(
+				new UploadServletRequestImpl(
+					httpServletRequest, fileParameters,
+					HashMapBuilder.put(
+							"groupId", Collections.singletonList(String.valueOf(_group.getGroupId()))
+						).put(
+							"classNameId", Collections.singletonList("56634")
+						).put(
+							"classTypeId", Collections.singletonList("0")
+						).put(
+							"formItemId", Collections.singletonList("95f1249a-7ddc-23ca-8b21-94bd9c6432d9")
+						).put(
+							"groupId", Collections.singletonList(String.valueOf(_group.getGroupId()))
+						).put(
+							"plid", Collections.singletonList(String.valueOf(plid))
+						).put(
+							"segmentsExperienceId", Collections.singletonList("0")
+						).put(
+							"myText", Collections.singletonList("t1")
+						).put(
+							"redirect", Collections.singletonList(layout.getFriendlyURL())
+						).build()),
+				null, RandomTestUtil.randomString());
+
 
 		MockHttpServletResponse mockHttpServletResponse =
 			new MockHttpServletResponse();
@@ -116,65 +191,32 @@ public class AddInfoItemStrutsActionTest {
 		PipingServletResponse pipingServletResponse = new PipingServletResponse(
 			mockHttpServletResponse, unsyncStringWriter);
 
-		mockHttpServletRequest.setParameter(
-			"classNameId", String.valueOf(1));
-		mockHttpServletRequest.setParameter(
-			"formItemId", String.valueOf(1));
-		mockHttpServletRequest.setParameter(
-			"groupId", String.valueOf(_group.getGroupId()));
-		mockHttpServletRequest.setParameter(
-			"redirect", "");
+		_processEvents(uploadPortletRequest, mockHttpServletResponse, _user);
 
-		_processEvents(mockHttpServletRequest, mockHttpServletResponse, _user);
+		_addInfoItemStrutsAction.execute(uploadPortletRequest, pipingServletResponse);
 
-		_addInfoItemStrutsAction.execute(
-			mockHttpServletRequest, pipingServletResponse);
+		List<ObjectEntry> objectEntries =
+			_objectEntryLocalService.getObjectEntries(
+				0, _objectDefinition.getObjectDefinitionId(), QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS);
 
-		URL renderedURL = _bundle.getEntry(
-			_RESOURCES_PATH + "simple.html");
+//		Assert.assertEquals(objectEntries.toString(), 1, objectEntries.size());
 
-		String actualHTML = _getHTML(unsyncStringWriter.toString());
+		ObjectEntry objectEntry = objectEntries.get(objectEntries.size() - 1);
 
-		String expectedHTML = _getHTML(
-			StringUtil.read(renderedURL.openStream()));
+		Map<String, Serializable> values = objectEntry.getValues();
 
-		Assert.assertEquals(expectedHTML, actualHTML);
-	}
-
-	private String _getHTML(String html) {
-		Document document = Jsoup.parseBodyFragment(html);
-
-		Document.OutputSettings outputSettings = new Document.OutputSettings();
-
-		outputSettings.indentAmount(0);
-		outputSettings.prettyPrint(false);
-
-		document.outputSettings(outputSettings);
-
-		Element bodyElement = document.body();
-
-		Elements elements = bodyElement.getElementsByTag("title");
-
-		elements.remove();
-
-		elements = bodyElement.getElementsByTag("link");
-
-		elements.remove();
-
-		elements = bodyElement.getElementsByTag("script");
-
-		elements.remove();
-
-		return _removeSpacingCharactersBetweenTags(bodyElement);
+		Assert.assertEquals("t1", values.get("myText"));
 	}
 
 	private void _processEvents(
-			MockHttpServletRequest mockHttpServletRequest,
+//			MockHttpServletRequest mockHttpServletRequest,
+			UploadPortletRequest mockHttpServletRequest,
 			MockHttpServletResponse mockHttpServletResponse, User user)
 		throws Exception {
 
 		mockHttpServletRequest.setAttribute(
-			WebKeys.CURRENT_URL, "/portal/fragment/render_fragment_entry");
+			WebKeys.CURRENT_URL, "/portal/add_info_item");
 
 		mockHttpServletRequest.setAttribute(WebKeys.USER, user);
 
@@ -184,32 +226,27 @@ public class AddInfoItemStrutsActionTest {
 			mockHttpServletResponse);
 	}
 
-	private String _removeSpacingCharactersBetweenTags(Element bodyElement) {
-		String htmlString = bodyElement.html();
-
-		htmlString = htmlString.replaceAll(">\\s+", ">");
-
-		return htmlString.replaceAll("\\s+<", "<");
-	}
-
-	private static final String _RESOURCES_PATH =
-		"com/liferay/info/internal/request/struts/test/dependencies/";
-
-	private Bundle _bundle;
-
-	@DeleteAfterTestRun
+//	@DeleteAfterTestRun
 	private Group _group;
 
 	@Inject(filter = "component.name=*.AddInfoItemStrutsAction")
 	private StrutsAction _addInfoItemStrutsAction;
 
-//	private ObjectDefinition _objectDefinition;
-//
-//	@Inject
-//	private ObjectDefinitionLocalService _objectDefinitionLocalService;
-//
-//	@Inject
-//	private ObjectFieldLocalService _objectFieldLocalService;
+	private ObjectDefinition _objectDefinition;
+
+	@Inject
+	private GroupLocalService _groupLocalService;
+
+	@Inject
+	private LayoutLocalService _layoutLocalService;
+
+	@Inject
+	private ObjectEntryLocalService _objectEntryLocalService;
+	@Inject
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Inject
+	private ObjectFieldLocalService _objectFieldLocalService;
 
 	@DeleteAfterTestRun
 	private User _user;

@@ -64,7 +64,7 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 		String redirect = null;
 
 		try {
-			CaptchaUtil.check(httpServletRequest);
+//			CaptchaUtil.check(httpServletRequest);
 
 			String className = _portal.getClassName(
 				ParamUtil.getLong(httpServletRequest, "classNameId"));
@@ -93,15 +93,15 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 				SessionMessages.add(httpServletRequest, formItemId);
 			}
 		}
-		catch (CaptchaException captchaException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(captchaException);
-			}
-
-			SessionErrors.add(
-				httpServletRequest, formItemId,
-				new InfoFormValidationException.InvalidCaptcha());
-		}
+//		catch (CaptchaException captchaException) {
+//			if (_log.isDebugEnabled()) {
+//				_log.debug(captchaException);
+//			}
+//
+//			SessionErrors.add(
+//				httpServletRequest, formItemId,
+//				new InfoFormValidationException.InvalidCaptcha());
+//		}
 		catch (InfoFormValidationException infoFormValidationException) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(infoFormValidationException);

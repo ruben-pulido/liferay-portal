@@ -25,4 +25,5 @@ dependencies {
 	testIntegrationCompile project(":apps:object:object-api")
 	testIntegrationCompile project(":apps:segments:segments-api")
 	testIntegrationCompile project(":test:arquillian-extension-junit-bridge")
+	testIntegrationCompile project(":core:petra:petra-string")
 }
