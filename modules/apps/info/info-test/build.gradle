@@ -1,5 +1,15 @@
 dependencies {
+	//	testIntegrationCompile project(":apps:info:info-api")
+
+	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "default"
 	testIntegrationCompile group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.4.0"
+	testIntegrationCompile project(":apps:fragment:fragment-api")
+	testIntegrationCompile project(":apps:fragment:fragment-entry-processor:fragment-entry-processor-api")
 	testIntegrationCompile project(":apps:info:info-api")
+	testIntegrationCompile project(":apps:layout:layout-api")
+	testIntegrationCompile project(":apps:layout:layout-page-template-api")
+	testIntegrationCompile project(":apps:layout:layout-test-util")
+	testIntegrationCompile project(":apps:object:object-api")
+	testIntegrationCompile project(":apps:segments:segments-api")
 	testIntegrationCompile project(":test:arquillian-extension-junit-bridge")
 }
