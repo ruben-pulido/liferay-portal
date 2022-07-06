@@ -23,6 +23,7 @@ import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.info.exception.InfoFormException;
 import com.liferay.info.exception.InfoFormPrincipalException;
 import com.liferay.info.exception.InfoFormValidationException;
+import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.internal.request.helper.InfoRequestFieldValuesProviderHelper;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemReference;
@@ -45,6 +46,7 @@ import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.struts.StrutsAction;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
@@ -79,7 +81,13 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 
 		String redirect = null;
 
+		List<InfoFieldValue<Object>> infoFieldValues = null;
+
 		try {
+			infoFieldValues =
+				_infoRequestFieldValuesProviderHelper.getInfoFieldValues(
+					httpServletRequest);
+
 			if (_isCaptchaLayoutStructureItem(formItemId, httpServletRequest)) {
 				CaptchaUtil.check(httpServletRequest);
 			}
@@ -99,8 +107,7 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 				ParamUtil.getLong(httpServletRequest, "groupId"),
 				InfoItemFieldValues.builder(
 				).infoFieldValues(
-					_infoRequestFieldValuesProviderHelper.getInfoFieldValues(
-						httpServletRequest)
+					infoFieldValues
 				).infoItemReference(
 					new InfoItemReference(className, 0)
 				).build());
@@ -118,9 +125,19 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 				_log.debug(captchaException);
 			}
 
+			redirect = httpServletRequest.getHeader(HttpHeaders.REFERER);
+
+			String value = "My Value";
+
+			HttpComponentsUtil.addParameter(redirect, "myKey", value);
+
+			httpServletResponse.sendRedirect(redirect);
+
 			SessionErrors.add(
 				httpServletRequest, formItemId,
 				new InfoFormValidationException.InvalidCaptcha());
+
+			return null;
 		}
 		catch (InfoFormValidationException infoFormValidationException) {
 			if (_log.isDebugEnabled()) {

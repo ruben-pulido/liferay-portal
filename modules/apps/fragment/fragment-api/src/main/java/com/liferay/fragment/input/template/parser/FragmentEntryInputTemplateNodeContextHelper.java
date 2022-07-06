@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -151,15 +152,17 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 		if (infoField == null) {
 			return new InputTemplateNode(
 				errorMessage, inputHelpText, inputLabel, name, required,
-				inputShowHelpText, inputShowLabel, "type", "value");
+				inputShowHelpText, inputShowLabel, "type", StringPool.BLANK);
 		}
 
 		InfoFieldType infoFieldType = infoField.getInfoFieldType();
 
+		String value = ParamUtil.getString(httpServletRequest, "myKey");
+
 		InputTemplateNode inputTemplateNode = new InputTemplateNode(
 			errorMessage, inputHelpText, inputLabel, name, required,
 			inputShowHelpText, inputShowLabel, infoFieldType.getName(),
-			"value");
+			value);
 
 		if (infoFieldType instanceof FileInfoFieldType) {
 			Optional<String> acceptedFileExtensionsOptional =
