@@ -157,7 +157,8 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 
 		InfoFieldType infoFieldType = infoField.getInfoFieldType();
 
-		String value = ParamUtil.getString(httpServletRequest, "myKey");
+		String value = ParamUtil.getString(
+			httpServletRequest, "INFO_FORM__" + infoField.getName());
 
 		InputTemplateNode inputTemplateNode = new InputTemplateNode(
 			errorMessage, inputHelpText, inputLabel, name, required,

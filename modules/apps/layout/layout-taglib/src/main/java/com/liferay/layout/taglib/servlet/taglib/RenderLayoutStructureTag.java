@@ -761,10 +761,25 @@ public class RenderLayoutStructureTag extends IncludeTag {
 				getRequest(), formStyledLayoutStructureItem.getItemId());
 		}
 
+		HttpServletRequest request = getRequest();
+
+
+//
+		if (request.getAttribute("") != null) {
+
+		}
+		// Request attribute, session, session messages (mapas metidos en sesion)
+		// Cuando se acaba de cargar una pagina completa (bottom.jsp) limpia todos los sesion errors y todos los session messages,
+		// te garantiza que de una página otra, esos atributos te los va a limpiar
+
+		// Los tienes que limpiar siempre antes de cerrar el caso de form
+
 		_renderLayoutStructure(
 			formStyledLayoutStructureItem.getChildrenItemIds(),
 			collectionElementIndex, infoForm,
 			renderLayoutStructureDisplayContext);
+
+		// TODO  borrar
 
 		jspWriter.write("</form>");
 	}

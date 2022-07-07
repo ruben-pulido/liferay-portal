@@ -23,6 +23,7 @@ import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.info.exception.InfoFormException;
 import com.liferay.info.exception.InfoFormPrincipalException;
 import com.liferay.info.exception.InfoFormValidationException;
+import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.internal.request.helper.InfoRequestFieldValuesProviderHelper;
 import com.liferay.info.item.InfoItemFieldValues;
@@ -47,14 +48,18 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.struts.StrutsAction;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
+import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -115,7 +120,8 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 			redirect = ParamUtil.getString(httpServletRequest, "redirect");
 
 			if (Validator.isNull(redirect)) {
-				redirect = ParamUtil.getString(httpServletRequest, "backURL");
+				redirect = _removeFormParameters(
+					ParamUtil.getString(httpServletRequest, "backURL"));
 
 				SessionMessages.add(httpServletRequest, formItemId);
 			}
@@ -125,11 +131,45 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 				_log.debug(captchaException);
 			}
 
-			redirect = httpServletRequest.getHeader(HttpHeaders.REFERER);
+			// TODO For any error, not just captcha
 
-			String value = "My Value";
+			redirect = _removeFormParameters(
+				httpServletRequest.getHeader(HttpHeaders.REFERER));
 
-			HttpComponentsUtil.addParameter(redirect, "myKey", value);
+			for (InfoFieldValue<Object> infoFieldValue : infoFieldValues) {
+				InfoField<?> infoField = infoFieldValue.getInfoField();
+
+				String parameterName = "INFO_FORM__" + infoField.getName();
+
+//				redirect = HttpComponentsUtil.addParameter(
+//					redirect, parameterName,
+//					String.valueOf(infoFieldValue.getValue()));
+
+				// Approach 3)
+
+				HttpSession session = httpServletRequest.getSession();
+//
+//				session.setAttribute("LIFERAY_SHARED_", );
+
+//				session.removeAttribute("");
+
+				// TODO Add formId to attribute name, or use map.
+				// Use formId as map
+
+				// Approach 4
+
+//				SessionMessages.add(request);
+//				SessionMessages.remove();
+
+				// Key: info_form_values_<formId> (map de clave valores)
+//				Atributos de sesion que se propagan
+
+
+				httpServletRequest.setAttribute(
+					"LIFERAY_SHARED_" + infoField.getName(),
+					String.valueOf(infoFieldValue.getValue())
+				);
+			}
 
 			httpServletResponse.sendRedirect(redirect);
 
@@ -186,6 +226,22 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 		httpServletResponse.sendRedirect(redirect);
 
 		return null;
+	}
+
+	private String _removeFormParameters(String url) {
+		Map<String, String[]> parameters = HttpComponentsUtil.getParameterMap(
+			HttpComponentsUtil.getQueryString(url));
+
+		for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
+		   String key = entry.getKey();
+
+		   if (key.startsWith("INFO_FORM__")) {
+				url = HttpComponentsUtil.removeParameter(
+					url, key);
+		   }
+		}
+
+		return url;
 	}
 
 	@Activate
