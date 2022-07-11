@@ -821,28 +821,43 @@ public class RenderLayoutStructureTag extends IncludeTag {
 				getRequest(), formStyledLayoutStructureItem.getItemId());
 		}
 
+//		Map<String, String> formParameterMap =
+//			(Map<String, String>)SessionMessages.get(
+//				getRequest(),
+//				InfoFormConstants.INFO_FORM_PARAMETER_MAP +
+//					formStyledLayoutStructureItem.getItemId());
+//
 		Map<String, String> formParameterMap =
-			(Map<String, String>)SessionMessages.get(
-				getRequest(),
-				InfoFormConstants.INFO_FORM_PARAMETER_MAP +
-					formStyledLayoutStructureItem.getItemId());
+			(Map<String, String>)httpServletRequest.getAttribute(
+				"LIFERAY_SHARED_" + "infoFormParameterMap" + formStyledLayoutStructureItem.getItemId());
 
-		SessionMessages.add(
-			getRequest(), InfoFormConstants.INFO_FORM_PARAMETER_MAP,
+		httpServletRequest.setAttribute(
+			"LIFERAY_SHARED_" + "infoFormParameterMap",
 			formParameterMap);
 
-		SessionMessages.remove(
-			getRequest(),
-			InfoFormConstants.INFO_FORM_PARAMETER_MAP +
+//		SessionMessages.add(
+//			getRequest(), InfoFormConstants.INFO_FORM_PARAMETER_MAP,
+//			formParameterMap);
+
+		httpServletRequest.removeAttribute(
+			"LIFERAY_SHARED_" + "infoFormParameterMap" +
 				formStyledLayoutStructureItem.getItemId());
+
+//		SessionMessages.remove(
+//			getRequest(),
+//			InfoFormConstants.INFO_FORM_PARAMETER_MAP +
+//				formStyledLayoutStructureItem.getItemId());
 
 		_renderLayoutStructure(
 			formStyledLayoutStructureItem.getChildrenItemIds(),
 			collectionElementIndex, infoForm,
 			renderLayoutStructureDisplayContext);
 
-		SessionMessages.remove(
-			getRequest(), InfoFormConstants.INFO_FORM_PARAMETER_MAP);
+		httpServletRequest.removeAttribute(
+			"LIFERAY_SHARED_" + "infoFormParameterMap");
+
+//		SessionMessages.remove(
+//			getRequest(), InfoFormConstants.INFO_FORM_PARAMETER_MAP);
 
 		jspWriter.write("</form>");
 	}

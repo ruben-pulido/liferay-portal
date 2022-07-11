@@ -162,8 +162,12 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 		String value = StringPool.BLANK;
 
 		Map<String, String> formParameterMap =
-			(Map<String, String>)SessionMessages.get(
-				httpServletRequest, InfoFormConstants.INFO_FORM_PARAMETER_MAP);
+			(Map<String, String>)httpServletRequest.getAttribute(
+				"LIFERAY_SHARED_" + "infoFormParameterMap");
+
+//		Map<String, String> formParameterMap =
+//			(Map<String, String>)SessionMessages.get(
+//				httpServletRequest, InfoFormConstants.INFO_FORM_PARAMETER_MAP);
 
 		if (formParameterMap != null) {
 			value = formParameterMap.get(infoField.getName());

@@ -187,10 +187,17 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 					String.valueOf(infoFieldValue.getValue()));
 			}
 
-			SessionMessages.add(
-				httpServletRequest,
-				InfoFormConstants.INFO_FORM_PARAMETER_MAP + formItemId,
-				formParameterMap);
+			httpServletRequest.setAttribute(
+					"LIFERAY_SHARED_" + "infoFormParameterMap" + formItemId,
+					formParameterMap
+				);
+
+
+//			SessionMessages.add(
+//				httpServletRequest,
+//				InfoFormConstants.INFO_FORM_PARAMETER_MAP + formItemId,
+//				formParameterMap);
+
 		}
 
 		if (Validator.isNull(redirect)) {
