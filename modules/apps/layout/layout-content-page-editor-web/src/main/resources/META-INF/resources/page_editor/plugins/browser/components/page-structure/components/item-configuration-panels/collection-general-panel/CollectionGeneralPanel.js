@@ -48,6 +48,7 @@ import {PaginationSelector} from './PaginationSelector';
 import {ShowGutterSelector} from './ShowGutterSelector';
 import {StyleDisplaySelector} from './StyleDisplaySelector';
 import {VerticalAlignmentSelector} from './VerticalAlignmentSelector';
+import {ClayCheckbox} from "@clayui/form";
 
 const LIST_STYLE_GRID = '';
 
@@ -62,6 +63,7 @@ export function CollectionGeneralPanel({item}) {
 		numberOfItemsPerPage: initialNumberOfItemsPerPage,
 		numberOfPages: initialNumberOfPages,
 		paginationType,
+		showEmptyMessage,
 	} = item.config;
 
 	const [availableListItemStyles, setAvailableListItemStyles] = useState([]);
@@ -226,6 +228,7 @@ export function CollectionGeneralPanel({item}) {
 		}
 	}, [collection]);
 
+
 	return (
 		<>
 			<div className="mb-3">
@@ -357,6 +360,15 @@ export function CollectionGeneralPanel({item}) {
 							)}
 						</>
 					)}
+
+					<ClayCheckbox
+						checked={showEmptyMessage}
+						label="Show Empty Message"
+						onChange={ (event => handleConfigurationChanged({
+							showEmptyMessage: event.target.checked
+						})) }
+					/>
+
 				</Collapse>
 
 				{filterConfigurationVisible ? (
@@ -369,6 +381,8 @@ export function CollectionGeneralPanel({item}) {
 					/>
 				) : null}
 			</div>
+
+
 
 			<CommonStyles
 				commonStylesValues={collectionConfig.styles}
