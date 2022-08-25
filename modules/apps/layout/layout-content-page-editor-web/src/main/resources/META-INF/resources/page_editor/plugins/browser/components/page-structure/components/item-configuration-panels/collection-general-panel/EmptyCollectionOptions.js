@@ -1,0 +1,158 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+import ClayForm, {ClayCheckbox, ClayInput} from '@clayui/form';
+import ClayIcon from '@clayui/icon';
+import ClayPopover from '@clayui/popover';
+import PropTypes from 'prop-types';
+import React, {useState} from 'react';
+
+import {useSelector} from '../../../../../../../app/contexts/StoreContext';
+import selectLanguageId from '../../../../../../../app/selectors/selectLanguageId';
+import {getEditableLocalizedValue} from '../../../../../../../app/utils/getEditableLocalizedValue';
+import {useId} from '../../../../../../../app/utils/useId';
+import CurrentLanguageFlag from '../../../../../../../common/components/CurrentLanguageFlag';
+import useControlledState from '../../../../../../../core/hooks/useControlledState';
+
+export function EmptyCollectionOptions({
+	collectionEmptyCollectionMessageId,
+	emptyCollectionConfig,
+	handleConfigurationChanged,
+}) {
+	const {displayMessage = true} = emptyCollectionConfig || {};
+
+	const handleDisplayMessageChanged = (event) =>
+		handleConfigurationChanged({
+			emptyCollectionConfig: {
+				...emptyCollectionConfig,
+				displayMessage: event.target.checked,
+			},
+		});
+
+	const languageId = useSelector(selectLanguageId);
+
+	const [
+		messageForSelectedLanguage,
+		setMessageForSelectedLanguage,
+	] = useControlledState(
+		getEditableLocalizedValue(
+			emptyCollectionConfig?.message,
+			languageId,
+			Liferay.Language.get('no-results-found')
+		)
+	);
+
+	return (
+		<>
+			{Liferay.FeatureFlags['LPS-160243'] && (
+				<div className="d-flex mb-2 pt-1">
+					<ClayCheckbox
+						checked={displayMessage}
+						label={Liferay.Language.get(
+							'show-empty-collection-alert'
+						)}
+						onChange={handleDisplayMessageChanged}
+					/>
+
+					<EmptyCollectionHelp />
+				</div>
+			)}
+
+			{Liferay.FeatureFlags['LPS-160789'] && displayMessage && (
+				<ClayForm.Group small>
+					<label htmlFor={collectionEmptyCollectionMessageId}>
+						{Liferay.Language.get('empty-collection-alert')}
+					</label>
+
+					<ClayInput.Group small>
+						<ClayInput.GroupItem>
+							<ClayInput
+								id={collectionEmptyCollectionMessageId}
+								onBlur={() =>
+									handleConfigurationChanged({
+										emptyCollectionConfig: {
+											...emptyCollectionConfig,
+											message: {
+												...emptyCollectionConfig?.message,
+												[languageId]: messageForSelectedLanguage,
+											},
+										},
+									})
+								}
+								onChange={(event) =>
+									setMessageForSelectedLanguage(
+										event.target.value
+									)
+								}
+								type="text"
+								value={messageForSelectedLanguage || ''}
+							/>
+						</ClayInput.GroupItem>
+
+						<ClayInput.GroupItem shrink>
+							<CurrentLanguageFlag />
+						</ClayInput.GroupItem>
+					</ClayInput.Group>
+				</ClayForm.Group>
+			)}
+		</>
+	);
+}
+
+function EmptyCollectionHelp() {
+	const id = useId();
+
+	const [showPopover, setShowPopover] = useState(false);
+
+	return (
+		<ClayPopover
+			alignPosition="top"
+			className="position-fixed"
+			disableScroll
+			header={Liferay.Language.get('empty-collection-alert')}
+			id={id}
+			onShowChange={setShowPopover}
+			role="tooltip"
+			show={showPopover}
+			trigger={
+				<span
+					aria-describedby={id}
+					onBlur={() => setShowPopover(false)}
+					onFocus={() => setShowPopover(true)}
+					onMouseEnter={() => setShowPopover(true)}
+					onMouseLeave={() => setShowPopover(false)}
+					tabIndex="0"
+				>
+					<ClayIcon
+						className="text-secondary"
+						symbol="question-circle"
+					/>
+				</span>
+			}
+		>
+			{Liferay.Language.get(
+				'information-message-displayed-in-view-mode-when-the-collection-is-empty-or-no-results-match-the-applied-filters'
+			)}
+		</ClayPopover>
+	);
+}
+
+EmptyCollectionOptions.propTypes = {
+	collectionEmptyCollectionMessageId: PropTypes.string.isRequired,
+	emptyCollectionConfig: PropTypes.shape({
+		displayMessage: PropTypes.bool,
+		message: PropTypes.object,
+	}),
+	handleConfigurationChanged: PropTypes.func.isRequired,
+};

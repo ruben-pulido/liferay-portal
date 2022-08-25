@@ -19,8 +19,10 @@ import com.liferay.headless.delivery.dto.v1_0.ClassPKReference;
 import com.liferay.headless.delivery.dto.v1_0.CollectionConfig;
 import com.liferay.headless.delivery.dto.v1_0.CollectionViewport;
 import com.liferay.headless.delivery.dto.v1_0.CollectionViewportDefinition;
+import com.liferay.headless.delivery.dto.v1_0.EmptyCollectionConfig;
 import com.liferay.headless.delivery.dto.v1_0.PageCollectionDefinition;
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
+import com.liferay.headless.delivery.internal.dto.v1_0.mapper.util.LocalizedValueUtil;
 import com.liferay.info.list.provider.item.selector.criterion.InfoListProviderItemSelectorReturnType;
 import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
 import com.liferay.layout.responsive.ViewportSize;
@@ -70,6 +72,8 @@ public class CollectionLayoutStructureItemMapper
 						displayAllPages =
 							collectionStyledLayoutStructureItem.
 								isDisplayAllPages();
+						emptyCollectionConfig = _getEmptyCollectionConfig(
+							collectionStyledLayoutStructureItem);
 						listItemStyle =
 							collectionStyledLayoutStructureItem.
 								getListItemStyle();
@@ -210,6 +214,43 @@ public class CollectionLayoutStructureItemMapper
 			});
 
 		return collectionViewports.toArray(new CollectionViewport[0]);
+	}
+
+	private EmptyCollectionConfig _getEmptyCollectionConfig(
+		CollectionStyledLayoutStructureItem
+			collectionStyledLayoutStructureItem) {
+
+		JSONObject jsonObject =
+			collectionStyledLayoutStructureItem.getEmptyCollectionJSONObject();
+
+		if (jsonObject == null || jsonObject.length() == 0) {
+			return null;
+		}
+
+		return new EmptyCollectionConfig() {
+			{
+				setDisplayMessage(
+					() -> {
+						if (!jsonObject.has("displayMessage")) {
+							return null;
+						}
+
+						return jsonObject.getBoolean("displayMessage");
+					});
+				setMessage_i18n(
+					() -> {
+						JSONObject messageJSONObject = jsonObject.getJSONObject(
+							"message");
+
+						if (messageJSONObject == null) {
+							return null;
+						}
+
+						return LocalizedValueUtil.toLocalizedValues(
+							messageJSONObject);
+					});
+			}
+		};
 	}
 
 	private PageCollectionDefinition.PaginationType _getPaginationType(

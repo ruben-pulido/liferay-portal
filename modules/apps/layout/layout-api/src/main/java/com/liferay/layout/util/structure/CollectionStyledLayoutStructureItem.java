@@ -33,6 +33,8 @@ public class CollectionStyledLayoutStructureItem
 
 	public CollectionStyledLayoutStructureItem(String parentItemId) {
 		super(parentItemId);
+
+		_emptyCollectionConfigJSONObject = JSONFactoryUtil.createJSONObject();
 	}
 
 	@Override
@@ -58,6 +60,10 @@ public class CollectionStyledLayoutStructureItem
 			!Objects.equals(
 				_displayAllPages,
 				collectionStyledLayoutStructureItem._displayAllPages) ||
+			!Objects.equals(
+				_emptyCollectionConfigJSONObject,
+				collectionStyledLayoutStructureItem.
+					_emptyCollectionConfigJSONObject) ||
 			!Objects.equals(
 				_gutters, collectionStyledLayoutStructureItem._gutters) ||
 			!Objects.equals(
@@ -94,6 +100,10 @@ public class CollectionStyledLayoutStructureItem
 		return _collectionJSONObject;
 	}
 
+	public JSONObject getEmptyCollectionJSONObject() {
+		return _emptyCollectionConfigJSONObject;
+	}
+
 	@Override
 	public JSONObject getItemConfigJSONObject() {
 		JSONObject jsonObject = super.getItemConfigJSONObject();
@@ -104,6 +114,8 @@ public class CollectionStyledLayoutStructureItem
 			"displayAllItems", _displayAllItems
 		).put(
 			"displayAllPages", _displayAllPages
+		).put(
+			"emptyCollectionConfig", _emptyCollectionConfigJSONObject
 		).put(
 			"gutters", _gutters
 		).put(
@@ -251,6 +263,12 @@ public class CollectionStyledLayoutStructureItem
 		}
 	}
 
+	public void setEmptyCollectionConfigJSONObject(
+		JSONObject emptyCollectionConfigJSONObject) {
+
+		_emptyCollectionConfigJSONObject = emptyCollectionConfigJSONObject;
+	}
+
 	public void setGutters(boolean gutters) {
 		_gutters = gutters;
 	}
@@ -344,6 +362,11 @@ public class CollectionStyledLayoutStructureItem
 				itemConfigJSONObject.getBoolean("displayAllPages"));
 		}
 
+		if (itemConfigJSONObject.has("emptyCollectionConfig")) {
+			setEmptyCollectionConfigJSONObject(
+				itemConfigJSONObject.getJSONObject("emptyCollectionConfig"));
+		}
+
 		if (itemConfigJSONObject.has("gutters")) {
 			setGutters(itemConfigJSONObject.getBoolean("gutters"));
 		}
@@ -409,6 +432,7 @@ public class CollectionStyledLayoutStructureItem
 	private JSONObject _collectionJSONObject;
 	private boolean _displayAllItems;
 	private boolean _displayAllPages = true;
+	private JSONObject _emptyCollectionConfigJSONObject;
 	private boolean _gutters = true;
 	private String _listItemStyle;
 	private String _listStyle;

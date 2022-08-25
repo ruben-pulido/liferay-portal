@@ -27,6 +27,7 @@ import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
 import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -100,6 +101,18 @@ public class CollectionLayoutStructureItemImporter
 			(Boolean)definitionMap.get("displayAllItems"));
 
 		Boolean displayAllPages = (Boolean)definitionMap.get("displayAllPages");
+
+		Map<String, Object> emptyCollectionConfig =
+			(Map<String, Object>)definitionMap.get("emptyCollectionConfig");
+
+		if ((emptyCollectionConfig != null) &&
+			!emptyCollectionConfig.isEmpty()) {
+
+			collectionStyledLayoutStructureItem.
+				setEmptyCollectionConfigJSONObject(
+					_getEmptyCollectionConfigAsJSONObject(
+						emptyCollectionConfig));
+		}
 
 		Boolean showAllItems = (Boolean)definitionMap.get("showAllItems");
 
@@ -269,6 +282,45 @@ public class CollectionLayoutStructureItemImporter
 			"title", infoCollectionProvider.getLabel(LocaleUtil.getDefault())
 		).put(
 			"type", InfoListProviderItemSelectorReturnType.class.getName()
+		);
+	}
+
+	private JSONObject _getEmptyCollectionConfigAsJSONObject(
+		Map<String, Object> emptyCollectionConfig) {
+
+		return JSONUtil.put(
+			"displayMessage",
+			() -> {
+				if (emptyCollectionConfig.containsKey("displayMessage")) {
+					return GetterUtil.getBoolean(
+						emptyCollectionConfig.get("displayMessage"), true);
+				}
+
+				return null;
+			}
+		).put(
+			"message",
+			() -> {
+				if (emptyCollectionConfig.containsKey("message_i18n")) {
+					JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+					Map<String, Object> map =
+						(Map<String, Object>)emptyCollectionConfig.get(
+							"message_i18n");
+
+					if (MapUtil.isEmpty(map)) {
+						return null;
+					}
+
+					for (Map.Entry<String, Object> entry : map.entrySet()) {
+						jsonObject.put(entry.getKey(), entry.getValue());
+					}
+
+					return jsonObject;
+				}
+
+				return null;
+			}
 		);
 	}
 

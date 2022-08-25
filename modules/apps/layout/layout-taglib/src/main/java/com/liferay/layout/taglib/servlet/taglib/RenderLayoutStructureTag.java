@@ -53,6 +53,7 @@ import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.layoutconfiguration.util.RuntimePageUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -72,6 +73,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsValues;
@@ -232,7 +234,10 @@ public class RenderLayoutStructureTag extends IncludeTag {
 			renderCollectionLayoutStructureItemDisplayContext.getCollection();
 
 		if (ListUtil.isEmpty(collection)) {
-			_renderEmptyState(jspWriter);
+			_renderEmptyState(
+				collectionStyledLayoutStructureItem.
+					getEmptyCollectionJSONObject(),
+				jspWriter);
 
 			jspWriter.write("</div>");
 
@@ -696,12 +701,50 @@ public class RenderLayoutStructureTag extends IncludeTag {
 		}
 	}
 
-	private void _renderEmptyState(JspWriter jspWriter) throws Exception {
+	private void _renderEmptyState(JSONObject jsonObject, JspWriter jspWriter)
+		throws Exception {
+
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-160243")) &&
+			(jsonObject != null) && !jsonObject.getBoolean("displayMessage")) {
+
+			return;
+		}
+
+		String message = LanguageUtil.get(getRequest(), "no-results-found");
+
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-160789")) &&
+			(jsonObject != null)) {
+
+			JSONObject messageJSONObject = jsonObject.getJSONObject("message");
+
+			if (messageJSONObject != null) {
+				HttpServletRequest httpServletRequest = getRequest();
+
+				ThemeDisplay themeDisplay =
+					(ThemeDisplay)httpServletRequest.getAttribute(
+						WebKeys.THEME_DISPLAY);
+
+				String customMessage = messageJSONObject.getString(
+					String.valueOf(themeDisplay.getLocale()));
+
+				if (Validator.isNotNull(customMessage)) {
+					message = customMessage;
+				}
+			}
+
+			jspWriter.write("<div class=\"c-empty-state\">");
+			jspWriter.write("<div class=\"c-empty-state-text\">");
+			jspWriter.write(message);
+			jspWriter.write("</div></div>");
+
+			return;
+		}
+
 		jspWriter.write("<div class=\"c-empty-state\">");
 		jspWriter.write("<div class=\"c-empty-state-title mt-0\">");
 		jspWriter.write("<span class=\"text-truncate-inline\">");
 		jspWriter.write("<span class=\"text-truncate\">");
-		jspWriter.write(LanguageUtil.get(getRequest(), "no-results-found"));
+		jspWriter.write(message);
 		jspWriter.write("</span></span></div>");
 		jspWriter.write("<div class=\"c-empty-state-text\">");
 		jspWriter.write(
