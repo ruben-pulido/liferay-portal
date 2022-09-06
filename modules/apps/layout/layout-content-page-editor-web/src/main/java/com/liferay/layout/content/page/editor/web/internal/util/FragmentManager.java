@@ -47,6 +47,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -143,10 +144,8 @@ public class FragmentManager {
 			return allFragmentCollectionMapsList;
 		}
 
-		List<String> sortedFragmentCollectionKeys = ListUtil.fromArray(
-			portalPreferences.getValues(
-				ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
-				"sortedFragmentCollectionKeys", new String[0]));
+		List<String> sortedFragmentCollectionKeys =
+			getSortedFragmentCollectionKeys(portalPreferences);
 
 		if (!sortedFragmentCollectionKeys.isEmpty()) {
 			Map<String, Map<String, Object>> fragmentCollectionMaps =
@@ -207,6 +206,46 @@ public class FragmentManager {
 		}
 
 		return allFragmentCollectionMapsList;
+	}
+
+	public List<String> getSortedFragmentCollectionKeys(
+		PortalPreferences portalPreferences) {
+
+		return ListUtil.fromArray(
+			_removeNumberPrefix(
+				portalPreferences.getValues(
+					ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
+					"sortedFragmentCollectionKeys", new String[0])));
+	}
+
+	public void updateSortedFragmentCollectionKeys(
+		PortalPreferences portalPreferences,
+		String[] sortedFragmentCollectionKeys) {
+
+		portalPreferences.setValues(
+			ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
+			"sortedFragmentCollectionKeys",
+			_addNumberPrefix(sortedFragmentCollectionKeys));
+	}
+
+	public void updateSortedPortletCategoryKeys(
+		PortalPreferences portalPreferences,
+		String[] sortedPortletCategoryKeys) {
+
+		portalPreferences.setValues(
+			ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
+			"sortedPortletCategoryKeys",
+			_addNumberPrefix(sortedPortletCategoryKeys));
+	}
+
+	private String[] _addNumberPrefix(String[] sortedKeys) {
+		String[] newArray = new String[sortedKeys.length];
+
+		for (int i = 0; i < sortedKeys.length; i++) {
+			newArray[i] = i + StringPool.DOUBLE_DOLLAR + sortedKeys[i];
+		}
+
+		return newArray;
 	}
 
 	private Map<String, Map<String, Object>> _getDynamicFragmentCollectionMaps(
@@ -580,6 +619,26 @@ public class FragmentManager {
 		}
 
 		return false;
+	}
+
+	private String[] _removeNumberPrefix(String[] numberedSortedKeys) {
+		String[] newArray = new String[numberedSortedKeys.length];
+
+		Map<String, String> numberKeyMap = new HashMap<>();
+
+		for (String numberedSortedKey : numberedSortedKeys) {
+			numberKeyMap.put(
+				numberedSortedKey.substring(
+					0, numberedSortedKey.indexOf(StringPool.DOUBLE_DOLLAR)),
+				numberedSortedKey.substring(
+					numberedSortedKey.indexOf(StringPool.DOUBLE_DOLLAR) + 2));
+		}
+
+		for (int i = 0; i < numberedSortedKeys.length; i++) {
+			newArray[i] = numberKeyMap.get(String.valueOf(i));
+		}
+
+		return newArray;
 	}
 
 	private static final String[] _SORTED_FRAGMENT_COLLECTION_KEYS = {
