@@ -13,7 +13,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {useState} from 'react';
 
 function PieceImg({piecePlacement, square}) {
 	const piece = piecePlacement[square];
@@ -27,7 +27,72 @@ function PieceImg({piecePlacement, square}) {
 	);
 }
 
-export default function ChessBoard({piecePlacement}) {
+export default function ChessBoard({handleAddChessMove, piecePlacement}) {
+	const [previousSourceSquare, setPreviousSourceSquare] = useState(null);
+	const [previousTargetSquare, setPreviousTargetSquare] = useState(null);
+	const [sourceSquare, setSourceSquare] = useState(null);
+
+	const getClassName = (squareId) => {
+		const color = getSquareColor(squareId);
+
+		if (sourceSquare === squareId) {
+			return `square-${color}-selected`;
+		}
+
+		if (
+			previousSourceSquare === squareId ||
+			previousTargetSquare === squareId
+		) {
+			return `square-${color}-previously-selected`;
+		}
+
+		return `square-${color}`;
+	};
+
+	const getSquareColor = (squareId) => {
+		var letter = squareId[0];
+		var number = squareId[1];
+
+		if (
+			(letter === 'a' ||
+				letter === 'c' ||
+				letter === 'e' ||
+				letter === 'g') &&
+			number % 2 === 0
+		) {
+			return 'white';
+		}
+
+		if (
+			(letter === 'b' ||
+				letter === 'd' ||
+				letter === 'f' ||
+				letter === 'h') &&
+			number % 2 === 1
+		) {
+			return 'white';
+		}
+
+		return 'black';
+	};
+
+	const updateSquares = (event) => {
+		if (sourceSquare) {
+			if (sourceSquare === event.currentTarget.id) {
+				setSourceSquare(null);
+			}
+			else {
+				handleAddChessMove(sourceSquare + '-' + event.currentTarget.id);
+				setPreviousSourceSquare(sourceSquare);
+				setPreviousTargetSquare(event.currentTarget.id);
+				setSourceSquare(null);
+			}
+		}
+		else {
+			setSourceSquare(event.currentTarget.id);
+		}
+	};
+
 	return (
 		<div>
 			Chess Board
