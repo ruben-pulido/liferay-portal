@@ -14,7 +14,6 @@
 
 package com.liferay.chess.piece.internal;
 
-import com.liferay.chess.piece.BaseChessPiece;
 import com.liferay.chess.piece.ChessPiece;
 
 import org.osgi.service.component.annotations.Component;
@@ -23,7 +22,7 @@ import org.osgi.service.component.annotations.Component;
  * @author Rubén Pulido
  */
 @Component(immediate = true, service = ChessPiece.class)
-public class ChessPiecePawn extends BaseChessPiece implements ChessPiece {
+public class ChessPiecePawn implements ChessPiece {
 
 	public String getCathphrase() {
 		return "I am the soul of the game.";
