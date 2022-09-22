@@ -14,6 +14,7 @@
 
 package com.liferay.chess.piece;
 
+import com.liferay.portal.kernel.service.CompanyService;
 import com.liferay.portal.kernel.util.Portal;
 
 import org.osgi.service.component.annotations.Reference;
@@ -25,8 +26,13 @@ public abstract class BaseChessPiece implements ChessPiece {
 
 	@Override
 	public String getCathphrase() {
-		return "My computer name is " + portal.getComputerName();
+		return portal.getComputerName() +
+			" is my computer name and this is an OSGi identifier: " +
+				companyService.getOSGiServiceIdentifier();
 	}
+
+	@Reference
+	protected CompanyService companyService;
 
 	@Reference
 	protected Portal portal;
