@@ -45,7 +45,7 @@ public interface ChessGameService extends BaseService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this interface directly. Always use {@link ChessGameServiceUtil} to access the chess game remote service. Add custom service methods to <code>com.liferay.chess.service.impl.ChessGameServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add custom service methods to <code>com.liferay.chess.service.impl.ChessGameServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the chess game remote service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link ChessGameServiceUtil} if injection and service tracking are not available.
 	 */
 
 	/**
