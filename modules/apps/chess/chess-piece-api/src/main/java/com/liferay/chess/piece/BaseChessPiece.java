@@ -25,7 +25,7 @@ public abstract class BaseChessPiece implements ChessPiece {
 
 	@Override
 	public String getCathphrase() {
-		return "I'm still thinking about my catchphrase.";
+		return "My computer name is " + _portal.getComputerName();
 	}
 
 	@Reference
