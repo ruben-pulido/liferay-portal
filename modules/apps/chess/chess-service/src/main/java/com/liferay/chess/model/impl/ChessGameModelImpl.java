@@ -16,7 +16,6 @@ package com.liferay.chess.model.impl;
 
 import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.model.ChessGameModel;
-import com.liferay.chess.model.ChessGameSoap;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
@@ -38,18 +37,15 @@ import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 
 import java.sql.Blob;
 import java.sql.Types;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -163,61 +159,6 @@ public class ChessGameModelImpl
 	public static void setFinderCacheEnabled(boolean finderCacheEnabled) {
 	}
 
-	/**
-	 * Converts the soap model instance into a normal model instance.
-	 *
-	 * @param soapModel the soap model instance to convert
-	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
-	public static ChessGame toModel(ChessGameSoap soapModel) {
-		if (soapModel == null) {
-			return null;
-		}
-
-		ChessGame model = new ChessGameImpl();
-
-		model.setMvccVersion(soapModel.getMvccVersion());
-		model.setUuid(soapModel.getUuid());
-		model.setChessGameId(soapModel.getChessGameId());
-		model.setGroupId(soapModel.getGroupId());
-		model.setCompanyId(soapModel.getCompanyId());
-		model.setUserId(soapModel.getUserId());
-		model.setUserName(soapModel.getUserName());
-		model.setCreateDate(soapModel.getCreateDate());
-		model.setModifiedDate(soapModel.getModifiedDate());
-		model.setWhitePlayerId(soapModel.getWhitePlayerId());
-		model.setBlackPlayerId(soapModel.getBlackPlayerId());
-		model.setMoves(soapModel.getMoves());
-		model.setPosition(soapModel.getPosition());
-		model.setWinnerPlayerId(soapModel.getWinnerPlayerId());
-
-		return model;
-	}
-
-	/**
-	 * Converts the soap model instances into normal model instances.
-	 *
-	 * @param soapModels the soap model instances to convert
-	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
-	public static List<ChessGame> toModels(ChessGameSoap[] soapModels) {
-		if (soapModels == null) {
-			return null;
-		}
-
-		List<ChessGame> models = new ArrayList<ChessGame>(soapModels.length);
-
-		for (ChessGameSoap soapModel : soapModels) {
-			models.add(toModel(soapModel));
-		}
-
-		return models;
-	}
-
 	public ChessGameModelImpl() {
 	}
 
@@ -300,34 +241,6 @@ public class ChessGameModelImpl
 		getAttributeSetterBiConsumers() {
 
 		return _attributeSetterBiConsumers;
-	}
-
-	private static Function<InvocationHandler, ChessGame>
-		_getProxyProviderFunction() {
-
-		Class<?> proxyClass = ProxyUtil.getProxyClass(
-			ChessGame.class.getClassLoader(), ChessGame.class,
-			ModelWrapper.class);
-
-		try {
-			Constructor<ChessGame> constructor =
-				(Constructor<ChessGame>)proxyClass.getConstructor(
-					InvocationHandler.class);
-
-			return invocationHandler -> {
-				try {
-					return constructor.newInstance(invocationHandler);
-				}
-				catch (ReflectiveOperationException
-							reflectiveOperationException) {
-
-					throw new InternalError(reflectiveOperationException);
-				}
-			};
-		}
-		catch (NoSuchMethodException noSuchMethodException) {
-			throw new InternalError(noSuchMethodException);
-		}
 	}
 
 	private static final Map<String, Function<ChessGame, Object>>
@@ -1021,7 +934,9 @@ public class ChessGameModelImpl
 	private static class EscapedModelProxyProviderFunctionHolder {
 
 		private static final Function<InvocationHandler, ChessGame>
-			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+			_escapedModelProxyProviderFunction =
+				ProxyUtil.getProxyProviderFunction(
+					ChessGame.class, ModelWrapper.class);
 
 	}
 

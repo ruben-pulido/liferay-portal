@@ -25,10 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
-
 /**
  * The persistence utility for the chess game service. This utility wraps <code>com.liferay.chess.service.persistence.impl.ChessGamePersistenceImpl</code> and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
  *
@@ -739,7 +735,7 @@ public class ChessGameUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ChessGameModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param start the lower bound of the range of chess games
 	 * @param end the upper bound of the range of chess games (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -932,24 +928,9 @@ public class ChessGameUtil {
 	}
 
 	public static ChessGamePersistence getPersistence() {
-		return _serviceTracker.getService();
+		return _persistence;
 	}
 
-	private static ServiceTracker<ChessGamePersistence, ChessGamePersistence>
-		_serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(ChessGamePersistence.class);
-
-		ServiceTracker<ChessGamePersistence, ChessGamePersistence>
-			serviceTracker =
-				new ServiceTracker<ChessGamePersistence, ChessGamePersistence>(
-					bundle.getBundleContext(), ChessGamePersistence.class,
-					null);
-
-		serviceTracker.open();
-
-		_serviceTracker = serviceTracker;
-	}
+	private static volatile ChessGamePersistence _persistence;
 
 }

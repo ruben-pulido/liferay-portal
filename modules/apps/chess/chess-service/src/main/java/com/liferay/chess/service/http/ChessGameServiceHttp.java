@@ -38,7 +38,6 @@ package com.liferay.chess.service.http;
  * </p>
  *
  * @author Rubén Pulido
- * @see ChessGameServiceSoap
  * @generated
  */
 public class ChessGameServiceHttp {
