@@ -65,21 +65,6 @@ public class ChessDataPortalInstanceLifecycleListener
 			blackPlayerUserId, new ServiceContext());
 	}
 
-	private static final List<UserData> _getUsersData() {
-		List<UserData> userData = new ArrayList<>();
-
-		userData.add(
-			new UserData("carlos", "carlos@chess.com", "Carlos", "Valerio"));
-		userData.add(
-			new UserData("dani", "dani@chess.com", "Daniel", "Balbontín"));
-		userData.add(
-			new UserData("richi", "richi@chess.com", "Ricardo", "Fernández"));
-		userData.add(
-			new UserData("ruben", "ruben@chess.com", "Rubén", "Pulido"));
-
-		return userData;
-	}
-
 	private void _addUser(Company company, UserData userData) throws Exception {
 		User existingUser = _userLocalService.fetchUserByEmailAddress(
 			company.getCompanyId(), userData.emailAddress);
@@ -94,6 +79,21 @@ public class ChessDataPortalInstanceLifecycleListener
 			company.getCompanyId(), userData.screenName, userData.emailAddress,
 			defaultUser.getLocale(), userData.firstName, null,
 			userData.lastName);
+	}
+
+	private List<UserData> _getUsersData() {
+		List<UserData> userData = new ArrayList<>();
+
+		userData.add(
+			new UserData("carlos", "carlos@chess.com", "Carlos", "Valerio"));
+		userData.add(
+			new UserData("dani", "dani@chess.com", "Daniel", "Balbontín"));
+		userData.add(
+			new UserData("richi", "richi@chess.com", "Ricardo", "Fernández"));
+		userData.add(
+			new UserData("ruben", "ruben@chess.com", "Rubén", "Pulido"));
+
+		return userData;
 	}
 
 	@Reference
