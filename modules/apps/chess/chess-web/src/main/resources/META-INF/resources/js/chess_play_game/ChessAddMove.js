@@ -23,11 +23,10 @@ import {PLAYER_COLOR} from './constants';
 
 export default function ChessAddMove({
 	actionUrl,
+	addChessMove,
 	chessGameId,
-	chessMoves,
 	currentTurn,
 	portletNamespace,
-	setChessMoves,
 	setCurrentTurn,
 	setGameResult,
 }) {
@@ -54,7 +53,7 @@ export default function ChessAddMove({
 				setGameResult(json?.chessGameResult ?? null);
 			});
 
-		setChessMoves(chessMoves.concat(chessMove));
+		addChessMove(chessMove);
 
 		if (currentTurn === PLAYER_COLOR.WHITE) {
 			setCurrentTurn(PLAYER_COLOR.BLACK);
@@ -91,11 +90,10 @@ export default function ChessAddMove({
 
 ChessAddMove.propTypes = {
 	actionUrl: PropTypes.string.isRequired,
+	addChessMove: PropTypes.func.isRequired,
 	chessGameId: PropTypes.number.isRequired,
-	chessMoves: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
 	currentTurn: PropTypes.string,
 	portletNamespace: PropTypes.string,
-	setChessMoves: PropTypes.func.isRequired,
 	setCurrentTurn: PropTypes.func.isRequired,
 	setGameResult: PropTypes.func.isRequired,
 };
