@@ -23,7 +23,10 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Rubén Pulido
  */
-@Component(immediate = true, service = ChessPiece.class)
+@Component(
+	immediate = true, property = "service.ranking:Integer=200",
+	service = ChessPiece.class
+)
 public class ChessPieceNightrider implements ChessPiece {
 
 	@Override
