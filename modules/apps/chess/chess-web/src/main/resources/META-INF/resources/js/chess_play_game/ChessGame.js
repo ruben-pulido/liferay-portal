@@ -12,6 +12,7 @@
  * details.
  */
 
+import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 
@@ -33,9 +34,40 @@ const ChessGame = ({config}) => {
 	const [currentTurn, setCurrentTurn] = useState(PLAYER_COLOR.WHITE);
 	const [gameResult, setGameResult] = useState(null);
 
-	function addChessMove(chessMove) {
+	const addChessMove = (
+		addMoveURL,
+		chessMove,
+		chessGameId,
+		portletNamespace
+	) => {
+		const data = Liferay.Util.ns(portletNamespace, {
+			chessGameId,
+			chessMove,
+		});
+
+		const formData = objectToFormData(data);
+
+		fetch(addMoveURL, {
+			body: formData,
+			method: 'POST',
+		})
+			.then((response) => response.json())
+			.then((json) => {
+				setGameResult(json?.chessGameResult ?? null);
+			});
+
 		setChessMoves(chessMoves.concat(chessMove));
-	}
+		updateCurrentTurn();
+	};
+
+	const handleAddChessMove = (chessMove) => {
+		addChessMove(
+			config.urls.addMoveURL,
+			chessMove,
+			config.chessGameId,
+			config.portletNamespace
+		);
+	};
 
 	function updateCurrentTurn() {
 		if (currentTurn === PLAYER_COLOR.WHITE) {
@@ -64,16 +96,7 @@ const ChessGame = ({config}) => {
 					<div>Game result: {GAME_RESULT[gameResult]}</div>
 				)}
 				<ChessMoves chessMoves={chessMoves} />
-				<ChessAddMove
-					actionUrl={config.urls.addMoveURL}
-					addChessMove={addChessMove}
-					chessGameId={config.chessGameId}
-					currentTurn={currentTurn}
-					portletNamespace={config.portletNamespace}
-					setCurrentTurn={setCurrentTurn}
-					setGameResult={setGameResult}
-					updateCurrentTurn={updateCurrentTurn}
-				/>
+				<ChessAddMove handleAddChessMove={handleAddChessMove} />
 			</LoggedInUserContext.Provider>
 		</div>
 	);
