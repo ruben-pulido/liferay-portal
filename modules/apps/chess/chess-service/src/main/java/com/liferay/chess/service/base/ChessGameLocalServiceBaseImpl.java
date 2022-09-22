@@ -383,6 +383,7 @@ public abstract class ChessGameLocalServiceBaseImpl
 	/**
 	 * @throws PortalException
 	 */
+	@Override
 	public PersistedModel createPersistedModel(Serializable primaryKeyObj)
 		throws PortalException {
 
@@ -399,6 +400,7 @@ public abstract class ChessGameLocalServiceBaseImpl
 		return chessGameLocalService.deleteChessGame((ChessGame)persistedModel);
 	}
 
+	@Override
 	public BasePersistence<ChessGame> getBasePersistence() {
 		return chessGamePersistence;
 	}

@@ -11,5 +11,6 @@ create table ChessGame (
 	whitePlayerId LONG,
 	blackPlayerId LONG,
 	moves VARCHAR(75) null,
+	position VARCHAR(75) null,
 	winnerPlayerId LONG
 );
