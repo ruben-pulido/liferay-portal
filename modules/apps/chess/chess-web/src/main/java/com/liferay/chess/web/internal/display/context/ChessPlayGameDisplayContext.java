@@ -59,6 +59,8 @@ public class ChessPlayGameDisplayContext {
 				).put(
 					"chessGameId", chessGame.getChessGameId()
 				).put(
+					"portletNamespace", _renderResponse.getNamespace()
+				).put(
 					"urls",
 					() -> HashMapBuilder.<String, Object>put(
 						"addMoveURL", () -> getAddMoveActionURL()
