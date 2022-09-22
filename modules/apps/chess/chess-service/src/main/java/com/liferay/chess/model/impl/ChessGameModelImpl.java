@@ -106,7 +106,7 @@ public class ChessGameModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ChessGame (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,chessGameId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,whitePlayerId LONG,blackPlayerId LONG,moves VARCHAR(75) null,position VARCHAR(75) null,winnerPlayerId LONG)";
+		"create table ChessGame (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,chessGameId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,whitePlayerId LONG,blackPlayerId LONG,moves VARCHAR(2000) null,position VARCHAR(500) null,winnerPlayerId LONG)";
 
 	public static final String TABLE_SQL_DROP = "drop table ChessGame";
 

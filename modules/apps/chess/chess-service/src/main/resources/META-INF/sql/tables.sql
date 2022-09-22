@@ -10,7 +10,7 @@ create table ChessGame (
 	modifiedDate DATE null,
 	whitePlayerId LONG,
 	blackPlayerId LONG,
-	moves VARCHAR(75) null,
-	position VARCHAR(75) null,
+	moves VARCHAR(2000) null,
+	position VARCHAR(500) null,
 	winnerPlayerId LONG
 );
