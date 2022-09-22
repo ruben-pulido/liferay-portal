@@ -24,9 +24,9 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
@@ -82,18 +82,11 @@ public class ChessDataPortalInstanceLifecycleListener
 	}
 
 	private List<UserData> _getUsersData() {
-		List<UserData> userData = new ArrayList<>();
-
-		userData.add(
-			new UserData("carlos", "carlos@chess.com", "Carlos", "Valerio"));
-		userData.add(
-			new UserData("dani", "dani@chess.com", "Daniel", "Balbontín"));
-		userData.add(
-			new UserData("richi", "richi@chess.com", "Ricardo", "Fernández"));
-		userData.add(
+		return ListUtil.fromArray(
+			new UserData("carlos", "carlos@chess.com", "Carlos", "Valerio"),
+			new UserData("dani", "dani@chess.com", "Daniel", "Balbontín"),
+			new UserData("richi", "richi@chess.com", "Ricardo", "Fernández"),
 			new UserData("ruben", "ruben@chess.com", "Rubén", "Pulido"));
-
-		return userData;
 	}
 
 	@Reference
