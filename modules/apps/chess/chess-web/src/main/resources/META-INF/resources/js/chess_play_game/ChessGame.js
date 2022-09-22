@@ -53,6 +53,11 @@ const ChessGame = ({config}) => {
 		})
 			.then((response) => response.json())
 			.then((json) => {
+				return json.error === undefined
+					? json
+					: Promise.reject(new Error(json.error));
+			})
+			.then((json) => {
 				setGameResult(json?.chessGameResult ?? null);
 			})
 			.then(() => {
