@@ -14,6 +14,7 @@
 
 package com.liferay.chess.internal.info.item;
 
+import com.liferay.chess.model.ChessGame;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.field.type.NumberInfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
@@ -27,6 +28,8 @@ public interface ChessGameInfoItemFields {
 		InfoField.builder(
 		).infoFieldType(
 			NumberInfoFieldType.INSTANCE
+		).namespace(
+			ChessGame.class.getSimpleName()
 		).name(
 			"blackPlayerId"
 		).localizable(
@@ -36,6 +39,8 @@ public interface ChessGameInfoItemFields {
 		InfoField.builder(
 		).infoFieldType(
 			TextInfoFieldType.INSTANCE
+		).namespace(
+			ChessGame.class.getSimpleName()
 		).name(
 			"blackPlayerName"
 		).localizable(
@@ -45,6 +50,8 @@ public interface ChessGameInfoItemFields {
 		InfoField.builder(
 		).infoFieldType(
 			NumberInfoFieldType.INSTANCE
+		).namespace(
+			ChessGame.class.getSimpleName()
 		).name(
 			"chessGameId"
 		).localizable(
@@ -54,6 +61,8 @@ public interface ChessGameInfoItemFields {
 		InfoField.builder(
 		).infoFieldType(
 			TextInfoFieldType.INSTANCE
+		).namespace(
+			ChessGame.class.getSimpleName()
 		).name(
 			"moves"
 		).localizable(
@@ -63,6 +72,8 @@ public interface ChessGameInfoItemFields {
 		InfoField.builder(
 		).infoFieldType(
 			NumberInfoFieldType.INSTANCE
+		).namespace(
+			ChessGame.class.getSimpleName()
 		).name(
 			"whitePlayerId"
 		).localizable(
@@ -72,6 +83,8 @@ public interface ChessGameInfoItemFields {
 		InfoField.builder(
 		).infoFieldType(
 			TextInfoFieldType.INSTANCE
+		).namespace(
+			ChessGame.class.getSimpleName()
 		).name(
 			"whitePlayerName"
 		).localizable(
@@ -81,6 +94,8 @@ public interface ChessGameInfoItemFields {
 		InfoField.builder(
 		).infoFieldType(
 			NumberInfoFieldType.INSTANCE
+		).namespace(
+			ChessGame.class.getSimpleName()
 		).name(
 			"winnerPlayerId"
 		).localizable(
@@ -90,6 +105,8 @@ public interface ChessGameInfoItemFields {
 		InfoField.builder(
 		).infoFieldType(
 			TextInfoFieldType.INSTANCE
+		).namespace(
+			ChessGame.class.getSimpleName()
 		).name(
 			"winnerPlayerName"
 		).localizable(
