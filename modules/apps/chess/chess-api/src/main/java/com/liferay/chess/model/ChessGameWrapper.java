@@ -148,6 +148,11 @@ public class ChessGameWrapper
 		}
 	}
 
+	@Override
+	public ChessGame cloneWithOriginalValues() {
+		return wrap(model.cloneWithOriginalValues());
+	}
+
 	/**
 	 * Returns the black player ID of this chess game.
 	 *
