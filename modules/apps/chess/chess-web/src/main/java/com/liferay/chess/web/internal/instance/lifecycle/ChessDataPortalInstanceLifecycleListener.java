@@ -14,10 +14,15 @@
 
 package com.liferay.chess.web.internal.instance.lifecycle;
 
+import com.liferay.chess.model.ChessGame;
+import com.liferay.chess.service.ChessGameLocalService;
 import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
 import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
 
@@ -39,6 +44,25 @@ public class ChessDataPortalInstanceLifecycleListener
 		for (UserData userData : _getUsersData()) {
 			_addUser(company, userData);
 		}
+
+		ChessGame chessGame = _chessGameLocalService.fetchChessGame(1);
+
+		if (chessGame != null) {
+			return;
+		}
+
+		long whitePlayerUserId = _userLocalService.getUserIdByEmailAddress(
+			company.getCompanyId(), "ruben@chess.com");
+
+		long blackPlayerUserId = _userLocalService.getUserIdByEmailAddress(
+			company.getCompanyId(), "richi@chess.com");
+
+		Group group = _groupLocalService.getUserGroup(
+			company.getCompanyId(), whitePlayerUserId);
+
+		_chessGameLocalService.addChessGame(
+			whitePlayerUserId, group.getGroupId(), whitePlayerUserId,
+			blackPlayerUserId, new ServiceContext());
 	}
 
 	private static final List<UserData> _getUsersData() {
@@ -71,6 +95,12 @@ public class ChessDataPortalInstanceLifecycleListener
 			defaultUser.getLocale(), userData.firstName, null,
 			userData.lastName);
 	}
+
+	@Reference
+	private ChessGameLocalService _chessGameLocalService;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private Portal _portal;
