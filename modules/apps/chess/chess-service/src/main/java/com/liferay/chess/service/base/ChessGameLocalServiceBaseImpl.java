@@ -16,6 +16,7 @@ package com.liferay.chess.service.base;
 
 import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.ChessGameLocalService;
+import com.liferay.chess.service.ChessGameLocalServiceUtil;
 import com.liferay.chess.service.persistence.ChessGamePersistence;
 import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
 import com.liferay.exportimport.kernel.lar.ManifestSummary;
@@ -50,10 +51,13 @@ import com.liferay.portal.kernel.util.PortalUtil;
 
 import java.io.Serializable;
 
+import java.lang.reflect.Field;
+
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -74,7 +78,7 @@ public abstract class ChessGameLocalServiceBaseImpl
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Use <code>ChessGameLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.liferay.chess.service.ChessGameLocalServiceUtil</code>.
+	 * Never modify or reference this class directly. Use <code>ChessGameLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>ChessGameLocalServiceUtil</code>.
 	 */
 
 	/**
@@ -143,6 +147,13 @@ public abstract class ChessGameLocalServiceBaseImpl
 	@Override
 	public <T> T dslQuery(DSLQuery dslQuery) {
 		return chessGamePersistence.dslQuery(dslQuery);
+	}
+
+	@Override
+	public int dslQueryCount(DSLQuery dslQuery) {
+		Long count = dslQuery(dslQuery);
+
+		return count.intValue();
 	}
 
 	@Override
@@ -492,6 +503,11 @@ public abstract class ChessGameLocalServiceBaseImpl
 		return chessGamePersistence.update(chessGame);
 	}
 
+	@Deactivate
+	protected void deactivate() {
+		_setLocalServiceUtilService(null);
+	}
+
 	@Override
 	public Class<?>[] getAopInterfaces() {
 		return new Class<?>[] {
@@ -503,6 +519,8 @@ public abstract class ChessGameLocalServiceBaseImpl
 	@Override
 	public void setAopProxy(Object aopProxy) {
 		chessGameLocalService = (ChessGameLocalService)aopProxy;
+
+		_setLocalServiceUtilService(chessGameLocalService);
 	}
 
 	/**
@@ -544,6 +562,22 @@ public abstract class ChessGameLocalServiceBaseImpl
 		}
 		catch (Exception exception) {
 			throw new SystemException(exception);
+		}
+	}
+
+	private void _setLocalServiceUtilService(
+		ChessGameLocalService chessGameLocalService) {
+
+		try {
+			Field field = ChessGameLocalServiceUtil.class.getDeclaredField(
+				"_service");
+
+			field.setAccessible(true);
+
+			field.set(null, chessGameLocalService);
+		}
+		catch (ReflectiveOperationException reflectiveOperationException) {
+			throw new RuntimeException(reflectiveOperationException);
 		}
 	}
 
