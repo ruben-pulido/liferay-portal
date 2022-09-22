@@ -28,12 +28,12 @@ public class NoSuchGameException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchGameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchGameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchGameException(Throwable cause) {
-		super(cause);
+	public NoSuchGameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }
