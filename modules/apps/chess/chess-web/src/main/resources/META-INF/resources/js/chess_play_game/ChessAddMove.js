@@ -14,13 +14,34 @@
 
 import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
+import {fetch} from 'frontend-js-web';
 import React from 'react';
 
-export default function ChessAddMove() {
+export default function ChessAddMove({
+	actionUrl,
+	chessGameId,
+	portletNamespace,
+}) {
 	const handleAddMoveClick = () => {
 		const moveTextInput = document.getElementById('moveTextInput');
 
-		alert('Add Move button clicked with move: ' + moveTextInput.value);
+		const chessMove = moveTextInput.value;
+
+		const data = Liferay.Util.ns(portletNamespace, {
+			chessGameId,
+			chessMove,
+		});
+
+		const formData = new FormData();
+
+		Object.keys(data).forEach((key) => {
+			formData.set(key, data[key]);
+		});
+
+		fetch(actionUrl, {
+			body: formData,
+			method: 'POST',
+		});
 	};
 
 	return (
