@@ -21,7 +21,9 @@ import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Rubén Pulido
+ * @deprecated As of Athanasius (7.3.x), with no direct replacement
  */
+@Deprecated
 public abstract class BaseChessPiece implements ChessPiece {
 
 	@Override
