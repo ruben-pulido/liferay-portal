@@ -18,6 +18,12 @@ import {fetch, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 
+const GAME_RESULT = {
+	BLACK_WINS: 'Black wins',
+	DRAW: 'Draw',
+	WHITE_WINS: 'White wins',
+};
+
 const PLAYER_COLOR = {
 	BLACK: 'Black',
 	WHITE: 'White',
@@ -31,6 +37,7 @@ export default function ChessAddMove({
 }) {
 	const [chessMoves, setChessMoves] = useState(initialChessMoves);
 	const [currentTurn, setCurrentTurn] = useState(PLAYER_COLOR.WHITE);
+	const [gameResult, setGameResult] = useState(null);
 
 	const handleAddMoveClick = () => {
 		const moveTextInput = document.getElementById('moveTextInput');
@@ -47,7 +54,11 @@ export default function ChessAddMove({
 		fetch(actionUrl, {
 			body: formData,
 			method: 'POST',
-		});
+		})
+			.then((response) => response.json())
+			.then((json) => {
+				setGameResult(json?.chessGameResult ?? null);
+			});
 
 		setChessMoves(chessMoves.concat(chessMove));
 
@@ -63,6 +74,7 @@ export default function ChessAddMove({
 		<div className="chess-game__chess-add-move">
 			Chess Add Move
 			<div>Current turn: {currentTurn}</div>
+			{gameResult && <div>Game result: {GAME_RESULT[gameResult]}</div>}
 			<div>
 				Moves:
 				<ul>
