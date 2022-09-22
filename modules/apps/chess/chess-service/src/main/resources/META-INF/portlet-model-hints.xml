@@ -13,8 +13,12 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="whitePlayerId" type="long" />
 		<field name="blackPlayerId" type="long" />
-		<field name="moves" type="String" />
-		<field name="position" type="String" />
+		<field name="moves" type="String">
+			<hint name="max-length">2000</hint>
+		</field>
+		<field name="position" type="String">
+			<hint name="max-length">500</hint>
+		</field>
 		<field name="winnerPlayerId" type="long" />
 	</model>
 </model-hints>
