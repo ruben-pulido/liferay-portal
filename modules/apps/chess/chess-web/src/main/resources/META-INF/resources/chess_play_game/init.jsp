@@ -14,17 +14,6 @@
  */
 --%>
 
-<%@ include file="/chess_play_game/init.jsp" %>
+<%@ include file="/init.jsp" %>
 
-<%
-ChessPlayGameDisplayContext chessPlayGameDisplayContext = new ChessPlayGameDisplayContext();
-%>
-
-Play Chess Game
-
-<div>
-	<react:component
-		module="js/chess_play_game/ChessGame"
-		props="<%= chessPlayGameDisplayContext.getContext() %>"
-	/>
-</div>
+<%@ page import="com.liferay.chess.web.internal.display.context.ChessPlayGameDisplayContext" %>
