@@ -1,0 +1,3 @@
+Bundle-Name: Liferay Chess Piece Implementation
+Bundle-SymbolicName: com.liferay.chess.piece.impl
+Bundle-Version: 1.0.0
