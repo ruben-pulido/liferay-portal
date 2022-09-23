@@ -261,6 +261,9 @@ public interface ChessGameLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<ChessGame> getChessGames(int start, int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<ChessGame> getChessGames(long groupId);
+
 	/**
 	 * Returns all the chess games matching the UUID and company.
 	 *

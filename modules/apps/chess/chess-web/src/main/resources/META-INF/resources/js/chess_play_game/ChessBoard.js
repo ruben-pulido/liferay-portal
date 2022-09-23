@@ -50,8 +50,8 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 	};
 
 	const getSquareColor = (squareId) => {
-		var letter = squareId[0];
-		var number = squareId[1];
+		const letter = squareId[0];
+		const number = squareId[1];
 
 		if (
 			(letter === 'a' ||
@@ -107,6 +107,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'a8'})}
 							</td>
+
 							<td
 								className={getClassName('b8')}
 								id="b8"
@@ -114,6 +115,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'b8'})}
 							</td>
+
 							<td
 								className={getClassName('c8')}
 								id="c8"
@@ -121,6 +123,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'c8'})}
 							</td>
+
 							<td
 								className={getClassName('d8')}
 								id="d8"
@@ -128,6 +131,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'd8'})}
 							</td>
+
 							<td
 								className={getClassName('e8')}
 								id="e8"
@@ -135,6 +139,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'e8'})}
 							</td>
+
 							<td
 								className={getClassName('f8')}
 								id="f8"
@@ -142,6 +147,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'f8'})}
 							</td>
+
 							<td
 								className={getClassName('g8')}
 								id="g8"
@@ -149,6 +155,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'g8'})}
 							</td>
+
 							<td
 								className={getClassName('h8')}
 								id="h8"
@@ -157,6 +164,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 								{PieceImg({piecePlacement, square: 'h8'})}
 							</td>
 						</tr>
+
 						<tr>
 							<td
 								className={getClassName('a7')}
@@ -165,6 +173,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'a7'})}
 							</td>
+
 							<td
 								className={getClassName('b7')}
 								id="b7"
@@ -172,6 +181,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'b7'})}
 							</td>
+
 							<td
 								className={getClassName('c7')}
 								id="c7"
@@ -179,6 +189,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'c7'})}
 							</td>
+
 							<td
 								className={getClassName('d7')}
 								id="d7"
@@ -186,6 +197,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'd7'})}
 							</td>
+
 							<td
 								className={getClassName('e7')}
 								id="e7"
@@ -193,6 +205,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'e7'})}
 							</td>
+
 							<td
 								className={getClassName('f7')}
 								id="f7"
@@ -200,6 +213,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'f7'})}
 							</td>
+
 							<td
 								className={getClassName('g7')}
 								id="g7"
@@ -207,6 +221,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'g7'})}
 							</td>
+
 							<td
 								className={getClassName('h7')}
 								id="h7"
@@ -215,6 +230,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 								{PieceImg({piecePlacement, square: 'h7'})}
 							</td>
 						</tr>
+
 						<tr>
 							<td
 								className={getClassName('a6')}
@@ -223,6 +239,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'a6'})}
 							</td>
+
 							<td
 								className={getClassName('b6')}
 								id="b6"
@@ -230,6 +247,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'b6'})}
 							</td>
+
 							<td
 								className={getClassName('c6')}
 								id="c6"
@@ -237,6 +255,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'c6'})}
 							</td>
+
 							<td
 								className={getClassName('d6')}
 								id="d6"
@@ -244,6 +263,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'd6'})}
 							</td>
+
 							<td
 								className={getClassName('e6')}
 								id="e6"
@@ -251,6 +271,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'e6'})}
 							</td>
+
 							<td
 								className={getClassName('f6')}
 								id="f6"
@@ -258,6 +279,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'f6'})}
 							</td>
+
 							<td
 								className={getClassName('g6')}
 								id="g6"
@@ -265,6 +287,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'g6'})}
 							</td>
+
 							<td
 								className={getClassName('h6')}
 								id="h6"
@@ -273,6 +296,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 								{PieceImg({piecePlacement, square: 'h6'})}
 							</td>
 						</tr>
+
 						<tr>
 							<td
 								className={getClassName('a5')}
@@ -281,6 +305,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'a5'})}
 							</td>
+
 							<td
 								className={getClassName('b5')}
 								id="b5"
@@ -288,6 +313,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'b5'})}
 							</td>
+
 							<td
 								className={getClassName('c5')}
 								id="c5"
@@ -295,6 +321,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'c5'})}
 							</td>
+
 							<td
 								className={getClassName('d5')}
 								id="d5"
@@ -302,6 +329,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'd5'})}
 							</td>
+
 							<td
 								className={getClassName('e5')}
 								id="e5"
@@ -309,6 +337,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'e5'})}
 							</td>
+
 							<td
 								className={getClassName('f5')}
 								id="f5"
@@ -316,6 +345,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'f5'})}
 							</td>
+
 							<td
 								className={getClassName('g5')}
 								id="g5"
@@ -323,6 +353,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'g5'})}
 							</td>
+
 							<td
 								className={getClassName('h5')}
 								id="h5"
@@ -331,6 +362,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 								{PieceImg({piecePlacement, square: 'h5'})}
 							</td>
 						</tr>
+
 						<tr>
 							<td
 								className={getClassName('a4')}
@@ -339,6 +371,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'a4'})}
 							</td>
+
 							<td
 								className={getClassName('b4')}
 								id="b4"
@@ -346,6 +379,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'b4'})}
 							</td>
+
 							<td
 								className={getClassName('c4')}
 								id="c4"
@@ -353,6 +387,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'c4'})}
 							</td>
+
 							<td
 								className={getClassName('d4')}
 								id="d4"
@@ -360,6 +395,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'd4'})}
 							</td>
+
 							<td
 								className={getClassName('e4')}
 								id="e4"
@@ -367,6 +403,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'e4'})}
 							</td>
+
 							<td
 								className={getClassName('f4')}
 								id="f4"
@@ -374,6 +411,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'f4'})}
 							</td>
+
 							<td
 								className={getClassName('g4')}
 								id="g4"
@@ -381,6 +419,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'g4'})}
 							</td>
+
 							<td
 								className={getClassName('h4')}
 								id="h4"
@@ -389,6 +428,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 								{PieceImg({piecePlacement, square: 'h4'})}
 							</td>
 						</tr>
+
 						<tr>
 							<td
 								className={getClassName('a3')}
@@ -397,6 +437,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'a3'})}
 							</td>
+
 							<td
 								className={getClassName('b3')}
 								id="b3"
@@ -404,6 +445,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'b3'})}
 							</td>
+
 							<td
 								className={getClassName('c3')}
 								id="c3"
@@ -411,6 +453,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'c3'})}
 							</td>
+
 							<td
 								className={getClassName('d3')}
 								id="d3"
@@ -418,6 +461,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'd3'})}
 							</td>
+
 							<td
 								className={getClassName('e3')}
 								id="e3"
@@ -425,6 +469,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'e3'})}
 							</td>
+
 							<td
 								className={getClassName('f3')}
 								id="f3"
@@ -432,6 +477,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'f3'})}
 							</td>
+
 							<td
 								className={getClassName('g3')}
 								id="g3"
@@ -439,6 +485,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'g3'})}
 							</td>
+
 							<td
 								className={getClassName('h3')}
 								id="h3"
@@ -447,6 +494,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 								{PieceImg({piecePlacement, square: 'h3'})}
 							</td>
 						</tr>
+
 						<tr>
 							<td
 								className={getClassName('a2')}
@@ -455,6 +503,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'a2'})}
 							</td>
+
 							<td
 								className={getClassName('b2')}
 								id="b2"
@@ -462,6 +511,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'b2'})}
 							</td>
+
 							<td
 								className={getClassName('c2')}
 								id="c2"
@@ -469,6 +519,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'c2'})}
 							</td>
+
 							<td
 								className={getClassName('d2')}
 								id="d2"
@@ -476,6 +527,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'd2'})}
 							</td>
+
 							<td
 								className={getClassName('e2')}
 								id="e2"
@@ -483,6 +535,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'e2'})}
 							</td>
+
 							<td
 								className={getClassName('f2')}
 								id="f2"
@@ -490,6 +543,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'f2'})}
 							</td>
+
 							<td
 								className={getClassName('g2')}
 								id="g2"
@@ -497,6 +551,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'g2'})}
 							</td>
+
 							<td
 								className={getClassName('h2')}
 								id="h2"
@@ -505,6 +560,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 								{PieceImg({piecePlacement, square: 'h2'})}
 							</td>
 						</tr>
+
 						<tr>
 							<td
 								className={getClassName('a1')}
@@ -513,6 +569,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'a1'})}
 							</td>
+
 							<td
 								className={getClassName('b1')}
 								id="b1"
@@ -520,6 +577,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'b1'})}
 							</td>
+
 							<td
 								className={getClassName('c1')}
 								id="c1"
@@ -527,6 +585,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'c1'})}
 							</td>
+
 							<td
 								className={getClassName('d1')}
 								id="d1"
@@ -534,6 +593,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'd1'})}
 							</td>
+
 							<td
 								className={getClassName('e1')}
 								id="e1"
@@ -541,6 +601,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'e1'})}
 							</td>
+
 							<td
 								className={getClassName('f1')}
 								id="f1"
@@ -548,6 +609,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'f1'})}
 							</td>
+
 							<td
 								className={getClassName('g1')}
 								id="g1"
@@ -555,6 +617,7 @@ export default function ChessBoard({handleAddChessMove, piecePlacement}) {
 							>
 								{PieceImg({piecePlacement, square: 'g1'})}
 							</td>
+
 							<td
 								className={getClassName('h1')}
 								id="h1"

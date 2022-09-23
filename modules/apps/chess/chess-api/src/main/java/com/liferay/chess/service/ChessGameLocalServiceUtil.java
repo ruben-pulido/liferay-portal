@@ -286,6 +286,10 @@ public class ChessGameLocalServiceUtil {
 		return getService().getChessGames(start, end);
 	}
 
+	public static List<ChessGame> getChessGames(long groupId) {
+		return getService().getChessGames(groupId);
+	}
+
 	/**
 	 * Returns all the chess games matching the UUID and company.
 	 *

@@ -17,7 +17,7 @@ package com.liferay.chess.web.internal.handler;
 import com.liferay.chess.exception.InvalidChessMoveException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -26,6 +26,7 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Rubén Pulido
@@ -48,10 +49,13 @@ public class ChessGameExceptionRequestHandler {
 		}
 
 		JSONObject jsonObject = JSONUtil.put(
-			"error", LanguageUtil.get(themeDisplay.getRequest(), errorMessage));
+			"error", _language.get(themeDisplay.getRequest(), errorMessage));
 
 		JSONPortletResponseUtil.writeJSON(
 			actionRequest, actionResponse, jsonObject);
 	}
+
+	@Reference
+	private Language _language;
 
 }

@@ -14,7 +14,6 @@
 
 package com.liferay.chess.web.internal.instance.lifecycle;
 
-import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.ChessGameLocalService;
 import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
 import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
@@ -45,9 +44,9 @@ public class ChessDataPortalInstanceLifecycleListener
 			_addUser(company, userData);
 		}
 
-		ChessGame chessGame = _chessGameLocalService.fetchChessGame(1);
+		int chessGamesCount = _chessGameLocalService.getChessGamesCount();
 
-		if (chessGame != null) {
+		if (chessGamesCount > 0) {
 			return;
 		}
 
@@ -57,8 +56,8 @@ public class ChessDataPortalInstanceLifecycleListener
 		long blackPlayerUserId = _userLocalService.getUserIdByEmailAddress(
 			company.getCompanyId(), "richi@chess.com");
 
-		Group group = _groupLocalService.getUserGroup(
-			company.getCompanyId(), whitePlayerUserId);
+		Group group = _groupLocalService.fetchGroup(
+			company.getCompanyId(), "Guest");
 
 		_chessGameLocalService.addChessGame(
 			whitePlayerUserId, group.getGroupId(), whitePlayerUserId,

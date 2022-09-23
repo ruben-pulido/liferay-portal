@@ -25,10 +25,13 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.WebKeys;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderResponse;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Rubén Pulido
@@ -36,8 +39,10 @@ import javax.portlet.RenderResponse;
 public class ChessPlayGameDisplayContext {
 
 	public ChessPlayGameDisplayContext(
-		PortletRequest portletRequest, RenderResponse renderResponse) {
+		HttpServletRequest httpServletRequest, PortletRequest portletRequest,
+		RenderResponse renderResponse) {
 
+		_httpServletRequest = httpServletRequest;
 		_portletRequest = portletRequest;
 		_renderResponse = renderResponse;
 	}
@@ -123,12 +128,20 @@ public class ChessPlayGameDisplayContext {
 			return _chessGame;
 		}
 
-		_chessGame = ChessGameLocalServiceUtil.fetchChessGame(1);
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)_httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		List<ChessGame> chessGames = ChessGameLocalServiceUtil.getChessGames(
+			themeDisplay.getSiteGroupId());
+
+		_chessGame = chessGames.get(0);
 
 		return _chessGame;
 	}
 
 	private ChessGame _chessGame;
+	private final HttpServletRequest _httpServletRequest;
 	private final PortletRequest _portletRequest;
 	private final RenderResponse _renderResponse;
 

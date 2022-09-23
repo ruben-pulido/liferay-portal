@@ -81,7 +81,7 @@ public class ChessPlayGameAddMoveMVCActionCommand extends BaseMVCActionCommand {
 		}
 		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(exception, exception);
+				_log.warn(exception);
 			}
 
 			_chessGameExceptionRequestHandler.handleException(

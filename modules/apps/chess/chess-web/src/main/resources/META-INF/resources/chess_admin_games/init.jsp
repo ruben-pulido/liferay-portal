@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,37 +12,8 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+--%>
 
-import React from 'react';
+<%@ page import="com.liferay.chess.web.internal.display.context.ChessAdminGamesDisplayContext" %>
 
-export default function Game() {
-	return (
-		<div>
-			<h1>Chess Game</h1>
-
-			<table>
-				<thead>
-					<tr>
-						<th>Player</th>
-
-						<th>Move</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					<tr className="row-white-player">
-						<td>White</td>
-
-						<td>e2e4</td>
-					</tr>
-
-					<tr className="row-black-player">
-						<td>Black</td>
-
-						<td>e7e5</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	);
-}
+<%@ include file="/init.jsp" %>

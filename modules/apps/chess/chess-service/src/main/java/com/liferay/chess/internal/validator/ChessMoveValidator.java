@@ -27,11 +27,9 @@ public class ChessMoveValidator {
 	public void validateChessMove(long chessGameId, String chessMove)
 		throws InvalidChessMoveException {
 
-		if (chessMove == null) {
-			throw new InvalidChessMoveException();
-		}
+		if ((chessMove == null) ||
+			((chessMove.length() != 4) && (chessMove.length() != 5))) {
 
-		if ((chessMove.length() != 4) && (chessMove.length() != 5)) {
 			throw new InvalidChessMoveException();
 		}
 	}

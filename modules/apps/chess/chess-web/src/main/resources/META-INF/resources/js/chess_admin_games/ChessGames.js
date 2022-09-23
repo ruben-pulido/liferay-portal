@@ -14,34 +14,23 @@
 
 import React from 'react';
 
-export default function Game() {
+export default function ChessGames({config}) {
 	return (
 		<div>
-			<h1>Chess Game</h1>
-
-			<table>
-				<thead>
-					<tr>
-						<th>Player</th>
-
-						<th>Move</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					<tr className="row-white-player">
-						<td>White</td>
-
-						<td>e2e4</td>
-					</tr>
-
-					<tr className="row-black-player">
-						<td>Black</td>
-
-						<td>e7e5</td>
-					</tr>
-				</tbody>
-			</table>
+			Chess Games
+			{config.chessGames && (
+				<ul>
+					{config.chessGames.map((chessGame, i) => (
+						<li key={i}>
+							<pre>
+								<code>
+									{JSON.stringify(chessGame, null, 2)}
+								</code>
+							</pre>
+						</li>
+					))}
+				</ul>
+			)}
 		</div>
 	);
 }
