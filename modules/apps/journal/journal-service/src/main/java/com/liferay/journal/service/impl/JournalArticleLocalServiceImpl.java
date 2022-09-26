@@ -5743,6 +5743,8 @@ public class JournalArticleLocalServiceImpl
 			if (article.getGroupId() != companyGroup.getGroupId()) {
 				throw new ArticleFriendlyURLException();
 			}
+
+			urlTitle = latestArticle.getUrlTitle();
 		}
 
 		content = format(user, groupId, article, content);
