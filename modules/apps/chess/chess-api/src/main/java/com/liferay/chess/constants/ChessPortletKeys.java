@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.chess.web.internal.constants;
+package com.liferay.chess.constants;
 
 /**
  * @author Rubén Pulido
