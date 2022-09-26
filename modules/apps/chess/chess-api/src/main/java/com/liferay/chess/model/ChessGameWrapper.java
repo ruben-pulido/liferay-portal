@@ -52,6 +52,7 @@ public class ChessGameWrapper
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("whitePlayerId", getWhitePlayerId());
 		attributes.put("blackPlayerId", getBlackPlayerId());
 		attributes.put("moves", getMoves());
@@ -115,6 +116,12 @@ public class ChessGameWrapper
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 
 		Long whitePlayerId = (Long)attributes.get("whitePlayerId");
@@ -201,6 +208,16 @@ public class ChessGameWrapper
 	@Override
 	public long getGroupId() {
 		return model.getGroupId();
+	}
+
+	/**
+	 * Returns the last publish date of this chess game.
+	 *
+	 * @return the last publish date of this chess game
+	 */
+	@Override
+	public Date getLastPublishDate() {
+		return model.getLastPublishDate();
 	}
 
 	/**
@@ -366,6 +383,16 @@ public class ChessGameWrapper
 	@Override
 	public void setGroupId(long groupId) {
 		model.setGroupId(groupId);
+	}
+
+	/**
+	 * Sets the last publish date of this chess game.
+	 *
+	 * @param lastPublishDate the last publish date of this chess game
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		model.setLastPublishDate(lastPublishDate);
 	}
 
 	/**

@@ -363,6 +363,9 @@ public abstract class ChessGameLocalServiceBaseImpl
 		exportActionableDynamicQuery.setCompanyId(
 			portletDataContext.getCompanyId());
 
+		exportActionableDynamicQuery.setGroupId(
+			portletDataContext.getScopeGroupId());
+
 		exportActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<ChessGame>() {
 

@@ -8,6 +8,7 @@ create table ChessGame (
 	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
+	lastPublishDate DATE null,
 	whitePlayerId LONG,
 	blackPlayerId LONG,
 	moves VARCHAR(2000) null,

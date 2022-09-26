@@ -11,6 +11,7 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
+		<field name="lastPublishDate" type="Date" />
 		<field name="whitePlayerId" type="long" />
 		<field name="blackPlayerId" type="long" />
 		<field name="moves" type="String">
