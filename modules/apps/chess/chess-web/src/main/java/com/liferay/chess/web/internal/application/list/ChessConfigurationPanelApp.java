@@ -16,8 +16,8 @@ package com.liferay.chess.web.internal.application.list;
 
 import com.liferay.application.list.BasePanelApp;
 import com.liferay.application.list.PanelApp;
+import com.liferay.chess.constants.ChessPortletKeys;
 import com.liferay.chess.web.internal.constants.ChessPanelCategoryKeys;
-import com.liferay.chess.web.internal.constants.ChessPortletKeys;
 import com.liferay.portal.kernel.model.Portlet;
 
 import org.osgi.service.component.annotations.Component;
