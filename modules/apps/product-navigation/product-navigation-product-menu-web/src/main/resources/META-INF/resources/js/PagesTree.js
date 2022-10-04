@@ -12,64 +12,149 @@
  * details.
  */
 
+import ClayButton from '@clayui/button';
 import {TreeView as ClayTreeView} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
 import React from 'react';
 
+const ITEMS = [
+	{
+		children: [
+			{
+				children: [
+					{
+						children: [{id: 17, name: 'Research 1'}],
+						id: 3,
+						name: 'Research',
+					},
+					{
+						children: [{id: 16, name: 'News 1'}],
+						id: 4,
+						name: 'News',
+					},
+				],
+				id: 2,
+				name: 'Blogs',
+				paginated: true,
+			},
+			{
+				children: [
+					{
+						children: [
+							{
+								id: 18,
+								name: 'Instructions.pdf',
+							},
+						],
+						id: 15,
+						name: 'PDF',
+					},
+					{
+						children: [
+							{
+								id: 6,
+								name: 'Treeview review.docx',
+							},
+							{
+								id: 7,
+								name: 'Heuristics Evaluation.docx',
+							},
+						],
+						id: 8,
+						name: 'Word',
+					},
+				],
+				id: 5,
+				name: 'Documents and Media',
+				url: 'https://www.google.es',
+			},
+		],
+		id: 1,
+		name: 'Liferay Drive',
+	},
+	{
+		children: [
+			{id: 10, name: 'Blogs'},
+			{id: 11, name: 'Documents and Media'},
+		],
+		id: 9,
+		name: 'Repositories',
+		paginated: true,
+	},
+	{
+		children: [
+			{id: 13, name: 'PDF'},
+			{id: 14, name: 'Word'},
+		],
+		id: 12,
+		name: 'Documents and Media',
+	},
+];
+
 export default function PagesTree() {
-	const items = Array.from(Array(100).keys()).map((index) => ({
-		children: [],
-		id: index,
-		name: `Page ${index}`,
-		url: '',
-	}));
+	const onLoadMore = async (item, cursor = 1) => {
+		if (!item.children) {
+			return;
+		}
 
-	items.push({
-		id: 'load-more',
-	});
+		if (cursor === null) {
+			return;
+		}
 
-	const onLoadMore = () => {
-		return new Promise((resolve, reject) => {
-			setTimeout(() => {
-				reject(new Error('Could not load more items'));
-			}, 1000);
-		}).catch((error) => {
-			console.log(error);
+		await new Promise((resolve) => {
+			setTimeout(() => resolve(''), 1000);
 		});
+
+		const newCursor = cursor + 1;
+
+		return {
+			cursor: newCursor <= 3 ? newCursor : null,
+			items: [
+				{
+					id: Math.random(),
+					name: `${item.name} ${Math.random()}`,
+				},
+				{
+					id: Math.random(),
+					name: `${item.name} ${Math.random()}`,
+				},
+				{
+					id: Math.random(),
+					name: `${item.name} ${Math.random()}`,
+				},
+			],
+		};
+	};
+
+	const onItemMove = (item, parentItem) => {
+		console.log(item, parentItem);
 	};
 
 	return (
 		<div className="pages-tree">
 			<ClayTreeView
-				defaultItems={items}
+				defaultExpandedKeys={new Set(['pages', 1, 2])}
+				defaultItems={[
+					{
+						children: ITEMS,
+						id: 'pages',
+						name: Liferay.Language.get('pages'),
+					},
+				]}
 				displayType="dark"
-				expanderIcons={{
-					close: <ClayIcon symbol="hr" />,
-					open: <ClayIcon symbol="plus" />,
-				}}
+				dragAndDrop
 				nestedKey="children"
+				onItemMove={onItemMove}
 				onLoadMore={onLoadMore}
 				showExpanderOnHover={false}
 			>
-				{(item) => {
+				{(item, selection, expand, load) => {
 					const hasUrl = item.url && item.url !== '#';
-
-					if (item.id === 'load-more') {
-						return (
-							<ClayTreeView.Item>
-								<ClayTreeView.ItemStack>
-									<p className="m-0">Load more items</p>
-								</ClayTreeView.ItemStack>
-							</ClayTreeView.Item>
-						);
-					}
 
 					return (
 						<ClayTreeView.Item>
-							<ClayTreeView.ItemStack>
-								<ClayIcon
-									symbol={item.url ? 'page' : 'folder'}
-								/>
+							<ClayTreeView.ItemStack active={item.id === 2}>
+								<ClayIcon symbol={item.icon} />
 
 								{hasUrl ? (
 									<a
@@ -86,11 +171,7 @@ export default function PagesTree() {
 							<ClayTreeView.Group items={item.children}>
 								{(item) => (
 									<ClayTreeView.Item>
-										<ClayIcon
-											symbol={
-												item.url ? 'page' : 'folder'
-											}
-										/>
+										<ClayIcon symbol={item.icon} />
 
 										{hasUrl ? (
 											<a
@@ -105,6 +186,23 @@ export default function PagesTree() {
 									</ClayTreeView.Item>
 								)}
 							</ClayTreeView.Group>
+
+							{load.get(item.id) !== null &&
+								expand.has(item.id) &&
+								item.paginated && (
+									<ClayButton
+										borderless
+										className="text-light"
+										displayType="secondary"
+										onClick={() =>
+											load.loadMore(item.id, item)
+										}
+									>
+										{Liferay.Language.get(
+											'load-more-results'
+										)}
+									</ClayButton>
+								)}
 						</ClayTreeView.Item>
 					);
 				}}
