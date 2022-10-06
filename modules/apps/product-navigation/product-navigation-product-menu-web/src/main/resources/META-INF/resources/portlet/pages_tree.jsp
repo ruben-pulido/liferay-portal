@@ -49,15 +49,18 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = (LayoutsTreeDisplayContext
 		</c:when>
 		<c:otherwise>
             <c:choose>
-                <c:when test='<%= GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-119382")) %>'>
+                <c:when test='<%= GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-162954")) %>'>
+                    <h4>NEW PAGE TREE</h4>
                     <div>
                         <react:component
                             module="js/PagesTree"
+                            props="<%= layoutsTreeDisplayContext.getPagesTreeData() %>"
                             servletContext="<%= application %>"
                         />
                     </div>
                 </c:when>
                 <c:otherwise>
+                    <h4>OLD PAGE TREE</h4>
                     <liferay-util:buffer
                         var="linkTemplate"
                     >

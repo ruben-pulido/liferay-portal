@@ -54,8 +54,11 @@ import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.SessionClicks;
+import com.liferay.portal.kernel.util.SessionTreeJSClicks;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portlet.layoutsadmin.util.LayoutsTreeUtil;
 import com.liferay.product.navigation.product.menu.constants.ProductNavigationProductMenuPortletKeys;
 import com.liferay.product.navigation.product.menu.web.internal.constants.ProductNavigationProductMenuWebKeys;
 import com.liferay.site.navigation.model.SiteNavigationMenu;
@@ -74,6 +77,7 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.WindowStateException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Pavel Savinov
@@ -81,7 +85,8 @@ import javax.portlet.WindowStateException;
 public class LayoutsTreeDisplayContext {
 
 	public LayoutsTreeDisplayContext(
-		GroupProvider groupProvider, RenderRequest renderRequest,
+		GroupProvider groupProvider,
+		HttpServletRequest httpServletRequest, RenderRequest renderRequest,
 		SiteNavigationMenuItemLocalService siteNavigationMenuItemLocalService,
 		SiteNavigationMenuItemTypeRegistry siteNavigationMenuItemTypeRegistry,
 		SiteNavigationMenuLocalService siteNavigationMenuLocalService) {
@@ -89,6 +94,7 @@ public class LayoutsTreeDisplayContext {
 		_liferayPortletRequest = PortalUtil.getLiferayPortletRequest(
 			renderRequest);
 
+		_httpServletRequest = httpServletRequest;
 		_renderRequest = renderRequest;
 		_siteNavigationMenuItemLocalService =
 			siteNavigationMenuItemLocalService;
@@ -408,6 +414,28 @@ public class LayoutsTreeDisplayContext {
 		).put(
 			"siteNavigationMenuItems", _getSiteNavigationMenuItemsJSONArray()
 		).build();
+	}
+
+	public Map<String, Object> getPagesTreeData() throws Exception {
+		return HashMapBuilder.<String, Object>put(
+				"items", _getLayoutsJSONArray()
+			).put(
+				"namespace", _namespace
+			).put(
+				"loadMoreItemsURL",
+				() -> {
+					LiferayPortletURL findLayoutsURL = PortletURLFactoryUtil.create(
+						_liferayPortletRequest,
+						ProductNavigationProductMenuPortletKeys.
+							PRODUCT_NAVIGATION_PRODUCT_MENU,
+						PortletRequest.RESOURCE_PHASE);
+
+					findLayoutsURL.setResourceID(
+						"/product_navigation_product_menu/get_layouts_tree");
+
+					return findLayoutsURL.toString();
+				}
+			).build();
 	}
 
 	public String getViewCollectionItemsURL()
@@ -753,6 +781,21 @@ public class LayoutsTreeDisplayContext {
 		return _siteNavigationMenuItemsJSONArray;
 	}
 
+	private JSONArray _getLayoutsJSONArray() throws Exception {
+		boolean privateLayout = isPrivateLayout();
+
+		String treeId = "productMenuPagesTree";
+
+		long[] openNodes = StringUtil.split(
+			SessionTreeJSClicks.getOpenNodes(_httpServletRequest, treeId), 0L);
+
+		return JSONFactoryUtil.createJSONArray(
+			LayoutsTreeUtil.getLayoutsJSON(_httpServletRequest, _groupId,
+				privateLayout,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, openNodes, true,
+				treeId, null));
+	}
+
 	private SiteNavigationMenuItemType _getSiteNavigationMenuItemType(
 		String type) {
 
@@ -924,6 +967,7 @@ public class LayoutsTreeDisplayContext {
 	private String _pageTypeSelectedOption;
 	private Boolean _privateLayoutsEnabled;
 	private String _redirect;
+	private final HttpServletRequest _httpServletRequest;
 	private final RenderRequest _renderRequest;
 	private Long _selectedSiteNavigationMenuItemId;
 	private Long _siteNavigationMenuId;

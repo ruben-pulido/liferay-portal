@@ -12,118 +12,58 @@
  * details.
  */
 
+// TODO:
+
+// Decidir como queremos que se muestre el arbol la primera vez que carga (desplegado el primer nivel?)
+// Decidir como queremos que se comporte cuando expandes / contraes nodos y recargas la pagina
+
+// Decidir donde guardamos nodos expandidos
+
+// Decidir si ponemos el root node en backend o en frontend
+// Averiguar si es necesario mandar tantos datos
+
+
+// Añadir URL templates a la config que pasa por props
+// items, config
+
+// No se muestran los nodos de tercer nivel
+
+// Hay que mostrar Public Pages / Private Pages / ... como label del root node
+
+// En el antiguo la primera vez que cargas el arbol solo salen desplegados los del primer nivel
+
+// Context menu (drop down) para acciones. Ver como tienen que ser los URLs de la config y ver si podemos usar objectToURLSearchParams
+
 import ClayButton from '@clayui/button';
 import {TreeView as ClayTreeView} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
 import React from 'react';
 
-const ITEMS = [
-	{
-		children: [
-			{
-				children: [
-					{
-						children: [{id: 17, name: 'Research 1'}],
-						id: 3,
-						name: 'Research',
-					},
-					{
-						children: [{id: 16, name: 'News 1'}],
-						id: 4,
-						name: 'News',
-					},
-				],
-				id: 2,
-				name: 'Blogs',
-				paginated: true,
-			},
-			{
-				children: [
-					{
-						children: [
-							{
-								id: 18,
-								name: 'Instructions.pdf',
-							},
-						],
-						id: 15,
-						name: 'PDF',
-					},
-					{
-						children: [
-							{
-								id: 6,
-								name: 'Treeview review.docx',
-							},
-							{
-								id: 7,
-								name: 'Heuristics Evaluation.docx',
-							},
-						],
-						id: 8,
-						name: 'Word',
-					},
-				],
-				id: 5,
-				name: 'Documents and Media',
-				url: 'https://www.google.es',
-			},
-		],
-		id: 1,
-		name: 'Liferay Drive',
-	},
-	{
-		children: [
-			{id: 10, name: 'Blogs'},
-			{id: 11, name: 'Documents and Media'},
-		],
-		id: 9,
-		name: 'Repositories',
-		paginated: true,
-	},
-	{
-		children: [
-			{id: 13, name: 'PDF'},
-			{id: 14, name: 'Word'},
-		],
-		id: 12,
-		name: 'Documents and Media',
-	},
-];
+import {fetch} from 'frontend-js-web';
 
-export default function PagesTree() {
-	const onLoadMore = async (item, cursor = 1) => {
-		if (!item.children) {
-			return;
-		}
+export default function PagesTree({items, loadMoreItemsURL, namespace}) {
+	const onLoadMore = (item, cursor = 1) => {
+		fetch(loadMoreItemsURL, {
+			body: Liferay.Util.objectToURLSearchParams({
+				[`${namespace}pageIndex`]: cursor,
+				[`${namespace}start`]: cursor * 20,
+				// [`pageIndex2`]: cursor,
+				[`${namespace}selPlid`]: item.id,
+				// [`selPlid2`]: item.id,
+				[`${namespace}parentLayoutId`]: item.id,
+				// [`parentLayoutId2`]: item.id,
+			}),
+			method: 'post',
+		}).then((response) => {
+			const {hasMoreElements, items: nextItems} = response;
 
-		if (cursor === null) {
-			return;
-		}
+			console.log(response);
 
-		await new Promise((resolve) => {
-			setTimeout(() => resolve(''), 1000);
+			return {
+				cursor: hasMoreElements ? cursor + 1 : null,
+				items: nextItems,
+			};
 		});
-
-		const newCursor = cursor + 1;
-
-		return {
-			cursor: newCursor <= 3 ? newCursor : null,
-			items: [
-				{
-					id: Math.random(),
-					name: `${item.name} ${Math.random()}`,
-				},
-				{
-					id: Math.random(),
-					name: `${item.name} ${Math.random()}`,
-				},
-				{
-					id: Math.random(),
-					name: `${item.name} ${Math.random()}`,
-				},
-			],
-		};
 	};
 
 	const onItemMove = (item, parentItem) => {
@@ -133,12 +73,13 @@ export default function PagesTree() {
 	return (
 		<div className="pages-tree">
 			<ClayTreeView
-				defaultExpandedKeys={new Set(['pages', 1, 2])}
+				defaultExpandedKeys={new Set(['pages'])}
 				defaultItems={[
 					{
-						children: ITEMS,
-						id: 'pages',
+						children: items,
+						id: 0,
 						name: Liferay.Language.get('pages'),
+						paginated: true,
 					},
 				]}
 				displayType="dark"
@@ -153,7 +94,7 @@ export default function PagesTree() {
 
 					return (
 						<ClayTreeView.Item>
-							<ClayTreeView.ItemStack active={item.id === 2}>
+							<ClayTreeView.ItemStack>
 								<ClayIcon symbol={item.icon} />
 
 								{hasUrl ? (
