@@ -15,9 +15,9 @@ html#{$cadmin-selector} {
 
 			.treeview-link {
 				a {
-					white-space: nowrap;
 					overflow: hidden;
 					text-overflow: ellipsis;
+					white-space: nowrap;
 				}
 
 				.dropdown-toggle {
