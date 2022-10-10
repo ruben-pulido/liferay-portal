@@ -53,6 +53,7 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = (LayoutsTreeDisplayContext
 					<div>
 						<react:component
 							module="js/PagesTree"
+							props="<%= layoutsTreeDisplayContext.getPagesTreeData() %>"
 							servletContext="<%= application %>"
 						/>
 					</div>
