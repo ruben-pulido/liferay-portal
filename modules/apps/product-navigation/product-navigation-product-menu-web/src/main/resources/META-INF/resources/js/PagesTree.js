@@ -86,7 +86,17 @@ export default function PagesTree({
 									<a href={item.regularURL}>{item.name}</a>
 								</div>
 
-								<ItemOptionsDropdown />
+								<ItemOptionsDropdown
+									getAddChildCollectionURLTemplate={
+										getAddChildCollectionURLTemplate
+									}
+									getAddChildURLTemplate={
+										getAddChildURLTemplate
+									}
+									getConfigureLayoutURLTemplate={
+										getConfigureLayoutURLTemplate
+									}
+								/>
 							</div>
 						</ClayTreeView.ItemStack>
 
@@ -134,6 +144,9 @@ export default function PagesTree({
 }
 
 PagesTree.propTypes = {
+	getAddChildCollectionURLTemplate: PropTypes.string.isRequired,
+	getAddChildURLTemplate: PropTypes.string.isRequired,
+	getConfigureLayoutURLTemplate: PropTypes.string.isRequired,
 	items: PropTypes.array.isRequired,
 	loadMoreItemsURL: PropTypes.string.isRequired,
 	maxPageSize: PropTypes.number.isRequired,
@@ -141,15 +154,26 @@ PagesTree.propTypes = {
 	selectedLayoutId: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
 };
 
-function ItemOptionsDropdown() {
+function ItemOptionsDropdown({
+	getAddChildCollectionURLTemplate,
+	getAddChildURLTemplate,
+	getConfigureLayoutURLTemplate,
+}) {
 	const items = [
 		{
 			disabled: true,
+			href: getAddChildCollectionURLTemplate,
 			label: 'Test option 1',
 		},
 		{
 			disabled: false,
+			href: getAddChildURLTemplate,
 			label: 'Test option 2',
+		},
+		{
+			disabled: false,
+			href: getConfigureLayoutURLTemplate,
+			label: 'Test option 3',
 		},
 	];
 
@@ -170,7 +194,11 @@ function ItemOptionsDropdown() {
 	);
 }
 
-ItemOptionsDropdown.propTypes = {};
+ItemOptionsDropdown.propTypes = {
+	getAddChildCollectionURLTemplate: PropTypes.string.isRequired,
+	getAddChildURLTemplate: PropTypes.string.isRequired,
+	getConfigureLayoutURLTemplate: PropTypes.string.isRequired,
+};
 
 function openErrorToast() {
 	openToast({
