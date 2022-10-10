@@ -313,34 +313,38 @@ public class LayoutsTreeDisplayContext {
 
 	public Map<String, Object> getPagesTreeData() throws Exception {
 		return HashMapBuilder.<String, Object>put(
-			"getAddChildCollectionURLTemplate",
-			getAddChildCollectionURLTemplate()
-		).put(
-			"getAddChildURLTemplate", getAddChildURLTemplate()
-		).put(
-			"getConfigureLayoutURLTemplate", getConfigureLayoutURLTemplate()
+			"config",
+			HashMapBuilder.<String, Object>put(
+				"getAddChildCollectionURLTemplate",
+				getAddChildCollectionURLTemplate()
+			).put(
+				"getAddChildURLTemplate", getAddChildURLTemplate()
+			).put(
+				"getConfigureLayoutURLTemplate", getConfigureLayoutURLTemplate()
+			).put(
+				"loadMoreItemsURL",
+				() -> {
+					LiferayPortletURL getLayoutsURL =
+						PortletURLFactoryUtil.create(
+							_liferayPortletRequest,
+							ProductNavigationProductMenuPortletKeys.
+								PRODUCT_NAVIGATION_PRODUCT_MENU,
+							PortletRequest.RESOURCE_PHASE);
+
+					getLayoutsURL.setResourceID(
+						"/product_navigation_product_menu/get_layouts");
+
+					return getLayoutsURL.toString();
+				}
+			).put(
+				"maxPageSize",
+				GetterUtil.getInteger(
+					PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN, 20)
+			).put(
+				"namespace", getNamespace()
+			).build()
 		).put(
 			"items", _getLayoutsJSONArray()
-		).put(
-			"loadMoreItemsURL",
-			() -> {
-				LiferayPortletURL getLayoutsURL = PortletURLFactoryUtil.create(
-					_liferayPortletRequest,
-					ProductNavigationProductMenuPortletKeys.
-						PRODUCT_NAVIGATION_PRODUCT_MENU,
-					PortletRequest.RESOURCE_PHASE);
-
-				getLayoutsURL.setResourceID(
-					"/product_navigation_product_menu/get_layouts");
-
-				return getLayoutsURL.toString();
-			}
-		).put(
-			"maxPageSize",
-			GetterUtil.getInteger(
-				PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN, 20)
-		).put(
-			"namespace", _namespace
 		).build();
 	}
 
