@@ -32,10 +32,9 @@ export default function PagesTree({
 		(item, cursor = 1) =>
 			fetch(loadMoreItemsURL, {
 				body: Liferay.Util.objectToURLSearchParams({
-					[`${namespace}pageIndex`]: cursor,
-					[`${namespace}start`]: cursor * 20,
-					[`${namespace}selPlid`]: item.id,
-					[`${namespace}parentLayoutId`]: item.id,
+					[`${namespace}parentLayoutId`]: item.layoutId,
+					[`${namespace}selPlid`]: item.plid,
+					[`${namespace}start`]: cursor * maxPageSize,
 				}),
 				method: 'post',
 			})
