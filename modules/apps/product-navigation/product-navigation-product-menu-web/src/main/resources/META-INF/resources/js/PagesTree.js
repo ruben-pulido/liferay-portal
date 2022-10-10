@@ -22,11 +22,7 @@ import React, {useCallback} from 'react';
 
 const ROOT_ITEM_ID = '0';
 
-export default function PagesTree({
-	config,
-	items,
-	selectedLayoutId,
-}) {
+export default function PagesTree({config, items, selectedLayoutId}) {
 	const {loadMoreItemsURL, maxPageSize, namespace} = config;
 
 	const onLoadMore = useCallback(
