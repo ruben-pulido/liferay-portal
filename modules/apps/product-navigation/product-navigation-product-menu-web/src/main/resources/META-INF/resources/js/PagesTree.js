@@ -22,7 +22,12 @@ import React, {useCallback} from 'react';
 
 const ROOT_ITEM_ID = '0';
 
-export default function PagesTree({config, items, selectedLayoutId}) {
+export default function PagesTree({
+	config,
+	items,
+	privateLayout,
+	selectedLayoutId,
+}) {
 	const {loadMoreItemsURL, maxPageSize, namespace} = config;
 
 	const onLoadMore = useCallback(
@@ -32,6 +37,7 @@ export default function PagesTree({config, items, selectedLayoutId}) {
 			return fetch(loadMoreItemsURL, {
 				body: Liferay.Util.objectToURLSearchParams({
 					[`${namespace}parentLayoutId`]: item.layoutId,
+					[`${namespace}privateLayout`]: privateLayout,
 					[`${namespace}selPlid`]: item.plid,
 					[`${namespace}start`]: cursor * maxPageSize,
 				}),
