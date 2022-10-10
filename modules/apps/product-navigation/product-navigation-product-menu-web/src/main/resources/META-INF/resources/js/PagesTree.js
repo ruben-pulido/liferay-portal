@@ -25,10 +25,9 @@ const ROOT_ITEM_ID = '0';
 export default function PagesTree({
 	config,
 	items,
-	portletNamespace: namespace,
 	selectedLayoutId,
 }) {
-	const {loadMoreItemsURL, maxPageSize} = config;
+	const {loadMoreItemsURL, maxPageSize, namespace} = config;
 
 	const onLoadMore = useCallback(
 		(item, initialCursor = 1) => {
@@ -135,7 +134,6 @@ export default function PagesTree({
 PagesTree.propTypes = {
 	config: PropTypes.object.isRequired,
 	items: PropTypes.array.isRequired,
-	portletNamespace: PropTypes.string.isRequired,
 	selectedLayoutId: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
 };
 
