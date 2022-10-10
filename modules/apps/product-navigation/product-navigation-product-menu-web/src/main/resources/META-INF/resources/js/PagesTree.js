@@ -24,6 +24,7 @@ import React, {useCallback} from 'react';
 export default function PagesTree({
 	items,
 	loadMoreItemsURL,
+	maxPageSize,
 	portletNamespace: namespace,
 	selectedLayoutId,
 }) {
@@ -48,7 +49,7 @@ export default function PagesTree({
 				.catch(() => {
 					openErrorToast();
 				}),
-		[loadMoreItemsURL, namespace]
+		[loadMoreItemsURL, maxPageSize, namespace]
 	);
 
 	const [expandedKeys, setExpandedKeys] = useSessionState(
@@ -133,6 +134,7 @@ export default function PagesTree({
 PagesTree.propTypes = {
 	items: PropTypes.array.isRequired,
 	loadMoreItemsURL: PropTypes.string.isRequired,
+	maxPageSize: PropTypes.number.isRequired,
 	portletNamespace: PropTypes.string.isRequired,
 	selectedLayoutId: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
 };
