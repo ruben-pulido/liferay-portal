@@ -322,6 +322,20 @@ public class LayoutsTreeDisplayContext {
 		).put(
 			"items", _getLayoutsJSONArray()
 		).put(
+			"loadMoreItemsURL",
+			() -> {
+				LiferayPortletURL getLayoutsURL = PortletURLFactoryUtil.create(
+					_liferayPortletRequest,
+					ProductNavigationProductMenuPortletKeys.
+						PRODUCT_NAVIGATION_PRODUCT_MENU,
+					PortletRequest.RESOURCE_PHASE);
+
+				getLayoutsURL.setResourceID(
+					"/product_navigation_product_menu/get_layouts");
+
+				return getLayoutsURL.toString();
+			}
+		).put(
 			"maxPageSize",
 			GetterUtil.getInteger(
 				PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN, 20)
