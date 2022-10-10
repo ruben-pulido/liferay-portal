@@ -346,6 +346,8 @@ public class LayoutsTreeDisplayContext {
 		).put(
 			"items", _getLayoutsJSONArray()
 		).put(
+			"privateLayout", isPrivateLayout()
+		).put(
 			"selectedLayoutId", getSelPlid()
 		).build();
 	}
