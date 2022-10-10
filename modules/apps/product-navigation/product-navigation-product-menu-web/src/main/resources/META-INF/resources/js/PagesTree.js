@@ -22,6 +22,9 @@ import PropTypes from 'prop-types';
 import React, {useCallback} from 'react';
 
 export default function PagesTree({
+	getAddChildCollectionURLTemplate,
+	getAddChildURLTemplate,
+	getConfigureLayoutURLTemplate,
 	items,
 	loadMoreItemsURL,
 	maxPageSize,
