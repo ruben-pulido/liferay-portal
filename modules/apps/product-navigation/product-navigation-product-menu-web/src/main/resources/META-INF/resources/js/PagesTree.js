@@ -40,6 +40,7 @@ export default function PagesTree({
 				body: Liferay.Util.objectToURLSearchParams({
 					[`${namespace}parentLayoutId`]: item.layoutId,
 					[`${namespace}privateLayout`]: isPrivateLayoutsTree,
+					[`${namespace}returnLayoutsAsArray`]: true,
 					[`${namespace}selPlid`]: item.plid,
 					[`${namespace}start`]: cursor * maxPageSize,
 				}),
