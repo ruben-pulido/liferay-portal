@@ -324,6 +324,8 @@ public class LayoutsTreeDisplayContext {
 			).put(
 				"loadMoreItemsURL",
 				() -> {
+					// TODO Use ResourceURLBuilder
+
 					LiferayPortletURL getLayoutsURL =
 						PortletURLFactoryUtil.create(
 							_liferayPortletRequest,
@@ -342,6 +344,8 @@ public class LayoutsTreeDisplayContext {
 					PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN, 20)
 			).put(
 				"namespace", getNamespace()
+			).put(
+				"viewCollectionItemsURLTemplate", getViewCollectionItemsURL()
 			).build()
 		).put(
 			"items", _getLayoutsJSONArray()
@@ -627,15 +631,13 @@ public class LayoutsTreeDisplayContext {
 
 		_httpServletRequest.setAttribute("returnLayoutsAsArray", Boolean.TRUE);
 
-		boolean privateLayout = isPrivateLayout();
-
 		String treeId = "productMenuPagesTree";
 
 		long[] openNodes = StringUtil.split(
 			SessionTreeJSClicks.getOpenNodes(_httpServletRequest, treeId), 0L);
 
 		String layoutsJSON = LayoutsTreeUtil.getLayoutsJSON(
-			_httpServletRequest, _groupId, privateLayout,
+			_httpServletRequest, _groupId, isPrivateLayout(),
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, openNodes, true, treeId,
 			null);
 
@@ -657,11 +659,15 @@ public class LayoutsTreeDisplayContext {
 				"paginated",
 				() -> {
 					int layoutsCount = _layoutService.getLayoutsCount(
-						_groupId, privateLayout,
+						_groupId, isPrivateLayout(),
 						LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
 
-					return layoutsCount >
-						PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN;
+					if (layoutsCount >
+						PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN) {
+						return true;
+					}
+
+					return false;
 				}
 			));
 	}

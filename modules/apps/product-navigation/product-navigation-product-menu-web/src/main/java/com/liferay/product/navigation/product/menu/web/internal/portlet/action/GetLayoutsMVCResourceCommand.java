@@ -65,8 +65,6 @@ public class GetLayoutsMVCResourceCommand extends BaseMVCResourceCommand {
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		long groupId = themeDisplay.getScopeGroupId();
-
 		boolean incomplete = ParamUtil.getBoolean(
 			httpServletRequest, "incomplete", true);
 		long parentLayoutId = ParamUtil.getLong(
@@ -74,18 +72,14 @@ public class GetLayoutsMVCResourceCommand extends BaseMVCResourceCommand {
 		boolean privateLayout = ParamUtil.getBoolean(
 			httpServletRequest, "privateLayout");
 
-		HttpServletResponse httpServletResponse =
-			_portal.getHttpServletResponse(resourceResponse);
-
-		httpServletResponse.setContentType(ContentTypes.APPLICATION_JSON);
-
 		JSONPortletResponseUtil.writeJSON(
 			resourceRequest, resourceResponse,
 			JSONUtil.put(
 				"hasMoreElements",
 				() -> {
 					int childLayoutsCount = _layoutService.getLayoutsCount(
-						groupId, privateLayout, parentLayoutId);
+						themeDisplay.getScopeGroupId(), privateLayout,
+						parentLayoutId);
 
 					int start = ParamUtil.getInteger(
 						httpServletRequest, "start");
@@ -99,14 +93,19 @@ public class GetLayoutsMVCResourceCommand extends BaseMVCResourceCommand {
 
 					end = Math.max(start, end);
 
-					return childLayoutsCount > end;
+					if(childLayoutsCount > end) {
+						return true;
+					}
+
+					return false;
 				}
 			).put(
 				"items",
 				JSONFactoryUtil.createJSONArray(
 					LayoutsTreeUtil.getLayoutsJSON(
-						httpServletRequest, groupId, privateLayout,
-						parentLayoutId, incomplete, "productMenuPagesTree"))
+						httpServletRequest, themeDisplay.getScopeGroupId(),
+						privateLayout, parentLayoutId, incomplete,
+						"productMenuPagesTree"))
 			));
 	}
 
