@@ -584,11 +584,10 @@ public class LayoutsTreeImpl implements LayoutsTree {
 		boolean mobile = _browserSniffer.isMobile(httpServletRequest);
 
 		for (LayoutTreeNode layoutTreeNode : layoutTreeNodes) {
-			LayoutTreeNodes childLayoutTreeNodes =
-				layoutTreeNode.getChildLayoutTreeNodes();
 
 			JSONSerializable childrenJSONSerializable = _toJSONSerializable(
-				httpServletRequest, groupId, childLayoutTreeNodes,
+				httpServletRequest, groupId,
+				layoutTreeNode.getChildLayoutTreeNodes(),
 				layoutSetBranch);
 
 			Layout layout = layoutTreeNode.getLayout();
@@ -672,14 +671,14 @@ public class LayoutsTreeImpl implements LayoutsTree {
 			);
 
 			List<LayoutTreeNode> layoutTreeNodesList =
-				childLayoutTreeNodes.getLayoutTreeNodesList();
+				layoutTreeNode.getChildLayoutTreeNodes().getLayoutTreeNodesList();
 
 			if (GetterUtil.getBoolean(
 					httpServletRequest.getAttribute("returnLayoutsAsArray")) &&
 				GetterUtil.getBoolean(
 					PropsUtil.get("feature.flag.LPS-162954")) &&
-				(childLayoutTreeNodes.getTotal() !=
-					layoutTreeNodesList.size())) {
+				(layoutTreeNode.getChildLayoutTreeNodes().getTotal() !=
+				 layoutTreeNodesList.size())) {
 
 				jsonObject.put("paginated", true);
 			}
@@ -782,7 +781,7 @@ public class LayoutsTreeImpl implements LayoutsTree {
 		if (_log.isDebugEnabled()) {
 			_log.debug(
 				StringBundler.concat(
-					"_toJSON(groupId=", groupId, ", layoutTreeNodes=",
+					"_toJSONSerializable(groupId=", groupId, ", layoutTreeNodes=",
 					layoutTreeNodes, StringPool.CLOSE_PARENTHESIS));
 		}
 
