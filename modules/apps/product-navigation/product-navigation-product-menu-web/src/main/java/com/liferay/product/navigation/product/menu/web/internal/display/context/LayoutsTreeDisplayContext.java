@@ -629,7 +629,57 @@ public class LayoutsTreeDisplayContext {
 	private JSONArray _getLayoutsJSONArray() throws Exception {
 		JSONArray layoutsJSONArray = null;
 
+		JSONArray actionsJSONArray = JSONFactoryUtil.createJSONArray();
+
+		JSONArray itemsJSONArray = JSONFactoryUtil.createJSONArray();
+
+		itemsJSONArray.put(
+			JSONUtil.put(
+				"id", "add-child-page"
+			).put(
+				"label", _language.get(_themeDisplay.getLocale(), "add-child-page")
+			).put(
+				"href", getAddChildURLTemplate()
+			).put(
+				"type", "item"
+			)
+		).put(
+			JSONUtil.put(
+				"id", "add-child-collection-page"
+			).put(
+				"label", _language.get(_themeDisplay.getLocale(), "add-child-collection-page")
+			).put(
+				"href", getAddChildCollectionURLTemplate()
+			).put(
+				"type", "item"
+			)
+		).put(
+			JSONUtil.put(
+				"id", "configure"
+			).put(
+				"label", _language.get(_themeDisplay.getLocale(), "configure")
+			).put(
+				"href", getConfigureLayoutURLTemplate()
+			).put(
+				"type", "item"
+			)
+		).put(
+			JSONUtil.put(
+				"id", "view-collection-items"
+			).put(
+				"label", _language.get(_themeDisplay.getLocale(), "view-collection-items")
+			).put(
+				"url", getViewCollectionItemsURL()
+			).put(
+				"type", "item"
+			)
+		);
+
+		actionsJSONArray.put(
+			JSONUtil.put("type", "group").put("items", itemsJSONArray));
+
 		_httpServletRequest.setAttribute("returnLayoutsAsArray", Boolean.TRUE);
+		_httpServletRequest.setAttribute("actions", actionsJSONArray);
 
 		String treeId = "productMenuPagesTree";
 
