@@ -48,11 +48,13 @@ import com.liferay.portal.kernel.servlet.BrowserSniffer;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.SessionClicks;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.layoutsadmin.util.LayoutsTree;
@@ -63,6 +65,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -593,6 +596,79 @@ public class LayoutsTreeImpl implements LayoutsTree {
 			Layout layout = layoutTreeNode.getLayout();
 
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+			if (GetterUtil.getBoolean(
+					httpServletRequest.getAttribute("returnLayoutsAsArray")) &&
+				GetterUtil.getBoolean(
+					PropsUtil.get("feature.flag.LPS-162954"))) {
+
+				JSONArray actionsJSONArray = (JSONArray)httpServletRequest.getAttribute("actions");
+
+				JSONArray layoutActionsJSONArray =
+					JSONFactoryUtil.createJSONArray(
+						actionsJSONArray.toJSONString());
+
+				for (int i = 0; i < layoutActionsJSONArray.length(); i++) {
+
+					JSONObject actionGroupJSONObject =
+						layoutActionsJSONArray.getJSONObject(i);
+
+					JSONArray updatedItemsJSONArray = JSONFactoryUtil.createJSONArray();
+
+					JSONArray itemsJSONArray = actionGroupJSONObject.getJSONArray("items");
+
+					Map<String, String> valuesMap = HashMapBuilder.put(
+						"plid", String.valueOf(layout.getPlid())
+					).put(
+						"collectionPK",
+						layout.getTypeSettingsProperty("collectionPK")
+					).put(
+						"collectionType",
+						layout.getTypeSettingsProperty("collectionType")
+					).build();
+
+					for (int j = 0; j < itemsJSONArray.length(); j++) {
+						JSONObject itemJSONObject = itemsJSONArray.getJSONObject(j);
+
+						String id = itemJSONObject.getString("id");
+
+						if (!layout.isTypeCollection() &&
+							(Objects.equals(id, "view-collection-items"))) {
+							continue;
+						}
+
+						if (layout.isTypeCollection() &&
+							((Objects.equals(id, "add-child-collection-page") ||
+							(Objects.equals(id, "add-child-page"))))) {
+							continue;
+						}
+
+						if (!itemJSONObject.isNull("href")) {
+							String href = itemJSONObject.getString("href");
+
+							href = StringUtil.replace(
+								href, StringPool.OPEN_CURLY_BRACE, StringPool.CLOSE_CURLY_BRACE, valuesMap);
+
+							itemJSONObject.put("href", href);
+						}
+
+						if (!itemJSONObject.isNull("url")) {
+							String url = itemJSONObject.getString("url");
+
+							url = StringUtil.replace(
+								url, StringPool.OPEN_CURLY_BRACE, StringPool.CLOSE_CURLY_BRACE, valuesMap);
+
+							itemJSONObject.put("url", url);
+						}
+
+						updatedItemsJSONArray.put(itemJSONObject);
+					}
+
+					actionGroupJSONObject.put("items", updatedItemsJSONArray);
+				}
+
+				jsonObject.put("actions", layoutActionsJSONArray);
+			}
 
 			if (childrenJSONSerializable instanceof JSONArray) {
 				JSONArray childrenJSONArray =
