@@ -89,9 +89,8 @@ import javax.servlet.http.HttpServletRequest;
 public class LayoutsTreeDisplayContext {
 
 	public LayoutsTreeDisplayContext(
-		GroupProvider groupProvider, HttpServletRequest httpServletRequest,
-		Language language, LayoutService layoutService,
-		RenderRequest renderRequest,
+		HttpServletRequest httpServletRequest, Language language,
+		LayoutService layoutService, RenderRequest renderRequest,
 		SiteNavigationMenuItemLocalService siteNavigationMenuItemLocalService,
 		SiteNavigationMenuItemTypeRegistry siteNavigationMenuItemTypeRegistry,
 		SiteNavigationMenuLocalService siteNavigationMenuLocalService) {
@@ -350,7 +349,7 @@ public class LayoutsTreeDisplayContext {
 		).put(
 			"items", _getLayoutsJSONArray()
 		).put(
-			"privateLayout", isPrivateLayout()
+			"isPrivateLayoutsTree", isPrivateLayout()
 		).put(
 			"selectedLayoutId", getSelPlid()
 		).build();
@@ -629,56 +628,12 @@ public class LayoutsTreeDisplayContext {
 	private JSONArray _getLayoutsJSONArray() throws Exception {
 		JSONArray layoutsJSONArray = null;
 
-		JSONArray actionsJSONArray = JSONFactoryUtil.createJSONArray();
+		JSONArray actionsJSONArray = getActionsJSONArray();
 
-		JSONArray itemsJSONArray = JSONFactoryUtil.createJSONArray();
-
-		itemsJSONArray.put(
-			JSONUtil.put(
-				"id", "add-child-page"
-			).put(
-				"label", _language.get(_themeDisplay.getLocale(), "add-child-page")
-			).put(
-				"href", getAddChildURLTemplate()
-			).put(
-				"type", "item"
-			)
-		).put(
-			JSONUtil.put(
-				"id", "add-child-collection-page"
-			).put(
-				"label", _language.get(_themeDisplay.getLocale(), "add-child-collection-page")
-			).put(
-				"href", getAddChildCollectionURLTemplate()
-			).put(
-				"type", "item"
-			)
-		).put(
-			JSONUtil.put(
-				"id", "configure"
-			).put(
-				"label", _language.get(_themeDisplay.getLocale(), "configure")
-			).put(
-				"href", getConfigureLayoutURLTemplate()
-			).put(
-				"type", "item"
-			)
-		).put(
-			JSONUtil.put(
-				"id", "view-collection-items"
-			).put(
-				"label", _language.get(_themeDisplay.getLocale(), "view-collection-items")
-			).put(
-				"url", getViewCollectionItemsURL()
-			).put(
-				"type", "item"
-			)
-		);
-
-		actionsJSONArray.put(
-			JSONUtil.put("type", "group").put("items", itemsJSONArray));
-
+		// TODO Should we add it as attribute
 		_httpServletRequest.setAttribute("returnLayoutsAsArray", Boolean.TRUE);
+
+		// TODO Insertar el Display Context auxiliar
 		_httpServletRequest.setAttribute("actions", actionsJSONArray);
 
 		String treeId = "productMenuPagesTree";
@@ -720,6 +675,77 @@ public class LayoutsTreeDisplayContext {
 					return false;
 				}
 			));
+	}
+
+	private JSONArray getActionsJSONArray() throws Exception {
+		JSONArray actionsJSONArray = JSONFactoryUtil.createJSONArray();
+
+		JSONArray itemsJSONArray = JSONFactoryUtil.createJSONArray();
+
+		itemsJSONArray.put(
+			JSONUtil.put(
+				"id", "add-child-page"
+			).put(
+				"label", _language.get(_themeDisplay.getLocale(), "add-child-page")
+			).put(
+				"href", getAddChildURLTemplate()
+			).put(
+				"type", "item"
+			)
+		).put(
+			JSONUtil.put(
+				"id", "add-child-collection-page"
+			).put(
+				"label", _language.get(_themeDisplay.getLocale(), "add-child-collection-page")
+			).put(
+				"href", getAddChildCollectionURLTemplate()
+			).put(
+				"type", "item"
+			)
+		).put(
+			JSONUtil.put(
+				"id", "configure"
+			).put(
+				"label", _language.get(_themeDisplay.getLocale(), "configure")
+			).put(
+				"href", getConfigureLayoutURLTemplate()
+			).put(
+				"type", "item"
+			)
+		).put(
+			JSONUtil.put(
+				"data",
+				JSONUtil.put(
+					"id", "view-collection-items"
+				).put(
+					"modalTitle",
+					_language.get(_themeDisplay.getLocale(), "view-items")
+				).put(
+					"url", getViewCollectionItemsURL()
+				)
+			).put(
+				"href", getViewCollectionItemsURL()
+			).put(
+				"id", "view-collection-items"
+			).put(
+				"label",
+				_language.get(
+					_themeDisplay.getLocale(), "view-collection-items")
+			).put(
+				"target", "_blank"
+			).put(
+				"type", "item"
+			)
+		);
+
+		actionsJSONArray.put(
+			JSONUtil.put(
+				"type", "group"
+			).put(
+				"items", itemsJSONArray
+			)
+		);
+		return actionsJSONArray;
 	}
 
 	private JSONObject _getOptionGroupJSONObject(

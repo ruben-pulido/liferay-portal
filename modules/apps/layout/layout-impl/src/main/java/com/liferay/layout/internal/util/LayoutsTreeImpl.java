@@ -16,6 +16,7 @@ package com.liferay.layout.internal.util;
 
 import com.liferay.exportimport.kernel.staging.LayoutStagingUtil;
 import com.liferay.exportimport.kernel.staging.Staging;
+import com.liferay.layout.constants.LayoutWebKeys;
 import com.liferay.layout.security.permission.resource.LayoutContentModelResourcePermission;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -602,7 +603,14 @@ public class LayoutsTreeImpl implements LayoutsTree {
 				GetterUtil.getBoolean(
 					PropsUtil.get("feature.flag.LPS-162954"))) {
 
+//				LayoutActionsDisplayContext attribute = httpServletRequest.getAttribute(
+//					LayoutWebKeys.LAYOUT_ACTIONS_DISPLAY_CONTEXT);
+
 				JSONArray actionsJSONArray = (JSONArray)httpServletRequest.getAttribute("actions");
+
+				// TODO
+				// Obtener del request el displayContext de los actions
+				// invokar al display context pasándole el layout
 
 				JSONArray layoutActionsJSONArray =
 					JSONFactoryUtil.createJSONArray(
@@ -652,17 +660,24 @@ public class LayoutsTreeImpl implements LayoutsTree {
 							itemJSONObject.put("href", href);
 						}
 
-						if (!itemJSONObject.isNull("url")) {
-							String url = itemJSONObject.getString("url");
+						if (!itemJSONObject.isNull("data")) {
 
-							url = StringUtil.replace(
-								url, StringPool.OPEN_CURLY_BRACE, StringPool.CLOSE_CURLY_BRACE, valuesMap);
+							JSONObject dataJSONObject =
+								itemJSONObject.getJSONObject("data");
 
-							itemJSONObject.put("url", url);
+							if (!dataJSONObject.isNull("url")) {
+								String url = dataJSONObject.getString("url");
+
+								url = StringUtil.replace(
+									url, StringPool.OPEN_CURLY_BRACE,
+									StringPool.CLOSE_CURLY_BRACE, valuesMap);
+
+								dataJSONObject.put("url", url);
+							}
 						}
 
-						updatedItemsJSONArray.put(itemJSONObject);
-					}
+							updatedItemsJSONArray.put(itemJSONObject);
+						}
 
 					actionGroupJSONObject.put("items", updatedItemsJSONArray);
 				}

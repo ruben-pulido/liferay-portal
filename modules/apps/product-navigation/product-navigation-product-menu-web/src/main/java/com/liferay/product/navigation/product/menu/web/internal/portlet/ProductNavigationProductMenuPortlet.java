@@ -19,6 +19,7 @@ import com.liferay.application.list.PanelAppRegistry;
 import com.liferay.application.list.PanelCategoryRegistry;
 import com.liferay.application.list.constants.ApplicationListWebKeys;
 import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
+import com.liferay.layout.constants.LayoutWebKeys;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.LayoutService;
@@ -27,6 +28,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.product.navigation.product.menu.constants.ProductNavigationProductMenuPortletKeys;
 import com.liferay.product.navigation.product.menu.web.internal.constants.ProductNavigationProductMenuWebKeys;
+import com.liferay.product.navigation.product.menu.web.internal.display.context.LayoutActionsDisplayContext;
 import com.liferay.product.navigation.product.menu.web.internal.display.context.LayoutsTreeDisplayContext;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
 import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
@@ -102,18 +104,33 @@ public class ProductNavigationProductMenuPortlet extends MVCPortlet {
 			ApplicationListWebKeys.PANEL_CATEGORY_REGISTRY,
 			_panelCategoryRegistry);
 
+//		_setLayoutActionsDisplayContextRequestAttribute(
+//			originalHttpServletRequest, renderRequest);
 		_setLayoutsTreeDisplayContextRequestAttribute(
 			originalHttpServletRequest, renderRequest);
 
 		super.doDispatch(renderRequest, renderResponse);
 	}
 
+//	private void _setLayoutActionsDisplayContextRequestAttribute(
+//		HttpServletRequest httpServletRequest, RenderRequest renderRequest) {
+//
+//		LayoutActionsDisplayContext layoutActionsDisplayContext =
+//			new LayoutActionsDisplayContext(
+//				httpServletRequest, _language, _layoutService,
+//				renderRequest, _siteNavigationMenuLocalService);
+//
+//		renderRequest.setAttribute(
+//			LayoutWebKeys.LAYOUT_ACTIONS_DISPLAY_CONTEXT,
+//			layoutActionsDisplayContext);
+//	}
+
 	private void _setLayoutsTreeDisplayContextRequestAttribute(
 		HttpServletRequest httpServletRequest, RenderRequest renderRequest) {
 
 		LayoutsTreeDisplayContext layoutsTreeDisplayContext =
 			new LayoutsTreeDisplayContext(
-				_groupProvider, httpServletRequest, _language, _layoutService,
+				httpServletRequest, _language, _layoutService,
 				renderRequest, _siteNavigationMenuItemLocalService,
 				_siteNavigationMenuItemTypeRegistry,
 				_siteNavigationMenuLocalService);

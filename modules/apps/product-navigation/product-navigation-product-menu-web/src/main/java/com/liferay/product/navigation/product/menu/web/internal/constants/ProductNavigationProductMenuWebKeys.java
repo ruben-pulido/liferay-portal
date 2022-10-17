@@ -22,6 +22,9 @@ public class ProductNavigationProductMenuWebKeys {
 	public static final String LAYOUTS_TREE_DISPLAY_CONTEXT =
 		"LAYOUTS_TREE_DISPLAY_CONTEXT";
 
+	public static final String LAYOUT_ACTIONS_DISPLAY_CONTEXT =
+		"LAYOUT_ACTIONS_DISPLAY_CONTEXT";
+
 	public static final String PAGE_TYPE_SELECTED_OPTION =
 		"PAGE_TYPE_SELECTED_OPTION";
 
