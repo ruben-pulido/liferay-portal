@@ -34,6 +34,13 @@ export default function PagesTree({
 
 	const onLoadMore = useCallback(
 		(item, initialCursor = 1) => {
+			if (!item.hasChildren) {
+				return Promise.resolve({
+					cursor: null,
+					items: [],
+				});
+			}
+
 			const cursor = item.children ? initialCursor : 0;
 
 			return fetch(loadMoreItemsURL, {
@@ -115,6 +122,7 @@ export default function PagesTree({
 								{item.actions && (
 									<ItemActionsDropdown
 										actions={item.actions}
+										namespace={namespace}
 									/>
 								)}
 							</div>
@@ -146,6 +154,7 @@ export default function PagesTree({
 										{item.actions && (
 											<ItemActionsDropdown
 												actions={item.actions}
+												namespace={namespace}
 											/>
 										)}
 									</div>
