@@ -109,7 +109,9 @@ public class LayoutSiteNavigationMenuItemType
 
 		boolean privateLayout = layout.isPrivateLayout();
 
-		if (privateLayout != portletDataContext.isPrivateLayout()) {
+		if (!ExportImportThreadLocal.isPortletExportInProcess() &&
+			(privateLayout != portletDataContext.isPrivateLayout())) {
+
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					StringBundler.concat(
@@ -128,7 +130,8 @@ public class LayoutSiteNavigationMenuItemType
 		if (!ArrayUtil.contains(
 				portletDataContext.getLayoutIds(), layout.getLayoutId())) {
 
-			return false;
+				return false;
+			}
 		}
 
 		LayoutRevision layoutRevision = _layoutStaging.getLayoutRevision(
