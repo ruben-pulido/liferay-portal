@@ -113,7 +113,7 @@ if (journalContentDisplayContext.isShowArticle()) {
 			</c:when>
 			<c:when test="<%= Validator.isNotNull(journalContentDisplayContext.getArticleId()) %>">
 				<c:choose>
-					<c:when test="<%= journalContentDisplayContext.isExpired() %>">
+					<c:when test="<%= journalContentDisplayContext.isExpired() && !journalContentDisplayContext.isPreview() %>">
 						<div class="alert alert-warning">
 							<liferay-ui:message arguments="<%= HtmlUtil.escape(article.getTitle(locale)) %>" key="x-is-expired" />
 						</div>
