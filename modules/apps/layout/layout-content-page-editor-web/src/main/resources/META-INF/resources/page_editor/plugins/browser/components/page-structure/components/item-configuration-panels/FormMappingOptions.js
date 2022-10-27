@@ -61,7 +61,7 @@ export default function FormMappingOptions({
 						formConfig: FORM_MAPPING_SOURCES.otherContentType,
 					});
 				}}
-				value={selectedType.value}
+				value={selectedType?.value}
 			/>
 
 			{selectedType?.subtypes?.length > 0 && (

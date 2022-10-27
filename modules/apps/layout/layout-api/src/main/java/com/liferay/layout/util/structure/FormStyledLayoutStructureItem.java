@@ -16,6 +16,7 @@ package com.liferay.layout.util.structure;
 
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.petra.lang.HashUtil;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 
 import java.util.Objects;
@@ -108,7 +109,14 @@ public class FormStyledLayoutStructureItem extends StyledLayoutStructureItem {
 		).put(
 			"justify", _justify
 		).put(
-			"successMessage", _successMessageJSONObject
+			"successMessage",
+			() -> {
+				if (_successMessageJSONObject != null) {
+					return _successMessageJSONObject;
+				}
+
+				return JSONFactoryUtil.createJSONObject();
+			}
 		).put(
 			"widthType", _widthType
 		);
