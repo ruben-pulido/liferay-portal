@@ -206,6 +206,14 @@ public class ObjectEntryInfoItemFormProvider
 					objectField.getBusinessType(),
 					ObjectFieldConstants.BUSINESS_TYPE_PICKLIST)) {
 
+			SelectInfoFieldType.Option defaultOption = _getDefaultOption(
+				objectField);
+
+			if (defaultOption != null) {
+				finalStep.attribute(
+					SelectInfoFieldType.DEFAULT_OPTION, defaultOption);
+			}
+
 			finalStep.attribute(
 				SelectInfoFieldType.OPTIONS, _getOptions(objectField));
 		}
@@ -409,7 +417,6 @@ public class ObjectEntryInfoItemFormProvider
 				for (ObjectField objectField :
 						_objectFieldLocalService.getObjectFields(
 							objectDefinitionId)) {
-
 					if (objectField.isSystem()) {
 						continue;
 					}
@@ -464,6 +471,25 @@ public class ObjectEntryInfoItemFormProvider
 		).name(
 			objectDefinition.getName()
 		).build();
+	}
+
+	private SelectInfoFieldType.Option _getDefaultOption(
+		ObjectField objectField) {
+
+		List<ListTypeEntry> listTypeEntries =
+			_listTypeEntryLocalService.getListTypeEntries(
+				objectField.getListTypeDefinitionId());
+
+		for (ListTypeEntry listTypeEntry : listTypeEntries) {
+			if (Objects.equals(
+				objectField.getDefaultValue(), listTypeEntry.getKey())) {
+				return new SelectInfoFieldType.Option(
+					new FunctionInfoLocalizedValue<>(listTypeEntry::getName),
+					listTypeEntry.getKey());
+			}
+		}
+
+		return null;
 	}
 
 	private List<SelectInfoFieldType.Option> _getOptions(
