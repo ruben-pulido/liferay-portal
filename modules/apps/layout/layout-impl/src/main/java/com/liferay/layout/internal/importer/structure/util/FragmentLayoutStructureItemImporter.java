@@ -245,15 +245,20 @@ public class FragmentLayoutStructureItemImporter
 			return null;
 		}
 
+		long siteId = layout.getGroupId();
+
+		if (fragmentDefinitionMap.get("siteId") != null) {
+			siteId = GetterUtil.getLong(fragmentDefinitionMap.get("siteId"));
+		}
+
 		FragmentEntry fragmentEntry = _getFragmentEntry(
-			layout.getCompanyId(), layout.getGroupId(), fragmentKey);
+			layout.getCompanyId(), siteId, fragmentKey);
 
 		FragmentRenderer fragmentRenderer =
 			_fragmentRendererRegistry.getFragmentRenderer(fragmentKey);
 
 		if ((fragmentEntry == null) && (fragmentRenderer == null)) {
-			warningMessages.add(
-				_getWarningMessage(layout.getGroupId(), fragmentKey));
+			warningMessages.add(_getWarningMessage(siteId, fragmentKey));
 
 			return null;
 		}
