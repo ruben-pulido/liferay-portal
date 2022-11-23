@@ -169,7 +169,7 @@ public class FragmentAutoDeployListener implements AutoDeployListener {
 				User user = _getUser(curCompany, curGroup);
 
 				if (user == null) {
-					throw new AutoDeployException();
+					return;
 				}
 
 				PermissionThreadLocal.setPermissionChecker(
