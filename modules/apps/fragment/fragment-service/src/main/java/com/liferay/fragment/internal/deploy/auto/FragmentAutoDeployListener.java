@@ -51,6 +51,7 @@ import com.liferay.staging.StagingGroupHelper;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
@@ -132,6 +133,7 @@ public class FragmentAutoDeployListener implements AutoDeployListener {
 			throw new AutoDeployException();
 		}
 
+		List<Company> companies = new ArrayList<>();
 		Company company = null;
 		Group group = null;
 
@@ -141,6 +143,8 @@ public class FragmentAutoDeployListener implements AutoDeployListener {
 			!Objects.equals(companyWebId, StringPool.STAR)) {
 
 			company = _companyLocalService.getCompanyByWebId(companyWebId);
+
+			companies.add(company);
 		}
 
 		if ((company != null) && deployJSONObject.has("groupKey")) {
@@ -151,54 +155,57 @@ public class FragmentAutoDeployListener implements AutoDeployListener {
 			group = _groupLocalService.getCompanyGroup(company.getCompanyId());
 		}
 		else {
-			List<Company> companies = _companyLocalService.getCompanies(0, 1);
+			companies = _companyLocalService.getCompanies();
 
 			if (ListUtil.isEmpty(companies)) {
 				throw new AutoDeployException();
 			}
-
-			company = companies.get(0);
 		}
 
-		User user = _getUser(company, group);
+		Group curGroup = group;
 
-		if (user == null) {
-			throw new AutoDeployException();
-		}
+		_companyLocalService.forEachCompany(
+			curCompany -> {
+				User user = _getUser(curCompany, curGroup);
 
-		PermissionThreadLocal.setPermissionChecker(
-			PermissionCheckerFactoryUtil.create(user));
+				if (user == null) {
+					throw new AutoDeployException();
+				}
 
-		PrincipalThreadLocal.setName(user.getUserId());
+				PermissionThreadLocal.setPermissionChecker(
+					PermissionCheckerFactoryUtil.create(user));
 
-		ServiceContext serviceContext = new ServiceContext();
+				PrincipalThreadLocal.setName(user.getUserId());
 
-		if (company != null) {
-			serviceContext.setCompanyId(company.getCompanyId());
-		}
-		else {
-			serviceContext.setCompanyId(CompanyConstants.SYSTEM);
-		}
+				ServiceContext serviceContext = new ServiceContext();
 
-		serviceContext.setUserId(user.getUserId());
+				if (curCompany != null) {
+					serviceContext.setCompanyId(curCompany.getCompanyId());
+				}
+				else {
+					serviceContext.setCompanyId(CompanyConstants.SYSTEM);
+				}
 
-		ServiceContextThreadLocal.pushServiceContext(serviceContext);
+				serviceContext.setUserId(user.getUserId());
 
-		long groupId = 0;
+				ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
-		if (group != null) {
-			groupId = group.getGroupId();
-		}
+				long groupId = 0;
 
-		_fragmentsImporter.importFragmentEntries(
-			user.getUserId(), groupId, 0, file, true);
+				if (curGroup != null) {
+					groupId = curGroup.getGroupId();
+				}
 
-		if ((company != null) && (group != null) &&
-			(company.getGroupId() != group.getGroupId())) {
+				_fragmentsImporter.importFragmentEntries(
+					user.getUserId(), groupId, 0, file, true);
 
-			_layoutsImporter.importFile(
-				user.getUserId(), groupId, 0L, file, true);
-		}
+				if ((curCompany != null) && (curGroup != null) &&
+					(curCompany.getGroupId() != curGroup.getGroupId())) {
+
+					_layoutsImporter.importFile(
+						user.getUserId(), groupId, 0L, file, true);
+				}
+			});
 	}
 
 	private JSONObject _getDeployJSONObject(File file)
@@ -276,8 +283,12 @@ public class FragmentAutoDeployListener implements AutoDeployListener {
 		User user = _userLocalService.fetchUserById(userId);
 
 		if ((user == null) || user.isDefaultUser()) {
-			Role role = _roleLocalService.getRole(
+			Role role = _roleLocalService.fetchRole(
 				companyId, RoleConstants.ADMINISTRATOR);
+
+			if (role == null) {
+				return null;
+			}
 
 			long[] userIds = _userLocalService.getRoleUserIds(role.getRoleId());
 
