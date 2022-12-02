@@ -14,6 +14,17 @@
 
 import React from 'react';
 
-export default function ChessMoves() {
-	return <div className="chess-game__chess-moves">Chess Moves</div>;
+export default function ChessMoves({chessMoves}) {
+	return (
+		<div className="chess-game__chess-moves">
+			Chess Moves
+			{chessMoves && (
+				<ul>
+					{chessMoves.map((chessMove, i) => (
+						<li key={i}>{chessMove}</li>
+					))}
+				</ul>
+			)}
+		</div>
+	);
 }
