@@ -131,15 +131,20 @@ const ChessGame = ({config}) => {
 					handleAddChessMove={handleAddChessMove}
 					piecePlacement={piecePlacement}
 				/>
+
 				<ChessGameInfo
 					blackPlayer={config.blackPlayer}
 					whitePlayer={config.whitePlayer}
 				/>
+
 				<div>Current turn: {currentTurn}</div>
+
 				{gameResult && (
 					<div>Game result: {GAME_RESULT[gameResult]}</div>
 				)}
+
 				<ChessMoves chessMoves={chessMoves} />
+
 				<ChessAddMove handleAddChessMove={handleAddChessMove} />
 			</LoggedInUserContext.Provider>
 		</div>

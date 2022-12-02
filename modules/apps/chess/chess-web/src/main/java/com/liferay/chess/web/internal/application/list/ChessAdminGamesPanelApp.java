@@ -14,15 +14,11 @@
 
 package com.liferay.chess.web.internal.application.list;
 
-import com.liferay.application.list.BasePanelCategory;
-import com.liferay.application.list.PanelCategory;
-import com.liferay.application.list.constants.PanelCategoryKeys;
+import com.liferay.application.list.BasePanelApp;
+import com.liferay.application.list.PanelApp;
 import com.liferay.chess.web.internal.constants.ChessPanelCategoryKeys;
-import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
-
-import java.util.Locale;
-import java.util.ResourceBundle;
+import com.liferay.chess.web.internal.constants.ChessPortletKeys;
+import com.liferay.portal.kernel.model.Portlet;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -33,28 +29,25 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"panel.category.key=" + PanelCategoryKeys.SITE_ADMINISTRATION,
-		"panel.category.order:Integer=50"
+		"panel.app.order:Integer=100",
+		"panel.category.key=" + ChessPanelCategoryKeys.SITE_ADMINISTRATION_CHESS_GAMES
 	},
-	service = PanelCategory.class
+	service = PanelApp.class
 )
-public class ChessGamesSiteAdministrationPanelCategory
-	extends BasePanelCategory {
+public class ChessAdminGamesPanelApp extends BasePanelApp {
 
 	@Override
-	public String getKey() {
-		return ChessPanelCategoryKeys.SITE_ADMINISTRATION_CHESS_GAMES;
+	public String getPortletId() {
+		return ChessPortletKeys.CHESS_ADMIN_GAMES;
 	}
 
 	@Override
-	public String getLabel(Locale locale) {
-		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-			"content.Language", locale, getClass());
-
-		return _language.get(resourceBundle, "games");
+	@Reference(
+		target = "(javax.portlet.name=" + ChessPortletKeys.CHESS_ADMIN_GAMES + ")",
+		unbind = "-"
+	)
+	public void setPortlet(Portlet portlet) {
+		super.setPortlet(portlet);
 	}
-
-	@Reference
-	private Language _language;
 
 }

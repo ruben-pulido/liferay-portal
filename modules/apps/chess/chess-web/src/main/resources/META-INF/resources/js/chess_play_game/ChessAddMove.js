@@ -41,6 +41,7 @@ export default function ChessAddMove({handleAddChessMove}) {
 			<div>Logged in user: {loggedInUser.emailAddress}</div>
 			<ClayForm.Group>
 				<label htmlFor="moveTextInput">Move</label>
+
 				<ClayInput
 					id="moveTextInput"
 					placeholder="e2e4"

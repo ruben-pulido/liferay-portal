@@ -24,13 +24,4 @@ package com.liferay.chess.model.impl;
  * @author Rubén Pulido
  */
 public class ChessGameImpl extends ChessGameBaseImpl {
-
-	/**
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. All methods that expect a chess game model instance should use the {@link com.liferay.chess.model.ChessGame} interface instead.
-	 */
-	public ChessGameImpl() {
-	}
-
 }

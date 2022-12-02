@@ -315,6 +315,13 @@ public class ChessGameLocalServiceWrapper
 		return _chessGameLocalService.getChessGames(start, end);
 	}
 
+	@Override
+	public java.util.List<com.liferay.chess.model.ChessGame> getChessGames(
+		long groupId) {
+
+		return _chessGameLocalService.getChessGames(groupId);
+	}
+
 	/**
 	 * Returns all the chess games matching the UUID and company.
 	 *

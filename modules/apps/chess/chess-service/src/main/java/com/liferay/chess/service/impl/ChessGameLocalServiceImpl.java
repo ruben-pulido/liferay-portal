@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.util.Date;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -156,6 +157,10 @@ public class ChessGameLocalServiceImpl extends ChessGameLocalServiceBaseImpl {
 		return chessGamePersistence.update(chessGame);
 	}
 
+	public List<ChessGame> getChessGames(long groupId) {
+		return chessGamePersistence.findByGroupId(groupId);
+	}
+
 	/**
 	 * NOTE FOR DEVELOPERS:
 	 * <p>
@@ -178,7 +183,7 @@ public class ChessGameLocalServiceImpl extends ChessGameLocalServiceBaseImpl {
 
 		movesJSONArray.put(move);
 
-		chessGame.setMoves(movesJSONArray.toJSONString());
+		chessGame.setMoves(movesJSONArray.toString());
 
 		JSONObject positionJSONObject = _jsonFactory.createJSONObject(
 			chessGame.getPosition());

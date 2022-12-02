@@ -24,7 +24,7 @@ import com.liferay.info.field.type.TextInfoFieldType;
  */
 public interface ChessGameInfoItemFields {
 
-	public static final InfoField<NumberInfoFieldType> blackPlayerId =
+	public static final InfoField<NumberInfoFieldType> blackPlayerIdInfoField =
 		InfoField.builder(
 		).infoFieldType(
 			NumberInfoFieldType.INSTANCE
@@ -35,7 +35,7 @@ public interface ChessGameInfoItemFields {
 		).localizable(
 			false
 		).build();
-	public static final InfoField<TextInfoFieldType> blackPlayerName =
+	public static final InfoField<TextInfoFieldType> blackPlayerNameInfoField =
 		InfoField.builder(
 		).infoFieldType(
 			TextInfoFieldType.INSTANCE
@@ -46,7 +46,7 @@ public interface ChessGameInfoItemFields {
 		).localizable(
 			false
 		).build();
-	public static final InfoField<NumberInfoFieldType> chessGameIdField =
+	public static final InfoField<NumberInfoFieldType> chessGameIdInfoField =
 		InfoField.builder(
 		).infoFieldType(
 			NumberInfoFieldType.INSTANCE
@@ -68,7 +68,7 @@ public interface ChessGameInfoItemFields {
 		).localizable(
 			false
 		).build();
-	public static final InfoField<NumberInfoFieldType> whitePlayerId =
+	public static final InfoField<NumberInfoFieldType> whitePlayerIdInfoField =
 		InfoField.builder(
 		).infoFieldType(
 			NumberInfoFieldType.INSTANCE
@@ -79,7 +79,7 @@ public interface ChessGameInfoItemFields {
 		).localizable(
 			false
 		).build();
-	public static final InfoField<TextInfoFieldType> whitePlayerName =
+	public static final InfoField<TextInfoFieldType> whitePlayerNameInfoField =
 		InfoField.builder(
 		).infoFieldType(
 			TextInfoFieldType.INSTANCE
@@ -90,7 +90,7 @@ public interface ChessGameInfoItemFields {
 		).localizable(
 			false
 		).build();
-	public static final InfoField<NumberInfoFieldType> winnerPlayerId =
+	public static final InfoField<NumberInfoFieldType> winnerPlayerIdInfoField =
 		InfoField.builder(
 		).infoFieldType(
 			NumberInfoFieldType.INSTANCE
@@ -101,7 +101,7 @@ public interface ChessGameInfoItemFields {
 		).localizable(
 			false
 		).build();
-	public static final InfoField<TextInfoFieldType> winnerPlayerName =
+	public static final InfoField<TextInfoFieldType> winnerPlayerNameInfoField =
 		InfoField.builder(
 		).infoFieldType(
 			TextInfoFieldType.INSTANCE
