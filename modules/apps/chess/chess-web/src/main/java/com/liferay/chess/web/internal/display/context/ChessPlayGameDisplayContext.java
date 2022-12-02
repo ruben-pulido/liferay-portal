@@ -18,6 +18,7 @@ import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.ChessGameLocalServiceUtil;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -64,6 +65,15 @@ public class ChessPlayGameDisplayContext {
 				).put(
 					"initialChessMoves",
 					() -> JSONFactoryUtil.createJSONArray(chessGame.getMoves())
+				).put(
+					"initialPiecePlacement",
+					() -> {
+						JSONObject jsonObject =
+							JSONFactoryUtil.createJSONObject(
+								chessGame.getPosition());
+
+						return jsonObject.getJSONObject("piecePlacement");
+					}
 				).put(
 					"portletNamespace", _renderResponse.getNamespace()
 				).put(
