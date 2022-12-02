@@ -16,7 +16,7 @@ import React from 'react';
 
 export default function Game() {
 	return (
-		<div>
+		<div className="game-root">
 			<h1>Chess Game</h1>
 			<table>
 				<thead>
@@ -26,11 +26,11 @@ export default function Game() {
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
+					<tr className="row-white-player">
 						<td>White</td>
 						<td>e2e4</td>
 					</tr>
-					<tr>
+					<tr className="row-black-player">
 						<td>Black</td>
 						<td>e7e5</td>
 					</tr>
