@@ -15,15 +15,21 @@
 import React from 'react';
 
 import ChessBoard from './ChessBoard';
-import ChessMoves from './ChessMoves';
+import ChessGameInfo from './ChessGameInfo';
 
-const ChessGame = () => {
+const ChessGame = ({config}) => {
 	return (
-		<div className="chess-game">
+		<div>
+			Chess Game Id: {config.chessGameId}
 			<ChessBoard />
-			<ChessMoves />
+			<ChessGameInfo
+				blackPlayer={config.blackPlayer}
+				whitePlayer={config.whitePlayer}
+			/>
 		</div>
 	);
 };
 
-export default ChessGame;
+export default function ({config}) {
+	return <ChessGame config={config} />;
+}
