@@ -18,6 +18,8 @@ import com.liferay.chess.piece.ChessPiece;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Rubén Pulido
@@ -41,7 +43,10 @@ public class ChessPieceSayCatchphraseCommand {
 			chessPiece.getName() + " says: " + chessPiece.getCathphrase());
 	}
 
-	@Reference
+	@Reference (
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY
+	)
 	private volatile ChessPiece _chessPiece;
 
 }
