@@ -265,6 +265,21 @@ public interface ChessGameModel
 	public void setMoves(String moves);
 
 	/**
+	 * Returns the position of this chess game.
+	 *
+	 * @return the position of this chess game
+	 */
+	@AutoEscape
+	public String getPosition();
+
+	/**
+	 * Sets the position of this chess game.
+	 *
+	 * @param position the position of this chess game
+	 */
+	public void setPosition(String position);
+
+	/**
 	 * Returns the winner player ID of this chess game.
 	 *
 	 * @return the winner player ID of this chess game

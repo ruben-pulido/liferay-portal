@@ -55,6 +55,7 @@ public class ChessGameWrapper
 		attributes.put("whitePlayerId", getWhitePlayerId());
 		attributes.put("blackPlayerId", getBlackPlayerId());
 		attributes.put("moves", getMoves());
+		attributes.put("position", getPosition());
 		attributes.put("winnerPlayerId", getWinnerPlayerId());
 
 		return attributes;
@@ -132,6 +133,12 @@ public class ChessGameWrapper
 
 		if (moves != null) {
 			setMoves(moves);
+		}
+
+		String position = (String)attributes.get("position");
+
+		if (position != null) {
+			setPosition(position);
 		}
 
 		Long winnerPlayerId = (Long)attributes.get("winnerPlayerId");
@@ -219,6 +226,16 @@ public class ChessGameWrapper
 	@Override
 	public long getMvccVersion() {
 		return model.getMvccVersion();
+	}
+
+	/**
+	 * Returns the position of this chess game.
+	 *
+	 * @return the position of this chess game
+	 */
+	@Override
+	public String getPosition() {
+		return model.getPosition();
 	}
 
 	/**
@@ -374,6 +391,16 @@ public class ChessGameWrapper
 	@Override
 	public void setMvccVersion(long mvccVersion) {
 		model.setMvccVersion(mvccVersion);
+	}
+
+	/**
+	 * Sets the position of this chess game.
+	 *
+	 * @param position the position of this chess game
+	 */
+	@Override
+	public void setPosition(String position) {
+		model.setPosition(position);
 	}
 
 	/**

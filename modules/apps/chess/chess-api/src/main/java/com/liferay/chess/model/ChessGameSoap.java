@@ -45,6 +45,7 @@ public class ChessGameSoap implements Serializable {
 		soapModel.setWhitePlayerId(model.getWhitePlayerId());
 		soapModel.setBlackPlayerId(model.getBlackPlayerId());
 		soapModel.setMoves(model.getMoves());
+		soapModel.setPosition(model.getPosition());
 		soapModel.setWinnerPlayerId(model.getWinnerPlayerId());
 
 		return soapModel;
@@ -195,6 +196,14 @@ public class ChessGameSoap implements Serializable {
 		_moves = moves;
 	}
 
+	public String getPosition() {
+		return _position;
+	}
+
+	public void setPosition(String position) {
+		_position = position;
+	}
+
 	public long getWinnerPlayerId() {
 		return _winnerPlayerId;
 	}
@@ -215,6 +224,7 @@ public class ChessGameSoap implements Serializable {
 	private long _whitePlayerId;
 	private long _blackPlayerId;
 	private String _moves;
+	private String _position;
 	private long _winnerPlayerId;
 
 }

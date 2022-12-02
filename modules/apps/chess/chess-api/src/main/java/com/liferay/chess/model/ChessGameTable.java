@@ -56,6 +56,8 @@ public class ChessGameTable extends BaseTable<ChessGameTable> {
 		"blackPlayerId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<ChessGameTable, String> moves = createColumn(
 		"moves", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<ChessGameTable, String> position = createColumn(
+		"position", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<ChessGameTable, Long> winnerPlayerId = createColumn(
 		"winnerPlayerId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 

@@ -82,7 +82,7 @@ public class ChessGameModelImpl
 		{"userName", Types.VARCHAR}, {"createDate", Types.TIMESTAMP},
 		{"modifiedDate", Types.TIMESTAMP}, {"whitePlayerId", Types.BIGINT},
 		{"blackPlayerId", Types.BIGINT}, {"moves", Types.VARCHAR},
-		{"winnerPlayerId", Types.BIGINT}
+		{"position", Types.VARCHAR}, {"winnerPlayerId", Types.BIGINT}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -101,11 +101,12 @@ public class ChessGameModelImpl
 		TABLE_COLUMNS_MAP.put("whitePlayerId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("blackPlayerId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("moves", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("position", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("winnerPlayerId", Types.BIGINT);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ChessGame (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,chessGameId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,whitePlayerId LONG,blackPlayerId LONG,moves VARCHAR(75) null,winnerPlayerId LONG)";
+		"create table ChessGame (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,chessGameId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,whitePlayerId LONG,blackPlayerId LONG,moves VARCHAR(75) null,position VARCHAR(75) null,winnerPlayerId LONG)";
 
 	public static final String TABLE_SQL_DROP = "drop table ChessGame";
 
@@ -187,6 +188,7 @@ public class ChessGameModelImpl
 		model.setWhitePlayerId(soapModel.getWhitePlayerId());
 		model.setBlackPlayerId(soapModel.getBlackPlayerId());
 		model.setMoves(soapModel.getMoves());
+		model.setPosition(soapModel.getPosition());
 		model.setWinnerPlayerId(soapModel.getWinnerPlayerId());
 
 		return model;
@@ -382,6 +384,9 @@ public class ChessGameModelImpl
 		attributeGetterFunctions.put("moves", ChessGame::getMoves);
 		attributeSetterBiConsumers.put(
 			"moves", (BiConsumer<ChessGame, String>)ChessGame::setMoves);
+		attributeGetterFunctions.put("position", ChessGame::getPosition);
+		attributeSetterBiConsumers.put(
+			"position", (BiConsumer<ChessGame, String>)ChessGame::setPosition);
 		attributeGetterFunctions.put(
 			"winnerPlayerId", ChessGame::getWinnerPlayerId);
 		attributeSetterBiConsumers.put(
@@ -641,6 +646,26 @@ public class ChessGameModelImpl
 
 	@JSON
 	@Override
+	public String getPosition() {
+		if (_position == null) {
+			return "";
+		}
+		else {
+			return _position;
+		}
+	}
+
+	@Override
+	public void setPosition(String position) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_position = position;
+	}
+
+	@JSON
+	@Override
 	public long getWinnerPlayerId() {
 		return _winnerPlayerId;
 	}
@@ -728,6 +753,7 @@ public class ChessGameModelImpl
 		chessGameImpl.setWhitePlayerId(getWhitePlayerId());
 		chessGameImpl.setBlackPlayerId(getBlackPlayerId());
 		chessGameImpl.setMoves(getMoves());
+		chessGameImpl.setPosition(getPosition());
 		chessGameImpl.setWinnerPlayerId(getWinnerPlayerId());
 
 		chessGameImpl.resetOriginalValues();
@@ -865,6 +891,14 @@ public class ChessGameModelImpl
 			chessGameCacheModel.moves = null;
 		}
 
+		chessGameCacheModel.position = getPosition();
+
+		String position = chessGameCacheModel.position;
+
+		if ((position != null) && (position.length() == 0)) {
+			chessGameCacheModel.position = null;
+		}
+
 		chessGameCacheModel.winnerPlayerId = getWinnerPlayerId();
 
 		return chessGameCacheModel;
@@ -953,6 +987,7 @@ public class ChessGameModelImpl
 	private long _whitePlayerId;
 	private long _blackPlayerId;
 	private String _moves;
+	private String _position;
 	private long _winnerPlayerId;
 
 	public <T> T getColumnValue(String columnName) {
@@ -996,6 +1031,7 @@ public class ChessGameModelImpl
 		_columnOriginalValues.put("whitePlayerId", _whitePlayerId);
 		_columnOriginalValues.put("blackPlayerId", _blackPlayerId);
 		_columnOriginalValues.put("moves", _moves);
+		_columnOriginalValues.put("position", _position);
 		_columnOriginalValues.put("winnerPlayerId", _winnerPlayerId);
 	}
 
@@ -1044,7 +1080,9 @@ public class ChessGameModelImpl
 
 		columnBitmasks.put("moves", 2048L);
 
-		columnBitmasks.put("winnerPlayerId", 4096L);
+		columnBitmasks.put("position", 4096L);
+
+		columnBitmasks.put("winnerPlayerId", 8192L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}
