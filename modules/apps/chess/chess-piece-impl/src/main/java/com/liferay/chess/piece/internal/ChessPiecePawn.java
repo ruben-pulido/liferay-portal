@@ -22,17 +22,22 @@ import org.osgi.service.component.annotations.Component;
  * @author Rubén Pulido
  */
 @Component(
-	immediate = true, property = "service.ranking:Integer=100",
+	immediate = true,
+	property = {
+		"chess.piece.name=" + ChessPiecePawn.NAME, "service.ranking:Integer=100"
+	},
 	service = ChessPiece.class
 )
 public class ChessPiecePawn implements ChessPiece {
+
+	public static final String NAME = "pawn";
 
 	public String getCathphrase() {
 		return "I am the soul of the game.";
 	}
 
 	public String getName() {
-		return "pawn";
+		return NAME;
 	}
 
 }

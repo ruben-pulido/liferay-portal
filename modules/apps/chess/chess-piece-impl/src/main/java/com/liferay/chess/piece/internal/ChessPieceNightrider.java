@@ -24,10 +24,16 @@ import org.osgi.service.component.annotations.Reference;
  * @author Rubén Pulido
  */
 @Component(
-	immediate = true, property = "service.ranking:Integer=200",
+	immediate = true,
+	property = {
+		"chess.piece.name=" + ChessPieceNightrider.NAME,
+		"service.ranking:Integer=200"
+	},
 	service = ChessPiece.class
 )
 public class ChessPieceNightrider implements ChessPiece {
+
+	public static final String NAME = "nightrider";
 
 	@Override
 	public String getCathphrase() {
@@ -36,7 +42,7 @@ public class ChessPieceNightrider implements ChessPiece {
 
 	@Override
 	public String getName() {
-		return "nightrider";
+		return NAME;
 	}
 
 	@Reference

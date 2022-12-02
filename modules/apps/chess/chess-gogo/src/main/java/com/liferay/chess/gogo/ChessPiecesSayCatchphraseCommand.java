@@ -15,18 +15,15 @@
 package com.liferay.chess.gogo;
 
 import com.liferay.chess.piece.ChessPiece;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
+import com.liferay.portal.kernel.util.Validator;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * @author Rubén Pulido
@@ -40,65 +37,37 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 public class ChessPiecesSayCatchphraseCommand {
 
 	public void piecesSayCatchphrase() {
-		List<ChessPiece> chessPieces = new ArrayList<>(
-			_serviceTrackerMap.values());
-
-		for (ChessPiece chessPiece : chessPieces) {
+		for (ChessPiece chessPiece : _chessPiecesMap.values()) {
 			System.out.println(
 				chessPiece.getName() + " says: " + chessPiece.getCathphrase());
 		}
 	}
 
-	@Activate
-	protected void activate(BundleContext bundleContext) {
-		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
-			bundleContext, ChessPiece.class, null,
-			(serviceReference, emitter) -> {
-				ChessPiece fragmentCollectionFilter = bundleContext.getService(
-					serviceReference);
+	@Reference(
+		cardinality = ReferenceCardinality.MULTIPLE,
+		policy = ReferencePolicy.DYNAMIC
+	)
+	protected void setChessPiece(
+		ChessPiece chessPiece, Map<String, Object> properties) {
 
-				emitter.emit(fragmentCollectionFilter.getName());
-			},
-			new ChessPieceServiceTrackerCustomizer(bundleContext));
+		String pieceName = (String)properties.get("chess.piece.name");
+
+		if (Validator.isNull(pieceName)) {
+			return;
+		}
+
+		chessPiece = _chessPiecesMap.put(pieceName, chessPiece);
 	}
 
-	@Deactivate
-	protected void deactivate() {
-		_serviceTrackerMap.close();
+	protected void unsetChessPiece(
+		ChessPiece chessPiece, Map<String, Object> properties) {
+
+		String pieceName = (String)properties.get("chess.piece.name");
+
+		_chessPiecesMap.remove(pieceName);
 	}
 
-	private ServiceTrackerMap<String, ChessPiece> _serviceTrackerMap;
-
-	private class ChessPieceServiceTrackerCustomizer
-		implements ServiceTrackerCustomizer<ChessPiece, ChessPiece> {
-
-		public ChessPieceServiceTrackerCustomizer(BundleContext bundleContext) {
-			_bundleContext = bundleContext;
-		}
-
-		@Override
-		public ChessPiece addingService(
-			ServiceReference<ChessPiece> serviceReference) {
-
-			return _bundleContext.getService(serviceReference);
-		}
-
-		@Override
-		public void modifiedService(
-			ServiceReference<ChessPiece> serviceReference,
-			ChessPiece fragmentCollectionFilter) {
-		}
-
-		@Override
-		public void removedService(
-			ServiceReference<ChessPiece> serviceReference,
-			ChessPiece fragmentCollectionFilter) {
-
-			_bundleContext.ungetService(serviceReference);
-		}
-
-		private final BundleContext _bundleContext;
-
-	}
+	private final Map<String, ChessPiece> _chessPiecesMap =
+		new ConcurrentHashMap<>();
 
 }
