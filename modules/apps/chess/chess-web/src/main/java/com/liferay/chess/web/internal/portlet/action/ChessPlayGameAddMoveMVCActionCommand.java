@@ -16,9 +16,9 @@ package com.liferay.chess.web.internal.portlet.action;
 
 import com.liferay.announcements.kernel.exception.NoSuchEntryException;
 import com.liferay.chess.arbiter.ChessArbiter;
+import com.liferay.chess.constants.ChessPortletKeys;
 import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.ChessGameLocalService;
-import com.liferay.chess.web.internal.constants.ChessPortletKeys;
 import com.liferay.chess.web.internal.handler.ChessGameExceptionRequestHandler;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;

@@ -14,7 +14,7 @@
 
 package com.liferay.chess.web.internal.portlet;
 
-import com.liferay.chess.web.internal.constants.ChessPortletKeys;
+import com.liferay.chess.constants.ChessPortletKeys;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 
 import javax.portlet.Portlet;
