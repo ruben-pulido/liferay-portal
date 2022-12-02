@@ -29,6 +29,21 @@ const GAME_RESULT = {
 	WHITE_WINS: 'White wins',
 };
 
+const showNotification = (message, error) => {
+	const parentOpenToast = Liferay.Util.getOpener().Liferay.Util.openToast;
+
+	const openToastParams = {
+		message,
+	};
+
+	if (error) {
+		openToastParams.title = Liferay.Language.get('error');
+		openToastParams.type = 'danger';
+	}
+
+	parentOpenToast(openToastParams);
+};
+
 const ChessGame = ({config}) => {
 	const [chessMoves, setChessMoves] = useState(config.initialChessMoves);
 	const [currentTurn, setCurrentTurn] = useState(PLAYER_COLOR.WHITE);
