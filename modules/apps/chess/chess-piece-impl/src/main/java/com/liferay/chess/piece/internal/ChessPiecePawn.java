@@ -21,7 +21,10 @@ import org.osgi.service.component.annotations.Component;
 /**
  * @author Rubén Pulido
  */
-@Component(immediate = true, service = ChessPiece.class)
+@Component(
+	immediate = true, property = "service.ranking:Integer=100",
+	service = ChessPiece.class
+)
 public class ChessPiecePawn implements ChessPiece {
 
 	public String getCathphrase() {
