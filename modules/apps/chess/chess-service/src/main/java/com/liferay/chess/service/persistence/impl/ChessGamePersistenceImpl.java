@@ -20,6 +20,7 @@ import com.liferay.chess.model.ChessGameTable;
 import com.liferay.chess.model.impl.ChessGameImpl;
 import com.liferay.chess.model.impl.ChessGameModelImpl;
 import com.liferay.chess.service.persistence.ChessGamePersistence;
+import com.liferay.chess.service.persistence.ChessGameUtil;
 import com.liferay.chess.service.persistence.impl.constants.ChessPersistenceConstants;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
@@ -47,10 +48,11 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
+import com.liferay.portal.kernel.uuid.PortalUUID;
 
 import java.io.Serializable;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
 import java.util.Date;
@@ -1937,7 +1939,7 @@ public class ChessGamePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ChessGameModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param start the lower bound of the range of chess games
 	 * @param end the upper bound of the range of chess games (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -2310,7 +2312,7 @@ public class ChessGamePersistenceImpl
 		chessGame.setNew(true);
 		chessGame.setPrimaryKey(chessGameId);
 
-		String uuid = PortalUUIDUtil.generate();
+		String uuid = _portalUUID.generate();
 
 		chessGame.setUuid(uuid);
 
@@ -2425,7 +2427,7 @@ public class ChessGamePersistenceImpl
 		ChessGameModelImpl chessGameModelImpl = (ChessGameModelImpl)chessGame;
 
 		if (Validator.isNull(chessGame.getUuid())) {
-			String uuid = PortalUUIDUtil.generate();
+			String uuid = _portalUUID.generate();
 
 			chessGame.setUuid(uuid);
 		}
@@ -2829,11 +2831,30 @@ public class ChessGamePersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByGroupId",
 			new String[] {Long.class.getName()}, new String[] {"groupId"},
 			false);
+
+		_setChessGameUtilPersistence(this);
 	}
 
 	@Deactivate
 	public void deactivate() {
+		_setChessGameUtilPersistence(null);
+
 		entityCache.removeCache(ChessGameImpl.class.getName());
+	}
+
+	private void _setChessGameUtilPersistence(
+		ChessGamePersistence chessGamePersistence) {
+
+		try {
+			Field field = ChessGameUtil.class.getDeclaredField("_persistence");
+
+			field.setAccessible(true);
+
+			field.set(null, chessGamePersistence);
+		}
+		catch (ReflectiveOperationException reflectiveOperationException) {
+			throw new RuntimeException(reflectiveOperationException);
+		}
 	}
 
 	@Override
@@ -2898,6 +2919,9 @@ public class ChessGamePersistenceImpl
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
+
+	@Reference
+	private PortalUUID _portalUUID;
 
 	@Reference
 	private ChessGameModelArgumentsResolver _chessGameModelArgumentsResolver;

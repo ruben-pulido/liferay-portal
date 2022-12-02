@@ -26,6 +26,10 @@ import com.liferay.portal.kernel.service.ServiceWrapper;
 public class ChessGameLocalServiceWrapper
 	implements ChessGameLocalService, ServiceWrapper<ChessGameLocalService> {
 
+	public ChessGameLocalServiceWrapper() {
+		this(null);
+	}
+
 	public ChessGameLocalServiceWrapper(
 		ChessGameLocalService chessGameLocalService) {
 
