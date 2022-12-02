@@ -24,6 +24,7 @@
 
 		<!-- Other fields -->
 
+		<column name="lastPublishDate" type="Date" />
 		<column name="whitePlayerId" type="long" />
 		<column name="blackPlayerId" type="long" />
 		<column name="moves" type="String" />

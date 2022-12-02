@@ -78,9 +78,10 @@ public class ChessGameModelImpl
 		{"chessGameId", Types.BIGINT}, {"groupId", Types.BIGINT},
 		{"companyId", Types.BIGINT}, {"userId", Types.BIGINT},
 		{"userName", Types.VARCHAR}, {"createDate", Types.TIMESTAMP},
-		{"modifiedDate", Types.TIMESTAMP}, {"whitePlayerId", Types.BIGINT},
-		{"blackPlayerId", Types.BIGINT}, {"moves", Types.VARCHAR},
-		{"position", Types.VARCHAR}, {"winnerPlayerId", Types.BIGINT}
+		{"modifiedDate", Types.TIMESTAMP}, {"lastPublishDate", Types.TIMESTAMP},
+		{"whitePlayerId", Types.BIGINT}, {"blackPlayerId", Types.BIGINT},
+		{"moves", Types.VARCHAR}, {"position", Types.VARCHAR},
+		{"winnerPlayerId", Types.BIGINT}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -96,6 +97,7 @@ public class ChessGameModelImpl
 		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("whitePlayerId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("blackPlayerId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("moves", Types.VARCHAR);
@@ -104,7 +106,7 @@ public class ChessGameModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ChessGame (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,chessGameId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,whitePlayerId LONG,blackPlayerId LONG,moves VARCHAR(2000) null,position VARCHAR(500) null,winnerPlayerId LONG)";
+		"create table ChessGame (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,chessGameId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,whitePlayerId LONG,blackPlayerId LONG,moves VARCHAR(2000) null,position VARCHAR(500) null,winnerPlayerId LONG)";
 
 	public static final String TABLE_SQL_DROP = "drop table ChessGame";
 
@@ -286,6 +288,11 @@ public class ChessGameModelImpl
 		attributeSetterBiConsumers.put(
 			"modifiedDate",
 			(BiConsumer<ChessGame, Date>)ChessGame::setModifiedDate);
+		attributeGetterFunctions.put(
+			"lastPublishDate", ChessGame::getLastPublishDate);
+		attributeSetterBiConsumers.put(
+			"lastPublishDate",
+			(BiConsumer<ChessGame, Date>)ChessGame::setLastPublishDate);
 		attributeGetterFunctions.put(
 			"whitePlayerId", ChessGame::getWhitePlayerId);
 		attributeSetterBiConsumers.put(
@@ -511,6 +518,21 @@ public class ChessGameModelImpl
 
 	@JSON
 	@Override
+	public Date getLastPublishDate() {
+		return _lastPublishDate;
+	}
+
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_lastPublishDate = lastPublishDate;
+	}
+
+	@JSON
+	@Override
 	public long getWhitePlayerId() {
 		return _whitePlayerId;
 	}
@@ -665,6 +687,7 @@ public class ChessGameModelImpl
 		chessGameImpl.setUserName(getUserName());
 		chessGameImpl.setCreateDate(getCreateDate());
 		chessGameImpl.setModifiedDate(getModifiedDate());
+		chessGameImpl.setLastPublishDate(getLastPublishDate());
 		chessGameImpl.setWhitePlayerId(getWhitePlayerId());
 		chessGameImpl.setBlackPlayerId(getBlackPlayerId());
 		chessGameImpl.setMoves(getMoves());
@@ -695,6 +718,8 @@ public class ChessGameModelImpl
 			this.<Date>getColumnOriginalValue("createDate"));
 		chessGameImpl.setModifiedDate(
 			this.<Date>getColumnOriginalValue("modifiedDate"));
+		chessGameImpl.setLastPublishDate(
+			this.<Date>getColumnOriginalValue("lastPublishDate"));
 		chessGameImpl.setWhitePlayerId(
 			this.<Long>getColumnOriginalValue("whitePlayerId"));
 		chessGameImpl.setBlackPlayerId(
@@ -826,6 +851,15 @@ public class ChessGameModelImpl
 			chessGameCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
+		Date lastPublishDate = getLastPublishDate();
+
+		if (lastPublishDate != null) {
+			chessGameCacheModel.lastPublishDate = lastPublishDate.getTime();
+		}
+		else {
+			chessGameCacheModel.lastPublishDate = Long.MIN_VALUE;
+		}
+
 		chessGameCacheModel.whitePlayerId = getWhitePlayerId();
 
 		chessGameCacheModel.blackPlayerId = getBlackPlayerId();
@@ -950,6 +984,7 @@ public class ChessGameModelImpl
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
+	private Date _lastPublishDate;
 	private long _whitePlayerId;
 	private long _blackPlayerId;
 	private String _moves;
@@ -994,6 +1029,7 @@ public class ChessGameModelImpl
 		_columnOriginalValues.put("userName", _userName);
 		_columnOriginalValues.put("createDate", _createDate);
 		_columnOriginalValues.put("modifiedDate", _modifiedDate);
+		_columnOriginalValues.put("lastPublishDate", _lastPublishDate);
 		_columnOriginalValues.put("whitePlayerId", _whitePlayerId);
 		_columnOriginalValues.put("blackPlayerId", _blackPlayerId);
 		_columnOriginalValues.put("moves", _moves);
@@ -1040,15 +1076,17 @@ public class ChessGameModelImpl
 
 		columnBitmasks.put("modifiedDate", 256L);
 
-		columnBitmasks.put("whitePlayerId", 512L);
+		columnBitmasks.put("lastPublishDate", 512L);
 
-		columnBitmasks.put("blackPlayerId", 1024L);
+		columnBitmasks.put("whitePlayerId", 1024L);
 
-		columnBitmasks.put("moves", 2048L);
+		columnBitmasks.put("blackPlayerId", 2048L);
 
-		columnBitmasks.put("position", 4096L);
+		columnBitmasks.put("moves", 4096L);
 
-		columnBitmasks.put("winnerPlayerId", 8192L);
+		columnBitmasks.put("position", 8192L);
+
+		columnBitmasks.put("winnerPlayerId", 16384L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

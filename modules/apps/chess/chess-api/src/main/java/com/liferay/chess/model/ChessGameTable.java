@@ -50,6 +50,8 @@ public class ChessGameTable extends BaseTable<ChessGameTable> {
 		"createDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
 	public final Column<ChessGameTable, Date> modifiedDate = createColumn(
 		"modifiedDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
+	public final Column<ChessGameTable, Date> lastPublishDate = createColumn(
+		"lastPublishDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
 	public final Column<ChessGameTable, Long> whitePlayerId = createColumn(
 		"whitePlayerId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<ChessGameTable, Long> blackPlayerId = createColumn(

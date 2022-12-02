@@ -140,6 +140,8 @@ public class ChessGamePersistenceTest {
 
 		newChessGame.setModifiedDate(RandomTestUtil.nextDate());
 
+		newChessGame.setLastPublishDate(RandomTestUtil.nextDate());
+
 		newChessGame.setWhitePlayerId(RandomTestUtil.nextLong());
 
 		newChessGame.setBlackPlayerId(RandomTestUtil.nextLong());
@@ -175,6 +177,9 @@ public class ChessGamePersistenceTest {
 		Assert.assertEquals(
 			Time.getShortTimestamp(existingChessGame.getModifiedDate()),
 			Time.getShortTimestamp(newChessGame.getModifiedDate()));
+		Assert.assertEquals(
+			Time.getShortTimestamp(existingChessGame.getLastPublishDate()),
+			Time.getShortTimestamp(newChessGame.getLastPublishDate()));
 		Assert.assertEquals(
 			existingChessGame.getWhitePlayerId(),
 			newChessGame.getWhitePlayerId());
@@ -256,9 +261,9 @@ public class ChessGamePersistenceTest {
 		return OrderByComparatorFactoryUtil.create(
 			"ChessGame", "mvccVersion", true, "uuid", true, "chessGameId", true,
 			"groupId", true, "companyId", true, "userId", true, "userName",
-			true, "createDate", true, "modifiedDate", true, "whitePlayerId",
-			true, "blackPlayerId", true, "moves", true, "position", true,
-			"winnerPlayerId", true);
+			true, "createDate", true, "modifiedDate", true, "lastPublishDate",
+			true, "whitePlayerId", true, "blackPlayerId", true, "moves", true,
+			"position", true, "winnerPlayerId", true);
 	}
 
 	@Test
@@ -553,6 +558,8 @@ public class ChessGamePersistenceTest {
 		chessGame.setCreateDate(RandomTestUtil.nextDate());
 
 		chessGame.setModifiedDate(RandomTestUtil.nextDate());
+
+		chessGame.setLastPublishDate(RandomTestUtil.nextDate());
 
 		chessGame.setWhitePlayerId(RandomTestUtil.nextLong());
 

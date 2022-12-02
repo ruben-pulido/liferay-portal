@@ -76,7 +76,7 @@ public class ChessGameCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(29);
+		StringBundler sb = new StringBundler(31);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
@@ -96,6 +96,8 @@ public class ChessGameCacheModel
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
+		sb.append(", lastPublishDate=");
+		sb.append(lastPublishDate);
 		sb.append(", whitePlayerId=");
 		sb.append(whitePlayerId);
 		sb.append(", blackPlayerId=");
@@ -150,6 +152,13 @@ public class ChessGameCacheModel
 			chessGameImpl.setModifiedDate(new Date(modifiedDate));
 		}
 
+		if (lastPublishDate == Long.MIN_VALUE) {
+			chessGameImpl.setLastPublishDate(null);
+		}
+		else {
+			chessGameImpl.setLastPublishDate(new Date(lastPublishDate));
+		}
+
 		chessGameImpl.setWhitePlayerId(whitePlayerId);
 		chessGameImpl.setBlackPlayerId(blackPlayerId);
 
@@ -189,6 +198,7 @@ public class ChessGameCacheModel
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+		lastPublishDate = objectInput.readLong();
 
 		whitePlayerId = objectInput.readLong();
 
@@ -227,6 +237,7 @@ public class ChessGameCacheModel
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+		objectOutput.writeLong(lastPublishDate);
 
 		objectOutput.writeLong(whitePlayerId);
 
@@ -258,6 +269,7 @@ public class ChessGameCacheModel
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
+	public long lastPublishDate;
 	public long whitePlayerId;
 	public long blackPlayerId;
 	public String moves;
