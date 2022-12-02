@@ -16,6 +16,7 @@ package com.liferay.chess.service.base;
 
 import com.liferay.chess.model.ChessGame;
 import com.liferay.chess.service.ChessGameService;
+import com.liferay.chess.service.ChessGameServiceUtil;
 import com.liferay.chess.service.persistence.ChessGamePersistence;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.db.DB;
@@ -27,8 +28,11 @@ import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiServic
 import com.liferay.portal.kernel.service.BaseServiceImpl;
 import com.liferay.portal.kernel.util.PortalUtil;
 
+import java.lang.reflect.Field;
+
 import javax.sql.DataSource;
 
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -49,8 +53,13 @@ public abstract class ChessGameServiceBaseImpl
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Use <code>ChessGameService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.liferay.chess.service.ChessGameServiceUtil</code>.
+	 * Never modify or reference this class directly. Use <code>ChessGameService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>ChessGameServiceUtil</code>.
 	 */
+	@Deactivate
+	protected void deactivate() {
+		_setServiceUtilService(null);
+	}
+
 	@Override
 	public Class<?>[] getAopInterfaces() {
 		return new Class<?>[] {
@@ -61,6 +70,8 @@ public abstract class ChessGameServiceBaseImpl
 	@Override
 	public void setAopProxy(Object aopProxy) {
 		chessGameService = (ChessGameService)aopProxy;
+
+		_setServiceUtilService(chessGameService);
 	}
 
 	/**
@@ -102,6 +113,20 @@ public abstract class ChessGameServiceBaseImpl
 		}
 		catch (Exception exception) {
 			throw new SystemException(exception);
+		}
+	}
+
+	private void _setServiceUtilService(ChessGameService chessGameService) {
+		try {
+			Field field = ChessGameServiceUtil.class.getDeclaredField(
+				"_service");
+
+			field.setAccessible(true);
+
+			field.set(null, chessGameService);
+		}
+		catch (ReflectiveOperationException reflectiveOperationException) {
+			throw new RuntimeException(reflectiveOperationException);
 		}
 	}
 
