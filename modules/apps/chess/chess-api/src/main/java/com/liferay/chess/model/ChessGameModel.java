@@ -293,4 +293,7 @@ public interface ChessGameModel
 	 */
 	public void setWinnerPlayerId(long winnerPlayerId);
 
+	@Override
+	public ChessGame cloneWithOriginalValues();
+
 }
