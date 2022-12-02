@@ -7,6 +7,7 @@ dependencies {
 	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.3.0"
 	compileOnly project(":apps:application-list:application-list-api")
 	compileOnly project(":apps:chess:chess-api")
+	compileOnly project(":apps:chess:chess-arbiter-api")
 	compileOnly project(":apps:frontend-taglib:frontend-taglib")
 	compileOnly project(":apps:frontend-taglib:frontend-taglib-react")
 	compileOnly project(":apps:portal:portal-instance-lifecycle-api")
