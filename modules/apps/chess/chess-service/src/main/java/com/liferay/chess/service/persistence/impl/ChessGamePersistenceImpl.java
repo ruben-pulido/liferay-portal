@@ -37,7 +37,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -79,7 +78,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Rubén Pulido
  * @generated
  */
-@Component(service = {ChessGamePersistence.class, BasePersistence.class})
+@Component(service = ChessGamePersistence.class)
 public class ChessGamePersistenceImpl
 	extends BasePersistenceImpl<ChessGame> implements ChessGamePersistence {
 
@@ -195,7 +194,7 @@ public class ChessGamePersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<ChessGame>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (ChessGame chessGame : list) {
@@ -575,7 +574,7 @@ public class ChessGamePersistenceImpl
 
 		Object[] finderArgs = new Object[] {uuid};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -705,7 +704,7 @@ public class ChessGamePersistenceImpl
 
 		if (useFinderCache) {
 			result = finderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs);
+				_finderPathFetchByUUID_G, finderArgs, this);
 		}
 
 		if (result instanceof ChessGame) {
@@ -816,7 +815,7 @@ public class ChessGamePersistenceImpl
 
 		Object[] finderArgs = new Object[] {uuid, groupId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -982,7 +981,7 @@ public class ChessGamePersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<ChessGame>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (ChessGame chessGame : list) {
@@ -1394,7 +1393,7 @@ public class ChessGamePersistenceImpl
 
 		Object[] finderArgs = new Object[] {uuid, companyId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -1550,7 +1549,7 @@ public class ChessGamePersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<ChessGame>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (ChessGame chessGame : list) {
@@ -1982,7 +1981,7 @@ public class ChessGamePersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<ChessGame>)finderCache.getResult(
-				_finderPathWithPaginationFindByGroupId, finderArgs);
+				_finderPathWithPaginationFindByGroupId, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (ChessGame chessGame : list) {
@@ -2081,7 +2080,7 @@ public class ChessGamePersistenceImpl
 
 		Object[] finderArgs = new Object[] {groupId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -2136,7 +2135,7 @@ public class ChessGamePersistenceImpl
 		Object[] finderArgs = new Object[] {StringUtil.merge(groupIds)};
 
 		Long count = (Long)finderCache.getResult(
-			_finderPathWithPaginationCountByGroupId, finderArgs);
+			_finderPathWithPaginationCountByGroupId, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler();
@@ -2621,7 +2620,7 @@ public class ChessGamePersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<ChessGame>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
@@ -2691,7 +2690,7 @@ public class ChessGamePersistenceImpl
 	@Override
 	public int countAll() {
 		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY);
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -2922,8 +2921,5 @@ public class ChessGamePersistenceImpl
 
 	@Reference
 	private PortalUUID _portalUUID;
-
-	@Reference
-	private ChessGameModelArgumentsResolver _chessGameModelArgumentsResolver;
 
 }

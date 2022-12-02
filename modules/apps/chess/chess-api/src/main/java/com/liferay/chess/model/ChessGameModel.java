@@ -310,4 +310,8 @@ public interface ChessGameModel
 	@Override
 	public ChessGame cloneWithOriginalValues();
 
+	public default String toXmlString() {
+		return null;
+	}
+
 }

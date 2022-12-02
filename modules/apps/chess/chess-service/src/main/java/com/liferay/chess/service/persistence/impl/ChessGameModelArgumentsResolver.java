@@ -32,10 +32,7 @@ import org.osgi.service.component.annotations.Component;
  * @author Rubén Pulido
  * @generated
  */
-@Component(
-	immediate = true,
-	service = {ChessGameModelArgumentsResolver.class, ArgumentsResolver.class}
-)
+@Component(service = ArgumentsResolver.class)
 public class ChessGameModelArgumentsResolver implements ArgumentsResolver {
 
 	@Override
