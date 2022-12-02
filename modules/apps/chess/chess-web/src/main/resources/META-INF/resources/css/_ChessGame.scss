@@ -5,8 +5,36 @@
 	width: 50px;
 }
 
+.square-black-selected {
+	background-color: $blackPlayerBackgroundColorSelected;
+	border: 1px solid;
+	height: 50px;
+	width: 50px;
+}
+
+.square-black-previously-selected {
+	background-color: $blackPlayerBackgroundColorPreviouslySelected;
+	border: 1px solid;
+	height: 50px;
+	width: 50px;
+}
+
 .square-white {
 	background-color: $whitePlayerBackgroundColor;
+	border: 1px solid;
+	height: 50px;
+	width: 50px;
+}
+
+.square-white-previously-selected {
+	background-color: $whitePlayerBackgroundColorPreviouslySelected;
+	border: 1px solid;
+	height: 50px;
+	width: 50px;
+}
+
+.square-white-selected {
+	background-color: $whitePlayerBackgroundColorSelected;
 	border: 1px solid;
 	height: 50px;
 	width: 50px;
