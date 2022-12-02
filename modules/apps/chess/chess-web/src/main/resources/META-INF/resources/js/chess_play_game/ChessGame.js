@@ -14,6 +14,7 @@
 
 import React from 'react';
 
+import ChessAddMove from './ChessAddMove';
 import ChessBoard from './ChessBoard';
 import ChessGameInfo from './ChessGameInfo';
 
@@ -26,6 +27,7 @@ const ChessGame = ({config}) => {
 				blackPlayer={config.blackPlayer}
 				whitePlayer={config.whitePlayer}
 			/>
+			<ChessAddMove />
 		</div>
 	);
 };
