@@ -15,6 +15,7 @@
 import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
 import {fetch} from 'frontend-js-web';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 export default function ChessAddMove({
@@ -57,3 +58,9 @@ export default function ChessAddMove({
 		</div>
 	);
 }
+
+ChessAddMove.propTypes = {
+	actionUrl: PropTypes.string.isRequired,
+	chessGameId: PropTypes.number.isRequired,
+	portletNamespace: PropTypes.string,
+};
