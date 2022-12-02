@@ -38,12 +38,12 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = PanelCategory.class
 )
-public class ChessGamesSiteAdministrationPanelCategory
+public class ChessSiteAdministrationPanelCategory
 	extends BasePanelCategory {
 
 	@Override
 	public String getKey() {
-		return ChessPanelCategoryKeys.SITE_ADMINISTRATION_CHESS_GAMES;
+		return ChessPanelCategoryKeys.SITE_ADMINISTRATION_CHESS;
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class ChessGamesSiteAdministrationPanelCategory
 		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
 			"content.Language", locale, getClass());
 
-		return _language.get(resourceBundle, "games");
+		return _language.get(resourceBundle, "chess");
 	}
 
 	@Reference
