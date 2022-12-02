@@ -21,6 +21,7 @@ import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 
@@ -81,6 +82,75 @@ public class ChessGameLocalServiceImpl extends ChessGameLocalServiceBaseImpl {
 		chessGame.setWhitePlayerId(whiteBlackPlayerId);
 		chessGame.setBlackPlayerId(blackPlayerId);
 		chessGame.setMoves("[]");
+		chessGame.setPosition(
+			JSONUtil.put(
+				"piecePlacement",
+				JSONUtil.put(
+					"a1", "wr"
+				).put(
+					"a2", "wp"
+				).put(
+					"a7", "bp"
+				).put(
+					"a8", "br"
+				).put(
+					"b1", "wn"
+				).put(
+					"b2", "wp"
+				).put(
+					"b7", "bp"
+				).put(
+					"b8", "bn"
+				).put(
+					"c1", "wb"
+				).put(
+					"c2", "wp"
+				).put(
+					"c7", "bp"
+				).put(
+					"c8", "bb"
+				).put(
+					"d1", "wq"
+				).put(
+					"d2", "wp"
+				).put(
+					"d7", "bp"
+				).put(
+					"d8", "bq"
+				).put(
+					"e1", "wk"
+				).put(
+					"e2", "wp"
+				).put(
+					"e7", "bp"
+				).put(
+					"e8", "bk"
+				).put(
+					"f1", "wb"
+				).put(
+					"f2", "wp"
+				).put(
+					"f7", "bp"
+				).put(
+					"f8", "bb"
+				).put(
+					"g1", "wn"
+				).put(
+					"g2", "wp"
+				).put(
+					"g7", "bp"
+				).put(
+					"g8", "bn"
+				).put(
+					"h1", "wr"
+				).put(
+					"h2", "wp"
+				).put(
+					"h7", "bp"
+				).put(
+					"h8", "br"
+				)
+			).toString());
 
 		return chessGamePersistence.update(chessGame);
 	}
