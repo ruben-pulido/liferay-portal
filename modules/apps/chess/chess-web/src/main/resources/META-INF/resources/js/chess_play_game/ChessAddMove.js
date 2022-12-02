@@ -12,6 +12,7 @@
  * details.
  */
 
+import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
 import React from 'react';
 
@@ -23,6 +24,7 @@ export default function ChessAddMove() {
 				<label htmlFor="moveTextInput">Move</label>
 				<ClayInput id="moveTextInput" placeholder="e2e4" type="text" />
 			</ClayForm.Group>
+			<ClayButton displayType="primary">Add Move</ClayButton>
 		</div>
 	);
 }
