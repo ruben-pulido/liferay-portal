@@ -43,7 +43,7 @@ public class ChessPieceSayCatchphraseCommand {
 			chessPiece.getName() + " says: " + chessPiece.getCathphrase());
 	}
 
-	@Reference (
+	@Reference(
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY
 	)
