@@ -53,6 +53,10 @@ public class ChessPlayGameDisplayContext {
 			() -> {
 				ChessGame chessGame = _getChessGame();
 
+				if (chessGame == null) {
+					return null;
+				}
+
 				return HashMapBuilder.<String, Object>put(
 					"blackPlayer",
 					() -> HashMapBuilder.<String, Object>put(
@@ -134,6 +138,10 @@ public class ChessPlayGameDisplayContext {
 
 		List<ChessGame> chessGames = ChessGameLocalServiceUtil.getChessGames(
 			themeDisplay.getSiteGroupId());
+
+		if (chessGames.isEmpty()) {
+			return null;
+		}
 
 		_chessGame = chessGames.get(0);
 
