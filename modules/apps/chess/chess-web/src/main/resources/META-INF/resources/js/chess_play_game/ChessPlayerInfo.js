@@ -12,11 +12,16 @@
  * details.
  */
 
-import React from 'react';
+import React, {useContext} from 'react';
+
+import LoggedInUserContext from './LoggedInUserContext';
 
 export default function ChessPlayerInfo({player}) {
+	const loggedInUser = useContext(LoggedInUserContext);
+
 	return (
 		<div className="chess-game__chess-player-info">
+			<div>Logged in user: {loggedInUser.emailAddress}</div>
 			Player: {player.emailAddress}
 		</div>
 	);
