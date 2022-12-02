@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -76,6 +77,16 @@ public interface ChessGameLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public ChessGame addChessGame(ChessGame chessGame);
+
+	/**
+	 * NOTE FOR DEVELOPERS:
+	 * <p>
+	 * Never reference this class directly. Use <code>ChessGameLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>ChessGameLocalServiceUtil</code>.
+	 */
+	public ChessGame addChessGame(
+			long userId, long groupId, long whiteBlackPlayerId,
+			long blackPlayerId, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	 * Creates a new chess game with the primary key. Does not add the chess game to the database.
@@ -315,5 +326,13 @@ public interface ChessGameLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public ChessGame updateChessGame(ChessGame chessGame);
+
+	/**
+	 * NOTE FOR DEVELOPERS:
+	 * <p>
+	 * Never reference this class directly. Use <code>ChessGameLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>ChessGameLocalServiceUtil</code>.
+	 */
+	public ChessGame updateChessGame(long chessGameId, String move)
+		throws PortalException;
 
 }
