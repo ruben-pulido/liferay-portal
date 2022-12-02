@@ -127,7 +127,10 @@ const ChessGame = ({config}) => {
 		<div>
 			Chess Game Id: {config.chessGameId}
 			<LoggedInUserContext.Provider value={config.loggedInUser}>
-				<ChessBoard piecePlacement={piecePlacement} />
+				<ChessBoard
+					handleAddChessMove={handleAddChessMove}
+					piecePlacement={piecePlacement}
+				/>
 				<ChessGameInfo
 					blackPlayer={config.blackPlayer}
 					whitePlayer={config.whitePlayer}
