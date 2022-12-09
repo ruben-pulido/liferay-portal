@@ -156,8 +156,8 @@ const FragmentEditor = ({
 				fieldTypes,
 				fragmentCollectionId,
 				fragmentEntryId,
-				htmlContent: html,
-				jsContent: js,
+				htmlContent: btoa(html),
+				jsContent: btoa(js),
 				name,
 				status: allowedStatus.draft,
 			};
