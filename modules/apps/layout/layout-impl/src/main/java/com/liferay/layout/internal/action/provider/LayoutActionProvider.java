@@ -21,6 +21,7 @@ import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.taglib.security.PermissionsURLTag;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -28,6 +29,7 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
+import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
@@ -161,7 +163,18 @@ public class LayoutActionProvider {
 				JSONUtil.put("type", "divider")
 			).put(
 				JSONUtil.put(
-					"href", ""
+					"data",
+					JSONUtil.put(
+						"id", "copy-page"
+					).put(
+						"modalTitle",
+						_language.get(_themeDisplay.getLocale(), "copy-page")
+					).put(
+						"url",
+						_getCopyLayoutRenderURL(layout)
+					)
+				).put(
+					"href", StringPool.POUND
 				).put(
 					"id", "copy-page"
 				).put(
@@ -245,7 +258,18 @@ public class LayoutActionProvider {
 		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-152360"))) {
 			itemsJSONArray.put(
 				JSONUtil.put(
-					"href", ""
+					"data",
+					JSONUtil.put(
+						"id", "permissions"
+					).put(
+						"modalTitle",
+						_language.get(_themeDisplay.getLocale(), "permissions")
+					).put(
+						"url",
+						_getPermissionsURL(layout)
+					)
+				).put(
+					"href", StringPool.POUND
 				).put(
 					"id", "permissions"
 				).put(
@@ -298,7 +322,7 @@ public class LayoutActionProvider {
 						"modalTitle",
 						_language.get(_themeDisplay.getLocale(), "delete-page")
 					).put(
-						"url", "url"
+						"url", _getDeleteLayoutURL(layout)
 					).build()
 				).put(
 					"id", "delete"
@@ -318,6 +342,108 @@ public class LayoutActionProvider {
 			).put(
 				"type", "group"
 			));
+	}
+
+	private String _getCopyLayoutRenderURL(Layout layout) throws Exception {
+		PortletURL portletURL = PortletProviderUtil.getPortletURL(
+			_liferayPortletRequest, Layout.class.getName(),
+			PortletProvider.Action.ADD);
+
+		if (portletURL == null) {
+			return StringPool.BLANK;
+		}
+
+		portletURL.setParameter(
+			"mvcRenderCommandName", "/layout_admin/add_layout");
+		portletURL.setParameter("privateLayout", String.valueOf(Boolean.FALSE));
+		portletURL.setParameter("sourcePlid", String.valueOf(layout.getPlid()));
+		portletURL.setWindowState(LiferayWindowState.POP_UP);
+
+
+		return portletURL.toString();
+
+//		return PortletURLBuilder.createRenderURL(
+//			_liferayPortletResponse
+//		).setMVCRenderCommandName(
+//			"/layout_admin/add_layout"
+//		).setParameter(
+//			"privateLayout", false
+////			isPrivateLayout()
+//		).setParameter(
+//			"sourcePlid", layout.getPlid()
+//		).setWindowState(
+//			LiferayWindowState.POP_UP
+//		).buildString();
+	}
+
+//	public String getDeleteLayoutURL(Layout layout) throws PortalException {
+//		return PortletURLBuilder.createActionURL(
+//			_liferayPortletResponse
+//		).setActionName(
+//			"/layout_admin/delete_layout"
+//		).setRedirect(
+//			PortletURLBuilder.createRenderURL(
+//				_liferayPortletResponse
+//			).setParameter(
+//				"layoutSetBranchId", getActiveLayoutSetBranchId()
+//			).setParameter(
+//				"selPlid", layout.getParentPlid()
+//			).buildString()
+//		).setParameter(
+//			"layoutSetBranchId", getActiveLayoutSetBranchId()
+//		).setParameter(
+//			"selPlid", layout.getPlid()
+//		).buildString();
+//	}
+
+	private String _getDeleteLayoutURL(Layout layout) {
+		Group scopeGroup = _themeDisplay.getScopeGroup();
+
+		if (scopeGroup.isStaged() && !scopeGroup.isStagingGroup()) {
+			return null;
+		}
+
+//					LiferayPortletURL liferayPortletURL =
+//						(LiferayPortletURL) ActionURLBuilder.createActionURL(
+//							_httpServletRequest
+//						).setActionName(
+//							"/layout_admin/delete_layout"
+//						).buildActionURL();
+//
+//					liferayPortletURL.setCopyCurrentRenderParameters(false);
+//
+//					return liferayPortletURL.toString();
+
+		LiferayPortletURL liferayPortletURL = (LiferayPortletURL)PortletURLBuilder.create(
+			PortalUtil.getControlPanelPortletURL(
+				_liferayPortletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
+				PortletRequest.ACTION_PHASE)
+		).setActionName(
+			"/layout_admin/delete_layout"
+		).setRedirect(
+//			PortalUtil.getCurrentURL(_httpServletRequest)
+			_themeDisplay.getURLCurrent()
+		).setParameter(
+			"selPlid", layout.getPlid()
+		).buildPortletURL();
+
+//		liferayPortletURL.setCopyCurrentRenderParameters(false);
+
+		return liferayPortletURL.toString();
+
+//			_themeDisplay.getURLCurrent()
+//			PortalUtil.getControlPanelPortletURL(
+//				_httpServletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
+//				PortletRequest.RENDER_PHASE)
+	}
+
+	private String _getPermissionsURL(Layout layout) throws Exception {
+		return PermissionsURLTag.doTag(
+			StringPool.BLANK, Layout.class.getName(),
+			HtmlUtil.escape(layout.getName(_themeDisplay.getLocale())), null,
+			String.valueOf(layout.getPlid()),
+			LiferayWindowState.POP_UP.toString(), null,
+			_themeDisplay.getRequest());
 	}
 
 	private String _getAddChildCollectionURLTemplate() throws Exception {

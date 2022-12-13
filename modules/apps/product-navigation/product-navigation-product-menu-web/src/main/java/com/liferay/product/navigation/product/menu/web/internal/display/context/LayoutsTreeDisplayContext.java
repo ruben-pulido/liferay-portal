@@ -318,6 +318,7 @@ public class LayoutsTreeDisplayContext {
 			"selPpid", this::getSelPlid
 		).setWindowState(
 			LiferayWindowState.EXCLUSIVE
+//						LiferayWindowState.POP_UP
 		).buildString();
 	}
 

@@ -331,6 +331,7 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 				return portletDisplay.getId();
 			}
 		).setWindowState(
+//			LiferayWindowState.POP_UP
 			LiferayWindowState.EXCLUSIVE
 		).buildString();
 	}
