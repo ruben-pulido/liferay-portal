@@ -20,6 +20,7 @@ import {fetch, navigate, openModal, openToast} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useCallback, useRef, useState} from 'react';
 
+const ACTION_COPY_PAGE = 'copy-page';
 const ACTION_DELETE = 'delete';
 const ENTER_KEYCODE = 13;
 const ROOT_ITEM_ID = '0';
@@ -287,16 +288,37 @@ function normalizeActions(actions, namespace) {
 									onClick: ({processClose}) => {
 										processClose();
 
-										navigate(item.data.url);
+									fetch(item.data.url, {
+										method: 'post',
+										})
+									.then((response) => response.json())
+									.then(
+										(response) => {
+											if (response.redirect) {
+												navigate(response.redirect);
+											}
+										}
+									).catch(() => openErrorToast());
 									},
 								},
 							],
 							status: 'danger',
 						};
 					}
+					else if (item.id === ACTION_COPY_PAGE) {
+						modalData = {
+							...modalData,
+							id: 'addLayoutDialog'
+						}
+					}
+					else {
+						modalData = {
+							...modalData,
+							id: `${namespace}pagesTreeModal`,
+						}
+					}
 
 					openModal({
-						id: `${namespace}pagesTreeModal`,
 						title: item.data.modalTitle,
 						...modalData,
 					});

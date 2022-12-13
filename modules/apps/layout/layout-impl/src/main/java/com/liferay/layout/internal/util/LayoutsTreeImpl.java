@@ -586,6 +586,21 @@ public class LayoutsTreeImpl implements LayoutsTree {
 			ActionKeys.MANAGE_LAYOUTS);
 		boolean mobile = _browserSniffer.isMobile(httpServletRequest);
 
+		Layout afterDeleteSelectedLayout = null;
+		Layout secondLayout = null;
+
+		int index = 0;
+
+		for (LayoutTreeNode layoutTreeNode : layoutTreeNodes) {
+			if (index == 1) {
+				secondLayout = layoutTreeNode.getLayout();
+
+				break;
+			}
+
+			index++;
+		}
+
 		for (LayoutTreeNode layoutTreeNode : layoutTreeNodes) {
 			LayoutTreeNodes childLayoutTreeNodes =
 				layoutTreeNode.getChildLayoutTreeNodes();
@@ -608,9 +623,16 @@ public class LayoutsTreeImpl implements LayoutsTree {
 						httpServletRequest, _language,
 						_siteNavigationMenuLocalService);
 
+				if (afterDeleteSelectedLayout == null) {
+					afterDeleteSelectedLayout = secondLayout;
+				}
+
 				jsonObject.put(
 					"actions",
-					layoutActionProvider.getActionsJSONArray(layout));
+					layoutActionProvider.getActionsJSONArray(
+						layout, afterDeleteSelectedLayout));
+
+				afterDeleteSelectedLayout = layout;
 			}
 
 			if (childrenJSONSerializable instanceof JSONArray) {
