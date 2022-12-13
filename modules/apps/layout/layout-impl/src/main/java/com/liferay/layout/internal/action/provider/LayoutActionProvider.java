@@ -58,9 +58,11 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Rubén Pulido
@@ -68,10 +70,12 @@ import javax.servlet.http.HttpServletRequest;
 public class LayoutActionProvider {
 
 	public LayoutActionProvider(
-		HttpServletRequest httpServletRequest, Language language,
+		HttpServletRequest httpServletRequest,
+		HttpServletResponse httpServletResponse, Language language,
 		SiteNavigationMenuLocalService siteNavigationMenuLocalService) {
 
 		_httpServletRequest = httpServletRequest;
+		_httpServletResponse = httpServletResponse;
 		_language = language;
 		_siteNavigationMenuLocalService = siteNavigationMenuLocalService;
 
@@ -345,22 +349,51 @@ public class LayoutActionProvider {
 	}
 
 	private String _getCopyLayoutRenderURL(Layout layout) throws Exception {
-		PortletURL portletURL = PortletProviderUtil.getPortletURL(
-			_liferayPortletRequest, Layout.class.getName(),
-			PortletProvider.Action.ADD);
+		PortletResponse portletResponse =
+			(PortletResponse)_httpServletRequest.getAttribute(
+				JavaConstants.JAVAX_PORTLET_RESPONSE);
 
-		if (portletURL == null) {
-			return StringPool.BLANK;
-		}
+		return PortletURLBuilder.createRenderURL(
+			PortalUtil.getLiferayPortletResponse(portletResponse)
+		).setMVCRenderCommandName(
+			"/layout_admin/add_layout"
+		).setParameter(
+			"privateLayout",
+			"false"
+//			isPrivateLayout()
+		).setParameter(
+			"sourcePlid", layout.getPlid()
+		).setWindowState(
+			LiferayWindowState.POP_UP
+		).buildString();
 
-		portletURL.setParameter(
-			"mvcRenderCommandName", "/layout_admin/add_layout");
-		portletURL.setParameter("privateLayout", String.valueOf(Boolean.FALSE));
-		portletURL.setParameter("sourcePlid", String.valueOf(layout.getPlid()));
-		portletURL.setWindowState(LiferayWindowState.POP_UP);
+//		PortletURLBuilder.createActionURL(
+//			_renderResponse
+//		).setActionName(
+//			"/layout_admin/copy_layout_utility_page_entry"
+//		).setRedirect(
+//			_themeDisplay.getURLCurrent()
+//		).setParameter(
+//			"layoutUtilityPageEntryId",
+//			_layoutUtilityPageEntry.getLayoutUtilityPageEntryId()
+//		).buildString();
 
+//		PortletURL portletURL = PortletProviderUtil.getPortletURL(
+//			_liferayPortletRequest, Layout.class.getName(),
+//			PortletProvider.Action.ADD);
 
-		return portletURL.toString();
+//		if (portletURL == null) {
+//			return StringPool.BLANK;
+//		}
+//
+//		portletURL.setParameter(
+//			"mvcRenderCommandName", "/layout_admin/add_layout");
+//		portletURL.setParameter("privateLayout", String.valueOf(Boolean.FALSE));
+//		portletURL.setParameter("sourcePlid", String.valueOf(layout.getPlid()));
+//		portletURL.setWindowState(LiferayWindowState.POP_UP);
+//
+//
+//		return portletURL.toString();
 
 //		return PortletURLBuilder.createRenderURL(
 //			_liferayPortletResponse
@@ -748,6 +781,7 @@ public class LayoutActionProvider {
 	private Long _groupId;
 	private final GroupProvider _groupProvider;
 	private final HttpServletRequest _httpServletRequest;
+	private final HttpServletResponse _httpServletResponse;
 	private final Language _language;
 	private final LiferayPortletRequest _liferayPortletRequest;
 	private final String _namespace;

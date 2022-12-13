@@ -41,7 +41,8 @@ public class GetLayoutsAction extends JSONAction {
 		String treeId = ParamUtil.getString(httpServletRequest, "treeId");
 
 		if (cmd.equals("get")) {
-			return getLayoutsJSON(httpServletRequest, groupId, treeId);
+			return getLayoutsJSON(
+				httpServletRequest, httpServletResponse,groupId, treeId);
 		}
 		else if (cmd.equals("getAll")) {
 			return LayoutsTreeUtil.getLayoutsJSON(
@@ -55,7 +56,9 @@ public class GetLayoutsAction extends JSONAction {
 	}
 
 	protected String getLayoutsJSON(
-			HttpServletRequest httpServletRequest, long groupId, String treeId)
+			HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse, long groupId,
+			String treeId)
 		throws Exception {
 
 		boolean privateLayout = ParamUtil.getBoolean(
