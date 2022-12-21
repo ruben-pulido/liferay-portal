@@ -291,11 +291,10 @@ function normalizeActions(actions, namespace) {
 									fetch(item.data.url, {
 										method: 'post',
 										})
-									.then((response) => response.json())
 									.then(
 										(response) => {
-											if (response.redirect) {
-												navigate(response.redirect);
+											if (response.redirected) {
+												navigate(response.url);
 											}
 										}
 									).catch(() => openErrorToast());

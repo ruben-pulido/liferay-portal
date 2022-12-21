@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.PortletQName;
+import com.liferay.portal.kernel.portlet.url.builder.ActionURLBuilder;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
@@ -56,9 +57,9 @@ import com.liferay.taglib.security.PermissionsURLTag;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.portlet.ActionURL;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
-import javax.portlet.ResourceURL;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -502,14 +503,9 @@ public class LayoutActionProvider {
 			return null;
 		}
 
-		ResourceURL resourceURL =
-			(ResourceURL)PortalUtil.getControlPanelPortletURL(
-				_liferayPortletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
-				PortletRequest.RESOURCE_PHASE);
-
-		resourceURL.setResourceID("/layout_admin/delete_layout");
-
-		resourceURL.setParameter("selPlid", String.valueOf(layout.getPlid()));
+		ActionURL actionURL = (ActionURL)PortalUtil.getControlPanelPortletURL(
+			_liferayPortletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
+			PortletRequest.ACTION_PHASE);
 
 		String redirect = ParamUtil.getString(
 			_liferayPortletRequest, "redirect", _themeDisplay.getURLCurrent());
@@ -534,9 +530,15 @@ public class LayoutActionProvider {
 			}
 		}
 
-		resourceURL.setParameter("redirect", redirect);
-
-		return resourceURL.toString();
+		return ActionURLBuilder.createActionURL(
+			actionURL
+		).setActionName(
+			"/layout_admin/delete_layout"
+		).setRedirect(
+			redirect
+		).setParameter(
+			"selPlid", String.valueOf(layout.getPlid())
+		).buildString();
 	}
 
 	private long _getGroupId() {
