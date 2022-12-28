@@ -50,6 +50,8 @@ export default function PagesTree({
 				body: Liferay.Util.objectToURLSearchParams({
 					[`${namespace}parentLayoutId`]: item.layoutId,
 					[`${namespace}privateLayout`]: isPrivateLayoutsTree,
+					[`${namespace}redirect`]:
+						window.location.pathname + window.location.search,
 					[`${namespace}selPlid`]: item.plid,
 					[`${namespace}start`]: cursor * maxPageSize,
 				}),
