@@ -419,7 +419,16 @@ public class LayoutsTreeImpl implements LayoutsTree {
 					StringPool.CLOSE_PARENTHESIS));
 		}
 
-		return paginationJSONObject.getInt(String.valueOf(layoutId), 0);
+		int previousCount = paginationJSONObject.getInt(
+			String.valueOf(layoutId), 0);
+
+		paginationJSONObject.put(
+			String.valueOf(layoutId),
+			previousCount + PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN);
+
+		SessionClicks.put(httpSession, key, paginationJSONObject.toString());
+
+		return previousCount;
 	}
 
 	private List<Layout> _getPaginatedLayouts(
