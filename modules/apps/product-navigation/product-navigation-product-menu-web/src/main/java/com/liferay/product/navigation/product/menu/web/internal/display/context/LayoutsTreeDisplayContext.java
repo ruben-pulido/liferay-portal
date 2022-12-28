@@ -40,7 +40,6 @@ import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
-import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutService;
@@ -253,16 +252,28 @@ public class LayoutsTreeDisplayContext {
 			HashMapBuilder.<String, Object>put(
 				"loadMoreItemsURL",
 				() -> {
-					LiferayPortletURL liferayPortletURL =
-						(LiferayPortletURL)ResourceURLBuilder.createResourceURL(
-							_renderResponse
-						).setResourceID(
-							"/product_navigation_product_menu/get_layouts"
-						).buildResourceURL();
+					int start = ParamUtil.getInteger(
+						_httpServletRequest, "end",
+						PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN);
+					int end =
+						start +
+							PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN;
 
-					liferayPortletURL.setCopyCurrentRenderParameters(false);
+					String url =
+						_themeDisplay.getPathMain() +
+							"/portal/get_layouts?cmd=get&groupId=" +
+								getGroupId() +
+									"&loadMore=true&treeId=productMenuPagesTree" +
+										"&start=" + start + "&end=" + end +
+											"&returnLayoutsAsArray=true";
 
-					return liferayPortletURL.toString();
+					if (!Validator.isBlank(_themeDisplay.getDoAsUserId())) {
+						url =
+							url + "&doAsUserId=" +
+								_themeDisplay.getDoAsUserId();
+					}
+
+					return url;
 				}
 			).put(
 				"maxPageSize",

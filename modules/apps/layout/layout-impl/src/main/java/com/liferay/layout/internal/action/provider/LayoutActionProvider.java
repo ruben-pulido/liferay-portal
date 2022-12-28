@@ -374,7 +374,9 @@ public class LayoutActionProvider {
 	private PortletURL _getAddCollectionLayoutURL() throws Exception {
 		Group scopeGroup = _themeDisplay.getScopeGroup();
 
-		if (scopeGroup.isStaged() && !scopeGroup.isStagingGroup()) {
+		if ((scopeGroup.isStaged() && !scopeGroup.isStagingGroup()) ||
+			(_liferayPortletRequest == null)) {
+
 			return null;
 		}
 
@@ -398,7 +400,9 @@ public class LayoutActionProvider {
 	private PortletURL _getAddLayoutURL() throws Exception {
 		Group scopeGroup = _themeDisplay.getScopeGroup();
 
-		if (scopeGroup.isStaged() && !scopeGroup.isStagingGroup()) {
+		if ((scopeGroup.isStaged() && !scopeGroup.isStagingGroup()) ||
+			(_liferayPortletRequest == null)) {
+
 			return null;
 		}
 
@@ -438,6 +442,10 @@ public class LayoutActionProvider {
 	}
 
 	private String _getConfigureLayoutURL() throws Exception {
+		if (_liferayPortletRequest == null) {
+			return StringPool.BLANK;
+		}
+
 		PortletURL configureLayoutURL = PortletURLBuilder.create(
 			PortalUtil.getControlPanelPortletURL(
 				_liferayPortletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
@@ -478,6 +486,10 @@ public class LayoutActionProvider {
 	}
 
 	private String _getCopyLayoutRenderURL(Layout layout) {
+		if (_liferayPortletRequest == null) {
+			return StringPool.BLANK;
+		}
+
 		return PortletURLBuilder.create(
 			PortalUtil.getControlPanelPortletURL(
 				_httpServletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
@@ -507,8 +519,13 @@ public class LayoutActionProvider {
 			return null;
 		}
 
+//		if (_liferayPortletRequest == null) {
+//			return StringPool.BLANK;
+//		}
+
 		String redirect = ParamUtil.getString(
-			_liferayPortletRequest, "redirect", _themeDisplay.getURLCurrent());
+				_httpServletRequest,
+				"redirect", _themeDisplay.getURLCurrent());
 
 		Layout curLayout = _themeDisplay.getLayout();
 

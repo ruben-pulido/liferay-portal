@@ -552,6 +552,18 @@ public class LayoutsTreeImpl implements LayoutsTree {
 		return false;
 	}
 
+	private boolean _isReturnLayoutsAsArray(
+		HttpServletRequest httpServletRequest) {
+
+		if (ParamUtil.getBoolean(httpServletRequest, "returnLayoutsAsArray")) {
+			return true;
+		}
+
+		return GetterUtil.getBoolean(
+			httpServletRequest.getAttribute(
+				ProductNavigationProductMenuWebKeys.RETURN_LAYOUTS_AS_ARRAY));
+	}
+
 	private String _toJSON(
 			HttpServletRequest httpServletRequest, long groupId,
 			LayoutTreeNodes layoutTreeNodes, LayoutSetBranch layoutSetBranch)
@@ -613,11 +625,7 @@ public class LayoutsTreeImpl implements LayoutsTree {
 
 			JSONObject jsonObject = _jsonFactory.createJSONObject();
 
-			if (GetterUtil.getBoolean(
-					httpServletRequest.getAttribute(
-						ProductNavigationProductMenuWebKeys.
-							RETURN_LAYOUTS_AS_ARRAY))) {
-
+			if (_isReturnLayoutsAsArray(httpServletRequest)) {
 				LayoutActionProvider layoutActionProvider =
 					new LayoutActionProvider(
 						httpServletRequest, _language,
@@ -722,10 +730,7 @@ public class LayoutsTreeImpl implements LayoutsTree {
 			List<LayoutTreeNode> layoutTreeNodesList =
 				childLayoutTreeNodes.getLayoutTreeNodesList();
 
-			if (GetterUtil.getBoolean(
-					httpServletRequest.getAttribute(
-						ProductNavigationProductMenuWebKeys.
-							RETURN_LAYOUTS_AS_ARRAY)) &&
+			if (_isReturnLayoutsAsArray(httpServletRequest) &&
 				(childLayoutTreeNodes.getTotal() !=
 					layoutTreeNodesList.size())) {
 
@@ -837,11 +842,48 @@ public class LayoutsTreeImpl implements LayoutsTree {
 		JSONArray jsonArray = _toJSONArray(
 			httpServletRequest, groupId, layoutTreeNodes, layoutSetBranch);
 
-		if (GetterUtil.getBoolean(
-				httpServletRequest.getAttribute(
-					ProductNavigationProductMenuWebKeys.
-						RETURN_LAYOUTS_AS_ARRAY))) {
+		if (ParamUtil.getBoolean(httpServletRequest, "loadMore")) {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)httpServletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
 
+			return JSONUtil.put(
+				"hasMoreElements",
+				() -> {
+					long parentLayoutId = ParamUtil.getLong(
+						httpServletRequest, "parentLayoutId");
+					boolean privateLayout = ParamUtil.getBoolean(
+						httpServletRequest, "privateLayout");
+
+					int childLayoutsCount = _layoutService.getLayoutsCount(
+						themeDisplay.getScopeGroupId(), privateLayout,
+						parentLayoutId);
+
+					int start = ParamUtil.getInteger(
+						httpServletRequest, "start");
+
+					start = Math.max(0, start);
+
+					int pageSize = GetterUtil.getInteger(
+						PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN);
+
+					int end = ParamUtil.getInteger(
+						httpServletRequest, "end", start + pageSize);
+
+					end = Math.max(start, end);
+
+					if (childLayoutsCount > end) {
+						return true;
+					}
+
+					return false;
+				}
+			).put(
+				"items", jsonArray
+			);
+		}
+
+		if (_isReturnLayoutsAsArray(httpServletRequest)) {
 			return jsonArray;
 		}
 

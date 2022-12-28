@@ -48,10 +48,11 @@ export default function PagesTree({
 
 			return fetch(loadMoreItemsURL, {
 				body: Liferay.Util.objectToURLSearchParams({
-					[`${namespace}parentLayoutId`]: item.layoutId,
-					[`${namespace}privateLayout`]: isPrivateLayoutsTree,
-					[`${namespace}selPlid`]: item.plid,
-					[`${namespace}start`]: cursor * maxPageSize,
+					parentLayoutId : item.layoutId,
+					privateLayout : isPrivateLayoutsTree,
+					redirect : window.location.pathname + window.location.search,
+					selPlid : item.plid,
+					start : cursor * maxPageSize,
 				}),
 				method: 'post',
 			})
