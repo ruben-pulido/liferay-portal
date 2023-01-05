@@ -402,7 +402,7 @@ public class LayoutsTreeDisplayContext {
 			Boolean.TRUE);
 
 		String layoutsJSON = _layoutsTree.getLayoutsJSON(
-			_httpServletRequest, _getGroupId(), true, _isPrivateLayout(),
+			_httpServletRequest, _getGroupId(), false, _isPrivateLayout(),
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, openNodes, true,
 			"productMenuPagesTree", null);
 

@@ -261,6 +261,10 @@ TreeItem.propTypes = {
 };
 
 function normalizeActions(actions, namespace) {
+	if (true) {
+		return [];
+	}
+
 	return actions.map((group) => ({
 		...group,
 		items: group.items.map((item) => {
