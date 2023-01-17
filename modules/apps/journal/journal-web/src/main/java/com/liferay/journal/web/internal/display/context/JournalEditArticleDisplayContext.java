@@ -102,6 +102,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletURL;
 import javax.portlet.RenderResponse;
 
 import javax.servlet.http.HttpServletRequest;
@@ -846,6 +847,32 @@ public class JournalEditArticleDisplayContext {
 		return _smallImageSource;
 	}
 
+	public PortletURL getPortletURL() {
+		PortletURL portletURL = _liferayPortletResponse.createRenderURL();
+
+		portletURL.setParameter("articleId", String.valueOf(getArticleId()));
+		portletURL.setParameter("folderId", String.valueOf(getFolderId()));
+		portletURL.setParameter("groupId", String.valueOf(getGroupId()));
+		portletURL.setParameter("mvcPath", "/edit_article.jsp");
+		portletURL.setParameter(
+			"referringPortletResource",
+			String.valueOf(getReferringPortletResource()));
+		portletURL.setParameter("version", String.valueOf(getVersion()));
+
+		return portletURL;
+	}
+
+	public String getTabs1() {
+		if (_tabs1 != null) {
+			return _tabs1;
+		}
+
+		_tabs1 = ParamUtil.getString(
+			_httpServletRequest, "tabs1", "properties");
+
+		return _tabs1;
+	}
+
 	public Map<String, Object> getTemplateComponentContext() {
 		return HashMapBuilder.<String, Object>put(
 			"currentURL", _themeDisplay::getURLCurrent
@@ -1388,6 +1415,7 @@ public class JournalEditArticleDisplayContext {
 	private Boolean _showHeader;
 	private Boolean _showSelectFolder;
 	private String _smallImageSource;
+	private String _tabs1;
 	private final ThemeDisplay _themeDisplay;
 	private Double _version;
 

@@ -149,33 +149,40 @@ JournalEditArticleDisplayContext journalEditArticleDisplayContext = new JournalE
 			<liferay-ui:tabs
 				names="<%= tabs1Names %>"
 				param="tabs1"
-				refresh="<%= false %>"
+				portletURL="<%= journalEditArticleDisplayContext.getPortletURL() %>"
+				tabsValues="<%= tabs1Names %>"
 			>
 				<liferay-ui:section>
+					<c:if test='<%= Objects.equals(journalEditArticleDisplayContext.getTabs1(), "properties") %>'>
 					<liferay-frontend:form-navigator
 						fieldSetCssClass="panel-group-flush"
 						formModelBean="<%= article %>"
 						id="<%= FormNavigatorConstants.FORM_NAVIGATOR_ID_JOURNAL %>"
 						showButtons="<%= false %>"
 					/>
+					</c:if>
 				</liferay-ui:section>
 
 				<c:if test="<%= (article != null) && (journalEditArticleDisplayContext.getClassNameId() == JournalArticleConstants.CLASS_NAME_ID_DEFAULT) %>">
 					<liferay-ui:section>
-						<liferay-layout:layout-classed-model-usages-view
-							className="<%= JournalArticle.class.getName() %>"
-							classPK="<%= article.getResourcePrimKey() %>"
-						/>
-					</liferay-ui:section>
-
-					<c:if test='<%= GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-161038")) %>'>
-						<liferay-ui:section>
-							<liferay-change-tracking:timeline
+						<c:if test='<%= Objects.equals(journalEditArticleDisplayContext.getTabs1(), "usages") %>'>
+							<liferay-layout:layout-classed-model-usages-view
 								className="<%= JournalArticle.class.getName() %>"
-								classPK="<%= article.getPrimaryKey() %>"
+								classPK="<%= article.getResourcePrimKey() %>"
 							/>
-						</liferay-ui:section>
-					</c:if>
+						</c:if>
+					</liferay-ui:section>
+				</c:if>
+
+				<c:if test='<%= GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-161038")) %>'>
+					<liferay-ui:section>
+						<c:if test='<%= Objects.equals(journalEditArticleDisplayContext.getTabs1(), "timeline") %>'>
+						<liferay-change-tracking:timeline
+							className="<%= JournalArticle.class.getName() %>"
+							classPK="<%= article.getPrimaryKey() %>"
+						/>
+						</c:if>
+					</liferay-ui:section>
 				</c:if>
 			</liferay-ui:tabs>
 		</div>
