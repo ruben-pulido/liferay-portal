@@ -135,7 +135,7 @@ JournalEditArticleDisplayContext journalEditArticleDisplayContext = new JournalE
 		<div class="sidebar-body">
 
 			<%
-			String tabs1Names = "properties,usages";
+			String tabs1Names = "properties";
 
 			if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-161038"))) {
 				tabs1Names += ",timeline";
@@ -161,13 +161,6 @@ JournalEditArticleDisplayContext journalEditArticleDisplayContext = new JournalE
 				</liferay-ui:section>
 
 				<c:if test="<%= (article != null) && (journalEditArticleDisplayContext.getClassNameId() == JournalArticleConstants.CLASS_NAME_ID_DEFAULT) %>">
-					<liferay-ui:section>
-						<liferay-layout:layout-classed-model-usages-view
-							className="<%= JournalArticle.class.getName() %>"
-							classPK="<%= article.getResourcePrimKey() %>"
-						/>
-					</liferay-ui:section>
-
 					<c:if test='<%= GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-161038")) %>'>
 						<liferay-ui:section>
 							<liferay-change-tracking:timeline
