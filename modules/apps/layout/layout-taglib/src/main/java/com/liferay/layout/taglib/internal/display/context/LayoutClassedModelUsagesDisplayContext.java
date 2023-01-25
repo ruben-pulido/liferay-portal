@@ -19,6 +19,7 @@ import com.liferay.fragment.helper.FragmentEntryLinkHelper;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
+import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.model.LayoutClassedModelUsage;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
@@ -38,11 +39,14 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -51,6 +55,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.portlet.PortletException;
@@ -58,6 +63,7 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceURL;
 
 /**
  * @author Pavel Savinov
@@ -161,6 +167,17 @@ public class LayoutClassedModelUsagesDisplayContext {
 		return StringBundler.concat(
 			layoutPageTemplateEntry.getName(), " (",
 			LanguageUtil.get(_themeDisplay.getLocale(), "draft"), ")");
+	}
+
+	public Map<String, Object> getLayoutClassedModelUsagesData() {
+		return HashMapBuilder.<String, Object>put(
+			"className", _className
+		).put(
+			"classPK", _classPK
+		).put(
+			"getLayoutClassedModelUsagesURL",
+			_getLayoutClassedModelUsagesURL(_className, _classPK)
+		).build();
 	}
 
 	public String getLayoutClassedModelUsageTypeLabel(
@@ -441,6 +458,24 @@ public class LayoutClassedModelUsagesDisplayContext {
 		}
 
 		return true;
+	}
+
+	private String _getLayoutClassedModelUsagesURL(
+		String className, long classPK) {
+
+		RequestBackedPortletURLFactory requestBackedPortletURLFactory =
+			RequestBackedPortletURLFactoryUtil.create(_renderRequest);
+
+		ResourceURL resourceURL =
+			(ResourceURL)requestBackedPortletURLFactory.createResourceURL(
+				LayoutAdminPortletKeys.GROUP_PAGES);
+
+		resourceURL.setResourceID(
+			"/layout_admin/get_layout_classed_model_usages");
+		resourceURL.setParameter("className", className);
+		resourceURL.setParameter("classPK", String.valueOf(classPK));
+
+		return resourceURL.toString();
 	}
 
 	private String _getOrderByCol() {
