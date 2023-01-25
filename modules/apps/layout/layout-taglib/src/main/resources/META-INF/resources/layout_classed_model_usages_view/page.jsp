@@ -27,6 +27,7 @@ LayoutClassedModelUsagesDisplayContext layoutClassedModelUsagesDisplayContext = 
 	<c:when test='<%= GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-172886")) %>'>
 		<react:component
 			module="layout_classed_model_usages_view/js/ViewUsages"
+			props="<%= layoutClassedModelUsagesDisplayContext.getUsagesData() %>"
 		/>
 	</c:when>
 	<c:otherwise>

@@ -169,13 +169,9 @@ public class LayoutClassedModelUsagesDisplayContext {
 			LanguageUtil.get(_themeDisplay.getLocale(), "draft"), ")");
 	}
 
-	public Map<String, Object> getLayoutClassedModelUsagesData() {
+	public Map<String, Object> getUsagesData() {
 		return HashMapBuilder.<String, Object>put(
-			"className", _className
-		).put(
-			"classPK", _classPK
-		).put(
-			"getLayoutClassedModelUsagesURL",
+			"getUsagesURL",
 			_getLayoutClassedModelUsagesURL(_className, _classPK)
 		).build();
 	}

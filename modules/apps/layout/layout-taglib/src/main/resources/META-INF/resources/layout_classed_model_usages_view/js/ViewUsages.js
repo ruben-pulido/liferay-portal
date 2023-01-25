@@ -21,11 +21,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 
 import '../css/ViewUsages.scss';
 
-export default function ViewUsages({
-	getJournalArticleUsagesURL: getUsagesURL,
-	journalArticleResourcePrimKey: articleId,
-	portletNamespace,
-}) {
+export default function ViewUsages({getUsagesURL, portletNamespace}) {
 	const [activePage, setActivePage] = useState(0);
 	const [totalPages, setTotalPages] = useState(5);
 
@@ -38,7 +34,6 @@ export default function ViewUsages({
 			fetch(getUsagesURL, {
 				body: objectToFormData({
 					[`${portletNamespace}pageIndex`]: pageIndex,
-					[`${portletNamespace}journalArticleResourcePrimKey`]: articleId,
 				}),
 				method: 'POST',
 			})
@@ -49,7 +44,7 @@ export default function ViewUsages({
 				})
 				.catch(() => openErrorToast());
 		},
-		[articleId, getUsagesURL, portletNamespace]
+		[getUsagesURL, portletNamespace]
 	);
 
 	useEffect(() => {
