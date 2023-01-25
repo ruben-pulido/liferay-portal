@@ -16,7 +16,7 @@ package com.liferay.layout.admin.web.internal.portlet.action;
 
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.fragment.model.FragmentEntryLink;
-import com.liferay.journal.constants.JournalPortletKeys;
+import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.model.LayoutClassedModelUsage;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
@@ -62,7 +62,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = {
-		"javax.portlet.name=" + JournalPortletKeys.JOURNAL,
+		"javax.portlet.name=" + LayoutAdminPortletKeys.GROUP_PAGES,
 		"mvc.command.name=/layout_admin/get_layout_classed_model_usages"
 	},
 	service = MVCResourceCommand.class
@@ -77,17 +77,32 @@ public class GetLayoutClassedModelUsagesResourceCommand
 
 		String className = ParamUtil.getString(resourceRequest, "className");
 		long classPK = ParamUtil.getLong(resourceRequest, "classPK");
-		int pageIndex = ParamUtil.getInteger(resourceRequest, "pageIndex");
+		int pageIndex = ParamUtil.getInteger(resourceRequest, "pageIndex", 1);
 
 		long classNameId = _portal.getClassNameId(className);
 
 		int usagesPageSize = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.SEARCH_CONTAINER_PAGE_DEFAULT_DELTA), 20);
 
+		if (pageIndex < 1) {
+			pageIndex = 1;
+		}
+
+		int layoutClassedModelUsagesCount =
+			_layoutClassedModelUsageLocalService.
+				getLayoutClassedModelUsagesCount(classNameId, classPK);
+
+		int totalNumberOfPages = (int)Math.ceil(
+			layoutClassedModelUsagesCount / (double)usagesPageSize);
+
+		if (pageIndex > totalNumberOfPages) {
+			pageIndex = totalNumberOfPages;
+		}
+
 		List<LayoutClassedModelUsage> layoutClassedModelUsages =
 			_layoutClassedModelUsageLocalService.getLayoutClassedModelUsages(
-				classNameId, classPK, usagesPageSize * pageIndex,
-				usagesPageSize * (pageIndex + 1),
+				classNameId, classPK, usagesPageSize * (pageIndex - 1),
+				usagesPageSize * pageIndex,
 				new LayoutClassedModelUsageModifiedDateComparator(false));
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray();
@@ -98,13 +113,6 @@ public class GetLayoutClassedModelUsagesResourceCommand
 			jsonArray.put(
 				_toJSONObject(layoutClassedModelUsage, resourceRequest));
 		}
-
-		int layoutClassedModelUsagesCount =
-			_layoutClassedModelUsageLocalService.
-				getLayoutClassedModelUsagesCount(classNameId, classPK);
-
-		int totalNumberOfPages = (int)Math.ceil(
-			layoutClassedModelUsagesCount / (double)usagesPageSize);
 
 		JSONPortletResponseUtil.writeJSON(
 			resourceRequest, resourceResponse,

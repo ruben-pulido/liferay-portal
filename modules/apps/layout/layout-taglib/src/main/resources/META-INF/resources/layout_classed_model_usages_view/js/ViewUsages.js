@@ -16,7 +16,7 @@ import {ClayButtonWithIcon} from '@clayui/button';
 import ClayList from '@clayui/list';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayPaginationWithBasicItems} from '@clayui/pagination';
-import {fetch, objectToFormData, openToast} from 'frontend-js-web';
+import {fetch, openToast} from 'frontend-js-web';
 import React, {useCallback, useEffect, useState} from 'react';
 
 import '../css/ViewUsages.scss';
@@ -31,11 +31,12 @@ export default function ViewUsages({getUsagesURL, portletNamespace}) {
 		(pageIndex) => {
 			setItems([]);
 
-			fetch(getUsagesURL, {
-				body: objectToFormData({
-					[`${portletNamespace}pageIndex`]: pageIndex,
-				}),
-				method: 'POST',
+			const url = new URL(getUsagesURL);
+
+			url.searchParams.set(`${portletNamespace}pageIndex`, pageIndex);
+
+			fetch(url, {
+				method: 'GET',
 			})
 				.then((response) => response.json())
 				.then(({totalNumberOfPages, usages}) => {
