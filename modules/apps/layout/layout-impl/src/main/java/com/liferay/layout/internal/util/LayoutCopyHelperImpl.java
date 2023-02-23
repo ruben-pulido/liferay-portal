@@ -936,13 +936,16 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 					portletIds, _sourceLayout, _targetLayout);
 			}
 
-			_resourcePermissionLocalService.deleteResourcePermissions(
-				_sourceLayout.getCompanyId(), Layout.class.getName(),
-				ResourceConstants.SCOPE_INDIVIDUAL, _targetLayout.getPlid());
+			if (!_sourceLayout.isDraft()) {
+				_resourcePermissionLocalService.deleteResourcePermissions(
+					_sourceLayout.getCompanyId(), Layout.class.getName(),
+					ResourceConstants.SCOPE_INDIVIDUAL,
+					_targetLayout.getPlid());
 
-			_resourcePermissionLocalService.copyModelResourcePermissions(
-				_sourceLayout.getCompanyId(), Layout.class.getName(),
-				_sourceLayout.getPlid(), _targetLayout.getPlid());
+				_resourcePermissionLocalService.copyModelResourcePermissions(
+					_sourceLayout.getCompanyId(), Layout.class.getName(),
+					_sourceLayout.getPlid(), _targetLayout.getPlid());
+			}
 
 			// Copy classedModelUsages after copying the structure
 
@@ -1015,6 +1018,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		}
 
 		private final Consumer<Layout> _consumer;
+		private final boolean _copyLayoutPermissions;
 		private final Layout _sourceLayout;
 		private final long[] _sourceSegmentsExperiencesIds;
 		private final Layout _targetLayout;
