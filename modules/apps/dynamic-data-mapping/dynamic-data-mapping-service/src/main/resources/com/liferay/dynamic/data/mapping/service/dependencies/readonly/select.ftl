@@ -1,5 +1,7 @@
 <#include "../init.ftl">
 
+RUBEN
+
 <#if !(fields?? && fields.get(fieldName)??)>
 	<#assign fieldValue = "" />
 </#if>
