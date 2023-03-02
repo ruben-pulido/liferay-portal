@@ -18,23 +18,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.liferay.headless.delivery.dto.v1_0.ContextReference;
 import com.liferay.info.exception.NoSuchFormVariationException;
+import com.liferay.info.exception.NoSuchInfoItemException;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.form.InfoForm;
+import com.liferay.info.item.CompanyWebIdGroupKeyKeyInfoItemIdentifier;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemFormProvider;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.info.search.InfoSearchClassMapperRegistry;
 import com.liferay.layout.internal.importer.LayoutStructureItemImporterContext;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -236,6 +242,16 @@ public abstract class BaseLayoutStructureItemImporter {
 		}
 
 		String classPK = String.valueOf(itemReferenceMap.get("classPK"));
+
+		if (Validator.isNull(classPK)) {
+			classPK = _getClassPK(
+				className, itemReferenceMap,
+				layoutStructureItemImporterContext);
+		}
+
+		if (classPK == null) {
+			return;
+		}
 
 		if (Validator.isNotNull(classNameId) && Validator.isNotNull(classPK)) {
 			jsonObject.put(
@@ -476,6 +492,9 @@ public abstract class BaseLayoutStructureItemImporter {
 	}
 
 	@Reference
+	protected CompanyLocalService companyLocalService;
+
+	@Reference
 	protected GroupLocalService groupLocalService;
 
 	@Reference
@@ -493,6 +512,109 @@ public abstract class BaseLayoutStructureItemImporter {
 
 	@Reference
 	protected Portal portal;
+
+	private String _getClassPK(
+		String className, Map<String, Object> itemReferenceMap,
+		LayoutStructureItemImporterContext layoutStructureItemImporterContext) {
+
+		String externalReferenceCode = null;
+		String siteKey = null;
+		String virtualInstanceWebId = null;
+
+		List<Map<String, String>> fields =
+			(List<Map<String, String>>)itemReferenceMap.get("fields");
+
+		for (Map<String, String> field : fields) {
+			String key = field.get("fieldName");
+
+			if (Objects.equals(key, "externalReferenceCode")) {
+				externalReferenceCode = field.get("fieldValue");
+			}
+			else if (Objects.equals(key, "siteKey")) {
+				siteKey = field.get("fieldValue");
+			}
+			else if (Objects.equals(key, "virtualInstanceWebId")) {
+				virtualInstanceWebId = field.get("fieldValue");
+			}
+		}
+
+		if (externalReferenceCode == null) {
+			return String.valueOf(itemReferenceMap.get("classPK"));
+		}
+
+		Company company = null;
+
+		try {
+			company = companyLocalService.getCompanyByWebId(
+				virtualInstanceWebId);
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+		}
+
+		Layout layout = layoutStructureItemImporterContext.getLayout();
+
+		if (company == null) {
+			try {
+				company = companyLocalService.getCompanyById(
+					layout.getCompanyId());
+			}
+			catch (PortalException portalException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(portalException);
+				}
+			}
+		}
+
+		Group group = groupLocalService.fetchGroup(
+			company.getCompanyId(), siteKey);
+
+		if (group == null) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					StringBundler.concat("Group ", siteKey, " does not exist"));
+			}
+
+			group = layout.getGroup();
+
+			try {
+				company = companyLocalService.getCompany(layout.getCompanyId());
+			}
+			catch (PortalException portalException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						StringBundler.concat(
+							"Company ", layout.getCompanyId(),
+							" does not exist"));
+				}
+			}
+		}
+
+		InfoItemObjectProvider<Object> infoItemObjectProvider =
+			infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemObjectProvider.class, className);
+
+		if (infoItemObjectProvider == null) {
+			return null;
+		}
+
+		try {
+			return String.valueOf(
+				infoItemObjectProvider.getInfoItemClassPK(
+					new CompanyWebIdGroupKeyKeyInfoItemIdentifier(
+						company.getWebId(), group.getGroupKey(),
+						externalReferenceCode)));
+		}
+		catch (NoSuchInfoItemException noSuchInfoItemException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchInfoItemException);
+			}
+		}
+
+		return null;
+	}
 
 	private JSONObject _getLayoutJSONObject(
 		String fieldKey, String fieldValue, Layout layout) {

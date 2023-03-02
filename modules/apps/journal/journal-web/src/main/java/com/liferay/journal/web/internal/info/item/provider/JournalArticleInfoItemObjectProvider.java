@@ -16,6 +16,7 @@ package com.liferay.journal.web.internal.info.item.provider;
 
 import com.liferay.info.exception.NoSuchInfoItemException;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.CompanyWebIdGroupKeyKeyInfoItemIdentifier;
 import com.liferay.info.item.GroupKeyInfoItemIdentifier;
 import com.liferay.info.item.GroupUrlTitleInfoItemIdentifier;
 import com.liferay.info.item.InfoItemIdentifier;
@@ -29,10 +30,14 @@ import com.liferay.journal.service.JournalArticleResourceLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -63,6 +68,8 @@ public class JournalArticleInfoItemObjectProvider
 		throws NoSuchInfoItemException {
 
 		if (!(infoItemIdentifier instanceof ClassPKInfoItemIdentifier) &&
+			!(infoItemIdentifier instanceof
+				CompanyWebIdGroupKeyKeyInfoItemIdentifier) &&
 			!(infoItemIdentifier instanceof GroupKeyInfoItemIdentifier) &&
 			!(infoItemIdentifier instanceof GroupUrlTitleInfoItemIdentifier)) {
 
@@ -89,6 +96,45 @@ public class JournalArticleInfoItemObjectProvider
 				article = _getArticle(
 					groupKeyInfoItemIdentifier.getGroupId(),
 					groupKeyInfoItemIdentifier.getKey(), version);
+			}
+			else if (infoItemIdentifier instanceof
+						CompanyWebIdGroupKeyKeyInfoItemIdentifier) {
+
+				CompanyWebIdGroupKeyKeyInfoItemIdentifier
+					companyWebIdGroupKeyKeyInfoItemIdentifier =
+						(CompanyWebIdGroupKeyKeyInfoItemIdentifier)
+							infoItemIdentifier;
+
+				Company company = null;
+
+				try {
+					company = _companyLocalService.getCompanyByWebId(
+						companyWebIdGroupKeyKeyInfoItemIdentifier.
+							getCompanyWebId());
+				}
+				catch (PortalException portalException) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(portalException);
+					}
+				}
+
+				Group group = null;
+
+				if (company != null) {
+					group = _groupLocalService.fetchGroup(
+						company.getCompanyId(),
+						companyWebIdGroupKeyKeyInfoItemIdentifier.
+							getGroupKey());
+				}
+
+				if (group != null) {
+					article =
+						_journalArticleLocalService.
+							fetchLatestArticleByExternalReferenceCode(
+								group.getGroupId(),
+								companyWebIdGroupKeyKeyInfoItemIdentifier.
+									getKey());
+				}
 			}
 			else if (infoItemIdentifier instanceof
 						GroupUrlTitleInfoItemIdentifier) {
@@ -144,6 +190,46 @@ public class JournalArticleInfoItemObjectProvider
 			classPK);
 
 		return getInfoItem(infoItemIdentifier);
+	}
+
+	public Long getInfoItemClassPK(InfoItemIdentifier infoItemIdentifier)
+		throws NoSuchInfoItemException {
+
+		JournalArticle journalArticle = getInfoItem(infoItemIdentifier);
+
+		if (journalArticle == null) {
+			return null;
+		}
+
+		return journalArticle.getResourcePrimKey();
+	}
+
+	public InfoItemIdentifier getInfoItemIdentifier(long classPK)
+		throws NoSuchInfoItemException {
+
+		JournalArticle journalArticle = getInfoItem(classPK);
+
+		if (journalArticle == null) {
+			return null;
+		}
+
+		Company company = _companyLocalService.fetchCompany(
+			journalArticle.getCompanyId());
+
+		if (company == null) {
+			return null;
+		}
+
+		Group group = _groupLocalService.fetchGroup(
+			journalArticle.getGroupId());
+
+		if (group == null) {
+			return null;
+		}
+
+		return new CompanyWebIdGroupKeyKeyInfoItemIdentifier(
+			company.getWebId(), group.getGroupKey(),
+			journalArticle.getExternalReferenceCode());
 	}
 
 	private JournalArticle _getArticle(long classPK, String version)
@@ -253,6 +339,12 @@ public class JournalArticleInfoItemObjectProvider
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		JournalArticleInfoItemObjectProvider.class);
+
+	@Reference
+	private CompanyLocalService _companyLocalService;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private JournalArticleLocalService _journalArticleLocalService;

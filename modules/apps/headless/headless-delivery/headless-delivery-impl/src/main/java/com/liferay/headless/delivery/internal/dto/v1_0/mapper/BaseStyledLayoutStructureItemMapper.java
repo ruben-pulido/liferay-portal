@@ -181,8 +181,11 @@ public abstract class BaseStyledLayoutStructureItemMapper
 						defaultFragmentInlineValue = fragmentInlineValue;
 						fieldKey = FragmentMappedValueUtil.getFieldKey(
 							jsonObject);
+
+						// TODO
+
 						itemReference = FragmentMappedValueUtil.toItemReference(
-							jsonObject);
+							null, jsonObject);
 					}
 				};
 			}

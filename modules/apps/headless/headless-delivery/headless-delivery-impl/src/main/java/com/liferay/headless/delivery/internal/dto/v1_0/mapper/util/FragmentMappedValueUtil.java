@@ -18,6 +18,10 @@ import com.liferay.headless.delivery.dto.v1_0.ClassFieldsReference;
 import com.liferay.headless.delivery.dto.v1_0.ClassPKReference;
 import com.liferay.headless.delivery.dto.v1_0.ContextReference;
 import com.liferay.headless.delivery.dto.v1_0.Field;
+import com.liferay.info.exception.NoSuchInfoItemException;
+import com.liferay.info.item.CompanyWebIdGroupKeyKeyInfoItemIdentifier;
+import com.liferay.info.item.InfoItemIdentifier;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -78,7 +82,10 @@ public class FragmentMappedValueUtil {
 		return false;
 	}
 
-	public static Object toItemReference(JSONObject jsonObject) {
+	public static Object toItemReference(
+		InfoItemObjectProvider<Object> infoItemObjectProvider,
+		JSONObject jsonObject) {
+
 		String collectionFieldId = jsonObject.getString("collectionFieldId");
 		String fieldId = jsonObject.getString("fieldId");
 		JSONObject layoutJSONObject = jsonObject.getJSONObject("layout");
@@ -106,6 +113,16 @@ public class FragmentMappedValueUtil {
 			return new ContextReference() {
 				{
 					contextSource = ContextSource.DISPLAY_PAGE_ITEM;
+				}
+			};
+		}
+
+		if (true) { //TODO Add Feature Flag
+
+			return new ClassFieldsReference() {
+				{
+					className = _toItemClassName(jsonObject);
+					fields = _toItemFields(infoItemObjectProvider, jsonObject);
 				}
 			};
 		}
@@ -243,6 +260,84 @@ public class FragmentMappedValueUtil {
 		}
 
 		return classPK;
+	}
+
+	private static Field[] _toItemFields(
+		InfoItemObjectProvider<Object> infoItemObjectProvider,
+		JSONObject jsonObject) {
+
+		String classPKString = jsonObject.getString("classPK");
+
+		if (Validator.isNull(classPKString)) {
+			return null;
+		}
+
+		Long classPK = null;
+
+		try {
+			classPK = Long.parseLong(classPKString);
+		}
+		catch (NumberFormatException numberFormatException) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					String.format(
+						"Item class PK could not be set since class PK %s " +
+							"could not be parsed to a long",
+						classPKString),
+					numberFormatException);
+			}
+
+			return null;
+		}
+
+		InfoItemIdentifier infoItemIdentifier = null;
+
+		try {
+			infoItemIdentifier = infoItemObjectProvider.getInfoItemIdentifier(
+				classPK);
+		}
+		catch (NoSuchInfoItemException noSuchInfoItemException) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(noSuchInfoItemException);
+			}
+
+			return null;
+		}
+
+		if (!(infoItemIdentifier instanceof
+				CompanyWebIdGroupKeyKeyInfoItemIdentifier)) {
+
+			return null;
+		}
+
+		CompanyWebIdGroupKeyKeyInfoItemIdentifier
+			companyWebIdGroupKeyKeyInfoItemIdentifier =
+				(CompanyWebIdGroupKeyKeyInfoItemIdentifier)infoItemIdentifier;
+
+		return new Field[] {
+			new Field() {
+				{
+					fieldName = "externalReferenceCode";
+					fieldValue =
+						companyWebIdGroupKeyKeyInfoItemIdentifier.getKey();
+				}
+			},
+			new Field() {
+				{
+					fieldName = "siteKey";
+					fieldValue =
+						companyWebIdGroupKeyKeyInfoItemIdentifier.getGroupKey();
+				}
+			},
+			new Field() {
+				{
+					fieldName = "virtualInstanceWebId";
+					fieldValue =
+						companyWebIdGroupKeyKeyInfoItemIdentifier.
+							getCompanyWebId();
+				}
+			}
+		};
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

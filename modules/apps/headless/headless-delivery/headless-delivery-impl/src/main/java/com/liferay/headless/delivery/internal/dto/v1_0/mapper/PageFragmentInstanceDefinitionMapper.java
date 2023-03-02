@@ -342,6 +342,34 @@ public class PageFragmentInstanceDefinitionMapper {
 		};
 	}
 
+	private InfoItemObjectProvider<Object> _getInfoItemObjectProvider(
+		JSONObject jsonObject) {
+
+		long classNameId = jsonObject.getLong("classNameId");
+
+		if (classNameId == 0) {
+			return null;
+		}
+
+		String className = null;
+
+		try {
+			className = _portal.getClassName(classNameId);
+		}
+		catch (Exception exception) {
+			if (_log.isWarnEnabled()) {
+				_log.warn("Unable to get class name", exception);
+			}
+		}
+
+		if (Validator.isNull(className)) {
+			return null;
+		}
+
+		return _infoItemServiceRegistry.getFirstInfoItemService(
+			InfoItemObjectProvider.class, className);
+	}
+
 	private List<FragmentField> _getTextFragmentFields(
 		Map<String, String> editableTypes, JSONObject jsonObject,
 		boolean saveMapping) {
@@ -867,7 +895,7 @@ public class PageFragmentInstanceDefinitionMapper {
 						fieldKey = FragmentMappedValueUtil.getFieldKey(
 							jsonObject);
 						itemReference = FragmentMappedValueUtil.toItemReference(
-							jsonObject);
+							_getInfoItemObjectProvider(jsonObject), jsonObject);
 					}
 				};
 			}

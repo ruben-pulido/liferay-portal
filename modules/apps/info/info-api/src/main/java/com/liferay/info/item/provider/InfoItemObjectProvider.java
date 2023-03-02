@@ -39,4 +39,17 @@ public interface InfoItemObjectProvider<T> {
 
 	public T getInfoItem(long classPK) throws NoSuchInfoItemException;
 
+	public default Long getInfoItemClassPK(
+			InfoItemIdentifier infoItemIdentifier)
+		throws NoSuchInfoItemException {
+
+		return null;
+	}
+
+	public default InfoItemIdentifier getInfoItemIdentifier(long classPK)
+		throws NoSuchInfoItemException {
+
+		return null;
+	}
+
 }
