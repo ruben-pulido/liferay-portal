@@ -57,10 +57,8 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 	@Override
 	public Site postSite(Site site) throws Exception {
 		try {
-			Callable<Group> groupCallable = new GroupCallable(site);
-
 			Group group = TransactionInvokerUtil.invoke(
-				_transactionConfig, groupCallable);
+				_transactionConfig, new GroupCallable(site));
 
 			return new Site() {
 				{
@@ -80,18 +78,13 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 	}
 
 	private Group _addGroup(Site site) throws Exception {
-		if (Validator.isNull(site.getTemplateKey()) &&
-			Validator.isNotNull(site.getTemplateType())) {
+		if ((Validator.isNull(site.getTemplateKey()) &&
+			 Validator.isNotNull(site.getTemplateType())) ||
+			(Validator.isNotNull(site.getTemplateKey()) &&
+			 Validator.isNull(site.getTemplateType()))) {
 
 			throw new IllegalArgumentException(
 				"Template key cannot be empty if template type is specified");
-		}
-
-		if (Validator.isNotNull(site.getTemplateKey()) &&
-			Validator.isNull(site.getTemplateType())) {
-
-			throw new IllegalArgumentException(
-				"Template type cannot be empty if template key is specified");
 		}
 
 		ServiceContext serviceContext = new ServiceContext() {
