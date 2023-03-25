@@ -62,6 +62,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -83,6 +84,9 @@ import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Jürgen Kappler
@@ -800,10 +804,21 @@ public class FragmentLayoutStructureItemImporter
 			return processedHTML;
 		}
 
+		HttpServletRequest httpServletRequest = serviceContext.getRequest();
+		HttpServletResponse httpServletResponse = serviceContext.getResponse();
+		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+
+		if ((httpServletRequest == null) && (themeDisplay != null)) {
+			httpServletRequest = themeDisplay.getRequest();
+		}
+
+		if ((httpServletResponse == null) && (themeDisplay != null)) {
+			httpServletResponse = themeDisplay.getResponse();
+		}
+
 		FragmentEntryProcessorContext fragmentEntryProcessorContext =
 			new DefaultFragmentEntryProcessorContext(
-				serviceContext.getRequest(), serviceContext.getResponse(),
-				FragmentEntryLinkConstants.EDIT,
+				httpServletRequest, httpServletResponse, FragmentEntryLinkConstants.EDIT,
 				LocaleUtil.getMostRelevantLocale());
 
 		return _fragmentEntryProcessorRegistry.processFragmentEntryLinkHTML(

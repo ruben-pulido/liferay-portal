@@ -179,13 +179,17 @@ public class PortletFragmentEntryProcessor implements FragmentEntryProcessor {
 					stagingAdvicesThreadLocalEnabled);
 			}
 
-			String portletHTML = _fragmentPortletRenderer.renderPortlet(
-				fragmentEntryProcessorContext.getHttpServletRequest(),
-				fragmentEntryProcessorContext.getHttpServletResponse(),
-				portletName, instanceId,
-				_getPreferences(
-					plid, portletName, fragmentEntryLink, id,
-					defaultPreferences));
+			String portletHTML = StringPool.BLANK;
+
+			if (fragmentEntryProcessorContext.getHttpServletRequest() != null && fragmentEntryProcessorContext.getHttpServletResponse() != null) {
+				portletHTML = _fragmentPortletRenderer.renderPortlet(
+					fragmentEntryProcessorContext.getHttpServletRequest(),
+					fragmentEntryProcessorContext.getHttpServletResponse(),
+					portletName, instanceId,
+					_getPreferences(
+						plid, portletName, fragmentEntryLink, id,
+						defaultPreferences));
+			}
 
 			Element portletElement = new Element("div");
 
