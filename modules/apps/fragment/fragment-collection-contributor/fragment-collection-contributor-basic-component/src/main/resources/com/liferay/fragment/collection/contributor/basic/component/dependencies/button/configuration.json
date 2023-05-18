@@ -3,6 +3,12 @@
 		{
 			"fields": [
 				{
+					"defaultValue": false,
+					"label": "object-action",
+					"name": "objectAction",
+					"type": "checkbox"
+				},
+				{
 					"dataType": "string",
 					"defaultValue": "primary",
 					"label": "type",
