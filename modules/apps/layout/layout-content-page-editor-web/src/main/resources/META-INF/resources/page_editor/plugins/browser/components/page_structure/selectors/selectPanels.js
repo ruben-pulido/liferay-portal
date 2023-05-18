@@ -32,6 +32,7 @@ import {CollectionFilterGeneralPanel} from '../components/item_configuration_pan
 import ContainerAdvancedPanel from '../components/item_configuration_panels/ContainerAdvancedPanel';
 import ContainerGeneralPanel from '../components/item_configuration_panels/ContainerGeneralPanel';
 import {ContainerStylesPanel} from '../components/item_configuration_panels/ContainerStylesPanel';
+import EditableConfigurationPanel from '../components/item_configuration_panels/EditableConfigurationPanel';
 import EditableLinkPanel from '../components/item_configuration_panels/EditableLinkPanel';
 import FormAdvancedPanel from '../components/item_configuration_panels/FormAdvancedPanel';
 import {FormGeneralPanel} from '../components/item_configuration_panels/FormGeneralPanel';
@@ -64,6 +65,7 @@ export const PANEL_IDS = {
 	containerAdvanced: 'containerAdvanced',
 	containerGeneral: 'containerGeneral',
 	containerStyles: 'containerStyles',
+	editableConfiguration: 'editableConfiguration',
 	editableLink: 'editableLink',
 	editableMapping: 'editableMapping',
 	formAdvancedPanel: 'formAdvancedPanel',
@@ -114,6 +116,11 @@ export const PANELS = {
 		label: Liferay.Language.get('styles'),
 		priority: 1,
 		type: PANEL_TYPES.styles,
+	},
+	[PANEL_IDS.editableConfiguration]: {
+		component: EditableConfigurationPanel,
+		label: Liferay.Language.get('configuration'),
+		priority: 0,
 	},
 	[PANEL_IDS.editableLink]: {
 		component: EditableLinkPanel,
@@ -233,6 +240,8 @@ export function selectPanels(activeItemId, activeItemType, state) {
 
 	if (canUpdateEditables && activeItem.editableId) {
 		panelsIds = {
+			[PANEL_IDS.editableConfiguration]:
+				activeItem.type === EDITABLE_TYPES.objectAction,
 			[PANEL_IDS.editableLink]:
 				[
 					EDITABLE_TYPES.text,
