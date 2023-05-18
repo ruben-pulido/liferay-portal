@@ -1243,6 +1243,15 @@ public class RenderLayoutStructureTag extends IncludeTag {
 					renderLayoutStructureDisplayContext);
 			}
 		}
+
+		ComponentTag componentTag = new ComponentTag();
+
+		componentTag.setComponentId("infoItemActionComponent");
+
+		componentTag.setModule(
+			"render_layout_structure/js/InfoItemActionHandler");
+
+		componentTag.doTag(pageContext);
 	}
 
 	private void _renderLayoutStructure(
