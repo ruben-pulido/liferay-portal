@@ -1243,6 +1243,15 @@ public class RenderLayoutStructureTag extends IncludeTag {
 					renderLayoutStructureDisplayContext);
 			}
 		}
+
+		ComponentTag componentTag = new ComponentTag();
+
+		componentTag.setComponentId("objectActionComponent");
+
+		componentTag.setModule(
+			"render_layout_structure/js/ObjectActionsHandler");
+
+		componentTag.doTag(pageContext);
 	}
 
 	private void _renderLayoutStructure(
