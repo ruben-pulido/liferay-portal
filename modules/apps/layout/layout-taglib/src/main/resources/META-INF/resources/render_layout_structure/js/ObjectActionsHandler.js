@@ -48,7 +48,7 @@ function onTriggerClick(event) {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 			}),
-			method: 'GET',
+			method: 'PUT',
 		})
 			.then(() => {
 				trigger.classList.remove('disabled');
