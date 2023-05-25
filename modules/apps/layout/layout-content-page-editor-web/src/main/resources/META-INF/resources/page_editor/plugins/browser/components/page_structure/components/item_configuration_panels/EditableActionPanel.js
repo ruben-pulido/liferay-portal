@@ -12,16 +12,8 @@
  * details.
  */
 
-/**
- * Available editable types
- */
-export const EDITABLE_TYPES = {
-	'backgroundImage': 'background-image',
-	'date-time': 'date-time',
-	'html': 'html',
-	'image': 'image',
-	'link': 'link',
-	'objectAction': 'object-action',
-	'rich-text': 'rich-text',
-	'text': 'text',
-};
+import React from 'react';
+
+export default function EditableActionPanel() {
+	return <></>;
+}
