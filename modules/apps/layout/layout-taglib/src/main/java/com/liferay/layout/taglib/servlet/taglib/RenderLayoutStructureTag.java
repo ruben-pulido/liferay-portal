@@ -1244,7 +1244,11 @@ public class RenderLayoutStructureTag extends IncludeTag {
 			}
 		}
 
+		// TODO Can we inject here the url for executing actions?
+
 		ComponentTag componentTag = new ComponentTag();
+
+//		componentTag.s
 
 		componentTag.setComponentId("objectActionComponent");
 

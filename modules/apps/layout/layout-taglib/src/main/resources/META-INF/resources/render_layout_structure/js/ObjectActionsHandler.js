@@ -45,11 +45,16 @@ function onTriggerClick(event) {
 	trigger.appendChild(loadingIndicator);
 
 	Liferay.Util.fetch(new URL(actionUrl), {
+		body: JSON.stringify({
+			productExternalReferenceCode: productExternalReferenceCode,
+			productId: productId,
+			productGroupId: productPricingClass.id,
+		}),
 		headers: new Headers({
 			'Accept': 'application/json',
 			'Content-Type': 'application/json',
 		}),
-		method: 'GET',
+		method: 'POST',
 	})
 		.then(() => {
 			trigger.classList.remove('disabled');

@@ -122,6 +122,17 @@ public class RenderLayoutStructureDisplayContext {
 		return sb.toString();
 	}
 
+	// TODO Should be moved where it can be read by ObjectActionsHandler.js
+	public String getExecuteInfoItemActionActionURL() {
+		StringBundler sb = new StringBundler(3);
+
+		sb.append(PortalUtil.getPortalURL(_httpServletRequest));
+		sb.append(_themeDisplay.getPathMain());
+		sb.append("/portal/execute_info_item_action");
+
+		return sb.toString();
+	}
+
 	public List<String> getCollectionStyledLayoutStructureItemIds() {
 		List<String> collectionStyledLayoutStructureItemIds =
 			(List<String>)_httpServletRequest.getAttribute(
