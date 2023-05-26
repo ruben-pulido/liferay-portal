@@ -1,0 +1,1 @@
+Verifying commit signing was set up correctly
