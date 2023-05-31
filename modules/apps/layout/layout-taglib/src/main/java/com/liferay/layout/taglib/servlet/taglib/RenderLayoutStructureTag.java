@@ -1256,6 +1256,9 @@ public class RenderLayoutStructureTag extends IncludeTag {
 		ComponentTag componentTag = new ComponentTag();
 
 		componentTag.setComponentId("infoItemActionComponent");
+		componentTag.setContext(
+			renderLayoutStructureDisplayContext.
+				getInfoItemActionComponentContext());
 
 		componentTag.setModule(
 			"render_layout_structure/js/InfoItemActionHandler");
