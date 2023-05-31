@@ -14,13 +14,13 @@
 
 import {objectToFormData, openToast} from 'frontend-js-web';
 
-export default function ({namespace, triggerActionURL}) {
+export default function ({executeInfoItemActionURL}) {
 	const triggers = document.querySelectorAll(
 		'[data-lfr-editable-type="action"]'
 	);
 
 	const onClick = (event) => {
-		triggerAction(namespace, event.target, triggerActionURL);
+		triggerAction(event.target, executeInfoItemActionURL);
 	};
 
 	triggers.forEach((trigger) => {
@@ -36,10 +36,10 @@ export default function ({namespace, triggerActionURL}) {
 	};
 }
 
-function triggerAction(namespace, trigger, triggerActionURL) {
-	const {actionName, classNameId, classPK} = trigger.dataset;
+function triggerAction(trigger, executeInfoItemActionURL) {
+	const {lfrClassNameId, lfrClassPk, lfrFieldId} = trigger.dataset;
 
-	if (!actionName) {
+	if (!lfrFieldId) {
 		return;
 	}
 
@@ -48,11 +48,11 @@ function triggerAction(namespace, trigger, triggerActionURL) {
 	trigger.classList.add('disabled');
 	trigger.appendChild(loadingIndicator);
 
-	Liferay.Util.fetch(new URL(triggerActionURL), {
+	Liferay.Util.fetch(new URL(executeInfoItemActionURL), {
 		body: objectToFormData({
-			[`${namespace}actionName`]: actionName,
-			[`${namespace}classNameId`]: classNameId,
-			[`${namespace}classPK`]: classPK,
+			classNameId: lfrClassNameId,
+			classPK: lfrClassPk,
+			fieldId: lfrFieldId,
 		}),
 		method: 'POST',
 	})
