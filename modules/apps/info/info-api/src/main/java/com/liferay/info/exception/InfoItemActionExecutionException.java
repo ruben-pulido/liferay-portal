@@ -24,9 +24,21 @@ import java.util.Locale;
  */
 public class InfoItemActionExecutionException extends PortalException {
 
-	public String getLocalizedMessage(Locale locale) {
-		return LanguageUtil.get(
-			locale, "an-error-occurred-while-executing-the-action");
+	public InfoItemActionExecutionException() {
 	}
+
+	public InfoItemActionExecutionException(String errorMessage) {
+		_errorMessage = errorMessage;
+	}
+
+	public String getLocalizedMessage(Locale locale) {
+		if (_errorMessage != null) {
+			return _errorMessage;
+		}
+
+		return LanguageUtil.get(locale, "your-request-failed-to-complete");
+	}
+
+	private String _errorMessage;
 
 }
