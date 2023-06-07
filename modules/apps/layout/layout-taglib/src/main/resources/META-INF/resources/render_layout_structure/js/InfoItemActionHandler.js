@@ -60,14 +60,16 @@ function triggerAction(trigger, executeInfoItemActionURL) {
 		}),
 		method: 'POST',
 	})
-		.then(({error}) => {
+		.then((response) => response.json())
+		.then(({message, type}) => {
 			trigger.classList.remove('disabled');
 			trigger.removeChild(loadingIndicator);
 
-			if (error) {
-				openResultToast('danger', error);
-			} else {
-				openResultToast('success');
+			if (type === 'error') {
+				openResultToast('danger', message);
+			}
+			else {
+				openResultToast('success', message);
 			}
 		})
 		.catch(() => {
@@ -95,10 +97,7 @@ function getLoadingIndicator() {
 
 function openResultToast(type, message) {
 	openToast({
-		message:
-			message || type === 'success'
-				? Liferay.Language.get('your-request-completed-successfully')
-				: Liferay.Language.get('your-request-failed-to-complete'),
+		message,
 		title:
 			type === 'success'
 				? Liferay.Language.get('success')
