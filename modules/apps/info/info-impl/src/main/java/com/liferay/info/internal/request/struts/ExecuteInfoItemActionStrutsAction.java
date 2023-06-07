@@ -92,12 +92,7 @@ public class ExecuteInfoItemActionStrutsAction implements StrutsAction {
 			ServletResponseUtil.write(
 				httpServletResponse,
 				JSONUtil.put(
-					"message",
-					_language.get(
-						httpServletRequest.getLocale(),
-						"your-request-completed-successfully")
-				).put(
-					"type", "success"
+					"success", true
 				).toString());
 		}
 		catch (InfoItemActionExecutionException
@@ -110,11 +105,9 @@ public class ExecuteInfoItemActionStrutsAction implements StrutsAction {
 			ServletResponseUtil.write(
 				httpServletResponse,
 				JSONUtil.put(
-					"message",
+					"error",
 					infoItemActionExecutionException.getLocalizedMessage(
 						httpServletRequest.getLocale())
-				).put(
-					"type", "error"
 				).toString());
 		}
 		catch (Exception exception) {
@@ -128,11 +121,9 @@ public class ExecuteInfoItemActionStrutsAction implements StrutsAction {
 			ServletResponseUtil.write(
 				httpServletResponse,
 				JSONUtil.put(
-					"message",
+					"error",
 					infoItemActionExecutionException.getLocalizedMessage(
 						httpServletRequest.getLocale())
-				).put(
-					"type", "error"
 				).toString());
 		}
 
