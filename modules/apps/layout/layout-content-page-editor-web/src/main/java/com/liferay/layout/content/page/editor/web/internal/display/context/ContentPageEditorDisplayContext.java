@@ -31,6 +31,7 @@ import com.liferay.info.list.provider.item.selector.criterion.InfoListProviderIt
 import com.liferay.info.search.InfoSearchClassMapperRegistry;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.ItemSelectorCriterion;
+import com.liferay.item.selector.criteria.ActionedInfoItemItemSelectorReturnType;
 import com.liferay.item.selector.criteria.DownloadFileEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.InfoItemItemSelectorReturnType;
 import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
@@ -239,6 +240,8 @@ public class ContentPageEditorDisplayContext {
 		return HashMapBuilder.<String, Object>put(
 			"config",
 			HashMapBuilder.<String, Object>put(
+				"actionedInfoItemSelectorURL", _getActionedInfoItemSelectorURL()
+			).put(
 				"addFragmentCompositionURL",
 				getFragmentEntryActionURL(
 					"/layout_content_page_editor/add_fragment_composition")
@@ -1024,6 +1027,25 @@ public class ContentPageEditorDisplayContext {
 		segmentsExperienceLocalService;
 	protected final StagingGroupHelper stagingGroupHelper;
 	protected final ThemeDisplay themeDisplay;
+
+	private String _getActionedInfoItemSelectorURL() {
+		InfoItemItemSelectorCriterion itemSelectorCriterion =
+			new InfoItemItemSelectorCriterion();
+
+		itemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			new ActionedInfoItemItemSelectorReturnType());
+
+		PortletURL infoItemSelectorURL = _itemSelector.getItemSelectorURL(
+			RequestBackedPortletURLFactoryUtil.create(httpServletRequest),
+			renderResponse.getNamespace() + "selectInfoItem",
+			itemSelectorCriterion);
+
+		if (infoItemSelectorURL == null) {
+			return StringPool.BLANK;
+		}
+
+		return infoItemSelectorURL.toString();
+	}
 
 	private String _getAssetCategoryTreeNodeItemSelectorURL() {
 		ItemSelectorCriterion itemSelectorCriterion =
