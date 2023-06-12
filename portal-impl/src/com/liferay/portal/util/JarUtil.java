@@ -72,10 +72,6 @@ public class JarUtil {
 			Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
 		}
 
-		if (_log.isInfoEnabled()) {
-			_log.info(StringBundler.concat("Downloaded ", url, " to ", path));
-		}
-
 		try (InputStream inputStream = Files.newInputStream(path)) {
 			String digest = DigesterUtil.digestHex(Digester.SHA_1, inputStream);
 
@@ -85,6 +81,10 @@ public class JarUtil {
 						"Unable to download ", url, " to ", path, " because ",
 						sha1, " does not equal ", digest));
 			}
+		}
+
+		if (_log.isInfoEnabled()) {
+			_log.info(StringBundler.concat("Downloaded ", url, " to ", path));
 		}
 	}
 
