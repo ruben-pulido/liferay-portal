@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.xuggler.Xuggler;
 import com.liferay.portal.kernel.xuggler.XugglerInstallException;
 import com.liferay.portal.util.JarUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
-import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 
 import com.xuggle.ferry.JNILibraryLoader;
@@ -41,11 +40,9 @@ public class XugglerImpl implements Xuggler {
 	@Override
 	public void installNativeLibraries(String name) throws Exception {
 		try {
-			String sha1 = PropsUtil.get(PropsKeys.SETUP_DATABASE_JAR_SHA1);
-
 			JarUtil.downloadAndInstallJar(
 				new URL(PropsValues.XUGGLER_JAR_URL + name),
-				Paths.get(PropsValues.LIFERAY_LIB_PORTAL_DIR, name), sha1);
+				Paths.get(PropsValues.LIFERAY_LIB_PORTAL_DIR, name));
 
 			_nativeLibraryCopied = true;
 		}
