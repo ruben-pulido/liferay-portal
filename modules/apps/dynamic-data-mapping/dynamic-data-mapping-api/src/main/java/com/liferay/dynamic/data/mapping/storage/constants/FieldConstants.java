@@ -212,12 +212,20 @@ public class FieldConstants {
 			return value;
 		}
 		else if (type.equals(DOUBLE)) {
-			try {
-				return new BigDecimal(value.trim());
+			if (StringUtil.containsIgnoreCase(
+				String.valueOf(GetterUtil.getDouble(value)), "E",
+				StringPool.BLANK)) {
+
+				try {
+					return new BigDecimal(value.trim());
+				}
+				catch (NumberFormatException numberFormatException) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(numberFormatException);
+					}
+				}
 			}
-			catch (NumberFormatException numberFormatException) {
-				return GetterUtil.getDouble(value);
-			}
+			return GetterUtil.getDouble(value);
 		}
 		else if (type.equals(FLOAT)) {
 			return GetterUtil.getFloat(value);
