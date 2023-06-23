@@ -213,8 +213,8 @@ public class FieldConstants {
 		}
 		else if (type.equals(DOUBLE)) {
 			if (StringUtil.containsIgnoreCase(
-				String.valueOf(GetterUtil.getDouble(value)), "E",
-				StringPool.BLANK)) {
+					String.valueOf(GetterUtil.getDouble(value)), "E",
+					StringPool.BLANK)) {
 
 				try {
 					return new BigDecimal(value.trim());
@@ -225,6 +225,7 @@ public class FieldConstants {
 					}
 				}
 			}
+
 			return GetterUtil.getDouble(value);
 		}
 		else if (type.equals(FLOAT)) {
