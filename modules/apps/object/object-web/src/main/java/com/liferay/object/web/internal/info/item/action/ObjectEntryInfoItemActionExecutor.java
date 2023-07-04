@@ -14,6 +14,7 @@
 
 package com.liferay.object.web.internal.info.item.action;
 
+import com.liferay.info.exception.InfoItemActionErrorMessageException;
 import com.liferay.info.exception.InfoItemActionExecutionException;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemIdentifier;
@@ -49,6 +50,48 @@ public class ObjectEntryInfoItemActionExecutor
 		_objectActionLocalService = objectActionLocalService;
 		_objectDefinition = objectDefinition;
 		_objectEntryManagerRegistry = objectEntryManagerRegistry;
+	}
+
+	@Override
+	public String getInfoItemActionErrorMessage(String fieldId)
+		throws InfoItemActionErrorMessageException {
+
+		try {
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			if ((serviceContext == null) ||
+				(serviceContext.getThemeDisplay() == null)) {
+
+				throw new InfoItemActionErrorMessageException();
+			}
+
+			String objectActionName = fieldId;
+
+			String objectActionPrefix =
+				ObjectAction.class.getSimpleName() + StringPool.UNDERLINE;
+
+			if (objectActionName.startsWith(objectActionPrefix)) {
+				objectActionName = objectActionName.substring(
+					objectActionPrefix.length());
+			}
+
+			ObjectAction objectAction =
+				_objectActionLocalService.getObjectAction(
+					_objectDefinition.getObjectDefinitionId(), objectActionName,
+					ObjectActionTriggerConstants.KEY_STANDALONE);
+
+			ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+
+			return objectAction.getErrorMessage(themeDisplay.getLocale());
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+
+			throw new InfoItemActionErrorMessageException();
+		}
 	}
 
 	@Override
