@@ -48,6 +48,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocal
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
 import com.liferay.learn.LearnMessage;
 import com.liferay.learn.LearnMessageUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -211,6 +212,9 @@ public class ContentPageLayoutEditorDisplayContext
 			getFragmentEntryActionURL(
 				"/layout_content_page_editor/delete_segments_experience"));
 		configContext.put("editSegmentsEntryURL", _getEditSegmentsEntryURL());
+		configContext.put(
+			"getInfoItemActionErrorMessageURL",
+			_getInfoItemActionErrorMessageURL());
 		configContext.put("plid", themeDisplay.getPlid());
 
 		Layout layout = themeDisplay.getLayout();
@@ -490,6 +494,16 @@ public class ContentPageLayoutEditorDisplayContext
 			).put(
 				"type", InfoListProviderItemSelectorReturnType.class.getName()
 			));
+	}
+
+	private String _getInfoItemActionErrorMessageURL() {
+		StringBundler sb = new StringBundler(3);
+
+		sb.append(portal.getPortalURL(httpServletRequest));
+		sb.append(themeDisplay.getPathMain());
+		sb.append("/portal/get_info_item_action_error_message");
+
+		return sb.toString();
 	}
 
 	private List<Map<String, Object>> _getLayoutDataList() throws Exception {
