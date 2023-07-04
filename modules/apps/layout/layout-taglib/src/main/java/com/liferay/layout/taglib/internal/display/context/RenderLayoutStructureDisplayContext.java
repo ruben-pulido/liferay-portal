@@ -419,6 +419,17 @@ public class RenderLayoutStructureDisplayContext {
 
 				return sb.toString();
 			}
+		).put(
+			"getInfoItemActionErrorMessageURL",
+			() -> {
+				StringBundler sb = new StringBundler(3);
+
+				sb.append(PortalUtil.getPortalURL(_httpServletRequest));
+				sb.append(_themeDisplay.getPathMain());
+				sb.append("/portal/get_info_item_action_error_message");
+
+				return sb.toString();
+			}
 		).build();
 	}
 
