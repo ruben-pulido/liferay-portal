@@ -109,7 +109,7 @@ export default {
 	 */
 	getInfoItemActionErrorMessage({classNameId, fieldId}) {
 		return serviceFetch(
-			config.getInfoItemFieldValueURL,
+			config.getInfoItemActionErrorMessageURL,
 			{
 				body: {
 					classNameId,
