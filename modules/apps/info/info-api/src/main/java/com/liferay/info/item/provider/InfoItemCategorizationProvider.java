@@ -12,18 +12,15 @@
  * details.
  */
 
-package com.liferay.info.item.creator;
+package com.liferay.info.item.provider;
 
-import com.liferay.info.exception.InfoFormException;
-import com.liferay.info.item.InfoItemFieldValues;
+import com.liferay.portal.kernel.exception.PortalException;
 
 /**
  * @author Rubén Pulido
  */
-public interface InfoItemCreator<T> {
+public interface InfoItemCategorizationProvider<T> {
 
-	public T createFromInfoItemFieldValues(
-			long groupId, InfoItemFieldValues infoItemFieldValues)
-		throws InfoFormException;
+	public boolean supportsCategorization() throws PortalException;
 
 }

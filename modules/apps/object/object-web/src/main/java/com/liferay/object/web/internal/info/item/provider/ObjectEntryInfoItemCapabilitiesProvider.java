@@ -28,10 +28,12 @@ public class ObjectEntryInfoItemCapabilitiesProvider
 	implements InfoItemCapabilitiesProvider<ObjectEntry> {
 
 	public ObjectEntryInfoItemCapabilitiesProvider(
+		InfoItemCapability categorizationInfoItemCapability,
 		InfoItemCapability displayPageInfoItemCapability,
 		InfoItemCapability editPageInfoItemCapability,
 		InfoItemCapability templateInfoItemCapability) {
 
+		_categorizationInfoItemCapability = categorizationInfoItemCapability;
 		_displayPageInfoItemCapability = displayPageInfoItemCapability;
 		_editPageInfoItemCapability = editPageInfoItemCapability;
 		_templateInfoItemCapability = templateInfoItemCapability;
@@ -40,10 +42,11 @@ public class ObjectEntryInfoItemCapabilitiesProvider
 	@Override
 	public List<InfoItemCapability> getInfoItemCapabilities() {
 		return ListUtil.fromArray(
-			_displayPageInfoItemCapability, _editPageInfoItemCapability,
-			_templateInfoItemCapability);
+			_categorizationInfoItemCapability, _displayPageInfoItemCapability,
+			_editPageInfoItemCapability, _templateInfoItemCapability);
 	}
 
+	private final InfoItemCapability _categorizationInfoItemCapability;
 	private final InfoItemCapability _displayPageInfoItemCapability;
 	private final InfoItemCapability _editPageInfoItemCapability;
 	private final InfoItemCapability _templateInfoItemCapability;

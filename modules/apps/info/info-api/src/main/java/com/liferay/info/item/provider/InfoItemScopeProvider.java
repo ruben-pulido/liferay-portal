@@ -12,18 +12,13 @@
  * details.
  */
 
-package com.liferay.info.item.creator;
-
-import com.liferay.info.exception.InfoFormException;
-import com.liferay.info.item.InfoItemFieldValues;
+package com.liferay.info.item.provider;
 
 /**
  * @author Rubén Pulido
  */
-public interface InfoItemCreator<T> {
+public interface InfoItemScopeProvider<T> {
 
-	public T createFromInfoItemFieldValues(
-			long groupId, InfoItemFieldValues infoItemFieldValues)
-		throws InfoFormException;
+	public int getScope();
 
 }

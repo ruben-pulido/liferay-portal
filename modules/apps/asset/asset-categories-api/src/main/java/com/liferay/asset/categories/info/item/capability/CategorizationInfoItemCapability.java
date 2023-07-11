@@ -12,18 +12,23 @@
  * details.
  */
 
-package com.liferay.info.item.creator;
+package com.liferay.asset.categories.info.item.capability;
 
-import com.liferay.info.exception.InfoFormException;
-import com.liferay.info.item.InfoItemFieldValues;
+import com.liferay.info.item.capability.InfoItemCapability;
+import com.liferay.info.item.creator.InfoItemCreator;
 
 /**
  * @author Rubén Pulido
  */
-public interface InfoItemCreator<T> {
+public interface CategorizationInfoItemCapability extends InfoItemCapability {
 
-	public T createFromInfoItemFieldValues(
-			long groupId, InfoItemFieldValues infoItemFieldValues)
-		throws InfoFormException;
+	public static final String KEY =
+		"com.liferay.asset.categories.info.item.capability." +
+			"CategorizationInfoItemCapability";
+
+	public static final Class<?>[] REQUIRED_INFO_ITEM_SERVICE_CLASSES =
+		new Class<?>[] {
+			InfoItemCreator.class
+		};
 
 }
