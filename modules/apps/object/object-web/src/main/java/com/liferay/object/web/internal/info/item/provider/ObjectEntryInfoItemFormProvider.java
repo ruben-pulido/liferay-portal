@@ -693,6 +693,25 @@ public class ObjectEntryInfoItemFormProvider
 						}
 					}
 
+					boolean required = objectField.isRequired();
+
+					if (required) {
+						List<ObjectFieldSetting> objectFieldSettings =
+							objectField.getObjectFieldSettings();
+
+						for (ObjectFieldSetting objectFieldSetting :
+								objectFieldSettings) {
+
+							if (Objects.equals(
+									objectFieldSetting.getName(),
+									"defaultValue") &&
+								(objectFieldSetting.getValue() != null)) {
+
+								required = false;
+							}
+						}
+					}
+
 					unsafeConsumer.accept(
 						_addAttributes(
 							InfoField.builder(
@@ -714,7 +733,7 @@ public class ObjectEntryInfoItemFormProvider
 									objectField.getLabelMap()
 								).build()
 							).required(
-								objectField.isRequired()
+								required
 							),
 							objectField));
 				}
