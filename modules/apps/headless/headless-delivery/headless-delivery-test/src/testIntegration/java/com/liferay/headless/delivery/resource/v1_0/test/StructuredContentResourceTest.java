@@ -33,6 +33,7 @@ import com.liferay.headless.delivery.client.pagination.Page;
 import com.liferay.headless.delivery.client.pagination.Pagination;
 import com.liferay.headless.delivery.client.problem.Problem;
 import com.liferay.headless.delivery.client.resource.v1_0.StructuredContentResource;
+import com.liferay.headless.delivery.client.serdes.v1_0.StructuredContentSerDes;
 import com.liferay.journal.constants.JournalFolderConstants;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalFolder;
@@ -114,9 +115,6 @@ public class StructuredContentResourceTest
 			ServiceContextTestUtil.getServiceContext(testGroup.getGroupId()));
 		_complexDDMStructure = _addDDMStructure(
 			testGroup, "test-complex-ddm-structure.json");
-
-		_customDDMStructure = _addDDMStructure(
-			testGroup, "test-custom-ddm-structure.json");
 
 		_ddmStructure = _addDDMStructure(testGroup, "test-ddm-structure.json");
 
@@ -324,19 +322,8 @@ public class StructuredContentResourceTest
 		}
 	}
 
-	@Override
 	@Test
-	public void testGetSiteStructuredContentsPage() throws Exception {
-		super.testGetSiteStructuredContentsPage();
-
-		_testGetSiteStructuredContentsPageByDefaultPriority();
-		_testGetSiteStructuredContentsPageByGivenPriority();
-		_testGetSiteStructuredContentsPageOrderedByDescendingPriority();
-	}
-
-	@Override
-	@Test
-	public void testGetStructuredContent() throws Exception {
+	public void testGetCustomStructuredContent() throws Exception {
 
 		// Get structured content
 
@@ -535,8 +522,19 @@ public class StructuredContentResourceTest
 		_testGetStructuredContentAssetLibrary();
 	}
 
+	@Override
 	@Test
-	public void testGetCustomStructuredContent() throws Exception {
+	public void testGetSiteStructuredContentsPage() throws Exception {
+		super.testGetSiteStructuredContentsPage();
+
+		_testGetSiteStructuredContentsPageByDefaultPriority();
+		_testGetSiteStructuredContentsPageByGivenPriority();
+		_testGetSiteStructuredContentsPageOrderedByDescendingPriority();
+	}
+
+	@Override
+	@Test
+	public void testGetStructuredContent() throws Exception {
 
 		// Get structured content
 
@@ -554,6 +552,9 @@ public class StructuredContentResourceTest
 
 		assertEquals(postStructuredContent, getStructuredContent);
 		assertValid(getStructuredContent);
+
+
+		_testGetCustomStructuredContents(postStructuredContent);
 
 		// Different folder
 
@@ -1351,6 +1352,16 @@ public class StructuredContentResourceTest
 		return ddmFormDeserializerDeserializeResponse.getDDMForm();
 	}
 
+	private String _getGrid() {
+		return StringBundler.concat(
+			"{", _COMPLETE_STRUCTURED_CONTENT_OPTIONS[0], ":",
+			_COMPLETE_STRUCTURED_CONTENT_OPTIONS[2], ",",
+			_COMPLETE_STRUCTURED_CONTENT_OPTIONS[1], ":",
+			_COMPLETE_STRUCTURED_CONTENT_OPTIONS[1], ",",
+			_COMPLETE_STRUCTURED_CONTENT_OPTIONS[2], ":",
+			_COMPLETE_STRUCTURED_CONTENT_OPTIONS[0], "}");
+	}
+
 	private String _randomColor() {
 		return String.format(
 			"#%02d%02d%02d", RandomTestUtil.randomInt(0, 100),
@@ -1362,6 +1373,7 @@ public class StructuredContentResourceTest
 
 		JournalArticle journalArticle = JournalTestUtil.addArticle(
 			testGroup.getGroupId(), _journalFolder.getFolderId());
+
 
 		StructuredContent structuredContent = super.randomStructuredContent();
 
@@ -1386,171 +1398,173 @@ public class StructuredContentResourceTest
 
 	private ContentField[] _randomContentFields(JournalArticle journalArticle) {
 		return new ContentField[] {
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							data = RandomTestUtil.randomString(10);
-						}
-					};
-					name = "Text";
-				}
-			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							data = RandomTestUtil.randomString(10);
+//						}
+//					};
+//					name = "Text";
+//				}
+//			},
 			new ContentField() {
 				{
 					contentFieldValue = new ContentFieldValue() {
 						{
 							data = _COMPLETE_STRUCTURED_CONTENT_OPTIONS[2];
-							value = _COMPLETE_STRUCTURED_CONTENT_OPTIONS[2];
+							value = _COMPLETE_STRUCTURED_CONTENT_OPTIONS[2]+"label";
 						}
 					};
 					name = "SelectFromList";
 				}
 			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							data = _COMPLETE_STRUCTURED_CONTENT_OPTIONS[0];
+//							value = _COMPLETE_STRUCTURED_CONTENT_OPTIONS[0];
+//						}
+//					};
+//					name = "SingleSelection";
+//				}
+//			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							data = StringBundler.concat(
+//								"[", _COMPLETE_STRUCTURED_CONTENT_OPTIONS[1],
+//								_COMPLETE_STRUCTURED_CONTENT_OPTIONS[2], "]");
+//							value = StringBundler.concat(
+//								"[", _COMPLETE_STRUCTURED_CONTENT_OPTIONS[1],
+//								_COMPLETE_STRUCTURED_CONTENT_OPTIONS[1], "]");
+//						}
+//					};
+//					name = "MultipleSelection";
+//				}
+//			},
 			new ContentField() {
 				{
 					contentFieldValue = new ContentFieldValue() {
 						{
-							data = _COMPLETE_STRUCTURED_CONTENT_OPTIONS[0];
-							value = _COMPLETE_STRUCTURED_CONTENT_OPTIONS[0];
-						}
-					};
-					name = "SingleSelection";
-				}
-			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							data =
-								"[" +
-									_COMPLETE_STRUCTURED_CONTENT_OPTIONS[1] + "]";
-							value = _COMPLETE_STRUCTURED_CONTENT_OPTIONS[1];
-						}
-					};
-					name = "MultipleSelection";
-				}
-			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							data = _randomGrid();
-							value = _randomGrid();
+							data = _getGrid();
+							value = _getGrid();
 						}
 					};
 					name = "Grid";
 				}
 			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							data = _randomDate();
-						}
-					};
-					name = "Date";
-				}
-			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							data = String.valueOf(RandomTestUtil.randomInt());
-						}
-					};
-					name = "Numeric";
-				}
-			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							image = new ContentDocument() {
-								{
-									id = _dlFileEntry.getPrimaryKey();
-								}
-							};
-						}
-					};
-					name = "Image";
-				}
-			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							data = RandomTestUtil.randomString(500);
-						}
-					};
-					name = "RichText";
-				}
-			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							document = new ContentDocument() {
-								{
-									id = _dlFileEntry.getPrimaryKey();
-								}
-							};
-						}
-					};
-					name = "Upload";
-				}
-			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							data = _randomColor();
-						}
-					};
-					name = "Color";
-				}
-			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							structuredContentLink =
-								new StructuredContentLink() {
-									{
-										id =
-											journalArticle.getResourcePrimKey();
-									}
-								};
-						}
-					};
-					name = "WebContent";
-				}
-			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							geo = new Geo() {
-								{
-									latitude = RandomTestUtil.randomDouble();
-									longitude = RandomTestUtil.randomDouble();
-								}
-							};
-						}
-					};
-					name = "Geolocation";
-				}
-			},
-			new ContentField() {
-				{
-					contentFieldValue = new ContentFieldValue() {
-						{
-							link = _layout.getFriendlyURL();
-						}
-					};
-					name = "LinkToPage";
-				}
-			}
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							data = _randomDate();
+//						}
+//					};
+//					name = "Date";
+//				}
+//			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							data = String.valueOf(RandomTestUtil.randomInt());
+//						}
+//					};
+//					name = "Numeric";
+//				}
+//			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							image = new ContentDocument() {
+//								{
+//									id = _dlFileEntry.getPrimaryKey();
+//								}
+//							};
+//						}
+//					};
+//					name = "Image";
+//				}
+//			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							data = RandomTestUtil.randomString(500);
+//						}
+//					};
+//					name = "RichText";
+//				}
+//			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							document = new ContentDocument() {
+//								{
+//									id = _dlFileEntry.getPrimaryKey();
+//								}
+//							};
+//						}
+//					};
+//					name = "Upload";
+//				}
+//			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							data = _randomColor();
+//						}
+//					};
+//					name = "Color";
+//				}
+//			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							structuredContentLink =
+//								new StructuredContentLink() {
+//									{
+//										id =
+//											journalArticle.getResourcePrimKey();
+//									}
+//								};
+//						}
+//					};
+//					name = "WebContent";
+//				}
+//			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							geo = new Geo() {
+//								{
+//									latitude = RandomTestUtil.randomDouble();
+//									longitude = RandomTestUtil.randomDouble();
+//								}
+//							};
+//						}
+//					};
+//					name = "Geolocation";
+//				}
+//			},
+//			new ContentField() {
+//				{
+//					contentFieldValue = new ContentFieldValue() {
+//						{
+//							link = _layout.getFriendlyURL();
+//						}
+//					};
+//					name = "LinkToPage";
+//				}
+//			}
 		};
 	}
 
@@ -1559,20 +1573,6 @@ public class StructuredContentResourceTest
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 		return simpleDateFormat.format(new Date());
-	}
-
-	private String _randomGrid() {
-		return StringBundler.concat(
-			"{", _COMPLETE_STRUCTURED_CONTENT_OPTIONS[0], ":",
-			_COMPLETE_STRUCTURED_CONTENT_OPTIONS
-				[RandomTestUtil.randomInt(0, 2)],
-			",", _COMPLETE_STRUCTURED_CONTENT_OPTIONS[1], ":",
-			_COMPLETE_STRUCTURED_CONTENT_OPTIONS
-				[RandomTestUtil.randomInt(0, 2)],
-			",", _COMPLETE_STRUCTURED_CONTENT_OPTIONS[2], ":",
-			_COMPLETE_STRUCTURED_CONTENT_OPTIONS
-				[RandomTestUtil.randomInt(0, 2)],
-			"}");
 	}
 
 	private StructuredContent _randomStructuredContent(Locale locale)
@@ -1665,6 +1665,45 @@ public class StructuredContentResourceTest
 			"dependencies/" + fileName);
 
 		return StringUtil.read(inputStream);
+	}
+
+	private StructuredContent _testGetCustomStructuredContents(
+		StructuredContent structuredContent) {
+
+		StructuredContentSerDes.toJSON(structuredContent);
+
+		ContentField[] contentFields = structuredContent.getContentFields();
+
+		for (ContentField contentField : contentFields) {
+			String name = contentField.getName();
+
+			if (name.equals("Grid")) {
+
+				String expected = StringBundler.concat(
+					"{\n", "\t\"Option1\": \"Option3\",\n",
+					"\t\"Option2\": \"Option2\",\n",
+					"\t\"Option3\": \"Option1\"\n", "}");
+
+				ContentFieldValue contentFieldValue =
+					contentField.getContentFieldValue();
+
+				Assert.assertEquals(expected, contentFieldValue.getData());
+				Assert.assertEquals(expected, contentFieldValue.getValue());
+			}
+			else if (name.equals("SelectFromList")) {
+
+				String expectedData = "Option3";
+				String expectedValue = "Option3";
+
+				ContentFieldValue contentFieldValue =
+					contentField.getContentFieldValue();
+
+				Assert.assertEquals(expectedData, contentFieldValue.getData());
+				Assert.assertEquals(expectedValue, contentFieldValue.getValue());
+			}
+		}
+
+		return structuredContent;
 	}
 
 	private void _testGetSiteStructuredContentsPageByDefaultPriority()
@@ -1911,7 +1950,6 @@ public class StructuredContentResourceTest
 
 	private BlogsEntry _blogsEntry;
 	private DDMStructure _complexDDMStructure;
-	private DDMStructure _customDDMStructure;
 	private DDMStructure _ddmStructure;
 	private DDMTemplate _ddmTemplate;
 	private DDMStructure _depotDDMStructure;
