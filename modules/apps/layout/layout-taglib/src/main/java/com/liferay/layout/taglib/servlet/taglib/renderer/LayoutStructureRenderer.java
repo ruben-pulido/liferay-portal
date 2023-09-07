@@ -130,10 +130,20 @@ public class LayoutStructureRenderer {
 	public class LayoutStructureItemRenderTime {
 
 		public LayoutStructureItemRenderTime(
-			LayoutStructureItem layoutStructureItem, long renderTime) {
+			String fragmentElementId, LayoutStructureItem layoutStructureItem,
+			long renderTime) {
 
+			_fragmentElementId = fragmentElementId;
 			_layoutStructureItem = layoutStructureItem;
 			_renderTime = renderTime;
+		}
+
+		public String getElementId() {
+			if (_fragmentElementId != null) {
+				return _fragmentElementId;
+			}
+
+			return _layoutStructureItem.getItemId();
 		}
 
 		public LayoutStructureItem getLayoutStructureItem() {
@@ -144,6 +154,7 @@ public class LayoutStructureRenderer {
 			return _renderTime;
 		}
 
+		private final String _fragmentElementId;
 		private final LayoutStructureItem _layoutStructureItem;
 		private final long _renderTime;
 
@@ -1017,10 +1028,12 @@ public class LayoutStructureRenderer {
 			_httpServletRequest, formStyledLayoutStructureItem.getItemId());
 	}
 
-	private void _renderFragmentStyledLayoutStructureItem(
+	private String _renderFragmentStyledLayoutStructureItem(
 			InfoForm infoForm,
 			FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem)
 		throws Exception {
+
+		String fragmentElementId = null;
 
 		JspWriter jspWriter = _pageContext.getOut();
 
@@ -1041,6 +1054,9 @@ public class LayoutStructureRenderer {
 						getDefaultFragmentRendererContext(
 							fragmentEntryLink, infoForm,
 							fragmentStyledLayoutStructureItem.getItemId());
+
+				fragmentElementId =
+					defaultFragmentRendererContext.getFragmentElementId();
 
 				FragmentRendererController fragmentRendererController =
 					ServletContextUtil.getFragmentRendererController();
@@ -1077,6 +1093,8 @@ public class LayoutStructureRenderer {
 		if (Objects.equals(layout.getType(), LayoutConstants.TYPE_PORTLET)) {
 			jspWriter.write("</div>");
 		}
+
+		return fragmentElementId;
 	}
 
 	private void _renderLayoutStructure(List<String> childrenItemIds)
@@ -1097,6 +1115,8 @@ public class LayoutStructureRenderer {
 				_layoutStructure.getLayoutStructureItem(childrenItemId);
 
 			long start = System.currentTimeMillis();
+
+			String fragmentElementId = null;
 
 			if (layoutStructureItem instanceof
 					CollectionStyledLayoutStructureItem) {
@@ -1176,7 +1196,7 @@ public class LayoutStructureRenderer {
 					continue;
 				}
 
-				_renderFragmentStyledLayoutStructureItem(
+				fragmentElementId = _renderFragmentStyledLayoutStructureItem(
 					infoForm, fragmentStyledLayoutStructureItem);
 			}
 			else if (layoutStructureItem instanceof
@@ -1203,7 +1223,8 @@ public class LayoutStructureRenderer {
 
 			_layoutStructureItemRenderTimes.add(
 				new LayoutStructureItemRenderTime(
-					layoutStructureItem, System.currentTimeMillis() - start));
+					fragmentElementId, layoutStructureItem,
+					System.currentTimeMillis() - start));
 		}
 	}
 

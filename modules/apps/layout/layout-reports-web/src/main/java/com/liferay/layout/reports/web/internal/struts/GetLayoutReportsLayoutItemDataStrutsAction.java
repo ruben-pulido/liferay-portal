@@ -227,7 +227,7 @@ public class GetLayoutReportsLayoutItemDataStrutsAction
 				).put(
 					"isPortlet", fragmentEntryLink.isTypePortlet()
 				).put(
-					"itemId", layoutStructureItem.getItemId()
+					"itemId", layoutStructureItemRenderTime.getElementId()
 				).put(
 					"itemType", layoutStructureItem.getItemType()
 				).put(
