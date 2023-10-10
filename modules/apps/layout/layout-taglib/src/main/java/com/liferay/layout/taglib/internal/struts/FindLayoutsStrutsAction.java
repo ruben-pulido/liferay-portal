@@ -82,7 +82,7 @@ public class FindLayoutsStrutsAction implements StrutsAction {
 			httpServletRequest, "enableCurrentPage");
 		String itemSelectorReturnType = ParamUtil.getString(
 			httpServletRequest, "itemSelectorReturnType");
-		Long selPlid = ParamUtil.getLong(
+		long selPlid = ParamUtil.getLong(
 			httpServletRequest, "selPlid", LayoutConstants.DEFAULT_PLID);
 
 		for (Layout layout : layouts) {
