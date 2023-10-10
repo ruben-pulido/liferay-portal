@@ -45,9 +45,9 @@ public class FindLayoutsStrutsAction implements StrutsAction {
 			HttpServletResponse httpServletResponse)
 		throws Exception {
 
-		String keywords = ParamUtil.getString(httpServletRequest, "keywords");
-
 		JSONObject jsonObject = _jsonFactory.createJSONObject();
+
+		String keywords = ParamUtil.getString(httpServletRequest, "keywords");
 
 		if (Validator.isNull(keywords)) {
 			jsonObject.put("layouts", _jsonFactory.createJSONArray());
