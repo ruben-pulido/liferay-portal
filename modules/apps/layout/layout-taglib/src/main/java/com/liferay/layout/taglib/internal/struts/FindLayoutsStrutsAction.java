@@ -155,7 +155,4 @@ public class FindLayoutsStrutsAction implements StrutsAction {
 	@Reference
 	private LayoutLocalService _layoutLocalService;
 
-	@Reference
-	private Portal _portal;
-
 }
