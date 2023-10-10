@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.struts.StrutsAction;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -86,7 +85,6 @@ public class FindLayoutsStrutsAction implements StrutsAction {
 			httpServletRequest, "selPlid", LayoutConstants.DEFAULT_PLID);
 
 		for (Layout layout : layouts) {
-
 			jsonArray.put(
 				JSONUtil.put(
 					"disabled",
@@ -110,8 +108,8 @@ public class FindLayoutsStrutsAction implements StrutsAction {
 				).put(
 					"name", layout.getName(themeDisplay.getLocale())
 				).put(
-					"path", _getLayoutPathJSONArray(
-						layout, themeDisplay.getLocale())
+					"path",
+					_getLayoutPathJSONArray(layout, themeDisplay.getLocale())
 				).put(
 					"payload",
 					LayoutUtil.getLayoutPayload(
