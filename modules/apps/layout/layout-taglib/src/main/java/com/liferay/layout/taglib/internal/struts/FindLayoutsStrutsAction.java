@@ -58,20 +58,11 @@ public class FindLayoutsStrutsAction implements StrutsAction {
 			return null;
 		}
 
-		boolean checkDisplayPage = ParamUtil.getBoolean(
-			httpServletRequest, "checkDisplayPage");
-		boolean enableCurrentPage = ParamUtil.getBoolean(
-			httpServletRequest, "enableCurrentPage");
-		String itemSelectorReturnType = ParamUtil.getString(
-			httpServletRequest, "itemSelectorReturnType");
-		Long selPlid = ParamUtil.getLong(
-			httpServletRequest, "selPlid", LayoutConstants.DEFAULT_PLID);
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
-
-		JSONArray jsonArray = _jsonFactory.createJSONArray();
 
 		List<Layout> layouts = _layoutLocalService.getLayouts(
 			themeDisplay.getSiteGroupId(), keywords,
@@ -84,6 +75,15 @@ public class FindLayoutsStrutsAction implements StrutsAction {
 				LayoutConstants.TYPE_URL
 			},
 			new int[] {WorkflowConstants.STATUS_ANY}, 0, 10, null);
+
+		boolean checkDisplayPage = ParamUtil.getBoolean(
+			httpServletRequest, "checkDisplayPage");
+		boolean enableCurrentPage = ParamUtil.getBoolean(
+			httpServletRequest, "enableCurrentPage");
+		String itemSelectorReturnType = ParamUtil.getString(
+			httpServletRequest, "itemSelectorReturnType");
+		Long selPlid = ParamUtil.getLong(
+			httpServletRequest, "selPlid", LayoutConstants.DEFAULT_PLID);
 
 		for (Layout layout : layouts) {
 
