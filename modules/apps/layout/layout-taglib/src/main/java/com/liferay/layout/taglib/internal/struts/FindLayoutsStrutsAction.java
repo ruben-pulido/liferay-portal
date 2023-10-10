@@ -86,8 +86,6 @@ public class FindLayoutsStrutsAction implements StrutsAction {
 			new int[] {WorkflowConstants.STATUS_ANY}, 0, 10, null);
 
 		for (Layout layout : layouts) {
-			JSONArray layoutPathJSONArray = _getLayoutPathJSONArray(
-				layout, themeDisplay.getLocale());
 
 			jsonArray.put(
 				JSONUtil.put(
@@ -112,7 +110,8 @@ public class FindLayoutsStrutsAction implements StrutsAction {
 				).put(
 					"name", layout.getName(themeDisplay.getLocale())
 				).put(
-					"path", layoutPathJSONArray
+					"path", _getLayoutPathJSONArray(
+						layout, themeDisplay.getLocale())
 				).put(
 					"payload",
 					LayoutUtil.getLayoutPayload(
