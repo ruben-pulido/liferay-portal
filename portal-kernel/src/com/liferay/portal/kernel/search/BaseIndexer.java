@@ -1470,7 +1470,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 				return assetEntry.getClassPK();
 			}
 
-			return 0;
+			return 0; // Should we return classPK to be consistent with the case when assetRenderFactory is null?
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {

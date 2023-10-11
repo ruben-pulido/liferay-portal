@@ -94,7 +94,7 @@ public class JournalArticleAssetRendererFactory
 			return assetEntry;
 		}
 
-		AssetRenderer<?> assetRenderer = getAssetRenderer(
+		AssetRenderer<JournalArticle> assetRenderer = getAssetRenderer(
 			journalArticle.getResourcePrimKey());
 
 		if ((assetRenderer == null) ||
