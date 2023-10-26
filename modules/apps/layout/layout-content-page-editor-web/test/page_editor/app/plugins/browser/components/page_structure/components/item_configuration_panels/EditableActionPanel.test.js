@@ -209,4 +209,20 @@ describe('EditableActionPanel', () => {
 			screen.queryByText('reload-page-after-success')
 		).not.toBeInTheDocument();
 	});
+
+	it('renders display page and does not allow to reload when selecting External URL', () => {
+		Liferay.FeatureFlags['LPS-195263'] = true;
+
+		renderActionPanel({
+			state: getStateWithConfig({
+				mappedAction: {...MAPPED_ACTION, fieldId: 'actionFieldId'},
+				onSuccess: {interaction: 'displayPage'},
+			}),
+		});
+
+		expect(screen.getByText('display-page')).toBeInTheDocument();
+		expect(
+			screen.queryByText('reload-page-after-success')
+		).not.toBeInTheDocument();
+	});
 });
