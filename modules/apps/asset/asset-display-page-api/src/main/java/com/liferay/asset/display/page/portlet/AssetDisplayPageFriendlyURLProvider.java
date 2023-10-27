@@ -6,6 +6,7 @@
 package com.liferay.asset.display.page.portlet;
 
 import com.liferay.info.item.InfoItemReference;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 
@@ -19,6 +20,10 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface AssetDisplayPageFriendlyURLProvider {
 
+	public String getDefaultURL(
+			InfoItemReference infoItemReference, ThemeDisplay themeDisplay)
+		throws PortalException;
+
 	public String getFriendlyURL(
 			InfoItemReference infoItemReference, Locale locale,
 			ThemeDisplay themeDisplay)
@@ -26,6 +31,12 @@ public interface AssetDisplayPageFriendlyURLProvider {
 
 	public String getFriendlyURL(
 			InfoItemReference infoItemReference, ThemeDisplay themeDisplay)
+		throws PortalException;
+
+	public String getURL(
+			InfoItemReference infoItemReference,
+			LayoutPageTemplateEntry layoutPageTemplateEntry, Locale locale,
+			ThemeDisplay themeDisplay)
 		throws PortalException;
 
 }
