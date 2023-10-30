@@ -8,11 +8,15 @@ package com.liferay.fragment.entry.processor.editable.internal.mapper;
 import com.liferay.fragment.entry.processor.editable.element.constants.ActionEditableElementConstants;
 import com.liferay.fragment.entry.processor.editable.mapper.EditableElementMapper;
 import com.liferay.fragment.processor.FragmentEntryProcessorContext;
+import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
+import com.liferay.info.item.InfoItemServiceRegistry;
+import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
+import com.liferay.info.type.WebURL;
 import com.liferay.layout.page.template.info.item.provider.DisplayPageURLProvider;
-import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -171,35 +175,44 @@ public class ActionEditableElementMapper implements EditableElementMapper {
 				_portal.getClassName(GetterUtil.getLong(classNameId)),
 				GetterUtil.getLong(classPK));
 
-			if (layoutPageTemplateEntryKey.equals(
-					"ObjectEntry_displayPageURL")) {
+			InfoItemObjectProvider<?> infoItemObjectProvider =
+				_infoItemServiceRegistry.getFirstInfoItemService(
+					InfoItemObjectProvider.class,
+					_portal.getClassName(classNameId),
+					ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
 
-				url = _displayPageURLProvider.getDefaultURL(
-					infoItemReference, themeDisplay);
+			if (infoItemObjectProvider == null) {
+				return;
 			}
-			else if (layoutPageTemplateEntryKey.startsWith(
-						"LayoutPageTemplateEntry_")) {
 
-				layoutPageTemplateEntryKey =
-					layoutPageTemplateEntryKey.substring(
-						"LayoutPageTemplateEntry_".length());
+			InfoItemFieldValuesProvider<Object> infoItemFieldValuesProvider =
+				_infoItemServiceRegistry.getFirstInfoItemService(
+					InfoItemFieldValuesProvider.class,
+					_portal.getClassName(classNameId));
 
-				LayoutPageTemplateEntry layoutPageTemplateEntry =
-					_layoutPageTemplateEntryLocalService.
-						fetchLayoutPageTemplateEntry(
-							themeDisplay.getScopeGroupId(),
-							layoutPageTemplateEntryKey);
+			if (infoItemFieldValuesProvider == null) {
+				return;
+			}
 
-				Layout layout = _layoutLocalService.fetchLayout(
-					layoutPageTemplateEntry.getPlid());
+			Object infoItem = infoItemObjectProvider.getInfoItem(
+				new ClassPKInfoItemIdentifier(classPK));
 
-				if (layout == null) {
-					return;
-				}
+			if (infoItem == null) {
+				return;
+			}
 
-				url = _displayPageURLProvider.getURL(
-					infoItemReference, layoutPageTemplateEntry,
-					themeDisplay.getLocale(), themeDisplay);
+			InfoFieldValue<Object> infoFieldValue =
+				infoItemFieldValuesProvider.getInfoFieldValue(
+					infoItem, layoutPageTemplateEntryKey);
+
+			if (infoFieldValue == null) {
+				return;
+			}
+
+			Object infoFieldValueValue = infoFieldValue.getValue();
+
+			if (infoFieldValueValue instanceof WebURL) {
+				url = ((WebURL)infoFieldValueValue).getURL();
 			}
 
 			if (Validator.isNull(url)) {
@@ -276,6 +289,9 @@ public class ActionEditableElementMapper implements EditableElementMapper {
 
 	@Reference
 	private DisplayPageURLProvider _displayPageURLProvider;
+
+	@Reference
+	private InfoItemServiceRegistry _infoItemServiceRegistry;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;
