@@ -149,21 +149,21 @@ export default function EditableActionPanel({item}) {
 			{isMapped(mappedAction) && (
 				<>
 					<InteractionSelector
-						config={editableValue.config}
 						data={INTERACTION_DATA.success}
 						fragmentId={item.parentId}
 						interactionOptions={SUCCESS_INTERACTION_OPTIONS}
+						itemConfig={editableValue.config}
 						onValueSelect={onValueSelect}
 					/>
 
 					<InteractionSelector
-						config={editableValue.config}
 						data={{
 							...INTERACTION_DATA.error,
 							defaultMessage: defaultError,
 						}}
 						fragmentId={item.parentId}
 						interactionOptions={ERROR_INTERACTION_OPTIONS}
+						itemConfig={editableValue.config}
 						onValueSelect={onValueSelect}
 					/>
 				</>
@@ -177,15 +177,15 @@ EditableActionPanel.propTypes = {
 };
 
 function InteractionSelector({
-	config,
 	data,
 	fragmentId,
 	interactionOptions,
+	itemConfig,
 	onValueSelect,
 }) {
 	const {defaultMessage, field, label, type} = data;
 
-	const interactionConfig = config[field];
+	const interactionConfig = itemConfig[field];
 
 	const {displayPage, interaction, page, reload, text, url} =
 		interactionConfig || {};
@@ -239,9 +239,22 @@ function InteractionSelector({
 		previewElement?.remove();
 	};
 
-	const mappingIds = collectionConfig
-		? collectionConfig.collection
-		: config.mappedAction;
+	let mappingIds = null;
+
+	// If inside a DisplayPageTemplate
+
+	if (itemConfig.mappedAction.mappedField) {
+		const {selectedMappingTypes} = config;
+		mappingIds = {
+			classNameId: selectedMappingTypes.type.id,
+			classTypeId: selectedMappingTypes.subtype.id,
+		};
+	}
+	else {
+		mappingIds = collectionConfig
+			? collectionConfig.collection
+			: itemConfig.mappedAction;
+	}
 
 	return (
 		<>
@@ -406,8 +419,8 @@ function InteractionSelector({
 }
 
 InteractionSelector.propTypes = {
-	config: PropTypes.object.isRequired,
 	data: PropTypes.object.isRequired,
 	fragmentId: PropTypes.string.isRequired,
+	itemConfig: PropTypes.object.isRequired,
 	onValueSelect: PropTypes.func.isRequired,
 };
