@@ -309,6 +309,10 @@ public class JournalManagementToolbarDisplayContext
 		).setParameter(
 			"ddmStructureId", (String)null
 		).setParameter(
+			"navigationMine", (Boolean)null
+		).setParameter(
+			"navigationRecent", (Boolean)null
+		).setParameter(
 			"orderByCol", StringPool.BLANK
 		).setParameter(
 			"orderByType", StringPool.BLANK
@@ -379,8 +383,8 @@ public class JournalManagementToolbarDisplayContext
 					PortletURLBuilder.create(
 						PortletURLUtil.clone(
 							currentURLObj, liferayPortletResponse)
-					).setNavigation(
-						(String)null
+					).setParameter(
+						"navigationMine", (Boolean)null
 					).buildString());
 
 				labelItem.setCloseable(true);
@@ -403,8 +407,8 @@ public class JournalManagementToolbarDisplayContext
 					PortletURLBuilder.create(
 						PortletURLUtil.clone(
 							currentURLObj, liferayPortletResponse)
-					).setNavigation(
-						(String)null
+					).setParameter(
+						"navigationRecent", (Boolean)null
 					).buildString());
 
 				labelItem.setCloseable(true);
@@ -555,16 +559,52 @@ public class JournalManagementToolbarDisplayContext
 
 	@Override
 	protected List<DropdownItem> getFilterNavigationDropdownItems() {
-		List<DropdownItem> filterNavigationDropdownItems = getDropdownItems(
-			getNavigationEntriesMap(),
-			PortletURLBuilder.create(
-				getPortletURL()
-			).setKeywords(
-				StringPool.BLANK
-			).setParameter(
-				"ddmStructureId", (String)null
-			).buildPortletURL(),
-			getNavigationParam(), getNavigation());
+		List<DropdownItem> filterNavigationDropdownItems = new ArrayList<>();
+
+		filterNavigationDropdownItems.add(
+			DropdownItemBuilder.setActive(
+				_journalDisplayContext.isNavigationMine()
+			).setHref(
+				PortletURLBuilder.create(
+					getPortletURL()
+				).setNavigation(
+					"all"
+				).setParameter(
+					"ddmStructureId", (String)null
+				).setParameter(
+					"navigationMine", (Boolean)null
+				).setParameter(
+					"navigationRecent", (Boolean)null
+				).buildPortletURL()
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "all")
+			).build());
+
+		filterNavigationDropdownItems.add(
+			DropdownItemBuilder.setActive(
+				_journalDisplayContext.isNavigationMine()
+			).setHref(
+				PortletURLBuilder.create(
+					getPortletURL()
+				).setParameter(
+					"navigationMine", true
+				).buildPortletURL()
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "mine")
+			).build());
+
+		filterNavigationDropdownItems.add(
+			DropdownItemBuilder.setActive(
+				_journalDisplayContext.isNavigationRecent()
+			).setHref(
+				PortletURLBuilder.create(
+					getPortletURL()
+				).setParameter(
+					"navigationRecent", true
+				).buildPortletURL()
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "recent")
+			).build());
 
 		filterNavigationDropdownItems.add(
 			DropdownItemBuilder.putData(
