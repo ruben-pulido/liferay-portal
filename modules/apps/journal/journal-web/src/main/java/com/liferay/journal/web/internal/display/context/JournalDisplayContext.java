@@ -1798,6 +1798,10 @@ public class JournalDisplayContext {
 			searchContext.setKeywords(getKeywords());
 		}
 
+		if (isNavigationMine() || isNavigationRecent()) {
+			searchContext.setOwnerUserId(_themeDisplay.getUserId());
+		}
+
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
 		queryConfig.setHighlightEnabled(false);
