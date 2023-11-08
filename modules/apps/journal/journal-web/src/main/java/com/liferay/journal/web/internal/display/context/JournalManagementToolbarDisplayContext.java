@@ -598,18 +598,20 @@ public class JournalManagementToolbarDisplayContext
 				LanguageUtil.get(httpServletRequest, "all")
 			).build());
 
-		filterNavigationDropdownItems.add(
-			DropdownItemBuilder.setActive(
-				_journalDisplayContext.isNavigationMine()
-			).setHref(
-				PortletURLBuilder.create(
-					getPortletURL()
-				).setParameter(
-					"navigationMine", Boolean.TRUE
-				).buildPortletURL()
-			).setLabel(
-				LanguageUtil.get(httpServletRequest, "mine")
-			).build());
+		if (!_journalDisplayContext.isNavigationRecent()) {
+			filterNavigationDropdownItems.add(
+				DropdownItemBuilder.setActive(
+					_journalDisplayContext.isNavigationMine()
+				).setHref(
+					PortletURLBuilder.create(
+						getPortletURL()
+					).setParameter(
+						"navigationMine", Boolean.TRUE
+					).buildPortletURL()
+				).setLabel(
+					LanguageUtil.get(httpServletRequest, "mine")
+				).build());
+		}
 
 		filterNavigationDropdownItems.add(
 			DropdownItemBuilder.setActive(
