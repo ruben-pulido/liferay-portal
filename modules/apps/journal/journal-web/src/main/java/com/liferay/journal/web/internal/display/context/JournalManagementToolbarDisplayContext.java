@@ -383,8 +383,8 @@ public class JournalManagementToolbarDisplayContext
 					PortletURLBuilder.create(
 						PortletURLUtil.clone(
 							currentURLObj, liferayPortletResponse)
-					).setNavigation(
-						(String)null
+					).setParameter(
+						"navigationMine", (String)null
 					).buildString());
 
 				labelItem.setCloseable(true);
@@ -407,8 +407,8 @@ public class JournalManagementToolbarDisplayContext
 					PortletURLBuilder.create(
 						PortletURLUtil.clone(
 							currentURLObj, liferayPortletResponse)
-					).setNavigation(
-						(String)null
+					).setParameter(
+						"navigationRecent", (String)null
 					).buildString());
 
 				labelItem.setCloseable(true);
