@@ -573,8 +573,6 @@ public class JournalManagementToolbarDisplayContext
 					"navigationMine", (Boolean)null
 				).setParameter(
 					"navigationRecent", (Boolean)null
-				).setParameter(
-					"status", (String)null
 				).buildPortletURL()
 			).setLabel(
 				LanguageUtil.get(httpServletRequest, "all")
