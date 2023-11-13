@@ -1242,9 +1242,7 @@ public class JournalDisplayContext {
 	}
 
 	public boolean isSearch() {
-		if (Validator.isNotNull(getKeywords()) ||
-			ArrayUtil.isNotEmpty(_getAssetCategoryIds()) ||
-			ArrayUtil.isNotEmpty(_getAssetTagNames())) {
+		if (Validator.isNotNull(getKeywords())) {
 
 			return true;
 		}
@@ -1253,7 +1251,9 @@ public class JournalDisplayContext {
 	}
 
 	public boolean isShowInfoButton() {
-		if (isNavigationMine() || isNavigationRecent() || isSearch()) {
+		if (isNavigationMine() || isNavigationRecent() || isSearch() ||
+			ArrayUtil.isNotEmpty(_getAssetCategoryIds()) ||
+			ArrayUtil.isNotEmpty(_getAssetTagNames())) {
 			return false;
 		}
 
@@ -1412,6 +1412,22 @@ public class JournalDisplayContext {
 		BooleanQuery booleanQuery = new BooleanQueryImpl();
 
 		BooleanFilter booleanFilter = new BooleanFilter();
+
+		if (
+			  Objects.equals(_getSearchLocation(), "current-folder")) {
+
+			BooleanFilter currentFolderBooleanFilter = new BooleanFilter();
+
+			currentFolderBooleanFilter.addTerm(
+				Field.ENTRY_CLASS_NAME, JournalFolder.class.getName(),
+				BooleanClauseOccur.MUST);
+			currentFolderBooleanFilter.addTerm(
+				Field.ENTRY_CLASS_PK, String.valueOf(getFolderId()),
+				BooleanClauseOccur.MUST);
+
+			booleanFilter.add(
+				currentFolderBooleanFilter, BooleanClauseOccur.MUST_NOT);
+		}
 
 		if (ArrayUtil.isNotEmpty(_getAssetCategoryIds())) {
 			booleanFilter.add(
@@ -1709,7 +1725,10 @@ public class JournalDisplayContext {
 				new String[] {JournalArticle.class.getName()});
 		}
 
-		if (Objects.equals(_getSearchLocation(), "current-folder")) {
+		// TODO Can isSearch be removed?
+		if (isSearch() &&
+			Objects.equals(_getSearchLocation(), "current-folder")) {
+
 			searchContext.setFolderIds(
 				Collections.singletonList(getFolderId()));
 		}
