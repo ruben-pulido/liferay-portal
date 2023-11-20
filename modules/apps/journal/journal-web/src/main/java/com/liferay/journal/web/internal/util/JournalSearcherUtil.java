@@ -77,7 +77,8 @@ public class JournalSearcherUtil {
 						_journalArticleLocalServiceSnapshot.get();
 
 					return journalArticleLocalService.fetchLatestArticle(
-						GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)),
+						GetterUtil.getLong(
+							document.get(Field.ROOT_ENTRY_CLASS_PK)),
 						WorkflowConstants.STATUS_ANY, false);
 				}
 
