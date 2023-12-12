@@ -131,6 +131,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.portlet.PortletException;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletURL;
 
@@ -1009,6 +1010,10 @@ public class JournalDisplayContext {
 			portletURL.setParameter("tab", tab);
 		}
 
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+			portletURL.setParameter("type", getType());
+		}
+
 		return portletURL;
 	}
 
@@ -1034,20 +1039,20 @@ public class JournalDisplayContext {
 			return _searchContainer;
 		}
 
-		if (!isSearch() || isWebContentTabSelected()) {
+		if (isShowComments()) {
+			_searchContainer = _getCommentsSearchContainer();
+
+			return _searchContainer;
+		}
+
+		if ((!isSearch() && !isShowVersions()) || isShowWebContent()) {
 			_searchContainer = _getArticlesSearchContainer();
 
 			return _searchContainer;
 		}
 
-		if (isIndexAllArticleVersions() && isVersionsTabSelected()) {
+		if (isIndexAllArticleVersions() && isShowVersions()) {
 			_searchContainer = _getVersionsSearchContainer();
-
-			return _searchContainer;
-		}
-
-		if (isCommentsTabSelected()) {
-			_searchContainer = _getCommentsSearchContainer();
 
 			return _searchContainer;
 		}
@@ -1060,6 +1065,10 @@ public class JournalDisplayContext {
 	public String getSearchInLabel() {
 		if (Objects.equals(_getSearchIn(), "title")) {
 			return LanguageUtil.get(_themeDisplay.getLocale(), "title-only");
+		}
+
+		if (Objects.equals(_getSearchIn(), "comments")) {
+			return LanguageUtil.get(_themeDisplay.getLocale(), "comments");
 		}
 
 		return LanguageUtil.get(_themeDisplay.getLocale(), "all-fields");
@@ -1079,24 +1088,13 @@ public class JournalDisplayContext {
 		return LanguageUtil.get(_themeDisplay.getLocale(), "everywhere");
 	}
 
-	public Map<String, Object> getSearchProps() throws PortalException {
+	public Map<String, Object> getSearchProps()
+		throws PortalException, PortletException {
+
 		return HashMapBuilder.<String, Object>put(
 			"searchIn", _getSearchIn()
 		).put(
-			"searchInOptions",
-			JSONUtil.putAll(
-				JSONUtil.put(
-					"label",
-					LanguageUtil.get(_themeDisplay.getLocale(), "all-fields")
-				).put(
-					"value", "all-fields"
-				),
-				JSONUtil.put(
-					"label",
-					LanguageUtil.get(_themeDisplay.getLocale(), "title-only")
-				).put(
-					"value", "title"
-				))
+			"searchInOptions", _getSearchInOptionsJSONArray()
 		).put(
 			"searchLocation", _getSearchLocation()
 		).put(
@@ -1186,6 +1184,14 @@ public class JournalDisplayContext {
 	}
 
 	public String getTab() throws PortalException {
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+			if (Objects.equals(_getSearchIn(), "comments")) {
+				return "comments";
+			}
+
+			return getType();
+		}
+
 		if (_tab != null) {
 			return _tab;
 		}
@@ -1233,6 +1239,14 @@ public class JournalDisplayContext {
 		_type = ParamUtil.getString(_httpServletRequest, "type", "web-content");
 
 		return _type;
+	}
+
+	public String getVersionsEmptyResultsMessage() {
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+			return "no-version-was-found";
+		}
+
+		return "no-web-content-was-found";
 	}
 
 	public int getVersionsTotal() throws PortalException {
@@ -1294,7 +1308,7 @@ public class JournalDisplayContext {
 
 	public boolean isFilterApplied() {
 		if ((getStatus() != WorkflowConstants.STATUS_ANY) ||
-			isNavigationMine() || isNavigationRecent()) {
+			isNavigationMine() || isNavigationRecent() || isTypeVersions()) {
 
 			return true;
 		}
@@ -1384,6 +1398,38 @@ public class JournalDisplayContext {
 		return false;
 	}
 
+	public boolean isSearchInComments() {
+		if (Objects.equals(_getSearchIn(), "comments")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isShowComments() throws PortalException {
+		if ((!FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isCommentsTabSelected()) ||
+			(FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isSearchInComments())) {
+
+			return true;
+		}
+
+		if ((FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isTypeWebContent() && !hasResults() && !hasVersionsResults() &&
+			 hasCommentsResults()) ||
+			(FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isTypeVersions() && !hasVersionsResults() &&
+			 hasCommentsResults())) {
+
+			_searchIn = "comments";
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean isShowInfoButton() {
 		if (isNavigationMine() || isNavigationRecent() || isSearch() ||
 			ArrayUtil.isNotEmpty(_getAssetCategoryIds()) ||
@@ -1404,6 +1450,14 @@ public class JournalDisplayContext {
 			return true;
 		}
 
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			isTypeWebContent() && !hasResults() && hasVersionsResults()) {
+
+			_type = "versions";
+
+			return true;
+		}
+
 		return false;
 	}
 
@@ -1411,7 +1465,7 @@ public class JournalDisplayContext {
 		if ((!FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
 			 isWebContentTabSelected()) ||
 			(FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
-			 isTypeWebContent())) {
+			 isTypeWebContent() && !isShowComments() && !isShowVersions())) {
 
 			return true;
 		}
@@ -1628,9 +1682,9 @@ public class JournalDisplayContext {
 			}
 		}
 
-		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") && !isSearch() &&
-			!isNavigationMine() && !isNavigationRecent() &&
-			(getDDMStructureId() <= 0) &&
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			!isTypeVersions() && !isSearch() && !isNavigationMine() &&
+			!isNavigationRecent() && (getDDMStructureId() <= 0) &&
 			(getHighlightedDDMStructureId() <= 0) &&
 			(getStatus() == WorkflowConstants.STATUS_ANY) &&
 			ArrayUtil.isEmpty(_getAssetCategoryIds()) &&
@@ -1907,6 +1961,36 @@ public class JournalDisplayContext {
 		return _searchIn;
 	}
 
+	private JSONArray _getSearchInOptionsJSONArray() {
+		JSONArray jsonArray = JSONUtil.put(
+			JSONUtil.put(
+				"label",
+				LanguageUtil.get(_themeDisplay.getLocale(), "all-fields")
+			).put(
+				"value", "all-fields"
+			));
+
+		jsonArray.put(
+			JSONUtil.put(
+				"label",
+				LanguageUtil.get(_themeDisplay.getLocale(), "title-only")
+			).put(
+				"value", "title"
+			));
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+			jsonArray.put(
+				JSONUtil.put(
+					"label",
+					LanguageUtil.get(_themeDisplay.getLocale(), "comments")
+				).put(
+					"value", "comments"
+				));
+		}
+
+		return jsonArray;
+	}
+
 	private String _getSearchLocation() {
 		if (_searchLocation != null) {
 			return _searchLocation;
@@ -1998,9 +2082,7 @@ public class JournalDisplayContext {
 		return "web-content";
 	}
 
-	private SearchContainer<JournalArticle> _getVersionsSearchContainer()
-		throws PortalException {
-
+	private SearchContainer<JournalArticle> _getVersionsSearchContainer() {
 		if (_articleVersionsSearchContainer != null) {
 			return _articleVersionsSearchContainer;
 		}
@@ -2014,6 +2096,7 @@ public class JournalDisplayContext {
 			JournalPortletUtil.getArticleOrderByComparator(
 				getOrderByCol(), getOrderByType()));
 		articleVersionsSearchContainer.setOrderByType(getOrderByType());
+		articleVersionsSearchContainer.setRowChecker(_getEntriesChecker());
 
 		SearchResponse searchResponse =
 			JournalSearcherUtil.searchJournalArticles(

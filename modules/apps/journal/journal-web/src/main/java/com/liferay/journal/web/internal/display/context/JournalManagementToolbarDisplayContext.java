@@ -322,7 +322,11 @@ public class JournalManagementToolbarDisplayContext
 		).setParameter(
 			"orderByType", StringPool.BLANK
 		).setParameter(
+			"searchIn", StringPool.BLANK
+		).setParameter(
 			"status", WorkflowConstants.STATUS_ANY
+		).setParameter(
+			"type", (String)null
 		).buildString();
 	}
 
@@ -361,6 +365,40 @@ public class JournalManagementToolbarDisplayContext
 					getFilterStatusDropdownItems());
 				dropdownGroupItem.setLabel(
 					LanguageUtil.get(httpServletRequest, "filter-by-status"));
+			}
+		).addGroup(
+			() ->
+				_journalDisplayContext.isIndexAllArticleVersions() &&
+				FeatureFlagManagerUtil.isEnabled("LPS-196768"),
+			dropdownGroupItem -> {
+				dropdownGroupItem.setDropdownItems(
+					DropdownItemListBuilder.add(
+						dropdownItem -> {
+							dropdownItem.setActive(
+								Objects.equals(
+									_journalDisplayContext.getType(),
+									"web-content"));
+							dropdownItem.setHref(
+								getPortletURL(), "type", "web-content");
+							dropdownItem.setLabel(
+								LanguageUtil.get(
+									httpServletRequest, "web-content"));
+						}
+					).add(
+						dropdownItem -> {
+							dropdownItem.setActive(
+								Objects.equals(
+									_journalDisplayContext.getType(),
+									"versions"));
+							dropdownItem.setHref(
+								getPortletURL(), "type", "versions");
+							dropdownItem.setLabel(
+								LanguageUtil.get(
+									httpServletRequest, "versions"));
+						}
+					).build());
+				dropdownGroupItem.setLabel(
+					LanguageUtil.get(httpServletRequest, "filter-by-type"));
 			}
 		).addGroup(
 			() ->
@@ -483,6 +521,23 @@ public class JournalManagementToolbarDisplayContext
 				labelItem.setLabel(
 					LanguageUtil.get(httpServletRequest, "status") + ": " +
 						_getStatusLabel(status));
+			}
+		).add(
+			_journalDisplayContext::isTypeVersions,
+			labelItem -> {
+				labelItem.putData(
+					"removeLabelURL",
+					PortletURLBuilder.create(
+						PortletURLUtil.clone(
+							currentURLObj, liferayPortletResponse)
+					).setParameter(
+						"type", (String)null
+					).buildString());
+
+				labelItem.setCloseable(true);
+				labelItem.setLabel(
+					LanguageUtil.get(httpServletRequest, "type") + ": " +
+						LanguageUtil.get(httpServletRequest, "versions"));
 			}
 		);
 
@@ -1169,12 +1224,24 @@ public class JournalManagementToolbarDisplayContext
 
 		if (status == WorkflowConstants.STATUS_APPROVED) {
 			label = "with-approved-versions";
+
+			if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+				label = "approved";
+			}
 		}
 		else if (status == WorkflowConstants.STATUS_EXPIRED) {
 			label = "with-expired-versions";
+
+			if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+				label = "expired";
+			}
 		}
 		else if (status == WorkflowConstants.STATUS_SCHEDULED) {
 			label = "with-scheduled-versions";
+
+			if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+				label = "scheduled";
+			}
 		}
 		else {
 			label = WorkflowConstants.getStatusLabel(status);
