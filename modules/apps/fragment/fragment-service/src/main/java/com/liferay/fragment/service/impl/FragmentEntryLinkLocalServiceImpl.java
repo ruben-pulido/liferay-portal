@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -258,7 +259,9 @@ public class FragmentEntryLinkLocalServiceImpl
 					}
 
 					PortletPreferencesLocalServiceUtil.deletePortletPreferences(
-						0, 3, fragmentEntryLink.getPlid(), portletId);
+						PortletKeys.PREFS_OWNER_ID_DEFAULT,
+						PortletKeys.PREFS_OWNER_TYPE_LAYOUT,
+						fragmentEntryLink.getPlid(), portletId);
 				}
 				catch (PortalException portalException) {
 					if (_log.isDebugEnabled()) {
