@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
@@ -243,6 +244,29 @@ public class FragmentEntryLinkLocalServiceImpl
 				fragmentEntryLink);
 
 			deletedFragmentEntryLinks.add(fragmentEntryLink);
+
+			if (fragmentEntryLink.isTypePortlet()) {
+
+				try {
+					JSONObject jsonObject = _jsonFactory.createJSONObject(
+						fragmentEntryLink.getEditableValues());
+					String portletId = jsonObject.getString("portletId");
+					String instanceId = jsonObject.getString("instanceId");
+
+					if (!instanceId.isEmpty()) {
+						portletId = portletId + "_INSTANCE_" + instanceId;
+					}
+
+					PortletPreferencesLocalServiceUtil.deletePortletPreferences(
+						0, 3, fragmentEntryLink.getPlid(), portletId);
+
+				}
+				catch (PortalException portalException) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(portalException);
+					}
+				}
+			}
 		}
 
 		return deletedFragmentEntryLinks;
