@@ -31,7 +31,7 @@ import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
-import com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil;
+import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
@@ -258,7 +258,7 @@ public class FragmentEntryLinkLocalServiceImpl
 						portletId = portletId + "_INSTANCE_" + instanceId;
 					}
 
-					PortletPreferencesLocalServiceUtil.deletePortletPreferences(
+					_portletPreferencesLocalService.deletePortletPreferences(
 						PortletKeys.PREFS_OWNER_ID_DEFAULT,
 						PortletKeys.PREFS_OWNER_TYPE_LAYOUT,
 						fragmentEntryLink.getPlid(), portletId);
@@ -1079,5 +1079,8 @@ public class FragmentEntryLinkLocalServiceImpl
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private PortletPreferencesLocalService _portletPreferencesLocalService;
 
 }
