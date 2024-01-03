@@ -246,27 +246,30 @@ public class FragmentEntryLinkLocalServiceImpl
 
 			deletedFragmentEntryLinks.add(fragmentEntryLink);
 
-			if (fragmentEntryLink.isTypePortlet()) {
-				try {
-					JSONObject jsonObject = _jsonFactory.createJSONObject(
-						fragmentEntryLink.getEditableValues());
+			String editableValues = fragmentEntryLink.getEditableValues();
+
+			try {
+				JSONObject jsonObject = _jsonFactory.createJSONObject(
+					editableValues);
+
+				if (Validator.isNotNull(jsonObject.getString("portletId"))) {
 
 					String instanceId = jsonObject.getString("instanceId");
 					String portletId = jsonObject.getString("portletId");
 
 					if (Validator.isNotNull(instanceId)) {
 						portletId = portletId + "_INSTANCE_" + instanceId;
-					}
+						}
 
 					_portletPreferencesLocalService.deletePortletPreferences(
 						PortletKeys.PREFS_OWNER_ID_DEFAULT,
 						PortletKeys.PREFS_OWNER_TYPE_LAYOUT,
 						fragmentEntryLink.getPlid(), portletId);
-				}
-				catch (PortalException portalException) {
-					if (_log.isDebugEnabled()) {
-						_log.debug(portalException);
 					}
+			}
+			catch (PortalException portalException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(portalException);
 				}
 			}
 		}
