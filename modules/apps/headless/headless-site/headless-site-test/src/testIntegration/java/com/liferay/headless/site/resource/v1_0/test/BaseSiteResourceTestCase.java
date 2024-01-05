@@ -206,6 +206,24 @@ public abstract class BaseSiteResourceTestCase {
 	}
 
 	@Test
+	public void testDeleteSiteByExternalReferenceCode() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		Site site = testDeleteSiteByExternalReferenceCode_addSite();
+
+		assertHttpResponseStatusCode(
+			204,
+			siteResource.deleteSiteByExternalReferenceCodeHttpResponse(
+				site.getExternalReferenceCode()));
+	}
+
+	protected Site testDeleteSiteByExternalReferenceCode_addSite()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
 	public void testPutSiteByExternalReferenceCode() throws Exception {
 		Site postSite = testPutSiteByExternalReferenceCode_addSite();
 
