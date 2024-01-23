@@ -4,6 +4,7 @@
  */
 
 import {ApiHelpers} from './ApiHelpers';
+import {getRandomInt} from "../utils/util";
 
 export class HeadlessDeliveryApiHelper {
 	readonly apiHelpers: ApiHelpers;
@@ -32,6 +33,21 @@ export class HeadlessDeliveryApiHelper {
 	) {
 		return this.apiHelpers.delete(
 			`${this.apiHelpers.baseUrl}${this.basePath}/sites/Guest/documents-folder/by-external-reference-code/${externalReferenceCode}`
+		);
+	}
+
+	async postStructuredContent(
+		siteId: number) {
+		const title = 'StructuredContent' + getRandomInt();
+
+		return this.apiHelpers.post(
+			`${this.apiHelpers.baseUrl}${this.basePath}/sites/${siteId}/structured-contents`,
+			{
+				contentFields: [],
+				contentStructureId: 32805,
+				title: `${title}`,
+				viewableBy: 'Anyone'
+			}
 		);
 	}
 }

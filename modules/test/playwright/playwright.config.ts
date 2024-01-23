@@ -7,6 +7,7 @@ import {defineConfig} from '@playwright/test';
 
 import {config as batchPlanner} from './tests/batch-planner/config';
 import {config as exportImportWeb} from './tests/export-import-web/config';
+import {config as journal} from './tests/journal-web/config';
 import {config as layoutContentPageEditorWeb} from './tests/layout-content-page-editor-web/config';
 import {config as object} from './tests/object-web/config';
 import {config as portalWeb} from './tests/portal-web/config';
@@ -20,6 +21,7 @@ export default defineConfig({
 	projects: [
 		batchPlanner,
 		exportImportWeb,
+		journal,
 		layoutContentPageEditorWeb,
 		object,
 		portalWeb,
