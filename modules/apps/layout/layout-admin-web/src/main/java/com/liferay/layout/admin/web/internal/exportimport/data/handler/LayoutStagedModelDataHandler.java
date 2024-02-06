@@ -1041,6 +1041,10 @@ public class LayoutStagedModelDataHandler
 		importLayoutPageTemplateStructures(
 			portletDataContext, layout, importedLayout);
 
+		// LPD-16349 Import layout portlets after layout page template
+		// structures have been imported, to ensure portlet preferences are
+		// not deleted.
+
 		if ((Objects.equals(layout.getType(), LayoutConstants.TYPE_PORTLET) &&
 			 Validator.isNotNull(layout.getTypeSettings())) ||
 			layout.isTypeAssetDisplay() || layout.isTypeContent()) {
