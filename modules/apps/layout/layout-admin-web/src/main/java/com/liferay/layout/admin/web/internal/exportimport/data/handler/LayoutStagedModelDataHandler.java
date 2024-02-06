@@ -1036,6 +1036,11 @@ public class LayoutStagedModelDataHandler
 
 		importLayoutFriendlyURLs(portletDataContext, layout, importedLayout);
 
+		importAssets(portletDataContext, layout, importedLayout);
+
+		importLayoutPageTemplateStructures(
+			portletDataContext, layout, importedLayout);
+
 		if ((Objects.equals(layout.getType(), LayoutConstants.TYPE_PORTLET) &&
 			 Validator.isNotNull(layout.getTypeSettings())) ||
 			layout.isTypeAssetDisplay() || layout.isTypeContent()) {
@@ -1043,11 +1048,6 @@ public class LayoutStagedModelDataHandler
 			importLayoutPortlets(
 				portletDataContext, importedLayout, layoutElement);
 		}
-
-		importAssets(portletDataContext, layout, importedLayout);
-
-		importLayoutPageTemplateStructures(
-			portletDataContext, layout, importedLayout);
 
 		importLayoutSEOEntries(portletDataContext, layout);
 
