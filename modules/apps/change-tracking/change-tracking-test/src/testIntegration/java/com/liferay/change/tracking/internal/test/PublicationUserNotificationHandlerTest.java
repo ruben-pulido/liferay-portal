@@ -9,8 +9,9 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.change.tracking.constants.CTPortletKeys;
 import com.liferay.change.tracking.internal.test.util.CTCollectionTestUtil;
 import com.liferay.change.tracking.model.CTCollection;
+import com.liferay.change.tracking.model.CTProcess;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
-import com.liferay.journal.service.JournalArticleService;
+import com.liferay.change.tracking.service.CTProcessLocalService;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
@@ -19,11 +20,13 @@ import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserNotificationEvent;
 import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.notifications.UserNotificationFeedEntry;
 import com.liferay.portal.kernel.notifications.UserNotificationHandler;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserNotificationEventLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -31,7 +34,10 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -84,129 +90,63 @@ public class PublicationUserNotificationHandlerTest {
 		CTCollectionTestUtil.publishCTCollectionWithError(
 			ctCollection.getCtCollectionId());
 
-		List<UserNotificationEvent> userNotificationEvents =
-			_userNotificationEventLocalService.getUserNotificationEvents(
-				TestPropsValues.getUserId());
-
-		for (UserNotificationEvent userNotificationEvent :
-				userNotificationEvents) {
-
-			if (!Objects.equals(
-					CTPortletKeys.PUBLICATIONS,
-					userNotificationEvent.getType())) {
-
-				continue;
-			}
-
-			JSONObject jsonObject = _jsonFactory.createJSONObject(
-				userNotificationEvent.getPayload());
-
-			if ((jsonObject.getInt("notificationType") !=
-					UserNotificationDefinition.
-						NOTIFICATION_TYPE_REVIEW_ENTRY) ||
-				!jsonObject.getBoolean("showConflicts")) {
-
-				continue;
-			}
-
-			UserNotificationFeedEntry userNotificationFeedEntry =
-				_userNotificationHandler.interpret(
-					userNotificationEvent, _getServiceContext());
-
-			Assert.assertEquals(
-				StringBundler.concat(
-					"<div class=\"title\">", ctCollection.getName(),
-					" scheduled publication failed.</div><div class=\"body\">",
-					"Click on this notification to see the list of conflicts ",
-					"that need to be manually resolved.</div>"),
-				userNotificationFeedEntry.getBody());
-		}
+		_assertUserNotifcationFeedEntryBody(
+			ctCollection.getCtCollectionId(),
+			StringBundler.concat(
+				"<div class=\"title\">", ctCollection.getName(),
+				" scheduled publication failed.</div><div class=\"body\">",
+				"Click on this notification to see the list of conflicts that ",
+				"need to be manually resolved.</div>"),
+			true, TestPropsValues.getUserId());
 	}
 
 	@Test
 	public void testGetBodyForStoppedService() throws Exception {
+		User user = UserTestUtil.addUser();
+
 		CTCollection ctCollection = _ctCollectionLocalService.addCTCollection(
-			null, TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
-			0, RandomTestUtil.randomString(), null);
+			null, user.getCompanyId(), user.getUserId(), 0,
+			RandomTestUtil.randomString(), null);
 
 		try (SafeCloseable safeCloseable =
 				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
 					ctCollection.getCtCollectionId())) {
 
 			JournalTestUtil.addArticle(
-				_group.getGroupId(), RandomTestUtil.randomString(),
+				TestPropsValues.getGroupId(), RandomTestUtil.randomString(),
 				StringPool.BLANK);
 		}
 
-		Bundle journalServiceBundle = null;
+		Bundle bundle = null;
 
 		try {
-			Bundle bundle = FrameworkUtil.getBundle(
-				JournalArticleService.class);
-
-			BundleContext bundleContext = bundle.getBundleContext();
-
-			for (Bundle curBundle : bundleContext.getBundles()) {
-				if (Objects.equals(
-						curBundle.getSymbolicName(),
-						"com.liferay.journal.service") &&
-					(curBundle.getState() == Bundle.ACTIVE)) {
-
-					curBundle.stop();
-
-					journalServiceBundle = curBundle;
-
-					break;
-				}
-			}
+			bundle = _stopJournalServiceBundle();
 
 			CTCollectionTestUtil.publishCTCollectionWithError(
 				ctCollection.getCtCollectionId());
 
-			List<UserNotificationEvent> userNotificationEvents =
-				_userNotificationEventLocalService.getUserNotificationEvents(
-					TestPropsValues.getUserId());
+			_assertUserNotifcationFeedEntryBody(
+				ctCollection.getCtCollectionId(),
+				StringBundler.concat(
+					"<div class=\"title\">", ctCollection.getName(),
+					" scheduled publication failed.</div><div class=",
+					"\"body\">An unexpected error occurred while publishing ",
+					"the scheduled publication. Please contact your system ",
+					"administrator to resolve the issue.</div>"),
+				false, user.getUserId());
 
-			for (UserNotificationEvent userNotificationEvent :
-					userNotificationEvents) {
-
-				if (!Objects.equals(
-						CTPortletKeys.PUBLICATIONS,
-						userNotificationEvent.getType())) {
-
-					continue;
-				}
-
-				JSONObject jsonObject = _jsonFactory.createJSONObject(
-					userNotificationEvent.getPayload());
-
-				if ((jsonObject.getInt("notificationType") !=
-						UserNotificationDefinition.
-							NOTIFICATION_TYPE_REVIEW_ENTRY) ||
-					jsonObject.getBoolean("showConflicts")) {
-
-					continue;
-				}
-
-				UserNotificationFeedEntry userNotificationFeedEntry =
-					_userNotificationHandler.interpret(
-						userNotificationEvent,
-						ServiceContextTestUtil.getServiceContext());
-
-				Assert.assertEquals(
-					StringBundler.concat(
-						"<div class=\"title\">", ctCollection.getName(),
-						" scheduled publication failed.</div><div class=",
-						"\"body\">An unexpected error occurred while ",
-						"publishing the scheduled publication. Please contact ",
-						"your system administrator to resolve the issue.",
-						"</div>"),
-					userNotificationFeedEntry.getBody());
-			}
+			_assertUserNotifcationFeedEntryBody(
+				ctCollection.getCtCollectionId(),
+				StringBundler.concat(
+					"<div class=\"title\">", ctCollection.getName(),
+					" scheduled publication failed with an unexpected system ",
+					"error.</div><div class=\"body\">Click on this ",
+					"notification to see the stack trace.</div>"),
+				false, TestPropsValues.getUserId());
 		}
 		finally {
-			if (journalServiceBundle != null) {
-				journalServiceBundle.start();
+			if (bundle != null) {
+				bundle.start();
 			}
 		}
 	}
@@ -220,9 +160,139 @@ public class PublicationUserNotificationHandlerTest {
 		CTCollectionTestUtil.publishCTCollectionWithError(
 			ctCollection.getCtCollectionId());
 
+		ServiceContext serviceContext = _getServiceContext();
+
+		_assertUserNotificationFeedEntryLink(
+			ctCollection.getCtCollectionId(),
+			PortletURLBuilder.create(
+				_portal.getControlPanelPortletURL(
+					serviceContext.getRequest(), serviceContext.getScopeGroup(),
+					CTPortletKeys.PUBLICATIONS, 0, 0,
+					PortletRequest.RENDER_PHASE)
+			).setMVCRenderCommandName(
+				"/change_tracking/view_conflicts"
+			).setParameter(
+				"ctCollectionId", ctCollection.getCtCollectionId()
+			).buildString(),
+			serviceContext, true, TestPropsValues.getUserId());
+	}
+
+	@Test
+	public void testGetLinkToViewStackTrace() throws Exception {
+		User user = UserTestUtil.addUser();
+
+		CTCollection ctCollection = _ctCollectionLocalService.addCTCollection(
+			null, user.getCompanyId(), user.getUserId(), 0,
+			RandomTestUtil.randomString(), null);
+
+		try (SafeCloseable safeCloseable =
+				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+					ctCollection.getCtCollectionId())) {
+
+			JournalTestUtil.addArticle(
+				TestPropsValues.getGroupId(), RandomTestUtil.randomString(),
+				StringPool.BLANK);
+		}
+
+		Bundle bundle = null;
+
+		try {
+			bundle = _stopJournalServiceBundle();
+
+			CTCollectionTestUtil.publishCTCollectionWithError(
+				ctCollection.getCtCollectionId());
+
+			ServiceContext serviceContext = _getServiceContext();
+
+			_assertUserNotificationFeedEntryLink(
+				ctCollection.getCtCollectionId(), StringPool.BLANK,
+				serviceContext, false, user.getUserId());
+
+			List<CTProcess> ctProcesses = _ctProcessLocalService.getCTProcesses(
+				ctCollection.getCtCollectionId());
+
+			CTProcess ctProcess = ctProcesses.get(0);
+
+			_assertUserNotificationFeedEntryLink(
+				ctCollection.getCtCollectionId(),
+				PortletURLBuilder.create(
+					_portal.getControlPanelPortletURL(
+						serviceContext.getRequest(),
+						serviceContext.getScopeGroup(),
+						CTPortletKeys.PUBLICATIONS, 0, 0,
+						PortletRequest.RENDER_PHASE)
+				).setMVCRenderCommandName(
+					"/change_tracking/view_stack_trace"
+				).setParameter(
+					"backgroundTaskId", ctProcess.getBackgroundTaskId()
+				).setParameter(
+					"ctCollectionName", ctCollection.getName()
+				).buildString(),
+				serviceContext, false, TestPropsValues.getUserId());
+		}
+		finally {
+			if (bundle != null) {
+				bundle.start();
+			}
+		}
+	}
+
+	private void _assertUserNotifcationFeedEntryBody(
+			long ctCollectionId, String expectedBody, boolean showConflicts,
+			long userId)
+		throws Exception {
+
+		UserNotificationFeedEntry userNotificationFeedEntry =
+			_userNotificationHandler.interpret(
+				_getUserNotificationEvent(
+					ctCollectionId, showConflicts, userId),
+				_getServiceContext());
+
+		Assert.assertEquals(expectedBody, userNotificationFeedEntry.getBody());
+	}
+
+	private void _assertUserNotificationFeedEntryLink(
+			long ctCollectionId, String expectedLink,
+			ServiceContext serviceContext, boolean showConflicts, long userId)
+		throws Exception {
+
+		UserNotificationFeedEntry userNotificationFeedEntry =
+			_userNotificationHandler.interpret(
+				_getUserNotificationEvent(
+					ctCollectionId, showConflicts, userId),
+				serviceContext);
+
+		Assert.assertEquals(expectedLink, userNotificationFeedEntry.getLink());
+	}
+
+	private ServiceContext _getServiceContext() throws Exception {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		ThemeDisplay themeDisplay = new ThemeDisplay();
+
+		themeDisplay.setCompany(
+			_companyLocalService.fetchCompany(TestPropsValues.getCompanyId()));
+		themeDisplay.setSiteGroupId(_group.getGroupId());
+
+		mockHttpServletRequest.setAttribute(
+			WebKeys.THEME_DISPLAY, themeDisplay);
+
+		serviceContext.setRequest(mockHttpServletRequest);
+
+		return serviceContext;
+	}
+
+	private UserNotificationEvent _getUserNotificationEvent(
+			long ctCollectionId, boolean showConflicts, long userId)
+		throws Exception {
+
 		List<UserNotificationEvent> userNotificationEvents =
 			_userNotificationEventLocalService.getUserNotificationEvents(
-				TestPropsValues.getUserId());
+				userId);
 
 		for (UserNotificationEvent userNotificationEvent :
 				userNotificationEvents) {
@@ -237,52 +307,48 @@ public class PublicationUserNotificationHandlerTest {
 			JSONObject jsonObject = _jsonFactory.createJSONObject(
 				userNotificationEvent.getPayload());
 
-			if ((jsonObject.getInt("notificationType") !=
+			if ((jsonObject.getLong("ctCollectionId") == ctCollectionId) &&
+				(jsonObject.getInt("notificationType") ==
 					UserNotificationDefinition.
-						NOTIFICATION_TYPE_REVIEW_ENTRY) ||
-				!jsonObject.getBoolean("showConflicts")) {
+						NOTIFICATION_TYPE_REVIEW_ENTRY) &&
+				(jsonObject.getBoolean("showConflicts") == showConflicts)) {
 
-				continue;
+				return userNotificationEvent;
 			}
-
-			ServiceContext serviceContext = _getServiceContext();
-
-			UserNotificationFeedEntry userNotificationFeedEntry =
-				_userNotificationHandler.interpret(
-					userNotificationEvent, serviceContext);
-
-			Assert.assertEquals(
-				userNotificationFeedEntry.getLink(),
-				PortletURLBuilder.create(
-					_portal.getControlPanelPortletURL(
-						serviceContext.getRequest(),
-						serviceContext.getScopeGroup(),
-						CTPortletKeys.PUBLICATIONS, 0, 0,
-						PortletRequest.RENDER_PHASE)
-				).setMVCRenderCommandName(
-					"/change_tracking/view_conflicts"
-				).setParameter(
-					"ctCollectionId",
-					_jsonFactory.createJSONObject(
-						userNotificationEvent.getPayload()
-					).getLong(
-						"ctCollectionId"
-					)
-				).buildString());
 		}
+
+		return null;
 	}
 
-	private ServiceContext _getServiceContext() throws Exception {
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+	private Bundle _stopJournalServiceBundle() throws Exception {
+		Bundle bundle = FrameworkUtil.getBundle(
+			PublicationUserNotificationHandlerTest.class);
 
-		serviceContext.setRequest(new MockHttpServletRequest());
+		BundleContext bundleContext = bundle.getBundleContext();
 
-		return serviceContext;
+		for (Bundle curBundle : bundleContext.getBundles()) {
+			if (Objects.equals(
+					curBundle.getSymbolicName(),
+					"com.liferay.journal.service") &&
+				(curBundle.getState() == Bundle.ACTIVE)) {
+
+				curBundle.stop();
+
+				return curBundle;
+			}
+		}
+
+		return null;
 	}
 
 	@Inject
-	private static CTCollectionLocalService _ctCollectionLocalService;
+	private CompanyLocalService _companyLocalService;
+
+	@Inject
+	private CTCollectionLocalService _ctCollectionLocalService;
+
+	@Inject
+	private CTProcessLocalService _ctProcessLocalService;
 
 	private Group _group;
 

@@ -153,6 +153,26 @@ public class StructuredContentSerDes {
 			sb.append(structuredContent.getContentStructureId());
 		}
 
+		if (structuredContent.getContentStructureReference() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"contentStructureReference\": ");
+
+			if (structuredContent.getContentStructureReference() instanceof
+					String) {
+
+				sb.append("\"");
+				sb.append(
+					(String)structuredContent.getContentStructureReference());
+				sb.append("\"");
+			}
+			else {
+				sb.append(structuredContent.getContentStructureReference());
+			}
+		}
+
 		if (structuredContent.getCreator() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -641,6 +661,16 @@ public class StructuredContentSerDes {
 				String.valueOf(structuredContent.getContentStructureId()));
 		}
 
+		if (structuredContent.getContentStructureReference() == null) {
+			map.put("contentStructureReference", null);
+		}
+		else {
+			map.put(
+				"contentStructureReference",
+				String.valueOf(
+					structuredContent.getContentStructureReference()));
+		}
+
 		if (structuredContent.getCreator() == null) {
 			map.put("creator", null);
 		}
@@ -945,6 +975,14 @@ public class StructuredContentSerDes {
 				if (jsonParserFieldValue != null) {
 					structuredContent.setContentStructureId(
 						Long.valueOf((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "contentStructureReference")) {
+
+				if (jsonParserFieldValue != null) {
+					structuredContent.setContentStructureReference(
+						(Object)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "creator")) {

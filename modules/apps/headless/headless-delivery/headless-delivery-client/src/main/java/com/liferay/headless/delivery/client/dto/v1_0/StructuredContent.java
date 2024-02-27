@@ -155,6 +155,29 @@ public class StructuredContent implements Cloneable, Serializable {
 
 	protected Long contentStructureId;
 
+	public Object getContentStructureReference() {
+		return contentStructureReference;
+	}
+
+	public void setContentStructureReference(Object contentStructureReference) {
+		this.contentStructureReference = contentStructureReference;
+	}
+
+	public void setContentStructureReference(
+		UnsafeSupplier<Object, Exception>
+			contentStructureReferenceUnsafeSupplier) {
+
+		try {
+			contentStructureReference =
+				contentStructureReferenceUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Object contentStructureReference;
+
 	public Creator getCreator() {
 		return creator;
 	}

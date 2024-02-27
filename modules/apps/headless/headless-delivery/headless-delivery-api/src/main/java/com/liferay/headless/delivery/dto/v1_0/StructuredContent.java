@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
@@ -37,7 +38,6 @@ import javax.annotation.Generated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonFilter("Liferay.Vulcan")
 @Schema(
 	description = "Represents content that has fields and is rendered by a template backed by a `ContentStructure`. This is modeled internally as a `JournalArticle`.",
-	requiredProperties = {"contentStructureId", "title"}
+	requiredProperties = {"title"}
 )
 @XmlRootElement(name = "StructuredContent")
 public class StructuredContent implements Serializable {
@@ -328,11 +328,54 @@ public class StructuredContent implements Serializable {
 
 	@GraphQLField(description = "The ID of the `ContentStructure`.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	@NotNull
 	protected Long contentStructureId;
 
 	@JsonIgnore
 	private Supplier<Long> _contentStructureIdSupplier;
+
+	@Schema(description = "The reference to the `ContentStructure`.")
+	@Valid
+	public Object getContentStructureReference() {
+		if (_contentStructureReferenceSupplier != null) {
+			contentStructureReference =
+				_contentStructureReferenceSupplier.get();
+
+			_contentStructureReferenceSupplier = null;
+		}
+
+		return contentStructureReference;
+	}
+
+	public void setContentStructureReference(Object contentStructureReference) {
+		this.contentStructureReference = contentStructureReference;
+
+		_contentStructureReferenceSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setContentStructureReference(
+		UnsafeSupplier<Object, Exception>
+			contentStructureReferenceUnsafeSupplier) {
+
+		_contentStructureReferenceSupplier = () -> {
+			try {
+				return contentStructureReferenceUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(description = "The reference to the `ContentStructure`.")
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Object contentStructureReference;
+
+	@JsonIgnore
+	private Supplier<Object> _contentStructureReferenceSupplier;
 
 	@Schema(description = "The structured content's creator.")
 	@Valid
@@ -1677,6 +1720,30 @@ public class StructuredContent implements Serializable {
 			sb.append("\"contentStructureId\": ");
 
 			sb.append(contentStructureId);
+		}
+
+		Object contentStructureReference = getContentStructureReference();
+
+		if (contentStructureReference != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"contentStructureReference\": ");
+
+			if (contentStructureReference instanceof Map) {
+				sb.append(
+					JSONFactoryUtil.createJSONObject(
+						(Map<?, ?>)contentStructureReference));
+			}
+			else if (contentStructureReference instanceof String) {
+				sb.append("\"");
+				sb.append(_escape((String)contentStructureReference));
+				sb.append("\"");
+			}
+			else {
+				sb.append(contentStructureReference);
+			}
 		}
 
 		Creator creator = getCreator();
