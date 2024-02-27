@@ -5079,6 +5079,12 @@ components:
                         The ID of the `ContentStructure`.
                     format: int64
                     type: integer
+                contentStructureReference:
+                    # @review
+                    description:
+                        The reference to the `ContentStructure`.
+                    oneOf:
+                        - $ref: "#/components/schemas/ClassFieldsReference"
                 creator:
                     $ref: "#/components/schemas/Creator"
                     description:
@@ -5242,7 +5248,6 @@ components:
                     type: string
                     writeOnly: true
             required:
-                - contentStructureId
                 - title
         StructuredContentFolder:
             description:

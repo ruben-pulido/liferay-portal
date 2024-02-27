@@ -55,4 +55,17 @@ export class HeadlessDeliveryApiHelper {
 			`${this.apiHelpers.baseUrl}${this.basePath}/sites/${siteId}/documents`
 		);
 	}
+
+	async postStructuredContent(
+		siteId: string,
+		contentStructureId: number,
+		datePublished: string,
+		title: string
+	): Promise<StructuredContent> {
+		return this.apiHelpers.post(
+			`${this.apiHelpers.baseUrl}${this.basePath}/sites/${siteId}/structured-contents`,
+			{contentStructureId, datePublished, title}
+		);
+	}
+
 }

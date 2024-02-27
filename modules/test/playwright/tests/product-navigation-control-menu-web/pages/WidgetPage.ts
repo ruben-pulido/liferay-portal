@@ -1,0 +1,40 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+// @ts-ignore
+
+import {Locator, Page} from '@playwright/test';
+
+export class WidgetPage {
+	readonly page: Page;
+	readonly controlMenuAddButton: Locator;
+	readonly controlMenuAddPanelContentTab: Locator;
+
+	constructor(page: Page) {
+		this.page = page;
+
+		this.controlMenuAddButton = page.locator('id=_com_liferay_product_navigation_control_menu_web_portlet_ProductNavigationControlMenuPortlet_addToggleId');
+		this.controlMenuAddPanelContentTab = page.getByText('Content', {exact: true});
+	}
+
+	async getControlMenuAddPanelContentRecentPanelList() {
+		await this.controlMenuAddButton.click();
+	}
+
+	async clickControlMenuAddButton() {
+		await this.controlMenuAddButton.click();
+	}
+
+	async goToControlMenuAddPanelContentTab() {
+		await this.page.getByText('Content', {exact: true}).click();
+	}
+
+	async goToSitePage(site: Site, layout: Layout) {
+		await this.page.goto(
+			`/web${site.friendlyUrlPath}${layout.friendlyURL}`
+		);
+	}
+
+}

@@ -16,12 +16,22 @@ import {HeadlessCommerceDeliveryCartApiHelper} from './HeadlessCommerceDeliveryC
 import {HeadlessCommerceDeliveryCatalogApiHelper} from './HeadlessCommerceDeliveryCatalogApiHelper';
 import {HeadlessDeliveryApiHelper} from './HeadlessDeliveryApiHelper';
 import {HeadlessSiteApiHelper} from './HeadlessSiteApiHelper';
+import {JSONWebServicesCompanyApiHelper} from './JSONWebServicesCompanyApiHelper';
+import {JSONWebServicesGroupApiHelper} from './JSONWebServicesGroupApiHelper';
+import {JSONWebServicesJournalApiHelper} from './JSONWebServicesJournalApiHelper';
+import {JSONWebServicesLayoutApiHelper} from './JSONWebServicesLayoutApiHelper';
 import {ObjectAdminApiHelper} from './ObjectAdminApiHelper';
 import {ObjectApiHelper} from './ObjectApiHelper';
+import {
+	JSONWebServicesClassNameApiHelper
+} from "./JSONWebServicesClassNameApiHelper";
+import {JSONWebServicesDDMApiHelper} from "./JSONWebServicesDDMApiHelper";
+import {HeadlessAdminContentApiHelper} from "./HeadlessAdminContentApiHelper";
 
 export class ApiHelpers {
 	readonly baseUrl: string;
 	readonly featureFlag: FeatureFlagApiHelper;
+	readonly headlessAdminContent: HeadlessAdminContentApiHelper;
 	readonly headlessAdminUser: HeadlessAdminUserApiHelper;
 	readonly headlessCommerceAdminCatalog: HeadlessCommerceAdminCatalogApiHelper;
 	readonly headlessCommerceAdminChannel: HeadlessCommerceAdminChannelApiHelper;
@@ -29,6 +39,12 @@ export class ApiHelpers {
 	readonly headlessCommerceDeliveryCart: HeadlessCommerceDeliveryCartApiHelper;
 	readonly headlessDelivery: HeadlessDeliveryApiHelper;
 	readonly headlessSite: HeadlessSiteApiHelper;
+	readonly jsonWebServicesClassName: JSONWebServicesClassNameApiHelper;
+	readonly jsonWebServicesCompany: JSONWebServicesCompanyApiHelper;
+	readonly jsonWebServicesDDM: JSONWebServicesDDMApiHelper;
+	readonly jsonWebServicesGroup: JSONWebServicesGroupApiHelper;
+	readonly jsonWebServicesJournal: JSONWebServicesJournalApiHelper;
+	readonly jsonWebServicesLayout: JSONWebServicesLayoutApiHelper;
 	readonly object: ObjectApiHelper;
 	readonly objectAdmin: ObjectAdminApiHelper;
 	readonly page: Page;
@@ -36,6 +52,7 @@ export class ApiHelpers {
 	constructor(page: Page) {
 		this.baseUrl = liferayConfig.environment.baseUrl + '/o/';
 		this.featureFlag = new FeatureFlagApiHelper(page);
+		this.headlessAdminContent = new HeadlessAdminContentApiHelper(this);
 		this.headlessAdminUser = new HeadlessAdminUserApiHelper(this);
 		this.headlessCommerceAdminCatalog =
 			new HeadlessCommerceAdminCatalogApiHelper(this);
@@ -47,6 +64,12 @@ export class ApiHelpers {
 			new HeadlessCommerceDeliveryCartApiHelper(this);
 		this.headlessDelivery = new HeadlessDeliveryApiHelper(this);
 		this.headlessSite = new HeadlessSiteApiHelper(this);
+		this.jsonWebServicesClassName = new JSONWebServicesClassNameApiHelper(this);
+		this.jsonWebServicesCompany = new JSONWebServicesCompanyApiHelper(this);
+		this.jsonWebServicesDDM = new JSONWebServicesDDMApiHelper(this);
+		this.jsonWebServicesGroup = new JSONWebServicesGroupApiHelper(this);
+		this.jsonWebServicesJournal = new JSONWebServicesJournalApiHelper(this);
+		this.jsonWebServicesLayout = new JSONWebServicesLayoutApiHelper(this);
 		this.object = new ObjectApiHelper(this);
 		this.objectAdmin = new ObjectAdminApiHelper(this);
 		this.page = page;
@@ -61,6 +84,14 @@ export class ApiHelpers {
 	async get(url: string) {
 		const response = await this.page.request.get(url, {
 			headers: await this.getHeader(),
+		});
+
+		return response.json();
+	}
+
+	async getWithHeaders(url: string, headers: { [key: string]: string; }) {
+		const response = await this.page.request.get(url, {
+			headers: headers,
 		});
 
 		return response.json();
@@ -81,14 +112,41 @@ export class ApiHelpers {
 		return response.json();
 	}
 
-	async post(url: string, data: DataObject | any[]) {
+	// async post(url: string, data: DataObject | any[]) {
+	// 	const response = await this.page.request.post(url, {
+	// 		data,
+	// 		headers: await this.getHeader(),
+	// 	});
+	//
+	// 	return response.json();
+	// }
+
+	async post(url: string, data: DataObject | any[], headers?: { [key: string]: string; }) {
 		const response = await this.page.request.post(url, {
 			data,
-			headers: await this.getHeader(),
+			headers: headers || await this.getHeader(),
 		});
 
 		return response.json();
 	}
+
+	async postForm(url: string, data: string, headers: { [key: string]: string; }) {
+		const response = await this.page.request.post(url, {
+			data,
+			headers: headers,
+		});
+
+		return response.json();
+	}
+
+	// async postWithHeadersBK(url: string, data: DataObject | any[], headers: { [key: string]: string; }) {
+	// 	const response = await this.page.request.post(url, {
+	// 		data,
+	// 		headers: headers,
+	// 	});
+	//
+	// 	return response.json();
+	// }
 
 	async getHeader() {
 		const authToken = await this.page.evaluate(() => Liferay.authToken);

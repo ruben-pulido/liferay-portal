@@ -16,7 +16,9 @@ import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.headless.delivery.dto.v1_0.ClassFieldsReference;
 import com.liferay.headless.delivery.dto.v1_0.ContentField;
+import com.liferay.headless.delivery.dto.v1_0.Field;
 import com.liferay.headless.delivery.dto.v1_0.RenderedContent;
 import com.liferay.headless.delivery.dto.v1_0.StructuredContent;
 import com.liferay.headless.delivery.dto.v1_0.TaxonomyCategoryBrief;
@@ -129,6 +131,8 @@ public class StructuredContentDTOConverter
 						journalArticle, _journalArticleService,
 						_layoutLocalService));
 				setContentStructureId(ddmStructure::getStructureId);
+				setContentStructureReference(
+					() -> _toClassFieldsReference(ddmStructure));
 				setCreator(
 					() -> CreatorUtil.toCreator(
 						dtoConverterContext, _portal,
@@ -238,6 +242,37 @@ public class StructuredContentDTOConverter
 		}
 
 		return filterDescriptionMap;
+	}
+
+	private ClassFieldsReference _toClassFieldsReference(
+		DDMStructure ddmStructure) {
+
+		return new ClassFieldsReference() {
+			{
+				setClassName(ddmStructure::getClassName);
+				setFields(
+					() -> {
+						Field contentStructureKeyField = new Field();
+
+						contentStructureKeyField.setFieldName(
+							"contentStructureKey");
+						contentStructureKeyField.setFieldValue(
+							ddmStructure.getStructureKey());
+
+						Field siteKeyField = new Field();
+
+						Group group = _groupLocalService.getGroup(
+							ddmStructure.getGroupId());
+
+						siteKeyField.setFieldName("siteKey");
+						siteKeyField.setFieldValue(group.getGroupKey());
+
+						return new Field[] {
+							contentStructureKeyField, siteKeyField
+						};
+					});
+			}
+		};
 	}
 
 	private ContentField[] _toContentFields(
