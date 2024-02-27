@@ -129,6 +129,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.ws.rs.BadRequestException;
@@ -714,8 +715,61 @@ public class StructuredContentResourceImpl
 			StructuredContent structuredContent)
 		throws Exception {
 
-		DDMStructure ddmStructure = _ddmStructureService.getStructure(
-			structuredContent.getContentStructureId());
+		if ((structuredContent.getContentStructureId() == null) &&
+			(structuredContent.getContentStructureReference() == null)) {
+
+			throw new BadRequestException(
+				"Structured content is invalid. Field contentStructureId or " +
+					"field contentStructureReference must be specified.");
+		}
+
+		DDMStructure ddmStructure = null;
+
+		if (structuredContent.getContentStructureId() != null) {
+			ddmStructure = _ddmStructureService.getStructure(
+				structuredContent.getContentStructureId());
+		}
+		else {
+			String contentStructureKey = null;
+			String siteKey = null;
+
+			Map<String, Object> classFieldsReferenceMap =
+				(Map<String, Object>)
+					structuredContent.getContentStructureReference();
+
+			List<Map<String, String>> fields =
+				(List<Map<String, String>>)classFieldsReferenceMap.get(
+					"fields");
+
+			for (Map<String, String> field : fields) {
+				String key = field.get("fieldName");
+
+				if (Objects.equals(key, "contentStructureKey")) {
+					contentStructureKey = field.get("fieldValue");
+				}
+				else if (Objects.equals(key, "siteKey")) {
+					siteKey = field.get("fieldValue");
+				}
+			}
+
+			Group group = groupLocalService.fetchGroup(
+				contextCompany.getCompanyId(), siteKey);
+
+			String className = (String)classFieldsReferenceMap.get("className");
+
+			ddmStructure = _ddmStructureService.fetchStructure(
+				group.getGroupId(), _portal.getClassNameId(className),
+				contentStructureKey);
+
+			if (ddmStructure == null) {
+				throw new BadRequestException(
+					StringBundler.concat(
+						"Structured content is invalid. No content structure ",
+						"was found for site key ", siteKey, ", class name ",
+						className, ", and content structure key ",
+						contentStructureKey));
+			}
+		}
 
 		LocalDateTime localDateTime = LocalDateTimeUtil.toLocalDateTime(
 			structuredContent.getDatePublished(), null,
