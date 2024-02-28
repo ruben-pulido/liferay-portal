@@ -6,11 +6,7 @@
 import {ClayButtonWithIcon, default as ClayButton} from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
-import {
-	ReactPortal,
-	useIsMounted,
-	useStateSafe,
-} from '@liferay/frontend-js-react-web';
+import {useIsMounted, useStateSafe} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import {useId, useSessionState} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
@@ -369,10 +365,15 @@ export default function Sidebar() {
 	};
 
 	return (
-		<ReactPortal className="cadmin">
+		<div className="cadmin">
 			<div
 				className={classNames(
-					'page-editor__sidebar page-editor__theme-adapter-forms'
+					'page-editor__sidebar page-editor__theme-adapter-forms',
+					{
+						'page-editor__old-sidebar': !Liferay.FeatureFlags[
+							'LPD-10988'
+						],
+					}
 				)}
 				ref={dropClearRef}
 				style={{'--sidebar-content-width': `${sidebarWidth}px`}}
@@ -550,7 +551,7 @@ export default function Sidebar() {
 					/>
 				</div>
 			</div>
-		</ReactPortal>
+		</div>
 	);
 }
 

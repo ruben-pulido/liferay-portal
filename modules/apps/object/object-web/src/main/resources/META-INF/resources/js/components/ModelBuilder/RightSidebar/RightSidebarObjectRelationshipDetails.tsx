@@ -16,8 +16,8 @@ import {
 	API,
 	Input,
 	SingleSelect,
-	getLocalizableLabel,
 	openToast,
+	stringUtils,
 } from '@liferay/object-js-components-web';
 import {InputLocalized} from 'frontend-js-components-web';
 
@@ -185,7 +185,7 @@ export function RightSidebarObjectRelationshipDetails({
 							) {
 								return {
 									...objectRelationshipEdgeData,
-									label: getLocalizableLabel(
+									label: stringUtils.getLocalizableLabel(
 										defaultLanguageId,
 										objectRelationship.label,
 										objectRelationship.name

@@ -6,21 +6,46 @@
 import {Cookie, Page, expect} from '@playwright/test';
 
 export type LoginScreenName =
-	| 'test'
-	| 'test-company-admin'
-	| 'test-organization-owner'
-	| 'test-unprivileged';
+	| 'demo.company.admin'
+	| 'demo.organization.owner'
+	| 'demo.unprivileged'
+	| 'test';
+
+const userData = {
+	'demo.company.admin': {
+		name: 'Demo',
+		password: 'demo',
+		surname: 'Company Admin',
+	},
+	'demo.organization.owner': {
+		name: 'Demo',
+		password: 'demo',
+		surname: 'Organization Owner',
+	},
+	'demo.unprivileged': {
+		name: 'Demo',
+		password: 'demo',
+		surname: 'Unprivileged',
+	},
+	'test': {
+		name: 'Test',
+		password: 'test',
+		surname: 'Test',
+	},
+};
 
 async function performLogin(
 	page: Page,
 	screenName: LoginScreenName
 ): Promise<Cookie[]> {
+	const {name, password, surname} = userData[screenName];
+
 	await page.goto('/');
 
 	await page.getByRole('button', {name: 'Sign In'}).click();
 
 	await page.getByLabel('Email Address').fill(`${screenName}@liferay.com`);
-	await page.getByLabel('Password').fill('test');
+	await page.getByLabel('Password').fill(password);
 	await page.getByLabel('Remember Me').check();
 
 	await page
@@ -29,7 +54,7 @@ async function performLogin(
 		.click();
 
 	await expect(
-		page.getByLabel(`${screenName} ${screenName} User Profile`)
+		page.getByLabel(`${name} ${surname} User Profile`)
 	).toBeVisible({
 		timeout: 30 * 1000,
 	});

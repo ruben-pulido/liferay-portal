@@ -11,8 +11,8 @@ import {
 	API,
 	FormError,
 	Input,
-	REQUIRED_MSG,
 	SingleSelect,
+	constantsUtils,
 	invalidateRequired,
 	useForm,
 } from '@liferay/object-js-components-web';
@@ -75,7 +75,7 @@ export function ModalAddObjectValidation({
 		const label = validation.name?.[defaultLanguageId];
 
 		if (invalidateRequired(label)) {
-			errors.name = REQUIRED_MSG;
+			errors.name = constantsUtils.REQUIRED_MSG;
 		}
 
 		return errors;

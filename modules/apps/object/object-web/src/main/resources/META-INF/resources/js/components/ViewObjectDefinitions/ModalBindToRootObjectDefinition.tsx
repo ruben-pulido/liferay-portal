@@ -10,8 +10,8 @@ import ClayModal, {useModal} from '@clayui/modal';
 import {
 	Input,
 	SingleSelect,
-	getLocalizableLabel,
 	openToast,
+	stringUtils,
 } from '@liferay/object-js-components-web';
 import {createResourceURL, fetch} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
@@ -274,7 +274,7 @@ export function ModalBindToRootObjectDefinition({
 				<Input
 					disabled
 					label={Liferay.Language.get('object-to-be-bound')}
-					value={getLocalizableLabel(
+					value={stringUtils.getLocalizableLabel(
 						selectedObjectDefinitionToBind?.defaultLanguageId as Liferay.Language.Locale,
 						selectedObjectDefinitionToBind?.label,
 						selectedObjectDefinitionToBind?.name
