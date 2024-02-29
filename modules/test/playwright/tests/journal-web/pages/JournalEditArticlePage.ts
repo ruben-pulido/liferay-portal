@@ -35,12 +35,26 @@ export class JournalEditArticlePage {
 		await this.journalPage.goToCreateNewBasicArticle();
 	}
 
+	async editAndPublishExistingBasicArticle(title: string) {
+		await this.journalPage.goToJournalArticleAction('Edit', title);
+
+		await this.propertiesTab.waitFor();
+
+		await this.titlePlaceholder.fill(title);
+
+		await this.publishButton.waitFor();
+
+		await this.publishButton.click();
+	}
+
 	async publishNewBasicArticle(title: string) {
 		await this.goto();
 
 		await this.propertiesTab.waitFor();
 
 		await this.titlePlaceholder.fill(title);
+
+		await this.publishButton.waitFor();
 
 		await this.publishButton.click();
 	}

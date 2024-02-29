@@ -10,6 +10,7 @@ import {Page} from '@playwright/test';
 import {liferayConfig} from '../liferay.config';
 import {ApiBuilderHelper} from './ApiBuilderHelper';
 import {FeatureFlagApiHelper} from './FeatureFlagApiHelper';
+import {HeadlessAdminContentApiHelper} from './HeadlessAdminContentApiHelper';
 import {HeadlessAdminUserApiHelper} from './HeadlessAdminUserApiHelper';
 import {HeadlessCommerceAdminCatalogApiHelper} from './HeadlessCommerceAdminCatalogApiHelper';
 import {HeadlessCommerceAdminChannelApiHelper} from './HeadlessCommerceAdminChannelApiHelper';
@@ -19,11 +20,18 @@ import {HeadlessDeliveryApiHelper} from './HeadlessDeliveryApiHelper';
 import {HeadlessSiteApiHelper} from './HeadlessSiteApiHelper';
 import {ObjectAdminApiHelper} from './ObjectAdminApiHelper';
 import {ObjectApiHelper} from './ObjectApiHelper';
+import {JSONWebServicesClassNameApiHelper} from './jsonWebServices/JSONWebServicesClassNameApiHelper';
+import {JSONWebServicesCompanyApiHelper} from './jsonWebServices/JSONWebServicesCompanyApiHelper';
+import {JSONWebServicesDDMApiHelper} from './jsonWebServices/JSONWebServicesDDMApiHelper';
+import {JSONWebServicesGroupApiHelper} from './jsonWebServices/JSONWebServicesGroupApiHelper';
+import {JSONWebServicesJournalApiHelper} from './jsonWebServices/JSONWebServicesJournalApiHelper';
+import {JSONWebServicesLayoutApiHelper} from './jsonWebServices/JSONWebServicesLayoutApiHelper';
 
 export class ApiHelpers {
 	readonly apiBuilder: ApiBuilderHelper;
 	readonly baseUrl: string;
 	readonly featureFlag: FeatureFlagApiHelper;
+	readonly headlessAdminContent: HeadlessAdminContentApiHelper;
 	readonly headlessAdminUser: HeadlessAdminUserApiHelper;
 	readonly headlessCommerceAdminCatalog: HeadlessCommerceAdminCatalogApiHelper;
 	readonly headlessCommerceAdminChannel: HeadlessCommerceAdminChannelApiHelper;
@@ -31,14 +39,25 @@ export class ApiHelpers {
 	readonly headlessCommerceDeliveryCart: HeadlessCommerceDeliveryCartApiHelper;
 	readonly headlessDelivery: HeadlessDeliveryApiHelper;
 	readonly headlessSite: HeadlessSiteApiHelper;
+	readonly jsonWebServicesClassName: JSONWebServicesClassNameApiHelper;
+	readonly jsonWebServicesCompany: JSONWebServicesCompanyApiHelper;
+	readonly jsonWebServicesDDM: JSONWebServicesDDMApiHelper;
+	readonly jsonWebServicesGroup: JSONWebServicesGroupApiHelper;
+	readonly jsonWebServicesJournal: JSONWebServicesJournalApiHelper;
+	readonly jsonWebServicesLayout: JSONWebServicesLayoutApiHelper;
 	readonly object: ObjectApiHelper;
 	readonly objectAdmin: ObjectAdminApiHelper;
 	readonly page: Page;
+
+	private static readonly _authorization = `Basic ${btoa(
+		`test@liferay.com:test`
+	)}`;
 
 	constructor(page: Page) {
 		this.apiBuilder = new ApiBuilderHelper(this);
 		this.baseUrl = liferayConfig.environment.baseUrl + '/o/';
 		this.featureFlag = new FeatureFlagApiHelper(page);
+		this.headlessAdminContent = new HeadlessAdminContentApiHelper(this);
 		this.headlessAdminUser = new HeadlessAdminUserApiHelper(this);
 		this.headlessCommerceAdminCatalog =
 			new HeadlessCommerceAdminCatalogApiHelper(this);
@@ -50,27 +69,56 @@ export class ApiHelpers {
 			new HeadlessCommerceDeliveryCartApiHelper(this);
 		this.headlessDelivery = new HeadlessDeliveryApiHelper(this);
 		this.headlessSite = new HeadlessSiteApiHelper(this);
+		this.jsonWebServicesClassName = new JSONWebServicesClassNameApiHelper(
+			this
+		);
+		this.jsonWebServicesCompany = new JSONWebServicesCompanyApiHelper(this);
+		this.jsonWebServicesDDM = new JSONWebServicesDDMApiHelper(this);
+		this.jsonWebServicesGroup = new JSONWebServicesGroupApiHelper(this);
+		this.jsonWebServicesJournal = new JSONWebServicesJournalApiHelper(this);
+		this.jsonWebServicesLayout = new JSONWebServicesLayoutApiHelper(this);
 		this.object = new ObjectApiHelper(this);
 		this.objectAdmin = new ObjectAdminApiHelper(this);
 		this.page = page;
 	}
 
-	async postResponse(url: string, data: DataObject | any[]) {
+	async postResponse(
+		url: string,
+		data: DataObject | any[] | string,
+		failOnStatusCode?: boolean,
+		headers?: {[key: string]: string}
+	) {
 		return await this.page.request.post(url, {
 			data,
-			headers: await this.getHeader(),
+			failOnStatusCode: failOnStatusCode || false,
+			headers: headers || (await this.getHeader()),
 		});
 	}
 
-	async post(url: string, data: DataObject | any[]) {
-		const response = await this.postResponse(url, data);
+	async post(
+		url: string,
+		data: DataObject | any[] | string,
+		failOnStatusCode?: boolean,
+		headers?: {[key: string]: string}
+	) {
+		const response = await this.postResponse(
+			url,
+			data,
+			failOnStatusCode,
+			headers
+		);
 
 		return response.json();
 	}
 
-	async getResponse(url: string) {
+	async getResponse(
+		url: string,
+		failOnStatusCode?: boolean,
+		headers?: {[key: string]: string}
+	) {
 		return await this.page.request.get(url, {
-			headers: await this.getHeader(),
+			failOnStatusCode: failOnStatusCode || false,
+			headers: headers || (await this.getHeader()),
 		});
 	}
 
@@ -86,8 +134,12 @@ export class ApiHelpers {
 		});
 	}
 
-	async get(url: string) {
-		const response = await this.getResponse(url);
+	async get(
+		url: string,
+		failOnStatusCode?: boolean,
+		headers?: {[key: string]: string}
+	) {
+		const response = await this.getResponse(url, failOnStatusCode, headers);
 
 		return response.json();
 	}
@@ -107,11 +159,25 @@ export class ApiHelpers {
 		return response.json();
 	}
 
+	async getJSONWebServicesHeaders() {
+		return {
+			'Authorization': ApiHelpers._authorization,
+			'Content-Type': 'application/x-www-form-urlencoded',
+			...(await this._getCSRFTokenHeader()),
+		};
+	}
+
 	async getHeader() {
+		return {
+			'Content-Type': 'application/json',
+			...(await this._getCSRFTokenHeader()),
+		};
+	}
+
+	async _getCSRFTokenHeader() {
 		const authToken = await this.page.evaluate(() => Liferay.authToken);
 
 		return {
-			'Content-Type': 'application/json',
 			'x-csrf-token': authToken,
 		};
 	}

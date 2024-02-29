@@ -783,7 +783,9 @@ public class UserImpl extends UserBaseImpl {
 
 	@Override
 	public boolean isEmailAddressVerificationComplete() {
-		if (isGuestUser() || isEmailAddressVerified()) {
+		if (isGuestUser() || isEmailAddressVerified() ||
+			isServiceAccountUser()) {
+
 			return true;
 		}
 
@@ -799,11 +801,7 @@ public class UserImpl extends UserBaseImpl {
 			_log.error(portalException);
 		}
 
-		if (emailAddressVerificationRequired) {
-			return false;
-		}
-
-		return true;
+		return !emailAddressVerificationRequired;
 	}
 
 	@Override
@@ -837,6 +835,15 @@ public class UserImpl extends UserBaseImpl {
 	@Override
 	public boolean isPasswordModified() {
 		return _passwordModified;
+	}
+
+	@Override
+	public boolean isPasswordResetRequired() {
+		if (isGuestUser() || !isPasswordReset() || isServiceAccountUser()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override

@@ -66,7 +66,21 @@ public class CPDefinitionVirtualSettingLocalServiceImpl
 		throws PortalException {
 
 		User user = _userLocalService.getUser(serviceContext.getUserId());
-		long groupId = serviceContext.getScopeGroupId();
+
+		long groupId = 0;
+
+		if (className.equals(CPDefinition.class.getName())) {
+			CPDefinition cpDefinition =
+				_cpDefinitionLocalService.getCPDefinition(classPK);
+
+			groupId = cpDefinition.getGroupId();
+		}
+		else {
+			CPInstance cpInstance = _cpInstanceLocalService.getCPInstance(
+				classPK);
+
+			groupId = cpInstance.getGroupId();
+		}
 
 		if (Validator.isNotNull(url)) {
 			fileEntryId = 0;
@@ -242,6 +256,11 @@ public class CPDefinitionVirtualSettingLocalServiceImpl
 							classNameId, newCPInstance.getCPInstanceId());
 				}
 			}
+
+			_cpdVirtualSettingFileEntryLocalService.
+				deleteCPDVirtualSettingFileEntries(
+					cpDefinitionVirtualSetting.
+						getCPDefinitionVirtualSettingId());
 
 			cpDefinitionVirtualSettingPersistence.remove(
 				cpDefinitionVirtualSetting);
