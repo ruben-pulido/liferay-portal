@@ -111,9 +111,16 @@ export class ApiHelpers {
 		return response.json();
 	}
 
-	async getResponse(url: string) {
+	async getResponse(
+		url: string,
+		data?: string,
+		failOnStatusCode?: boolean,
+		headers?: {[key: string]: string}
+	) {
 		return await this.page.request.get(url, {
-			headers: await this.getHeader(),
+			data,
+			failOnStatusCode: failOnStatusCode || false,
+			headers: headers || (await this.getHeader()),
 		});
 	}
 
@@ -129,8 +136,18 @@ export class ApiHelpers {
 		});
 	}
 
-	async get(url: string) {
-		const response = await this.getResponse(url);
+	async get(
+		url: string,
+		data?: string,
+		failOnStatusCode?: boolean,
+		headers?: {[key: string]: string}
+	) {
+		const response = await this.getResponse(
+			url,
+			data,
+			failOnStatusCode,
+			headers
+		);
 
 		return response.json();
 	}
