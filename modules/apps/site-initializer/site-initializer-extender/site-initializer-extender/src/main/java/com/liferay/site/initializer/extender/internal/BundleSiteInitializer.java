@@ -110,10 +110,12 @@ import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.io.unsync.UnsyncStringWriter;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -155,7 +157,11 @@ import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.settings.ArchivedSettingsFactory;
+import com.liferay.portal.kernel.template.StringTemplateResource;
+import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
+import com.liferay.portal.kernel.template.TemplateException;
+import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.DateUtil;
@@ -421,6 +427,28 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_getClassNameIdStringUtilReplaceValues();
 		_releaseInfoStringUtilReplaceValues =
 			_getReleaseInfoStringUtilReplaceValues();
+
+		_siteInitializerConfigurationJSONObject =
+			_getSiteInitializerConfigurationJSONObject();
+	}
+
+	private JSONObject _getSiteInitializerConfigurationJSONObject () {
+		String json = null;
+
+		try {
+			json = SiteInitializerUtil.read(
+				"/site-initializer/site-initializer-configuration.json",
+				_servletContext);
+
+			if (json == null) {
+				return null;
+			}
+
+			return _jsonFactory.createJSONObject(json);
+		}
+		catch (Exception e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -1284,8 +1312,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private void _addOrganizationUser(
-			JSONArray jsonArray, ServiceContext serviceContext, long userId)
-		throws Exception {
+			JSONArray jsonArray, ServiceContext serviceContext, long userId) {
 
 		if (JSONUtil.isEmpty(jsonArray)) {
 			return;
@@ -2219,17 +2246,19 @@ public class BundleSiteInitializer implements SiteInitializer {
 				_journalArticleLocalService.fetchArticle(
 					serviceContext.getScopeGroupId(), articleId);
 
+			String content = _replace(
+				SiteInitializerUtil.read(
+					_replace(resourcePath, ".json", ".xml"),
+					_servletContext),
+				stringUtilReplaceValues);
+
 			if (journalArticle == null) {
 				journalArticle = _journalArticleLocalService.addArticle(
 					null, serviceContext.getUserId(),
 					serviceContext.getScopeGroupId(), journalFolderId,
 					JournalArticleConstants.CLASS_NAME_ID_DEFAULT, 0, articleId,
 					false, 1, titleMap, null, titleMap,
-					_replace(
-						SiteInitializerUtil.read(
-							_replace(resourcePath, ".json", ".xml"),
-							_servletContext),
-						stringUtilReplaceValues),
+					content,
 					ddmStructure.getStructureId(),
 					jsonObject.getString("ddmTemplateKey"), null,
 					calendar.get(Calendar.MONTH),
@@ -2246,11 +2275,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					serviceContext.getScopeGroupId(), journalFolderId,
 					articleId, journalArticle.getVersion(), titleMap, null,
 					titleMap,
-					_replace(
-						SiteInitializerUtil.read(
-							_replace(resourcePath, ".json", ".xml"),
-							_servletContext),
-						stringUtilReplaceValues),
+					content,
 					jsonObject.getString("ddmTemplateKey"), null,
 					calendar.get(Calendar.MONTH),
 					calendar.get(Calendar.DAY_OF_MONTH),
@@ -2260,6 +2285,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 					0, 0, true, true, false, 0, 0, null, null, null, null,
 					serviceContext);
 			}
+
+			stringUtilReplaceValues.put(
+				"JOURNAL_ARTICLE_ASSET_ENTRY_CLASS_PK:" + articleId,
+					String.valueOf(journalArticle.getResourcePrimKey()));
 
 			JournalArticle finalJournalArticle = journalArticle;
 
@@ -2552,6 +2581,55 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return layoutsMap;
 	}
 
+	private String _getMessage(TemplateException templateException) {
+
+		String message = "Freemarker syntax is invalid";
+
+		Throwable causeThrowable = templateException.getCause();
+
+		String causeThrowableMessage = causeThrowable.getMessage();
+
+		if (Validator.isNotNull(causeThrowableMessage)) {
+			message = message + "\n\n" + causeThrowableMessage;
+		}
+
+		return message;
+	}
+
+	private String _processFreemarkerTemplate(String freemarkerTemplate)
+		throws Exception {
+
+		if (Validator.isNull(freemarkerTemplate)) {
+			return freemarkerTemplate;
+		}
+
+		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
+
+		Template template = TemplateManagerUtil.getTemplate(
+			TemplateConstants.LANG_TYPE_FTL,
+			new StringTemplateResource("template_id", "[#ftl] " + freemarkerTemplate), true);
+
+		template.put(TemplateConstants.WRITER, unsyncStringWriter);
+
+		if (_siteInitializerConfigurationJSONObject != null) {
+			template.putAll(
+				HashMapBuilder.<String, Object>put(
+					"siteInitializerConfiguration", _siteInitializerConfigurationJSONObject
+				).build());
+		}
+
+		try {
+			template.processTemplate(unsyncStringWriter);
+		}
+		catch (TemplateException templateException) {
+			throw new Exception(
+				_getMessage(templateException),
+				templateException);
+		}
+
+		return unsyncStringWriter.toString();
+	}
+
 	private void _addOrUpdateLayoutContent(
 			Layout layout, String resourcePath, long segmentsExperienceId,
 			ServiceContext serviceContext,
@@ -2571,8 +2649,18 @@ public class BundleSiteInitializer implements SiteInitializer {
 			type = LayoutConstants.TYPE_PORTLET;
 		}
 
-		String json = SiteInitializerUtil.read(
-			resourcePath + "page-definition.json", _servletContext);
+		String jsonFreemarkerTemplate = SiteInitializerUtil.read(
+			resourcePath + "page-definition.json.ftl", _servletContext);
+
+		String json = null;
+
+		if (jsonFreemarkerTemplate != null) {
+			json = _processFreemarkerTemplate(jsonFreemarkerTemplate);
+		}
+		else {
+			json = SiteInitializerUtil.read(
+				resourcePath + "page-definition.json", _servletContext);
+		}
 
 		if (json == null) {
 			return;
@@ -5309,6 +5397,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final WorkflowDefinitionResource.Factory
 		_workflowDefinitionResourceFactory;
 	private final ZipWriterFactory _zipWriterFactory;
+	private final JSONObject _siteInitializerConfigurationJSONObject;
 
 	private class SiteNavigationMenuItemSetting {
 

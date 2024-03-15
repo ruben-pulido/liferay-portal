@@ -1,0 +1,14 @@
+{
+    "documents" : {
+        "group" : {
+          "students" : {
+              "number" : 10
+          }
+        }
+    },
+    "layouts" : {
+        "teachers" : {
+          "numberOfFragments" : 4
+        }
+    }
+}
