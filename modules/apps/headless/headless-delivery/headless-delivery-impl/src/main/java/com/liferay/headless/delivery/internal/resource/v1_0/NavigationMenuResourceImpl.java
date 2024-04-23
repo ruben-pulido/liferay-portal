@@ -346,7 +346,10 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 	}
 
 	private String _getType(NavigationMenuItem navigationMenuItem) {
-		if (navigationMenuItem.getLink() != null) {
+		if (navigationMenuItem.getType() != null) {
+			return navigationMenuItem.getType();
+		}
+		else if (navigationMenuItem.getLink() != null) {
 			return "layout";
 		}
 		else if (navigationMenuItem.getUrl() != null) {

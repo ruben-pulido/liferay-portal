@@ -3310,7 +3310,6 @@ components:
                     # @review
                     description:
                         The navigation menu item's type.
-                    readOnly: true
                     type: string
                 url:
                     # @review
