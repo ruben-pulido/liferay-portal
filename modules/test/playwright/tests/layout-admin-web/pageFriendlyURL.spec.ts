@@ -46,7 +46,7 @@ test('This is a test for LPD-21554. Some page names result in 404 friendly URLs.
 		title: pageName,
 	});
 
-	await page.goto(sitePage.friendlyUrlPath);
+	await page.goto(`${process.env.PORTAL_URL}${sitePage.friendlyUrlPath}`);
 
 	await expect.soft(page.getByText('Heading Example')).toBeVisible();
 
