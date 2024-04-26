@@ -1,8 +1,8 @@
-{
-	"friendlyURL": "/courses",
-	"hidden": true,
+ {
+	"friendlyURL": "/teachers",
+	"hidden": false,
 	"name_i18n": {
-		"en_US": "Courses"
+		"en_US": "Teachers"
 	},
 	"private": false,
 	"system": false,

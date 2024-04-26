@@ -166,6 +166,8 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 					file, fileKey, symbolicName),
 				null));
 
+		bundleSiteInitializer.setSiteInitializerConfigurationJSONObject();
+
 		return bundleSiteInitializer;
 	}
 
