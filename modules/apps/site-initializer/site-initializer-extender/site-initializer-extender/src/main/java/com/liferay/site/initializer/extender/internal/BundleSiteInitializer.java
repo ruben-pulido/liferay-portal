@@ -111,11 +111,11 @@ import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.io.unsync.UnsyncStringWriter;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -427,28 +427,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_getClassNameIdStringUtilReplaceValues();
 		_releaseInfoStringUtilReplaceValues =
 			_getReleaseInfoStringUtilReplaceValues();
-
-		_siteInitializerConfigurationJSONObject =
-			_getSiteInitializerConfigurationJSONObject();
-	}
-
-	private JSONObject _getSiteInitializerConfigurationJSONObject () {
-		String json = null;
-
-		try {
-			json = SiteInitializerUtil.read(
-				"/site-initializer/site-initializer-configuration.json",
-				_servletContext);
-
-			if (json == null) {
-				return null;
-			}
-
-			return _jsonFactory.createJSONObject(json);
-		}
-		catch (Exception e) {
-			return null;
-		}
 	}
 
 	@Override
@@ -633,7 +611,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				() -> _addOrUpdateNotificationTemplates(
 					serviceContext, stringUtilReplaceValues));
 
-			Map<String, Layout> layoutsMap = _invoke(
+			Map<String, Map<Integer, Layout>> layoutsMap = _invoke(
 				() -> _addOrUpdateLayouts(
 					serviceContext, stringUtilReplaceValues));
 
@@ -721,6 +699,21 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	protected void setServletContext(ServletContext servletContext) {
 		_servletContext = servletContext;
+	}
+
+	protected void setSiteInitializerConfigurationJSONObject()
+		throws Exception {
+
+		String json = SiteInitializerUtil.read(
+			"/site-initializer/site-initializer-configuration.json",
+			_servletContext);
+
+		if (json == null) {
+			return;
+		}
+
+		_siteInitializerConfigurationJSONObject = _jsonFactory.createJSONObject(
+			json);
 	}
 
 	private void _addAccountGroupAssignments(ServiceContext serviceContext)
@@ -1348,7 +1341,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private void _addOrganizationUser(
-			JSONArray jsonArray, ServiceContext serviceContext, long userId) {
+		JSONArray jsonArray, ServiceContext serviceContext, long userId) {
 
 		if (JSONUtil.isEmpty(jsonArray)) {
 			return;
@@ -2284,8 +2277,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			String content = _replace(
 				SiteInitializerUtil.read(
-					_replace(resourcePath, ".json", ".xml"),
-					_servletContext),
+					_replace(resourcePath, ".json", ".xml"), _servletContext),
 				stringUtilReplaceValues);
 
 			if (journalArticle == null) {
@@ -2293,8 +2285,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					null, serviceContext.getUserId(),
 					serviceContext.getScopeGroupId(), journalFolderId,
 					JournalArticleConstants.CLASS_NAME_ID_DEFAULT, 0, articleId,
-					false, 1, titleMap, null, titleMap,
-					content,
+					false, 1, titleMap, null, titleMap, content,
 					ddmStructure.getStructureId(),
 					jsonObject.getString("ddmTemplateKey"), null,
 					calendar.get(Calendar.MONTH),
@@ -2310,10 +2301,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 					serviceContext.getUserId(),
 					serviceContext.getScopeGroupId(), journalFolderId,
 					articleId, journalArticle.getVersion(), titleMap, null,
-					titleMap,
-					content,
-					jsonObject.getString("ddmTemplateKey"), null,
-					calendar.get(Calendar.MONTH),
+					titleMap, content, jsonObject.getString("ddmTemplateKey"),
+					null, calendar.get(Calendar.MONTH),
 					calendar.get(Calendar.DAY_OF_MONTH),
 					calendar.get(Calendar.YEAR),
 					calendar.get(Calendar.HOUR_OF_DAY),
@@ -2324,7 +2313,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			stringUtilReplaceValues.put(
 				"JOURNAL_ARTICLE_ASSET_ENTRY_CLASS_PK:" + articleId,
-					String.valueOf(journalArticle.getResourcePrimKey()));
+				String.valueOf(journalArticle.getResourcePrimKey()));
 
 			JournalArticle finalJournalArticle = journalArticle;
 
@@ -2461,16 +2450,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private Map<String, Layout> _addOrUpdateLayout(
-			long parentLayoutId, String parentResourcePath,
+			Integer layoutIndex, String pageJSON, long parentLayoutId, String parentResourcePath,
 			ServiceContext serviceContext,
 			Map<String, String> stringUtilReplaceValues)
 		throws Exception {
 
 		JSONObject pageJSONObject = _jsonFactory.createJSONObject(
-			_replace(
-				SiteInitializerUtil.read(
-					parentResourcePath + "page.json", _servletContext),
-				stringUtilReplaceValues));
+			_replace(pageJSON, stringUtilReplaceValues));
 
 		Map<Locale, String> nameMap = new HashMap<>(
 			SiteInitializerUtil.toMap(pageJSONObject.getString("name_i18n")));
@@ -2585,7 +2571,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		Map<String, Layout> layoutsMap = HashMapBuilder.<String, Layout>put(
 			parentResourcePath, layout
-		).build();
+		).build(); // TODO
 
 		String layoutTemplateId = StringUtil.toLowerCase(
 			pageJSONObject.getString("layoutTemplateId"));
@@ -2613,70 +2599,55 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith("/")) {
+				String jsonFreemarkerTemplate = SiteInitializerUtil.read(
+					resourcePath + "page.json.ftl", _servletContext);
+
+				String json = null;
+
+				if (jsonFreemarkerTemplate != null) {
+					json = _processFreemarkerTemplate(
+						jsonFreemarkerTemplate, null);
+				}
+				else {
+					json = SiteInitializerUtil.read(
+						resourcePath + "page.json", _servletContext);
+				}
+
 				layoutsMap.putAll(
+					// TODO Check if layoutIndex value passed is correct
 					_addOrUpdateLayout(
-						layout.getLayoutId(), resourcePath, serviceContext,
-						stringUtilReplaceValues));
+						layoutIndex, json, layout.getLayoutId(), resourcePath,
+						serviceContext, stringUtilReplaceValues));
 			}
 		}
 
 		return layoutsMap;
 	}
 
-	private String _getMessage(TemplateException templateException) {
-
-		String message = "Freemarker syntax is invalid";
-
-		Throwable causeThrowable = templateException.getCause();
-
-		String causeThrowableMessage = causeThrowable.getMessage();
-
-		if (Validator.isNotNull(causeThrowableMessage)) {
-			message = message + "\n\n" + causeThrowableMessage;
-		}
-
-		return message;
-	}
-
-	private String _processFreemarkerTemplate(String freemarkerTemplate)
-		throws Exception {
-
-		if (Validator.isNull(freemarkerTemplate)) {
-			return freemarkerTemplate;
-		}
-
-		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
-
-		Template template = TemplateManagerUtil.getTemplate(
-			TemplateConstants.LANG_TYPE_FTL,
-			new StringTemplateResource("template_id", "[#ftl] " + freemarkerTemplate), true);
-
-		template.put(TemplateConstants.WRITER, unsyncStringWriter);
-
-		if (_siteInitializerConfigurationJSONObject != null) {
-			template.putAll(
-				HashMapBuilder.<String, Object>put(
-					"siteInitializerConfiguration", _siteInitializerConfigurationJSONObject
-				).build());
-		}
-
-		try {
-			template.processTemplate(unsyncStringWriter);
-		}
-		catch (TemplateException templateException) {
-			throw new Exception(
-				_getMessage(templateException),
-				templateException);
-		}
-
-		return unsyncStringWriter.toString();
-	}
-
 	private void _addOrUpdateLayoutContent(
-			Layout layout, String resourcePath, long segmentsExperienceId,
+			Layout layout, Integer layoutIndex, String resourcePath, long segmentsExperienceId,
 			ServiceContext serviceContext,
 			Map<String, String> stringUtilReplaceValues)
 		throws Exception {
+
+		String pageFreemarkerTemplate = SiteInitializerUtil.read(
+			resourcePath + "page.json.ftl", _servletContext);
+
+		String pageJSON = null;
+
+		if (pageFreemarkerTemplate != null) {
+			pageJSON = _processFreemarkerTemplate(
+				pageFreemarkerTemplate,
+				JSONUtil.put("layoutIndex", layoutIndex));
+		}
+		else {
+			pageJSON = SiteInitializerUtil.read(
+				resourcePath + "page.json", _servletContext);
+		}
+
+		if (pageJSON == null) {
+			return;
+		}
 
 		JSONObject pageJSONObject = _jsonFactory.createJSONObject(
 			SiteInitializerUtil.read(
@@ -2691,28 +2662,29 @@ public class BundleSiteInitializer implements SiteInitializer {
 			type = LayoutConstants.TYPE_PORTLET;
 		}
 
-		String jsonFreemarkerTemplate = SiteInitializerUtil.read(
+		String pageDefinitionFreemarkerTemplate = SiteInitializerUtil.read(
 			resourcePath + "page-definition.json.ftl", _servletContext);
 
-		String json = null;
+		String pageDefinitionJSON = null;
 
-		if (jsonFreemarkerTemplate != null) {
-			json = _processFreemarkerTemplate(jsonFreemarkerTemplate);
+		if (pageDefinitionFreemarkerTemplate != null) {
+			pageDefinitionJSON = _processFreemarkerTemplate(
+				pageDefinitionFreemarkerTemplate, null);
 		}
 		else {
-			json = SiteInitializerUtil.read(
+			pageDefinitionJSON = SiteInitializerUtil.read(
 				resourcePath + "page-definition.json", _servletContext);
 		}
 
-		if (json == null) {
+		if (pageDefinitionJSON == null) {
 			return;
 		}
 
-		json = _replace(
-			_replace(json, serviceContext), stringUtilReplaceValues);
+		pageDefinitionJSON = _replace(
+			_replace(pageDefinitionJSON, serviceContext), stringUtilReplaceValues);
 
 		JSONObject pageDefinitionJSONObject = _jsonFactory.createJSONObject(
-			json);
+			pageDefinitionJSON);
 
 		Layout draftLayout = layout.fetchDraftLayout();
 
@@ -2830,7 +2802,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private Map<String, Layout> _addOrUpdateLayouts(
+	private Map<String, Map<Integer, Layout>> _addOrUpdateLayouts(
 			ServiceContext serviceContext,
 			Map<String, String> stringUtilReplaceValues)
 		throws Exception {
@@ -2842,7 +2814,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return new HashMap<>();
 		}
 
-		Map<String, Layout> layoutsMap = new HashMap<>();
+		Map<String, Map<Integer, Layout>> layoutsMap = new HashMap<>();
 
 		List<Layout> layouts = _layoutLocalService.getLayouts(
 			serviceContext.getScopeGroupId(), QueryUtil.ALL_POS,
@@ -2863,10 +2835,62 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith("/")) {
-				layoutsMap.putAll(
-					_addOrUpdateLayout(
-						LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, resourcePath,
-						serviceContext, stringUtilReplaceValues));
+				// TODO We should refactor to store Plid instead of Layout to prevent running OOM
+//				Map<Integer, Long> layoutIndexPlidMap = new HashMap<>();
+				Map<Integer, Layout> layoutIndexLayoutMap = new HashMap<>();
+
+				String jsonFreemarkerTemplate = SiteInitializerUtil.read(
+					resourcePath + "page.json.ftl", _servletContext);
+
+				int numberOfLayouts = _getNumberOfLayouts(resourcePath);
+
+				if ((jsonFreemarkerTemplate == null) ||
+					(numberOfLayouts <= 0)) {
+
+					String json = SiteInitializerUtil.read(
+						resourcePath + "page.json", _servletContext);
+
+					Map<String, Layout> layoutMap = _addOrUpdateLayout(
+						0, json, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
+						resourcePath, serviceContext,
+						stringUtilReplaceValues);
+
+					Layout layout = layoutMap.get(resourcePath);
+
+					layoutIndexLayoutMap.put(0, layout);
+					// TODO
+//					layoutIndexPlidMap.put(0, layout.getPlid());
+
+					layoutsMap.put(resourcePath, layoutIndexLayoutMap);
+//					layoutsMap.put(resourcePath, layoutIndexPlidMap);
+				}
+				else {
+					for (int layoutIndex = 1; layoutIndex <= numberOfLayouts;
+						 layoutIndex++) {
+
+						String json = _processFreemarkerTemplate(
+							jsonFreemarkerTemplate,
+							JSONUtil.put(
+								"layoutIndex", String.valueOf(layoutIndex)));
+
+						Map<String, Layout> layoutMap =
+							_addOrUpdateLayout(
+								layoutIndex, json,
+								LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
+								resourcePath, serviceContext,
+								stringUtilReplaceValues);
+
+						Layout layout = layoutMap.get(resourcePath);
+
+						layoutIndexLayoutMap.put(layoutIndex, layout);
+						// TODO
+	//					layoutIndexPlidMap.put(layoutIndex, layout.getPlid());
+					}
+
+					// TODO
+					layoutsMap.put(resourcePath, layoutIndexLayoutMap);
+//					layoutsMap.put(resourcePath, layoutIndexPlidMap);
+				}
 			}
 		}
 
@@ -2874,16 +2898,23 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private void _addOrUpdateLayoutsContent(
-			Map<String, Layout> layouts, ServiceContext serviceContext,
+			Map<String, Map<Integer, Layout>> layoutsMap, ServiceContext serviceContext,
 			Map<String, SiteNavigationMenuItemSetting>
 				siteNavigationMenuItemSettings,
 			Map<String, String> stringUtilReplaceValues)
 		throws Exception {
 
-		for (Map.Entry<String, Layout> entry : layouts.entrySet()) {
-			_addOrUpdateLayoutContent(
-				entry.getValue(), entry.getKey(), 0, serviceContext,
-				stringUtilReplaceValues);
+		for (Map.Entry<String, Map<Integer, Layout>> resourceEntry : layoutsMap.entrySet()) {
+
+			for (Map.Entry<Integer, Layout> entry : resourceEntry.getValue().entrySet()) {
+
+				String resourcePath = resourceEntry.getKey();
+
+				_addOrUpdateLayoutContent(
+					entry.getValue(), entry.getKey(), resourcePath, 0,
+					serviceContext,
+					stringUtilReplaceValues);
+			}
 		}
 
 		_addOrUpdateSiteNavigationMenus(
@@ -4324,8 +4355,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			for (String resourcePath : resourcePaths) {
 				if (resourcePath.endsWith("/")) {
+
+					// TODO
+
 					_addOrUpdateLayoutContent(
-						layout, resourcePath,
+						layout, null, resourcePath,
 						segmentsExperience.getSegmentsExperienceId(),
 						serviceContext, stringUtilReplaceValues);
 				}
@@ -4920,6 +4954,20 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return (Serializable)jsonObject.get("defaultValue");
 	}
 
+	private String _getMessage(TemplateException templateException) {
+		String message = "Freemarker syntax is invalid";
+
+		Throwable causeThrowable = templateException.getCause();
+
+		String causeThrowableMessage = causeThrowable.getMessage();
+
+		if (Validator.isNotNull(causeThrowableMessage)) {
+			message = message + "\n\n" + causeThrowableMessage;
+		}
+
+		return message;
+	}
+
 	private UnicodePropertiesBuilder.UnicodePropertiesWrapper
 		_getNavigationMenuItemUnicodePropertiesWrapper(
 			JSONObject menuItemJSONObject) {
@@ -4946,6 +4994,27 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		return unicodePropertiesWrapper;
+	}
+
+	private int _getNumberOfLayouts(String resourcePath) {
+		JSONObject layoutsJSONObject =
+			_siteInitializerConfigurationJSONObject.getJSONObject("layouts");
+
+		if (layoutsJSONObject == null) {
+			return 0;
+		}
+
+		String[] parts = StringUtil.split(resourcePath, CharPool.SLASH);
+
+
+		JSONObject resourceJSONObject = layoutsJSONObject.getJSONObject(
+			FileUtil.getShortFileName(parts[parts.length - 1]));
+
+		if (resourceJSONObject == null) {
+			return 0;
+		}
+
+		return resourceJSONObject.getInt("numberOfLayouts");
 	}
 
 	private Map<String, String> _getReleaseInfoStringUtilReplaceValues() {
@@ -5029,6 +5098,47 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		return t;
+	}
+
+	private String _processFreemarkerTemplate(
+			String freemarkerTemplate,
+			JSONObject freemarkerTemplateConfigurationJSONObject)
+		throws Exception {
+
+		if (Validator.isNull(freemarkerTemplate)) {
+			return freemarkerTemplate;
+		}
+
+		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
+
+		Template template = TemplateManagerUtil.getTemplate(
+			TemplateConstants.LANG_TYPE_FTL,
+			new StringTemplateResource(
+				"template_id", "[#ftl] " + freemarkerTemplate),
+			true);
+
+		template.put(TemplateConstants.WRITER, unsyncStringWriter);
+
+		if (_siteInitializerConfigurationJSONObject != null) {
+			template.putAll(
+				HashMapBuilder.<String, Object>put(
+					"freemarkerTemplateConfiguration",
+					freemarkerTemplateConfigurationJSONObject
+				).put(
+					"siteInitializerConfiguration",
+					_siteInitializerConfigurationJSONObject
+				).build());
+		}
+
+		try {
+			template.processTemplate(unsyncStringWriter);
+		}
+		catch (TemplateException templateException) {
+			throw new Exception(
+				_getMessage(templateException), templateException);
+		}
+
+		return unsyncStringWriter.toString();
 	}
 
 	private void _publishObjectDefinitions(
@@ -5439,6 +5549,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final SegmentsExperienceLocalService
 		_segmentsExperienceLocalService;
 	private ServletContext _servletContext;
+	private JSONObject _siteInitializerConfigurationJSONObject;
 	private final SiteNavigationMenuItemLocalService
 		_siteNavigationMenuItemLocalService;
 	private final SiteNavigationMenuItemTypeRegistry
@@ -5462,7 +5573,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final WorkflowDefinitionResource.Factory
 		_workflowDefinitionResourceFactory;
 	private final ZipWriterFactory _zipWriterFactory;
-	private final JSONObject _siteInitializerConfigurationJSONObject;
 
 	private class SiteNavigationMenuItemSetting {
 
