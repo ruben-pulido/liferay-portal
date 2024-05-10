@@ -3126,6 +3126,54 @@ paths:
                                     $ref: "#/components/schemas/PageVersion"
                                 type: array
             tags: ["SitePage"]
+        post:
+            description:
+                Adds a new page version in draft status to a site page.
+            operationId: postSiteSitePagePageVersionByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PageVersion"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/PageVersion"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageVersion"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageVersion"
+                    description:
+                        default response
+            # @review
+            tags: ["SitePage"]
     /sites:
         post:
             description:
