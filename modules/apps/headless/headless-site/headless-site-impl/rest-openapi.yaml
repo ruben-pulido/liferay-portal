@@ -371,6 +371,8 @@ components:
                     description:
                         the localized experience's names.
                     type: object
+                pageStructure:
+                    $ref: "#/components/schemas/PageStructure"
                 segments:
                     # @review
                     description:
@@ -2017,6 +2019,15 @@ components:
                     # @review
                     description:
                         The page's site navigation menu settings.
+            type: object
+        PageStructure:
+            properties:
+                pageElement:
+                    $ref: "#/components/schemas/PageElement"
+                pageRules:
+                    items:
+                        $ref: "#/components/schemas/PageRule"
+                    type: array
             type: object
         PageWidgetInstanceDefinition:
             # @review
