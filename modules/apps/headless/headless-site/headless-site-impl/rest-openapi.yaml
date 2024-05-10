@@ -3282,6 +3282,49 @@ paths:
                     description:
                         default response
             tags: ["SitePage"]
+    "/sites/{siteId}/page-versions/by-external-reference-code/{externalReferenceCode}/experiences":
+        get:
+            description:
+                Retrieves the experiences of a specific page version of a site page within a site by specifying the page version's external reference code.
+            operationId: getSitePageVersionExperiencesByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Experience"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Experience"
+                                type: array
+            tags: ["PageVersion"]
+
     "/sites/{siteId}/site-pages/by-external-reference-code/{externalReferenceCode}/page-versions":
         get:
             description:
