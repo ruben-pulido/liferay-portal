@@ -2326,6 +2326,51 @@ components:
                     description:
                         The Client Extension for the theme spritemap of a page
             type: object
+        Site:
+            # @review
+            description:
+                Represents the site being created.
+            properties:
+                externalReferenceCode:
+                    description:
+                        The site's external reference code.
+                    type: string
+                friendlyUrlPath:
+                    readOnly: true
+                    type: string
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                key:
+                    readOnly: true
+                    type: string
+                membershipType:
+                    description:
+                        The default value is open.
+                    enum:
+                        - open
+                        - private
+                        - restricted
+                    type: string
+                    writeOnly: true
+                name:
+                    type: string
+                parentSiteKey:
+                    type: string
+                    writeOnly: true
+                templateKey:
+                    type: string
+                    writeOnly: true
+                templateType:
+                    enum:
+                        - site-initializer
+                        - site-template
+                    type: string
+                    writeOnly: true
+            required:
+                - name
+            type: object
         SitePage:
             # @review
             description:
@@ -2693,51 +2738,6 @@ components:
                         type: object
                     type: array
             type: object
-        Site:
-            # @review
-            description:
-                Represents the site being created.
-            properties:
-                externalReferenceCode:
-                    description:
-                        The site's external reference code.
-                    type: string
-                friendlyUrlPath:
-                    readOnly: true
-                    type: string
-                id:
-                    format: int64
-                    readOnly: true
-                    type: integer
-                key:
-                    readOnly: true
-                    type: string
-                membershipType:
-                    description:
-                        The default value is open.
-                    enum:
-                        - open
-                        - private
-                        - restricted
-                    type: string
-                    writeOnly: true
-                name:
-                    type: string
-                parentSiteKey:
-                    type: string
-                    writeOnly: true
-                templateKey:
-                    type: string
-                    writeOnly: true
-                templateType:
-                    enum:
-                        - site-initializer
-                        - site-template
-                    type: string
-                    writeOnly: true
-            required:
-                - name
-            type: object
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
@@ -2768,6 +2768,102 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["Site"]
+    "/sites/{siteId}/site-pages":
+        get:
+            description:
+                Retrieves the public pages of the site
+            operationId: getSiteSitePagesPage
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: aggregationTerms
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+                - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/SitePage"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/SitePage"
+                                type: array
+            tags: ["SitePage"]
+        post:
+            description:
+                Adds a new site page
+            operationId: postSiteSitePage
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/SitePage"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/SitePage"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SitePage"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/SitePage"
+                    description:
+                        default response
+            # @review
+            tags: ["SitePage"]
     /sites:
         post:
             description:
@@ -2889,99 +2985,3 @@ paths:
                                 format: binary
                                 type: string
             tags: ["Site"]
-    "/sites/{siteId}/site-pages":
-        get:
-            description:
-                Retrieves the public pages of the site
-            operationId: getSiteSitePagesPage
-            parameters:
-                - in: path
-                  name: siteId
-                  required: true
-                  schema:
-                      format: int64
-                      type: integer
-                - in: query
-                  name: aggregationTerms
-                  schema:
-                      items:
-                          type: string
-                      type: array
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: filter
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: page
-                  schema:
-                      type: integer
-                - in: query
-                  name: pageSize
-                  schema:
-                      type: integer
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-                - in: query
-                  name: search
-                  schema:
-                      type: string
-                - in: query
-                  name: sort
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/SitePage"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/SitePage"
-                                type: array
-            tags: ["SitePage"]
-        post:
-            description:
-                Adds a new site page
-            operationId: postSiteSitePage
-            parameters:
-                - in: path
-                  name: siteId
-                  required: true
-                  schema:
-                      format: int64
-                      type: integer
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/SitePage"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/SitePage"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/SitePage"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/SitePage"
-                    description:
-                        default response
-            # @review
-            tags: ["SitePage"]
