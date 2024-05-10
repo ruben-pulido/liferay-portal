@@ -2029,6 +2029,15 @@ components:
                         $ref: "#/components/schemas/PageRule"
                     type: array
             type: object
+        PageVersion:
+            properties:
+                experiences:
+                    items:
+                        $ref: "#/components/schemas/Experience"
+                    type: array
+                settings:
+                    $ref: "#/components/schemas/Settings"
+            type: object
         PageWidgetInstanceDefinition:
             # @review
             description:
