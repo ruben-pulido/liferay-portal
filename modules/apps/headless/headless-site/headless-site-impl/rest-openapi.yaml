@@ -2447,6 +2447,10 @@ components:
                     # @review
                     description:
                         Experience of the page that it's being retrieved.
+                externalReferenceCode:
+                    description:
+                        The page's external reference code.
+                    type: string
                 friendlyUrlPath:
                     # @review
                     description:
