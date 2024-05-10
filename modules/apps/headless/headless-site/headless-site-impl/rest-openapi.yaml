@@ -2893,6 +2893,27 @@ paths:
             # @review
             tags: ["SitePage"]
     "/sites/{siteId}/site-pages/by-external-reference-code/{externalReferenceCode}":
+        delete:
+            description:
+                Deletes a specific public page of a site by external reference code.
+            operationId: deleteSiteSitePageByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["SitePage"]
         get:
             description:
                 Retrieves a specific public page of a site by external reference code.
