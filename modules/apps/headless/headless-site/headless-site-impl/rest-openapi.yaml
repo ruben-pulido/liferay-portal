@@ -2509,6 +2509,13 @@ components:
                     description:
                         The type of the page.
                     type: string
+                pageVersions:
+                    properties:
+                        approved:
+                            $ref: "#/components/schemas/PageVersion"
+                        draft:
+                            $ref: "#/components/schemas/PageVersion"
+                    type: object
                 parentSitePage:
                     # @review
                     description:
