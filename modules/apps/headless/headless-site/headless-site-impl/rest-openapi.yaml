@@ -3324,7 +3324,54 @@ paths:
                                     $ref: "#/components/schemas/Experience"
                                 type: array
             tags: ["PageVersion"]
-
+        post:
+            description:
+                Adds a new experience to a page version in draft status of a site page by specifying the page version's external reference code.
+            operationId: postSitePageVersionExperienceByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Experience"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Experience"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Experience"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Experience"
+                    description:
+                        default response
+            # @review
+            tags: ["PageVersion"]
     "/sites/{siteId}/site-pages/by-external-reference-code/{externalReferenceCode}/page-versions":
         get:
             description:
