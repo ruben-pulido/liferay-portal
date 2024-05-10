@@ -2641,6 +2641,29 @@ components:
                     enum: [SpecificFrame, NewTab]
                     type: string
             type: object
+        Status:
+            # @review
+            description:
+                Represents the status of a resource
+            properties:
+                code:
+                    # @review
+                    description:
+                        A number which identifies a specific status
+                    format: int32
+                    readOnly: true
+                    type: integer
+                label:
+                    # @review
+                    description:
+                        Label associated to the status
+                    readOnly: true
+                    type: string
+                label_i18n:
+                    additionalProperties:
+                        type: string
+                    readOnly: true
+                    type: object
         TaxonomyCategoryBrief:
             properties:
                 embeddedTaxonomyCategory:
