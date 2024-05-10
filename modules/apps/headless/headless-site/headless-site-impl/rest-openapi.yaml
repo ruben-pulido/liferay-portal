@@ -2475,10 +2475,13 @@ components:
                 pageDefinition:
                     $ref: "#/components/schemas/PageDefinition"
                     # @review
+                    deprecated: true
                     description:
                         Optional field with the structure of all the elements of the page. Can be embedded with
                         nestedFields when retrieving the collection of site pages. When retrieving a single site page,
-                        it will automatically be included.
+                        it will automatically be included. Deprecated as of Cavanaugh (7.4.x), replaced by
+                        Experience.pageStructure.pageElement, Experience.pageStructure.pageRules and
+                        PageVersion.settings.
                 pagePermissions:
                     # @review
                     description:
