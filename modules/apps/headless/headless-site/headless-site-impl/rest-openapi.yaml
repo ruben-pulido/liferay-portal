@@ -2834,6 +2834,28 @@ paths:
                         application/xml: {}
             tags: ["Site"]
     "/sites/{siteId}/page-versions/by-external-reference-code/{externalReferenceCode}":
+        delete:
+            description:
+                Deletes a specific page version of a site page by external reference code. The page version needs to be
+                in draft status.
+            operationId: deleteSitePageVersionByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["SitePage"]
         get:
             description:
                 Retrieves a specific page version of a site page by external reference code.
