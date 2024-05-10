@@ -2035,6 +2035,10 @@ components:
                     items:
                         $ref: "#/components/schemas/Experience"
                     type: array
+                externalReferenceCode:
+                    description:
+                        The page version's external reference code, unique per site.
+                    type: string
                 settings:
                     $ref: "#/components/schemas/Settings"
                 status:
