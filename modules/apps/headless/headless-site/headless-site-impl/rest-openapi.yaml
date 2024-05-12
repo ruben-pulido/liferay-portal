@@ -1441,6 +1441,13 @@ components:
                     items:
                         $ref: "#/components/schemas/PageElement"
                     type: array
+                parentExternalReferenceCode:
+                    description:
+                        The parent's page element's external reference code. Unique within the site.
+                    type: string
+                previousSiblingExternalReferenceCode:
+                    description:
+                        The previous sibling page element's external reference code. Unique within the site.
                 type:
                     # @review
                     description:
