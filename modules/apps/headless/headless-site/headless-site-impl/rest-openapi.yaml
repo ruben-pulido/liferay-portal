@@ -2841,6 +2841,40 @@ paths:
                         application/xml: {}
             tags: ["Site"]
     "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}":
+        delete:
+            description:
+                Deletes an experience of a specific draft page version of a site page within a site by specifying the
+                experience's external reference code. The default experience cannot be deleted.
+            operationId: deleteSiteExperienceByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["Experience"]
         get:
             description:
                 Retrieves an experience of a specific page version of a site page within a site by specifying the
