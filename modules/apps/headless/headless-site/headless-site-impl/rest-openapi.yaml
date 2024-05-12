@@ -3106,6 +3106,53 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/Experience"
             tags: ["Experience"]
+    "/sites/{siteId}/page-element/by-external-reference-code/{externalReferenceCode}/page-elements":
+        get:
+            description:
+                Retrieves the child page elements of a parent page element within a experience of a specific page
+                version of a site page within a site by specifying the parent page element's external reference code.
+            operationId: getSitePageElementPageElementsByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: flatten
+                  schema:
+                      type: boolean
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/PageElement"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/PageElement"
+                                type: array
+            tags: ["PageElement"]
     "/sites/{siteId}/page-versions/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
