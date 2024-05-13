@@ -2528,6 +2528,11 @@ components:
                     description:
                         The parent page or null if it is a top level page.
                     properties:
+                        externalReferenceCode:
+                            # @review
+                            description:
+                                The external reference code of the parent page.
+                            type: string
                         friendlyUrlPath:
                             # @review
                             description:
