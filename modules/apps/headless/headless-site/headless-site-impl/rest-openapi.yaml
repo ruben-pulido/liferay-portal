@@ -354,6 +354,10 @@ components:
                 # @review
                 Represents a customized experience for a given page.
             properties:
+                externalReferenceCode:
+                    description:
+                        The experience's external reference code, unique per site.
+                    type: string
                 key:
                     # @review
                     description:
