@@ -2863,6 +2863,86 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["Site"]
+    "/sites/{siteId}/experiences":
+        get:
+            description:
+                Retrieves all the experiences of all page versions of all pages within.
+            operationId: getSiteExperiences
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Experience"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Experience"
+                                type: array
+            tags: ["Experience"]
+        post:
+            description:
+                Adds a new experience to a page version in draft status of a site page.
+            operationId: postSiteExperience
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Experience"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Experience"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Experience"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Experience"
+                    description:
+                        default response
+            # @review
+            tags: ["Experience"]
     "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
@@ -3502,86 +3582,6 @@ paths:
                     description:
                         default response
             tags: ["PageVersion"]
-    "/sites/{siteId}/experiences":
-        get:
-            description:
-                Retrieves all the experiences of all page versions of all pages within.
-            operationId: getSiteExperiences
-            parameters:
-                - in: path
-                  name: siteId
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/Experience"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/Experience"
-                                type: array
-            tags: ["Experience"]
-        post:
-            description:
-                Adds a new experience to a page version in draft status of a site page.
-            operationId: postSiteExperience
-            parameters:
-                - in: path
-                  name: siteId
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/Experience"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/Experience"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/Experience"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/Experience"
-                    description:
-                        default response
-            # @review
-            tags: ["Experience"]
     "/sites/{siteId}/page-versions/by-external-reference-code/{externalReferenceCode}/publish":
         post:
             description:
