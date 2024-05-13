@@ -377,6 +377,10 @@ components:
                     type: object
                 pageStructure:
                     $ref: "#/components/schemas/PageStructure"
+                pageVersionExternalReferenceCode:
+                    description:
+                        The page version's external reference code, unique per site.
+                    type: string
                 priority:
                     # @review
                     description:
