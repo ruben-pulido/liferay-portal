@@ -3447,7 +3447,7 @@ paths:
                     content:
                         application/json: {}
                         application/xml: {}
-            tags: ["SitePage"]
+            tags: ["PageVersion"]
         get:
             description:
                 Retrieves a specific page version of a site page by external reference code.
