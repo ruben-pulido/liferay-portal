@@ -3101,6 +3101,52 @@ paths:
                         default response
             # @review
             tags: ["Experience"]
+    "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}/page-rules":
+        get:
+            description:
+                Retrieves all the page rules within an experience in a page version of a site page.
+            operationId: getSiteExperiencePageRulesByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: externalReferenceCode
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: flatten
+                  schema:
+                      type: boolean
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/PageRule"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/PageRule"
+                                type: array
+            # @review
+            tags: ["Experience"]
     "/sites/{siteId}/page-elements/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
