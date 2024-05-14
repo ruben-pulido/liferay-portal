@@ -3345,86 +3345,6 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/PageElement"
             tags: ["PageElement"]
-    "/sites/{siteId}/page-versions":
-        get:
-            description:
-                Retrieves the page versions of site.
-            operationId: getSitePageVersions
-            parameters:
-                - in: path
-                  name: siteId
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/PageVersion"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/PageVersion"
-                                type: array
-            tags: ["PageVersion"]
-        post:
-            description:
-                Adds a new page version in draft status to a site page.
-            operationId: postSitePageVersion
-            parameters:
-                - in: path
-                  name: siteId
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/PageVersion"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/PageVersion"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/PageVersion"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/PageVersion"
-                    description:
-                        default response
-            # @review
-            tags: ["PageVersion"]
     "/sites/{siteId}/page-versions/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
@@ -3873,6 +3793,95 @@ paths:
                                 $ref: "#/components/schemas/SitePage"
                     description:
                         default response
+            tags: ["SitePage"]
+    "/sites/{siteId}/site-pages/by-external-reference-code/{externalReferenceCode}/page-versions":
+        get:
+            description:
+                Retrieves the page versions of a site page.
+            operationId: getSiteSitePagePageVersionsByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: externalReferenceCode
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/PageVersion"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/PageVersion"
+                                type: array
+            # @review
+            tags: ["SitePage"]
+        post:
+            description:
+                Adds a new page version in draft status to a site page.
+            operationId: postSiteSitePagePageVersionByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: externalReferenceCode
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PageVersion"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/PageVersion"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageVersion"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageVersion"
+                    description:
+                        default response
+            # @review
             tags: ["SitePage"]
     /sites:
         post:
