@@ -3022,15 +3022,19 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/Experience"
             tags: ["Experience"]
-    "/sites/{siteId}/page-elements":
+    "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}/page-elements":
         get:
             description:
-                Retrieves all the page elements within a site.
-            operationId: getSitePageElements
+                Retrieves all the page elements within an experience in a page version of a site page.
+            operationId: getSiteExperiencePageElements
             parameters:
                 - in: path
                   name: siteId
                   required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: externalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -3062,15 +3066,20 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/PageElement"
                                 type: array
-            tags: ["PageElement"]
+            # @review
+            tags: ["Experience"]
         post:
             description:
                 Adds a new page element to an experience in a page version in draft status of a site page.
-            operationId: postSitePageElement
+            operationId: postSiteExperiencePageElementByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
                   required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: externalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -3105,7 +3114,7 @@ paths:
                     description:
                         default response
             # @review
-            tags: ["PageElement"]
+            tags: ["Experience"]
     "/sites/{siteId}/page-elements/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
