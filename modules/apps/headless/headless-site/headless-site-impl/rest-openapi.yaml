@@ -1449,9 +1449,13 @@ components:
                     description:
                         The parent's page element's external reference code. Unique within the site.
                     type: string
-                previousSiblingExternalReferenceCode:
+                position:
                     description:
-                        The previous sibling page element's external reference code. Unique within the site.
+                        The 0-based position this page element occupies with respect to its siblings (0 for first child,
+                        1 for second child, ...). If not specified when creating a page element the page element will be
+                        added at the last valid position.
+                    minimum: 0
+                    type: integer
                 type:
                     # @review
                     description:
