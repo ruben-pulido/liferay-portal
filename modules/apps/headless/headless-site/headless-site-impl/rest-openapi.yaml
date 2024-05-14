@@ -3401,6 +3401,40 @@ paths:
             # @review
             tags: ["PageElement"]
     "/sites/{siteId}/page-rules/by-external-reference-code/{externalReferenceCode}":
+        delete:
+            description:
+                Deletes a page rule within an experience of a specific draft page version of a site page within a site
+                by specifying the page rule's external reference code.
+            operationId: deleteSitePageRuleByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["PageRule"]
         get:
             description:
                 Retrieves page rule within an experience of a specific page version of a site page within a site by
