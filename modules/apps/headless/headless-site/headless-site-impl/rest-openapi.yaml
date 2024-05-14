@@ -3147,6 +3147,53 @@ paths:
                                 type: array
             # @review
             tags: ["Experience"]
+        post:
+            description:
+                Adds a new page rule to an experience in a page version in draft status of a site page.
+            operationId: postSiteExperiencePageRuleByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: externalReferenceCode
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PageRule"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/PageRule"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageRule"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageRule"
+                    description:
+                        default response
+            # @review
+            tags: ["Experience"]
     "/sites/{siteId}/page-elements/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
