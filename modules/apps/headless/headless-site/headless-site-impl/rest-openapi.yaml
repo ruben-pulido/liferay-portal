@@ -3012,7 +3012,7 @@ paths:
         get:
             description:
                 Retrieves all the page elements within an experience in a page version of a site page.
-            operationId: getSiteExperiencePageElements
+            operationId: getSiteExperiencePageElementsByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
