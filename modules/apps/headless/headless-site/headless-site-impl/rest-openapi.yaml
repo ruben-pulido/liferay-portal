@@ -3060,7 +3060,7 @@ paths:
             description:
                 Deletes an experience of a specific draft page specification of a site page within a site by specifying
                 the experience's external reference code. The default experience cannot be deleted.
-            operationId: deleteSiteExperienceByExternalReferenceCode
+            operationId: deleteSitePageExperienceByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3089,12 +3089,12 @@ paths:
                     content:
                         application/json: {}
                         application/xml: {}
-            tags: ["Experience"]
+            tags: ["PageExperience"]
         get:
             description:
                 Retrieves an experience of a specific page specification of a site page within a site by specifying the
                 experience's external reference code.
-            operationId: getSiteExperienceByExternalReferenceCode
+            operationId: getSitePageExperienceByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3130,13 +3130,13 @@ paths:
                             schema:
                                 items:
                                     $ref: "#/components/schemas/Experience"
-            tags: ["Experience"]
+            tags: ["PageExperience"]
         patch:
             description:
                 Updates an experience of a specific draft page specification of a site page within a site by specifying
                 the experience's external reference code. Updates only the fields received in the request body, leaving
                 any other fields untouched.
-            operationId: patchSiteExperienceByExternalReferenceCode
+            operationId: patchSitePageExperienceByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3172,12 +3172,12 @@ paths:
                             schema:
                                 items:
                                     $ref: "#/components/schemas/Experience"
-            tags: ["Experience"]
+            tags: ["PageExperience"]
         put:
             description:
                 Updates an experience of a specific draft page specification of a site page within a site by specifying
                 the experience's external reference code.
-            operationId: putSiteExperienceByExternalReferenceCode
+            operationId: putSitePageExperienceByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3213,12 +3213,12 @@ paths:
                             schema:
                                 items:
                                     $ref: "#/components/schemas/Experience"
-            tags: ["Experience"]
+            tags: ["PageExperience"]
     "/sites/{siteId}/page-experiences/by-external-reference-code/{externalReferenceCode}/page-elements":
         get:
             description:
                 Retrieves all the page elements within an experience in a page specification of a site page.
-            operationId: getSiteExperiencePageElementsByExternalReferenceCode
+            operationId: getSitePageExperiencePageElementsByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3259,11 +3259,11 @@ paths:
                                     $ref: "#/components/schemas/PageElement"
                                 type: array
             # @review
-            tags: ["Experience"]
+            tags: ["PageExperience"]
         post:
             description:
                 Adds a new page element to an experience in a page specification in draft status of a site page.
-            operationId: postSiteExperiencePageElementByExternalReferenceCode
+            operationId: postSitePageExperiencePageElementByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3306,12 +3306,12 @@ paths:
                     description:
                         default response
             # @review
-            tags: ["Experience"]
+            tags: ["PageExperience"]
     "/sites/{siteId}/page-experiences/by-external-reference-code/{externalReferenceCode}/page-rules":
         get:
             description:
                 Retrieves all the page rules within an experience in a page specification of a site page.
-            operationId: getSiteExperiencePageRulesByExternalReferenceCode
+            operationId: getSitePageExperiencePageRulesByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3352,11 +3352,11 @@ paths:
                                     $ref: "#/components/schemas/PageRule"
                                 type: array
             # @review
-            tags: ["Experience"]
+            tags: ["PageExperience"]
         post:
             description:
                 Adds a new page rule to an experience in a page specification in draft status of a site page.
-            operationId: postSiteExperiencePageRuleByExternalReferenceCode
+            operationId: postSitePageExperiencePageRuleByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3399,7 +3399,7 @@ paths:
                     description:
                         default response
             # @review
-            tags: ["Experience"]
+            tags: ["PageExperience"]
     "/sites/{siteId}/page-rules/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
@@ -3720,7 +3720,7 @@ paths:
         get:
             description:
                 Retrieves all the experiences of a page specification.
-            operationId: getSitePageSpecificationExperiencesByExternalReferenceCode
+            operationId: getSitePageSpecificationPageExperiencesByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3762,7 +3762,7 @@ paths:
         post:
             description:
                 Adds a new experience to a page specification in draft status of a site page.
-            operationId: postSitePageSpecificationExperienceByExternalReferenceCode
+            operationId: postSitePageSpecificationPageExperienceByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
