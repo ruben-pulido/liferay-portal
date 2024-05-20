@@ -2048,7 +2048,7 @@ components:
             type: object
         PageSpecification:
             properties:
-                experiences:
+                pageExperiences:
                     items:
                         $ref: "#/components/schemas/Experience"
                     type: array
@@ -2849,7 +2849,7 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["Site"]
-    "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteId}/page-experiences/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
                 Deletes an experience of a specific draft page specification of a site page within a site by specifying
@@ -3008,7 +3008,7 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/Experience"
             tags: ["Experience"]
-    "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}/page-elements":
+    "/sites/{siteId}/page-experiences/by-external-reference-code/{externalReferenceCode}/page-elements":
         get:
             description:
                 Retrieves all the page elements within an experience in a page specification of a site page.
@@ -3101,7 +3101,7 @@ paths:
                         default response
             # @review
             tags: ["Experience"]
-    "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}/page-rules":
+    "/sites/{siteId}/page-experiences/by-external-reference-code/{externalReferenceCode}/page-rules":
         get:
             description:
                 Retrieves all the page rules within an experience in a page specification of a site page.
@@ -3716,7 +3716,7 @@ paths:
                     description:
                         default response
             tags: ["PageSpecification"]
-    "/sites/{siteId}/page-specifications/by-external-reference-code/{externalReferenceCode}/experiences":
+    "/sites/{siteId}/page-specifications/by-external-reference-code/{externalReferenceCode}/page-experiences":
         get:
             description:
                 Retrieves all the experiences of a page specification.
