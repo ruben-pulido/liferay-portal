@@ -380,7 +380,7 @@ components:
                 priority:
                     # @review
                     description:
-                        the experience's priority. It must be a unique value within the page version. The default
+                        the experience's priority. It must be a unique value within the page specification. The default
                         experience will always be assigned priority 0. A priority higher than 0 will result in an
                         experience being active and a priority lower than 0 will result in an experience being inactive.
                     type: integer
@@ -2055,7 +2055,7 @@ components:
                         $ref: "#/components/schemas/PageRule"
                     type: array
             type: object
-        PageVersion:
+        PageSpecification:
             properties:
                 experiences:
                     items:
@@ -2063,7 +2063,7 @@ components:
                     type: array
                 externalReferenceCode:
                     description:
-                        The page version's external reference code, unique per site.
+                        The page specification's external reference code, unique per site.
                     type: string
                 settings:
                     $ref: "#/components/schemas/Settings"
@@ -2515,7 +2515,7 @@ components:
                         nestedFields when retrieving the collection of site pages. When retrieving a single site page,
                         it will automatically be included. Deprecated as of Cavanaugh (7.4.x), replaced by
                         Experience.pageStructure.pageElement, Experience.pageStructure.pageRules and
-                        PageVersion.settings.
+                        PageSpecification.settings.
                 pagePermissions:
                     # @review
                     description:
@@ -2546,12 +2546,12 @@ components:
                     description:
                         The type of the page.
                     type: string
-                pageVersions:
+                pageSpecifications:
                     properties:
                         approved:
-                            $ref: "#/components/schemas/PageVersion"
+                            $ref: "#/components/schemas/PageSpecification"
                         draft:
-                            $ref: "#/components/schemas/PageVersion"
+                            $ref: "#/components/schemas/PageSpecification"
                     type: object
                 parentSitePage:
                     # @review
@@ -2852,7 +2852,7 @@ paths:
     "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
-                Deletes an experience of a specific draft page version of a site page within a site by specifying the
+                Deletes an experience of a specific draft page specification of a site page within a site by specifying the
                 experience's external reference code. The default experience cannot be deleted.
             operationId: deleteSiteExperienceByExternalReferenceCode
             parameters:
@@ -2886,7 +2886,7 @@ paths:
             tags: ["Experience"]
         get:
             description:
-                Retrieves an experience of a specific page version of a site page within a site by specifying the
+                Retrieves an experience of a specific page specification of a site page within a site by specifying the
                 experience's external reference code.
             operationId: getSiteExperienceByExternalReferenceCode
             parameters:
@@ -2927,7 +2927,7 @@ paths:
             tags: ["Experience"]
         patch:
             description:
-                Updates an experience of a specific draft page version of a site page within a site by specifying the
+                Updates an experience of a specific draft page specification of a site page within a site by specifying the
                 experience's external reference code. Updates only the fields received in the request body, leaving any
                 other fields untouched.
             operationId: patchSiteExperienceByExternalReferenceCode
@@ -2969,7 +2969,7 @@ paths:
             tags: ["Experience"]
         put:
             description:
-                Updates an experience of a specific draft page version of a site page within a site by specifying the
+                Updates an experience of a specific draft page specification of a site page within a site by specifying the
                 experience's external reference code.
             operationId: putSiteExperienceByExternalReferenceCode
             parameters:
@@ -3011,7 +3011,7 @@ paths:
     "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}/page-elements":
         get:
             description:
-                Retrieves all the page elements within an experience in a page version of a site page.
+                Retrieves all the page elements within an experience in a page specification of a site page.
             operationId: getSiteExperiencePageElementsByExternalReferenceCode
             parameters:
                 - in: path
@@ -3056,7 +3056,7 @@ paths:
             tags: ["Experience"]
         post:
             description:
-                Adds a new page element to an experience in a page version in draft status of a site page.
+                Adds a new page element to an experience in a page specification in draft status of a site page.
             operationId: postSiteExperiencePageElementByExternalReferenceCode
             parameters:
                 - in: path
@@ -3104,7 +3104,7 @@ paths:
     "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}/page-rules":
         get:
             description:
-                Retrieves all the page rules within an experience in a page version of a site page.
+                Retrieves all the page rules within an experience in a page specification of a site page.
             operationId: getSiteExperiencePageRulesByExternalReferenceCode
             parameters:
                 - in: path
@@ -3149,7 +3149,7 @@ paths:
             tags: ["Experience"]
         post:
             description:
-                Adds a new page rule to an experience in a page version in draft status of a site page.
+                Adds a new page rule to an experience in a page specification in draft status of a site page.
             operationId: postSiteExperiencePageRuleByExternalReferenceCode
             parameters:
                 - in: path
@@ -3197,7 +3197,7 @@ paths:
     "/sites/{siteId}/page-elements/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
-                Deletes a page element within an experience of a specific draft page version of a site page within a
+                Deletes a page element within an experience of a specific draft page specification of a site page within a
                 site by specifying the page element's external reference code.
             operationId: deleteSitePageElementByExternalReferenceCode
             parameters:
@@ -3231,7 +3231,7 @@ paths:
             tags: ["PageElement"]
         get:
             description:
-                Retrieves page element within an experience of a specific page version of a site page within a site by
+                Retrieves page element within an experience of a specific page specification of a site page within a site by
                 specifying the page element's external reference code.
             operationId: getSitePageElementByExternalReferenceCode
             parameters:
@@ -3272,7 +3272,7 @@ paths:
             tags: ["PageElement"]
         patch:
             description:
-                Updates a page element within an experience of a specific draft page version of a site page within a
+                Updates a page element within an experience of a specific draft page specification of a site page within a
                 site by specifying the page element's external reference code. Updates only the fields received in the
                 request body, leaving any other fields untouched.
             operationId: patchSitePageElementByExternalReferenceCode
@@ -3314,7 +3314,7 @@ paths:
             tags: ["PageElement"]
         put:
             description:
-                Updates a page element within an experience of a specific draft page version of a site page within a
+                Updates a page element within an experience of a specific draft page specification of a site page within a
                 site by specifying the page elment's external reference code.
             operationId: putSitePageElementByExternalReferenceCode
             parameters:
@@ -3356,7 +3356,7 @@ paths:
     "/sites/{siteId}/page-elements/by-external-reference-code/{externalReferenceCode}/page-elements":
         get:
             description:
-                Retrieves all the descendant page elements of a page element within an experience in a page version of a
+                Retrieves all the descendant page elements of a page element within an experience in a page specification of a
                 site page.
             operationId: getSitePageElementPageElementsByExternalReferenceCode
             parameters:
@@ -3403,7 +3403,7 @@ paths:
     "/sites/{siteId}/page-rules/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
-                Deletes a page rule within an experience of a specific draft page version of a site page within a site
+                Deletes a page rule within an experience of a specific draft page specification of a site page within a site
                 by specifying the page rule's external reference code.
             operationId: deleteSitePageRuleByExternalReferenceCode
             parameters:
@@ -3437,7 +3437,7 @@ paths:
             tags: ["PageRule"]
         get:
             description:
-                Retrieves page rule within an experience of a specific page version of a site page within a site by
+                Retrieves page rule within an experience of a specific page specification of a site page within a site by
                 specifying the page rule's external reference code.
             operationId: getSitePageRuleByExternalReferenceCode
             parameters:
@@ -3478,7 +3478,7 @@ paths:
             tags: ["PageRule"]
         patch:
             description:
-                Updates a page rule within an experience of a specific draft page version of a site page within a site
+                Updates a page rule within an experience of a specific draft page specification of a site page within a site
                 by specifying the page rule's external reference code. Updates only the fields received in the request
                 body, leaving any other fields untouched.
             operationId: patchSitePageRuleByExternalReferenceCode
@@ -3520,7 +3520,7 @@ paths:
             tags: ["PageRule"]
         put:
             description:
-                Updates a page rule within an experience of a specific draft page version of a site page within a site
+                Updates a page rule within an experience of a specific draft page specification of a site page within a site
                 by specifying the page element's external reference code.
             operationId: putSitePageRuleByExternalReferenceCode
             parameters:
@@ -3559,12 +3559,12 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/PageRule"
             tags: ["PageRule"]
-    "/sites/{siteId}/page-versions/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteId}/page-specifications/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
-                Deletes a specific page version of a site page by external reference code. The page version needs to be
+                Deletes a specific page specification of a site page by external reference code. The page specification needs to be
                 in draft status.
-            operationId: deleteSitePageVersionByExternalReferenceCode
+            operationId: deleteSitePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3581,11 +3581,11 @@ paths:
                     content:
                         application/json: {}
                         application/xml: {}
-            tags: ["PageVersion"]
+            tags: ["PageSpecification"]
         get:
             description:
-                Retrieves a specific page version of a site page by external reference code.
-            operationId: getSitePageVersionByExternalReferenceCode
+                Retrieves a specific page specification of a site page by external reference code.
+            operationId: getSitePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3614,18 +3614,18 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageVersion"
+                                $ref: "#/components/schemas/PageSpecification"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageVersion"
+                                $ref: "#/components/schemas/PageSpecification"
                     description:
                         default response
-            tags: ["PageVersion"]
+            tags: ["PageSpecification"]
         patch:
             description:
-                Updates a page version of a site page based only on the fields received in the request body, leaving any
+                Updates a page specification of a site page based only on the fields received in the request body, leaving any
                 other fields untouched.
-            operationId: patchSitePageVersionByExternalReferenceCode
+            operationId: patchSitePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3653,26 +3653,26 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PageVersion"
+                            $ref: "#/components/schemas/PageSpecification"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/PageVersion"
+                            $ref: "#/components/schemas/PageSpecification"
             responses:
                 default:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageVersion"
+                                $ref: "#/components/schemas/PageSpecification"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageVersion"
+                                $ref: "#/components/schemas/PageSpecification"
                     description:
                         default response
-            tags: ["PageVersion"]
+            tags: ["PageSpecification"]
         put:
             description:
                 Updates the draft of a site page with the given external reference code.
-            operationId: putSitePageVersionByExternalReferenceCode
+            operationId: putSitePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3700,27 +3700,27 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PageVersion"
+                            $ref: "#/components/schemas/PageSpecification"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/PageVersion"
+                            $ref: "#/components/schemas/PageSpecification"
             responses:
                 default:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageVersion"
+                                $ref: "#/components/schemas/PageSpecification"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageVersion"
+                                $ref: "#/components/schemas/PageSpecification"
                     description:
                         default response
-            tags: ["PageVersion"]
-    "/sites/{siteId}/page-versions/by-external-reference-code/{externalReferenceCode}/experiences":
+            tags: ["PageSpecification"]
+    "/sites/{siteId}/page-specifications/by-external-reference-code/{externalReferenceCode}/experiences":
         get:
             description:
-                Retrieves all the experiences of a page version.
-            operationId: getSitePageVersionExperiencesByExternalReferenceCode
+                Retrieves all the experiences of a page specification.
+            operationId: getSitePageSpecificationExperiencesByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3758,11 +3758,11 @@ paths:
                                     $ref: "#/components/schemas/Experience"
                                 type: array
             # @review
-            tags: ["PageVersion"]
+            tags: ["PageSpecification"]
         post:
             description:
-                Adds a new experience to a page version in draft status of a site page.
-            operationId: postSitePageVersionExperienceByExternalReferenceCode
+                Adds a new experience to a page specification in draft status of a site page.
+            operationId: postSitePageSpecificationExperienceByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3806,12 +3806,12 @@ paths:
                     description:
                         default response
             # @review
-            tags: ["PageVersion"]
-    "/sites/{siteId}/page-versions/by-external-reference-code/{externalReferenceCode}/publish":
+            tags: ["PageSpecification"]
+    "/sites/{siteId}/page-specifications/by-external-reference-code/{externalReferenceCode}/publish":
         post:
             description:
-                Publishes a page version (in draft status) of a site page.
-            operationId: postSitePageVersionPublishByExternalReferenceCode
+                Publishes a page specification (in draft status) of a site page.
+            operationId: postSitePageSpecificationPublishByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -3840,14 +3840,14 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageVersion"
+                                $ref: "#/components/schemas/PageSpecification"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageVersion"
+                                $ref: "#/components/schemas/PageSpecification"
                     description:
                         default response
             # @review
-            tags: ["PageVersion"]
+            tags: ["PageSpecification"]
     "/sites/{siteId}/site-pages":
         get:
             description:
@@ -4099,11 +4099,11 @@ paths:
                     description:
                         default response
             tags: ["SitePage"]
-    "/sites/{siteId}/site-pages/by-external-reference-code/{externalReferenceCode}/page-versions":
+    "/sites/{siteId}/site-pages/by-external-reference-code/{externalReferenceCode}/page-specifications":
         get:
             description:
-                Retrieves the page versions of a site page.
-            operationId: getSiteSitePagePageVersionsByExternalReferenceCode
+                Retrieves the page specifications of a site page.
+            operationId: getSiteSitePagePageSpecificationsByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -4132,19 +4132,19 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/PageVersion"
+                                    $ref: "#/components/schemas/PageSpecification"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/PageVersion"
+                                    $ref: "#/components/schemas/PageSpecification"
                                 type: array
             # @review
             tags: ["SitePage"]
         post:
             description:
-                Adds a new page version in draft status to a site page.
-            operationId: postSiteSitePagePageVersionByExternalReferenceCode
+                Adds a new page specification in draft status to a site page.
+            operationId: postSiteSitePagePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
                   name: siteId
@@ -4171,19 +4171,19 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PageVersion"
+                            $ref: "#/components/schemas/PageSpecification"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/PageVersion"
+                            $ref: "#/components/schemas/PageSpecification"
             responses:
                 200:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageVersion"
+                                $ref: "#/components/schemas/PageSpecification"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageVersion"
+                                $ref: "#/components/schemas/PageSpecification"
                     description:
                         default response
             # @review
