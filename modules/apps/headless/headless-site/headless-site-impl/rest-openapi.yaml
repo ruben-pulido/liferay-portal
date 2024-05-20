@@ -2071,10 +2071,6 @@ components:
                     type: string
                 settings:
                     $ref: "#/components/schemas/Settings"
-                sitePageExternalReferenceCode:
-                    description:
-                        The site page's external reference code this page version belongs to.
-                    type: string
                 status:
                     $ref: "#/components/schemas/Status"
                     # @review
