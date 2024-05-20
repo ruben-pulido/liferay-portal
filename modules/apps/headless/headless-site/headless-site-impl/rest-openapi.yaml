@@ -2543,9 +2543,9 @@ components:
                         Settings of the page, such as SEO or OpenGraph.
                 pageSpecifications:
                     properties:
-                        approved:
-                            $ref: "#/components/schemas/PageSpecification"
                         draft:
+                            $ref: "#/components/schemas/PageSpecification"
+                        published:
                             $ref: "#/components/schemas/PageSpecification"
                     type: object
                 pageType:
