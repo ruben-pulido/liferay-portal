@@ -2849,7 +2849,7 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["Site"]
-    "/sites/{siteId}/page-elements/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteExternalReferenceCode}/page-elements/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
                 Deletes a page element within an experience of a specific draft page specification of a site page within
@@ -2857,7 +2857,7 @@ paths:
             operationId: deleteSitePageElementByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -2891,7 +2891,7 @@ paths:
             operationId: getSitePageElementByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -2933,7 +2933,7 @@ paths:
             operationId: patchSitePageElementByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -2974,7 +2974,7 @@ paths:
             operationId: putSitePageElementByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3008,7 +3008,7 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/PageElement"
             tags: ["PageElement"]
-    "/sites/{siteId}/page-elements/by-external-reference-code/{externalReferenceCode}/page-elements":
+    "/sites/{siteExternalReferenceCode}/page-elements/by-external-reference-code/{externalReferenceCode}/page-elements":
         get:
             description:
                 Retrieves all the descendant page elements of a page element within an experience in a page
@@ -3016,7 +3016,7 @@ paths:
             operationId: getSitePageElementPageElementsByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3055,7 +3055,7 @@ paths:
                                 type: array
             # @review
             tags: ["PageElement"]
-    "/sites/{siteId}/page-experiences/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteExternalReferenceCode}/page-experiences/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
                 Deletes an experience of a specific draft page specification of a site page within a site by specifying
@@ -3063,7 +3063,7 @@ paths:
             operationId: deleteSitePageExperienceByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3097,7 +3097,7 @@ paths:
             operationId: getSitePageExperienceByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3139,7 +3139,7 @@ paths:
             operationId: patchSitePageExperienceByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3180,7 +3180,7 @@ paths:
             operationId: putSitePageExperienceByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3214,14 +3214,14 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/Experience"
             tags: ["PageExperience"]
-    "/sites/{siteId}/page-experiences/by-external-reference-code/{externalReferenceCode}/page-elements":
+    "/sites/{siteExternalReferenceCode}/page-experiences/by-external-reference-code/{externalReferenceCode}/page-elements":
         get:
             description:
                 Retrieves all the page elements within an experience in a page specification of a site page.
             operationId: getSitePageExperiencePageElementsByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3266,7 +3266,7 @@ paths:
             operationId: postSitePageExperiencePageElementByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3307,14 +3307,14 @@ paths:
                         default response
             # @review
             tags: ["PageExperience"]
-    "/sites/{siteId}/page-experiences/by-external-reference-code/{externalReferenceCode}/page-rules":
+    "/sites/{siteExternalReferenceCode}/page-experiences/by-external-reference-code/{externalReferenceCode}/page-rules":
         get:
             description:
                 Retrieves all the page rules within an experience in a page specification of a site page.
             operationId: getSitePageExperiencePageRulesByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3359,7 +3359,7 @@ paths:
             operationId: postSitePageExperiencePageRuleByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3400,7 +3400,7 @@ paths:
                         default response
             # @review
             tags: ["PageExperience"]
-    "/sites/{siteId}/page-rules/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteExternalReferenceCode}/page-rules/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
                 Deletes a page rule within an experience of a specific draft page specification of a site page within a
@@ -3408,7 +3408,7 @@ paths:
             operationId: deleteSitePageRuleByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3442,7 +3442,7 @@ paths:
             operationId: getSitePageRuleByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3484,7 +3484,7 @@ paths:
             operationId: patchSitePageRuleByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3525,7 +3525,7 @@ paths:
             operationId: putSitePageRuleByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3559,7 +3559,7 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/PageRule"
             tags: ["PageRule"]
-    "/sites/{siteId}/page-specifications/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteExternalReferenceCode}/page-specifications/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
                 Deletes a specific page specification of a site page by external reference code. The page specification
@@ -3567,7 +3567,7 @@ paths:
             operationId: deleteSitePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3588,7 +3588,7 @@ paths:
             operationId: getSitePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3628,7 +3628,7 @@ paths:
             operationId: patchSitePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3675,7 +3675,7 @@ paths:
             operationId: putSitePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3716,14 +3716,14 @@ paths:
                     description:
                         default response
             tags: ["PageSpecification"]
-    "/sites/{siteId}/page-specifications/by-external-reference-code/{externalReferenceCode}/page-experiences":
+    "/sites/{siteExternalReferenceCode}/page-specifications/by-external-reference-code/{externalReferenceCode}/page-experiences":
         get:
             description:
                 Retrieves all the experiences of a page specification.
             operationId: getSitePageSpecificationPageExperiencesByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3765,7 +3765,7 @@ paths:
             operationId: postSitePageSpecificationPageExperienceByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3807,14 +3807,14 @@ paths:
                         default response
             # @review
             tags: ["PageSpecification"]
-    "/sites/{siteId}/page-specifications/by-external-reference-code/{externalReferenceCode}/publish":
+    "/sites/{siteExternalReferenceCode}/page-specifications/by-external-reference-code/{externalReferenceCode}/publish":
         post:
             description:
                 Publishes a page specification (in draft status) of a site page.
             operationId: postSitePageSpecificationPublishByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3848,14 +3848,14 @@ paths:
                         default response
             # @review
             tags: ["PageSpecification"]
-    "/sites/{siteId}/site-pages":
+    "/sites/{siteExternalReferenceCode}/site-pages":
         get:
             description:
                 Retrieves the public pages of the site
             operationId: getSiteSitePagesPage
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       format: int64
@@ -3918,7 +3918,7 @@ paths:
             operationId: postSiteSitePage
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       format: int64
@@ -3944,14 +3944,14 @@ paths:
                         default response
             # @review
             tags: ["SitePage"]
-    "/sites/{siteId}/site-pages/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteExternalReferenceCode}/site-pages/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
                 Deletes a specific public page of a site by external reference code.
             operationId: deleteSiteSitePageByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3972,7 +3972,7 @@ paths:
             operationId: getSiteSitePageByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -4011,7 +4011,7 @@ paths:
             operationId: patchSiteSitePageByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -4058,7 +4058,7 @@ paths:
             operationId: putSiteSitePageByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -4099,14 +4099,14 @@ paths:
                     description:
                         default response
             tags: ["SitePage"]
-    "/sites/{siteId}/site-pages/by-external-reference-code/{externalReferenceCode}/page-specifications":
+    "/sites/{siteExternalReferenceCode}/site-pages/by-external-reference-code/{externalReferenceCode}/page-specifications":
         get:
             description:
                 Retrieves the page specifications of a site page.
             operationId: getSiteSitePagePageSpecificationsByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -4147,7 +4147,7 @@ paths:
             operationId: postSiteSitePagePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
-                  name: siteId
+                  name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
