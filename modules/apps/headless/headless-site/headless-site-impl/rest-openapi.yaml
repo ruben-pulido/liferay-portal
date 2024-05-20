@@ -2071,12 +2071,6 @@ components:
                     type: string
                 settings:
                     $ref: "#/components/schemas/Settings"
-                status:
-                    $ref: "#/components/schemas/Status"
-                    # @review
-                    description:
-                        Represents the status of a page version (e.g: draft, published)
-                    readOnly: true
             type: object
         PageWidgetInstanceDefinition:
             # @review
