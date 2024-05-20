@@ -2046,15 +2046,6 @@ components:
                     description:
                         The page's site navigation menu settings.
             type: object
-        PageStructure:
-            properties:
-                pageElement:
-                    $ref: "#/components/schemas/PageElement"
-                pageRules:
-                    items:
-                        $ref: "#/components/schemas/PageRule"
-                    type: array
-            type: object
         PageSpecification:
             properties:
                 experiences:
@@ -2067,6 +2058,15 @@ components:
                     type: string
                 settings:
                     $ref: "#/components/schemas/Settings"
+            type: object
+        PageStructure:
+            properties:
+                pageElement:
+                    $ref: "#/components/schemas/PageElement"
+                pageRules:
+                    items:
+                        $ref: "#/components/schemas/PageRule"
+                    type: array
             type: object
         PageWidgetInstanceDefinition:
             # @review
@@ -2541,11 +2541,6 @@ components:
                     # @review
                     description:
                         Settings of the page, such as SEO or OpenGraph.
-                pageType:
-                    # @review
-                    description:
-                        The type of the page.
-                    type: string
                 pageSpecifications:
                     properties:
                         approved:
@@ -2553,6 +2548,11 @@ components:
                         draft:
                             $ref: "#/components/schemas/PageSpecification"
                     type: object
+                pageType:
+                    # @review
+                    description:
+                        The type of the page.
+                    type: string
                 parentSitePage:
                     # @review
                     description:
@@ -2852,8 +2852,8 @@ paths:
     "/sites/{siteId}/experiences/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
-                Deletes an experience of a specific draft page specification of a site page within a site by specifying the
-                experience's external reference code. The default experience cannot be deleted.
+                Deletes an experience of a specific draft page specification of a site page within a site by specifying
+                the experience's external reference code. The default experience cannot be deleted.
             operationId: deleteSiteExperienceByExternalReferenceCode
             parameters:
                 - in: path
@@ -2927,9 +2927,9 @@ paths:
             tags: ["Experience"]
         patch:
             description:
-                Updates an experience of a specific draft page specification of a site page within a site by specifying the
-                experience's external reference code. Updates only the fields received in the request body, leaving any
-                other fields untouched.
+                Updates an experience of a specific draft page specification of a site page within a site by specifying
+                the experience's external reference code. Updates only the fields received in the request body, leaving
+                any other fields untouched.
             operationId: patchSiteExperienceByExternalReferenceCode
             parameters:
                 - in: path
@@ -2969,8 +2969,8 @@ paths:
             tags: ["Experience"]
         put:
             description:
-                Updates an experience of a specific draft page specification of a site page within a site by specifying the
-                experience's external reference code.
+                Updates an experience of a specific draft page specification of a site page within a site by specifying
+                the experience's external reference code.
             operationId: putSiteExperienceByExternalReferenceCode
             parameters:
                 - in: path
@@ -3197,8 +3197,8 @@ paths:
     "/sites/{siteId}/page-elements/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
-                Deletes a page element within an experience of a specific draft page specification of a site page within a
-                site by specifying the page element's external reference code.
+                Deletes a page element within an experience of a specific draft page specification of a site page within
+                a site by specifying the page element's external reference code.
             operationId: deleteSitePageElementByExternalReferenceCode
             parameters:
                 - in: path
@@ -3231,8 +3231,8 @@ paths:
             tags: ["PageElement"]
         get:
             description:
-                Retrieves page element within an experience of a specific page specification of a site page within a site by
-                specifying the page element's external reference code.
+                Retrieves page element within an experience of a specific page specification of a site page within a
+                site by specifying the page element's external reference code.
             operationId: getSitePageElementByExternalReferenceCode
             parameters:
                 - in: path
@@ -3272,8 +3272,8 @@ paths:
             tags: ["PageElement"]
         patch:
             description:
-                Updates a page element within an experience of a specific draft page specification of a site page within a
-                site by specifying the page element's external reference code. Updates only the fields received in the
+                Updates a page element within an experience of a specific draft page specification of a site page within
+                a site by specifying the page element's external reference code. Updates only the fields received in the
                 request body, leaving any other fields untouched.
             operationId: patchSitePageElementByExternalReferenceCode
             parameters:
@@ -3314,8 +3314,8 @@ paths:
             tags: ["PageElement"]
         put:
             description:
-                Updates a page element within an experience of a specific draft page specification of a site page within a
-                site by specifying the page elment's external reference code.
+                Updates a page element within an experience of a specific draft page specification of a site page within
+                a site by specifying the page elment's external reference code.
             operationId: putSitePageElementByExternalReferenceCode
             parameters:
                 - in: path
@@ -3356,8 +3356,8 @@ paths:
     "/sites/{siteId}/page-elements/by-external-reference-code/{externalReferenceCode}/page-elements":
         get:
             description:
-                Retrieves all the descendant page elements of a page element within an experience in a page specification of a
-                site page.
+                Retrieves all the descendant page elements of a page element within an experience in a page
+                specification of a site page.
             operationId: getSitePageElementPageElementsByExternalReferenceCode
             parameters:
                 - in: path
@@ -3403,8 +3403,8 @@ paths:
     "/sites/{siteId}/page-rules/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
-                Deletes a page rule within an experience of a specific draft page specification of a site page within a site
-                by specifying the page rule's external reference code.
+                Deletes a page rule within an experience of a specific draft page specification of a site page within a
+                site by specifying the page rule's external reference code.
             operationId: deleteSitePageRuleByExternalReferenceCode
             parameters:
                 - in: path
@@ -3437,8 +3437,8 @@ paths:
             tags: ["PageRule"]
         get:
             description:
-                Retrieves page rule within an experience of a specific page specification of a site page within a site by
-                specifying the page rule's external reference code.
+                Retrieves page rule within an experience of a specific page specification of a site page within a site
+                by specifying the page rule's external reference code.
             operationId: getSitePageRuleByExternalReferenceCode
             parameters:
                 - in: path
@@ -3478,9 +3478,9 @@ paths:
             tags: ["PageRule"]
         patch:
             description:
-                Updates a page rule within an experience of a specific draft page specification of a site page within a site
-                by specifying the page rule's external reference code. Updates only the fields received in the request
-                body, leaving any other fields untouched.
+                Updates a page rule within an experience of a specific draft page specification of a site page within a
+                site by specifying the page rule's external reference code. Updates only the fields received in the
+                request body, leaving any other fields untouched.
             operationId: patchSitePageRuleByExternalReferenceCode
             parameters:
                 - in: path
@@ -3520,8 +3520,8 @@ paths:
             tags: ["PageRule"]
         put:
             description:
-                Updates a page rule within an experience of a specific draft page specification of a site page within a site
-                by specifying the page element's external reference code.
+                Updates a page rule within an experience of a specific draft page specification of a site page within a
+                site by specifying the page element's external reference code.
             operationId: putSitePageRuleByExternalReferenceCode
             parameters:
                 - in: path
@@ -3562,8 +3562,8 @@ paths:
     "/sites/{siteId}/page-specifications/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
-                Deletes a specific page specification of a site page by external reference code. The page specification needs to be
-                in draft status.
+                Deletes a specific page specification of a site page by external reference code. The page specification
+                needs to be in draft status.
             operationId: deleteSitePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
@@ -3623,8 +3623,8 @@ paths:
             tags: ["PageSpecification"]
         patch:
             description:
-                Updates a page specification of a site page based only on the fields received in the request body, leaving any
-                other fields untouched.
+                Updates a page specification of a site page based only on the fields received in the request body,
+                leaving any other fields untouched.
             operationId: patchSitePageSpecificationByExternalReferenceCode
             parameters:
                 - in: path
