@@ -2048,10 +2048,6 @@ components:
             type: object
         PageSpecification:
             properties:
-                externalReferenceCode:
-                    description:
-                        The page specification's external reference code, unique per site.
-                    type: string
                 pageExperiences:
                     items:
                         $ref: "#/components/schemas/Experience"
@@ -2830,12 +2826,12 @@ info:
     version: v1.0
 openapi: 3.0.1
 paths:
-    "/sites/{siteExternalReferenceCode}/page-elements/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteExternalReferenceCode}/page-elements/{pageElementExternalReferenceCode}":
         delete:
             description:
-                Deletes a page element within an experience of a specific draft page specification of a site page within
-                a site by specifying the page element's external reference code.
-            operationId: deleteSitePageElementByExternalReferenceCode
+                Deletes a page element within an experience of a specific page specification of a site page within a
+                site.
+            operationId: deleteSitePageElement
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -2843,20 +2839,8 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageElementExternalReferenceCode
                   required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
                   schema:
                       type: string
             responses:
@@ -2868,8 +2852,8 @@ paths:
         get:
             description:
                 Retrieves page element within an experience of a specific page specification of a site page within a
-                site by specifying the page element's external reference code.
-            operationId: getSitePageElementByExternalReferenceCode
+                site.
+            operationId: getSitePageElement
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -2877,7 +2861,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageElementExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -2908,10 +2892,9 @@ paths:
             tags: ["PageElement"]
         patch:
             description:
-                Updates a page element within an experience of a specific draft page specification of a site page within
-                a site by specifying the page element's external reference code. Updates only the fields received in the
-                request body, leaving any other fields untouched.
-            operationId: patchSitePageElementByExternalReferenceCode
+                Updates a page element within an experience of a specific page specification of a site page within a
+                site. Updates only the fields received in the request body, leaving any other fields untouched.
+            operationId: patchSitePageElement
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -2919,7 +2902,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageElementExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -2950,9 +2933,9 @@ paths:
             tags: ["PageElement"]
         put:
             description:
-                Updates a page element within an experience of a specific draft page specification of a site page within
-                a site by specifying the page elment's external reference code.
-            operationId: putSitePageElementByExternalReferenceCode
+                Updates a page element within an experience of a specific page specification of a site page within a
+                site.
+            operationId: putSitePageElement
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -2960,7 +2943,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageElementExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -2989,20 +2972,21 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/PageElement"
             tags: ["PageElement"]
-    "/sites/{siteExternalReferenceCode}/page-elements/by-external-reference-code/{externalReferenceCode}/page-elements":
+    "/sites/{siteExternalReferenceCode}/page-elements/{pageElementExternalReferenceCode}/page-elements":
         get:
             description:
                 Retrieves all the descendant page elements of a page element within an experience in a page
                 specification of a site page.
-            operationId: getSitePageElementPageElementsByExternalReferenceCode
+            operationId: getSitePageElementPageElements
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
-                - in: query
-                  name: externalReferenceCode
+                - in: path
+                  name: pageElementExternalReferenceCode
+                  required: true
                   schema:
                       type: string
                 - in: query
@@ -3036,12 +3020,12 @@ paths:
                                 type: array
             # @review
             tags: ["PageElement"]
-    "/sites/{siteExternalReferenceCode}/page-experiences/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteExternalReferenceCode}/page-experiences/{pageExperienceExternalReferenceCode}":
         delete:
             description:
-                Deletes an experience of a specific draft page specification of a site page within a site by specifying
-                the experience's external reference code. The default experience cannot be deleted.
-            operationId: deleteSitePageExperienceByExternalReferenceCode
+                Deletes an experience of a specific page specification of a site page within a site. The default
+                experience cannot be deleted.
+            operationId: deleteSitePageExperience
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3049,7 +3033,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageExperienceExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3073,9 +3057,8 @@ paths:
             tags: ["PageExperience"]
         get:
             description:
-                Retrieves an experience of a specific page specification of a site page within a site by specifying the
-                experience's external reference code.
-            operationId: getSitePageExperienceByExternalReferenceCode
+                Retrieves an experience of a specific page specification of a site page within a site.
+            operationId: getSitePageExperience
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3083,7 +3066,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageExperienceExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3114,10 +3097,9 @@ paths:
             tags: ["PageExperience"]
         patch:
             description:
-                Updates an experience of a specific draft page specification of a site page within a site by specifying
-                the experience's external reference code. Updates only the fields received in the request body, leaving
-                any other fields untouched.
-            operationId: patchSitePageExperienceByExternalReferenceCode
+                Updates an experience of a specific page specification of a site page within a site. Updates only the
+                fields received in the request body, leaving any other fields untouched.
+            operationId: patchSitePageExperience
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3125,7 +3107,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageExperienceExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3156,9 +3138,8 @@ paths:
             tags: ["PageExperience"]
         put:
             description:
-                Updates an experience of a specific draft page specification of a site page within a site by specifying
-                the experience's external reference code.
-            operationId: putSitePageExperienceByExternalReferenceCode
+                Updates an experience of a specific page specification of a site page within a site.
+            operationId: putSitePageExperience
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3166,7 +3147,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageExperienceExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3195,19 +3176,19 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/Experience"
             tags: ["PageExperience"]
-    "/sites/{siteExternalReferenceCode}/page-experiences/by-external-reference-code/{externalReferenceCode}/page-elements":
+    "/sites/{siteExternalReferenceCode}/page-experiences/{pageExperienceExternalReferenceCode}/page-elements":
         get:
             description:
                 Retrieves all the page elements within an experience in a page specification of a site page.
-            operationId: getSitePageExperiencePageElementsByExternalReferenceCode
+            operationId: getSitePageExperiencePageElements
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
-                - in: query
-                  name: externalReferenceCode
+                - in: path
+                  name: pageExperienceExternalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -3244,15 +3225,11 @@ paths:
         post:
             description:
                 Adds a new page element to an experience in a page specification in draft status of a site page.
-            operationId: postSitePageExperiencePageElementByExternalReferenceCode
+            operationId: postSitePageExperiencePageElement
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
                   required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: externalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -3261,6 +3238,10 @@ paths:
                       type: string
                 - in: query
                   name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: pageExperienceExternalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -3288,19 +3269,15 @@ paths:
                         default response
             # @review
             tags: ["PageExperience"]
-    "/sites/{siteExternalReferenceCode}/page-experiences/by-external-reference-code/{externalReferenceCode}/page-rules":
+    "/sites/{siteExternalReferenceCode}/page-experiences/{pageExperienceExternalReferenceCode}/page-rules":
         get:
             description:
                 Retrieves all the page rules within an experience in a page specification of a site page.
-            operationId: getSitePageExperiencePageRulesByExternalReferenceCode
+            operationId: getSitePageExperiencePageRules
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
                   required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: externalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -3313,6 +3290,10 @@ paths:
                       type: boolean
                 - in: query
                   name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: pageExperienceExternalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -3337,15 +3318,11 @@ paths:
         post:
             description:
                 Adds a new page rule to an experience in a page specification in draft status of a site page.
-            operationId: postSitePageExperiencePageRuleByExternalReferenceCode
+            operationId: postSitePageExperiencePageRule
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
                   required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: externalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -3354,6 +3331,10 @@ paths:
                       type: string
                 - in: query
                   name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: pageExperienceExternalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -3381,12 +3362,11 @@ paths:
                         default response
             # @review
             tags: ["PageExperience"]
-    "/sites/{siteExternalReferenceCode}/page-rules/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteExternalReferenceCode}/page-rules/{pageRuleExternalReferenceCode}":
         delete:
             description:
-                Deletes a page rule within an experience of a specific draft page specification of a site page within a
-                site by specifying the page rule's external reference code.
-            operationId: deleteSitePageRuleByExternalReferenceCode
+                Deletes a page rule within an experience of a specific page specification of a site page within a site.
+            operationId: deleteSitePageRule
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3394,7 +3374,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageRuleExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3418,9 +3398,8 @@ paths:
             tags: ["PageRule"]
         get:
             description:
-                Retrieves page rule within an experience of a specific page specification of a site page within a site
-                by specifying the page rule's external reference code.
-            operationId: getSitePageRuleByExternalReferenceCode
+                Retrieves page rule within an experience of a specific page specification of a site page within a site.
+            operationId: getSitePageRule
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3428,7 +3407,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageRuleExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3459,10 +3438,9 @@ paths:
             tags: ["PageRule"]
         patch:
             description:
-                Updates a page rule within an experience of a specific draft page specification of a site page within a
-                site by specifying the page rule's external reference code. Updates only the fields received in the
-                request body, leaving any other fields untouched.
-            operationId: patchSitePageRuleByExternalReferenceCode
+                Updates a page rule within an experience of a specific page specification of a site page within a site.
+                Updates only the fields received in the request body, leaving any other fields untouched.
+            operationId: patchSitePageRule
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3470,7 +3448,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageRuleExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3501,9 +3479,8 @@ paths:
             tags: ["PageRule"]
         put:
             description:
-                Updates a page rule within an experience of a specific draft page specification of a site page within a
-                site by specifying the page element's external reference code.
-            operationId: putSitePageRuleByExternalReferenceCode
+                Updates a page rule within an experience of a specific page specification of a site page within a site.
+            operationId: putSitePageRule
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3511,7 +3488,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: pageRuleExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3540,295 +3517,6 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/PageRule"
             tags: ["PageRule"]
-    "/sites/{siteExternalReferenceCode}/page-specifications/by-external-reference-code/{externalReferenceCode}":
-        delete:
-            description:
-                Deletes a specific page specification of a site page by external reference code. The page specification
-                needs to be in draft status.
-            operationId: deleteSitePageSpecificationByExternalReferenceCode
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: externalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["PageSpecification"]
-        get:
-            description:
-                Retrieves a specific page specification of a site page by external reference code.
-            operationId: getSitePageSpecificationByExternalReferenceCode
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: externalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/PageSpecification"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/PageSpecification"
-                    description:
-                        default response
-            tags: ["PageSpecification"]
-        patch:
-            description:
-                Updates a page specification of a site page based only on the fields received in the request body,
-                leaving any other fields untouched.
-            operationId: patchSitePageSpecificationByExternalReferenceCode
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: externalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/PageSpecification"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/PageSpecification"
-            responses:
-                default:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/PageSpecification"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/PageSpecification"
-                    description:
-                        default response
-            tags: ["PageSpecification"]
-        put:
-            description:
-                Updates the draft of a site page with the given external reference code.
-            operationId: putSitePageSpecificationByExternalReferenceCode
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: externalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/PageSpecification"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/PageSpecification"
-            responses:
-                default:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/PageSpecification"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/PageSpecification"
-                    description:
-                        default response
-            tags: ["PageSpecification"]
-    "/sites/{siteExternalReferenceCode}/page-specifications/by-external-reference-code/{externalReferenceCode}/page-experiences":
-        get:
-            description:
-                Retrieves all the experiences of a page specification.
-            operationId: getSitePageSpecificationPageExperiencesByExternalReferenceCode
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: externalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/Experience"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/Experience"
-                                type: array
-            # @review
-            tags: ["PageSpecification"]
-        post:
-            description:
-                Adds a new experience to a page specification in draft status of a site page.
-            operationId: postSitePageSpecificationPageExperienceByExternalReferenceCode
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: externalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/Experience"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/Experience"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/Experience"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/Experience"
-                    description:
-                        default response
-            # @review
-            tags: ["PageSpecification"]
-    "/sites/{siteExternalReferenceCode}/page-specifications/by-external-reference-code/{externalReferenceCode}/publish":
-        post:
-            description:
-                Publishes a page specification (in draft status) of a site page.
-            operationId: postSitePageSpecificationPublishByExternalReferenceCode
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: externalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/PageSpecification"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/PageSpecification"
-                    description:
-                        default response
-            # @review
-            tags: ["PageSpecification"]
     "/sites/{siteExternalReferenceCode}/site-pages":
         get:
             description:
@@ -3925,11 +3613,11 @@ paths:
                         default response
             # @review
             tags: ["SitePage"]
-    "/sites/{siteExternalReferenceCode}/site-pages/by-external-reference-code/{externalReferenceCode}":
+    "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}":
         delete:
             description:
-                Deletes a specific public page of a site by external reference code.
-            operationId: deleteSiteSitePageByExternalReferenceCode
+                Deletes a specific public page of a site.
+            operationId: deleteSiteSitePage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3937,7 +3625,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: sitePageExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3949,8 +3637,8 @@ paths:
             tags: ["SitePage"]
         get:
             description:
-                Retrieves a specific public page of a site by external reference code.
-            operationId: getSiteSitePageByExternalReferenceCode
+                Retrieves a specific public page of a site.
+            operationId: getSiteSitePage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3958,7 +3646,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: sitePageExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -3989,7 +3677,7 @@ paths:
         patch:
             description:
                 Updates only the fields received in the request body, leaving any other fields untouched.
-            operationId: patchSiteSitePageByExternalReferenceCode
+            operationId: patchSiteSitePage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3997,7 +3685,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: sitePageExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -4036,7 +3724,7 @@ paths:
         put:
             description:
                 Updates the site page with the given external reference code, or creates it if it does not exist.
-            operationId: putSiteSitePageByExternalReferenceCode
+            operationId: putSiteSitePage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -4044,7 +3732,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: externalReferenceCode
+                  name: sitePageExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -4080,60 +3768,20 @@ paths:
                     description:
                         default response
             tags: ["SitePage"]
-    "/sites/{siteExternalReferenceCode}/site-pages/by-external-reference-code/{externalReferenceCode}/page-specifications":
-        get:
-            description:
-                Retrieves the page specifications of a site page.
-            operationId: getSiteSitePagePageSpecificationsByExternalReferenceCode
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: externalReferenceCode
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/PageSpecification"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/PageSpecification"
-                                type: array
-            # @review
-            tags: ["SitePage"]
+    "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/page-specifications":
         post:
             description:
                 Adds a new page specification in draft status to a site page.
-            operationId: postSiteSitePagePageSpecificationByExternalReferenceCode
+            operationId: postSiteSitePagePageSpecification
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
                   required: true
                   schema:
                       type: string
-                - in: query
-                  name: externalReferenceCode
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
                   schema:
                       type: string
                 - in: query
@@ -4169,3 +3817,517 @@ paths:
                         default response
             # @review
             tags: ["SitePage"]
+    "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/page-specifications/draft":
+        delete:
+            description:
+                Deletes the draft page specification of a site page.
+            operationId: deleteSiteSitePagePageSpecificationDraft
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["PageSpecification"]
+        get:
+            description:
+                Retrieves the draft page specification of a site page.
+            operationId: getSiteSitePagePageSpecificationDraft
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                    description:
+                        default response
+            tags: ["PageSpecification"]
+        patch:
+            description:
+                Updates the draft page specification of a site page based only on the fields received in the request
+                body, leaving any other fields untouched.
+            operationId: patchSiteSitePagePageSpecificationDraft
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PageSpecification"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/PageSpecification"
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                    description:
+                        default response
+            tags: ["PageSpecification"]
+        put:
+            description:
+                Updates the draft page specification of a site page.
+            operationId: putSiteSitePagePageSpecificationDraft
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PageSpecification"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/PageSpecification"
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                    description:
+                        default response
+            tags: ["PageSpecification"]
+    "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/page-specifications/draft/page-experiences":
+        get:
+            description:
+                Retrieves all the experiences of a draft page specification.
+            operationId: getSiteSitePagePageSpecificationDraftPageExperiences
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Experience"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Experience"
+                                type: array
+            # @review
+            tags: ["PageSpecification"]
+        post:
+            description:
+                Adds a new experience to a draft page specification of a site page.
+            operationId: postSiteSitePagePageSpecificationDraftPageExperience
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Experience"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Experience"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Experience"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Experience"
+                    description:
+                        default response
+            # @review
+            tags: ["PageSpecification"]
+    "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/page-specifications/draft/publish":
+        post:
+            description:
+                Publishes a page specification in draft status of a site page.
+            operationId: postSiteSitePagePageSpecificationDraftPublish
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                    description:
+                        default response
+            # @review
+            tags: ["PageSpecification"]
+    "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/page-specifications/published":
+        get:
+            description:
+                Retrieves the published page specification of a site page.
+            operationId: getSiteSitePagePageSpecificationPublished
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                    description:
+                        default response
+            tags: ["PageSpecification"]
+        patch:
+            description:
+                Updates the published page specification of a site page based only on the fields received in the request
+                body, leaving any other fields untouched.
+            operationId: patchSiteSitePagePageSpecificationPublished
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PageSpecification"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/PageSpecification"
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                    description:
+                        default response
+            tags: ["PageSpecification"]
+        put:
+            description:
+                Updates the published page specification of a site page.
+            operationId: putSiteSitePagePageSpecificationPublished
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PageSpecification"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/PageSpecification"
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                    description:
+                        default response
+            tags: ["PageSpecification"]
+    "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/page-specifications/published/page-experiences":
+        get:
+            description:
+                Retrieves all the experiences of a published page specification.
+            operationId: getSiteSitePagePageSpecificationPublishedPageExperiences
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Experience"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Experience"
+                                type: array
+            # @review
+            tags: ["PageSpecification"]
+        post:
+            description:
+                Adds a new experience to a published page specification of a site page.
+            operationId: postSiteSitePagePageSpecificationPublishedPageExperience
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Experience"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Experience"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Experience"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Experience"
+                    description:
+                        default response
+            # @review
+            tags: ["PageSpecification"]
