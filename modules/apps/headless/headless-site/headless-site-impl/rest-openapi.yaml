@@ -3930,6 +3930,102 @@ paths:
                         default response
             # @review
             tags: ["PageRule"]
+    "/sites/{siteExternalReferenceCode}/page-rules/{pageRuleExternalReferenceCode}/page-rule-conditions":
+        get:
+            description:
+                Retrieves all the page rule condition conditions within an experience in a page specification of a site
+                page.
+            operationId: getSitePageRulePageRuleConditions
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: pageRuleExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: flatten
+                  schema:
+                      type: boolean
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/PageRuleCondition"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/PageRuleCondition"
+                                type: array
+            # @review
+            tags: ["PageRule"]
+        post:
+            description:
+                Adds a new page rule condition to a page rule in an experience in a page specification in draft status
+                of a site page.
+            operationId: postSitePageRulePageRuleCondition
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: pageRuleExternalReferenceCode
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PageRuleCondition"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/PageRuleCondition"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageRuleCondition"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageRuleCondition"
+                    description:
+                        default response
+            # @review
+            tags: ["PageRule"]
     "/sites/{siteExternalReferenceCode}/site-pages":
         get:
             description:
