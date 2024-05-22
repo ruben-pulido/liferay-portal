@@ -2977,7 +2977,7 @@ paths:
             description:
                 Retrieves all the descendant page elements of a page element within an experience in a page
                 specification of a site page.
-            operationId: getSitePageElementPageElements
+            operationId: getSitePageElementPageElementsPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3180,7 +3180,7 @@ paths:
         get:
             description:
                 Retrieves all the page elements within an experience in a page specification of a site page.
-            operationId: getSitePageExperiencePageElements
+            operationId: getSitePageExperiencePageElementsPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3232,16 +3232,17 @@ paths:
                   required: true
                   schema:
                       type: string
+                - in: path
+                  name: pageExperienceExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
                 - in: query
                   name: fields
                   schema:
                       type: string
                 - in: query
                   name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: pageExperienceExternalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -3273,7 +3274,7 @@ paths:
         get:
             description:
                 Retrieves all the page rules within an experience in a page specification of a site page.
-            operationId: getSitePageExperiencePageRules
+            operationId: getSitePageExperiencePageRulesPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3839,7 +3840,7 @@ paths:
         get:
             description:
                 Retrieves all the page rule action actions within an experience in a page specification of a site page.
-            operationId: getSitePageRulePageRuleActions
+            operationId: getSitePageRulePageRuleActionsPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -3935,7 +3936,7 @@ paths:
             description:
                 Retrieves all the page rule condition conditions within an experience in a page specification of a site
                 page.
-            operationId: getSitePageRulePageRuleConditions
+            operationId: getSitePageRulePageRuleConditionsPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -4036,8 +4037,7 @@ paths:
                   name: siteExternalReferenceCode
                   required: true
                   schema:
-                      format: int64
-                      type: integer
+                      type: string
                 - in: query
                   name: aggregationTerms
                   schema:
@@ -4099,8 +4099,7 @@ paths:
                   name: siteExternalReferenceCode
                   required: true
                   schema:
-                      format: int64
-                      type: integer
+                      type: string
             requestBody:
                 content:
                     application/json:
@@ -4486,7 +4485,7 @@ paths:
         get:
             description:
                 Retrieves all the experiences of a draft page specification.
-            operationId: getSiteSitePagePageSpecificationDraftPageExperiences
+            operationId: getSiteSitePagePageSpecificationDraftPageExperiencesPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -4753,7 +4752,7 @@ paths:
         get:
             description:
                 Retrieves all the experiences of a published page specification.
-            operationId: getSiteSitePagePageSpecificationPublishedPageExperiences
+            operationId: getSiteSitePagePageSpecificationPublishedPageExperiencesPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
