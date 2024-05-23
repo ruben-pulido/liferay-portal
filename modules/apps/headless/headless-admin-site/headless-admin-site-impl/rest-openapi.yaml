@@ -469,6 +469,64 @@ components:
                     readOnly: true
                     type: string
             type: object
+        FragmentComposition:
+            # @review
+            description:
+                Represents a composition of fragments that can be added to a site page.
+            properties:
+                collectionExternalReferenceCode:
+                    # @review
+                    description:
+                        The external reference code of the collection this fragment composition belongs to.
+                    type: string
+                creator:
+                    $ref: "#/components/schemas/Creator"
+                    description:
+                        The structured content's creator.
+                    readOnly: true
+                dateCreated:
+                    description:
+                        The structured content's creation date.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateModified:
+                    description:
+                        The last time any field of the structured content was changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                datePublished:
+                    description:
+                        The structured content's most recent publication date.
+                    format: date-time
+                    type: string
+                description:
+                    # @review
+                    description:
+                        The description of this fragment composition.
+                    type: string
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The external reference code of this fragment composition.
+                    type: string
+                key:
+                    # @review
+                    description:
+                        The fragment composition's key.
+                    type: string
+                name:
+                    # @review
+                    description:
+                        The fragment composition's name.
+                    type: string
+                pageElement:
+                    $ref: "#/components/schemas/PageElement"
+                    # @review
+                    description:
+                        The fragment composition's page element, whose definition must be of type PageSectionDefinition.
+            type: object
         FragmentField:
             # @review
             description:
