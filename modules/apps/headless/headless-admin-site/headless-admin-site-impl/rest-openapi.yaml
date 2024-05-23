@@ -399,6 +399,24 @@ components:
                             type: string
                     type: object
             type: object
+        DocumentExternalReferenceCodeReference:
+            properties:
+                externalReferenceCode:
+                    type: string
+                scope:
+                    properties:
+                        externalReferenceCode:
+                            type: string
+                        type:
+                            enum: [AssetLibrary, Site]
+                            type: string
+                    required:
+                        - externalReferenceCode
+                        - type
+                    type: object
+            required:
+                - externalReferenceCode
+            type: object
         Experience:
             description:
                 # @review
@@ -526,6 +544,11 @@ components:
                     # @review
                     description:
                         The fragment composition's page element, whose definition must be of type PageSectionDefinition.
+                thumbnail:
+                    $ref: "#/components/schemas/DocumentExternalReferenceCodeReference"
+                    # @review
+                    description:
+                        The fragment composition's thumbnail.
             type: object
         FragmentField:
             # @review
