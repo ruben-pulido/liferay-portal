@@ -2855,12 +2855,17 @@ components:
                             description:
                                 The taxonomy category's external reference code.
                             type: string
-                        siteKey:
-                            # @review
-                            description:
-                                The key of the site or asset library where the taxonomy category is located. It can be
-                                left out if the taxonomy category is in the same site as the page.
-                            type: string
+                        scope:
+                            properties:
+                                externalReferenceCode:
+                                    type: string
+                                type:
+                                    enum: [AssetLibrary, Site]
+                                    type: string
+                            required:
+                                - externalReferenceCode
+                                - type
+                            type: object
                     required:
                         - externalReferenceCode
                     type: object
