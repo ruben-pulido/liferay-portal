@@ -2257,40 +2257,6 @@ components:
                     description:
                         The widget instance of the page widget instance.
             type: object
-        RenderedPage:
-            # @review
-            description:
-                A list of rendered pages, which results from using a page template and the appropriate viewport to
-                process the page and return HTML.
-            properties:
-                masterPageId:
-                    # @review
-                    description:
-                        The ID of the master page used to render the content.
-                    readOnly: true
-                    type: string
-                masterPageName:
-                    # @review
-                    description:
-                        The name of the master page used to render the content.
-                    type: string
-                pageTemplateId:
-                    # @review
-                    description:
-                        The ID of the template used to render the content.
-                    readOnly: true
-                    type: string
-                pageTemplateName:
-                    # @review
-                    description:
-                        The name of the template used to render the content.
-                    type: string
-                renderedPageURL:
-                    # @review
-                    description:
-                        An absolute URL to the rendered page.
-                    type: string
-            type: object
         RowViewport:
             # @review
             description:
