@@ -2711,13 +2711,17 @@ components:
                                 The relative URL of the parent page.
                             type: string
                     type: object
-                siteId:
+                site:
                     # @review
                     description:
-                        The ID of the site to which this page is scoped.
-                    format: int64
-                    readOnly: true
-                    type: integer
+                        The site to which this page is scoped.
+                    properties:
+                        externalReferenceCode:
+                            # @review
+                            description:
+                                The external reference code of the site.
+                            type: string
+                    type: object
                 taxonomyCategoryBriefs:
                     # @review
                     description:
