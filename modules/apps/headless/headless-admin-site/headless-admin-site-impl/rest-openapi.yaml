@@ -2832,12 +2832,6 @@ components:
                         Optional field with the embedded taxonomy category, can be embedded with nestedFields
                     readOnly: true
                     type: object
-                taxonomyCategoryId:
-                    description:
-                        The category's ID. This can be used to retrieve more information in the `TaxonomyCategory` API.
-                    format: int64
-                    readOnly: true
-                    type: integer
                 taxonomyCategoryName:
                     description:
                         The category's name.
