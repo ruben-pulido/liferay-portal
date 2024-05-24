@@ -2711,11 +2711,6 @@ components:
                                 The relative URL of the parent page.
                             type: string
                     type: object
-                renderedPage:
-                    $ref: "#/components/schemas/RenderedPage"
-                    # @review
-                    description:
-                        Metadata of the page such as it's master page and template.
                 siteId:
                     # @review
                     description:
