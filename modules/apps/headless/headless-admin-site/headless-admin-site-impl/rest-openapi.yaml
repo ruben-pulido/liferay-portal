@@ -1905,6 +1905,11 @@ components:
                     description:
                         The page rule ID.
                     type: string
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The page rule external reference code.
+                    type: string
                 name:
                     # @review
                     description:
@@ -1940,6 +1945,11 @@ components:
                     description:
                         The page rule action's ID.
                     type: string
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The page rule action's external reference code.
+                    type: string
                 itemId:
                     # @review
                     description:
@@ -1965,6 +1975,11 @@ components:
                     # @review
                     description:
                         The page rule condition's ID.
+                    type: string
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The page rule condition's external reference code.
                     type: string
                 type:
                     # @review
