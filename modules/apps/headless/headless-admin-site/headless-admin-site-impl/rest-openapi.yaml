@@ -2725,17 +2725,6 @@ components:
                     items:
                         $ref: "#/components/schemas/TaxonomyCategoryBrief"
                     type: array
-                taxonomyCategoryIds:
-                    deprecated: true
-                    # @review
-                    description:
-                        A write-only field that adds `TaxonomyCategory` instances to the page. Deprecated as of
-                        Cavanaugh (7.4.x), replaced by `taxonomyCategoryBriefs.taxonomyCategoryReference`
-                    items:
-                        format: int64
-                        type: integer
-                    type: array
-                    writeOnly: true
                 title:
                     # @review
                     description:
