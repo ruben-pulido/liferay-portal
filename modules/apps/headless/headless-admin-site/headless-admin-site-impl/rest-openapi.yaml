@@ -1958,11 +1958,6 @@ components:
                         The custom name of a Page rule.
                     enum: [All, Any]
                     type: string
-                id:
-                    # @review
-                    description:
-                        The page rule ID.
-                    type: string
                 externalReferenceCode:
                     # @review
                     description:
@@ -1998,11 +1993,6 @@ components:
                     description:
                         The page rule action's action.
                     type: string
-                id:
-                    # @review
-                    description:
-                        The page rule action's ID.
-                    type: string
                 externalReferenceCode:
                     # @review
                     description:
@@ -2028,11 +2018,6 @@ components:
                     # @review
                     description:
                         The page rule condition's description.
-                    type: string
-                id:
-                    # @review
-                    description:
-                        The page rule condition's ID.
                     type: string
                 externalReferenceCode:
                     # @review
