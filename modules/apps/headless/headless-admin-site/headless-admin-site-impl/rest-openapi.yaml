@@ -1192,15 +1192,73 @@ components:
             description:
                 Represents a page with common elements (header, footer, ...) used for all or several pages of a site.
             properties:
+                creator:
+                    $ref: "#/components/schemas/Creator"
+                    # @review
+                    description:
+                        The master page's creator.
+                dateCreated:
+                    # @review
+                    description:
+                        The master page's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    # @review
+                    description:
+                        The last time any field of the master page was changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                datePublished:
+                    # @review
+                    description:
+                        The master page's most recent publication date.
+                    format: date-time
+                    type: string
+                default:
+                    # @review
+                    description:
+                        Whether the master page is the default one.
+                    type: boolean
                 key:
                     # @review
                     description:
                         The master page's key.
                     type: string
+                keywordBriefs:
+                    description:
+                        The keywords associated with this master page.
+                    items:
+                        $ref: "#/components/schemas/KeywordBrief"
+                    type: array
                 name:
                     # @review
                     description:
                         The master page's name.
+                    type: string
+                pageSpecifications:
+                    properties:
+                        draft:
+                            $ref: "#/components/schemas/PageSpecification"
+                        published:
+                            $ref: "#/components/schemas/PageSpecification"
+                    type: object
+                taxonomyCategoryBriefs:
+                    description:
+                        The categories associated with this master page.
+                    items:
+                        $ref: "#/components/schemas/TaxonomyCategoryBrief"
+                    type: array
+                thumbnail:
+                    $ref: "#/components/schemas/DocumentExternalReferenceCodeReference"
+                    # @review
+                    description:
+                        The master page's thumbnail.
+                uuid:
+                    # @review
+                    description:
+                        A valid external identifier to reference this page.
                     type: string
             type: object
         MessageFormSubmissionResult:
