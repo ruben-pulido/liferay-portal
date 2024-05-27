@@ -403,6 +403,116 @@ components:
                             type: string
                     type: object
             type: object
+        DisplayPageTemplate:
+            # @review
+            description:
+                Represents a Display Page template.
+            properties:
+                contentSubtype:
+                    # @review
+                    description:
+                        The display page template's content subtype.
+                    properties:
+                        subtypeExternalReferenceCode:
+                            # @review
+                            description:
+                                The content subtype's external reference code.
+                            type: string
+                    type: object
+                contentType:
+                    # @review
+                    description:
+                        The type of content.
+                    properties:
+                        classNameExternalReferenceCode:
+                            # @review
+                            description:
+                                The content type's class name external reference code.
+                            type: string
+                    type: object
+                creator:
+                    $ref: "#/components/schemas/Creator"
+                    # @review
+                    description:
+                        The display page template's creator.
+                dateCreated:
+                    # @review
+                    description:
+                        The display page template's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    # @review
+                    description:
+                        The last time any field of the display page template was changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                datePublished:
+                    # @review
+                    description:
+                        The display page template's most recent publication date.
+                    format: date-time
+                    type: string
+                default:
+                    # @review
+                    description:
+                        Whether the display page template is the default one for the given content type/subtype.
+                    type: boolean
+                displayPageTemplateSettings:
+                    $ref: "#/components/schemas/DisplayPageTemplateSettings"
+                    # @review
+                    description:
+                        Settings of the page, such as SEO or OpenGraph.
+                friendlyUrlPath:
+                    # @review
+                    description:
+                        A relative URL to the display page template's rendered content.
+                    type: string
+                friendlyUrlPath_i18n:
+                    additionalProperties:
+                        type: string
+                    # @review
+                    description:
+                        The localized relative URLs to the display page template's rendered content.
+                    type: object
+                key:
+                    # @review
+                    description:
+                        The display page template's key.
+                    type: string
+                name:
+                    # @review
+                    description:
+                        The display page template's name.
+                    type: string
+                thumbnail:
+                    $ref: "#/components/schemas/DocumentExternalReferenceCodeReference"
+                    # @review
+                    description:
+                        The display page template's thumbnail.
+                uuid:
+                    # @review
+                    description:
+                        A valid external identifier to reference this display page template.
+                    type: string
+            type: object
+        DisplayPageTemplateSettings:
+            # @review
+            description:
+                Represents the settings of a Display Page Template.
+            properties:
+                openGraphSettings:
+                    $ref: "#/components/schemas/OpenGraphSettings"
+                    # @review
+                    description:
+                        The page's Open Graph settings.
+                seoSettings:
+                    $ref: "#/components/schemas/SEOSettings"
+                    # @review
+                    description:
+                        The page's SEO settings.
+            type: object
         DocumentExternalReferenceCodeReference:
             properties:
                 externalReferenceCode:
