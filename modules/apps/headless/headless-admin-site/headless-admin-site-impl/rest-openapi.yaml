@@ -2480,22 +2480,22 @@ components:
         Settings:
             # @review
             description:
-                Represents the settings of a page.
+                Represents the settings of a page specification.
             properties:
                 colorSchemeName:
                     # @review
                     description:
-                        The page's color scheme name.
+                        The page specification's color scheme name.
                     type: string
                 css:
                     # @review
                     description:
-                        The page's CSS.
+                        The page specification's CSS.
                     type: string
                 favIcon:
                     # @review
                     description:
-                        The FavIcon of the page
+                        The FavIcon of the page specification
                     oneOf:
                         - $ref: "#/components/schemas/ClientExtension"
                         - $ref: "#/components/schemas/ContentDocument"
@@ -2514,17 +2514,18 @@ components:
                 javascript:
                     # @review
                     description:
-                        The page's JavaScript.
+                        The page specification's JavaScript.
                     type: string
                 masterPage:
                     $ref: "#/components/schemas/MasterPage"
                     # @review
                     description:
-                        The page's master page.
+                        The page specification's master page. This property is not applied if the page specification
+                        belongs to a master page.
                 styleBook:
                     # @review
                     description:
-                        The StyleBook that is applied to the page.
+                        The StyleBook that is applied to the page specification.
                     properties:
                         key:
                             # @review
@@ -2541,22 +2542,22 @@ components:
                     $ref: "#/components/schemas/ClientExtension"
                     # @review
                     description:
-                        The Client Extension for the theme css of a page
+                        The Client Extension for the theme css of a page specification.
                 themeName:
                     # @review
                     description:
-                        The page's theme name.
+                        The page specification's theme name.
                     type: string
                 themeSettings:
                     # @review
                     description:
-                        The page's theme settings.
+                        The page specification's theme settings.
                     type: object
                 themeSpritemapClientExtension:
                     $ref: "#/components/schemas/ClientExtension"
                     # @review
                     description:
-                        The Client Extension for the theme spritemap of a page
+                        The Client Extension for the theme spritemap of a page specification.
             type: object
         Site:
             # @review
