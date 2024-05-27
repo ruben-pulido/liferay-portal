@@ -486,6 +486,11 @@ components:
                     description:
                         The display page template's name.
                     type: string
+                parentFolder:
+                    $ref: "#/components/schemas/DisplayPageTemplateFolder"
+                    # @review
+                    description:
+                        The display page template's parent folder.
                 thumbnail:
                     $ref: "#/components/schemas/DocumentExternalReferenceCodeReference"
                     # @review
