@@ -464,6 +464,11 @@ components:
                     # @review
                     description:
                         Settings of the page, such as SEO or OpenGraph.
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The display page template's external reference code.
+                    type: string
                 friendlyUrlPath:
                     # @review
                     description:
