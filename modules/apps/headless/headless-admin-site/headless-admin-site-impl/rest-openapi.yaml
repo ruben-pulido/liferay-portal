@@ -2688,12 +2688,11 @@ components:
                     format: int64
                     readOnly: true
                     type: integer
-                keywords:
-                    # @review
+                keywordBriefs:
                     description:
-                        A list of keywords describing the page.
+                        The keywords associated with this master page.
                     items:
-                        type: string
+                        $ref: "#/components/schemas/KeywordBrief"
                     type: array
                 pageDefinition:
                     $ref: "#/components/schemas/PageDefinition"
