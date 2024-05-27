@@ -507,6 +507,55 @@ components:
                         A valid external identifier to reference this display page template.
                     type: string
             type: object
+        DisplayPageTemplateFolder:
+            # @review
+            description:
+                Represents a Display Page template folder.
+            properties:
+                creator:
+                    $ref: "#/components/schemas/Creator"
+                    # @review
+                    description:
+                        The display page template folder's creator.
+                dateCreated:
+                    # @review
+                    description:
+                        The display page template folder's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    # @review
+                    description:
+                        The last time any field of the display page template folder was changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                description:
+                    # @review
+                    description:
+                        The display page template folder's description.
+                    type: string
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The display page template folder's external reference code.
+                    type: string
+                key:
+                    # @review
+                    description:
+                        The display page template folder's key.
+                    type: string
+                name:
+                    # @review
+                    description:
+                        The display page template folder's name.
+                    type: string
+                uuid:
+                    # @review
+                    description:
+                        A valid external identifier to reference this page template folder.
+                    type: string
+            type: object
         DisplayPageTemplateSettings:
             # @review
             description:
