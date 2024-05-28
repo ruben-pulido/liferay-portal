@@ -1812,11 +1812,11 @@ components:
         CustomizedPageElement:
             # @review
             description:
-                Represents a Page element.
+                Represents a customized Page element.
             properties:
                 userExternalReferenceCode:
                     description:
-                        The page element's external reference code. Unique within the site.
+                        The external reference code of the user who owns this page element. Unique within the instance.
                     type: string
                 pageElement:
                     description:
@@ -1860,13 +1860,13 @@ components:
                     items:
                         $ref: "#/components/schemas/PageElement"
                     type: array
-                pageElementsByUser:
+                customizedPageElements:
                     # @review
                     description:
-                        A map of the customized page elements this page element has per user's external reference code.
+                        A list of the customized page elements.
                     items:
-                        $ref: "#/components/schemas/PageElement"
-                    type: array
+                        $ref: "#/components/schemas/CustomizedPageElement"
+                    type: object
                 parentExternalReferenceCode:
                     description:
                         The parent's page element's external reference code. Unique within the site.
