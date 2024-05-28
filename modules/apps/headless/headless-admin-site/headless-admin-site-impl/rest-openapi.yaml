@@ -463,7 +463,7 @@ components:
                     $ref: "#/components/schemas/DisplayPageTemplateSettings"
                     # @review
                     description:
-                        Settings of the page, such as SEO or OpenGraph.
+                        Settings of the display page template, such as SEO or OpenGraph.
                 externalReferenceCode:
                     # @review
                     description:
@@ -3253,31 +3253,117 @@ components:
                     readOnly: true
                     type: string
             type: object
-        UtilityPageTemplate:
+        UtilityPage:
             description:
-                Represents a Utility Page Template.
+                Represents a Utility Page.
             properties:
-                defaultTemplate:
+                creator:
+                    $ref: "#/components/schemas/Creator"
                     # @review
                     description:
-                        Specifies if the utility page template should be the default for the given type.
+                        The utility page's creator.
+                dateCreated:
+                    # @review
+                    description:
+                        The utility page's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    # @review
+                    description:
+                        The last time the utility page changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                datePublished:
+                    # @review
+                    description:
+                        The last time the utility page changed.
+                    format: date-time
+                    type: string
+                default:
+                    # @review
+                    description:
+                        Specifies if the utility page should be the default for the given type.
                     type: boolean
                 externalReferenceCode:
                     # @review
                     description:
-                        The utility page template external reference code.
+                        The utility page external reference code.
                     type: string
                 name:
                     # @review
                     description:
-                        The utility page template name.
+                        The utility page name.
                     type: string
+                pageSpecifications:
+                    properties:
+                        draft:
+                            $ref: "#/components/schemas/PageSpecification"
+                        published:
+                            $ref: "#/components/schemas/PageSpecification"
+                    type: object
+                thumbnail:
+                    $ref: "#/components/schemas/DocumentExternalReferenceCodeReference"
+                    # @review
+                    description:
+                        The utility page's thumbnail.
                 type:
                     # @review
                     description:
-                        The utility page template type.
+                        The utility page type.
                     enum: [CookiePolicy, CreateAccount, Error, ErrorCode404, ErrorCode500, ForgotPassword, Login, TermsOfUse]
                     type: string
+                utilityPageSettings:
+                    $ref: "#/components/schemas/UtilityPageSettings"
+                    # @review
+                    description:
+                        Settings of the utility page, such as SEO.
+                uuid:
+                    description:
+                        A valid external identifier to reference this utility page.
+                    type: string
+            type: object
+        UtilityPageSEOSettings:
+            # @review
+            description:
+                Represents settings related with SEO of an utility page.
+            properties:
+                description:
+                    type: string
+                    # @review
+                    description:
+                        The utility page's description to be used as summary for search engines.
+                description_i18n:
+                    additionalProperties:
+                        type: string
+                    # @review
+                    description:
+                        The localized descriptions of the utility page to be used as summary for search engines.
+                    type: object
+                htmlTitle:
+                    # @review
+                    description:
+                        The utility page's main title to be used by search engines.
+                    type: string
+                htmlTitle_i18n:
+                    additionalProperties:
+                        type: string
+                    # @review
+                    description:
+                        The localized main titles of the utility page to be used by search engines.
+                    type: object
+            type: object
+        UtilityPageSettings:
+            # @review
+            description:
+                Represents the settings of an utility page.
+            properties:
+                seoSettings:
+                    $ref: "#/components/schemas/UtilityPageSEOSettings"
+                    # @review
+                    description:
+                        The utility page's SEO settings.
             type: object
         WidgetInstance:
             # @review
