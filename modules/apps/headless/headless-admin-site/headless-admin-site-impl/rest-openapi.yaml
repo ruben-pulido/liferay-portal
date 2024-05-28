@@ -2464,6 +2464,131 @@ components:
                         $ref: "#/components/schemas/PageRule"
                     type: array
             type: object
+        PageTemplate:
+            # @review
+            description:
+                Represents a Page template.
+            properties:
+                creator:
+                    $ref: "#/components/schemas/Creator"
+                    # @review
+                    description:
+                        The page template's creator.
+                dateCreated:
+                    # @review
+                    description:
+                        The page template's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    # @review
+                    description:
+                        The last time the page template changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                datePublished:
+                    # @review
+                    description:
+                        The last time the page template changed.
+                    format: date-time
+                    type: string
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The page template's external reference code.
+                    type: string
+                key:
+                    # @review
+                    description:
+                        The page template's key.
+                    type: string
+                keywords:
+                    # @review
+                    description:
+                        A list of keywords describing the page template.
+                    items:
+                        type: string
+                    type: array
+                name:
+                    # @review
+                    description:
+                        The page template's name.
+                    type: string
+                pageSpecifications:
+                    properties:
+                        draft:
+                            $ref: "#/components/schemas/PageSpecification"
+                        published:
+                            $ref: "#/components/schemas/PageSpecification"
+                    type: object
+                pageTemplateCollection:
+                    $ref: "#/components/schemas/PageTemplateCollection"
+                    # @review
+                    description:
+                        The page template's collection.
+                taxonomyCategoryBriefs:
+                    description:
+                        The categories associated with this page template.
+                    items:
+                        $ref: "#/components/schemas/TaxonomyCategoryBrief"
+                    type: array
+                uuid:
+                    description:
+                        A valid external identifier to reference this page template.
+                    readOnly: true
+                    type: string
+            type: object
+        PageTemplateCollection:
+            # @review
+            description:
+                Represents a Page template collection.
+            properties:
+                creator:
+                    $ref: "#/components/schemas/Creator"
+                    # @review
+                    description:
+                        The page template collection's creator.
+                    readOnly: true
+                dateCreated:
+                    # @review
+                    description:
+                        The page template collection's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    # @review
+                    description:
+                        The last time the page template collection changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                description:
+                    # @review
+                    description:
+                        The page template collection's description.
+                    type: string
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The page template collection's external reference code.
+                    type: string
+                key:
+                    # @review
+                    description:
+                        The display page template collection's key.
+                    type: string
+                name:
+                    # @review
+                    description:
+                        The page template collection's name.
+                    type: string
+                uuid:
+                    description:
+                        A valid external identifier to reference this page template collection.
+                    readOnly: true
+                    type: string
+            type: object
         PageWidgetInstanceDefinition:
             # @review
             description:
@@ -3126,6 +3251,32 @@ components:
                     description:
                         The name of the user group.
                     readOnly: true
+                    type: string
+            type: object
+        UtilityPageTemplate:
+            description:
+                Represents a Utility Page Template.
+            properties:
+                defaultTemplate:
+                    # @review
+                    description:
+                        Specifies if the utility page template should be the default for the given type.
+                    type: boolean
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The utility page template external reference code.
+                    type: string
+                name:
+                    # @review
+                    description:
+                        The utility page template name.
+                    type: string
+                type:
+                    # @review
+                    description:
+                        The utility page template type.
+                    enum: [CookiePolicy, CreateAccount, Error, ErrorCode404, ErrorCode500, ForgotPassword, Login, TermsOfUse]
                     type: string
             type: object
         WidgetInstance:
