@@ -1809,19 +1809,6 @@ components:
                         - $ref: "#/components/schemas/FragmentSettingsAllowed"
                         - $ref: "#/components/schemas/FragmentSettingsUnallowed"
             type: object
-        CustomizedPageElement:
-            # @review
-            description:
-                Represents a customized Page element.
-            properties:
-                userExternalReferenceCode:
-                    description:
-                        The external reference code of the user who owns this page element. Unique within the instance.
-                    type: string
-                pageElement:
-                    description:
-                        The page element's external reference code. Unique within the site.
-                    $ref: "#/components/schemas/PageElement"
         PageElement:
             # @review
             description:
@@ -1843,8 +1830,8 @@ components:
                         - $ref: "#/components/schemas/PageRowDefinition"
                         - $ref: "#/components/schemas/PageSectionDefinition"
                         - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
-                        - $ref: "#/components/schemas/WidgetPageColumnDefinition"
-                        - $ref: "#/components/schemas/WidgetPageLayoutDefinition"
+                        - $ref: "#/components/schemas/PageWidgetPageColumnDefinition"
+                        - $ref: "#/components/schemas/PageWidgetPageLayoutDefinition"
                 externalReferenceCode:
                     description:
                         The page element's external reference code. Unique within the site.
@@ -1860,13 +1847,6 @@ components:
                     items:
                         $ref: "#/components/schemas/PageElement"
                     type: array
-                customizedPageElements:
-                    # @review
-                    description:
-                        A list of the customized page elements.
-                    items:
-                        $ref: "#/components/schemas/CustomizedPageElement"
-                    type: object
                 parentExternalReferenceCode:
                     description:
                         The parent's page element's external reference code. Unique within the site.
@@ -1884,7 +1864,12 @@ components:
                         The page element's type (collection, collection item, column, drop zone, form, fragment,
                         fragment drop zone, root, row, section or widget).
                     enum: [Collection, CollectionItem, Column, DropZone, Form, Fragment, FragmentDropZone, Root, Row, Section,
-                        Widget]
+                        Widget, WidgetPageColumn, WidgetPageLayout]
+                    type: string
+                userExternalReferenceCode:
+                    description:
+                        The external reference code of the user who owns this page element, if the page element is
+                        customizable. It only applies to widget pages.
                     type: string
         PageFormDefinition:
             # @review
@@ -2658,6 +2643,35 @@ components:
                     description:
                         The widget instance of the page widget instance.
             type: object
+        PageWidgetPageColumnDefinition:
+            # @review
+            description:
+                Represents the definition of a widget page column.
+            properties:
+                customizable:
+                    # @review
+                    description:
+                        A flag that indicates whether the page widget column is customizable or not.
+                    type: boolean
+            type: object
+        PageWidgetPageLayoutDefinition:
+            # @review
+            description:
+                Represents the definition of a widget page layout.
+            properties:
+                customizable:
+                    # @review
+                    description:
+                        A flag that indicates whether the page is customizable.
+                    type: boolean
+                layoutTemplateId:
+                    # @review
+                    description:
+                        The identifier of the layout template.
+                    type: string
+            required:
+                - layoutTemplateId
+            type: object
         RowViewport:
             # @review
             description:
@@ -3426,41 +3440,6 @@ components:
                                 type: string
                         type: object
                     type: array
-            type: object
-        WidgetPageColumnDefinition:
-            # @review
-            description:
-                Represents a definition of a Page widget column.
-            properties:
-                customizable:
-                    # @review
-                    description:
-                        A flag that indicates whether the page widget column is customizable or not.
-                    type: boolean
-                customizedPageElements:
-                    # @review
-                    description:
-                        A map with the customized page elements for each user's external reference code.
-                    properties:
-                    type: object
-            type: object
-        WidgetPageLayoutDefinition:
-            # @review
-            description:
-                Represents a definition of a Widget Page Layout.
-            properties:
-                customizable:
-                    # @review
-                    description:
-                        A flag that indicates whether the page is customizable.
-                    type: boolean
-                layoutTemplateId:
-                    # @review
-                    description:
-                        The identifier of the layout template.
-                    type: string
-            required:
-                - layoutTemplateId
             type: object
 info:
     description:
