@@ -1809,6 +1809,26 @@ components:
                         - $ref: "#/components/schemas/FragmentSettingsAllowed"
                         - $ref: "#/components/schemas/FragmentSettingsUnallowed"
             type: object
+
+        SitePage2:
+            # @review
+            description:
+                Represent a definition of a Page.
+            properties:
+                pageSettings:
+                    # @review
+                    description:
+                        The page settings.
+                    oneOf:
+                        - $ref: "#/components/schemas/WidgetPageSettings"
+                        - $ref: "#/components/schemas/ContentPageSettings"
+                type:
+                    # @review
+                    description:
+                        The type of page.
+                    enum: [Widget, Content]
+                    type: string
+
         PageElement:
             # @review
             description:
@@ -2996,11 +3016,6 @@ components:
                         The page's most recent publication date.
                     format: date-time
                     type: string
-                experience:
-                    $ref: "#/components/schemas/Experience"
-                    # @review
-                    description:
-                        Experience of the page that it's being retrieved.
                 externalReferenceCode:
                     description:
                         The page's external reference code.
@@ -3029,16 +3044,6 @@ components:
                     items:
                         $ref: "#/components/schemas/KeywordBrief"
                     type: array
-                pageDefinition:
-                    $ref: "#/components/schemas/PageDefinition"
-                    # @review
-                    deprecated: true
-                    description:
-                        Optional field with the structure of all the elements of the page. Can be embedded with
-                        nestedFields when retrieving the collection of site pages. When retrieving a single site page,
-                        it will automatically be included. Deprecated as of Cavanaugh (7.4.x), replaced by
-                        Experience.pageStructure.pageElement, Experience.pageStructure.pageRules and
-                        PageSpecification.settings.
                 pagePermissions:
                     # @review
                     description:
@@ -3071,6 +3076,190 @@ components:
                         published:
                             $ref: "#/components/schemas/PageSpecification"
                     type: object
+                pageType:
+                    # @review
+                    description:
+                        The type of the page.
+                    type: string
+                parentSitePage:
+                    # @review
+                    description:
+                        The parent page or null if it is a top level page.
+                    properties:
+                        externalReferenceCode:
+                            # @review
+                            description:
+                                The external reference code of the parent page.
+                            type: string
+                        friendlyUrlPath:
+                            # @review
+                            description:
+                                The relative URL of the parent page.
+                            type: string
+                    type: object
+                site:
+                    # @review
+                    description:
+                        The site to which this page is scoped.
+                    properties:
+                        externalReferenceCode:
+                            # @review
+                            description:
+                                The external reference code of the site.
+                            type: string
+                    type: object
+                taxonomyCategoryBriefs:
+                    # @review
+                    description:
+                        The categories associated with this page.
+                    items:
+                        $ref: "#/components/schemas/TaxonomyCategoryBrief"
+                    type: array
+                title:
+                    # @review
+                    description:
+                        The page's title.
+                    type: string
+                title_i18n:
+                    additionalProperties:
+                        type: string
+                    # @review
+                    description:
+                        The localized page's titles.
+                    type: object
+                uuid:
+                    # @review
+                    description:
+                        A valid external identifier to reference this page.
+                    readOnly: true
+                    type: string
+                viewableBy:
+                    enum:
+                        - Anyone
+                        - Members
+                        - Owner
+                    type: string
+                    writeOnly: true
+            required:
+                - title
+            type: object
+        WidgetPage:
+            # @review
+            description:
+                Represents a widget page. This is modeled internally as a `Layout`.
+            properties:
+                actions:
+                    additionalProperties:
+                        additionalProperties:
+                            type: string
+                        type: object
+                    # @review
+                    description:
+                        Block of actions allowed by the user making the request.
+                    readOnly: true
+                    type: object
+                aggregateRating:
+                    $ref: "#/components/schemas/AggregateRating"
+                    # @review
+                    description:
+                        The page's average rating.
+                    readOnly: true
+                availableLanguages:
+                    # @review
+                    description:
+                        The list of languages the page has a translation for.
+                    items:
+                        type: string
+                    readOnly: true
+                    type: array
+                creator:
+                    $ref: "#/components/schemas/Creator"
+                    # @review
+                    description:
+                        The page's creator.
+                    readOnly: true
+                customFields:
+                    # @review
+                    description:
+                        Custom fields associated with the page.
+                    items:
+                        $ref: "#/components/schemas/CustomField"
+                    type: array
+                dateCreated:
+                    # @review
+                    description:
+                        The page's creation date.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateModified:
+                    # @review
+                    description:
+                        The last time any field of the page was changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                datePublished:
+                    # @review
+                    description:
+                        The page's most recent publication date.
+                    format: date-time
+                    type: string
+                externalReferenceCode:
+                    description:
+                        The page's external reference code.
+                    type: string
+                friendlyUrlPath:
+                    # @review
+                    description:
+                        A relative URL to the page's rendered content.
+                    type: string
+                friendlyUrlPath_i18n:
+                    additionalProperties:
+                        type: string
+                    # @review
+                    description:
+                        The localized relative URLs to the page's rendered content.
+                    type: object
+                id:
+                    description:
+                        The page ID.
+                    format: int64
+                    readOnly: true
+                    type: integer
+                keywordBriefs:
+                    description:
+                        The keywords associated with this master page.
+                    items:
+                        $ref: "#/components/schemas/KeywordBrief"
+                    type: array
+                pagePermissions:
+                    # @review
+                    description:
+                        The page's permissions.
+                    items:
+                        properties:
+                            actionKeys:
+                                # @review
+                                description:
+                                    The keys of the actions the role has permission for.
+                                items:
+                                    type: string
+                                type: array
+                            roleKey:
+                                # @review
+                                description:
+                                    The role's key.
+                                type: string
+                        type: object
+                    type: array
+                widgetPageSettings:
+                    $ref: "#/components/schemas/WidgetPageSettings"
+                    # @review
+                    description:
+                        Settings of the page, such as SEO or OpenGraph.
+                widgetPageSpecification:
+                    $ref: "#/components/schemas/PageSpecification"
                 pageType:
                     # @review
                     description:
