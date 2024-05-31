@@ -1801,6 +1801,19 @@ components:
                     description:
                         The page element's external reference code. Unique within the site.
                     type: string
+                fragmentComposition:
+                    # @review
+                    description:
+                        A reference to the Fragment Composition being added to a PageExperience.
+                    properties:
+                        externalReferenceCode:
+                            description:
+                                The external reference code of the Fragment Composition
+                            type: string
+                    required:
+                        - externalReferenceCode
+                    type: object
+                    writeOnly: true
                 id:
                     description:
                         The page element's ID.
