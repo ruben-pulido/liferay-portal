@@ -1792,7 +1792,6 @@ components:
                         - $ref: "#/components/schemas/PageFormDefinition"
                         - $ref: "#/components/schemas/PageFragmentDropZoneDefinition"
                         - $ref: "#/components/schemas/PageFragmentInstanceDefinition"
-                        - $ref: "#/components/schemas/PageRootDefinition"
                         - $ref: "#/components/schemas/PageRowDefinition"
                         - $ref: "#/components/schemas/PageSectionDefinition"
                         - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
@@ -2056,11 +2055,6 @@ components:
                     items:
                         $ref: "#/components/schemas/WidgetInstance"
                     type: array
-            type: object
-        PageRootDefinition:
-            # @review
-            description:
-                Represents a definition of a Root Page.
             type: object
         PageRowDefinition:
             # @review
