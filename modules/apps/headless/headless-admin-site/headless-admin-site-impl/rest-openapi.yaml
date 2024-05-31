@@ -505,7 +505,7 @@ components:
                     description:
                         The display page template's parent folder.
                 thumbnail:
-                    $ref: "#/components/schemas/DocumentExternalReferenceCodeReference"
+                    $ref: "#/components/schemas/ExternalReference"
                     # @review
                     description:
                         The display page template's thumbnail.
@@ -580,7 +580,7 @@ components:
                     description:
                         The page's SEO settings.
             type: object
-        DocumentExternalReferenceCodeReference:
+        ExternalReference:
             properties:
                 externalReferenceCode:
                     type: string
@@ -683,7 +683,7 @@ components:
                     description:
                         The fragment composition's page element, whose definition must be of type PageSectionDefinition.
                 thumbnail:
-                    $ref: "#/components/schemas/DocumentExternalReferenceCodeReference"
+                    $ref: "#/components/schemas/ExternalReference"
                     # @review
                     description:
                         The fragment composition's thumbnail.
@@ -1428,7 +1428,7 @@ components:
                         $ref: "#/components/schemas/TaxonomyCategoryBrief"
                     type: array
                 thumbnail:
-                    $ref: "#/components/schemas/DocumentExternalReferenceCodeReference"
+                    $ref: "#/components/schemas/ExternalReference"
                     # @review
                     description:
                         The master page's thumbnail.
@@ -3340,7 +3340,7 @@ components:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
                 thumbnail:
-                    $ref: "#/components/schemas/DocumentExternalReferenceCodeReference"
+                    $ref: "#/components/schemas/ExternalReference"
                     # @review
                     description:
                         The utility page's thumbnail.
