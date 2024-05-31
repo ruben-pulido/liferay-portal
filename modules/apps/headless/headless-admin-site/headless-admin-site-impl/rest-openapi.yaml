@@ -1831,11 +1831,6 @@ components:
                     enum: [Collection, CollectionItem, Column, DropZone, Form, Fragment, FragmentDropZone, Root, Row, Section,
                         Widget, WidgetPageColumn, WidgetPageLayout]
                     type: string
-                userExternalReferenceCode:
-                    description:
-                        The external reference code of the user who owns this page element, if the page element is
-                        customizable. It only applies to widget pages.
-                    type: string
         PageExperience:
             description:
                 # @review
