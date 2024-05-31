@@ -1831,7 +1831,7 @@ components:
         PageExperience:
             description:
                 # @review
-                Represents a customized experience for a given page.
+                Represents a customized experience for a given page specification.
             properties:
                 externalReferenceCode:
                     description:
