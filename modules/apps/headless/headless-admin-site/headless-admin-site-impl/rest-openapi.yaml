@@ -2455,6 +2455,10 @@ components:
             type: object
         PageSpecification:
             properties:
+                externalReferenceCode:
+                    description:
+                        The page specification's external reference code, unique per site.
+                    type: string
                 pageExperiences:
                     items:
                         $ref: "#/components/schemas/Experience"
