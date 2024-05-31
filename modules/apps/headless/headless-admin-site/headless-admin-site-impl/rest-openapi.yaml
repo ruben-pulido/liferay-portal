@@ -590,7 +590,7 @@ components:
             required:
                 - externalReferenceCode
             type: object
-        Experience:
+        PageExperience:
             description:
                 # @review
                 Represents a customized experience for a given page.
@@ -2461,7 +2461,7 @@ components:
                     type: string
                 pageExperiences:
                     items:
-                        $ref: "#/components/schemas/Experience"
+                        $ref: "#/components/schemas/PageExperience"
                     type: array
                 settings:
                     $ref: "#/components/schemas/Settings"
@@ -5148,12 +5148,12 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/Experience"
+                                    $ref: "#/components/schemas/PageExperience"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/Experience"
+                                    $ref: "#/components/schemas/PageExperience"
             tags: ["PageExperience"]
         patch:
             description:
@@ -5189,12 +5189,12 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/Experience"
+                                    $ref: "#/components/schemas/PageExperience"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/Experience"
+                                    $ref: "#/components/schemas/PageExperience"
             tags: ["PageExperience"]
         put:
             description:
@@ -5229,12 +5229,12 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/Experience"
+                                    $ref: "#/components/schemas/PageExperience"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/Experience"
+                                    $ref: "#/components/schemas/PageExperience"
             tags: ["PageExperience"]
     "/sites/{siteExternalReferenceCode}/page-experiences/{pageExperienceExternalReferenceCode}/page-elements":
         get:
@@ -6276,12 +6276,12 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/Experience"
+                                    $ref: "#/components/schemas/PageExperience"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/Experience"
+                                    $ref: "#/components/schemas/PageExperience"
                                 type: array
             # @review
             tags: ["PageSpecification"]
@@ -6316,19 +6316,19 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/Experience"
+                            $ref: "#/components/schemas/PageExperience"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/Experience"
+                            $ref: "#/components/schemas/PageExperience"
             responses:
                 200:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/Experience"
+                                $ref: "#/components/schemas/PageExperience"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/Experience"
+                                $ref: "#/components/schemas/PageExperience"
                     description:
                         default response
             # @review
