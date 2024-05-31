@@ -6410,6 +6410,97 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/PageSpecification"
             tags: ["PageSpecification"]
+    "/sites/{siteExternalReferenceCode}/page-specifications/{pageSpecificationExternalReferenceCode}/page-experiences":
+        get:
+            description:
+                Retrieves all the experiences of a page specification.
+            operationId: getSitePageSpecificationPageExperiencesPage
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: pageSpecificationExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Experience"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Experience"
+                                type: array
+            # @review
+            tags: ["PageSpecification"]
+        post:
+            description:
+                Adds a new experience to a page specification of a site page.
+            operationId: postSitePageSpecificationPageExperience
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: pageSpecificationExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Experience"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Experience"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Experience"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Experience"
+                    description:
+                        default response
+            # @review
+            tags: ["PageSpecification"]
     "/sites/{siteExternalReferenceCode}/page-template-collections":
         get:
             description:
