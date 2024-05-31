@@ -6091,6 +6091,10 @@ paths:
                   required: true
                   schema:
                       type: string
+                - in: path
+                  name: pageExperienceExternalReferenceCode
+                  schema:
+                      type: string
                 - in: query
                   name: fields
                   schema:
@@ -6101,10 +6105,6 @@ paths:
                       type: boolean
                 - in: query
                   name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: pageExperienceExternalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -6136,16 +6136,16 @@ paths:
                   required: true
                   schema:
                       type: string
+                - in: path
+                  name: pageExperienceExternalReferenceCode
+                  schema:
+                      type: string
                 - in: query
                   name: fields
                   schema:
                       type: string
                 - in: query
                   name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: pageExperienceExternalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -6704,16 +6704,16 @@ paths:
                   required: true
                   schema:
                       type: string
+                - in: path
+                  name: pageRuleExternalReferenceCode
+                  schema:
+                      type: string
                 - in: query
                   name: fields
                   schema:
                       type: string
                 - in: query
                   name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: pageRuleExternalReferenceCode
                   schema:
                       type: string
                 - in: query
@@ -6800,16 +6800,16 @@ paths:
                   required: true
                   schema:
                       type: string
+                - in: path
+                  name: pageRuleExternalReferenceCode
+                  schema:
+                      type: string
                 - in: query
                   name: fields
                   schema:
                       type: string
                 - in: query
                   name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: pageRuleExternalReferenceCode
                   schema:
                       type: string
                 - in: query
