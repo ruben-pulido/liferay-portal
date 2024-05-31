@@ -1790,6 +1790,7 @@ components:
                         - $ref: "#/components/schemas/PageColumnDefinition"
                         - $ref: "#/components/schemas/PageDropZoneDefinition"
                         - $ref: "#/components/schemas/PageFormDefinition"
+                        - $ref: "#/components/schemas/PageFragmentCompositionInstanceDefinition"
                         - $ref: "#/components/schemas/PageFragmentDropZoneDefinition"
                         - $ref: "#/components/schemas/PageFragmentInstanceDefinition"
                         - $ref: "#/components/schemas/PageRowDefinition"
@@ -1801,12 +1802,6 @@ components:
                     description:
                         The page element's external reference code. Unique within the site.
                     type: string
-                fragmentComposition:
-                    $ref: "#/components/schemas/ExternalReference"
-                    # @review
-                    description:
-                        A reference to the fragment composition being added.
-                    writeOnly: true
                 id:
                     description:
                         The page element's ID.
@@ -1833,8 +1828,8 @@ components:
                     # @review
                     description:
                         The page element's type (collection, collection item, column, drop zone, form, fragment,
-                        fragment drop zone, root, row, section or widget).
-                    enum: [Collection, CollectionItem, Column, DropZone, Form, Fragment, FragmentDropZone, Root, Row, Section,
+                        fragment composition, fragment drop zone, root, row, section or widget).
+                    enum: [Collection, CollectionItem, Column, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Root, Row, Section,
                         Widget, WidgetPageColumn, WidgetPageLayout]
                     type: string
         PageExperience:
@@ -1978,6 +1973,18 @@ components:
                     description:
                         The custom name of of a Page form.
                     type: string
+            type: object
+        PageFragmentCompositionInstanceDefinition:
+            # @review
+            description:
+                Represents a definition of a Page Fragment Composition Instance.
+            properties:
+                fragmentComposition:
+                    $ref: "#/components/schemas/ExternalReference"
+                    # @review
+                    description:
+                        The reference to the fragment composition that will be used to generate the PageElement of type
+                        Section that will be added.
             type: object
         PageFragmentDropZoneDefinition:
             # @review
