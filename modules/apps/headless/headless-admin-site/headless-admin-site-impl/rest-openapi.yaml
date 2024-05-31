@@ -1802,17 +1802,10 @@ components:
                         The page element's external reference code. Unique within the site.
                     type: string
                 fragmentComposition:
+                    $ref: "#/components/schemas/ExternalReference"
                     # @review
                     description:
-                        A reference to the Fragment Composition being added to a PageExperience.
-                    properties:
-                        externalReferenceCode:
-                            description:
-                                The external reference code of the Fragment Composition
-                            type: string
-                    required:
-                        - externalReferenceCode
-                    type: object
+                        A reference to the fragment composition being added.
                     writeOnly: true
                 id:
                     description:
