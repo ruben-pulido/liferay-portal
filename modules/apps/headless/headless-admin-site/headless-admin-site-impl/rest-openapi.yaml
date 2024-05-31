@@ -1862,8 +1862,14 @@ components:
                     description:
                         the localized experience's names.
                     type: object
-                pageStructure:
-                    $ref: "#/components/schemas/PageStructure"
+                pageElements:
+                    items:
+                        $ref: "#/components/schemas/PageElement"
+                    type: array
+                pageRules:
+                    items:
+                        $ref: "#/components/schemas/PageRule"
+                    type: array
                 priority:
                     # @review
                     description:
@@ -2468,15 +2474,6 @@ components:
                     type: array
                 settings:
                     $ref: "#/components/schemas/Settings"
-            type: object
-        PageStructure:
-            properties:
-                pageElement:
-                    $ref: "#/components/schemas/PageElement"
-                pageRules:
-                    items:
-                        $ref: "#/components/schemas/PageRule"
-                    type: array
             type: object
         PageTemplate:
             # @review
