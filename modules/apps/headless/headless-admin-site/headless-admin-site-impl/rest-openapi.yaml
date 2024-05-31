@@ -6415,6 +6415,47 @@ paths:
                         default response
             # @review
             tags: ["PageSpecification"]
+    "/sites/{siteExternalReferenceCode}/page-specifications/{pageSpecificationExternalReferenceCode}/publish":
+        post:
+            description:
+                Publishes a page specification in draft status of a site page.
+            operationId: postSitePageSpecificationPublish
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: pageSpecificationExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/PageSpecification"
+                    description:
+                        default response
+            # @review
+            tags: ["PageSpecification"]
     "/sites/{siteExternalReferenceCode}/page-template-collections":
         get:
             description:
