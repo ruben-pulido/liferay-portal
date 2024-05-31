@@ -590,49 +590,6 @@ components:
             required:
                 - externalReferenceCode
             type: object
-        PageExperience:
-            description:
-                # @review
-                Represents a customized experience for a given page.
-            properties:
-                externalReferenceCode:
-                    description:
-                        The experience's external reference code, unique per site.
-                    type: string
-                key:
-                    # @review
-                    description:
-                        the experience's key.
-                    type: string
-                name:
-                    # @review
-                    description:
-                        the experience's name.
-                    type: string
-                name_i18n:
-                    additionalProperties:
-                        type: string
-                    # @review
-                    description:
-                        the localized experience's names.
-                    type: object
-                pageStructure:
-                    $ref: "#/components/schemas/PageStructure"
-                priority:
-                    # @review
-                    description:
-                        the experience's priority. It must be a unique value within the page specification. The default
-                        experience will always be assigned priority 0. A priority higher than 0 will result in an
-                        experience being active and a priority lower than 0 will result in an experience being inactive.
-                    type: integer
-                segments:
-                    # @review
-                    description:
-                        A list of segments the experience is used for.
-                    items:
-                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Segment"
-                    type: array
-            type: object
         Fragment:
             # @review
             description:
@@ -1871,6 +1828,49 @@ components:
                         The external reference code of the user who owns this page element, if the page element is
                         customizable. It only applies to widget pages.
                     type: string
+        PageExperience:
+            description:
+                # @review
+                Represents a customized experience for a given page.
+            properties:
+                externalReferenceCode:
+                    description:
+                        The experience's external reference code, unique per site.
+                    type: string
+                key:
+                    # @review
+                    description:
+                        the experience's key.
+                    type: string
+                name:
+                    # @review
+                    description:
+                        the experience's name.
+                    type: string
+                name_i18n:
+                    additionalProperties:
+                        type: string
+                    # @review
+                    description:
+                        the localized experience's names.
+                    type: object
+                pageStructure:
+                    $ref: "#/components/schemas/PageStructure"
+                priority:
+                    # @review
+                    description:
+                        the experience's priority. It must be a unique value within the page specification. The default
+                        experience will always be assigned priority 0. A priority higher than 0 will result in an
+                        experience being active and a priority lower than 0 will result in an experience being inactive.
+                    type: integer
+                segments:
+                    # @review
+                    description:
+                        A list of segments the experience is used for.
+                    items:
+                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Segment"
+                    type: array
+            type: object
         PageFormDefinition:
             # @review
             description:
