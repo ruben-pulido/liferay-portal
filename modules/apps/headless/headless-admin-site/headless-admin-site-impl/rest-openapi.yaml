@@ -491,6 +491,14 @@ components:
                     description:
                         The display page template's name.
                     type: string
+                pageSpecifications:
+                    # @review
+                    description:
+                        The display page template's specifications. A display page template may contain 0 or 1 page
+                        specifications in draft status and 0 or 1 page specifications in published status.
+                    items:
+                        $ref: "#/components/schemas/PageSpecification"
+                    type: array
                 parentFolder:
                     $ref: "#/components/schemas/DisplayPageTemplateFolder"
                     # @review
@@ -1406,12 +1414,13 @@ components:
                         The master page's name.
                     type: string
                 pageSpecifications:
-                    properties:
-                        draft:
-                            $ref: "#/components/schemas/PageSpecification"
-                        published:
-                            $ref: "#/components/schemas/PageSpecification"
-                    type: object
+                    # @review
+                    description:
+                        The master page's specifications. A master page may contain 0 or 1 page specifications in draft
+                        status and 0 or 1 page specifications in published status.
+                    items:
+                        $ref: "#/components/schemas/PageSpecification"
+                    type: array
                 taxonomyCategoryBriefs:
                     description:
                         The categories associated with this master page.
@@ -2527,12 +2536,13 @@ components:
                         The page template's name.
                     type: string
                 pageSpecifications:
-                    properties:
-                        draft:
-                            $ref: "#/components/schemas/PageSpecification"
-                        published:
-                            $ref: "#/components/schemas/PageSpecification"
-                    type: object
+                    # @review
+                    description:
+                        The page template's specifications. A page template may contain 0 or 1 page specifications in
+                        draft status and 0 or 1 page specifications in published status.
+                    items:
+                        $ref: "#/components/schemas/PageSpecification"
+                    type: array
                 pageTemplateCollection:
                     $ref: "#/components/schemas/PageTemplateCollection"
                     # @review
@@ -3054,12 +3064,13 @@ components:
                     description:
                         Settings of the page, such as SEO or OpenGraph.
                 pageSpecifications:
-                    properties:
-                        draft:
-                            $ref: "#/components/schemas/PageSpecification"
-                        published:
-                            $ref: "#/components/schemas/PageSpecification"
-                    type: object
+                    # @review
+                    description:
+                        The page's specifications. A page may contain 0 or 1 page specifications in draft status and 0
+                        or 1 page specifications in published status.
+                    items:
+                        $ref: "#/components/schemas/PageSpecification"
+                    type: array
                 pageType:
                     # @review
                     description:
@@ -3322,12 +3333,13 @@ components:
                         The utility page name.
                     type: string
                 pageSpecifications:
-                    properties:
-                        draft:
-                            $ref: "#/components/schemas/PageSpecification"
-                        published:
-                            $ref: "#/components/schemas/PageSpecification"
-                    type: object
+                    # @review
+                    description:
+                        The utility page's specifications. A utility page may contain 0 or 1 page specifications in
+                        draft status and 0 or 1 page specifications in published status.
+                    items:
+                        $ref: "#/components/schemas/PageSpecification"
+                    type: array
                 thumbnail:
                     $ref: "#/components/schemas/DocumentExternalReferenceCodeReference"
                     # @review
