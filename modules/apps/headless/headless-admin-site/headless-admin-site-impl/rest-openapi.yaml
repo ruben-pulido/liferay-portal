@@ -2552,6 +2552,11 @@ components:
                     items:
                         $ref: "#/components/schemas/TaxonomyCategoryBrief"
                     type: array
+                type:
+                    enum:
+                        - ContentPageTemplate
+                        - WidgetPageTemplate
+                    type: string
                 uuid:
                     description:
                         A valid external identifier to reference this page template.
@@ -3104,6 +3109,11 @@ components:
                     description:
                         The localized page's titles.
                     type: object
+                type:
+                    enum:
+                        - ContentPage
+                        - WidgetPage
+                    type: string
                 uuid:
                     # @review
                     description:
