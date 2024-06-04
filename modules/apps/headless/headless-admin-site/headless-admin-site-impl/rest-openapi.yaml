@@ -1830,7 +1830,6 @@ components:
                         - $ref: "#/components/schemas/PageSectionDefinition"
                         - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
                         - $ref: "#/components/schemas/PageWidgetPageColumnDefinition"
-                        - $ref: "#/components/schemas/PageWidgetPageLayoutDefinition"
                 externalReferenceCode:
                     description:
                         The page element's external reference code. Unique within the site.
@@ -1863,7 +1862,7 @@ components:
                         The page element's type (collection, collection item, column, drop zone, form, fragment,
                         fragment composition, fragment drop zone, root, row, section or widget).
                     enum: [Collection, CollectionItem, Column, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Root, Row, Section,
-                        Widget, WidgetPageColumn, WidgetPageLayout]
+                        Widget, WidgetPageColumn]
                     type: string
         PageExperience:
             description:
@@ -2666,24 +2665,6 @@ components:
                     description:
                         A flag that indicates whether the page widget column is customizable or not.
                     type: boolean
-            type: object
-        PageWidgetPageLayoutDefinition:
-            # @review
-            description:
-                Represents the definition of a widget page layout.
-            properties:
-                customizable:
-                    # @review
-                    description:
-                        A flag that indicates whether the page is customizable.
-                    type: boolean
-                layoutTemplateId:
-                    # @review
-                    description:
-                        The identifier of the layout template.
-                    type: string
-            required:
-                - layoutTemplateId
             type: object
         RowViewport:
             # @review
