@@ -3039,10 +3039,12 @@ components:
                         type: object
                     type: array
                 pageSettings:
-                    $ref: "#/components/schemas/ContentPageSettings"
                     # @review
                     description:
                         Settings of the page, such as SEO or OpenGraph.
+                    oneOf:
+                        - $ref: "#/components/schemas/ContentPageSettings"
+                        - $ref: "#/components/schemas/WidgetPageSettings"
                 pageSpecifications:
                     # @review
                     description:
