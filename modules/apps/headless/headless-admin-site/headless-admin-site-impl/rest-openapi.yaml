@@ -1861,7 +1861,7 @@ components:
                     description:
                         The page element's type (collection, collection item, column, drop zone, form, fragment,
                         fragment composition, fragment drop zone, root, row, section or widget).
-                    enum: [Collection, CollectionItem, Column, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Root, Row, Section,
+                    enum: [Collection, CollectionItem, Column, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Row, Section,
                         Widget, WidgetSection]
                     type: string
         PageExperience:
