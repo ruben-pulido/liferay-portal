@@ -3625,6 +3625,33 @@ components:
             required:
                 - title
             type: object
+        WidgetPageSettings:
+            allOf:
+                - $ref: "#/components/schemas/ContentPageSettings"
+                - properties:
+                      customizable:
+                          # @review
+                          description:
+                              A flag that indicates whether the page is customizable.
+                          type: boolean
+                      customizableSectionIds:
+                          # @review
+                          description:
+                              The ids of the customizable sections.
+                          items:
+                              type: string
+                          type: array
+                      layoutTemplateId:
+                          # @review
+                          description:
+                              The identifier of the layout template.
+                          type: string
+                  required:
+                      - layoutTemplateId
+            # @review
+            description:
+                Represents the settings of a widget Page.
+            type: object
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
