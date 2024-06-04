@@ -1766,6 +1766,173 @@ components:
                     minimum: 1
                     type: integer
             type: object
+        PageContainerDefinition:
+            # @review
+            description:
+                Represents a definition of a Page section.
+            properties:
+                backgroundColor:
+                    deprecated: true
+                    type: string
+                backgroundFragmentImage:
+                    $ref: "#/components/schemas/FragmentImage"
+                    # @review
+                    description:
+                        The background fragment image of the page section.
+                backgroundImage:
+                    deprecated: true
+                    description:
+                        "Deprecated as of Athanasius (7.3.x), replaced by backgroundFragmentImage"
+                    properties:
+                        description:
+                            oneOf:
+                                - $ref: "#/components/schemas/FragmentInlineValue"
+                        title:
+                            oneOf:
+                                - $ref: "#/components/schemas/FragmentInlineValue"
+                        url:
+                            oneOf:
+                                - $ref: "#/components/schemas/FragmentInlineValue"
+                                - $ref: "#/components/schemas/FragmentMappedValue"
+                    type: object
+                contentVisibility:
+                    # @review
+                    description:
+                        Defines the content visibility of the container.
+                    type: string
+                cssClasses:
+                    # @review
+                    description:
+                        A list of CSS Classes that are applied to the element.
+                    items:
+                        type: string
+                    type: array
+                customCSS:
+                    # @review
+                    description:
+                        Custom CSS that is applied on the fragment.
+                    type: string
+                customCSSViewports:
+                    # @review
+                    description:
+                        The custom CSS viewports of the page collection.
+                    items:
+                        $ref: "#/components/schemas/CustomCSSViewport"
+                    type: array
+                fragmentLink:
+                    $ref: "#/components/schemas/FragmentLink"
+                    # @review
+                    description:
+                        The fragment link of the page section.
+                fragmentStyle:
+                    $ref: "#/components/schemas/FragmentStyle"
+                    # @review
+                    description:
+                        The fragment style of the page section.
+                fragmentViewports:
+                    # @review
+                    description:
+                        A list of fragment viewports of the page section.
+                    items:
+                        $ref: "#/components/schemas/FragmentViewport"
+                    type: array
+                htmlProperties:
+                    # @review
+                    description:
+                        The page section's html properties
+                    properties:
+                        htmlTag:
+                            enum: [Article, Aside, Div, Footer, Header, Main, Nav, Section]
+                            type: string
+                    type: object
+                indexed:
+                    # @review
+                    description:
+                        A flag that indicates whether the page section is indexed or not.
+                    type: boolean
+                layout:
+                    # @review
+                    description:
+                        the page section's layout.
+                    properties:
+                        align:
+                            deprecated: true
+                            enum: [Baseline, Center, End, None, Start, Stretch]
+                            type: string
+                        borderColor:
+                            deprecated: true
+                            type: string
+                        borderRadius:
+                            deprecated: true
+                            enum: [Circle, Large, None, Pill, Regular]
+                            type: string
+                        borderWidth:
+                            deprecated: true
+                            type: integer
+                        containerType:
+                            # @review
+                            description:
+                                The container's type (fixed or fluid).
+                            enum: [Fixed, Fluid]
+                            type: string
+                        contentDisplay:
+                            deprecated: true
+                            enum: [Block, FlexColumn, FlexRow]
+                            type: string
+                        flexWrap:
+                            enum: [NoWrap, Wrap, WrapReverse]
+                            type: string
+                        justify:
+                            deprecated: true
+                            enum: [Center, End, None, SpaceAround, SpaceBetween, Start]
+                            type: string
+                        marginBottom:
+                            deprecated: true
+                            type: integer
+                        marginLeft:
+                            deprecated: true
+                            type: integer
+                        marginRight:
+                            deprecated: true
+                            type: integer
+                        marginTop:
+                            deprecated: true
+                            type: integer
+                        opacity:
+                            deprecated: true
+                            type: integer
+                        paddingBottom:
+                            deprecated: true
+                            type: integer
+                        paddingHorizontal:
+                            deprecated: true
+                            type: integer
+                        paddingLeft:
+                            deprecated: true
+                            type: integer
+                        paddingRight:
+                            deprecated: true
+                            type: integer
+                        paddingTop:
+                            deprecated: true
+                            type: integer
+                        shadow:
+                            deprecated: true
+                            enum: [Default, Large, None, Regular, Small]
+                            type: string
+                        widthType:
+                            # @review
+                            description:
+                                The width's type (fixed or fluid).
+                            enum: [Fixed, Fluid]
+                            type: string
+                    type: object
+                name:
+                    # @review
+                    description:
+                        The custom name of a Page section.
+                    type: string
+            type: object
         PageDefinition:
             # @review
             description:
@@ -1821,13 +1988,13 @@ components:
                         - $ref: "#/components/schemas/PageCollectionDefinition"
                         - $ref: "#/components/schemas/PageCollectionItemDefinition"
                         - $ref: "#/components/schemas/PageColumnDefinition"
+                        - $ref: "#/components/schemas/PageContainerDefinition"
                         - $ref: "#/components/schemas/PageDropZoneDefinition"
                         - $ref: "#/components/schemas/PageFormDefinition"
                         - $ref: "#/components/schemas/PageFragmentCompositionInstanceDefinition"
                         - $ref: "#/components/schemas/PageFragmentDropZoneDefinition"
                         - $ref: "#/components/schemas/PageFragmentInstanceDefinition"
                         - $ref: "#/components/schemas/PageRowDefinition"
-                        - $ref: "#/components/schemas/PageSectionDefinition"
                         - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
                         - $ref: "#/components/schemas/PageWidgetSectionDefinition"
                 externalReferenceCode:
@@ -1859,9 +2026,9 @@ components:
                 type:
                     # @review
                     description:
-                        The page element's type (collection, collection item, column, drop zone, form, fragment,
-                        fragment composition, fragment drop zone, root, row, section or widget).
-                    enum: [Collection, CollectionItem, Column, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Row, Section,
+                        The page element's type (collection, collection item, column, container, drop zone, form,
+                        fragment, fragment composition, fragment drop zone, row, widget or widget section).
+                    enum: [Collection, CollectionItem, Column, Container, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Row,
                         Widget, WidgetSection]
                     type: string
         PageExperience:
@@ -2300,173 +2467,6 @@ components:
                     # @review
                     description:
                         The page rule condition's value.
-                    type: string
-            type: object
-        PageSectionDefinition:
-            # @review
-            description:
-                Represents a definition of a Page section.
-            properties:
-                backgroundColor:
-                    deprecated: true
-                    type: string
-                backgroundFragmentImage:
-                    $ref: "#/components/schemas/FragmentImage"
-                    # @review
-                    description:
-                        The background fragment image of the page section.
-                backgroundImage:
-                    deprecated: true
-                    description:
-                        "Deprecated as of Athanasius (7.3.x), replaced by backgroundFragmentImage"
-                    properties:
-                        description:
-                            oneOf:
-                                - $ref: "#/components/schemas/FragmentInlineValue"
-                        title:
-                            oneOf:
-                                - $ref: "#/components/schemas/FragmentInlineValue"
-                        url:
-                            oneOf:
-                                - $ref: "#/components/schemas/FragmentInlineValue"
-                                - $ref: "#/components/schemas/FragmentMappedValue"
-                    type: object
-                contentVisibility:
-                    # @review
-                    description:
-                        Defines the content visibility of the container.
-                    type: string
-                cssClasses:
-                    # @review
-                    description:
-                        A list of CSS Classes that are applied to the element.
-                    items:
-                        type: string
-                    type: array
-                customCSS:
-                    # @review
-                    description:
-                        Custom CSS that is applied on the fragment.
-                    type: string
-                customCSSViewports:
-                    # @review
-                    description:
-                        The custom CSS viewports of the page collection.
-                    items:
-                        $ref: "#/components/schemas/CustomCSSViewport"
-                    type: array
-                fragmentLink:
-                    $ref: "#/components/schemas/FragmentLink"
-                    # @review
-                    description:
-                        The fragment link of the page section.
-                fragmentStyle:
-                    $ref: "#/components/schemas/FragmentStyle"
-                    # @review
-                    description:
-                        The fragment style of the page section.
-                fragmentViewports:
-                    # @review
-                    description:
-                        A list of fragment viewports of the page section.
-                    items:
-                        $ref: "#/components/schemas/FragmentViewport"
-                    type: array
-                htmlProperties:
-                    # @review
-                    description:
-                        The page section's html properties
-                    properties:
-                        htmlTag:
-                            enum: [Article, Aside, Div, Footer, Header, Main, Nav, Section]
-                            type: string
-                    type: object
-                indexed:
-                    # @review
-                    description:
-                        A flag that indicates whether the page section is indexed or not.
-                    type: boolean
-                layout:
-                    # @review
-                    description:
-                        the page section's layout.
-                    properties:
-                        align:
-                            deprecated: true
-                            enum: [Baseline, Center, End, None, Start, Stretch]
-                            type: string
-                        borderColor:
-                            deprecated: true
-                            type: string
-                        borderRadius:
-                            deprecated: true
-                            enum: [Circle, Large, None, Pill, Regular]
-                            type: string
-                        borderWidth:
-                            deprecated: true
-                            type: integer
-                        containerType:
-                            # @review
-                            description:
-                                The container's type (fixed or fluid).
-                            enum: [Fixed, Fluid]
-                            type: string
-                        contentDisplay:
-                            deprecated: true
-                            enum: [Block, FlexColumn, FlexRow]
-                            type: string
-                        flexWrap:
-                            enum: [NoWrap, Wrap, WrapReverse]
-                            type: string
-                        justify:
-                            deprecated: true
-                            enum: [Center, End, None, SpaceAround, SpaceBetween, Start]
-                            type: string
-                        marginBottom:
-                            deprecated: true
-                            type: integer
-                        marginLeft:
-                            deprecated: true
-                            type: integer
-                        marginRight:
-                            deprecated: true
-                            type: integer
-                        marginTop:
-                            deprecated: true
-                            type: integer
-                        opacity:
-                            deprecated: true
-                            type: integer
-                        paddingBottom:
-                            deprecated: true
-                            type: integer
-                        paddingHorizontal:
-                            deprecated: true
-                            type: integer
-                        paddingLeft:
-                            deprecated: true
-                            type: integer
-                        paddingRight:
-                            deprecated: true
-                            type: integer
-                        paddingTop:
-                            deprecated: true
-                            type: integer
-                        shadow:
-                            deprecated: true
-                            enum: [Default, Large, None, Regular, Small]
-                            type: string
-                        widthType:
-                            # @review
-                            description:
-                                The width's type (fixed or fluid).
-                            enum: [Fixed, Fluid]
-                            type: string
-                    type: object
-                name:
-                    # @review
-                    description:
-                        The custom name of a Page section.
                     type: string
             type: object
         PageSpecification:
