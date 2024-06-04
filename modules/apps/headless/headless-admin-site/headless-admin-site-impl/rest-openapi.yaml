@@ -1829,7 +1829,7 @@ components:
                         - $ref: "#/components/schemas/PageRowDefinition"
                         - $ref: "#/components/schemas/PageSectionDefinition"
                         - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
-                        - $ref: "#/components/schemas/PageWidgetPageColumnDefinition"
+                        - $ref: "#/components/schemas/PageWidgetSectionDefinition"
                 externalReferenceCode:
                     description:
                         The page element's external reference code. Unique within the site.
@@ -1862,7 +1862,7 @@ components:
                         The page element's type (collection, collection item, column, drop zone, form, fragment,
                         fragment composition, fragment drop zone, root, row, section or widget).
                     enum: [Collection, CollectionItem, Column, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Root, Row, Section,
-                        Widget, WidgetPageColumn]
+                        Widget, WidgetSection]
                     type: string
         PageExperience:
             description:
@@ -2655,10 +2655,10 @@ components:
                     description:
                         The widget instance of the page widget instance.
             type: object
-        PageWidgetPageColumnDefinition:
+        PageWidgetSectionDefinition:
             # @review
             description:
-                Represents the definition of a widget page column.
+                Represents the definition of a widget section.
             properties:
                 customizable:
                     # @review
