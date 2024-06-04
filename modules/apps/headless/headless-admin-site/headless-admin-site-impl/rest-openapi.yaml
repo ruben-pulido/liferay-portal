@@ -241,6 +241,39 @@ components:
                         The document's title.
                     type: string
             type: object
+        ContentPageSettings:
+            # @review
+            description:
+                Represents the settings of a content Page.
+            properties:
+                customMetaTags:
+                    # @review
+                    description:
+                        A list of custom metatags this page has.
+                    items:
+                        $ref: "#/components/schemas/CustomMetaTag"
+                    type: array
+                hiddenFromNavigation:
+                    # @review
+                    description:
+                        A flag that indicates whether the page is hidden from navigation.
+                    type: boolean
+                openGraphSettings:
+                    $ref: "#/components/schemas/OpenGraphSettings"
+                    # @review
+                    description:
+                        The page's Open Graph settings.
+                seoSettings:
+                    $ref: "#/components/schemas/SEOSettings"
+                    # @review
+                    description:
+                        The page's SEO settings.
+                sitePageNavigationMenuSettings:
+                    $ref: "#/components/schemas/SitePageNavigationMenuSettings"
+                    # @review
+                    description:
+                        The page's site navigation menu settings.
+            type: object
         ContextReference:
             properties:
                 contextSource:
@@ -2437,39 +2470,6 @@ components:
                         The custom name of a Page section.
                     type: string
             type: object
-        PageSettings:
-            # @review
-            description:
-                Represents the settings of a Page.
-            properties:
-                customMetaTags:
-                    # @review
-                    description:
-                        A list of custom metatags this page has.
-                    items:
-                        $ref: "#/components/schemas/CustomMetaTag"
-                    type: array
-                hiddenFromNavigation:
-                    # @review
-                    description:
-                        A flag that indicates whether the page is hidden from navigation.
-                    type: boolean
-                openGraphSettings:
-                    $ref: "#/components/schemas/OpenGraphSettings"
-                    # @review
-                    description:
-                        The page's Open Graph settings.
-                seoSettings:
-                    $ref: "#/components/schemas/SEOSettings"
-                    # @review
-                    description:
-                        The page's SEO settings.
-                sitePageNavigationMenuSettings:
-                    $ref: "#/components/schemas/SitePageNavigationMenuSettings"
-                    # @review
-                    description:
-                        The page's site navigation menu settings.
-            type: object
         PageSpecification:
             properties:
                 externalReferenceCode:
@@ -3058,7 +3058,7 @@ components:
                         type: object
                     type: array
                 pageSettings:
-                    $ref: "#/components/schemas/PageSettings"
+                    $ref: "#/components/schemas/ContentPageSettings"
                     # @review
                     description:
                         Settings of the page, such as SEO or OpenGraph.
