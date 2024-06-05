@@ -2882,51 +2882,16 @@ components:
                     description:
                         The Client Extension for the theme spritemap of a page specification.
             type: object
-        Site:
-            # @review
-            description:
-                Represents the site being created.
+        SiteBrief:
             properties:
-                externalReferenceCode:
+                embeddedSite:
+                    $ref: "../../headless-site/headless-site-impl/rest-openapi.yaml#Site"
+                    # @review
                     description:
-                        The site's external reference code.
-                    type: string
-                friendlyUrlPath:
+                        Optional field with the embedded site, can be embedded with nestedFields
                     readOnly: true
-                    type: string
-                id:
-                    format: int64
-                    readOnly: true
-                    type: integer
-                key:
-                    readOnly: true
-                    type: string
-                membershipType:
-                    description:
-                        The default value is open.
-                    enum:
-                        - open
-                        - private
-                        - restricted
-                    type: string
-                    writeOnly: true
-                name:
-                    type: string
-                parentSiteKey:
-                    type: string
-                    writeOnly: true
-                templateKey:
-                    type: string
-                    writeOnly: true
-                templateType:
-                    enum:
-                        - site-initializer
-                        - site-template
-                    type: string
-                    writeOnly: true
-            required:
-                - name
-            type: object
+                externalReference:
+                    $ref: "#/components/schemas/ExternalReference"
         SitePage:
             # @review
             description:
@@ -3034,28 +2999,16 @@ components:
                     items:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
-                parentSitePage:
+                parentSitePageBrief:
+                    $ref: "#/components/schemas/SitePageBrief"
                     # @review
                     description:
                         The parent page or null if it is a top level page.
-                    properties:
-                        externalReferenceCode:
-                            # @review
-                            description:
-                                The external reference code of the parent page.
-                            type: string
-                    type: object
-                site:
+                siteBrief:
+                    $ref: "#/components/schemas/SiteBrief"
                     # @review
                     description:
                         The site to which this page is scoped.
-                    properties:
-                        externalReferenceCode:
-                            # @review
-                            description:
-                                The external reference code of the site.
-                            type: string
-                    type: object
                 taxonomyCategoryBriefs:
                     # @review
                     description:
@@ -3107,6 +3060,16 @@ components:
                     description:
                         The reference to a page.
             type: object
+        SitePageBrief:
+            properties:
+                embeddedSitePage:
+                    $ref: "#/components/schemas/SitePage"
+                    # @review
+                    description:
+                        Optional field with the embedded site page, can be embedded with nestedFields
+                    readOnly: true
+                externalReference:
+                    $ref: "#/components/schemas/ExternalReference"
         SitePageFormSubmissionResult:
             # @review
             description:
