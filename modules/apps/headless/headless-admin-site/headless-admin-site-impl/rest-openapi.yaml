@@ -83,8 +83,8 @@ components:
                     # @review
                     description:
                         The page's SEO settings.
-                sitePageNavigationMenuSettings:
-                    $ref: "#/components/schemas/SitePageNavigationMenuSettings"
+                navigationMenuSettings:
+                    $ref: "#/components/schemas/NavigationMenuSettings"
                     # @review
                     description:
                         The page's site navigation menu settings.
@@ -3179,7 +3179,7 @@ components:
                     description:
                         The localized submission of page type.
             type: object
-        SitePageNavigationMenuSettings:
+        NavigationMenuSettings:
             # @review
             description:
                 Represents settings related with the site navigation menu of a page.
