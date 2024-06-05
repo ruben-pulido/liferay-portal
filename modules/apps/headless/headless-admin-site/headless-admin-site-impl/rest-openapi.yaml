@@ -189,16 +189,6 @@ components:
                 Represents a base page site page, containing the common properties of both a content page and a widget
                 page.
             properties:
-                actions:
-                    additionalProperties:
-                        additionalProperties:
-                            type: string
-                        type: object
-                    # @review
-                    description:
-                        Block of actions allowed by the user making the request.
-                    readOnly: true
-                    type: object
                 aggregateRating:
                     $ref: "#/components/schemas/AggregateRating"
                     # @review
