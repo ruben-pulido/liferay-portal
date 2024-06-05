@@ -3087,6 +3087,11 @@ components:
                     oneOf:
                         - $ref: "#/components/schemas/ContentPageSettings"
                         - $ref: "#/components/schemas/WidgetPageSettings"
+                    discriminator:
+                        propertyName: type
+                    mapping:
+                      ContentPage: '#/components/schemas/ContentPageSettings'
+                      WidgetPage: '#/components/schemas/WidgetPageSettings'
                 pageSpecifications:
                     # @review
                     description:
