@@ -3240,19 +3240,6 @@ components:
                         Optional field with the embedded taxonomy category, can be embedded with nestedFields
                     readOnly: true
                     type: object
-                taxonomyCategoryName:
-                    description:
-                        The category's name.
-                    readOnly: true
-                    type: string
-                taxonomyCategoryName_i18n:
-                    additionalProperties:
-                        type: string
-                    # @review
-                    description:
-                        The localized category's names.
-                    readOnly: true
-                    type: object
                 taxonomyCategoryReference:
                     # @review
                     description:
