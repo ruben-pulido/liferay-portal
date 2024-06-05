@@ -3693,6 +3693,23 @@ components:
                           description:
                               The localized descriptions of the widget page template.
                           type: object
+                      friendlyUrlPath:
+                          # @review
+                          description:
+                              A relative URL to the page's rendered content.
+                          type: string
+                      friendlyUrlPath_i18n:
+                          additionalProperties:
+                              type: string
+                          # @review
+                          description:
+                              The localized relative URLs to the page's rendered content.
+                          type: object
+                      hiddenFromNavigation:
+                          # @review
+                          description:
+                              A flag that indicates whether the page created based on this page template is hidden from navigation.
+                          type: boolean
                       name_i18n:
                           additionalProperties:
                               type: string
