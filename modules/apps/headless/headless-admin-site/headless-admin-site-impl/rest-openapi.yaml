@@ -3191,22 +3191,6 @@ components:
                     description:
                         The localized submission of URL type.
             type: object
-        UserGroupBrief:
-            description:
-                The author's user groups information.
-            properties:
-                id:
-                    description:
-                        The ID of the user group.
-                    format: int64
-                    readOnly: true
-                    type: integer
-                name:
-                    description:
-                        The name of the user group.
-                    readOnly: true
-                    type: string
-            type: object
         UtilityPage:
             description:
                 Represents a Utility Page.
