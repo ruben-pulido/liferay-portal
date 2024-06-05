@@ -866,6 +866,9 @@ components:
                         The page's SEO settings.
             type: object
         ExternalReference:
+            # @review
+            description:
+                A unique reference to an entity which remains constant across environments.
             properties:
                 externalReferenceCode:
                     type: string
