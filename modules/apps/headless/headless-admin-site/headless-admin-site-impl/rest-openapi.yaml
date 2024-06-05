@@ -1616,40 +1616,14 @@ components:
         KeywordBrief:
             properties:
                 embeddedKeyword:
+                    $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
                     # @review
                     description:
                         Optional field with the embedded keyword, can be embedded with nestedFields
                     readOnly: true
                     type: object
-                keywordName:
-                    description:
-                        The keyword's name.
-                    readOnly: true
-                    type: string
-                keywordReference:
-                    # @review
-                    description:
-                        A unique reference to a keyword.
-                    properties:
-                        externalReferenceCode:
-                            # @review
-                            description:
-                                The keyword's external reference code.
-                            type: string
-                        scope:
-                            properties:
-                                externalReferenceCode:
-                                    type: string
-                                type:
-                                    enum: [AssetLibrary, Site]
-                                    type: string
-                            required:
-                                - externalReferenceCode
-                                - type
-                            type: object
-                    required:
-                        - externalReferenceCode
-                    type: object
+                externalReference:
+                    $ref: "#/components/schemas/ExternalReference"
             type: object
         MasterPage:
             # @review
