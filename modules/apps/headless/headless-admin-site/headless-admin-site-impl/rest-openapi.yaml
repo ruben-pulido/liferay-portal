@@ -56,6 +56,39 @@ components:
                     readOnly: true
                     type: number
             type: object
+        BasePageSettings:
+            # @review
+            description:
+                Represents the base settings of a page, shared by both a content page and a widget page.
+            properties:
+                customMetaTags:
+                    # @review
+                    description:
+                        A list of custom meta tags this page has.
+                    items:
+                        $ref: "#/components/schemas/CustomMetaTag"
+                    type: array
+                hiddenFromNavigation:
+                    # @review
+                    description:
+                        A flag that indicates whether the page is hidden from navigation.
+                    type: boolean
+                openGraphSettings:
+                    $ref: "#/components/schemas/OpenGraphSettings"
+                    # @review
+                    description:
+                        The page's Open Graph settings.
+                seoSettings:
+                    $ref: "#/components/schemas/SEOSettings"
+                    # @review
+                    description:
+                        The page's SEO settings.
+                sitePageNavigationMenuSettings:
+                    $ref: "#/components/schemas/SitePageNavigationMenuSettings"
+                    # @review
+                    description:
+                        The page's site navigation menu settings.
+            type: object
         BasePageTemplate:
             # @review
             description:
@@ -331,37 +364,11 @@ components:
                     type: string
             type: object
         ContentPageSettings:
+            allOf:
+                - $ref: "#/components/schemas/BasePageSettings"
             # @review
             description:
-                Represents the settings of a content Page.
-            properties:
-                customMetaTags:
-                    # @review
-                    description:
-                        A list of custom metatags this page has.
-                    items:
-                        $ref: "#/components/schemas/CustomMetaTag"
-                    type: array
-                hiddenFromNavigation:
-                    # @review
-                    description:
-                        A flag that indicates whether the page is hidden from navigation.
-                    type: boolean
-                openGraphSettings:
-                    $ref: "#/components/schemas/OpenGraphSettings"
-                    # @review
-                    description:
-                        The page's Open Graph settings.
-                seoSettings:
-                    $ref: "#/components/schemas/SEOSettings"
-                    # @review
-                    description:
-                        The page's SEO settings.
-                sitePageNavigationMenuSettings:
-                    $ref: "#/components/schemas/SitePageNavigationMenuSettings"
-                    # @review
-                    description:
-                        The page's site navigation menu settings.
+                Represents the settings of a content page.
             type: object
         ContextReference:
             properties:
@@ -3640,7 +3647,7 @@ components:
             type: object
         WidgetPageSettings:
             allOf:
-                - $ref: "#/components/schemas/ContentPageSettings"
+                - $ref: "#/components/schemas/BasePageSettings"
                 - properties:
                       customizable:
                           # @review
