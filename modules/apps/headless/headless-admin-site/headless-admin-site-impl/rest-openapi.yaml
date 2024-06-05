@@ -313,11 +313,6 @@ components:
                             description:
                                 The external reference code of the parent page.
                             type: string
-                        friendlyUrlPath:
-                            # @review
-                            description:
-                                The relative URL of the parent page.
-                            type: string
                     type: object
                 site:
                     # @review
