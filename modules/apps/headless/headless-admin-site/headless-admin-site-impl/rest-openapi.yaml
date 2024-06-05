@@ -183,6 +183,209 @@ components:
                     readOnly: true
                     type: string
             type: object
+        BaseSitePage:
+            # @review
+            description:
+                Represents a base page site page, containing the common properties of both a content page and a widget
+                page.
+            properties:
+                actions:
+                    additionalProperties:
+                        additionalProperties:
+                            type: string
+                        type: object
+                    # @review
+                    description:
+                        Block of actions allowed by the user making the request.
+                    readOnly: true
+                    type: object
+                aggregateRating:
+                    $ref: "#/components/schemas/AggregateRating"
+                    # @review
+                    description:
+                        The page's average rating.
+                    readOnly: true
+                availableLanguages:
+                    # @review
+                    description:
+                        The list of languages the page has a translation for.
+                    items:
+                        type: string
+                    readOnly: true
+                    type: array
+                creator:
+                    $ref: "#/components/schemas/Creator"
+                    # @review
+                    description:
+                        The page's creator.
+                    readOnly: true
+                customFields:
+                    # @review
+                    description:
+                        Custom fields associated with the page.
+                    items:
+                        $ref: "#/components/schemas/CustomField"
+                    type: array
+                dateCreated:
+                    # @review
+                    description:
+                        The page's creation date.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateModified:
+                    # @review
+                    description:
+                        The last time any field of the page was changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                datePublished:
+                    # @review
+                    description:
+                        The page's most recent publication date.
+                    format: date-time
+                    type: string
+                externalReferenceCode:
+                    description:
+                        The page's external reference code.
+                    type: string
+                friendlyUrlPath:
+                    # @review
+                    description:
+                        A relative URL to the page's rendered content.
+                    type: string
+                friendlyUrlPath_i18n:
+                    additionalProperties:
+                        type: string
+                    # @review
+                    description:
+                        The localized relative URLs to the page's rendered content.
+                    type: object
+                id:
+                    description:
+                        The page ID.
+                    format: int64
+                    readOnly: true
+                    type: integer
+                keywordBriefs:
+                    description:
+                        The keywords associated with this master page.
+                    items:
+                        $ref: "#/components/schemas/KeywordBrief"
+                    type: array
+                pagePermissions:
+                    # @review
+                    description:
+                        The page's permissions.
+                    items:
+                        properties:
+                            actionKeys:
+                                # @review
+                                description:
+                                    The keys of the actions the role has permission for.
+                                items:
+                                    type: string
+                                type: array
+                            roleKey:
+                                # @review
+                                description:
+                                    The role's key.
+                                type: string
+                        type: object
+                    type: array
+                pageSettings:
+                    # @review
+                    description:
+                        Settings of the page, such as SEO or OpenGraph.
+                    discriminator:
+                        propertyName: type
+                    mapping:
+                        ContentPage: "#/components/schemas/ContentPageSettings"
+                        WidgetPage: "#/components/schemas/WidgetPageSettings"
+                    oneOf:
+                        - $ref: "#/components/schemas/ContentPageSettings"
+                        - $ref: "#/components/schemas/WidgetPageSettings"
+                pageSpecifications:
+                    # @review
+                    description:
+                        The page's specifications. A page may contain 0 or 1 page specifications in draft status and 0
+                        or 1 page specifications in published status.
+                    items:
+                        $ref: "#/components/schemas/PageSpecification"
+                    type: array
+                pageType:
+                    # @review
+                    description:
+                        The type of the page.
+                    type: string
+                parentSitePage:
+                    # @review
+                    description:
+                        The parent page or null if it is a top level page.
+                    properties:
+                        externalReferenceCode:
+                            # @review
+                            description:
+                                The external reference code of the parent page.
+                            type: string
+                        friendlyUrlPath:
+                            # @review
+                            description:
+                                The relative URL of the parent page.
+                            type: string
+                    type: object
+                site:
+                    # @review
+                    description:
+                        The site to which this page is scoped.
+                    properties:
+                        externalReferenceCode:
+                            # @review
+                            description:
+                                The external reference code of the site.
+                            type: string
+                    type: object
+                taxonomyCategoryBriefs:
+                    # @review
+                    description:
+                        The categories associated with this page.
+                    items:
+                        $ref: "#/components/schemas/TaxonomyCategoryBrief"
+                    type: array
+                title:
+                    # @review
+                    description:
+                        The page's title.
+                    type: string
+                title_i18n:
+                    additionalProperties:
+                        type: string
+                    # @review
+                    description:
+                        The localized page's titles.
+                    type: object
+                type:
+                    enum:
+                        - ContentPage
+                        - WidgetPage
+                    type: string
+                uuid:
+                    # @review
+                    description:
+                        A valid external identifier to reference this page.
+                    readOnly: true
+                    type: string
+                viewableBy:
+                    enum:
+                        - Anyone
+                        - Members
+                        - Owner
+                    type: string
+                    writeOnly: true
+            required:
+                - title
+            type: object
         ClassFieldReference:
             properties:
                 className:
@@ -386,6 +589,14 @@ components:
             # @review
             description:
                 Represents the settings of a content page.
+            type: object
+        ContentSitePage:
+            allOf:
+                - $ref: "#/components/schemas/BaseSitePage"
+                - properties:
+            # @review
+            description:
+                Represents a widget page template.
             type: object
         ContextReference:
             properties:
@@ -2993,206 +3204,9 @@ components:
                 - name
             type: object
         SitePage:
-            # @review
-            description:
-                Represents a site page. This is modeled internally as a `Layout`.
-            properties:
-                actions:
-                    additionalProperties:
-                        additionalProperties:
-                            type: string
-                        type: object
-                    # @review
-                    description:
-                        Block of actions allowed by the user making the request.
-                    readOnly: true
-                    type: object
-                aggregateRating:
-                    $ref: "#/components/schemas/AggregateRating"
-                    # @review
-                    description:
-                        The page's average rating.
-                    readOnly: true
-                availableLanguages:
-                    # @review
-                    description:
-                        The list of languages the page has a translation for.
-                    items:
-                        type: string
-                    readOnly: true
-                    type: array
-                creator:
-                    $ref: "#/components/schemas/Creator"
-                    # @review
-                    description:
-                        The page's creator.
-                    readOnly: true
-                customFields:
-                    # @review
-                    description:
-                        Custom fields associated with the page.
-                    items:
-                        $ref: "#/components/schemas/CustomField"
-                    type: array
-                dateCreated:
-                    # @review
-                    description:
-                        The page's creation date.
-                    format: date-time
-                    readOnly: true
-                    type: string
-                dateModified:
-                    # @review
-                    description:
-                        The last time any field of the page was changed.
-                    format: date-time
-                    readOnly: true
-                    type: string
-                datePublished:
-                    # @review
-                    description:
-                        The page's most recent publication date.
-                    format: date-time
-                    type: string
-                externalReferenceCode:
-                    description:
-                        The page's external reference code.
-                    type: string
-                friendlyUrlPath:
-                    # @review
-                    description:
-                        A relative URL to the page's rendered content.
-                    type: string
-                friendlyUrlPath_i18n:
-                    additionalProperties:
-                        type: string
-                    # @review
-                    description:
-                        The localized relative URLs to the page's rendered content.
-                    type: object
-                id:
-                    description:
-                        The page ID.
-                    format: int64
-                    readOnly: true
-                    type: integer
-                keywordBriefs:
-                    description:
-                        The keywords associated with this master page.
-                    items:
-                        $ref: "#/components/schemas/KeywordBrief"
-                    type: array
-                pagePermissions:
-                    # @review
-                    description:
-                        The page's permissions.
-                    items:
-                        properties:
-                            actionKeys:
-                                # @review
-                                description:
-                                    The keys of the actions the role has permission for.
-                                items:
-                                    type: string
-                                type: array
-                            roleKey:
-                                # @review
-                                description:
-                                    The role's key.
-                                type: string
-                        type: object
-                    type: array
-                pageSettings:
-                    # @review
-                    description:
-                        Settings of the page, such as SEO or OpenGraph.
-                    discriminator:
-                        propertyName: type
-                    mapping:
-                        ContentPage: "#/components/schemas/ContentPageSettings"
-                        WidgetPage: "#/components/schemas/WidgetPageSettings"
-                    oneOf:
-                        - $ref: "#/components/schemas/ContentPageSettings"
-                        - $ref: "#/components/schemas/WidgetPageSettings"
-                pageSpecifications:
-                    # @review
-                    description:
-                        The page's specifications. A page may contain 0 or 1 page specifications in draft status and 0
-                        or 1 page specifications in published status.
-                    items:
-                        $ref: "#/components/schemas/PageSpecification"
-                    type: array
-                pageType:
-                    # @review
-                    description:
-                        The type of the page.
-                    type: string
-                parentSitePage:
-                    # @review
-                    description:
-                        The parent page or null if it is a top level page.
-                    properties:
-                        externalReferenceCode:
-                            # @review
-                            description:
-                                The external reference code of the parent page.
-                            type: string
-                        friendlyUrlPath:
-                            # @review
-                            description:
-                                The relative URL of the parent page.
-                            type: string
-                    type: object
-                site:
-                    # @review
-                    description:
-                        The site to which this page is scoped.
-                    properties:
-                        externalReferenceCode:
-                            # @review
-                            description:
-                                The external reference code of the site.
-                            type: string
-                    type: object
-                taxonomyCategoryBriefs:
-                    # @review
-                    description:
-                        The categories associated with this page.
-                    items:
-                        $ref: "#/components/schemas/TaxonomyCategoryBrief"
-                    type: array
-                title:
-                    # @review
-                    description:
-                        The page's title.
-                    type: string
-                title_i18n:
-                    additionalProperties:
-                        type: string
-                    # @review
-                    description:
-                        The localized page's titles.
-                    type: object
-                type:
-                    enum:
-                        - ContentPage
-                        - WidgetPage
-                    type: string
-                uuid:
-                    # @review
-                    description:
-                        A valid external identifier to reference this page.
-                    readOnly: true
-                    type: string
-                viewableBy:
-                    enum:
-                        - Anyone
-                        - Members
-                        - Owner
-                    type: string
-                    writeOnly: true
-            required:
-                - title
+            oneOf:
+                - $ref: "#/components/schemas/ContentSitePage"
+                - $ref: "#/components/schemas/WidgetSitePage"
             type: object
         SitePageActionExecutionResult:
             # @review
@@ -3476,7 +3490,111 @@ components:
                         type: object
                     type: array
             type: object
-        WidgetPage:
+        WidgetPageSettings:
+            allOf:
+                - $ref: "#/components/schemas/BasePageSettings"
+                - properties:
+                      customizable:
+                          # @review
+                          description:
+                              A flag that indicates whether the page is customizable.
+                          type: boolean
+                      customizableSectionIds:
+                          # @review
+                          description:
+                              The ids of the customizable sections.
+                          items:
+                              type: string
+                          type: array
+                      layoutTemplateId:
+                          # @review
+                          description:
+                              The identifier of the layout template.
+                          type: string
+                  required:
+                      - layoutPageTemplateId
+            # @review
+            description:
+                Represents the settings of a widget page.
+            type: object
+        WidgetPageTemplate:
+            allOf:
+                - $ref: "#/components/schemas/BasePageTemplate"
+                - properties:
+                      active:
+                          # @review
+                          description:
+                              A flag that indicates whether the widget page template is active.
+                          type: boolean
+                      description:
+                          # @review
+                          description:
+                              The description of the widget page template.
+                          type: string
+                      description_i18n:
+                          additionalProperties:
+                              type: string
+                          # @review
+                          description:
+                              The localized descriptions of the widget page template.
+                          type: object
+                      friendlyUrlPath:
+                          # @review
+                          description:
+                              A relative URL to the page's rendered content.
+                          type: string
+                      friendlyUrlPath_i18n:
+                          additionalProperties:
+                              type: string
+                          # @review
+                          description:
+                              The localized relative URLs to the page's rendered content.
+                          type: object
+                      hiddenFromNavigation:
+                          # @review
+                          description:
+                              A flag that indicates whether the page created based on this page template is hidden from
+                              navigation.
+                          type: boolean
+                      name_i18n:
+                          additionalProperties:
+                              type: string
+                          # @review
+                          description:
+                              The localized names of the widget page template.
+            # @review
+            description:
+                Represents a widget page template.
+            type: object
+        WidgetPageTemplateSettings:
+            # @review
+            description:
+                Represents the settings of a widget page template.
+            properties:
+                layoutTemplateId:
+                    # @review
+                    description:
+                        The identifier of the layout template.
+                    type: string
+                navigationMenuSettings:
+                    # @review
+                    description:
+                        The widget page template's site navigation menu settings.
+                    properties:
+                        target:
+                            # @review
+                            description:
+                                The page's description to be used as summary for search engines.
+                            type: string
+                        targetType:
+                            # @review
+                            description:
+                                The target's type (specific frame or new tab).
+                            enum: [SpecificFrame, NewTab]
+                            type: string
+                    type: object
+            type: object
+        WidgetSitePage:
             # @review
             description:
                 Represents a widget page. This is modeled internally as a `Layout`.
@@ -3659,110 +3777,6 @@ components:
                     $ref: "#/components/schemas/PageSpecification"
             required:
                 - title
-            type: object
-        WidgetPageSettings:
-            allOf:
-                - $ref: "#/components/schemas/BasePageSettings"
-                - properties:
-                      customizable:
-                          # @review
-                          description:
-                              A flag that indicates whether the page is customizable.
-                          type: boolean
-                      customizableSectionIds:
-                          # @review
-                          description:
-                              The ids of the customizable sections.
-                          items:
-                              type: string
-                          type: array
-                      layoutTemplateId:
-                          # @review
-                          description:
-                              The identifier of the layout template.
-                          type: string
-                  required:
-                      - layoutPageTemplateId
-            # @review
-            description:
-                Represents the settings of a widget page.
-            type: object
-        WidgetPageTemplate:
-            allOf:
-                - $ref: "#/components/schemas/BasePageTemplate"
-                - properties:
-                      active:
-                          # @review
-                          description:
-                              A flag that indicates whether the widget page template is active.
-                          type: boolean
-                      description:
-                          # @review
-                          description:
-                              The description of the widget page template.
-                          type: string
-                      description_i18n:
-                          additionalProperties:
-                              type: string
-                          # @review
-                          description:
-                              The localized descriptions of the widget page template.
-                          type: object
-                      friendlyUrlPath:
-                          # @review
-                          description:
-                              A relative URL to the page's rendered content.
-                          type: string
-                      friendlyUrlPath_i18n:
-                          additionalProperties:
-                              type: string
-                          # @review
-                          description:
-                              The localized relative URLs to the page's rendered content.
-                          type: object
-                      hiddenFromNavigation:
-                          # @review
-                          description:
-                              A flag that indicates whether the page created based on this page template is hidden from
-                              navigation.
-                          type: boolean
-                      name_i18n:
-                          additionalProperties:
-                              type: string
-                          # @review
-                          description:
-                              The localized names of the widget page template.
-            # @review
-            description:
-                Represents a widget page template.
-            type: object
-        WidgetPageTemplateSettings:
-            # @review
-            description:
-                Represents the settings of a widget page template.
-            properties:
-                layoutTemplateId:
-                    # @review
-                    description:
-                        The identifier of the layout template.
-                    type: string
-                navigationMenuSettings:
-                    # @review
-                    description:
-                        The widget page template's site navigation menu settings.
-                    properties:
-                        target:
-                            # @review
-                            description:
-                                The page's description to be used as summary for search engines.
-                            type: string
-                        targetType:
-                            # @review
-                            description:
-                                The target's type (specific frame or new tab).
-                            enum: [SpecificFrame, NewTab]
-                            type: string
-                    type: object
             type: object
 info:
     description:
