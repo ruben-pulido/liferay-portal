@@ -375,6 +375,11 @@ components:
             description:
                 Represents the settings of a content page.
             type: object
+        ContentPageTemplateSettings:
+            # @review
+            description:
+                Represents the settings of a content page.
+            type: object
         ContextReference:
             properties:
                 contextSource:
