@@ -161,6 +161,11 @@ components:
                     oneOf:
                         - $ref: "#/components/schemas/ContentPageTemplateSettings"
                         - $ref: "#/components/schemas/WidgetPageTemplateSettings"
+                    discriminator:
+                        propertyName: type
+                    mapping:
+                      ContentPageTemplate: '#/components/schemas/ContentPageTemplateSettings'
+                      WidgetPageTemplate: '#/components/schemas/WidgetPageTemplateSettings'
                 taxonomyCategoryBriefs:
                     description:
                         The categories associated with this page template.
