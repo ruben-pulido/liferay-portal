@@ -403,7 +403,6 @@ components:
                     description:
                         Optional field with the embedded creator, can be embedded with nestedFields
                     readOnly: true
-                    type: object
                 externalReference:
                     $ref: "#/components/schemas/ExternalReference"
                     description:
@@ -1442,7 +1441,6 @@ components:
                     description:
                         Optional field with the embedded keyword, can be embedded with nestedFields
                     readOnly: true
-                    type: object
                 externalReference:
                     $ref: "#/components/schemas/ExternalReference"
             type: object
@@ -3151,7 +3149,6 @@ components:
                     description:
                         Optional field with the embedded taxonomy category, can be embedded with nestedFields
                     readOnly: true
-                    type: object
                 externalReference:
                     $ref: "#/components/schemas/ExternalReference"
         URLActionExecutionResult:
