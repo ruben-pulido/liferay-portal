@@ -3161,36 +3161,14 @@ components:
         TaxonomyCategoryBrief:
             properties:
                 embeddedTaxonomyCategory:
+                    $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
                     # @review
                     description:
                         Optional field with the embedded taxonomy category, can be embedded with nestedFields
                     readOnly: true
                     type: object
-                taxonomyCategoryReference:
-                    # @review
-                    description:
-                        A unique reference to a taxonomy category.
-                    properties:
-                        externalReferenceCode:
-                            # @review
-                            description:
-                                The taxonomy category's external reference code.
-                            type: string
-                        scope:
-                            properties:
-                                externalReferenceCode:
-                                    type: string
-                                type:
-                                    enum: [AssetLibrary, Site]
-                                    type: string
-                            required:
-                                - externalReferenceCode
-                                - type
-                            type: object
-                    required:
-                        - externalReferenceCode
-                    type: object
-            type: object
+                externalReference:
+                    $ref: "#/components/schemas/ExternalReference"
         URLActionExecutionResult:
             # @review
             description:
