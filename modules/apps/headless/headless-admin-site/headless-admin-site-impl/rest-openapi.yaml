@@ -3703,32 +3703,30 @@ components:
             description:
                 Represents a widget page template.
             type: object
-        WidgetPageTemplateNavigationMenuSettings:
-            # @review
-            description:
-                Represents settings related with the site navigation menu of a widget page template.
-            properties:
-                target:
-                    # @review
-                    description:
-                        The page's description to be used as summary for search engines.
-                    type: string
-                targetType:
-                    # @review
-                    description:
-                        The target's type (specific frame or new tab).
-                    enum: [SpecificFrame, NewTab]
-                    type: string
-            type: object
         WidgetPageTemplateSettings:
-            allOf:
-                - $ref: "#/components/schemas/BasePageTemplateSettings"
-                - properties:
-                      widgetPageTemplateNavigationMenuSettings:
-                          $ref: "#/components/schemas/WidgetPageTemplateNavigationMenuSettings"
-                          # @review
-                          description:
-                              The widget page template's site navigation menu settings.
+            properties:
+               layoutTemplateId:
+                   # @review
+                   description:
+                       The identifier of the layout template.
+                   type: string
+               navigationMenuSettings:
+                    # @review
+                    description:
+                       The widget page template's site navigation menu settings.
+                    properties:
+                        target:
+                            # @review
+                            description:
+                                The page's description to be used as summary for search engines.
+                            type: string
+                        targetType:
+                            # @review
+                            description:
+                                The target's type (specific frame or new tab).
+                            enum: [SpecificFrame, NewTab]
+                            type: string
+                    type: object
             # @review
             description:
                 Represents the settings of a widget page template.
