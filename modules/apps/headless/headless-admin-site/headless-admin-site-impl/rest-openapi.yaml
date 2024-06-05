@@ -246,12 +246,6 @@ components:
                     description:
                         The localized relative URLs to the page's rendered content.
                     type: object
-                id:
-                    description:
-                        The page ID.
-                    format: int64
-                    readOnly: true
-                    type: integer
                 keywordBriefs:
                     description:
                         The keywords associated with this master page.
