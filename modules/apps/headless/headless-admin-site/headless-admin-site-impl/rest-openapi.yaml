@@ -56,6 +56,95 @@ components:
                     readOnly: true
                     type: number
             type: object
+        BasePageTemplate:
+            # @review
+            description:
+                Represents a base page template, containing the common properties of both a content page template and a
+                widget page template.
+            properties:
+                creator:
+                    $ref: "#/components/schemas/Creator"
+                    # @review
+                    description:
+                        The page template's creator.
+                dateCreated:
+                    # @review
+                    description:
+                        The page template's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    # @review
+                    description:
+                        The last time the page template changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                datePublished:
+                    # @review
+                    description:
+                        The last time the page template changed.
+                    format: date-time
+                    type: string
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The page template's external reference code.
+                    type: string
+                key:
+                    # @review
+                    description:
+                        The page template's key.
+                    type: string
+                keywords:
+                    # @review
+                    description:
+                        A list of keywords describing the page template.
+                    items:
+                        type: string
+                    type: array
+                name:
+                    # @review
+                    description:
+                        The page template's name.
+                    type: string
+                pageSpecifications:
+                    # @review
+                    description:
+                        The page template's specifications. A page template may contain 0 or 1 page specifications in
+                        draft status and 0 or 1 page specifications in published status.
+                    items:
+                        $ref: "#/components/schemas/PageSpecification"
+                    type: array
+                pageTemplateCollection:
+                    $ref: "#/components/schemas/PageTemplateCollection"
+                    # @review
+                    description:
+                        The page template's collection.
+                pageTemplateSettings:
+                    # @review
+                    description:
+                        Settings of the page template.
+                    oneOf:
+                        - $ref: "#/components/schemas/ContentPageTemplateSettings"
+                        - $ref: "#/components/schemas/WidgetPageTemplateSettings"
+                taxonomyCategoryBriefs:
+                    description:
+                        The categories associated with this page template.
+                    items:
+                        $ref: "#/components/schemas/TaxonomyCategoryBrief"
+                    type: array
+                type:
+                    enum:
+                        - ContentPageTemplate
+                        - WidgetPageTemplate
+                    type: string
+                uuid:
+                    description:
+                        A valid external identifier to reference this page template.
+                    readOnly: true
+                    type: string
+            type: object
         ClassFieldReference:
             properties:
                 className:
@@ -2482,86 +2571,17 @@ components:
                 settings:
                     $ref: "#/components/schemas/Settings"
             type: object
-        PageTemplate:
+        ContentPageTemplate:
+            allOf:
+                - $ref: "#/components/schemas/BasePageTemplate"
             # @review
             description:
-                Represents a Page template.
-            properties:
-                creator:
-                    $ref: "#/components/schemas/Creator"
-                    # @review
-                    description:
-                        The page template's creator.
-                dateCreated:
-                    # @review
-                    description:
-                        The page template's creation date.
-                    format: date-time
-                    type: string
-                dateModified:
-                    # @review
-                    description:
-                        The last time the page template changed.
-                    format: date-time
-                    readOnly: true
-                    type: string
-                datePublished:
-                    # @review
-                    description:
-                        The last time the page template changed.
-                    format: date-time
-                    type: string
-                externalReferenceCode:
-                    # @review
-                    description:
-                        The page template's external reference code.
-                    type: string
-                key:
-                    # @review
-                    description:
-                        The page template's key.
-                    type: string
-                keywords:
-                    # @review
-                    description:
-                        A list of keywords describing the page template.
-                    items:
-                        type: string
-                    type: array
-                name:
-                    # @review
-                    description:
-                        The page template's name.
-                    type: string
-                pageSpecifications:
-                    # @review
-                    description:
-                        The page template's specifications. A page template may contain 0 or 1 page specifications in
-                        draft status and 0 or 1 page specifications in published status.
-                    items:
-                        $ref: "#/components/schemas/PageSpecification"
-                    type: array
-                pageTemplateCollection:
-                    $ref: "#/components/schemas/PageTemplateCollection"
-                    # @review
-                    description:
-                        The page template's collection.
-                taxonomyCategoryBriefs:
-                    description:
-                        The categories associated with this page template.
-                    items:
-                        $ref: "#/components/schemas/TaxonomyCategoryBrief"
-                    type: array
-                type:
-                    enum:
-                        - ContentPageTemplate
-                        - WidgetPageTemplate
-                    type: string
-                uuid:
-                    description:
-                        A valid external identifier to reference this page template.
-                    readOnly: true
-                    type: string
+                Represents a content page template.
+            type: object
+        PageTemplate:
+            oneOf:
+                - $ref: "#/components/schemas/ContentPageTemplate"
+                - $ref: "#/components/schemas/WidgetPageTemplate"
             type: object
         PageTemplateCollection:
             # @review
@@ -3640,10 +3660,71 @@ components:
                               The identifier of the layout template.
                           type: string
                   required:
-                      - layoutTemplateId
+                      - layoutPageTemplateId
             # @review
             description:
-                Represents the settings of a widget Page.
+                Represents the settings of a widget page.
+            type: object
+        WidgetPageTemplate:
+            allOf:
+                - $ref: "#/components/schemas/BasePageTemplate"
+                - properties:
+                      active:
+                          # @review
+                          description:
+                              A flag that indicates whether the widget page template is active.
+                          type: boolean
+                      description:
+                          # @review
+                          description:
+                              The description of the widget page template.
+                          type: string
+                      description_i18n:
+                          additionalProperties:
+                              type: string
+                          # @review
+                          description:
+                              The localized descriptions of the widget page template.
+                          type: object
+                      name_i18n:
+                          additionalProperties:
+                              type: string
+                          # @review
+                          description:
+                              The localized names of the widget page template.
+            # @review
+            description:
+                Represents a widget page template.
+            type: object
+        WidgetPageTemplateNavigationMenuSettings:
+            # @review
+            description:
+                Represents settings related with the site navigation menu of a widget page template.
+            properties:
+                target:
+                    # @review
+                    description:
+                        The page's description to be used as summary for search engines.
+                    type: string
+                targetType:
+                    # @review
+                    description:
+                        The target's type (specific frame or new tab).
+                    enum: [SpecificFrame, NewTab]
+                    type: string
+            type: object
+        WidgetPageTemplateSettings:
+            allOf:
+                - $ref: "#/components/schemas/BasePageTemplateSettings"
+                - properties:
+                      widgetPageTemplateNavigationMenuSettings:
+                          $ref: "#/components/schemas/WidgetPageTemplateNavigationMenuSettings"
+                          # @review
+                          description:
+                              The widget page template's site navigation menu settings.
+            # @review
+            description:
+                Represents the settings of a widget page template.
             type: object
 info:
     description:
