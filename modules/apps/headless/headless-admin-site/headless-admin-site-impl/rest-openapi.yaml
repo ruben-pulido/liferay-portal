@@ -382,19 +382,19 @@ components:
                 key:
                     # @review
                     description:
-                        The custom metatag's key.
+                        The custom meta tag's key.
                     type: string
                 value:
                     # @review
                     description:
-                        The custom metatag's value
+                        The custom meta tag's value
                     type: string
                 value_i18n:
                     additionalProperties:
                         type: string
                     # @review
                     description:
-                        The localized custom metatag's values.
+                        The localized custom meta tag's values.
                     type: object
             type: object
         CustomValue:
@@ -2378,7 +2378,7 @@ components:
                 verticalAlignment:
                     # @review
                     description:
-                        The vertical aligment property of the page row.
+                        The vertical alignment property of the page row.
                     type: string
             type: object
         PageRule:
@@ -2699,7 +2699,7 @@ components:
                         verticalAlignment:
                             # @review
                             description:
-                                The vertical aligment property of the row viewport.
+                                The vertical alignment property of the row viewport.
                             type: string
                     type: object
             required:
