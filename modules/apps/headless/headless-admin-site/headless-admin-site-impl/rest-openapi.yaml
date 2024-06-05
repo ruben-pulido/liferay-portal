@@ -73,6 +73,11 @@ components:
                     description:
                         A flag that indicates whether the page is hidden from navigation.
                     type: boolean
+                navigationMenuSettings:
+                    $ref: "#/components/schemas/NavigationMenuSettings"
+                    # @review
+                    description:
+                        The page's site navigation menu settings.
                 openGraphSettings:
                     $ref: "#/components/schemas/OpenGraphSettings"
                     # @review
@@ -83,11 +88,6 @@ components:
                     # @review
                     description:
                         The page's SEO settings.
-                navigationMenuSettings:
-                    $ref: "#/components/schemas/NavigationMenuSettings"
-                    # @review
-                    description:
-                        The page's site navigation menu settings.
             type: object
         BasePageTemplate:
             # @review
@@ -158,14 +158,14 @@ components:
                     # @review
                     description:
                         Settings of the page template.
-                    oneOf:
-                        - $ref: "#/components/schemas/ContentPageTemplateSettings"
-                        - $ref: "#/components/schemas/WidgetPageTemplateSettings"
                     discriminator:
                         propertyName: type
                     mapping:
-                      ContentPageTemplate: '#/components/schemas/ContentPageTemplateSettings'
-                      WidgetPageTemplate: '#/components/schemas/WidgetPageTemplateSettings'
+                        ContentPageTemplate: "#/components/schemas/ContentPageTemplateSettings"
+                        WidgetPageTemplate: "#/components/schemas/WidgetPageTemplateSettings"
+                    oneOf:
+                        - $ref: "#/components/schemas/ContentPageTemplateSettings"
+                        - $ref: "#/components/schemas/WidgetPageTemplateSettings"
                 taxonomyCategoryBriefs:
                     description:
                         The categories associated with this page template.
@@ -374,6 +374,13 @@ components:
             # @review
             description:
                 Represents the settings of a content page.
+            type: object
+        ContentPageTemplate:
+            allOf:
+                - $ref: "#/components/schemas/BasePageTemplate"
+            # @review
+            description:
+                Represents a content page template.
             type: object
         ContentPageTemplateSettings:
             # @review
@@ -1596,6 +1603,28 @@ components:
                 showNotification:
                     type: boolean
             type: object
+        NavigationMenuSettings:
+            # @review
+            description:
+                Represents settings related with the site navigation menu of a page.
+            properties:
+                queryString:
+                    # @review
+                    description:
+                        The default parameter for a page.
+                    type: string
+                target:
+                    # @review
+                    description:
+                        The page's description to be used as summary for search engines.
+                    type: string
+                targetType:
+                    # @review
+                    description:
+                        The target's type (specific frame or new tab).
+                    enum: [SpecificFrame, NewTab]
+                    type: string
+            type: object
         NoneActionExecutionResult:
             # @review
             description:
@@ -2588,13 +2617,6 @@ components:
                 settings:
                     $ref: "#/components/schemas/Settings"
             type: object
-        ContentPageTemplate:
-            allOf:
-                - $ref: "#/components/schemas/BasePageTemplate"
-            # @review
-            description:
-                Represents a content page template.
-            type: object
         PageTemplate:
             oneOf:
                 - $ref: "#/components/schemas/ContentPageTemplate"
@@ -3084,14 +3106,14 @@ components:
                     # @review
                     description:
                         Settings of the page, such as SEO or OpenGraph.
-                    oneOf:
-                        - $ref: "#/components/schemas/ContentPageSettings"
-                        - $ref: "#/components/schemas/WidgetPageSettings"
                     discriminator:
                         propertyName: type
                     mapping:
-                      ContentPage: '#/components/schemas/ContentPageSettings'
-                      WidgetPage: '#/components/schemas/WidgetPageSettings'
+                        ContentPage: "#/components/schemas/ContentPageSettings"
+                        WidgetPage: "#/components/schemas/WidgetPageSettings"
+                    oneOf:
+                        - $ref: "#/components/schemas/ContentPageSettings"
+                        - $ref: "#/components/schemas/WidgetPageSettings"
                 pageSpecifications:
                     # @review
                     description:
@@ -3193,28 +3215,6 @@ components:
                     # @review
                     description:
                         The localized submission of page type.
-            type: object
-        NavigationMenuSettings:
-            # @review
-            description:
-                Represents settings related with the site navigation menu of a page.
-            properties:
-                queryString:
-                    # @review
-                    description:
-                        The default parameter for a page.
-                    type: string
-                target:
-                    # @review
-                    description:
-                        The page's description to be used as summary for search engines.
-                    type: string
-                targetType:
-                    # @review
-                    description:
-                        The target's type (specific frame or new tab).
-                    enum: [SpecificFrame, NewTab]
-                    type: string
             type: object
         Status:
             # @review
@@ -3723,7 +3723,8 @@ components:
                       hiddenFromNavigation:
                           # @review
                           description:
-                              A flag that indicates whether the page created based on this page template is hidden from navigation.
+                              A flag that indicates whether the page created based on this page template is hidden from
+                              navigation.
                           type: boolean
                       name_i18n:
                           additionalProperties:
@@ -3736,16 +3737,19 @@ components:
                 Represents a widget page template.
             type: object
         WidgetPageTemplateSettings:
+            # @review
+            description:
+                Represents the settings of a widget page template.
             properties:
-               layoutTemplateId:
-                   # @review
-                   description:
-                       The identifier of the layout template.
-                   type: string
-               navigationMenuSettings:
+                layoutTemplateId:
                     # @review
                     description:
-                       The widget page template's site navigation menu settings.
+                        The identifier of the layout template.
+                    type: string
+                navigationMenuSettings:
+                    # @review
+                    description:
+                        The widget page template's site navigation menu settings.
                     properties:
                         target:
                             # @review
@@ -3759,9 +3763,6 @@ components:
                             enum: [SpecificFrame, NewTab]
                             type: string
                     type: object
-            # @review
-            description:
-                Represents the settings of a widget page template.
             type: object
 info:
     description:
