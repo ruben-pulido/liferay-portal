@@ -2013,10 +2013,6 @@ components:
                     description:
                         The page element's external reference code. Unique within the site.
                     type: string
-                id:
-                    description:
-                        The page element's ID.
-                    type: string
                 pageElements:
                     # @review
                     description:
