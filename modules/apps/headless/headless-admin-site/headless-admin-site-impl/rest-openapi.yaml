@@ -183,6 +183,19 @@ components:
                     readOnly: true
                     type: string
             type: object
+        ClassExternalReference:
+            # @review
+            description:
+                A unique reference to an entity of the specified class which remains constant across environments.
+            properties:
+                className:
+                    type: string
+                externalReference:
+                    $ref: "#/components/schemas/ExternalReference"
+            required:
+                - className
+                - externalReferenceCode
+            type: object
         ClassFieldReference:
             properties:
                 className:
