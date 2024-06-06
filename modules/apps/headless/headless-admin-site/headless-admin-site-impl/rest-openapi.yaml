@@ -238,17 +238,6 @@ components:
                     type: string
             required:
                 - className
-        ClassPKReference:
-            properties:
-                className:
-                    type: string
-                classPK:
-                    format: int64
-                    type: integer
-            required:
-                - className
-                - classPK
-            type: object
         ClassTypeReference:
             properties:
                 className:
