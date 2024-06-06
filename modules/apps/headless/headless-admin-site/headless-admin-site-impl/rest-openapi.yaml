@@ -6684,8 +6684,8 @@ paths:
             tags: ["PageTemplateSet"]
         put:
             description:
-                Updates the page template set with the given external reference code, or creates it if it does
-                not exist.
+                Updates the page template set with the given external reference code, or creates it if it does not
+                exist.
             operationId: putSitePageTemplateSet
             parameters:
                 - in: path
