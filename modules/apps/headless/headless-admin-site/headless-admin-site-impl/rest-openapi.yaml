@@ -196,42 +196,6 @@ components:
                 - className
                 - externalReferenceCode
             type: object
-        ClassFieldReference:
-            properties:
-                className:
-                    type: string
-                fieldName:
-                    type: string
-                fieldValue:
-                    type: string
-            required:
-                - className
-                - fieldName
-                - fieldValue
-            type: object
-        ClassFieldsReference:
-            properties:
-                className:
-                    type: string
-                fields:
-                    description:
-                        The list of fields for the reference.
-                    items:
-                        properties:
-                            fieldName:
-                                description:
-                                    The name of the field.
-                                type: string
-                            fieldValue:
-                                description:
-                                    The internal value of the field.
-                                type: string
-                        type: object
-                    type: array
-            required:
-                - className
-                - fields
-            type: object
         ClassNameReference:
             properties:
                 className:
@@ -1069,8 +1033,6 @@ components:
                             description:
                                 The mapping's item reference.
                             oneOf:
-                                - $ref: "#/components/schemas/ClassFieldReference"
-                                - $ref: "#/components/schemas/ClassFieldsReference"
                                 - $ref: "#/components/schemas/ClassExternalReference"
                                 - $ref: "#/components/schemas/ContextReference"
                     type: object
