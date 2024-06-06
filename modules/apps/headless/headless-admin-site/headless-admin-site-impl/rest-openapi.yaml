@@ -6529,6 +6529,51 @@ paths:
                         default response
             # @review
             tags: ["PageTemplateCollection"]
+    "/sites/{siteExternalReferenceCode}/page-template-collections/permissions":
+        get:
+            operationId: getSitePageTemplateCollectionPermissionsPage
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+                - in: query
+                  name: roleNames
+                  schema:
+                      type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["PageTemplateCollection"]
+        put:
+            operationId: putSitePageTemplateCollectionPermissionsPage
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json: {}
+                    application/xml: {}
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["PageTemplateCollection"]
     "/sites/{siteExternalReferenceCode}/page-template-collections/{pageTemplateCollectionExternalReferenceCode}":
         delete:
             description:
@@ -6779,6 +6824,61 @@ paths:
                     description:
                         default response
             # @review
+            tags: ["PageTemplateCollection"]
+    "/sites/{siteExternalReferenceCode}/page-template-collections/{pageTemplateCollectionExternalReferenceCode}/permissions":
+        get:
+            operationId: getPageTemplateCollectionPermissionsPage
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: pageTemplateCollectionExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+                - in: query
+                  name: roleNames
+                  schema:
+                      type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["PageTemplateCollection"]
+        put:
+            operationId: putPageTemplateCollectionPermissionsPage
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: pageTemplateCollectionExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json: {}
+                    application/xml: {}
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
             tags: ["PageTemplateCollection"]
     "/sites/{siteExternalReferenceCode}/page-templates":
         get:
