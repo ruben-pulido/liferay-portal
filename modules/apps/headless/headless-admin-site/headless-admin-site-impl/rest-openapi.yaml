@@ -478,28 +478,10 @@ components:
             description:
                 Represents a Display Page template.
             properties:
-                contentSubtype:
-                    # @review
+                contentTypeReference:
+                    $ref: "#/components/schemas/ClassTypeReference"
                     description:
-                        The display page template's content subtype.
-                    properties:
-                        subtypeExternalReferenceCode:
-                            # @review
-                            description:
-                                The content subtype's external reference code.
-                            type: string
-                    type: object
-                contentType:
-                    # @review
-                    description:
-                        The type of content.
-                    properties:
-                        classNameExternalReferenceCode:
-                            # @review
-                            description:
-                                The content type's class name external reference code.
-                            type: string
-                    type: object
+                        The content type (and optionally subtype) associated to the display page template.
                 creatorBrief:
                     $ref: "#/components/schemas/CreatorBrief"
                     # @review
