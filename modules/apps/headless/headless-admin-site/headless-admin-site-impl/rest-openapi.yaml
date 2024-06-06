@@ -149,8 +149,8 @@ components:
                     items:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
-                pageTemplateCollection:
-                    $ref: "#/components/schemas/PageTemplateCollection"
+                pageTemplateSet:
+                    $ref: "#/components/schemas/PageTemplateSet"
                     # @review
                     description:
                         The page template's collection.
@@ -2557,53 +2557,53 @@ components:
                 - $ref: "#/components/schemas/ContentPageTemplate"
                 - $ref: "#/components/schemas/WidgetPageTemplate"
             type: object
-        PageTemplateCollection:
+        PageTemplateSet:
             # @review
             description:
-                Represents a Page template collection.
+                Represents a Page template set.
             properties:
                 creatorBrief:
                     $ref: "#/components/schemas/CreatorBrief"
                     # @review
                     description:
-                        The page template collection's creator.
+                        The page template set's creator.
                     readOnly: true
                 dateCreated:
                     # @review
                     description:
-                        The page template collection's creation date.
+                        The page template set's creation date.
                     format: date-time
                     type: string
                 dateModified:
                     # @review
                     description:
-                        The last time the page template collection changed.
+                        The last time the page template set changed.
                     format: date-time
                     readOnly: true
                     type: string
                 description:
                     # @review
                     description:
-                        The page template collection's description.
+                        The page template set's description.
                     type: string
                 externalReferenceCode:
                     # @review
                     description:
-                        The page template collection's external reference code.
+                        The page template set's external reference code.
                     type: string
                 key:
                     # @review
                     description:
-                        The display page template collection's key.
+                        The display page template set's key.
                     type: string
                 name:
                     # @review
                     description:
-                        The page template collection's name.
+                        The page template set's name.
                     type: string
                 uuid:
                     description:
-                        A valid external identifier to reference this page template collection.
+                        A valid external identifier to reference this page template set.
                     readOnly: true
                     type: string
             type: object
@@ -6435,11 +6435,11 @@ paths:
                         default response
             # @review
             tags: ["PageSpecification"]
-    "/sites/{siteExternalReferenceCode}/page-template-collections":
+    "/sites/{siteExternalReferenceCode}/page-template-sets":
         get:
             description:
-                Retrieves the page template collections of the site
-            operationId: getSitePageTemplateCollectionsPage
+                Retrieves the page template sets of the site
+            operationId: getSitePageTemplateSetsPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6490,18 +6490,18 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/PageTemplateCollection"
+                                    $ref: "#/components/schemas/PageTemplateSet"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/PageTemplateCollection"
+                                    $ref: "#/components/schemas/PageTemplateSet"
                                 type: array
-            tags: ["PageTemplateCollection"]
+            tags: ["PageTemplateSet"]
         post:
             description:
-                Adds a new page template collection
-            operationId: postSitePageTemplateCollection
+                Adds a new page template set
+            operationId: postSitePageTemplateSet
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6512,26 +6512,26 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PageTemplateCollection"
+                            $ref: "#/components/schemas/PageTemplateSet"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/PageTemplateCollection"
+                            $ref: "#/components/schemas/PageTemplateSet"
             responses:
                 200:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageTemplateCollection"
+                                $ref: "#/components/schemas/PageTemplateSet"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageTemplateCollection"
+                                $ref: "#/components/schemas/PageTemplateSet"
                     description:
                         default response
             # @review
-            tags: ["PageTemplateCollection"]
-    "/sites/{siteExternalReferenceCode}/page-template-collections/permissions":
+            tags: ["PageTemplateSet"]
+    "/sites/{siteExternalReferenceCode}/page-template-sets/permissions":
         get:
-            operationId: getSitePageTemplateCollectionPermissionsPage
+            operationId: getSitePageTemplateSetPermissionsPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6555,9 +6555,9 @@ paths:
                     content:
                         application/json: {}
                         application/xml: {}
-            tags: ["PageTemplateCollection"]
+            tags: ["PageTemplateSet"]
         put:
-            operationId: putSitePageTemplateCollectionPermissionsPage
+            operationId: putSitePageTemplateSetPermissionsPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6573,12 +6573,12 @@ paths:
                     content:
                         application/json: {}
                         application/xml: {}
-            tags: ["PageTemplateCollection"]
-    "/sites/{siteExternalReferenceCode}/page-template-collections/{pageTemplateCollectionExternalReferenceCode}":
+            tags: ["PageTemplateSet"]
+    "/sites/{siteExternalReferenceCode}/page-template-sets/{pageTemplateSetExternalReferenceCode}":
         delete:
             description:
-                Deletes a specific page template collection of a site.
-            operationId: deleteSitePageTemplateCollection
+                Deletes a specific page template set of a site.
+            operationId: deleteSitePageTemplateSet
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6586,7 +6586,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: pageTemplateCollectionExternalReferenceCode
+                  name: pageTemplateSetExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -6595,11 +6595,11 @@ paths:
                     content:
                         application/json: {}
                         application/xml: {}
-            tags: ["PageTemplateCollection"]
+            tags: ["PageTemplateSet"]
         get:
             description:
-                Retrieves a specific page template collection of a site.
-            operationId: getSitePageTemplateCollection
+                Retrieves a specific page template set of a site.
+            operationId: getSitePageTemplateSet
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6607,7 +6607,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: pageTemplateCollectionExternalReferenceCode
+                  name: pageTemplateSetExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -6628,17 +6628,17 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageTemplateCollection"
+                                $ref: "#/components/schemas/PageTemplateSet"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageTemplateCollection"
+                                $ref: "#/components/schemas/PageTemplateSet"
                     description:
                         default response
-            tags: ["PageTemplateCollection"]
+            tags: ["PageTemplateSet"]
         patch:
             description:
                 Updates only the fields received in the request body, leaving any other fields untouched.
-            operationId: patchSitePageTemplateCollection
+            operationId: patchSitePageTemplateSet
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6646,7 +6646,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: pageTemplateCollectionExternalReferenceCode
+                  name: pageTemplateSetExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -6666,27 +6666,27 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PageTemplateCollection"
+                            $ref: "#/components/schemas/PageTemplateSet"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/PageTemplateCollection"
+                            $ref: "#/components/schemas/PageTemplateSet"
             responses:
                 default:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageTemplateCollection"
+                                $ref: "#/components/schemas/PageTemplateSet"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageTemplateCollection"
+                                $ref: "#/components/schemas/PageTemplateSet"
                     description:
                         default response
-            tags: ["PageTemplateCollection"]
+            tags: ["PageTemplateSet"]
         put:
             description:
-                Updates the page template collection with the given external reference code, or creates it if it does
+                Updates the page template set with the given external reference code, or creates it if it does
                 not exist.
-            operationId: putSitePageTemplateCollection
+            operationId: putSitePageTemplateSet
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6694,7 +6694,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: pageTemplateCollectionExternalReferenceCode
+                  name: pageTemplateSetExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -6714,27 +6714,27 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PageTemplateCollection"
+                            $ref: "#/components/schemas/PageTemplateSet"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/PageTemplateCollection"
+                            $ref: "#/components/schemas/PageTemplateSet"
             responses:
                 default:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageTemplateCollection"
+                                $ref: "#/components/schemas/PageTemplateSet"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageTemplateCollection"
+                                $ref: "#/components/schemas/PageTemplateSet"
                     description:
                         default response
-            tags: ["PageTemplateCollection"]
-    "/sites/{siteExternalReferenceCode}/page-template-collections/{pageTemplateCollectionExternalReferenceCode}/page-templates":
+            tags: ["PageTemplateSet"]
+    "/sites/{siteExternalReferenceCode}/page-template-sets/{pageTemplateSetExternalReferenceCode}/page-templates":
         get:
             description:
-                Retrieves all the page templates within a page template collection of a site page.
-            operationId: getSitePageTemplateCollectionPageTemplatesPage
+                Retrieves all the page templates within a page template set of a site page.
+            operationId: getSitePageTemplateSetPageTemplatesPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6742,7 +6742,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: pageTemplateCollectionExternalReferenceCode
+                  name: pageTemplateSetExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -6776,11 +6776,11 @@ paths:
                                     $ref: "#/components/schemas/PageTemplate"
                                 type: array
             # @review
-            tags: ["PageTemplateCollection"]
+            tags: ["PageTemplateSet"]
         post:
             description:
-                Adds a new page template in draft status to a page template collection.
-            operationId: postSitePageTemplateCollectionPageTemplate
+                Adds a new page template in draft status to a page template set.
+            operationId: postSitePageTemplateSetPageTemplate
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6788,7 +6788,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: pageTemplateCollectionExternalReferenceCode
+                  name: pageTemplateSetExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -6824,10 +6824,10 @@ paths:
                     description:
                         default response
             # @review
-            tags: ["PageTemplateCollection"]
-    "/sites/{siteExternalReferenceCode}/page-template-collections/{pageTemplateCollectionExternalReferenceCode}/permissions":
+            tags: ["PageTemplateSet"]
+    "/sites/{siteExternalReferenceCode}/page-template-sets/{pageTemplateSetExternalReferenceCode}/permissions":
         get:
-            operationId: getPageTemplateCollectionPermissionsPage
+            operationId: getPageTemplateSetPermissionsPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6835,7 +6835,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: pageTemplateCollectionExternalReferenceCode
+                  name: pageTemplateSetExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -6856,9 +6856,9 @@ paths:
                     content:
                         application/json: {}
                         application/xml: {}
-            tags: ["PageTemplateCollection"]
+            tags: ["PageTemplateSet"]
         put:
-            operationId: putPageTemplateCollectionPermissionsPage
+            operationId: putPageTemplateSetPermissionsPage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode
@@ -6866,7 +6866,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: pageTemplateCollectionExternalReferenceCode
+                  name: pageTemplateSetExternalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -6879,7 +6879,7 @@ paths:
                     content:
                         application/json: {}
                         application/xml: {}
-            tags: ["PageTemplateCollection"]
+            tags: ["PageTemplateSet"]
     "/sites/{siteExternalReferenceCode}/page-templates":
         get:
             description:
