@@ -1071,7 +1071,7 @@ components:
                             oneOf:
                                 - $ref: "#/components/schemas/ClassFieldReference"
                                 - $ref: "#/components/schemas/ClassFieldsReference"
-                                - $ref: "#/components/schemas/ClassPKReference"
+                                - $ref: "#/components/schemas/ClassExternalReference"
                                 - $ref: "#/components/schemas/ContextReference"
                     type: object
             type: object
@@ -1628,7 +1628,7 @@ components:
                                 The page collection's reference.
                             oneOf:
                                 - $ref: "#/components/schemas/ClassNameReference"
-                                - $ref: "#/components/schemas/ClassPKReference"
+                                - $ref: "#/components/schemas/ClassExternalReference"
                         collectionType:
                             # @review
                             description:
