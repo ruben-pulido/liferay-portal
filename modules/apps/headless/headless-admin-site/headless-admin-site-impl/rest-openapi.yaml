@@ -206,9 +206,8 @@ components:
             properties:
                 className:
                     type: string
-                classType:
-                    format: int64
-                    type: integer
+                classTypeKey:
+                    type: string
             required:
                 - className
             type: object
