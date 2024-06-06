@@ -3256,17 +3256,17 @@ components:
                         The widget instance's permissions.
                     items:
                         properties:
-                            actionKeys:
+                            actionIds:
                                 # @review
                                 description:
-                                    The keys of the actions the role has permission for.
+                                    The ids of the actions the role has permission for.
                                 items:
                                     type: string
                                 type: array
-                            roleKey:
+                            roleName:
                                 # @review
                                 description:
-                                    The role's key.
+                                    The role's name.
                                 type: string
                         type: object
                     type: array
