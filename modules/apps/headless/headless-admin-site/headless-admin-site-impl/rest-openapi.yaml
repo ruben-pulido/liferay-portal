@@ -952,24 +952,6 @@ components:
                         - $ref: "#/components/schemas/FragmentInlineValue"
                         - $ref: "#/components/schemas/FragmentMappedValue"
             type: object
-        FragmentImageClassPKReference:
-            # @review
-            description:
-                Represents a reference to a fragment image class primary key.
-            properties:
-                classPKReferences:
-                    additionalProperties:
-                        $ref: "#/components/schemas/ClassPKReference"
-                    # @review
-                    description:
-                        A map of class primary key references.
-                    type: object
-                fragmentImageConfiguration:
-                    $ref: "#/components/schemas/FragmentImageConfiguration"
-                    # @review
-                    description:
-                        The fragment image's configuration.
-            type: object
         FragmentImageConfiguration:
             # @review
             description:
