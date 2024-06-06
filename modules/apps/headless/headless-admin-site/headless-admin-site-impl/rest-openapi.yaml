@@ -892,12 +892,6 @@ components:
             properties:
                 classExternalReference:
                     $ref: "#/components/schemas/ClassExternalReference"
-                description:
-                    # @review
-                    description:
-                        The fragment image's description.
-                    oneOf:
-                        - $ref: "#/components/schemas/FragmentInlineValue"
                 config:
                     # @review
                     description:
@@ -919,6 +913,12 @@ components:
                                 The tablet configuration of the fragment image.
                             type: string
                     type: object
+                description:
+                    # @review
+                    description:
+                        The fragment image's description.
+                    oneOf:
+                        - $ref: "#/components/schemas/FragmentInlineValue"
                 title:
                     # @review
                     description:
