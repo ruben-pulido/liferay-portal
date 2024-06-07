@@ -2928,6 +2928,7 @@ components:
                     type: object
                 type:
                     enum:
+                        - CollectionPage
                         - ContentPage
                         - WidgetPage
                     type: string
