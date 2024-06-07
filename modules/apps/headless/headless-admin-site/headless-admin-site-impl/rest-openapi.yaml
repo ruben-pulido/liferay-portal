@@ -3838,11 +3838,18 @@ components:
                           items:
                               type: string
                           type: array
+                      inheritChanges:
+                          # @review
+                          description:
+                              Whether this widget page will inherit changes made to the associated widget page template
+                          type: boolean
                       layoutTemplateId:
                           # @review
                           description:
                               The identifier of the layout template.
                           type: string
+                      widgetPageTemplateBrief:
+                          $ref: "#/components/schemas/WidgetPageTemplateBrief"
                   required:
                       - layoutPageTemplateId
             # @review
@@ -3898,6 +3905,16 @@ components:
             description:
                 Represents a widget page template.
             type: object
+        WidgetPageTemplateBrief:
+            properties:
+                embeddedWidgetPageTemplate:
+                    $ref: "#/components/schemas/WidgetPageTemplate"
+                    # @review
+                    description:
+                        Optional field with the embedded widget page template, can be embedded with nestedFields
+                    readOnly: true
+                externalReference:
+                    $ref: "#/components/schemas/ExternalReference"
         WidgetPageTemplateSettings:
             # @review
             description:
