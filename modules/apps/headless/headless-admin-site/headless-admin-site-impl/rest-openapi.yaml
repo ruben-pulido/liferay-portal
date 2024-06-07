@@ -231,6 +231,21 @@ components:
                     readOnly: true
                     type: string
             type: object
+        CollectionConfig:
+            properties:
+                collectionReference:
+                    # @review
+                    description:
+                        The page collection's reference.
+                    oneOf:
+                        - $ref: "#/components/schemas/ClassNameReference"
+                        - $ref: "#/components/schemas/ClassExternalReference"
+                collectionType:
+                    # @review
+                    description:
+                        The collection's type (Collection, CollectionProvider).
+                    enum: [Collection, CollectionProvider]
+                    type: string
         CollectionViewport:
             # @review
             description:
@@ -1564,24 +1579,7 @@ components:
                 Represents a definition of a Page Collection.
             properties:
                 collectionConfig:
-                    properties:
-                        collectionReference:
-                            # @review
-                            description:
-                                The page collection's reference.
-                            oneOf:
-                                - $ref: "#/components/schemas/ClassNameReference"
-                                - $ref: "#/components/schemas/ClassExternalReference"
-                        collectionType:
-                            # @review
-                            description:
-                                The page collection's type (Collection, CollectionProvider).
-                            enum: [Collection, CollectionProvider]
-                            type: string
-                    required:
-                        - collectionReference
-                        - collectionType
-                    type: object
+                    $ref: "#/components/schemas/CollectionConfig"
                 collectionViewports:
                     # @review
                     description:
