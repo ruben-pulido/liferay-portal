@@ -20,42 +20,6 @@ components:
                         - $ref: "#/components/schemas/SitePageActionExecutionResult"
                         - $ref: "#/components/schemas/URLActionExecutionResult"
             type: object
-        AggregateRating:
-            description:
-                Represents the average rating. See [AggregateRating](https://www.schema.org/AggregateRating) for more
-                information.
-            properties:
-                bestRating:
-                    description:
-                        The highest possible rating (by default normalized to 1.0).
-                    format: double
-                    readOnly: true
-                    type: number
-                ratingAverage:
-                    description:
-                        The average rating.
-                    format: double
-                    readOnly: true
-                    type: number
-                ratingCount:
-                    description:
-                        The number of ratings.
-                    readOnly: true
-                    type: integer
-                ratingValue:
-                    # @review
-                    description:
-                        The rating value.
-                    format: double
-                    readOnly: true
-                    type: number
-                worstRating:
-                    description:
-                        The lowest possible rating (by default normalized to 0.0).
-                    format: double
-                    readOnly: true
-                    type: number
-            type: object
         BasePageSettings:
             # @review
             description:
