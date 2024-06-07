@@ -246,6 +246,19 @@ components:
                         The collection's type (Collection, CollectionProvider).
                     enum: [Collection, CollectionProvider]
                     type: string
+        CollectionPageSettings:
+            allOf:
+                - $ref: "#/components/schemas/BasePageSettings"
+                - properties:
+                      collectionConfig:
+                          $ref: "#/components/schemas/CollectionConfig"
+                          writeOnly: true
+                  required:
+                      - collectionConfig
+            # @review
+            description:
+                Represents the settings of a collection page.
+            type: object
         CollectionViewport:
             # @review
             description:
@@ -2884,9 +2897,11 @@ components:
                     discriminator:
                         propertyName: type
                     mapping:
+                        CollectionPage: "#/components/schemas/CollectionPageSettings"
                         ContentPage: "#/components/schemas/ContentPageSettings"
                         WidgetPage: "#/components/schemas/WidgetPageSettings"
                     oneOf:
+                        - $ref: "#/components/schemas/CollectionPageSettings"
                         - $ref: "#/components/schemas/ContentPageSettings"
                         - $ref: "#/components/schemas/WidgetPageSettings"
                 pageSpecifications:
