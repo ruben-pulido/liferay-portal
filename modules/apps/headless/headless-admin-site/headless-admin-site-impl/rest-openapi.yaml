@@ -324,12 +324,75 @@ components:
                         The document's title.
                     type: string
             type: object
+        ContentPageElement:
+            # @review
+            description:
+                Represents a Page element.
+            properties:
+                definition:
+                    # @review
+                    description:
+                        The page element's definition.
+                    oneOf:
+                        - $ref: "#/components/schemas/PageCollectionDefinition"
+                        - $ref: "#/components/schemas/PageCollectionItemDefinition"
+                        - $ref: "#/components/schemas/PageColumnDefinition"
+                        - $ref: "#/components/schemas/PageContainerDefinition"
+                        - $ref: "#/components/schemas/PageDropZoneDefinition"
+                        - $ref: "#/components/schemas/PageFormDefinition"
+                        - $ref: "#/components/schemas/PageFragmentCompositionInstanceDefinition"
+                        - $ref: "#/components/schemas/PageFragmentDropZoneDefinition"
+                        - $ref: "#/components/schemas/PageFragmentInstanceDefinition"
+                        - $ref: "#/components/schemas/PageRowDefinition"
+                        - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
+                externalReferenceCode:
+                    description:
+                        The page element's external reference code. Unique within the site.
+                    type: string
+                pageElements:
+                    # @review
+                    description:
+                        A list of the page elements this page element has.
+                    items:
+                        $ref: "#/components/schemas/PageElement"
+                    type: array
+                parentExternalReferenceCode:
+                    description:
+                        The parent's page element's external reference code. Unique within the site.
+                    type: string
+                position:
+                    description:
+                        The 0-based position this page element occupies with respect to its siblings (0 for first child,
+                        1 for second child, ...). If not specified when creating a page element the page element will be
+                        added at the last valid position.
+                    minimum: 0
+                    type: integer
+                type:
+                    # @review
+                    description:
+                        The page element's type (collection, collection item, column, container, drop zone, form,
+                        fragment, fragment composition, fragment drop zone, row, widget or widget section).
+                    enum: [Collection, CollectionItem, Column, Container, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Row, Widget]
+                    type: string
         ContentPageSettings:
             allOf:
                 - $ref: "#/components/schemas/BasePageSettings"
             # @review
             description:
                 Represents the settings of a content page.
+            type: object
+        ContentPageSpecification:
+            properties:
+                externalReferenceCode:
+                    description:
+                        The page specification's external reference code, unique per site.
+                    type: string
+                pageExperiences:
+                    items:
+                        $ref: "#/components/schemas/PageExperience"
+                    type: array
+                settings:
+                    $ref: "#/components/schemas/Settings"
             type: object
         ContentPageTemplate:
             allOf:
@@ -1933,57 +1996,10 @@ components:
                         - $ref: "#/components/schemas/FragmentSettingsUnallowed"
             type: object
         PageElement:
-            # @review
-            description:
-                Represents a Page element.
-            properties:
-                definition:
-                    # @review
-                    description:
-                        The page element's definition.
-                    oneOf:
-                        - $ref: "#/components/schemas/PageCollectionDefinition"
-                        - $ref: "#/components/schemas/PageCollectionItemDefinition"
-                        - $ref: "#/components/schemas/PageColumnDefinition"
-                        - $ref: "#/components/schemas/PageContainerDefinition"
-                        - $ref: "#/components/schemas/PageDropZoneDefinition"
-                        - $ref: "#/components/schemas/PageFormDefinition"
-                        - $ref: "#/components/schemas/PageFragmentCompositionInstanceDefinition"
-                        - $ref: "#/components/schemas/PageFragmentDropZoneDefinition"
-                        - $ref: "#/components/schemas/PageFragmentInstanceDefinition"
-                        - $ref: "#/components/schemas/PageRowDefinition"
-                        - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
-                        - $ref: "#/components/schemas/PageWidgetSectionDefinition"
-                externalReferenceCode:
-                    description:
-                        The page element's external reference code. Unique within the site.
-                    type: string
-                pageElements:
-                    # @review
-                    description:
-                        A list of the page elements this page element has.
-                    items:
-                        $ref: "#/components/schemas/PageElement"
-                    type: array
-                parentExternalReferenceCode:
-                    description:
-                        The parent's page element's external reference code. Unique within the site.
-                    type: string
-                position:
-                    description:
-                        The 0-based position this page element occupies with respect to its siblings (0 for first child,
-                        1 for second child, ...). If not specified when creating a page element the page element will be
-                        added at the last valid position.
-                    minimum: 0
-                    type: integer
-                type:
-                    # @review
-                    description:
-                        The page element's type (collection, collection item, column, container, drop zone, form,
-                        fragment, fragment composition, fragment drop zone, row, widget or widget section).
-                    enum: [Collection, CollectionItem, Column, Container, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Row,
-                        Widget, WidgetSection]
-                    type: string
+            oneOf:
+                - $ref: "#/components/schemas/ContentPageElement"
+                - $ref: "#/components/schemas/WidgetInstancePageElement"
+            type: object
         PageExperience:
             description:
                 # @review
@@ -2423,17 +2439,9 @@ components:
                     type: string
             type: object
         PageSpecification:
-            properties:
-                externalReferenceCode:
-                    description:
-                        The page specification's external reference code, unique per site.
-                    type: string
-                pageExperiences:
-                    items:
-                        $ref: "#/components/schemas/PageExperience"
-                    type: array
-                settings:
-                    $ref: "#/components/schemas/Settings"
+            oneOf:
+                - $ref: "#/components/schemas/ContentPageSpecification"
+                - $ref: "#/components/schemas/WidgetPageSpecification"
             type: object
         PageTemplate:
             oneOf:
@@ -3788,6 +3796,54 @@ components:
                         type: object
                     type: array
             type: object
+        WidgetInstancePageElement:
+            # @review
+            description:
+                Represents a widget instance page element.
+            properties:
+                externalReferenceCode:
+                    description:
+                        The external reference code of the widget instance page element.
+                    type: string
+                position:
+                    description:
+                        The 0-based position this widget instances occupies with respect to its siblings (0 for first
+                        child, 1 for second child, ...). If not specified when creating a page element the page element
+                        will be added at the last valid position.
+                    minimum: 0
+                    type: integer
+                sectionId:
+                    description:
+                        The widget page section's id this widget belongs to.
+                    type: string
+                widgetInstancePageElements:
+                    # @review
+                    description:
+                        A list of the page elements this page element has.
+                    items:
+                        $ref: "#/components/schemas/WidgetInstancePageElement"
+                    type: array
+        WidgetPageSection:
+            # @review
+            description:
+                Represents a widget page section.
+            properties:
+                customizable:
+                    # @review
+                    description:
+                        A flag that indicates whether the widget page section is customizable or not.
+                    type: boolean
+                id:
+                    description:
+                        The widget page section's id.
+                    type: string
+                widgetInstancePageElements:
+                    # @review
+                    description:
+                        A list of the page elements this page element has.
+                    items:
+                        $ref: "#/components/schemas/WidgetInstancePageElement"
+                    type: array
         WidgetPageSettings:
             allOf:
                 - $ref: "#/components/schemas/BasePageSettings"
@@ -3821,6 +3877,19 @@ components:
             # @review
             description:
                 Represents the settings of a widget page.
+            type: object
+        WidgetPageSpecification:
+            properties:
+                externalReferenceCode:
+                    description:
+                        The page specification's external reference code, unique per site.
+                    type: string
+                settings:
+                    $ref: "#/components/schemas/Settings"
+                widgetPageSections:
+                    items:
+                        $ref: "#/components/schemas/WidgetPageSection"
+                    type: array
             type: object
         WidgetPageTemplate:
             allOf:
