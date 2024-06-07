@@ -93,12 +93,11 @@ components:
                     description:
                         The page template's key.
                     type: string
-                keywords:
-                    # @review
+                keywordBriefs:
                     description:
-                        A list of keywords describing the page template.
+                        The keywords associated with this page template.
                     items:
-                        type: string
+                        $ref: "#/components/schemas/KeywordBrief"
                     type: array
                 name:
                     # @review
