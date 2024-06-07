@@ -2971,7 +2971,7 @@ components:
                 Represents a definition of an action execution of type page.
             properties:
                 itemReference:
-                    $ref: "#/components/schemas/ClassFieldsReference"
+                    $ref: "#/components/schemas/ExternalReference"
                     # @review
                     description:
                         The reference to a page.
@@ -2992,7 +2992,7 @@ components:
                 Represents a definition of a submission result of type page.
             properties:
                 itemReference:
-                    $ref: "#/components/schemas/ClassFieldsReference"
+                    $ref: "#/components/schemas/ExternalReference"
                     # @review
                     description:
                         The localized submission of page type.
