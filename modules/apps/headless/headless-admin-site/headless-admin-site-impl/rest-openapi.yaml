@@ -156,8 +156,8 @@ components:
             properties:
                 className:
                     type: string
-                classTypeKey:
-                    type: string
+                subTypeExternalReference:
+                    $ref: "#/components/schemas/ItemExternalReference"
             required:
                 - className
             type: object
