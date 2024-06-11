@@ -691,6 +691,8 @@ components:
             description:
                 A unique reference to an entity which remains constant across environments.
             properties:
+                className:
+                    type: string
                 externalReferenceCode:
                     type: string
                 scope:
