@@ -154,7 +154,7 @@ components:
                 className:
                     type: string
                 externalReference:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
             required:
                 - className
                 - externalReferenceCode
@@ -423,7 +423,7 @@ components:
                         Optional field with the embedded creator, can be embedded with nestedFields
                     readOnly: true
                 externalReference:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
                     description:
                         External reference containing the user's external reference code, unique per instance.
             type: object
@@ -611,7 +611,7 @@ components:
                     description:
                         The display page template's parent folder.
                 thumbnail:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
                     # @review
                     description:
                         The display page template's thumbnail.
@@ -686,7 +686,7 @@ components:
                     description:
                         The page's SEO settings.
             type: object
-        ExternalReference:
+        ItemExternalReference:
             # @review
             description:
                 A unique reference to an entity which remains constant across environments.
@@ -794,7 +794,7 @@ components:
                     description:
                         The fragment composition's page element, whose definition must be of type PageSectionDefinition.
                 thumbnail:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
                     # @review
                     description:
                         The fragment composition's thumbnail.
@@ -1411,7 +1411,7 @@ components:
                         Optional field with the embedded keyword, can be embedded with nestedFields
                     readOnly: true
                 externalReference:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
             type: object
         MasterPage:
             # @review
@@ -1478,7 +1478,7 @@ components:
                         $ref: "#/components/schemas/TaxonomyCategoryBrief"
                     type: array
                 thumbnail:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
                     # @review
                     description:
                         The master page's thumbnail.
@@ -2048,7 +2048,7 @@ components:
                     description:
                         A list of external references to the segments the experience is used for.
                     items:
-                        $ref: "#/components/schemas/ExternalReference"
+                        $ref: "#/components/schemas/ItemExternalReference"
                     type: array
             type: object
         PageFormDefinition:
@@ -2150,7 +2150,7 @@ components:
                 Represents a definition of a Page Fragment Composition Instance.
             properties:
                 fragmentComposition:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
                     # @review
                     description:
                         The reference to the fragment composition that will be used to generate the PageElement of type
@@ -2784,7 +2784,7 @@ components:
                         Optional field with the embedded site, can be embedded with nestedFields
                     readOnly: true
                 externalReference:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
         SitePage:
             # @review
             description:
@@ -2933,7 +2933,7 @@ components:
                 Represents a definition of an action execution of type page.
             properties:
                 itemReference:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
                     # @review
                     description:
                         The reference to a page.
@@ -2947,14 +2947,14 @@ components:
                         Optional field with the embedded site page, can be embedded with nestedFields
                     readOnly: true
                 externalReference:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
         SitePageFormSubmissionResult:
             # @review
             description:
                 Represents a definition of a submission result of type page.
             properties:
                 itemReference:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
                     # @review
                     description:
                         The localized submission of page type.
@@ -2991,7 +2991,7 @@ components:
                         Optional field with the embedded taxonomy category, can be embedded with nestedFields
                     readOnly: true
                 externalReference:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
         URLActionExecutionResult:
             # @review
             description:
@@ -3066,7 +3066,7 @@ components:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
                 thumbnail:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
                     # @review
                     description:
                         The utility page's thumbnail.
@@ -3951,7 +3951,7 @@ components:
                         Optional field with the embedded widget page template, can be embedded with nestedFields
                     readOnly: true
                 externalReference:
-                    $ref: "#/components/schemas/ExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
         WidgetPageTemplateSettings:
             # @review
             description:
