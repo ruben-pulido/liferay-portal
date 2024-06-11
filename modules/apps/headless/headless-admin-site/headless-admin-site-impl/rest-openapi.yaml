@@ -140,11 +140,20 @@ components:
                     oneOf:
                         - $ref: "#/components/schemas/ContentPageTemplateSettings"
                         - $ref: "#/components/schemas/WidgetPageTemplateSettings"
-                taxonomyCategoryBriefs:
+                taxonomyCategories:
+                    # @review
                     description:
-                        The categories associated with this page template.
+                        The associated categories.
                     items:
-                        $ref: "#/components/schemas/TaxonomyCategoryBrief"
+                        $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
+                    readOnly: true
+                    type: array
+                taxonomyCategoryExternalReferences:
+                    # @review
+                    description:
+                        The external references to the associated categories.
+                    items:
+                        "$ref": "#/components/schemas/ItemExternalReference"
                     type: array
                 type:
                     enum:
@@ -1468,11 +1477,20 @@ components:
                     items:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
-                taxonomyCategoryBriefs:
+                taxonomyCategories:
+                    # @review
                     description:
-                        The categories associated with this master page.
+                        The associated categories.
                     items:
-                        $ref: "#/components/schemas/TaxonomyCategoryBrief"
+                        $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
+                    readOnly: true
+                    type: array
+                taxonomyCategoryExternalReferences:
+                    # @review
+                    description:
+                        The external references to the associated categories.
+                    items:
+                        "$ref": "#/components/schemas/ItemExternalReference"
                     type: array
                 thumbnail:
                     $ref: "#/components/schemas/ItemExternalReference"
@@ -2847,6 +2865,7 @@ components:
                         "$ref": "#/components/schemas/ItemExternalReference"
                     type: array
                 keywords:
+                    # @review
                     description:
                         The associated keywords.
                     items:
@@ -2885,12 +2904,20 @@ components:
                     description:
                         The external reference code of the site to which this page is scoped.
                     type: string
-                taxonomyCategoryBriefs:
+                taxonomyCategories:
                     # @review
                     description:
-                        The categories associated with this page.
+                        The associated categories.
                     items:
-                        $ref: "#/components/schemas/TaxonomyCategoryBrief"
+                        $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
+                    readOnly: true
+                    type: array
+                taxonomyCategoryExternalReferences:
+                    # @review
+                    description:
+                        The external references to the associated categories.
+                    items:
+                        "$ref": "#/components/schemas/ItemExternalReference"
                     type: array
                 title:
                     # @review
@@ -2973,16 +3000,6 @@ components:
                         type: string
                     readOnly: true
                     type: object
-        TaxonomyCategoryBrief:
-            properties:
-                embeddedTaxonomyCategory:
-                    $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
-                    # @review
-                    description:
-                        Optional field with the embedded taxonomy category, can be embedded with nestedFields
-                    readOnly: true
-                externalReference:
-                    $ref: "#/components/schemas/ItemExternalReference"
         URLActionExecutionResult:
             # @review
             description:
