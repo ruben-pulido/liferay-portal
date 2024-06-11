@@ -673,29 +673,6 @@ components:
                     description:
                         The page's SEO settings.
             type: object
-        ItemExternalReference:
-            # @review
-            description:
-                A unique reference to an entity which remains constant across environments.
-            properties:
-                className:
-                    type: string
-                externalReferenceCode:
-                    type: string
-                scope:
-                    properties:
-                        externalReferenceCode:
-                            type: string
-                        type:
-                            enum: [AssetLibrary, Site]
-                            type: string
-                    required:
-                        - externalReferenceCode
-                        - type
-                    type: object
-            required:
-                - externalReferenceCode
-            type: object
         Fragment:
             # @review
             description:
@@ -1388,6 +1365,29 @@ components:
                         The longitude of a point in space.
                     format: double
                     type: number
+            type: object
+        ItemExternalReference:
+            # @review
+            description:
+                A unique reference to an entity which remains constant across environments.
+            properties:
+                className:
+                    type: string
+                externalReferenceCode:
+                    type: string
+                scope:
+                    properties:
+                        externalReferenceCode:
+                            type: string
+                        type:
+                            enum: [AssetLibrary, Site]
+                            type: string
+                    required:
+                        - externalReferenceCode
+                        - type
+                    type: object
+            required:
+                - externalReferenceCode
             type: object
         KeywordBrief:
             properties:
