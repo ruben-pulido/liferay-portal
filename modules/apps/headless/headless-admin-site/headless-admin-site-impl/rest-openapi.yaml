@@ -2868,11 +2868,11 @@ components:
                     items:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
-                parentSitePageBrief:
-                    $ref: "#/components/schemas/SitePageBrief"
+                parentSitePageExternalReferenceCode:
                     # @review
                     description:
-                        The parent page or null if it is a top level page.
+                        The parent page external reference code or null if it is a top level page.
+                    type: string
                 siteBrief:
                     $ref: "#/components/schemas/SiteBrief"
                     # @review
