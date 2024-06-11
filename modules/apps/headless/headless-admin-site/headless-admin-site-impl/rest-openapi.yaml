@@ -2932,16 +2932,6 @@ components:
                     description:
                         The reference to a page.
             type: object
-        SitePageBrief:
-            properties:
-                embeddedSitePage:
-                    $ref: "#/components/schemas/SitePage"
-                    # @review
-                    description:
-                        Optional field with the embedded site page, can be embedded with nestedFields
-                    readOnly: true
-                externalReference:
-                    $ref: "#/components/schemas/ItemExternalReference"
         SitePageFormSubmissionResult:
             # @review
             description:
