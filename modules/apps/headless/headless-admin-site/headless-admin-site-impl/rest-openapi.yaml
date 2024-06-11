@@ -96,11 +96,18 @@ components:
                     description:
                         The page template's key.
                     type: string
-                keywordBriefs:
+                keywordExternalReferences:
                     description:
-                        The keywords associated with this page template.
+                        The external references to the associated keywords.
                     items:
-                        $ref: "#/components/schemas/KeywordBrief"
+                        "$ref": "#/components/schemas/ItemExternalReference"
+                    type: array
+                keywords:
+                    description:
+                        The associated keywords.
+                    items:
+                        $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
+                    readOnly: true
                     type: array
                 name:
                     # @review
@@ -1388,17 +1395,6 @@ components:
             required:
                 - externalReferenceCode
             type: object
-        KeywordBrief:
-            properties:
-                embeddedKeyword:
-                    $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
-                    # @review
-                    description:
-                        Optional field with the embedded keyword, can be embedded with nestedFields
-                    readOnly: true
-                externalReference:
-                    $ref: "#/components/schemas/ItemExternalReference"
-            type: object
         MasterPage:
             # @review
             description:
@@ -1441,11 +1437,18 @@ components:
                     description:
                         The master page's key.
                     type: string
-                keywordBriefs:
+                keywordExternalReferences:
                     description:
-                        The keywords associated with this master page.
+                        The external references to the associated keywords.
                     items:
-                        $ref: "#/components/schemas/KeywordBrief"
+                        "$ref": "#/components/schemas/ItemExternalReference"
+                    type: array
+                keywords:
+                    description:
+                        The associated keywords.
+                    items:
+                        $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
+                    readOnly: true
                     type: array
                 name:
                     # @review
@@ -2830,11 +2833,18 @@ components:
                     description:
                         The localized relative URLs to the page's rendered content.
                     type: object
-                keywordBriefs:
+                keywordExternalReferences:
                     description:
-                        The keywords associated with this master page.
+                        The external references to the associated keywords.
                     items:
-                        $ref: "#/components/schemas/KeywordBrief"
+                        "$ref": "#/components/schemas/ItemExternalReference"
+                    type: array
+                keywords:
+                    description:
+                        The associated keywords.
+                    items:
+                        $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
+                    readOnly: true
                     type: array
                 pageSettings:
                     # @review
