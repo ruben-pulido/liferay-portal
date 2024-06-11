@@ -189,7 +189,7 @@ components:
                         The page collection's reference.
                     oneOf:
                         - $ref: "#/components/schemas/ClassNameReference"
-                        - $ref: "#/components/schemas/ClassExternalReference"
+                        - $ref: "#/components/schemas/ItemExternalReference"
                 collectionType:
                     # @review
                     description:
@@ -916,7 +916,7 @@ components:
                 Represents a fragment image.
             properties:
                 classExternalReference:
-                    $ref: "#/components/schemas/ClassExternalReference"
+                    $ref: "#/components/schemas/ItemExternalReference"
                 config:
                     # @review
                     description:
@@ -1046,7 +1046,7 @@ components:
                             description:
                                 The mapping's item reference.
                             oneOf:
-                                - $ref: "#/components/schemas/ClassExternalReference"
+                                - $ref: "#/components/schemas/ItemExternalReference"
                                 - $ref: "#/components/schemas/ContextReference"
                     type: object
             type: object
