@@ -2766,16 +2766,6 @@ components:
                     description:
                         The Client Extension for the theme spritemap of a page specification.
             type: object
-        SiteBrief:
-            properties:
-                embeddedSite:
-                    $ref: "../../headless-site/headless-site-impl/rest-openapi.yaml#Site"
-                    # @review
-                    description:
-                        Optional field with the embedded site, can be embedded with nestedFields
-                    readOnly: true
-                externalReference:
-                    $ref: "#/components/schemas/ItemExternalReference"
         SitePage:
             # @review
             description:
@@ -2873,11 +2863,11 @@ components:
                     description:
                         The parent page external reference code or null if it is a top level page.
                     type: string
-                siteBrief:
-                    $ref: "#/components/schemas/SiteBrief"
+                siteExternalReferenceCode:
                     # @review
                     description:
-                        The site to which this page is scoped.
+                        The external reference code of the site to which this page is scoped.
+                    type: string
                 taxonomyCategoryBriefs:
                     # @review
                     description:
