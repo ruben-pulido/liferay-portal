@@ -59,11 +59,14 @@ components:
                 Represents a base page template, containing the common properties of both a content page template and a
                 widget page template.
             properties:
-                creatorBrief:
-                    $ref: "#/components/schemas/CreatorBrief"
+                creator:
+                    # @review
+                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                creatorExternalReferenceCode:
                     # @review
                     description:
-                        The page template's creator.
+                        The page's creator external reference code.
+                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -401,19 +404,6 @@ components:
             required:
                 - contextSource
             type: object
-        CreatorBrief:
-            properties:
-                embeddedCreator:
-                    $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
-                    # @review
-                    description:
-                        Optional field with the embedded creator, can be embedded with nestedFields
-                    readOnly: true
-                externalReference:
-                    $ref: "#/components/schemas/ItemExternalReference"
-                    description:
-                        External reference containing the user's external reference code, unique per instance.
-            type: object
         CustomCSSViewport:
             # @review
             description:
@@ -523,11 +513,14 @@ components:
                     $ref: "#/components/schemas/ClassTypeReference"
                     description:
                         The content type (and optionally subtype) associated to the display page template.
-                creatorBrief:
-                    $ref: "#/components/schemas/CreatorBrief"
+                creator:
+                    # @review
+                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                creatorExternalReferenceCode:
                     # @review
                     description:
-                        The display page template's creator.
+                        The page's creator external reference code.
+                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -613,11 +606,14 @@ components:
             description:
                 Represents a Display Page template folder.
             properties:
-                creatorBrief:
-                    $ref: "#/components/schemas/CreatorBrief"
+                creator:
+                    # @review
+                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                creatorExternalReferenceCode:
                     # @review
                     description:
-                        The display page template folder's creator.
+                        The page's creator external reference code.
+                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -710,11 +706,14 @@ components:
                     description:
                         The external reference code of the collection this fragment composition belongs to.
                     type: string
-                creatorBrief:
-                    $ref: "#/components/schemas/CreatorBrief"
+                creator:
+                    # @review
+                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                creatorExternalReferenceCode:
+                    # @review
                     description:
-                        The structured content's creator.
-                    readOnly: true
+                        The page's creator external reference code.
+                    type: string
                 dateCreated:
                     description:
                         The structured content's creation date.
@@ -1405,11 +1404,14 @@ components:
             description:
                 Represents a page with common elements (header, footer, ...) used for all or several pages of a site.
             properties:
-                creatorBrief:
-                    $ref: "#/components/schemas/CreatorBrief"
+                creator:
+                    # @review
+                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                creatorExternalReferenceCode:
                     # @review
                     description:
-                        The master page's creator.
+                        The page's creator external reference code.
+                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -2442,12 +2444,14 @@ components:
             description:
                 Represents a Page template set.
             properties:
-                creatorBrief:
-                    $ref: "#/components/schemas/CreatorBrief"
+                creator:
+                    # @review
+                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                creatorExternalReferenceCode:
                     # @review
                     description:
-                        The page template set's creator.
-                    readOnly: true
+                        The page's creator external reference code.
+                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -2785,11 +2789,14 @@ components:
                         type: string
                     readOnly: true
                     type: array
-                creatorBrief:
-                    $ref: "#/components/schemas/CreatorBrief"
+                creator:
+                    # @review
+                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                creatorExternalReferenceCode:
                     # @review
                     description:
-                        The page's creator.
+                        The page's creator external reference code.
+                    type: string
                 customFields:
                     # @review
                     description:
@@ -3005,11 +3012,14 @@ components:
             description:
                 Represents a Utility Page.
             properties:
-                creatorBrief:
-                    $ref: "#/components/schemas/CreatorBrief"
+                creator:
+                    # @review
+                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                creatorExternalReferenceCode:
                     # @review
                     description:
-                        The utility page's creator.
+                        The page's creator external reference code.
+                    type: string
                 dateCreated:
                     # @review
                     description:
