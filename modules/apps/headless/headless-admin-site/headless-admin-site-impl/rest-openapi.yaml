@@ -61,7 +61,8 @@ components:
             properties:
                 creator:
                     # @review
-                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
@@ -522,7 +523,8 @@ components:
                         The content type (and optionally subtype) associated to the display page template.
                 creator:
                     # @review
-                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
@@ -615,7 +617,8 @@ components:
             properties:
                 creator:
                     # @review
-                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
@@ -715,7 +718,8 @@ components:
                     type: string
                 creator:
                     # @review
-                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
@@ -1402,7 +1406,8 @@ components:
             properties:
                 creator:
                     # @review
-                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
@@ -2449,7 +2454,8 @@ components:
             properties:
                 creator:
                     # @review
-                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
@@ -2784,7 +2790,8 @@ components:
                     type: array
                 creator:
                     # @review
-                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
@@ -3004,7 +3011,8 @@ components:
             properties:
                 creator:
                     # @review
-                        $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
