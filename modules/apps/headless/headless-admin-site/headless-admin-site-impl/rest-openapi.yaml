@@ -1021,12 +1021,6 @@ components:
             description:
                 Represents a fragment mapped value.
             properties:
-                # TODO Clarify whether we should remove defaultFragmentInlineValue
-                defaultFragmentInlineValue:
-                    $ref: "#/components/schemas/FragmentInlineValue"
-                    # @review
-                    description:
-                        The default value of the fragment mapped value.
                 mapping:
                     # @review
                     description:
