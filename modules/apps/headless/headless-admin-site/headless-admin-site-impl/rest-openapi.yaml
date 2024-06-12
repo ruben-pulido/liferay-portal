@@ -2791,6 +2791,15 @@ components:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
                     readOnly: true
                     type: array
+                oldFriendlyUrlPath_i18n:
+                    additionalProperties:
+                        items:
+                            type: string
+                        type: array
+                    # @review
+                    description:
+                        The old localized relative URLs to the page's rendered content.
+                    type: object
                 pageSettings:
                     # @review
                     description:
