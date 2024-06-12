@@ -469,11 +469,6 @@ components:
                     description:
                         The custom meta tag's key.
                     type: string
-                value:
-                    # @review
-                    description:
-                        The custom meta tag's value
-                    type: string
                 value_i18n:
                     additionalProperties:
                         type: string
@@ -487,11 +482,6 @@ components:
             description:
                 Represents a custom value.
             properties:
-                data:
-                    # @review
-                    description:
-                        The field's content value for simple types.
-                    type: object
                 data_i18n:
                     additionalProperties:
                         type: string
@@ -572,11 +562,6 @@ components:
                     # @review
                     description:
                         The display page template's external reference code.
-                    type: string
-                friendlyUrlPath:
-                    # @review
-                    description:
-                        A relative URL to the display page template's rendered content.
                     type: string
                 friendlyUrlPath_i18n:
                     additionalProperties:
@@ -959,11 +944,6 @@ components:
             description:
                 Represents a fragment inline value.
             properties:
-                value:
-                    # @review
-                    description:
-                        The fragment's inline value.
-                    type: string
                 value_i18n:
                     additionalProperties:
                         type: string
@@ -986,11 +966,6 @@ components:
                     deprecated: true
                     enum: [Blank, Parent, Self, Top]
                     type: string
-                value:
-                    $ref: "#/components/schemas/FragmentLinkValue"
-                    # @review
-                    description:
-                        The fragment link's value.
                 value_i18n:
                     additionalProperties:
                         $ref: "#/components/schemas/FragmentLinkValue"
@@ -1570,11 +1545,6 @@ components:
             description:
                 Represents settings related with Open Graph protocol.
             properties:
-                description:
-                    # @review
-                    description:
-                        The Open Graph's description.
-                    type: string
                 description_i18n:
                     additionalProperties:
                         type: string
@@ -1587,11 +1557,6 @@ components:
                     # @review
                     description:
                         The Open Graph's image.
-                imageAlt:
-                    # @review
-                    description:
-                        The Open Graph's image alt.
-                    type: string
                 imageAlt_i18n:
                     additionalProperties:
                         type: string
@@ -1599,11 +1564,6 @@ components:
                     description:
                         The localized Open Graph's image alts.
                     type: object
-                title:
-                    # @review
-                    description:
-                        The Open Graph's title.
-                    type: string
                 title_i18n:
                     additionalProperties:
                         type: string
@@ -2024,11 +1984,6 @@ components:
                     # @review
                     description:
                         the experience's key.
-                    type: string
-                name:
-                    # @review
-                    description:
-                        the experience's name.
                     type: string
                 name_i18n:
                     additionalProperties:
@@ -2610,11 +2565,6 @@ components:
             description:
                 Represents settings related with SEO.
             properties:
-                customCanonicalURL:
-                    # @review
-                    description:
-                        The canonical URL of the page, if it exists.
-                    type: string
                 customCanonicalURL_i18n:
                     additionalProperties:
                         type: string
@@ -2622,11 +2572,6 @@ components:
                     description:
                         The localized canonical URL of the page, if it exists.
                     type: object
-                description:
-                    type: string
-                    # @review
-                    description:
-                        The page's description to be used as summary for search engines.
                 description_i18n:
                     additionalProperties:
                         type: string
@@ -2634,11 +2579,6 @@ components:
                     description:
                         The localized descriptions of the page to be used as summary for search engines.
                     type: object
-                htmlTitle:
-                    # @review
-                    description:
-                        The page's main title to be used by search engines.
-                    type: string
                 htmlTitle_i18n:
                     additionalProperties:
                         type: string
@@ -2646,11 +2586,6 @@ components:
                     description:
                         The localized main titles of the page to be used by search engines.
                     type: object
-                robots:
-                    # @review
-                    description:
-                        A tag telling search engines if and how they should crawl the page.
-                    type: string
                 robots_i18n:
                     additionalProperties:
                         type: string
@@ -2658,11 +2593,6 @@ components:
                     description:
                         A localized tag telling search engines if and how they should crawl the page.
                     type: object
-                seoKeywords:
-                    # @review
-                    description:
-                        A list of target keywords of the page to be used by search engines.
-                    type: string
                 seoKeywords_i18n:
                     additionalProperties:
                         type: string
@@ -2840,11 +2770,6 @@ components:
                     description:
                         The page's external reference code.
                     type: string
-                friendlyUrlPath:
-                    # @review
-                    description:
-                        A relative URL to the page's rendered content.
-                    type: string
                 friendlyUrlPath_i18n:
                     additionalProperties:
                         type: string
@@ -2913,11 +2838,6 @@ components:
                     items:
                         "$ref": "#/components/schemas/ItemExternalReference"
                     type: array
-                title:
-                    # @review
-                    description:
-                        The page's title.
-                    type: string
                 title_i18n:
                     additionalProperties:
                         type: string
@@ -2983,12 +2903,6 @@ components:
                     format: int32
                     readOnly: true
                     type: integer
-                label:
-                    # @review
-                    description:
-                        Label associated to the status
-                    readOnly: true
-                    type: string
                 label_i18n:
                     additionalProperties:
                         type: string
@@ -3097,11 +3011,6 @@ components:
             description:
                 Represents settings related with SEO of an utility page.
             properties:
-                description:
-                    type: string
-                    # @review
-                    description:
-                        The utility page's description to be used as summary for search engines.
                 description_i18n:
                     additionalProperties:
                         type: string
@@ -3109,11 +3018,6 @@ components:
                     description:
                         The localized descriptions of the utility page to be used as summary for search engines.
                     type: object
-                htmlTitle:
-                    # @review
-                    description:
-                        The utility page's main title to be used by search engines.
-                    type: string
                 htmlTitle_i18n:
                     additionalProperties:
                         type: string
@@ -3292,11 +3196,6 @@ components:
                                 properties:
                                     applicationDecorator:
                                         enum: [Barebone, Borderless, Decorate]
-                                        type: string
-                                    customTitle:
-                                        # @review
-                                        description:
-                                            The custom title.
                                         type: string
                                     customTitle_i18n:
                                         additionalProperties:
@@ -3908,11 +3807,6 @@ components:
                           description:
                               A flag that indicates whether the widget page template is active.
                           type: boolean
-                      description:
-                          # @review
-                          description:
-                              The description of the widget page template.
-                          type: string
                       description_i18n:
                           additionalProperties:
                               type: string
@@ -3920,11 +3814,6 @@ components:
                           description:
                               The localized descriptions of the widget page template.
                           type: object
-                      friendlyUrlPath:
-                          # @review
-                          description:
-                              A relative URL to the page's rendered content.
-                          type: string
                       friendlyUrlPath_i18n:
                           additionalProperties:
                               type: string
