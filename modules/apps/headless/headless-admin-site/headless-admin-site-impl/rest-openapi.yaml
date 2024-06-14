@@ -331,7 +331,7 @@ components:
                         The document's title.
                     type: string
             type: object
-        ContentPageElement:
+        PageElement:
             # @review
             description:
                 Represents a Page element.
@@ -1965,11 +1965,6 @@ components:
                     oneOf:
                         - $ref: "#/components/schemas/FragmentSettingsAllowed"
                         - $ref: "#/components/schemas/FragmentSettingsUnallowed"
-            type: object
-        PageElement:
-            oneOf:
-                - $ref: "#/components/schemas/ContentPageElement"
-                - $ref: "#/components/schemas/WidgetInstancePageElement"
             type: object
         PageExperience:
             description:
@@ -3712,33 +3707,6 @@ components:
                         type: object
                     type: array
             type: object
-        WidgetInstancePageElement:
-            # @review
-            description:
-                Represents a widget instance page element.
-            properties:
-                externalReferenceCode:
-                    description:
-                        The external reference code of the widget instance page element.
-                    type: string
-                position:
-                    description:
-                        The 0-based position this widget instances occupies with respect to its siblings (0 for first
-                        child, 1 for second child, ...). If not specified when creating a page element the page element
-                        will be added at the last valid position.
-                    minimum: 0
-                    type: integer
-                sectionId:
-                    description:
-                        The widget page section's id this widget belongs to.
-                    type: string
-                widgetInstancePageElements:
-                    # @review
-                    description:
-                        A list of the page elements this page element has.
-                    items:
-                        $ref: "#/components/schemas/WidgetInstancePageElement"
-                    type: array
         WidgetPageSection:
             # @review
             description:
@@ -3753,12 +3721,12 @@ components:
                     description:
                         The widget page section's id.
                     type: string
-                widgetInstancePageElements:
+                widgetInstances:
                     # @review
                     description:
                         A list of the page elements this page element has.
                     items:
-                        $ref: "#/components/schemas/WidgetInstancePageElement"
+                        $ref: "#/components/schemas/WidgetPageWidgetInstance"
                     type: array
         WidgetPageSettings:
             allOf:
