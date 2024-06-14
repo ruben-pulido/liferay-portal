@@ -2509,17 +2509,6 @@ components:
                     description:
                         The widget instance of the page widget instance.
             type: object
-        PageWidgetSectionDefinition:
-            # @review
-            description:
-                Represents the definition of a widget section.
-            properties:
-                customizable:
-                    # @review
-                    description:
-                        A flag that indicates whether the page widget column is customizable or not.
-                    type: boolean
-            type: object
         RowViewport:
             # @review
             description:
