@@ -3211,67 +3211,7 @@ components:
                                               type: boolean
                                           letterSpacing:
                                               enum:
-                                                  - -10px
-                                                  - -9px
-                                                  - -8px
-                                                  - -7px
-                                                  - -6px
-                                                  - -5px
-                                                  - -4px
-                                                  - -3px
-                                                  - -2px
-                                                  - -1px
-                                                  - 0px
-                                                  - 1px
-                                                  - 2px
-                                                  - 3px
-                                                  - 4px
-                                                  - 5px
-                                                  - 6px
-                                                  - 7px
-                                                  - 8px
-                                                  - 9px
-                                                  - 10px
-                                                  - 11px
-                                                  - 12px
-                                                  - 13px
-                                                  - 14px
-                                                  - 15px
-                                                  - 16px
-                                                  - 17px
-                                                  - 18px
-                                                  - 19px
-                                                  - 20px
-                                                  - 21px
-                                                  - 22px
-                                                  - 23px
-                                                  - 24px
-                                                  - 25px
-                                                  - 26px
-                                                  - 27px
-                                                  - 28px
-                                                  - 29px
-                                                  - 30px
-                                                  - 31px
-                                                  - 32px
-                                                  - 33px
-                                                  - 34px
-                                                  - 35px
-                                                  - 36px
-                                                  - 37px
-                                                  - 38px
-                                                  - 39px
-                                                  - 40px
-                                                  - 41px
-                                                  - 42px
-                                                  - 43px
-                                                  - 44px
-                                                  - 45px
-                                                  - 46px
-                                                  - 47px
-                                                  - 48px
-                                                  - 49px
-                                                  - 50px
+                                                  [-10px, -9px, -8px, -7px, -6px, -5px, -4px, -3px, -2px, -1px, 0px, 1px, 2px, 3px, 4px, 5px, 6px, 7px, 8px, 9px, 10px, 11px, 12px, 13px, 14px, 15px, 16px, 17px, 18px, 19px, 20px, 21px, 22px, 23px, 24px, 25px, 26px, 27px, 28px, 29px, 30px, 31px, 32px, 33px, 34px, 35px, 36px, 37px, 38px, 39px, 40px, 41px, 42px, 43px, 44px, 45px, 46px, 47px, 48px, 49px, 50px]
                                               type: string
                                           lineHeight:
                                               enum:
@@ -3523,46 +3463,7 @@ components:
                                               enum: [ None, Overline, Strikethrough, Underline ]
                                               type: string
                                           wordSpacing:
-                                              enum:
-                                                  - -1em
-                                                  - -0.95em
-                                                  - -0.9em
-                                                  - -0.85em
-                                                  - -0.8em
-                                                  - -0.75em
-                                                  - -0.7em
-                                                  - -0.45em
-                                                  - -0.4em
-                                                  - -0.65em
-                                                  - -0.6em
-                                                  - -0.55em
-                                                  - -0.5em
-                                                  - -0.35em
-                                                  - -0.3em
-                                                  - -0.25em
-                                                  - -0.2em
-                                                  - -0.15em
-                                                  - -0.1em
-                                                  - -0.05em
-                                                  - Normal
-                                                  - 0.1em
-                                                  - 0.15em
-                                                  - 0.2em
-                                                  - 0.25em
-                                                  - 0.3em
-                                                  - 0.35em
-                                                  - 0.4em
-                                                  - 0.45em
-                                                  - 0.5em
-                                                  - 0.55em
-                                                  - 0.6em
-                                                  - 0.65em
-                                                  - 0.7em
-                                                  - 0.75em
-                                                  - 0.8em
-                                                  - 0.85em
-                                                  - 0.9em
-                                                  - 0.95em
+                                              enum: [-1em, -0.95em, -0.9em, -0.85em, -0.8em, -0.75em, -0.7em, -0.45em, -0.4em, -0.65em, -0.6em, -0.55em, -0.5em, -0.35em, -0.3em, -0.25em, -0.2em, -0.15em, -0.1em, -0.05em, Normal, 0.1em, 0.15em, 0.2em, 0.25em, 0.3em, 0.35em, 0.4em, 0.45em, 0.5em, 0.55em, 0.6em, 0.65em, 0.7em, 0.75em, 0.8em, 0.85em, 0.9em, 0.95em]
                                               type: string
                                       type: object
                               type: object
