@@ -164,6 +164,46 @@ components:
                         A valid external identifier to reference this page template.
                     type: string
             type: object
+        BaseWidgetInstance:
+            # @review
+            description:
+                Represents a base Widget Instance.
+            properties:
+                widgetConfig:
+                    additionalProperties:
+                        type: object
+                    type: object
+                widgetInstanceId:
+                    # @review
+                    description:
+                        The widget instance's ID.
+                    type: string
+                widgetName:
+                    # @review
+                    description:
+                        The widget instance's name.
+                    type: string
+                widgetPermissions:
+                    # @review
+                    description:
+                        The widget instance's permissions.
+                    items:
+                        properties:
+                            actionIds:
+                                # @review
+                                description:
+                                    The ids of the actions the role has permission for.
+                                items:
+                                    type: string
+                                type: array
+                            roleName:
+                                # @review
+                                description:
+                                    The role's name.
+                                type: string
+                        type: object
+                    type: array
+            type: object
         ClassNameReference:
             properties:
                 className:
@@ -262,56 +302,6 @@ components:
                 - columnViewportDefinition
                 - id
             type: object
-        PageElement:
-            # @review
-            description:
-                Represents a Page element.
-            properties:
-                definition:
-                    # @review
-                    description:
-                        The page element's definition.
-                    oneOf:
-                        - $ref: "#/components/schemas/PageCollectionDefinition"
-                        - $ref: "#/components/schemas/PageCollectionItemDefinition"
-                        - $ref: "#/components/schemas/PageColumnDefinition"
-                        - $ref: "#/components/schemas/PageContainerDefinition"
-                        - $ref: "#/components/schemas/PageDropZoneDefinition"
-                        - $ref: "#/components/schemas/PageFormDefinition"
-                        - $ref: "#/components/schemas/PageFragmentCompositionInstanceDefinition"
-                        - $ref: "#/components/schemas/PageFragmentDropZoneDefinition"
-                        - $ref: "#/components/schemas/PageFragmentInstanceDefinition"
-                        - $ref: "#/components/schemas/PageRowDefinition"
-                        - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
-                externalReferenceCode:
-                    description:
-                        The page element's external reference code. Unique within the site.
-                    type: string
-                pageElements:
-                    # @review
-                    description:
-                        A list of the page elements this page element has.
-                    items:
-                        $ref: "#/components/schemas/PageElement"
-                    type: array
-                parentExternalReferenceCode:
-                    description:
-                        The parent's page element's external reference code. Unique within the site.
-                    type: string
-                position:
-                    description:
-                        The 0-based position this page element occupies with respect to its siblings (0 for first child,
-                        1 for second child, ...). If not specified when creating a page element the page element will be
-                        added at the last valid position.
-                    minimum: 0
-                    type: integer
-                type:
-                    # @review
-                    description:
-                        The page element's type (collection, collection item, column, container, drop zone, form,
-                        fragment, fragment composition, fragment drop zone, row, widget or widget section).
-                    enum: [Collection, CollectionItem, Column, Container, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Row, Widget]
-                    type: string
         ContentPageSettings:
             allOf:
                 - $ref: "#/components/schemas/BasePageSettings"
@@ -344,6 +334,9 @@ components:
             description:
                 Represents the settings of a content page.
             type: object
+        ContentPageWidgetInstance:
+            allOf:
+                - $ref: "#/components/schemas/BaseWidgetInstance"
         ContextReference:
             properties:
                 contextSource:
@@ -624,6 +617,16 @@ components:
                     description:
                         The fragment instance's css.
                     type: string
+                datePropagated:
+                    description:
+                        The fragment instance's most recent propagation date.
+                    format: date-time
+                    type: string
+                datePublished:
+                    description:
+                        The fragment instance's most recent publication date.
+                    format: date-time
+                    type: string
                 defaultFragmentKey:
                     # @review
                     description:
@@ -635,10 +638,10 @@ components:
                         The external reference code of this fragment composition.
                     type: string
                 fragmentReference:
+                    $ref: "#/components/schemas/ItemExternalReference"
                     # @review
                     description:
                         An external reference to the fragment.
-                    $ref: "#/components/schemas/ItemExternalReference"
                 html:
                     # @review
                     description:
@@ -659,16 +662,6 @@ components:
                     description:
                         The fragment instance's type.
                     enum: [Component, Input, React]
-                    type: string
-                datePropagated:
-                    description:
-                        The fragment instance's most recent propagation date.
-                    format: date-time
-                    type: string
-                datePublished:
-                    description:
-                        The fragment instance's most recent publication date.
-                    format: date-time
                     type: string
                 uuid:
                     # @review
@@ -1291,7 +1284,8 @@ components:
         FriendlyUrlHistory:
             # @review
             description:
-                Represents the history of previously used URLs for a page to prevent broken links and provide an easy way to revert changes.
+                Represents the history of previously used URLs for a page to prevent broken links and provide an easy
+                way to revert changes.
             properties:
                 friendlyUrlPath_i18n:
                     additionalProperties:
@@ -1818,6 +1812,56 @@ components:
                         - $ref: "#/components/schemas/FragmentSettingsAllowed"
                         - $ref: "#/components/schemas/FragmentSettingsUnallowed"
             type: object
+        PageElement:
+            # @review
+            description:
+                Represents a Page element.
+            properties:
+                definition:
+                    # @review
+                    description:
+                        The page element's definition.
+                    oneOf:
+                        - $ref: "#/components/schemas/PageCollectionDefinition"
+                        - $ref: "#/components/schemas/PageCollectionItemDefinition"
+                        - $ref: "#/components/schemas/PageColumnDefinition"
+                        - $ref: "#/components/schemas/PageContainerDefinition"
+                        - $ref: "#/components/schemas/PageDropZoneDefinition"
+                        - $ref: "#/components/schemas/PageFormDefinition"
+                        - $ref: "#/components/schemas/PageFragmentCompositionInstanceDefinition"
+                        - $ref: "#/components/schemas/PageFragmentDropZoneDefinition"
+                        - $ref: "#/components/schemas/PageFragmentInstanceDefinition"
+                        - $ref: "#/components/schemas/PageRowDefinition"
+                        - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
+                externalReferenceCode:
+                    description:
+                        The page element's external reference code. Unique within the site.
+                    type: string
+                pageElements:
+                    # @review
+                    description:
+                        A list of the page elements this page element has.
+                    items:
+                        $ref: "#/components/schemas/PageElement"
+                    type: array
+                parentExternalReferenceCode:
+                    description:
+                        The parent's page element's external reference code. Unique within the site.
+                    type: string
+                position:
+                    description:
+                        The 0-based position this page element occupies with respect to its siblings (0 for first child,
+                        1 for second child, ...). If not specified when creating a page element the page element will be
+                        added at the last valid position.
+                    minimum: 0
+                    type: integer
+                type:
+                    # @review
+                    description:
+                        The page element's type (collection, collection item, column, container, drop zone, form,
+                        fragment, fragment composition, fragment drop zone, row, widget or widget section).
+                    enum: [Collection, CollectionItem, Column, Container, DropZone, Form, Fragment, FragmentComposition, FragmentDropZone, Row, Widget]
+                    type: string
         PageExperience:
             description:
                 # @review
@@ -2020,23 +2064,9 @@ components:
                 fragmentCSS:
                     # @review
                     description:
-                        The fragment's css at the time the fragment was added to the page or page template or last propagated.
+                        The fragment's css at the time the fragment was added to the page or page template or last
+                        propagated.
                     type: string
-                fragmentHtml:
-                    # @review
-                    description:
-                        The fragment's html at the time the fragment was added to the page or page template or last propagated.
-                    type: string
-                fragmentJS:
-                    # @review
-                    description:
-                        The fragment's js at the time the fragment was added to the page or page template or last propagated.
-                    type: string
-                fragmentReference:
-                    # @review
-                    description:
-                        An external reference to the fragment.
-                    $ref: "#/components/schemas/ItemExternalReference"
                 fragmentConfig:
                     additionalProperties:
                         type: object
@@ -2051,6 +2081,12 @@ components:
                     items:
                         $ref: "#/components/schemas/FragmentField"
                     type: array
+                fragmentHtml:
+                    # @review
+                    description:
+                        The fragment's html at the time the fragment was added to the page or page template or last
+                        propagated.
+                    type: string
                 fragmentInstanceConfigValues:
                     additionalProperties:
                         type: object
@@ -2058,6 +2094,17 @@ components:
                     description:
                         The page fragment instance's configuration.
                     type: object
+                fragmentJS:
+                    # @review
+                    description:
+                        The fragment's js at the time the fragment was added to the page or page template or last
+                        propagated.
+                    type: string
+                fragmentReference:
+                    $ref: "#/components/schemas/ItemExternalReference"
+                    # @review
+                    description:
+                        An external reference to the fragment.
                 fragmentStyle:
                     $ref: "#/components/schemas/FragmentStyle"
                     # @review
@@ -2621,6 +2668,12 @@ components:
                     description:
                         The page's external reference code.
                     type: string
+                friendlyUrlHistory:
+                    $ref: "#/components/schemas/FriendlyUrlHistory"
+                    # @review
+                    description:
+                        The the history of previously used URLs to the page's rendered content. This field is not
+                        returned by default. It can be requested via nestedFields.
                 friendlyUrlPath_i18n:
                     additionalProperties:
                         type: string
@@ -2642,11 +2695,6 @@ components:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
                     readOnly: true
                     type: array
-                friendlyUrlHistory:
-                    # @review
-                    description:
-                        The the history of previously used URLs to the page's rendered content. This field is not returned by default. It can be requested via nestedFields.
-                    $ref: "#/components/schemas/FriendlyUrlHistory"
                 pageSettings:
                     # @review
                     description:
@@ -2875,49 +2923,141 @@ components:
                     description:
                         The utility page's SEO settings.
             type: object
-        BaseWidgetInstance:
+        WidgetPageSection:
             # @review
             description:
-                Represents a base Widget Instance.
+                Represents a widget page section.
             properties:
-                widgetConfig:
-                    additionalProperties:
-                        type: object
-                    type: object
-                widgetInstanceId:
+                customizable:
                     # @review
                     description:
-                        The widget instance's ID.
+                        A flag that indicates whether the widget page section is customizable or not.
+                    type: boolean
+                id:
+                    description:
+                        The widget page section's id.
                     type: string
-                widgetName:
+                widgetInstances:
                     # @review
                     description:
-                        The widget instance's name.
-                    type: string
-                widgetPermissions:
-                    # @review
-                    description:
-                        The widget instance's permissions.
+                        A list of the page elements this page element has.
                     items:
-                        properties:
-                            actionIds:
-                                # @review
-                                description:
-                                    The ids of the actions the role has permission for.
-                                items:
-                                    type: string
-                                type: array
-                            roleName:
-                                # @review
-                                description:
-                                    The role's name.
-                                type: string
-                        type: object
+                        $ref: "#/components/schemas/WidgetPageWidgetInstance"
+                    type: array
+        WidgetPageSettings:
+            allOf:
+                - $ref: "#/components/schemas/BasePageSettings"
+                - properties:
+                      customizable:
+                          # @review
+                          description:
+                              A flag that indicates whether the page is customizable.
+                          type: boolean
+                      customizableSectionIds:
+                          # @review
+                          description:
+                              The ids of the customizable sections.
+                          items:
+                              type: string
+                          type: array
+                      inheritChanges:
+                          # @review
+                          description:
+                              Whether this widget page will inherit changes made to the associated widget page template
+                          type: boolean
+                      layoutTemplateId:
+                          # @review
+                          description:
+                              The identifier of the layout template.
+                          type: string
+                      widgetPageTemplateReference:
+                          $ref: "#/components/schemas/ItemExternalReference"
+                  required:
+                      - layoutPageTemplateId
+            # @review
+            description:
+                Represents the settings of a widget page.
+            type: object
+        WidgetPageSpecification:
+            properties:
+                externalReferenceCode:
+                    description:
+                        The page specification's external reference code, unique per site.
+                    type: string
+                settings:
+                    $ref: "#/components/schemas/Settings"
+                widgetPageSections:
+                    items:
+                        $ref: "#/components/schemas/WidgetPageSection"
                     type: array
             type: object
-        ContentPageWidgetInstance:
+        WidgetPageTemplate:
             allOf:
-                - $ref: "#/components/schemas/BaseWidgetInstance"
+                - $ref: "#/components/schemas/BasePageTemplate"
+                - properties:
+                      active:
+                          # @review
+                          description:
+                              A flag that indicates whether the widget page template is active.
+                          type: boolean
+                      description_i18n:
+                          additionalProperties:
+                              type: string
+                          # @review
+                          description:
+                              The localized descriptions of the widget page template.
+                          type: object
+                      friendlyUrlPath_i18n:
+                          additionalProperties:
+                              type: string
+                          # @review
+                          description:
+                              The localized relative URLs to the page's rendered content.
+                          type: object
+                      hiddenFromNavigation:
+                          # @review
+                          description:
+                              A flag that indicates whether the page created based on this page template is hidden from
+                              navigation.
+                          type: boolean
+                      name_i18n:
+                          additionalProperties:
+                              type: string
+                          # @review
+                          description:
+                              The localized names of the widget page template.
+            # @review
+            description:
+                Represents a widget page template.
+            type: object
+        WidgetPageTemplateSettings:
+            # @review
+            description:
+                Represents the settings of a widget page template.
+            properties:
+                layoutTemplateId:
+                    # @review
+                    description:
+                        The identifier of the layout template.
+                    type: string
+                navigationMenuSettings:
+                    # @review
+                    description:
+                        The widget page template's site navigation menu settings.
+                    properties:
+                        target:
+                            # @review
+                            description:
+                                The page's description to be used as summary for search engines.
+                            type: string
+                        targetType:
+                            # @review
+                            description:
+                                The target's type (specific frame or new tab).
+                            enum: [SpecificFrame, NewTab]
+                            type: string
+                    type: object
+            type: object
         WidgetPageWidgetInstance:
             allOf:
                 - $ref: "#/components/schemas/BaseWidgetInstance"
@@ -2928,24 +3068,26 @@ components:
                           type: string
                       parentSectionId:
                           description:
-                              The section's id of the widget page or the nested application widget instance this widget belongs to.
+                              The section's id of the widget page or the nested application widget instance this widget
+                              belongs to.
                           type: string
                       parentWidgetInstanceExternalReferenceCode:
                           description:
-                              The external reference code of the parent widget instance. Only available if this widget instance is within a nested applications widget instance.
+                              The external reference code of the parent widget instance. Only available if this widget
+                              instance is within a nested applications widget instance.
                           type: string
                       position:
                           description:
-                              The 0-based position this widget instances occupies with respect to its siblings (0 for first
-                              child, 1 for second child, ...). If not specified when creating a page element the page element
-                              will be added at the last valid position.
+                              The 0-based position this widget instances occupies with respect to its siblings (0 for
+                              first child, 1 for second child, ...). If not specified when creating a page element the
+                              page element will be added at the last valid position.
                           minimum: 0
                           type: integer
                       widgetLookAndFeelConfig:
                           # @review
                           description:
-                              The widget instance's look and feel configuration. It applies only to widgets within SitePages
-                              of type WidgetPage or within PageTemplates of type WidgetPageTemplate.
+                              The widget instance's look and feel configuration. It applies only to widgets within
+                              SitePages of type WidgetPage or within PageTemplates of type WidgetPageTemplate.
                           items:
                               properties:
                                   advancedStylingConfig:
@@ -3085,7 +3227,7 @@ components:
                                   generalConfig:
                                       properties:
                                           applicationDecorator:
-                                              enum: [ Barebone, Borderless, Decorate ]
+                                              enum: [Barebone, Borderless, Decorate]
                                               type: string
                                           customTitle_i18n:
                                               additionalProperties:
@@ -3197,7 +3339,7 @@ components:
                                   textStylesConfig:
                                       properties:
                                           alignment:
-                                              enum: [ Center, Justify, Left, Right ]
+                                              enum: [Center, Justify, Left, Right]
                                               type: string
                                           bold:
                                               type: boolean
@@ -3205,7 +3347,7 @@ components:
                                               example: "#FF0D0D"
                                               type: string
                                           font:
-                                              enum: [ Arial, Georgia, Tahoma, TimesNewRoman, TrebuchetMS, Verdana ]
+                                              enum: [Arial, Georgia, Tahoma, TimesNewRoman, TrebuchetMS, Verdana]
                                               type: string
                                           italic:
                                               type: boolean
@@ -3460,7 +3602,7 @@ components:
                                                   - 12em
                                               type: string
                                           textDecoration:
-                                              enum: [ None, Overline, Strikethrough, Underline ]
+                                              enum: [None, Overline, Strikethrough, Underline]
                                               type: string
                                           wordSpacing:
                                               enum: [-1em, -0.95em, -0.9em, -0.85em, -0.8em, -0.75em, -0.7em, -0.45em, -0.4em, -0.65em, -0.6em, -0.55em, -0.5em, -0.35em, -0.3em, -0.25em, -0.2em, -0.15em, -0.1em, -0.05em, Normal, 0.1em, 0.15em, 0.2em, 0.25em, 0.3em, 0.35em, 0.4em, 0.45em, 0.5em, 0.55em, 0.6em, 0.65em, 0.7em, 0.75em, 0.8em, 0.85em, 0.9em, 0.95em]
@@ -3471,141 +3613,6 @@ components:
             # @review
             description:
                 Represents a Widget Instance in a Widget Page.
-            type: object
-        WidgetPageSection:
-            # @review
-            description:
-                Represents a widget page section.
-            properties:
-                customizable:
-                    # @review
-                    description:
-                        A flag that indicates whether the widget page section is customizable or not.
-                    type: boolean
-                id:
-                    description:
-                        The widget page section's id.
-                    type: string
-                widgetInstances:
-                    # @review
-                    description:
-                        A list of the page elements this page element has.
-                    items:
-                        $ref: "#/components/schemas/WidgetPageWidgetInstance"
-                    type: array
-        WidgetPageSettings:
-            allOf:
-                - $ref: "#/components/schemas/BasePageSettings"
-                - properties:
-                      customizable:
-                          # @review
-                          description:
-                              A flag that indicates whether the page is customizable.
-                          type: boolean
-                      customizableSectionIds:
-                          # @review
-                          description:
-                              The ids of the customizable sections.
-                          items:
-                              type: string
-                          type: array
-                      inheritChanges:
-                          # @review
-                          description:
-                              Whether this widget page will inherit changes made to the associated widget page template
-                          type: boolean
-                      layoutTemplateId:
-                          # @review
-                          description:
-                              The identifier of the layout template.
-                          type: string
-                      widgetPageTemplateReference:
-                          $ref: "#/components/schemas/ItemExternalReference"
-                  required:
-                      - layoutPageTemplateId
-            # @review
-            description:
-                Represents the settings of a widget page.
-            type: object
-        WidgetPageSpecification:
-            properties:
-                externalReferenceCode:
-                    description:
-                        The page specification's external reference code, unique per site.
-                    type: string
-                settings:
-                    $ref: "#/components/schemas/Settings"
-                widgetPageSections:
-                    items:
-                        $ref: "#/components/schemas/WidgetPageSection"
-                    type: array
-            type: object
-        WidgetPageTemplate:
-            allOf:
-                - $ref: "#/components/schemas/BasePageTemplate"
-                - properties:
-                      active:
-                          # @review
-                          description:
-                              A flag that indicates whether the widget page template is active.
-                          type: boolean
-                      description_i18n:
-                          additionalProperties:
-                              type: string
-                          # @review
-                          description:
-                              The localized descriptions of the widget page template.
-                          type: object
-                      friendlyUrlPath_i18n:
-                          additionalProperties:
-                              type: string
-                          # @review
-                          description:
-                              The localized relative URLs to the page's rendered content.
-                          type: object
-                      hiddenFromNavigation:
-                          # @review
-                          description:
-                              A flag that indicates whether the page created based on this page template is hidden from
-                              navigation.
-                          type: boolean
-                      name_i18n:
-                          additionalProperties:
-                              type: string
-                          # @review
-                          description:
-                              The localized names of the widget page template.
-            # @review
-            description:
-                Represents a widget page template.
-            type: object
-        WidgetPageTemplateSettings:
-            # @review
-            description:
-                Represents the settings of a widget page template.
-            properties:
-                layoutTemplateId:
-                    # @review
-                    description:
-                        The identifier of the layout template.
-                    type: string
-                navigationMenuSettings:
-                    # @review
-                    description:
-                        The widget page template's site navigation menu settings.
-                    properties:
-                        target:
-                            # @review
-                            description:
-                                The page's description to be used as summary for search engines.
-                            type: string
-                        targetType:
-                            # @review
-                            description:
-                                The target's type (specific frame or new tab).
-                            enum: [SpecificFrame, NewTab]
-                            type: string
-                    type: object
             type: object
 info:
     description:
@@ -5325,238 +5332,6 @@ paths:
                                     $ref: "#/components/schemas/PageElement"
             # @review
             tags: ["PageElement"]
-    "/sites/{siteExternalReferenceCode}/widget-instances/{widgetInstanceExternalReferenceCode}":
-        delete:
-            description:
-                Deletes a widget instance of a specific widget page or widget page template within a site.
-            operationId: deleteSiteWidgetInstance
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: widgetInstanceExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["WidgetInstance"]
-        get:
-            description:
-                Retrieves a widget instance of a widget page or widget page template within a site.
-            operationId: getSiteWidgetInstance
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: widgetInstanceExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
-            tags: ["WidgetInstance"]
-        patch:
-            description:
-                Updates a widget instance of a widget page or widget page template within a site. Updates only the fields received in the request body, leaving any other fields untouched.
-            operationId: patchSiteWidgetInstance
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: widgetInstanceExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
-            tags: ["WidgetInstance"]
-        put:
-            description:
-                Updates a widget instance of a widget page or widget page template within a site.
-            operationId: putSiteWidgetInstance
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: widgetInstanceExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
-            tags: ["WidgetInstance"]
-    "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/widget-instances":
-        get:
-            description:
-                Retrieves all the widget instances of a widget page.
-            operationId: getSiteSitePageWidgetInstancesPage
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: sitePageExternalReferenceCode
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
-                                type: array
-            # @review
-            tags: ["SitePage"]
-        post:
-            description:
-                Adds a new widget instance to a widget page.
-            operationId: postSiteSitePageWidgetInstance
-            parameters:
-                - in: path
-                  name: siteExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: path
-                  name: sitePageExternalReferenceCode
-                  required: true
-                  schema:
-                      type: string
-                - in: query
-                  name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
-                  name: restrictFields
-                  schema:
-                      type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/WidgetPageWidgetInstance"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/WidgetPageWidgetInstance"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/WidgetPageWidgetInstance"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/WidgetPageWidgetInstance"
-                    description:
-                        default response
-            # @review
-            tags: ["SitePage"]
     "/sites/{siteExternalReferenceCode}/page-elements/{pageElementExternalReferenceCode}/page-elements":
         get:
             description:
@@ -8069,11 +7844,11 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                      $ref: "#/components/schemas/FriendlyUrlHistory"
+                                    $ref: "#/components/schemas/FriendlyUrlHistory"
                         application/xml:
                             schema:
                                 items:
-                                      $ref: "#/components/schemas/FriendlyUrlHistory"
+                                    $ref: "#/components/schemas/FriendlyUrlHistory"
             # @review
             tags: ["SitePage"]
     "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/page-specifications":
@@ -8220,3 +7995,236 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["SitePage"]
+    "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/widget-instances":
+        get:
+            description:
+                Retrieves all the widget instances of a widget page.
+            operationId: getSiteSitePageWidgetInstancesPage
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
+                                type: array
+            # @review
+            tags: ["SitePage"]
+        post:
+            description:
+                Adds a new widget instance to a widget page.
+            operationId: postSiteSitePageWidgetInstance
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: sitePageExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WidgetPageWidgetInstance"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/WidgetPageWidgetInstance"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WidgetPageWidgetInstance"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WidgetPageWidgetInstance"
+                    description:
+                        default response
+            # @review
+            tags: ["SitePage"]
+    "/sites/{siteExternalReferenceCode}/widget-instances/{widgetInstanceExternalReferenceCode}":
+        delete:
+            description:
+                Deletes a widget instance of a specific widget page or widget page template within a site.
+            operationId: deleteSiteWidgetInstance
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: widgetInstanceExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["WidgetInstance"]
+        get:
+            description:
+                Retrieves a widget instance of a widget page or widget page template within a site.
+            operationId: getSiteWidgetInstance
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: widgetInstanceExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
+            tags: ["WidgetInstance"]
+        patch:
+            description:
+                Updates a widget instance of a widget page or widget page template within a site. Updates only the
+                fields received in the request body, leaving any other fields untouched.
+            operationId: patchSiteWidgetInstance
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: widgetInstanceExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
+            tags: ["WidgetInstance"]
+        put:
+            description:
+                Updates a widget instance of a widget page or widget page template within a site.
+            operationId: putSiteWidgetInstance
+            parameters:
+                - in: path
+                  name: siteExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: path
+                  name: widgetInstanceExternalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WidgetPageWidgetInstance"
+            tags: ["WidgetInstance"]
