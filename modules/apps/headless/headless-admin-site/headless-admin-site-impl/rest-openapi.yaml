@@ -193,11 +193,6 @@ components:
                     description:
                         The client extension's external reference code.
                     type: string
-                name:
-                    description:
-                        The client extension's name.
-                    readOnly: true
-                    type: string
             type: object
         CollectionConfig:
             properties:
