@@ -607,10 +607,15 @@ components:
             description:
                 Represents a template made up of CSS, HTML, and JavaScript used to build Content Pages.
             properties:
-                collectionName:
+                collectionExternalReferenceCode:
                     # @review
                     description:
-                        The collection name this fragment belongs to.
+                        The external reference code of the collection this fragment belongs to.
+                    type: string
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The external reference code of this fragment composition.
                     type: string
                 key:
                     # @review
