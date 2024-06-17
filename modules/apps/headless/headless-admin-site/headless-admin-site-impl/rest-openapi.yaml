@@ -612,6 +612,23 @@ components:
                     description:
                         The external reference code of the collection this fragment belongs to.
                     type: string
+                configuration:
+                    additionalProperties:
+                        type: object
+                    # @review
+                    description:
+                        The fragment instance's configuration.
+                    type: object
+                css:
+                    # @review
+                    description:
+                        The fragment instance's css.
+                    type: string
+                defaultFragmentKey:
+                    # @review
+                    description:
+                        The key of the referenced fragment if it is a Default fragment.
+                    type: string
                 externalReferenceCode:
                     # @review
                     description:
@@ -656,8 +673,7 @@ components:
                 uuid:
                     # @review
                     description:
-                        The key of the site to which this fragment is scoped.
-                    readOnly: true
+                        A valid external identifier to reference this fragment instance.
                     type: string
             type: object
         FragmentComposition:
@@ -1977,7 +1993,7 @@ components:
                 customCSS:
                     # @review
                     description:
-                        Custom CSS that is applied on the fragment.
+                        Custom CSS that is applied on the fragment instance.
                     type: string
                 customCSSViewports:
                     # @review
@@ -1986,11 +2002,41 @@ components:
                     items:
                         $ref: "#/components/schemas/CustomCSSViewport"
                     type: array
-                fragment:
-                    $ref: "#/components/schemas/Fragment"
+                datePropagated:
+                    description:
+                        The fragment instance's most recent propagation date.
+                    format: date-time
+                    type: string
+                datePublished:
+                    description:
+                        The fragment instance's most recent publication date.
+                    format: date-time
+                    type: string
+                defaultFragmentKey:
                     # @review
                     description:
-                        The fragment of the page fragment instance.
+                        The key of the fragment if it is a default fragment.
+                    type: string
+                fragmentCSS:
+                    # @review
+                    description:
+                        The fragment's css at the time the fragment was added to the page or page template or last propagated.
+                    type: string
+                fragmentHtml:
+                    # @review
+                    description:
+                        The fragment's html at the time the fragment was added to the page or page template or last propagated.
+                    type: string
+                fragmentJS:
+                    # @review
+                    description:
+                        The fragment's js at the time the fragment was added to the page or page template or last propagated.
+                    type: string
+                fragmentReference:
+                    # @review
+                    description:
+                        An external reference to the fragment.
+                    $ref: "#/components/schemas/ItemExternalReference"
                 fragmentConfig:
                     additionalProperties:
                         type: object
@@ -2005,6 +2051,13 @@ components:
                     items:
                         $ref: "#/components/schemas/FragmentField"
                     type: array
+                fragmentInstanceConfigValues:
+                    additionalProperties:
+                        type: object
+                    # @review
+                    description:
+                        The page fragment instance's configuration.
+                    type: object
                 fragmentStyle:
                     $ref: "#/components/schemas/FragmentStyle"
                     # @review
@@ -2026,6 +2079,22 @@ components:
                     # @review
                     description:
                         The custom name of a Page Fragment Instance.
+                    type: string
+                namespace:
+                    # @review
+                    description:
+                        The fragment instance's namespace.
+                    type: string
+                type:
+                    # @review
+                    description:
+                        The fragment instance's type.
+                    enum: [Component, Input, React]
+                    type: string
+                uuid:
+                    # @review
+                    description:
+                        A valid external identifier to reference this fragment instance.
                     type: string
                 widgetInstances:
                     # @review
