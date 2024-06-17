@@ -957,7 +957,7 @@ components:
                     description:
                         A list of allowed fragments.
                     items:
-                        $ref: "#/components/schemas/Fragment"
+                        $ref: "#/components/schemas/ItemExternalReference"
                     type: array
             type: object
         FragmentSettingsUnallowed:
@@ -967,7 +967,7 @@ components:
             properties:
                 unallowedFragments:
                     items:
-                        $ref: "#/components/schemas/Fragment"
+                        $ref: "#/components/schemas/ItemExternalReference"
                     type: array
             type: object
         FragmentStyle:
