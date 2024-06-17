@@ -2741,6 +2741,7 @@ components:
                     # @review
                     description:
                         The external reference code of the site to which this page is scoped.
+                    readOnly: true
                     type: string
                 taxonomyCategories:
                     # @review
