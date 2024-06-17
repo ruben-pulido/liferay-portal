@@ -5686,7 +5686,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: pageExperienceExternalReferenceCode
+                  name: sitePageExternalReferenceCode
                   required: true
                   schema:
                       type: string
