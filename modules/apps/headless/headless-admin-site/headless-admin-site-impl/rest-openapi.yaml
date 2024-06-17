@@ -79,7 +79,6 @@ components:
                     description:
                         The last time the page template changed.
                     format: date-time
-                    readOnly: true
                     type: string
                 datePublished:
                     # @review
@@ -163,7 +162,6 @@ components:
                 uuid:
                     description:
                         A valid external identifier to reference this page template.
-                    readOnly: true
                     type: string
             type: object
         ClassNameReference:
@@ -540,7 +538,6 @@ components:
                     description:
                         The last time any field of the display page template was changed.
                     format: date-time
-                    readOnly: true
                     type: string
                 datePublished:
                     # @review
@@ -629,7 +626,6 @@ components:
                     description:
                         The last time any field of the display page template folder was changed.
                     format: date-time
-                    readOnly: true
                     type: string
                 description:
                     # @review
@@ -723,13 +719,11 @@ components:
                     description:
                         The structured content's creation date.
                     format: date-time
-                    readOnly: true
                     type: string
                 dateModified:
                     description:
                         The last time any field of the structured content was changed.
                     format: date-time
-                    readOnly: true
                     type: string
                 datePublished:
                     description:
@@ -1402,7 +1396,6 @@ components:
                     description:
                         The last time any field of the master page was changed.
                     format: date-time
-                    readOnly: true
                     type: string
                 datePublished:
                     # @review
@@ -2434,7 +2427,6 @@ components:
                     description:
                         The last time the page template set changed.
                     format: date-time
-                    readOnly: true
                     type: string
                 description:
                     # @review
@@ -2459,7 +2451,6 @@ components:
                 uuid:
                     description:
                         A valid external identifier to reference this page template set.
-                    readOnly: true
                     type: string
             type: object
         PageWidgetInstanceDefinition:
@@ -2717,7 +2708,6 @@ components:
                 creator:
                     # @review
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
-                    readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
@@ -2735,14 +2725,12 @@ components:
                     description:
                         The page's creation date.
                     format: date-time
-                    readOnly: true
                     type: string
                 dateModified:
                     # @review
                     description:
                         The last time any field of the page was changed.
                     format: date-time
-                    readOnly: true
                     type: string
                 datePublished:
                     # @review
@@ -2848,7 +2836,6 @@ components:
                     # @review
                     description:
                         A valid external identifier to reference this page.
-                    readOnly: true
                     type: string
                 viewableBy:
                     description:
@@ -2884,23 +2871,6 @@ components:
                     description:
                         The localized submission of page type.
             type: object
-        Status:
-            # @review
-            description:
-                Represents the status of a resource
-            properties:
-                code:
-                    # @review
-                    description:
-                        A number which identifies a specific status
-                    format: int32
-                    readOnly: true
-                    type: integer
-                label_i18n:
-                    additionalProperties:
-                        type: string
-                    readOnly: true
-                    type: object
         URLActionExecutionResult:
             # @review
             description:
@@ -2947,7 +2917,6 @@ components:
                     description:
                         The last time the utility page changed.
                     format: date-time
-                    readOnly: true
                     type: string
                 datePublished:
                     # @review
