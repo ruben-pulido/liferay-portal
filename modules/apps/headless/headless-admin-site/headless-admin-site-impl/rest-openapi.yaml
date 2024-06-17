@@ -617,17 +617,43 @@ components:
                     description:
                         The external reference code of this fragment composition.
                     type: string
-                key:
+                fragmentReference:
                     # @review
                     description:
-                        The fragment's key.
-                    type: string
-                name:
+                        An external reference to the fragment.
+                    $ref: "#/components/schemas/ItemExternalReference"
+                html:
                     # @review
                     description:
-                        The fragment's name.
+                        The fragment instance's html.
                     type: string
-                siteKey:
+                js:
+                    # @review
+                    description:
+                        The fragment's html.
+                    type: string
+                namespace:
+                    # @review
+                    description:
+                        The fragment instance's namespace.
+                    type: string
+                type:
+                    # @review
+                    description:
+                        The fragment instance's type.
+                    enum: [Component, Input, React]
+                    type: string
+                datePropagated:
+                    description:
+                        The fragment instance's most recent propagation date.
+                    format: date-time
+                    type: string
+                datePublished:
+                    description:
+                        The fragment instance's most recent publication date.
+                    format: date-time
+                    type: string
+                uuid:
                     # @review
                     description:
                         The key of the site to which this fragment is scoped.
@@ -759,22 +785,6 @@ components:
                     # @review
                     description:
                         The fragment field's background image.
-                backgroundImage:
-                    deprecated: true
-                    description:
-                        "Deprecated as of Athanasius (7.3.x), replaced by backgroundFragmentImage"
-                    properties:
-                        description:
-                            oneOf:
-                                - $ref: "#/components/schemas/FragmentInlineValue"
-                        title:
-                            oneOf:
-                                - $ref: "#/components/schemas/FragmentInlineValue"
-                        url:
-                            oneOf:
-                                - $ref: "#/components/schemas/FragmentInlineValue"
-                                - $ref: "#/components/schemas/FragmentMappedValue"
-                    type: object
             type: object
         FragmentFieldHTML:
             # @review
@@ -889,15 +899,6 @@ components:
             description:
                 Represents a fragment link.
             properties:
-                href:
-                    deprecated: true
-                    oneOf:
-                        - $ref: "#/components/schemas/FragmentInlineValue"
-                        - $ref: "#/components/schemas/FragmentMappedValue"
-                target:
-                    deprecated: true
-                    enum: [Blank, Parent, Self, Top]
-                    type: string
                 value_i18n:
                     additionalProperties:
                         $ref: "#/components/schemas/FragmentLinkValue"
@@ -1628,17 +1629,8 @@ components:
                     enum: [
                         None,
                         Numeric,
-                        # "Deprecated as of Cavanaugh (7.4.x), replaced by Numeric"
-                        Regular,
                         Simple]
                     type: string
-                showAllItems:
-                    deprecated: true
-                    # @review
-                    description:
-                        Whether to show all items when pagination is enabled. Deprecated as of Cavanaugh (7.4.x),
-                        replaced by displayAllPages
-                    type: boolean
                 templateKey:
                     # @review
                     description:
@@ -1661,33 +1653,6 @@ components:
             description:
                 Represents a definition of a Page Column.
             properties:
-                columnViewportConfig:
-                    deprecated: true
-                    description:
-                        "Deprecated as of Athanasius (7.3.x), replaced by columnViewports"
-                    properties:
-                        landscapeMobile:
-                            properties:
-                                size:
-                                    maximum: 12
-                                    minimum: 1
-                                    type: integer
-                            type: object
-                        portraitMobile:
-                            properties:
-                                size:
-                                    maximum: 12
-                                    minimum: 1
-                                    type: integer
-                            type: object
-                        tablet:
-                            properties:
-                                size:
-                                    maximum: 12
-                                    minimum: 1
-                                    type: integer
-                            type: object
-                    type: object
                 columnViewports:
                     # @review
                     description:
@@ -1708,30 +1673,11 @@ components:
             description:
                 Represents a definition of a Page section.
             properties:
-                backgroundColor:
-                    deprecated: true
-                    type: string
                 backgroundFragmentImage:
                     $ref: "#/components/schemas/FragmentImage"
                     # @review
                     description:
                         The background fragment image of the page section.
-                backgroundImage:
-                    deprecated: true
-                    description:
-                        "Deprecated as of Athanasius (7.3.x), replaced by backgroundFragmentImage"
-                    properties:
-                        description:
-                            oneOf:
-                                - $ref: "#/components/schemas/FragmentInlineValue"
-                        title:
-                            oneOf:
-                                - $ref: "#/components/schemas/FragmentInlineValue"
-                        url:
-                            oneOf:
-                                - $ref: "#/components/schemas/FragmentInlineValue"
-                                - $ref: "#/components/schemas/FragmentMappedValue"
-                    type: object
                 contentVisibility:
                     # @review
                     description:
@@ -1792,70 +1738,14 @@ components:
                     description:
                         the page section's layout.
                     properties:
-                        align:
-                            deprecated: true
-                            enum: [Baseline, Center, End, None, Start, Stretch]
-                            type: string
-                        borderColor:
-                            deprecated: true
-                            type: string
-                        borderRadius:
-                            deprecated: true
-                            enum: [Circle, Large, None, Pill, Regular]
-                            type: string
-                        borderWidth:
-                            deprecated: true
-                            type: integer
                         containerType:
                             # @review
                             description:
                                 The container's type (fixed or fluid).
                             enum: [Fixed, Fluid]
                             type: string
-                        contentDisplay:
-                            deprecated: true
-                            enum: [Block, FlexColumn, FlexRow]
-                            type: string
                         flexWrap:
                             enum: [NoWrap, Wrap, WrapReverse]
-                            type: string
-                        justify:
-                            deprecated: true
-                            enum: [Center, End, None, SpaceAround, SpaceBetween, Start]
-                            type: string
-                        marginBottom:
-                            deprecated: true
-                            type: integer
-                        marginLeft:
-                            deprecated: true
-                            type: integer
-                        marginRight:
-                            deprecated: true
-                            type: integer
-                        marginTop:
-                            deprecated: true
-                            type: integer
-                        opacity:
-                            deprecated: true
-                            type: integer
-                        paddingBottom:
-                            deprecated: true
-                            type: integer
-                        paddingHorizontal:
-                            deprecated: true
-                            type: integer
-                        paddingLeft:
-                            deprecated: true
-                            type: integer
-                        paddingRight:
-                            deprecated: true
-                            type: integer
-                        paddingTop:
-                            deprecated: true
-                            type: integer
-                        shadow:
-                            deprecated: true
-                            enum: [Default, Large, None, Regular, Small]
                             type: string
                         widthType:
                             # @review
@@ -2211,39 +2101,6 @@ components:
                     description:
                         A flag that indicates whether the page row has reverse order.
                     type: boolean
-                rowViewportConfig:
-                    deprecated: true
-                    description:
-                        "Deprecated as of Athanasius (7.3.x), replaced by rowViewports"
-                    properties:
-                        landscapeMobile:
-                            properties:
-                                modulesPerRow:
-                                    type: integer
-                                reverseOrder:
-                                    type: boolean
-                                verticalAlignment:
-                                    type: string
-                            type: object
-                        portraitMobile:
-                            properties:
-                                modulesPerRow:
-                                    type: integer
-                                reverseOrder:
-                                    type: boolean
-                                verticalAlignment:
-                                    type: string
-                            type: object
-                        tablet:
-                            properties:
-                                modulesPerRow:
-                                    type: integer
-                                reverseOrder:
-                                    type: boolean
-                                verticalAlignment:
-                                    type: string
-                            type: object
-                    type: object
                 rowViewports:
                     # @review
                     description:
