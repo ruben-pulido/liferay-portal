@@ -1484,7 +1484,7 @@ components:
                         The localized Open Graph's descriptions.
                     type: object
                 image:
-                    $ref: "#/components/schemas/ContentDocument"
+                    $ref: "#/components/schemas/ItemExternalReference"
                     # @review
                     description:
                         The Open Graph's image.
@@ -2569,7 +2569,7 @@ components:
                         The FavIcon of the page specification
                     oneOf:
                         - $ref: "#/components/schemas/ClientExtension"
-                        - $ref: "#/components/schemas/ContentDocument"
+                        - $ref: "#/components/schemas/ItemExternalReference"
                 globalCSSClientExtensions:
                     description:
                         The client extensions for global css associated to the page.
