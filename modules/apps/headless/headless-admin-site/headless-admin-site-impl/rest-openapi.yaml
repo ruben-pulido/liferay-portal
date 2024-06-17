@@ -1271,6 +1271,21 @@ components:
                 - fragmentViewportStyle
                 - id
             type: object
+        FriendlyUrlHistory:
+            # @review
+            description:
+                Represents the history of previously used URLs for a page to prevent broken links and provide an easy way to revert changes.
+            properties:
+                friendlyUrlPath_i18n:
+                    additionalProperties:
+                        items:
+                            type: string
+                        type: array
+                    # @review
+                    description:
+                        The old localized relative URLs to the page's rendered content.
+                    type: object
+            type: object
         Geo:
             description:
                 A point determined by latitude and longitude.
@@ -2701,15 +2716,11 @@ components:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
                     readOnly: true
                     type: array
-                oldFriendlyUrlPath_i18n:
-                    additionalProperties:
-                        items:
-                            type: string
-                        type: array
+                friendlyUrlHistory:
                     # @review
                     description:
-                        The old localized relative URLs to the page's rendered content. This field is not returned by default. It can be requested via nestedFields.
-                    type: object
+                        The the history of previously used URLs to the page's rendered content. This field is not returned by default. It can be requested via nestedFields.
+                    $ref: "#/components/schemas/FriendlyUrlHistory"
                 pageSettings:
                     # @review
                     description:
