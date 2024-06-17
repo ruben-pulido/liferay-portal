@@ -2708,7 +2708,7 @@ components:
                         type: array
                     # @review
                     description:
-                        The old localized relative URLs to the page's rendered content.
+                        The old localized relative URLs to the page's rendered content. This field is not returned by default. It can be requested via nestedFields.
                     type: object
                 pageSettings:
                     # @review
