@@ -53,6 +53,27 @@ components:
                     description:
                         The page's SEO settings.
             type: object
+        BasePageSpecification:
+            # @review
+            description:
+                A base page specification, containing the common properties of both a content page page specification
+                and a widget page page specification. It should only be referenced as part of an allOf clause.
+            properties:
+                externalReferenceCode:
+                    description:
+                        The page specification's external reference code, unique per site.
+                    type: string
+                settings:
+                    $ref: "#/components/schemas/Settings"
+                type:
+                    # @review
+                    description:
+                        The type of the page specification.
+                    enum:
+                        - ContentPageSpecification
+                        - WidgetPageSpecification
+                    type: string
+            type: object
         BasePageTemplate:
             # @review
             description:
@@ -340,21 +361,17 @@ components:
                 The settings of a content page.
             type: object
         ContentPageSpecification:
+            allOf:
+                - $ref: "#/components/schemas/BasePageSpecification"
+                - properties:
+                      pageExperiences:
+                          items:
+                              $ref: "#/components/schemas/PageExperience"
+                          type: array
             # @review
             description:
                 A page specification of a content page. A content page may contain 0 or 1 page specifications in draft
                 status and 0 or 1 page specifications in published status.
-            properties:
-                externalReferenceCode:
-                    description:
-                        The page specification's external reference code, unique per site.
-                    type: string
-                pageExperiences:
-                    items:
-                        $ref: "#/components/schemas/PageExperience"
-                    type: array
-                settings:
-                    $ref: "#/components/schemas/Settings"
             type: object
         ContentPageTemplate:
             allOf:
@@ -2377,6 +2394,11 @@ components:
                 A page specification of a content page, content page template, widget page, or widget page template. A
                 content page may contain 0 or 1 page specifications in draft status and 0 or 1 page specifications in
                 published status. A widget page contains only 1 page specification in published status.
+            discriminator:
+                propertyName: type
+            mapping:
+                ContentPageSpecification: "#/components/schemas/ContentPageSpecification"
+                WidgetPageSpecification: "#/components/schemas/WidgetPageSpecification"
             oneOf:
                 - $ref: "#/components/schemas/ContentPageSpecification"
                 - $ref: "#/components/schemas/WidgetPageSpecification"
@@ -3052,17 +3074,17 @@ components:
                 Represents the settings of a widget page.
             type: object
         WidgetPageSpecification:
-            properties:
-                externalReferenceCode:
-                    description:
-                        The page specification's external reference code, unique per site.
-                    type: string
-                settings:
-                    $ref: "#/components/schemas/Settings"
-                widgetPageSections:
-                    items:
-                        $ref: "#/components/schemas/WidgetPageSection"
-                    type: array
+            allOf:
+                - $ref: "#/components/schemas/BasePageSpecification"
+                - properties:
+                      widgetPageSections:
+                          items:
+                              $ref: "#/components/schemas/WidgetPageSection"
+                          type: array
+            # @review
+            description:
+                A page specification of a widget page. A widget page contains always 1 page specification in published
+                status.
             type: object
         WidgetPageTemplate:
             allOf:
