@@ -2640,6 +2640,7 @@ components:
                 creator:
                     # @review
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
