@@ -96,7 +96,7 @@ components:
                     description:
                         The page template's key.
                     type: string
-                keywordExternalReferences:
+                keywordItemExternalReferences:
                     description:
                         The external references to the associated keywords.
                     items:
@@ -147,7 +147,7 @@ components:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
                     readOnly: true
                     type: array
-                taxonomyCategoryExternalReferences:
+                taxonomyCategoryItemExternalReferences:
                     # @review
                     description:
                         The external references to the associated categories.
@@ -1377,7 +1377,7 @@ components:
                     description:
                         The master page's key.
                     type: string
-                keywordExternalReferences:
+                keywordItemExternalReferences:
                     description:
                         The external references to the associated keywords.
                     items:
@@ -1411,7 +1411,7 @@ components:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
                     readOnly: true
                     type: array
-                taxonomyCategoryExternalReferences:
+                taxonomyCategoryItemExternalReferences:
                     # @review
                     description:
                         The external references to the associated categories.
@@ -2686,7 +2686,7 @@ components:
                     description:
                         The localized relative URLs to the page's rendered content.
                     type: object
-                keywordExternalReferences:
+                keywordItemExternalReferences:
                     description:
                         The external references to the associated keywords.
                     items:
@@ -2741,7 +2741,7 @@ components:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
                     readOnly: true
                     type: array
-                taxonomyCategoryExternalReferences:
+                taxonomyCategoryItemExternalReferences:
                     # @review
                     description:
                         The external references to the associated categories.
