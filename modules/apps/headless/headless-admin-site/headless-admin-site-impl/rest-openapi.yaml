@@ -389,6 +389,9 @@ components:
             allOf:
                 - $ref: "#/components/schemas/BaseWidgetInstance"
         ContextReference:
+            # @review
+            description:
+                A reference of type context, used in collection display fragments and display page templates.
             properties:
                 contextSource:
                     enum: [CollectionItem, DisplayPageItem]
@@ -418,7 +421,7 @@ components:
         CustomField:
             # @review
             description:
-                Represents the value of each custom field. Fields can contain different information types (e.g.,
+                The value of each custom field. Fields can contain different information types (e.g.,
                 geolocation, strings, etc.).
             properties:
                 customValue:
@@ -645,12 +648,12 @@ components:
                     $ref: "#/components/schemas/OpenGraphSettings"
                     # @review
                     description:
-                        The page's Open Graph settings.
+                        The display page template's Open Graph settings.
                 seoSettings:
                     $ref: "#/components/schemas/SEOSettings"
                     # @review
                     description:
-                        The page's SEO settings.
+                        The display page template's SEO settings.
             type: object
         Fragment:
             # @review
