@@ -2382,6 +2382,11 @@ components:
                 - $ref: "#/components/schemas/WidgetPageSpecification"
             type: object
         PageTemplate:
+            discriminator:
+                propertyName: type
+            mapping:
+                ContentPageTemplate: "#/components/schemas/ContentPageTemplate"
+                WidgetPageTemplate: "#/components/schemas/WidgetPageTemplate"
             oneOf:
                 - $ref: "#/components/schemas/ContentPageTemplate"
                 - $ref: "#/components/schemas/WidgetPageTemplate"
