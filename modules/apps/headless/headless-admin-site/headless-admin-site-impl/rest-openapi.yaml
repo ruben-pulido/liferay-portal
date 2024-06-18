@@ -2064,7 +2064,8 @@ components:
                 draftPageElementExternalReferenceCode:
                     # @review
                     description:
-                        The external reference code of the corresponding page element in the draft of the page. Available only in the published page specification.
+                        The external reference code of the corresponding page element in the draft of the page.
+                        Available only in the published page specification.
                     type: string
                 fragmentCSS:
                     # @review
