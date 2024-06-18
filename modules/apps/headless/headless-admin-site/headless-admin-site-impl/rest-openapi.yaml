@@ -3700,6 +3700,7 @@ paths:
             tags: ["DisplayPageTemplateFolder"]
     "/sites/{siteExternalReferenceCode}/display-page-template-folders/{displayPageTemplateFolderExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a specific display page template folder of a site.
             operationId: deleteSiteDisplayPageTemplateFolder
@@ -3721,6 +3722,7 @@ paths:
                         application/xml: {}
             tags: ["DisplayPageTemplateFolder"]
         get:
+            # @review
             description:
                 Retrieves a specific display page template folder of a site.
             operationId: getSiteDisplayPageTemplateFolder
@@ -3760,6 +3762,7 @@ paths:
                         default response
             tags: ["DisplayPageTemplateFolder"]
         patch:
+            # @review
             description:
                 Updates only the fields received in the request body, leaving any other fields untouched.
             operationId: patchSiteDisplayPageTemplateFolder
@@ -3807,6 +3810,7 @@ paths:
                         default response
             tags: ["DisplayPageTemplateFolder"]
         put:
+            # @review
             description:
                 Updates the display page template folder with the given external reference code, or creates it if it
                 does not exist.
@@ -3856,6 +3860,7 @@ paths:
             tags: ["DisplayPageTemplateFolder"]
     "/sites/{siteExternalReferenceCode}/display-page-template-folders/{displayPageTemplateFolderExternalReferenceCode}/display-page-templates":
         get:
+            # @review
             description:
                 Retrieves all the display page templates within a display page template folder of a site page.
             operationId: getSiteDisplayPageTemplateFolderDisplayPageTemplatesPage
@@ -3902,6 +3907,7 @@ paths:
             # @review
             tags: ["DisplayPageTemplateFolder"]
         post:
+            # @review
             description:
                 Adds a new display page template in draft status to a display page template folder.
             operationId: postSiteDisplayPageTemplateFolderDisplayPageTemplate
@@ -4006,6 +4012,7 @@ paths:
             tags: ["DisplayPageTemplateFolder"]
     "/sites/{siteExternalReferenceCode}/display-page-templates":
         get:
+            # @review
             description:
                 Retrieves the display page templates of the site
             operationId: getSiteDisplayPageTemplatesPage
@@ -4068,6 +4075,7 @@ paths:
                                 type: array
             tags: ["DisplayPageTemplate"]
         post:
+            # @review
             description:
                 Adds a new display page template
             operationId: postSiteDisplayPageTemplate
@@ -4145,6 +4153,7 @@ paths:
             tags: ["DisplayPageTemplate"]
     "/sites/{siteExternalReferenceCode}/display-page-templates/{displayPageTemplateExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a specific display page template of a site.
             operationId: deleteSiteDisplayPageTemplate
@@ -4166,6 +4175,7 @@ paths:
                         application/xml: {}
             tags: ["DisplayPageTemplate"]
         get:
+            # @review
             description:
                 Retrieves a specific display page template of a site.
             operationId: getSiteDisplayPageTemplate
@@ -4205,6 +4215,7 @@ paths:
                         default response
             tags: ["DisplayPageTemplate"]
         patch:
+            # @review
             description:
                 Updates only the fields received in the request body, leaving any other fields untouched.
             operationId: patchSiteDisplayPageTemplate
@@ -4252,6 +4263,7 @@ paths:
                         default response
             tags: ["DisplayPageTemplate"]
         put:
+            # @review
             description:
                 Updates the display page template with the given external reference code, or creates it if it does not
                 exist.
@@ -4301,6 +4313,7 @@ paths:
             tags: ["DisplayPageTemplate"]
     "/sites/{siteExternalReferenceCode}/display-page-templates/{displayPageTemplateExternalReferenceCode}/page-specifications":
         post:
+            # @review
             description:
                 Adds a new page specification in draft status to a display page template.
             operationId: postSiteDisplayPageTemplatePageSpecification
@@ -4405,8 +4418,9 @@ paths:
             tags: ["DisplayPageTemplate"]
     "/sites/{siteExternalReferenceCode}/fragment-compositions":
         get:
+            # @review
             description:
-                Retrieves the fragment compositions of the site
+                Retrieves the fragment compositions of the site.
             operationId: getSiteFragmentCompositionsPage
             parameters:
                 - in: path
@@ -4461,10 +4475,11 @@ paths:
                                 type: array
             tags: ["FragmentComposition"]
         post:
+            # @review
             description:
                 Adds a new fragment composition. If the page element of the fragment composition does not contain a
-                "definition" property and contains an externalReferenceCode, the PageElement will be retrieved based on
-                the externalReferenceCode and used for creating the FragmentComposition.
+                definition property and contains an external reference code, the page element will be retrieved based on
+                the externalReferenceCode and used for creating the fragment composition.
             operationId: postSiteFragmentComposition
             parameters:
                 - in: path
@@ -4507,6 +4522,7 @@ paths:
             tags: ["FragmentComposition"]
     "/sites/{siteExternalReferenceCode}/fragment-compositions/{fragmentCompositionExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a specific fragment composition of a site.
             operationId: deleteSiteFragmentComposition
@@ -4528,6 +4544,7 @@ paths:
                         application/xml: {}
             tags: ["FragmentComposition"]
         get:
+            # @review
             description:
                 Retrieves a specific fragment composition of a site.
             operationId: getSiteFragmentComposition
@@ -4567,6 +4584,7 @@ paths:
                         default response
             tags: ["FragmentComposition"]
         patch:
+            # @review
             description:
                 Updates only the fields received in the request body, leaving any other fields untouched.
             operationId: patchSiteFragmentComposition
@@ -4614,6 +4632,7 @@ paths:
                         default response
             tags: ["FragmentComposition"]
         put:
+            # @review
             description:
                 Updates the fragment composition with the given external reference code, or creates it if it does not
                 exist.
@@ -4663,8 +4682,9 @@ paths:
             tags: ["FragmentComposition"]
     "/sites/{siteExternalReferenceCode}/master-pages":
         get:
+            # @review
             description:
-                Retrieves the master pages of the site
+                Retrieves the master pages of the site.
             operationId: getSiteMasterPagesPage
             parameters:
                 - in: path
@@ -4725,8 +4745,9 @@ paths:
                                 type: array
             tags: ["MasterPage"]
         post:
+            # @review
             description:
-                Adds a new master page
+                Adds a new master page.
             operationId: postSiteMasterPage
             parameters:
                 - in: path
@@ -4802,6 +4823,7 @@ paths:
             tags: ["MasterPage"]
     "/sites/{siteExternalReferenceCode}/master-pages/{masterPageExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a specific master page of a site.
             operationId: deleteSiteMasterPage
@@ -4823,6 +4845,7 @@ paths:
                         application/xml: {}
             tags: ["MasterPage"]
         get:
+            # @review
             description:
                 Retrieves a specific master page of a site.
             operationId: getSiteMasterPage
@@ -4862,6 +4885,7 @@ paths:
                         default response
             tags: ["MasterPage"]
         patch:
+            # @review
             description:
                 Updates only the fields received in the request body, leaving any other fields untouched.
             operationId: patchSiteMasterPage
@@ -4909,6 +4933,7 @@ paths:
                         default response
             tags: ["MasterPage"]
         put:
+            # @review
             description:
                 Updates the master page with the given external reference code, or creates it if it does not exist.
             operationId: putSiteMasterPage
@@ -4957,6 +4982,7 @@ paths:
             tags: ["MasterPage"]
     "/sites/{siteExternalReferenceCode}/master-pages/{masterPageExternalReferenceCode}/page-specifications":
         post:
+            # @review
             description:
                 Adds a new page specification in draft status to a master page.
             operationId: postSiteMasterPagePageSpecification
@@ -5061,6 +5087,7 @@ paths:
             tags: ["MasterPage"]
     "/sites/{siteExternalReferenceCode}/page-elements/{pageElementExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a page element within an experience of a specific page specification of a site page within a
                 site.
@@ -5083,8 +5110,9 @@ paths:
                         application/xml: {}
             tags: ["PageElement"]
         get:
+            # @review
             description:
-                Retrieves page element within an experience of a specific page specification of a site page within a
+                Retrieves a page element within an experience of a specific page specification of a site page within a
                 site.
             operationId: getSitePageElement
             parameters:
@@ -5124,6 +5152,7 @@ paths:
                                     $ref: "#/components/schemas/PageElement"
             tags: ["PageElement"]
         patch:
+            # @review
             description:
                 Updates a page element within an experience of a specific page specification of a site page within a
                 site. Updates only the fields received in the request body, leaving any other fields untouched.
@@ -5165,6 +5194,7 @@ paths:
                                     $ref: "#/components/schemas/PageElement"
             tags: ["PageElement"]
         put:
+            # @review
             description:
                 Updates a page element within an experience of a specific page specification of a site page within a
                 site.
@@ -5207,6 +5237,7 @@ paths:
             tags: ["PageElement"]
     "/sites/{siteExternalReferenceCode}/page-elements/{pageElementExternalReferenceCode}/fragment-compositions":
         post:
+            # @review
             description:
                 Adds a new fragment composition under a page element of an experience in a page specification of a site
                 page. If successful, the response will contain the page element in which the fragment composition is
@@ -5268,6 +5299,7 @@ paths:
             tags: ["PageElement"]
     "/sites/{siteExternalReferenceCode}/page-elements/{pageElementExternalReferenceCode}/page-elements":
         get:
+            # @review
             description:
                 Retrieves all the descendant page elements of a page element within an experience in a page
                 specification of a site page.
@@ -5316,6 +5348,7 @@ paths:
             tags: ["PageElement"]
     "/sites/{siteExternalReferenceCode}/page-experiences/{pageExperienceExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes an experience of a specific page specification of a site page within a site. The default
                 experience cannot be deleted.
@@ -5350,6 +5383,7 @@ paths:
                         application/xml: {}
             tags: ["PageExperience"]
         get:
+            # @review
             description:
                 Retrieves an experience of a specific page specification of a site page within a site.
             operationId: getSitePageExperience
@@ -5390,6 +5424,7 @@ paths:
                                     $ref: "#/components/schemas/PageExperience"
             tags: ["PageExperience"]
         patch:
+            # @review
             description:
                 Updates an experience of a specific page specification of a site page within a site. Updates only the
                 fields received in the request body, leaving any other fields untouched.
@@ -5431,6 +5466,7 @@ paths:
                                     $ref: "#/components/schemas/PageExperience"
             tags: ["PageExperience"]
         put:
+            # @review
             description:
                 Updates an experience of a specific page specification of a site page within a site.
             operationId: putSitePageExperience
@@ -5472,6 +5508,7 @@ paths:
             tags: ["PageExperience"]
     "/sites/{siteExternalReferenceCode}/page-experiences/{pageExperienceExternalReferenceCode}/page-elements":
         get:
+            # @review
             description:
                 Retrieves all the page elements within an experience in a page specification of a site page.
             operationId: getSitePageExperiencePageElementsPage
@@ -5517,6 +5554,7 @@ paths:
             # @review
             tags: ["PageExperience"]
         post:
+            # @review
             description:
                 Adds a new page element to an experience in a page specification in draft status of a site page.
             operationId: postSitePageExperiencePageElement
@@ -5566,6 +5604,7 @@ paths:
             tags: ["PageExperience"]
     "/sites/{siteExternalReferenceCode}/page-experiences/{pageExperienceExternalReferenceCode}/page-rules":
         get:
+            # @review
             description:
                 Retrieves all the page rules within an experience in a page specification of a site page.
             operationId: getSitePageExperiencePageRulesPage
@@ -5611,6 +5650,7 @@ paths:
             # @review
             tags: ["PageExperience"]
         post:
+            # @review
             description:
                 Adds a new page rule to an experience in a page specification in draft status of a site page.
             operationId: postSitePageExperiencePageRule
@@ -5659,6 +5699,7 @@ paths:
             tags: ["PageExperience"]
     "/sites/{siteExternalReferenceCode}/page-rule-actions/{pageRuleActionExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a page rule action within a page rule of an experience of a specific page specification of a
                 site page within a site.
@@ -5693,6 +5734,7 @@ paths:
                         application/xml: {}
             tags: ["PageRuleAction"]
         get:
+            # @review
             description:
                 Retrieves a page rule action within a page rule of an experience of a specific page specification of a
                 site page within a site.
@@ -5734,6 +5776,7 @@ paths:
                                     $ref: "#/components/schemas/PageRuleAction"
             tags: ["PageRuleAction"]
         patch:
+            # @review
             description:
                 Updates a page rule action within a page rule of an experience of a specific page specification of a
                 site page within a site. Updates only the fields received in the request body, leaving any other fields
@@ -5776,6 +5819,7 @@ paths:
                                     $ref: "#/components/schemas/PageRuleAction"
             tags: ["PageRuleAction"]
         put:
+            # @review
             description:
                 Updates a page rule action within a page rule of an experience of a specific page specification of a
                 site page within a site.
@@ -5818,6 +5862,7 @@ paths:
             tags: ["PageRuleAction"]
     "/sites/{siteExternalReferenceCode}/page-rule-conditions/{pageRuleConditionExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a page rule condition within a page rule of an experience of a specific page specification of a
                 site page within a site.
@@ -5852,6 +5897,7 @@ paths:
                         application/xml: {}
             tags: ["PageRuleCondition"]
         get:
+            # @review
             description:
                 Retrieves a page rule condition within a page rule of an experience of a specific page specification of
                 a site page within a site.
@@ -5893,6 +5939,7 @@ paths:
                                     $ref: "#/components/schemas/PageRuleCondition"
             tags: ["PageRuleCondition"]
         patch:
+            # @review
             description:
                 Updates a page rule condition within a page rule of an experience of a specific page specification of a
                 site page within a site. Updates only the fields received in the request body, leaving any other fields
@@ -5935,6 +5982,7 @@ paths:
                                     $ref: "#/components/schemas/PageRuleCondition"
             tags: ["PageRuleCondition"]
         put:
+            # @review
             description:
                 Updates a page rule condition within a page rule of an experience of a specific page specification of a
                 site page within a site.
@@ -5977,6 +6025,7 @@ paths:
             tags: ["PageRuleCondition"]
     "/sites/{siteExternalReferenceCode}/page-rules/{pageRuleExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a page rule within an experience of a specific page specification of a site page within a site.
             operationId: deleteSitePageRule
@@ -6010,6 +6059,7 @@ paths:
                         application/xml: {}
             tags: ["PageRule"]
         get:
+            # @review
             description:
                 Retrieves page rule within an experience of a specific page specification of a site page within a site.
             operationId: getSitePageRule
@@ -6050,6 +6100,7 @@ paths:
                                     $ref: "#/components/schemas/PageRule"
             tags: ["PageRule"]
         patch:
+            # @review
             description:
                 Updates a page rule within an experience of a specific page specification of a site page within a site.
                 Updates only the fields received in the request body, leaving any other fields untouched.
@@ -6091,6 +6142,7 @@ paths:
                                     $ref: "#/components/schemas/PageRule"
             tags: ["PageRule"]
         put:
+            # @review
             description:
                 Updates a page rule within an experience of a specific page specification of a site page within a site.
             operationId: putSitePageRule
@@ -6132,6 +6184,7 @@ paths:
             tags: ["PageRule"]
     "/sites/{siteExternalReferenceCode}/page-rules/{pageRuleExternalReferenceCode}/page-rule-actions":
         get:
+            # @review
             description:
                 Retrieves all the page rule action actions within an experience in a page specification of a site page.
             operationId: getSitePageRulePageRuleActionsPage
@@ -6178,6 +6231,7 @@ paths:
             # @review
             tags: ["PageRule"]
         post:
+            # @review
             description:
                 Adds a new page rule action to a page rule in an experience in a page specification in draft status of a
                 site page.
@@ -6227,6 +6281,7 @@ paths:
             tags: ["PageRule"]
     "/sites/{siteExternalReferenceCode}/page-rules/{pageRuleExternalReferenceCode}/page-rule-conditions":
         get:
+            # @review
             description:
                 Retrieves all the page rule condition conditions within an experience in a page specification of a site
                 page.
@@ -6274,6 +6329,7 @@ paths:
             # @review
             tags: ["PageRule"]
         post:
+            # @review
             description:
                 Adds a new page rule condition to a page rule in an experience in a page specification in draft status
                 of a site page.
@@ -6323,6 +6379,7 @@ paths:
             tags: ["PageRule"]
     "/sites/{siteExternalReferenceCode}/page-specifications/{pageSpecificationExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a page specification of a site page.
             operationId: deleteSitePageSpecification
@@ -6356,6 +6413,7 @@ paths:
                         application/xml: {}
             tags: ["PageSpecification"]
         get:
+            # @review
             description:
                 Retrieves a page specification of a site page.
             operationId: getSitePageSpecification
@@ -6396,6 +6454,7 @@ paths:
                                     $ref: "#/components/schemas/PageSpecification"
             tags: ["PageSpecification"]
         patch:
+            # @review
             description:
                 Updates a page specification of a site page. Updates only the fields received in the request body,
                 leaving any other fields untouched.
@@ -6437,6 +6496,7 @@ paths:
                                     $ref: "#/components/schemas/PageSpecification"
             tags: ["PageSpecification"]
         put:
+            # @review
             description:
                 Updates a page specification of a site page.
             operationId: putSitePageSpecification
@@ -6478,6 +6538,7 @@ paths:
             tags: ["PageSpecification"]
     "/sites/{siteExternalReferenceCode}/page-specifications/{pageSpecificationExternalReferenceCode}/page-experiences":
         get:
+            # @review
             description:
                 Retrieves all the experiences of a page specification.
             operationId: getSitePageSpecificationPageExperiencesPage
@@ -6520,6 +6581,7 @@ paths:
             # @review
             tags: ["PageSpecification"]
         post:
+            # @review
             description:
                 Adds a new experience to a page specification of a site page.
             operationId: postSitePageSpecificationPageExperience
@@ -6569,6 +6631,7 @@ paths:
             tags: ["PageSpecification"]
     "/sites/{siteExternalReferenceCode}/page-specifications/{pageSpecificationExternalReferenceCode}/publish":
         post:
+            # @review
             description:
                 Publishes a page specification in draft status of a site page.
             operationId: postSitePageSpecificationPublish
@@ -6610,6 +6673,7 @@ paths:
             tags: ["PageSpecification"]
     "/sites/{siteExternalReferenceCode}/page-template-sets":
         get:
+            # @review
             description:
                 Retrieves the page template sets of the site
             operationId: getSitePageTemplateSetsPage
@@ -6672,6 +6736,7 @@ paths:
                                 type: array
             tags: ["PageTemplateSet"]
         post:
+            # @review
             description:
                 Adds a new page template set
             operationId: postSitePageTemplateSet
@@ -6749,6 +6814,7 @@ paths:
             tags: ["PageTemplateSet"]
     "/sites/{siteExternalReferenceCode}/page-template-sets/{pageTemplateSetExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a specific page template set of a site.
             operationId: deleteSitePageTemplateSet
@@ -6770,6 +6836,7 @@ paths:
                         application/xml: {}
             tags: ["PageTemplateSet"]
         get:
+            # @review
             description:
                 Retrieves a specific page template set of a site.
             operationId: getSitePageTemplateSet
@@ -6809,6 +6876,7 @@ paths:
                         default response
             tags: ["PageTemplateSet"]
         patch:
+            # @review
             description:
                 Updates only the fields received in the request body, leaving any other fields untouched.
             operationId: patchSitePageTemplateSet
@@ -6856,6 +6924,7 @@ paths:
                         default response
             tags: ["PageTemplateSet"]
         put:
+            # @review
             description:
                 Updates the page template set with the given external reference code, or creates it if it does not
                 exist.
@@ -6905,6 +6974,7 @@ paths:
             tags: ["PageTemplateSet"]
     "/sites/{siteExternalReferenceCode}/page-template-sets/{pageTemplateSetExternalReferenceCode}/page-templates":
         get:
+            # @review
             description:
                 Retrieves all the page templates within a page template set of a site page.
             operationId: getSitePageTemplateSetPageTemplatesPage
@@ -6951,6 +7021,7 @@ paths:
             # @review
             tags: ["PageTemplateSet"]
         post:
+            # @review
             description:
                 Adds a new page template in draft status to a page template set.
             operationId: postSitePageTemplateSetPageTemplate
@@ -7055,6 +7126,7 @@ paths:
             tags: ["PageTemplateSet"]
     "/sites/{siteExternalReferenceCode}/page-templates":
         get:
+            # @review
             description:
                 Retrieves the page templates of the site
             operationId: getSitePageTemplatesPage
@@ -7117,6 +7189,7 @@ paths:
                                 type: array
             tags: ["PageTemplate"]
         post:
+            # @review
             description:
                 Adds a new page template
             operationId: postSitePageTemplate
@@ -7194,6 +7267,7 @@ paths:
             tags: ["PageTemplate"]
     "/sites/{siteExternalReferenceCode}/page-templates/{pageTemplateExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a specific page template of a site.
             operationId: deleteSitePageTemplate
@@ -7215,6 +7289,7 @@ paths:
                         application/xml: {}
             tags: ["PageTemplate"]
         get:
+            # @review
             description:
                 Retrieves a specific page template of a site.
             operationId: getSitePageTemplate
@@ -7254,6 +7329,7 @@ paths:
                         default response
             tags: ["PageTemplate"]
         patch:
+            # @review
             description:
                 Updates only the fields received in the request body, leaving any other fields untouched.
             operationId: patchSitePageTemplate
@@ -7301,6 +7377,7 @@ paths:
                         default response
             tags: ["PageTemplate"]
         put:
+            # @review
             description:
                 Updates the page template with the given external reference code, or creates it if it does not exist.
             operationId: putSitePageTemplate
@@ -7349,6 +7426,7 @@ paths:
             tags: ["PageTemplate"]
     "/sites/{siteExternalReferenceCode}/page-templates/{pageTemplateExternalReferenceCode}/page-specifications":
         post:
+            # @review
             description:
                 Adds a new page specification in draft status to a page template.
             operationId: postSitePageTemplatePageSpecification
@@ -7453,6 +7531,7 @@ paths:
             tags: ["PageTemplate"]
     "/sites/{siteExternalReferenceCode}/site-pages":
         get:
+            # @review
             description:
                 Retrieves the public pages of the site
             operationId: getSiteSitePagesPage
@@ -7515,6 +7594,7 @@ paths:
                                 type: array
             tags: ["SitePage"]
         post:
+            # @review
             description:
                 Adds a new site page
             operationId: postSiteSitePage
@@ -7592,6 +7672,7 @@ paths:
             tags: ["SitePage"]
     "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a specific public page of a site.
             operationId: deleteSiteSitePage
@@ -7613,6 +7694,7 @@ paths:
                         application/xml: {}
             tags: ["SitePage"]
         get:
+            # @review
             description:
                 Retrieves a specific public page of a site.
             operationId: getSiteSitePage
@@ -7652,6 +7734,7 @@ paths:
                         default response
             tags: ["SitePage"]
         patch:
+            # @review
             description:
                 Updates only the fields received in the request body, leaving any other fields untouched.
             operationId: patchSiteSitePage
@@ -7699,6 +7782,7 @@ paths:
                         default response
             tags: ["SitePage"]
         put:
+            # @review
             description:
                 Updates the site page with the given external reference code, or creates it if it does not exist.
             operationId: putSiteSitePage
@@ -7747,6 +7831,7 @@ paths:
             tags: ["SitePage"]
     "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/friendly-url-history":
         get:
+            # @review
             description:
                 Retrieves the history of previously used URLs for a page.
             operationId: getSiteSitePageFriendlyUrlHistory
@@ -7787,6 +7872,7 @@ paths:
             tags: ["SitePage"]
     "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/page-specifications":
         get:
+            # @review
             description:
                 Retrieves all the page specifications of a site page.
             operationId: getSiteSitePagePageSpecificationsPage
@@ -7828,6 +7914,7 @@ paths:
             # @review
             tags: ["SitePage"]
         post:
+            # @review
             description:
                 Adds a new page specification to a site page.
             operationId: postSiteSitePagePageSpecification
@@ -7931,6 +8018,7 @@ paths:
             tags: ["SitePage"]
     "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/widget-instances":
         get:
+            # @review
             description:
                 Retrieves all the widget instances of a widget page.
             operationId: getSiteSitePageWidgetInstancesPage
@@ -7972,6 +8060,7 @@ paths:
             # @review
             tags: ["SitePage"]
         post:
+            # @review
             description:
                 Adds a new widget instance to a widget page.
             operationId: postSiteSitePageWidgetInstance
@@ -8021,6 +8110,7 @@ paths:
             tags: ["SitePage"]
     "/sites/{siteExternalReferenceCode}/widget-instances/{widgetInstanceExternalReferenceCode}":
         delete:
+            # @review
             description:
                 Deletes a widget instance of a specific widget page or widget page template within a site.
             operationId: deleteSiteWidgetInstance
@@ -8042,6 +8132,7 @@ paths:
                         application/xml: {}
             tags: ["WidgetInstance"]
         get:
+            # @review
             description:
                 Retrieves a widget instance of a widget page or widget page template within a site.
             operationId: getSiteWidgetInstance
@@ -8082,6 +8173,7 @@ paths:
                                     $ref: "#/components/schemas/WidgetPageWidgetInstance"
             tags: ["WidgetInstance"]
         patch:
+            # @review
             description:
                 Updates a widget instance of a widget page or widget page template within a site. Updates only the
                 fields received in the request body, leaving any other fields untouched.
@@ -8123,6 +8215,7 @@ paths:
                                     $ref: "#/components/schemas/WidgetPageWidgetInstance"
             tags: ["WidgetInstance"]
         put:
+            # @review
             description:
                 Updates a widget instance of a widget page or widget page template within a site.
             operationId: putSiteWidgetInstance
