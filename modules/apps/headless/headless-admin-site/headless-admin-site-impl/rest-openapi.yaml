@@ -402,7 +402,7 @@ components:
         CustomCSSViewport:
             # @review
             description:
-                Represents a custom CSS viewport.
+                A custom CSS viewport.
             properties:
                 customCSS:
                     # @review
@@ -440,7 +440,7 @@ components:
         CustomMetaTag:
             # @review
             description:
-                Represents a custom meta tag.
+                A custom meta tag.
             properties:
                 key:
                     # @review
@@ -458,7 +458,7 @@ components:
         CustomValue:
             # @review
             description:
-                Represents a custom value.
+                A custom value.
             properties:
                 data_i18n:
                     additionalProperties:
@@ -486,7 +486,7 @@ components:
         DisplayPageActionExecutionResult:
             # @review
             description:
-                Represents a definition of an action execution of type display page.
+                The definition of an action execution of type display page.
             properties:
                 mapping:
                     # @review
@@ -503,7 +503,7 @@ components:
         DisplayPageTemplate:
             # @review
             description:
-                Represents a Display Page template.
+                A display page template.
             properties:
                 contentTypeReference:
                     $ref: "#/components/schemas/ClassSubtypeReference"
@@ -598,7 +598,7 @@ components:
         DisplayPageTemplateFolder:
             # @review
             description:
-                Represents a Display Page template folder.
+                A display page template folder.
             properties:
                 creator:
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
@@ -737,7 +737,7 @@ components:
         FragmentField:
             # @review
             description:
-                Represents a fragment field.
+                A fragment field.
             properties:
                 id:
                     # @review
@@ -758,7 +758,7 @@ components:
         FragmentFieldAction:
             # @review
             description:
-                Represents a fragment field with an action.
+                A fragment field with an action.
             properties:
                 action:
                     # @review
@@ -787,7 +787,7 @@ components:
         FragmentFieldBackgroundImage:
             # @review
             description:
-                Represents a fragment field with a background image.
+                A fragment field with a background image.
             properties:
                 backgroundFragmentImage:
                     $ref: "#/components/schemas/FragmentImage"
@@ -798,7 +798,7 @@ components:
         FragmentFieldHTML:
             # @review
             description:
-                Represents a fragment field with HTML.
+                A fragment field with HTML.
             properties:
                 html:
                     # @review
@@ -811,7 +811,7 @@ components:
         FragmentFieldImage:
             # @review
             description:
-                Represents a fragment field with an image.
+                A fragment field with an image.
             properties:
                 fragmentImage:
                     $ref: "#/components/schemas/FragmentImage"
@@ -827,7 +827,7 @@ components:
         FragmentFieldText:
             # @review
             description:
-                Represents a fragment field with text.
+                A fragment field with text.
             properties:
                 fragmentLink:
                     $ref: "#/components/schemas/FragmentLink"
@@ -845,7 +845,7 @@ components:
         FragmentImage:
             # @review
             description:
-                Represents a fragment image.
+                A fragment image.
             properties:
                 config:
                     # @review
@@ -893,7 +893,7 @@ components:
         FragmentInlineValue:
             # @review
             description:
-                Represents a fragment inline value.
+                A fragment inline value.
             properties:
                 value_i18n:
                     additionalProperties:
@@ -906,7 +906,7 @@ components:
         FragmentLink:
             # @review
             description:
-                Represents a fragment link.
+                A fragment link.
             properties:
                 value_i18n:
                     additionalProperties:
@@ -918,12 +918,13 @@ components:
         FragmentLinkValue:
             # @review
             description:
-                Represents a fragment link value.
+                A fragment link value.
             properties:
                 href:
                     # @review
                     description:
-                        The fragment link value's hypertext reference. Can be inline or mapped to an external value.
+                        The fragment link value's hypertext reference. Can be an inline value or mapped to an external
+                        value.
                     oneOf:
                         - $ref: "#/components/schemas/FragmentInlineValue"
                         - $ref: "#/components/schemas/FragmentMappedValue"
@@ -936,7 +937,7 @@ components:
         FragmentMappedValue:
             # @review
             description:
-                Represents a fragment mapped value.
+                A fragment mapped value.
             properties:
                 mapping:
                     # @review
@@ -960,7 +961,7 @@ components:
         FragmentSettingsAllowed:
             # @review
             description:
-                Represents the settings of allowed fragments in a page dropzone.
+                Represents the settings of allowed fragments in a page drop zone.
             properties:
                 allowedFragments:
                     # @review
@@ -973,7 +974,7 @@ components:
         FragmentSettingsUnallowed:
             # @review
             description:
-                Represents the settings of unallowed fragments in a page dropzone.
+                Represents the settings of unallowed fragments in a page drop zone.
             properties:
                 unallowedFragments:
                     items:
@@ -1008,20 +1009,19 @@ components:
                 js:
                     # @review
                     description:
-                        The fragment's js at the time the fragment wwas added or propagated to the page or page
-                        template.
+                        The fragment's js at the time the fragment was added or propagated to the page or page template.
                     type: string
                 type:
                     # @review
                     description:
-                        The fragment instance's type.
+                        The fragment's type.
                     enum: [Component, Input, React]
                     type: string
             type: object
         FragmentStyle:
             # @review
             description:
-                Represents a fragment style.
+                A fragment style.
             properties:
                 backgroundColor:
                     # @review
@@ -1167,7 +1167,7 @@ components:
         FragmentViewport:
             # @review
             description:
-                Represents a fragment viewport.
+                A fragment viewport.
             properties:
                 fragmentViewportStyle:
                     # @review
@@ -1376,7 +1376,7 @@ components:
         MasterPage:
             # @review
             description:
-                Represents a page with common elements (header, footer, ...) used for all or several pages of a site.
+                A page with common elements (header, footer, ...) used for all or several pages of a site.
             properties:
                 creator:
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
@@ -1474,7 +1474,7 @@ components:
         MessageFormSubmissionResult:
             # @review
             description:
-                Represents a definition of a submission result of type message.
+                The definition of a submission result of type message.
             properties:
                 message:
                     $ref: "#/components/schemas/FragmentInlineValue"
@@ -1515,7 +1515,7 @@ components:
         NoneActionExecutionResult:
             # @review
             description:
-                Represents a definition of an action execution result of type none.
+                The definition of an action execution result of type none.
             properties:
                 reload:
                     # @review
@@ -1526,7 +1526,7 @@ components:
         NotificationActionExecutionResult:
             # @review
             description:
-                Represents a definition of an action execution result of type notification.
+                The definition of an action execution result of type notification.
             properties:
                 reload:
                     # @review
@@ -1574,7 +1574,7 @@ components:
         PageCollectionDefinition:
             # @review
             description:
-                Represents a definition of a Page Collection.
+                The definition of a Page Collection.
             properties:
                 collectionConfig:
                     $ref: "#/components/schemas/CollectionConfig"
@@ -1692,7 +1692,7 @@ components:
         PageCollectionItemDefinition:
             # @review
             description:
-                Represents a definition of a Page Collection Item.
+                The definition of a Page Collection Item.
             properties:
                 collectionItemConfig:
                     # @review
@@ -1703,7 +1703,7 @@ components:
         PageColumnDefinition:
             # @review
             description:
-                Represents a definition of a Page Column.
+                The definition of a Page Column.
             properties:
                 columnViewports:
                     # @review
@@ -1723,7 +1723,7 @@ components:
         PageContainerDefinition:
             # @review
             description:
-                Represents a definition of a Page section.
+                The definition of a Page section.
             properties:
                 backgroundFragmentImage:
                     $ref: "#/components/schemas/FragmentImage"
@@ -1857,7 +1857,7 @@ components:
         PageElement:
             # @review
             description:
-                Represents a Page element.
+                A page element.
             properties:
                 definition:
                     # @review
@@ -1907,7 +1907,7 @@ components:
         PageExperience:
             description:
                 # @review
-                Represents a customized experience for a given page specification.
+                A customized experience for a given page specification.
             properties:
                 externalReferenceCode:
                     description:
@@ -1916,20 +1916,26 @@ components:
                 key:
                     # @review
                     description:
-                        the experience's key.
+                        The experience's key.
                     type: string
                 name_i18n:
                     additionalProperties:
                         type: string
                     # @review
                     description:
-                        the localized experience's names.
+                        The localized experience's names.
                     type: object
                 pageElements:
+                    # @review
+                    description:
+                        The page elements in the experience.
                     items:
                         $ref: "#/components/schemas/PageElement"
                     type: array
                 pageRules:
+                    # @review
+                    description:
+                        The page rules in the experience.
                     items:
                         $ref: "#/components/schemas/PageRule"
                     type: array
@@ -1951,24 +1957,24 @@ components:
         PageFormDefinition:
             # @review
             description:
-                Represent a definition of a Page form.
+                The definition of a page form.
             properties:
                 cssClasses:
                     # @review
                     description:
-                        A list of CSS Classes that are applied to the element.
+                        A list of CSS classes that are applied to the page element.
                     items:
                         type: string
                     type: array
                 customCSS:
                     # @review
                     description:
-                        Custom CSS that is applied on the fragment.
+                        Custom CSS that is applied on the page element.
                     type: string
                 customCSSViewports:
                     # @review
                     description:
-                        The custom CSS viewports of the page collection.
+                        The custom CSS viewports of the page form.
                     items:
                         $ref: "#/components/schemas/CustomCSSViewport"
                     type: array
@@ -1998,11 +2004,11 @@ components:
                     $ref: "#/components/schemas/FragmentStyle"
                     # @review
                     description:
-                        The fragment style of a Page form.
+                        The fragment style of a page form.
                 fragmentViewports:
                     # @review
                     description:
-                        A list of fragment viewports of a Page form.
+                        A list of fragment viewports of a page form.
                     items:
                         $ref: "#/components/schemas/FragmentViewport"
                     type: array
@@ -2014,7 +2020,7 @@ components:
                 layout:
                     # @review
                     description:
-                        the page section's layout.
+                        The page section's layout.
                     properties:
                         align:
                             enum: [Baseline, Center, End, None, Start, Stretch]
@@ -2038,41 +2044,41 @@ components:
                 name:
                     # @review
                     description:
-                        The custom name of of a Page form.
+                        The custom name of of a page form.
                     type: string
             type: object
         PageFragmentCompositionInstanceDefinition:
             # @review
             description:
-                Represents a definition of a Page Fragment Composition Instance.
+                The definition of a page fragment composition instance.
             properties:
                 fragmentComposition:
                     $ref: "#/components/schemas/ItemExternalReference"
                     # @review
                     description:
-                        The reference to the fragment composition that will be used to generate the PageElement of type
-                        Section that will be added.
+                        The reference to the fragment composition that will be used to generate the page elment of type
+                        section that will be added.
             type: object
         PageFragmentDropZoneDefinition:
             # @review
             description:
-                Represents a definition of a Page Fragment DropZone.
+                The definition of a page fragment drop zone.
             properties:
                 fragmentDropZoneId:
                     # @review
                     description:
-                        The id of the fragment dropzone
+                        The id of the fragment drop zone
                     type: string
             type: object
         PageFragmentInstanceDefinition:
             # @review
             description:
-                Represents a definition of a Page Fragment Instance.
+                A definition of a page fragment instance.
             properties:
                 cssClasses:
                     # @review
                     description:
-                        A list of CSS Classes that are applied to the element.
+                        A list of CSS classes that are applied to the fragment instance.
                     items:
                         type: string
                     type: array
@@ -2084,7 +2090,7 @@ components:
                 customCSSViewports:
                     # @review
                     description:
-                        The custom CSS viewports of the page collection.
+                        The custom CSS viewports of the fragment instance.
                     items:
                         $ref: "#/components/schemas/CustomCSSViewport"
                     type: array
@@ -2150,7 +2156,7 @@ components:
                 name:
                     # @review
                     description:
-                        The custom name of a Page Fragment Instance.
+                        The custom name of a fragment instance.
                     type: string
                 namespace:
                     # @review
@@ -2165,7 +2171,7 @@ components:
                 widgetInstances:
                     # @review
                     description:
-                        A list of widget instances of the page fragment instance.
+                        A list of widget instances within the fragment instance.
                     items:
                         $ref: "#/components/schemas/WidgetInstance"
                     type: array
@@ -2173,24 +2179,24 @@ components:
         PageRowDefinition:
             # @review
             description:
-                Represents a definition of a Page row.
+                The definition of a page row.
             properties:
                 cssClasses:
                     # @review
                     description:
-                        A list of CSS Classes that are applied to the element.
+                        A list of CSS classes that are applied to the page row.
                     items:
                         type: string
                     type: array
                 customCSS:
                     # @review
                     description:
-                        Custom CSS that is applied on the fragment.
+                        Custom CSS that is applied on the page row.
                     type: string
                 customCSSViewports:
                     # @review
                     description:
-                        The custom CSS viewports of the page collection.
+                        The custom CSS viewports of the page row.
                     items:
                         $ref: "#/components/schemas/CustomCSSViewport"
                     type: array
@@ -2198,11 +2204,11 @@ components:
                     $ref: "#/components/schemas/FragmentStyle"
                     # @review
                     description:
-                        The fragment style of a Page row.
+                        The fragment style of the page row.
                 fragmentViewports:
                     # @review
                     description:
-                        A list of fragment viewports of a Page row.
+                        A list of fragment viewports of a page row.
                     items:
                         $ref: "#/components/schemas/FragmentViewport"
                     type: array
@@ -2224,7 +2230,7 @@ components:
                 name:
                     # @review
                     description:
-                        The custom name of a Page row.
+                        The custom name of a page row.
                     type: string
                 numberOfColumns:
                     # @review
@@ -2252,7 +2258,7 @@ components:
         PageRule:
             # @review
             description:
-                Represents a definition of a Page Rule.
+                The definition of a page rule.
             properties:
                 conditionType:
                     # @review
@@ -2268,19 +2274,19 @@ components:
                 name:
                     # @review
                     description:
-                        The custom name of a Page rule.
+                        The custom name of a page rule.
                     type: string
                 pageRuleActions:
                     # @review
                     description:
-                        A list of actions of a Page rule.
+                        A list of actions of a page rule.
                     items:
                         $ref: "#/components/schemas/PageRuleAction"
                     type: array
                 pageRuleConditions:
                     # @review
                     description:
-                        A list of conditions of a Page rule.
+                        A list of conditions of a page rule.
                     items:
                         $ref: "#/components/schemas/PageRuleCondition"
                     type: array
@@ -2288,7 +2294,7 @@ components:
         PageRuleAction:
             # @review
             description:
-                Represents a definition of a Page Rule Action.
+                The definition of a page rule action.
             properties:
                 action:
                     # @review
@@ -2303,7 +2309,7 @@ components:
                 itemId:
                     # @review
                     description:
-                        The page rule condition's item ID.
+                        The page rule action's item ID.
                     type: string
                 type:
                     # @review
@@ -2314,7 +2320,7 @@ components:
         PageRuleCondition:
             # @review
             description:
-                Represents a definition of a Page Rule Condition.
+                The definition of a Page Rule Condition.
             properties:
                 condition:
                     # @review
@@ -2365,7 +2371,7 @@ components:
         PageTemplateSet:
             # @review
             description:
-                Represents a Page template set.
+                A page template set.
             properties:
                 creator:
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
@@ -2377,7 +2383,7 @@ components:
                 creatorExternalReferenceCode:
                     # @review
                     description:
-                        The page's creator external reference code.
+                        The page template set's creator external reference code.
                     type: string
                 dateCreated:
                     # @review
@@ -2404,7 +2410,7 @@ components:
                 key:
                     # @review
                     description:
-                        The display page template set's key.
+                        The page template set's key.
                     type: string
                 name:
                     # @review
@@ -2419,12 +2425,12 @@ components:
         PageWidgetInstanceDefinition:
             # @review
             description:
-                Represents a definition of a Page Widget instance.
+                The definition of a page widget instance.
             properties:
                 cssClasses:
                     # @review
                     description:
-                        A list of CSS Classes that are applied to the element.
+                        A list of CSS classes that are applied to the element.
                     items:
                         type: string
                     type: array
@@ -2455,7 +2461,7 @@ components:
                 name:
                     # @review
                     description:
-                        The custom name of a Page Widget instance.
+                        The custom name of a page widget instance.
                     type: string
                 widgetInstance:
                     $ref: "#/components/schemas/ContentPageWidgetInstance"
@@ -2466,7 +2472,7 @@ components:
         RowViewport:
             # @review
             description:
-                Represents a row viewport.
+                A row viewport.
             properties:
                 id:
                     # @review
@@ -2501,7 +2507,7 @@ components:
         SEOSettings:
             # @review
             description:
-                Represents settings related with SEO.
+                Settings related with SEO.
             properties:
                 customCanonicalURL_i18n:
                     additionalProperties:
@@ -2591,19 +2597,19 @@ components:
                 favIcon:
                     # @review
                     description:
-                        The FavIcon of the page specification
+                        The FavIcon of the page specification.
                     oneOf:
                         - $ref: "#/components/schemas/ClientExtension"
                         - $ref: "#/components/schemas/ItemExternalReference"
                 globalCSSClientExtensions:
                     description:
-                        The client extensions for global css associated to the page.
+                        The client extensions for global CSS associated to the page.
                     items:
                         $ref: "#/components/schemas/ClientExtension"
                     type: array
                 globalJSClientExtensions:
                     description:
-                        The client extensions for global js associated to the page.
+                        The client extensions for global JS associated to the page.
                     items:
                         $ref: "#/components/schemas/ClientExtension"
                     type: array
@@ -2621,24 +2627,24 @@ components:
                 styleBook:
                     # @review
                     description:
-                        The StyleBook that is applied to the page specification.
+                        The style book that is applied to the page specification.
                     properties:
                         key:
                             # @review
                             description:
-                                The stylebook's key.
+                                The style book's key.
                             type: string
                         name:
                             # @review
                             description:
-                                The stylebook's name.
+                                The style book's name.
                             type: string
                     type: object
                 themeCSSClientExtension:
                     $ref: "#/components/schemas/ClientExtension"
                     # @review
                     description:
-                        The Client Extension for the theme css of a page specification.
+                        The client extension for the theme CSS of a page specification.
                 themeName:
                     # @review
                     description:
@@ -2653,12 +2659,12 @@ components:
                     $ref: "#/components/schemas/ClientExtension"
                     # @review
                     description:
-                        The Client Extension for the theme spritemap of a page specification.
+                        The client extension for the theme spritemap of a page specification.
             type: object
         SitePage:
             # @review
             description:
-                Represents a site page, which can be of type content or widget.
+                A page on a site, which can be of type content or widget.
             properties:
                 availableLanguages:
                     # @review
@@ -2712,8 +2718,8 @@ components:
                     $ref: "#/components/schemas/FriendlyUrlHistory"
                     # @review
                     description:
-                        The the history of previously used URLs to the page's rendered content. This field is not
-                        returned by default. It can be requested via nestedFields.
+                        The history of previously used URLs to the page's rendered content. This field is not returned
+                        by default. It can be requested via nestedFields.
                 friendlyUrlPath_i18n:
                     additionalProperties:
                         type: string
@@ -2818,7 +2824,7 @@ components:
         SitePageActionExecutionResult:
             # @review
             description:
-                Represents a definition of an action execution of type page.
+                The definition of an action execution of type page.
             properties:
                 itemReference:
                     $ref: "#/components/schemas/ItemExternalReference"
@@ -2829,7 +2835,7 @@ components:
         SitePageFormSubmissionResult:
             # @review
             description:
-                Represents a definition of a submission result of type page.
+                The definition of a submission result of type page.
             properties:
                 itemReference:
                     $ref: "#/components/schemas/ItemExternalReference"
@@ -2840,7 +2846,7 @@ components:
         URLActionExecutionResult:
             # @review
             description:
-                Represents a definition of an action execution result of type URL.
+                The definition of an action execution result of type URL.
             properties:
                 url:
                     $ref: "#/components/schemas/FragmentInlineValue"
@@ -2851,7 +2857,7 @@ components:
         URLFormSubmissionResult:
             # @review
             description:
-                Represents a definition of a submission result of type URL.
+                The definition of a submission result of type URL.
             properties:
                 url:
                     $ref: "#/components/schemas/FragmentInlineValue"
@@ -2861,7 +2867,7 @@ components:
             type: object
         UtilityPage:
             description:
-                Represents a Utility Page.
+                The definition of a Utility Page.
             properties:
                 creator:
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
@@ -2872,7 +2878,7 @@ components:
                 creatorExternalReferenceCode:
                     # @review
                     description:
-                        The page's creator external reference code.
+                        The utility page's creator external reference code.
                     type: string
                 dateCreated:
                     # @review
@@ -2900,12 +2906,12 @@ components:
                 externalReferenceCode:
                     # @review
                     description:
-                        The utility page external reference code.
+                        The utility page's external reference code.
                     type: string
                 name:
                     # @review
                     description:
-                        The utility page name.
+                        The utility page's name.
                     type: string
                 pageSpecifications:
                     # @review
@@ -2923,14 +2929,14 @@ components:
                 type:
                     # @review
                     description:
-                        The utility page type.
+                        The utility page's type.
                     enum: [CookiePolicy, CreateAccount, Error, ErrorCode404, ErrorCode500, ForgotPassword, Login, TermsOfUse]
                     type: string
                 utilityPageSettings:
                     $ref: "#/components/schemas/UtilityPageSettings"
                     # @review
                     description:
-                        Settings of the utility page, such as SEO.
+                        Settings of the utility page.
                 uuid:
                     description:
                         A valid external identifier to reference this utility page.
@@ -2939,7 +2945,7 @@ components:
         UtilityPageSEOSettings:
             # @review
             description:
-                Represents settings related with SEO of an utility page.
+                Settings related with SEO of an utility page.
             properties:
                 description_i18n:
                     additionalProperties:
@@ -2959,7 +2965,7 @@ components:
         UtilityPageSettings:
             # @review
             description:
-                Represents the settings of an utility page.
+                The settings of an utility page.
             properties:
                 seoSettings:
                     $ref: "#/components/schemas/UtilityPageSEOSettings"
@@ -2970,7 +2976,7 @@ components:
         WidgetPageSection:
             # @review
             description:
-                Represents a widget page section.
+                A widget page section.
             properties:
                 customizable:
                     # @review
@@ -2984,7 +2990,7 @@ components:
                 widgetInstances:
                     # @review
                     description:
-                        A list of the page elements this page element has.
+                        A list of the widget instances within this page section.
                     items:
                         $ref: "#/components/schemas/WidgetPageWidgetInstance"
                     type: array
@@ -2995,24 +3001,24 @@ components:
                       customizable:
                           # @review
                           description:
-                              A flag that indicates whether the page is customizable.
+                              A flag that indicates whether the widget page is customizable.
                           type: boolean
                       customizableSectionIds:
                           # @review
                           description:
-                              The ids of the customizable sections.
+                              The IDs of the customizable sections.
                           items:
                               type: string
                           type: array
                       inheritChanges:
                           # @review
                           description:
-                              Whether this widget page will inherit changes made to the associated widget page template
+                              Whether this widget page will inherit changes made to the associated widget page template.
                           type: boolean
                       layoutTemplateId:
                           # @review
                           description:
-                              The identifier of the layout template.
+                              The ID of the layout template.
                           type: string
                       widgetPageTemplateReference:
                           $ref: "#/components/schemas/ItemExternalReference"
@@ -3020,12 +3026,15 @@ components:
                       - layoutPageTemplateId
             # @review
             description:
-                Represents the settings of a widget page.
+                The settings of a widget page.
             type: object
         WidgetPageSpecification:
             allOf:
                 - $ref: "#/components/schemas/BasePageSpecification"
                 - properties:
+                      # @review
+                      description:
+                          The sections of a widget page.
                       widgetPageSections:
                           items:
                               $ref: "#/components/schemas/WidgetPageSection"
@@ -3072,12 +3081,12 @@ components:
                               The localized names of the widget page template.
             # @review
             description:
-                Represents a widget page template.
+                A widget page template.
             type: object
         WidgetPageTemplateSettings:
             # @review
             description:
-                Represents the settings of a widget page template.
+                The settings of a widget page template.
             properties:
                 layoutTemplateId:
                     # @review
@@ -3112,7 +3121,7 @@ components:
                           type: string
                       parentSectionId:
                           description:
-                              The section's id of the widget page or the nested application widget instance this widget
+                              The section's ID of the widget page or the nested application widget instance this widget
                               belongs to.
                           type: string
                       parentWidgetInstanceExternalReferenceCode:
@@ -3122,16 +3131,15 @@ components:
                           type: string
                       position:
                           description:
-                              The 0-based position this widget instances occupies with respect to its siblings (0 for
-                              first child, 1 for second child, ...). If not specified when creating a page element the
-                              page element will be added at the last valid position.
+                              The 0-based position this widget instance occupies with respect to its siblings (0 for
+                              first child, 1 for second child, ...). If not specified when creating a widget instance
+                              the widget instance will be added at the last valid position.
                           minimum: 0
                           type: integer
                       widgetLookAndFeelConfig:
                           # @review
                           description:
-                              The widget instance's look and feel configuration. It applies only to widgets within
-                              SitePages of type WidgetPage or within PageTemplates of type WidgetPageTemplate.
+                              The widget instance's look and feel configuration.
                           items:
                               properties:
                                   advancedStylingConfig:
@@ -3536,7 +3544,7 @@ components:
                           type: array
             # @review
             description:
-                Represents a Widget Instance in a Widget Page.
+                A widget instance in a widget page.
             type: object
 info:
     description:
@@ -3551,8 +3559,9 @@ openapi: 3.0.1
 paths:
     "/sites/{siteExternalReferenceCode}/display-page-template-folders":
         get:
+            # @review
             description:
-                Retrieves the display page template folders of the site
+                Retrieves the display page template folders of the site.
             operationId: getSiteDisplayPageTemplateFoldersPage
             parameters:
                 - in: path
@@ -3613,8 +3622,9 @@ paths:
                                 type: array
             tags: ["DisplayPageTemplateFolder"]
         post:
+            # @review
             description:
-                Adds a new display page template folder
+                Adds a new display page template folder.
             operationId: postSiteDisplayPageTemplateFolder
             parameters:
                 - in: path
