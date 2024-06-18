@@ -210,7 +210,10 @@ components:
                     type: string
             required:
                 - className
-        ClassTypeReference:
+        ClassSubtypeReference:
+            # @review
+            description:
+                A reference specifying the class name and an optional subtype.
             properties:
                 className:
                     type: string
@@ -446,7 +449,7 @@ components:
                 Represents a Display Page template.
             properties:
                 contentTypeReference:
-                    $ref: "#/components/schemas/ClassTypeReference"
+                    $ref: "#/components/schemas/ClassSubtypeReference"
                     description:
                         The content type (and optionally subtype) associated to the display page template.
                 creator:
@@ -1945,7 +1948,7 @@ components:
                             description:
                                 The form reference.
                             oneOf:
-                                - $ref: "#/components/schemas/ClassTypeReference"
+                                - $ref: "#/components/schemas/ClassSubtypeReference"
                                 - $ref: "#/components/schemas/ContextReference"
                         formSuccessSubmissionResult:
                             # @review
