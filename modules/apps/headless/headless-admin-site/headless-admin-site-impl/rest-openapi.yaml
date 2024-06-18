@@ -342,8 +342,8 @@ components:
         ContentPageSpecification:
             # @review
             description:
-                A page specification of a content page. A content page may contain 0 or 1 page
-                specifications in draft status and 0 or 1 page specifications in published status.
+                A page specification of a content page. A content page may contain 0 or 1 page specifications in draft
+                status and 0 or 1 page specifications in published status.
             properties:
                 externalReferenceCode:
                     description:
@@ -2374,8 +2374,9 @@ components:
         PageSpecification:
             # @review
             description:
-                A page specification of a content page, content page template, widget page, or widget page template. A content page may contain 0 or 1 page
-                specifications in draft status and 0 or 1 page specifications in published status. A widget page contains only 1 page specification in published status.
+                A page specification of a content page, content page template, widget page, or widget page template. A
+                content page may contain 0 or 1 page specifications in draft status and 0 or 1 page specifications in
+                published status. A widget page contains only 1 page specification in published status.
             oneOf:
                 - $ref: "#/components/schemas/ContentPageSpecification"
                 - $ref: "#/components/schemas/WidgetPageSpecification"
