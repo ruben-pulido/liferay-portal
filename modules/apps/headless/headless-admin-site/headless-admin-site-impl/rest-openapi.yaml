@@ -907,7 +907,7 @@ components:
             description:
                 Represents a fragment image.
             properties:
-                classExternalReference:
+                itemExternalReference:
                     $ref: "#/components/schemas/ItemExternalReference"
                 config:
                     # @review
