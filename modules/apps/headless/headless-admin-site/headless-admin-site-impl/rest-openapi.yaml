@@ -653,7 +653,7 @@ components:
         DisplayPageTemplateSettings:
             # @review
             description:
-                Represents the settings of a Display Page Template.
+                The settings of a Display Page Template.
             properties:
                 openGraphSettings:
                     $ref: "#/components/schemas/OpenGraphSettings"
@@ -669,13 +669,8 @@ components:
         FragmentComposition:
             # @review
             description:
-                Represents a composition of fragments that can be added to a site page.
+                A composition of fragments that can be added to a site page.
             properties:
-                collectionExternalReferenceCode:
-                    # @review
-                    description:
-                        The external reference code of the collection this fragment composition belongs to.
-                    type: string
                 creator:
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
                     # @review
@@ -712,6 +707,11 @@ components:
                     # @review
                     description:
                         The external reference code of this fragment composition.
+                    type: string
+                fragmentSetExternalReferenceCode:
+                    # @review
+                    description:
+                        The external reference code of the fragment set this fragment composition belongs to.
                     type: string
                 key:
                     # @review
