@@ -240,6 +240,11 @@ components:
                     # @review
                     description:
                         The page collection's reference.
+                    discriminator:
+                        propertyName: collectionType
+                    mapping:
+                        Collection: "#/components/schemas/ItemExternalReference"
+                        CollectionProvider: "#/components/schemas/ClassNameReference"
                     oneOf:
                         - $ref: "#/components/schemas/ClassNameReference"
                         - $ref: "#/components/schemas/ItemExternalReference"
