@@ -3032,10 +3032,10 @@ components:
             allOf:
                 - $ref: "#/components/schemas/BasePageSpecification"
                 - properties:
-                      # @review
-                      description:
-                          The sections of a widget page.
                       widgetPageSections:
+                          # @review
+                          description:
+                              The sections of a widget page.
                           items:
                               $ref: "#/components/schemas/WidgetPageSection"
                           type: array
