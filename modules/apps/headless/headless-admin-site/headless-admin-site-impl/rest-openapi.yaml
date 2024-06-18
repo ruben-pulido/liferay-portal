@@ -4282,19 +4282,19 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PageSpecification"
+                            $ref: "#/components/schemas/ContentPageSpecification"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/PageSpecification"
+                            $ref: "#/components/schemas/ContentPageSpecification"
             responses:
                 200:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageSpecification"
+                                $ref: "#/components/schemas/ContentPageSpecification"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageSpecification"
+                                $ref: "#/components/schemas/ContentPageSpecification"
                     description:
                         default response
             # @review
@@ -4938,19 +4938,19 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PageSpecification"
+                            $ref: "#/components/schemas/ContentPageSpecification"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/PageSpecification"
+                            $ref: "#/components/schemas/ContentPageSpecification"
             responses:
                 200:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageSpecification"
+                                $ref: "#/components/schemas/ContentPageSpecification"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageSpecification"
+                                $ref: "#/components/schemas/ContentPageSpecification"
                     description:
                         default response
             # @review
@@ -7330,19 +7330,19 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PageSpecification"
+                            $ref: "#/components/schemas/ContentPageSpecification"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/PageSpecification"
+                            $ref: "#/components/schemas/ContentPageSpecification"
             responses:
                 200:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageSpecification"
+                                $ref: "#/components/schemas/ContentPageSpecification"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageSpecification"
+                                $ref: "#/components/schemas/ContentPageSpecification"
                     description:
                         default response
             # @review
@@ -7808,19 +7808,19 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PageSpecification"
+                            $ref: "#/components/schemas/ContentPageSpecification"
                     application/xml:
                         schema:
-                            $ref: "#/components/schemas/PageSpecification"
+                            $ref: "#/components/schemas/ContentPageSpecification"
             responses:
                 200:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/PageSpecification"
+                                $ref: "#/components/schemas/ContentPageSpecification"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/PageSpecification"
+                                $ref: "#/components/schemas/ContentPageSpecification"
                     description:
                         default response
             # @review
