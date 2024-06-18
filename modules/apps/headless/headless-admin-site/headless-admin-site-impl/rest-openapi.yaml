@@ -3,7 +3,7 @@ components:
         ActionExecutionResult:
             # @review
             description:
-                Represents a definition of an action execution result.
+                The result of an action execution.
             properties:
                 type:
                     # @review
@@ -23,7 +23,7 @@ components:
         BasePageSettings:
             # @review
             description:
-                Represents the base settings of a page, shared by both a content page and a widget page.
+                The base settings of a page, shared by both a content page and a widget page.
             properties:
                 customMetaTags:
                     # @review
@@ -56,12 +56,14 @@ components:
         BasePageTemplate:
             # @review
             description:
-                Represents a base page template, containing the common properties of both a content page template and a
-                widget page template.
+                A base page template, containing the common properties of both a content page template and a widget page
+                template. It should only be referenced as part of an allOf clause.
             properties:
                 creator:
-                    # @review
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    # @review
+                    description:
+                        The page template's creator. It is not returned by default. It can be embedded via nestedFields.
                     readOnly: true
                 creatorExternalReferenceCode:
                     # @review
@@ -83,7 +85,7 @@ components:
                 datePublished:
                     # @review
                     description:
-                        The last time the page template changed.
+                        The last time the page template was published.
                     format: date-time
                     type: string
                 externalReferenceCode:
@@ -104,7 +106,8 @@ components:
                     type: array
                 keywords:
                     description:
-                        The associated keywords.
+                        The associated keywords. They are not returned by default. They can be embedded via
+                        nestedFields.
                     items:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
                     readOnly: true
@@ -117,8 +120,9 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The page template's specifications. A page template may contain 0 or 1 page specifications in
-                        draft status and 0 or 1 page specifications in published status.
+                        The page template's specifications. A page template of type content may contain 0 or 1 page
+                        specifications in draft status and 0 or 1 page specifications in published status. A page
+                        template of type widget contains only 1 page specification in published status.
                     items:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
@@ -126,11 +130,11 @@ components:
                     $ref: "#/components/schemas/PageTemplateSet"
                     # @review
                     description:
-                        The page template's collection.
+                        The page template's set.
                 pageTemplateSettings:
                     # @review
                     description:
-                        Settings of the page template.
+                        The settings of the page template.
                     discriminator:
                         propertyName: type
                     mapping:
@@ -142,7 +146,8 @@ components:
                 taxonomyCategories:
                     # @review
                     description:
-                        The associated categories.
+                        The associated categories. They are not returned by default. They can be embedded via
+                        nestedFields.
                     items:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
                     readOnly: true
@@ -155,11 +160,15 @@ components:
                         "$ref": "#/components/schemas/ItemExternalReference"
                     type: array
                 type:
+                    # @review
+                    description:
+                        The type of the page template.
                     enum:
                         - ContentPageTemplate
                         - WidgetPageTemplate
                     type: string
                 uuid:
+                    # @review
                     description:
                         A valid external identifier to reference this page template.
                     type: string
@@ -167,11 +176,15 @@ components:
         BaseWidgetInstance:
             # @review
             description:
-                Represents a base Widget Instance.
+                A base page widget instance, containing the common properties of both a content page widget instance and
+                a widget page widget instance. It should only be referenced as part of an allOf clause.
             properties:
                 widgetConfig:
                     additionalProperties:
                         type: object
+                    # @review
+                    description:
+                        The configuration keys and values of the widget instance.
                     type: object
                 widgetInstanceId:
                     # @review
@@ -192,7 +205,7 @@ components:
                             actionIds:
                                 # @review
                                 description:
-                                    The ids of the actions the role has permission for.
+                                    The IDs of the actions the role has permission for.
                                 items:
                                     type: string
                                 type: array
@@ -205,6 +218,9 @@ components:
                     type: array
             type: object
         ClassNameReference:
+            # @review
+            description:
+                A reference specifying the class name.
             properties:
                 className:
                     type: string
@@ -225,11 +241,14 @@ components:
         ClientExtension:
             # @review
             description:
-                Represents a client extension
+                A reference to a client extension along with its configuration values.
             properties:
                 clientExtensionConfig:
                     additionalProperties:
                         type: string
+                    # @review
+                    description:
+                        The configuration keys and values of the client extension.
                     type: object
                 externalReferenceCode:
                     # @review
@@ -268,12 +287,12 @@ components:
                       - collectionConfig
             # @review
             description:
-                Represents the settings of a collection page.
+                The settings of a collection page.
             type: object
         CollectionViewport:
             # @review
             description:
-                Represents a collection viewport.
+                A collection viewport.
             properties:
                 collectionViewportDefinition:
                     # @review
@@ -296,6 +315,9 @@ components:
                 - collectionViewportDefinition
             type: object
         ColumnViewport:
+            # @review
+            description:
+                A column in a viewport.
             properties:
                 columnViewportDefinition:
                     properties:
@@ -315,9 +337,13 @@ components:
                 - $ref: "#/components/schemas/BasePageSettings"
             # @review
             description:
-                Represents the settings of a content page.
+                The settings of a content page.
             type: object
         ContentPageSpecification:
+            # @review
+            description:
+                A page specification of a content page. A content page may contain 0 or 1 page
+                specifications in draft status and 0 or 1 page specifications in published status.
             properties:
                 externalReferenceCode:
                     description:
@@ -335,12 +361,12 @@ components:
                 - $ref: "#/components/schemas/BasePageTemplate"
             # @review
             description:
-                Represents a content page template.
+                A content page template.
             type: object
         ContentPageTemplateSettings:
             # @review
             description:
-                Represents the settings of a content page.
+                The settings of a content page.
             type: object
         ContentPageWidgetInstance:
             allOf:
@@ -453,13 +479,16 @@ components:
                     description:
                         The content type (and optionally subtype) associated to the display page template.
                 creator:
-                    # @review
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    # @review
+                    description:
+                        The display page template's creator. It is not returned by default. It can be embedded via
+                        nestedFields.
                     readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
-                        The page's creator external reference code.
+                        The display page template's creator external reference code.
                     type: string
                 dateCreated:
                     # @review
@@ -541,13 +570,16 @@ components:
                 Represents a Display Page template folder.
             properties:
                 creator:
-                    # @review
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    # @review
+                    description:
+                        The display page template folder's creator. It is not returned by default. It can be embedded
+                        via nestedFields.
                     readOnly: true
                 creatorExternalReferenceCode:
                     # @review
                     description:
-                        The page's creator external reference code.
+                        The display page template folder's creator external reference code.
                     type: string
                 dateCreated:
                     # @review
@@ -688,8 +720,11 @@ components:
                         The external reference code of the collection this fragment composition belongs to.
                     type: string
                 creator:
-                    # @review
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    # @review
+                    description:
+                        The fragment composition's creator. It is not returned by default. It can be embedded via
+                        nestedFields.
                     readOnly: true
                 creatorExternalReferenceCode:
                     # @review
@@ -1349,8 +1384,10 @@ components:
                 Represents a page with common elements (header, footer, ...) used for all or several pages of a site.
             properties:
                 creator:
-                    # @review
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    # @review
+                    description:
+                        The master page's creator. It is not returned by default. It can be embedded via nestedFields.
                     readOnly: true
                 creatorExternalReferenceCode:
                     # @review
@@ -1393,7 +1430,8 @@ components:
                     type: array
                 keywords:
                     description:
-                        The associated keywords.
+                        The associated keywords. They are not returned by default. They can be embedded via
+                        nestedFields.
                     items:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
                     readOnly: true
@@ -1414,7 +1452,8 @@ components:
                 taxonomyCategories:
                     # @review
                     description:
-                        The associated categories.
+                        The associated categories. They are not returned by default. They can be embedded via
+                        nestedFields.
                     items:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
                     readOnly: true
@@ -2333,6 +2372,10 @@ components:
                     type: string
             type: object
         PageSpecification:
+            # @review
+            description:
+                A page specification of a content page, content page template, widget page, or widget page template. A content page may contain 0 or 1 page
+                specifications in draft status and 0 or 1 page specifications in published status. A widget page contains only 1 page specification in published status.
             oneOf:
                 - $ref: "#/components/schemas/ContentPageSpecification"
                 - $ref: "#/components/schemas/WidgetPageSpecification"
@@ -2348,8 +2391,11 @@ components:
                 Represents a Page template set.
             properties:
                 creator:
-                    # @review
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    # @review
+                    description:
+                        The page template set's creator. It is not returned by default. It can be embedded via
+                        nestedFields.
                     readOnly: true
                 creatorExternalReferenceCode:
                     # @review
@@ -2646,8 +2692,10 @@ components:
                     readOnly: true
                     type: array
                 creator:
-                    # @review
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    # @review
+                    description:
+                        The page's creator. It is not returned by default. It can be embedded via nestedFields.
                     readOnly: true
                 creatorExternalReferenceCode:
                     # @review
@@ -2705,7 +2753,8 @@ components:
                 keywords:
                     # @review
                     description:
-                        The associated keywords.
+                        The associated keywords. They are not returned by default. They can be embedded via
+                        nestedFields.
                     items:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
                     readOnly: true
@@ -2746,7 +2795,8 @@ components:
                 taxonomyCategories:
                     # @review
                     description:
-                        The associated categories.
+                        The associated categories. They are not returned by default. They can be embedded via
+                        nestedFields.
                     items:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#TaxonomyCategory"
                     readOnly: true
@@ -2837,8 +2887,10 @@ components:
                 Represents a Utility Page.
             properties:
                 creator:
-                    # @review
                     $ref: "../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator"
+                    # @review
+                    description:
+                        The utility page's creator. It is not returned by default. It can be embedded via nestedFields.
                     readOnly: true
                 creatorExternalReferenceCode:
                     # @review
