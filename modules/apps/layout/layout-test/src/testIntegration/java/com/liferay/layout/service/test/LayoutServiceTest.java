@@ -273,7 +273,7 @@ public class LayoutServiceTest {
 	@Test
 	public void testUpdateLayoutTemplate() throws Exception {
 		Layout layout = _addTypePortletLayout(
-			RandomTestUtil.randomString(), false, StringPool.BLANK);
+			null, RandomTestUtil.randomString(), false, StringPool.BLANK);
 
 		UnicodeProperties typeSettingsUnicodeProperties =
 			layout.getTypeSettingsProperties();
@@ -339,7 +339,7 @@ public class LayoutServiceTest {
 	}
 
 	private Layout _addTypePortletLayout(
-			String name, boolean privateLayout, String typeSettings)
+		String externalReferenceCode, String name, boolean privateLayout, String typeSettings)
 		throws Exception {
 
 		Map<Locale, String> map = HashMapBuilder.put(
@@ -347,7 +347,7 @@ public class LayoutServiceTest {
 		).build();
 
 		return _layoutService.addLayout(
-			null, _group.getGroupId(), privateLayout,
+			externalReferenceCode, _group.getGroupId(), privateLayout,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, 0, 0, map, map,
 			Collections.emptyMap(), Collections.emptyMap(),
 			Collections.emptyMap(), LayoutConstants.TYPE_PORTLET, typeSettings,
@@ -366,7 +366,7 @@ public class LayoutServiceTest {
 		String name = RandomTestUtil.randomString();
 
 		Layout layout = _addTypePortletLayout(
-			name, privateLayout, StringPool.BLANK);
+			null, name, privateLayout, StringPool.BLANK);
 
 		Assert.assertEquals(name, layout.getName(_locale));
 		Assert.assertEquals(privateLayout, layout.isPrivateLayout());
@@ -439,7 +439,7 @@ public class LayoutServiceTest {
 		throws Exception {
 
 		Layout layout = _addTypePortletLayout(
-			RandomTestUtil.randomString(), privateLayout,
+			null, RandomTestUtil.randomString(), privateLayout,
 			"layout-template-id=2_columns_ii");
 
 		String[] column1PortletIds = _addPortletsToLayout(
