@@ -368,6 +368,7 @@ public class LayoutServiceTest {
 		Layout layout = _addTypePortletLayout(
 			null, name, privateLayout, StringPool.BLANK);
 
+		Assert.assertNotNull(layout.getExternalReferenceCode());
 		Assert.assertEquals(name, layout.getName(_locale));
 		Assert.assertEquals(privateLayout, layout.isPrivateLayout());
 		Assert.assertTrue(layout.isTypePortlet());
