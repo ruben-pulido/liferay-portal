@@ -88,13 +88,13 @@ public class PortalImplActualURLTest {
 			null, _serviceContext.getUserId(), group.getGroupId(), true,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "Home", StringPool.BLANK,
 			StringPool.BLANK, LayoutConstants.TYPE_PORTLET, false,
-			StringPool.BLANK, _serviceContext);
+			StringPool.BLANK, _serviceContext, null);
 
 		_layoutLocalService.addLayout(
 			null, _serviceContext.getUserId(), group.getGroupId(), true,
 			homeLayout.getLayoutId(), "Child Layout", StringPool.BLANK,
 			StringPool.BLANK, LayoutConstants.TYPE_PORTLET, false,
-			StringPool.BLANK, _serviceContext);
+			StringPool.BLANK, _serviceContext, null);
 
 		Assert.assertNotNull(
 			_portal.getActualURL(
@@ -126,19 +126,19 @@ public class PortalImplActualURLTest {
 			null, _serviceContext.getUserId(), group.getGroupId(), true,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "Home", StringPool.BLANK,
 			StringPool.BLANK, LayoutConstants.TYPE_PORTLET, false,
-			StringPool.BLANK, _serviceContext);
+			StringPool.BLANK, _serviceContext, null);
 
 		Layout nodeLayout = _layoutLocalService.addLayout(
 			null, _serviceContext.getUserId(), group.getGroupId(), true,
 			homeLayout.getLayoutId(), "Node", StringPool.BLANK,
 			StringPool.BLANK, LayoutConstants.TYPE_NODE, false,
-			StringPool.BLANK, _serviceContext);
+			StringPool.BLANK, _serviceContext, null);
 
 		Layout childLayout = _layoutLocalService.addLayout(
 			null, _serviceContext.getUserId(), group.getGroupId(), true,
 			nodeLayout.getLayoutId(), "Child Layout", StringPool.BLANK,
 			StringPool.BLANK, LayoutConstants.TYPE_PORTLET, false,
-			StringPool.BLANK, _serviceContext);
+			StringPool.BLANK, _serviceContext, null);
 
 		Map<String, String[]> parameterMap = HttpComponentsUtil.getParameterMap(
 			HttpComponentsUtil.getQueryString(

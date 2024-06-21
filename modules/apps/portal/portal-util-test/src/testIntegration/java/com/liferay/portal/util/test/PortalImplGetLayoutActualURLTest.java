@@ -134,7 +134,7 @@ public class PortalImplGetLayoutActualURLTest
 			null, _serviceContext.getUserId(), group.getGroupId(), false,
 			parentLayoutId, RandomTestUtil.randomString(),
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(), type,
-			false, StringPool.BLANK, _serviceContext);
+			false, StringPool.BLANK, _serviceContext, null);
 	}
 
 	private Layout _assertAllChildrenAndGetDeeperParentLayout(

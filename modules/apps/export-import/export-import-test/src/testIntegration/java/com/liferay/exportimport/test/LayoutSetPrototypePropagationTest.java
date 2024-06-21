@@ -1168,7 +1168,7 @@ public class LayoutSetPrototypePropagationTest
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), null, null,
 			LayoutConstants.TYPE_CONTENT, false, StringPool.BLANK,
-			ServiceContextTestUtil.getServiceContext());
+			ServiceContextTestUtil.getServiceContext(), null);
 
 		Layout draftLayout = layout.fetchDraftLayout();
 

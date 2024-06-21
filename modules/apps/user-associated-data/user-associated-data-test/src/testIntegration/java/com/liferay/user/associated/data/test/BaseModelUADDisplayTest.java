@@ -283,7 +283,7 @@ public class BaseModelUADDisplayTest {
 		}
 
 		Layout layout = _layoutLocalService.addLayout(
-			null, userId, groupId, false,
+			null, null, userId, groupId, false,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, 0, 0,
 			Collections.singletonMap(_user.getLocale(), name.concat("name")),
 			Collections.emptyMap(), Collections.emptyMap(),

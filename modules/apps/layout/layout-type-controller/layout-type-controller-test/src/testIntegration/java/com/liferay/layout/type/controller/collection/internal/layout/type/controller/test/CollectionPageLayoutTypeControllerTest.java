@@ -129,7 +129,7 @@ public class CollectionPageLayoutTypeControllerTest {
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), StringPool.BLANK, StringPool.BLANK,
 			LayoutConstants.TYPE_COLLECTION, false, StringPool.BLANK,
-			ServiceContextThreadLocal.getServiceContext());
+			ServiceContextThreadLocal.getServiceContext(), null);
 	}
 
 	private HttpServletRequest _getHttpServletRequest(

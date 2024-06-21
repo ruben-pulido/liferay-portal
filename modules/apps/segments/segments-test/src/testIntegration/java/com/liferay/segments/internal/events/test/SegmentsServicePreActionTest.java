@@ -107,11 +107,11 @@ public class SegmentsServicePreActionTest {
 					LocaleUtil.getDefault(), RandomTestUtil.randomString());
 
 				Layout layout = _layoutLocalService.addLayout(
-					null, TestPropsValues.getUserId(), _group.getGroupId(),
-					false, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, 0, 0,
-					nameMap, nameMap, Collections.emptyMap(),
-					Collections.emptyMap(), Collections.emptyMap(),
-					LayoutConstants.TYPE_COLLECTION,
+					null, null, TestPropsValues.getUserId(),
+					_group.getGroupId(), false,
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, 0, 0, nameMap,
+					nameMap, Collections.emptyMap(), Collections.emptyMap(),
+					Collections.emptyMap(), LayoutConstants.TYPE_COLLECTION,
 					UnicodePropertiesBuilder.put(
 						LayoutTypeSettingsConstants.KEY_PUBLISHED, "true"
 					).buildString(),
@@ -165,11 +165,11 @@ public class SegmentsServicePreActionTest {
 					LocaleUtil.getDefault(), RandomTestUtil.randomString());
 
 				Layout layout = _layoutLocalService.addLayout(
-					null, TestPropsValues.getUserId(), _group.getGroupId(),
-					false, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, 0, 0,
-					nameMap, nameMap, Collections.emptyMap(),
-					Collections.emptyMap(), Collections.emptyMap(),
-					LayoutConstants.TYPE_COLLECTION,
+					null, null, TestPropsValues.getUserId(),
+					_group.getGroupId(), false,
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, 0, 0, nameMap,
+					nameMap, Collections.emptyMap(), Collections.emptyMap(),
+					Collections.emptyMap(), LayoutConstants.TYPE_COLLECTION,
 					UnicodePropertiesBuilder.put(
 						LayoutTypeSettingsConstants.KEY_PUBLISHED, "true"
 					).buildString(),
@@ -310,11 +310,11 @@ public class SegmentsServicePreActionTest {
 					LocaleUtil.getDefault(), RandomTestUtil.randomString());
 
 				Layout layout = _layoutLocalService.addLayout(
-					null, TestPropsValues.getUserId(), _group.getGroupId(),
-					false, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, 0, 0,
-					nameMap, nameMap, Collections.emptyMap(),
-					Collections.emptyMap(), Collections.emptyMap(),
-					LayoutConstants.TYPE_COLLECTION,
+					null, null, TestPropsValues.getUserId(),
+					_group.getGroupId(), false,
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, 0, 0, nameMap,
+					nameMap, Collections.emptyMap(), Collections.emptyMap(),
+					Collections.emptyMap(), LayoutConstants.TYPE_COLLECTION,
 					UnicodePropertiesBuilder.put(
 						LayoutTypeSettingsConstants.KEY_PUBLISHED, "true"
 					).buildString(),

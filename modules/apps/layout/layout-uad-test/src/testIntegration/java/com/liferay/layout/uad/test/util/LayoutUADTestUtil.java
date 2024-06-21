@@ -39,7 +39,7 @@ public class LayoutUADTestUtil {
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, name,
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 			LayoutConstants.TYPE_PORTLET, false, friendlyURL,
-			ServiceContextTestUtil.getServiceContext());
+			ServiceContextTestUtil.getServiceContext(), null);
 	}
 
 }

@@ -48,7 +48,8 @@ public class DefaultLayoutLayoutSetPrototypeLocalServiceWrapper
 			Layout defaultLayout = _layoutLocalService.addLayout(
 				null, userId, layoutSetPrototype.getGroupId(), true,
 				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "Home", null, null,
-				LayoutConstants.TYPE_CONTENT, false, "/home", serviceContext);
+				LayoutConstants.TYPE_CONTENT, false, "/home", serviceContext,
+				null);
 
 			Layout draftLayout = defaultLayout.fetchDraftLayout();
 

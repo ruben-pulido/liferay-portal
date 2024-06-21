@@ -155,7 +155,7 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 		}
 
 		Layout layout = layoutLocalService.addLayout(
-			externalReferenceCode, getUserId(), groupId, privateLayout,
+			externalReferenceCode, null, getUserId(), groupId, privateLayout,
 			parentLayoutId, classNameId, classPK, localeNamesMap,
 			localeTitlesMap, descriptionMap, keywordsMap, robotsMap, type,
 			typeSettings, hidden, system, friendlyURLMap, masterLayoutPlid,
@@ -342,7 +342,7 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 		return layoutLocalService.addLayout(
 			externalReferenceCode, getUserId(), groupId, privateLayout,
 			parentLayoutId, name, title, description, type, hidden, friendlyURL,
-			serviceContext);
+			serviceContext, null);
 	}
 
 	@Override

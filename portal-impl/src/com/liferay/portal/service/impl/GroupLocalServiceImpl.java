@@ -4137,7 +4137,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			PropsValues.CONTROL_PANEL_LAYOUT_NAME, StringPool.BLANK,
 			StringPool.BLANK, LayoutConstants.TYPE_CONTROL_PANEL, false,
-			friendlyURL, serviceContext);
+			friendlyURL, serviceContext, null);
 	}
 
 	protected void addDefaultGuestPublicLayouts(Group group)

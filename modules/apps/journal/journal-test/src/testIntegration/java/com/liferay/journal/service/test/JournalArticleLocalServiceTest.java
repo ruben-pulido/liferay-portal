@@ -1917,7 +1917,8 @@ public class JournalArticleLocalServiceTest {
 			StringPool.BLANK, LayoutConstants.TYPE_PORTLET, false,
 			StringPool.BLANK,
 			ServiceContextTestUtil.getServiceContext(
-				TestPropsValues.getGroupId(), TestPropsValues.getUserId()));
+				TestPropsValues.getGroupId(), TestPropsValues.getUserId()),
+			null);
 
 		themeDisplay.setLayout(layout);
 

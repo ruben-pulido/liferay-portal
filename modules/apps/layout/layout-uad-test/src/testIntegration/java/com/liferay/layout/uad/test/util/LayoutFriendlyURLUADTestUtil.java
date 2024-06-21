@@ -44,7 +44,7 @@ public class LayoutFriendlyURLUADTestUtil {
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, name,
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 			LayoutConstants.TYPE_PORTLET, false, friendlyURL,
-			ServiceContextTestUtil.getServiceContext());
+			ServiceContextTestUtil.getServiceContext(), null);
 
 		return layoutFriendlyURLLocalService.getLayoutFriendlyURL(
 			layout.getPlid(), layout.getDefaultLanguageId());

@@ -1385,7 +1385,7 @@ public class FileSystemImporter extends BaseImporter {
 
 			if (!updateModeEnabled || (layout == null)) {
 				layout = layoutLocalService.addLayout(
-					null, userId, groupId, privateLayout, parentLayoutId,
+					null, null, userId, groupId, privateLayout, parentLayoutId,
 					nameMap, titleMap, null, null, null, type, typeSettings,
 					hidden, friendlyURLMap, serviceContext);
 			}

@@ -134,7 +134,8 @@ public class NavigationMenuTagTest {
 			StringPool.BLANK, LayoutConstants.TYPE_CONTENT, false,
 			StringPool.BLANK,
 			ServiceContextTestUtil.getServiceContext(
-				TestPropsValues.getGroupId(), TestPropsValues.getUserId()));
+				TestPropsValues.getGroupId(), TestPropsValues.getUserId()),
+			null);
 
 		Assert.assertFalse(contentLayout.isPublished());
 

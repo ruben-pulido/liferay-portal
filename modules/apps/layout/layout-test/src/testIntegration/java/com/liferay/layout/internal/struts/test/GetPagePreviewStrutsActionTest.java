@@ -152,7 +152,7 @@ public class GetPagePreviewStrutsActionTest {
 			privateLayout, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 			StringPool.BLANK, type, false, privateLayout, StringPool.BLANK,
-			serviceContext);
+			serviceContext, null);
 
 		_fragmentEntryLink = ContentLayoutTestUtil.addFragmentEntryLinkToLayout(
 			null, layout,

@@ -161,7 +161,7 @@ public class BlogsEntryAnalyticsReportsInfoItemTest {
 				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 				StringPool.BLANK, LayoutConstants.TYPE_CONTENT, false,
-				StringPool.BLANK, serviceContext);
+				StringPool.BLANK, serviceContext, null);
 
 			themeDisplay.setLayoutSet(layout.getLayoutSet());
 

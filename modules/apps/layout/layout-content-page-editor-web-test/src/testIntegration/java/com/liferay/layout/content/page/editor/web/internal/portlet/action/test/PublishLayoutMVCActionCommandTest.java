@@ -281,7 +281,7 @@ public class PublishLayoutMVCActionCommandTest {
 				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 				RandomTestUtil.randomString(), StringPool.BLANK,
 				StringPool.BLANK, LayoutConstants.TYPE_PORTLET, false,
-				StringPool.BLANK, serviceContext);
+				StringPool.BLANK, serviceContext, null);
 
 			Assert.assertEquals(user.getUserId(), originalLayout.getUserId());
 			Assert.assertTrue(originalLayout.isTypePortlet());

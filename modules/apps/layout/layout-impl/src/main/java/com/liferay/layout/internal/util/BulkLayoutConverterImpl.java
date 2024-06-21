@@ -344,8 +344,8 @@ public class BulkLayoutConverterImpl implements BulkLayoutConverter {
 
 		if (draftLayout == null) {
 			draftLayout = _layoutLocalService.addLayout(
-				null, userId, layout.getGroupId(), layout.isPrivateLayout(),
-				layout.getParentLayoutId(),
+				null, null, userId, layout.getGroupId(),
+				layout.isPrivateLayout(), layout.getParentLayoutId(),
 				_classNameLocalService.getClassNameId(Layout.class),
 				layout.getPlid(), layout.getNameMap(), layout.getTitleMap(),
 				layout.getDescriptionMap(), layout.getKeywordsMap(),

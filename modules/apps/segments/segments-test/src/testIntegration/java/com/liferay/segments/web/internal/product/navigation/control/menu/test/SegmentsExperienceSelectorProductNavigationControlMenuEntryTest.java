@@ -107,7 +107,7 @@ public class SegmentsExperienceSelectorProductNavigationControlMenuEntryTest {
 			null, null, "full_page_application", false,
 			StringPool.SLASH +
 				FriendlyURLNormalizerUtil.normalize("Full Page Application"),
-			ServiceContextTestUtil.getServiceContext());
+			ServiceContextTestUtil.getServiceContext(), null);
 
 		Assert.assertFalse(
 			_productNavigationControlMenuEntry.isShow(

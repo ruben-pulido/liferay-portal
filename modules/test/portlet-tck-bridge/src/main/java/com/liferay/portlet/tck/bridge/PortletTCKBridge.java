@@ -125,7 +125,8 @@ public class PortletTCKBridge {
 				null, userId, group.getGroupId(), true,
 				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, pageName, pageName,
 				pageName, LayoutConstants.TYPE_PORTLET, false,
-				"/" + StringUtil.toLowerCase(pageName), new ServiceContext());
+				"/" + StringUtil.toLowerCase(pageName), new ServiceContext(),
+				null);
 
 			LayoutTypePortlet layoutTypePortlet =
 				(LayoutTypePortlet)layout.getLayoutType();

@@ -103,7 +103,7 @@ public class AddDefaultSharedFormLayoutPortalInstanceLifecycleListener
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "Shared",
 			StringPool.BLANK, StringPool.BLANK,
 			DDMFormPortletLayoutTypeConstants.LAYOUT_TYPE, true, "/shared",
-			serviceContext);
+			serviceContext, null);
 
 		_updateUserLayoutViewPermissionPermission(companyId, layout);
 
@@ -131,7 +131,7 @@ public class AddDefaultSharedFormLayoutPortalInstanceLifecycleListener
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "Shared",
 			StringPool.BLANK, StringPool.BLANK,
 			DDMFormPortletLayoutTypeConstants.LAYOUT_TYPE, true, "/shared",
-			serviceContext);
+			serviceContext, null);
 	}
 
 	private void _updateUserLayoutViewPermissionPermission(

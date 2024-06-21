@@ -116,7 +116,7 @@ public class LayoutLocalServiceUtil {
 		throws PortalException {
 
 		return getService().addLayout(
-			externalReferenceCode, userId, groupId, privateLayout,
+			externalReferenceCode, null, userId, groupId, privateLayout,
 			parentLayoutId, classNameId, classPK, nameMap, titleMap,
 			descriptionMap, keywordsMap, robotsMap, type, typeSettings, hidden,
 			system, friendlyURLMap, masterLayoutPlid, serviceContext);
@@ -184,7 +184,7 @@ public class LayoutLocalServiceUtil {
 		throws PortalException {
 
 		return getService().addLayout(
-			externalReferenceCode, userId, groupId, privateLayout,
+			externalReferenceCode, null, userId, groupId, privateLayout,
 			parentLayoutId, nameMap, titleMap, descriptionMap, keywordsMap,
 			robotsMap, type, typeSettings, hidden, system, friendlyURLMap,
 			serviceContext);
@@ -251,7 +251,7 @@ public class LayoutLocalServiceUtil {
 		throws PortalException {
 
 		return getService().addLayout(
-			externalReferenceCode, userId, groupId, privateLayout,
+			externalReferenceCode, null, userId, groupId, privateLayout,
 			parentLayoutId, nameMap, titleMap, descriptionMap, keywordsMap,
 			robotsMap, type, typeSettings, hidden, friendlyURLMap,
 			serviceContext);
@@ -316,7 +316,7 @@ public class LayoutLocalServiceUtil {
 		return getService().addLayout(
 			externalReferenceCode, userId, groupId, privateLayout,
 			parentLayoutId, name, title, description, type, hidden, system,
-			friendlyURL, serviceContext);
+			friendlyURL, serviceContext, null);
 	}
 
 	/**
@@ -377,7 +377,7 @@ public class LayoutLocalServiceUtil {
 		return getService().addLayout(
 			externalReferenceCode, userId, groupId, privateLayout,
 			parentLayoutId, name, title, description, type, hidden, friendlyURL,
-			serviceContext);
+			serviceContext, null);
 	}
 
 	public static Layout copyLayout(

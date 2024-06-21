@@ -163,7 +163,7 @@ public class MentionsPortletTest {
 			null, userId, groupId, false,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, name, null,
 			RandomTestUtil.randomString(), LayoutConstants.TYPE_PORTLET, false,
-			friendlyURL, ServiceContextTestUtil.getServiceContext());
+			friendlyURL, ServiceContextTestUtil.getServiceContext(), null);
 	}
 
 	private User _addUser(String screenName) throws Exception {

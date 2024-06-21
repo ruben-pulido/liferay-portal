@@ -431,7 +431,7 @@ public class CPFileImporterImpl implements CPFileImporter {
 		Layout layout = _layoutLocalService.addLayout(
 			null, serviceContext.getUserId(), serviceContext.getScopeGroupId(),
 			privateLayout, parentLayoutId, name, name, StringPool.BLANK,
-			layoutType, hidden, friendlyURL, serviceContext);
+			layoutType, hidden, friendlyURL, serviceContext, null);
 
 		if (Validator.isNotNull(icon)) {
 			String filePath = dependenciesFilePath + "layout_icons/" + icon;

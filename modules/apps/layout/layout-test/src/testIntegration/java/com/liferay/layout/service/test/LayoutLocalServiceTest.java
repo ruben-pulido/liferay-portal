@@ -103,7 +103,8 @@ public class LayoutLocalServiceTest {
 			externalReferenceCode, TestPropsValues.getUserId(),
 			_group.getGroupId(), true, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), null, RandomTestUtil.randomString(),
-			LayoutConstants.TYPE_CONTENT, false, false, null, _serviceContext);
+			LayoutConstants.TYPE_CONTENT, false, false, null, _serviceContext,
+			null);
 
 		Assert.assertEquals(
 			externalReferenceCode, layout.getExternalReferenceCode());
@@ -134,7 +135,8 @@ public class LayoutLocalServiceTest {
 			null, TestPropsValues.getUserId(), _group.getGroupId(), true,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), null, RandomTestUtil.randomString(),
-			LayoutConstants.TYPE_CONTENT, false, false, null, _serviceContext);
+			LayoutConstants.TYPE_CONTENT, false, false, null, _serviceContext,
+			null);
 
 		String externalReferenceCode = layout1.getExternalReferenceCode();
 
@@ -167,13 +169,15 @@ public class LayoutLocalServiceTest {
 			externalReferenceCode, TestPropsValues.getUserId(),
 			_group.getGroupId(), true, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), null, RandomTestUtil.randomString(),
-			LayoutConstants.TYPE_CONTENT, false, false, null, _serviceContext);
+			LayoutConstants.TYPE_CONTENT, false, false, null, _serviceContext,
+			null);
 
 		_layoutLocalService.addLayout(
 			externalReferenceCode, TestPropsValues.getUserId(),
 			_group.getGroupId(), true, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), null, RandomTestUtil.randomString(),
-			LayoutConstants.TYPE_CONTENT, false, false, null, _serviceContext);
+			LayoutConstants.TYPE_CONTENT, false, false, null, _serviceContext,
+			null);
 	}
 
 	@Test
@@ -186,7 +190,8 @@ public class LayoutLocalServiceTest {
 			externalReferenceCode, TestPropsValues.getUserId(),
 			_group.getGroupId(), true, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), null, RandomTestUtil.randomString(),
-			LayoutConstants.TYPE_PORTLET, false, false, null, _serviceContext);
+			LayoutConstants.TYPE_PORTLET, false, false, null, _serviceContext,
+			null);
 
 		Assert.assertEquals(
 			externalReferenceCode, layout.getExternalReferenceCode());
@@ -206,7 +211,8 @@ public class LayoutLocalServiceTest {
 			null, TestPropsValues.getUserId(), _group.getGroupId(), true,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), null, RandomTestUtil.randomString(),
-			LayoutConstants.TYPE_PORTLET, false, false, null, _serviceContext);
+			LayoutConstants.TYPE_PORTLET, false, false, null, _serviceContext,
+			null);
 
 		String externalReferenceCode = layout1.getExternalReferenceCode();
 
@@ -224,7 +230,8 @@ public class LayoutLocalServiceTest {
 			null, TestPropsValues.getUserId(), _group.getGroupId(), true,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), null, RandomTestUtil.randomString(),
-			LayoutConstants.TYPE_CONTENT, false, false, null, _serviceContext);
+			LayoutConstants.TYPE_CONTENT, false, false, null, _serviceContext,
+			null);
 
 		_layoutLocalService.deleteLayout(
 			layout.getExternalReferenceCode(), layout.getGroupId());
@@ -300,7 +307,7 @@ public class LayoutLocalServiceTest {
 			null, TestPropsValues.getUserId(), _group.getGroupId(), false,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "friendly url 1", null,
 			RandomTestUtil.randomString(), LayoutConstants.TYPE_PORTLET, false,
-			false, null, _serviceContext);
+			false, null, _serviceContext, null);
 
 		Assert.assertEquals(
 			layout1,
@@ -329,8 +336,8 @@ public class LayoutLocalServiceTest {
 				publishedLayout.getTypeSettingsProperties();
 
 			draftLayout = _layoutLocalService.addLayout(
-				null, publishedLayout.getUserId(), publishedLayout.getGroupId(),
-				publishedLayout.isPrivateLayout(),
+				null, null, publishedLayout.getUserId(),
+				publishedLayout.getGroupId(), publishedLayout.isPrivateLayout(),
 				publishedLayout.getParentLayoutId(),
 				_portal.getClassNameId(Layout.class), publishedLayout.getPlid(),
 				publishedLayout.getNameMap(), publishedLayout.getTitleMap(),
@@ -357,7 +364,8 @@ public class LayoutLocalServiceTest {
 			null, TestPropsValues.getUserId(), _group.getGroupId(), true,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			RandomTestUtil.randomString(), null, RandomTestUtil.randomString(),
-			LayoutConstants.TYPE_PORTLET, false, false, null, serviceContext);
+			LayoutConstants.TYPE_PORTLET, false, false, null, serviceContext,
+			null);
 
 		Assert.assertEquals(
 			2,

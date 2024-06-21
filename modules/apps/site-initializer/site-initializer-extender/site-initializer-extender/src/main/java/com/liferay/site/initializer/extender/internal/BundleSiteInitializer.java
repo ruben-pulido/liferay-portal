@@ -2602,7 +2602,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 		else {
 			layout = _layoutLocalService.addLayout(
-				null, serviceContext.getUserId(),
+				null, null, serviceContext.getUserId(),
 				serviceContext.getScopeGroupId(),
 				pageJSONObject.getBoolean("private"), parentLayoutId, nameMap,
 				SiteInitializerUtil.toMap(

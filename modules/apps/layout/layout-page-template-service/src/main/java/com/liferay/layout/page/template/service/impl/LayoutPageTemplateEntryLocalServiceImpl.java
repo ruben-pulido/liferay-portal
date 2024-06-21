@@ -883,8 +883,8 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 		serviceContext.setAttribute("layout.page.template.entry.type", type);
 
 		Layout layout = _layoutLocalService.addLayout(
-			null, userId, groupId, privateLayout, 0, 0, 0, titleMap, titleMap,
-			null, null, null, layoutType, typeSettings, true, true,
+			null, null, userId, groupId, privateLayout, 0, 0, 0, titleMap,
+			titleMap, null, null, null, layoutType, typeSettings, true, true,
 			new HashMap<>(), masterLayoutPlid, serviceContext);
 
 		Layout draftLayout = layout.fetchDraftLayout();

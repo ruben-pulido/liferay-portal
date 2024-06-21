@@ -71,7 +71,8 @@ public class PortalImplTest {
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 			StringPool.BLANK, LayoutConstants.TYPE_CONTENT, false, "/abc/w/def",
 			ServiceContextTestUtil.getServiceContext(
-				TestPropsValues.getGroupId(), TestPropsValues.getUserId()));
+				TestPropsValues.getGroupId(), TestPropsValues.getUserId()),
+			null);
 
 		String canonicalURL = _portal.getCanonicalURL(
 			String.format(
