@@ -5,18 +5,23 @@
 
 package com.liferay.friendly.url.model.impl;
 
+import com.liferay.asset.entry.rel.model.AssetEntryAssetCategoryRel;
+import com.liferay.asset.entry.rel.service.AssetEntryAssetCategoryRelLocalServiceUtil;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetCategoryLocalServiceUtil;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +56,8 @@ public class FriendlyURLEntryImpl extends FriendlyURLEntryBaseImpl {
 			return urlTitle;
 		}
 
-		List<AssetCategory> assetCategories = assetEntry.getCategories();
+		List<AssetCategory> assetCategories = _getAssetCategoriesByEntryId(
+			assetEntry.getEntryId());
 
 		if (assetCategories.isEmpty()) {
 			return urlTitle;
@@ -113,6 +119,33 @@ public class FriendlyURLEntryImpl extends FriendlyURLEntryBaseImpl {
 		}
 
 		return false;
+	}
+
+	private List<AssetCategory> _getAssetCategoriesByEntryId(
+		long assetEntryId) {
+
+		List<AssetEntryAssetCategoryRel> assetEntryAssetCategoryRels =
+			AssetEntryAssetCategoryRelLocalServiceUtil.
+				getAssetEntryAssetCategoryRelsByAssetEntryId(
+					assetEntryId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					AssetEntryAssetCategoryRelAssetCategoryRelIdComparator.
+						getInstance(true));
+
+		List<AssetCategory> categories = new ArrayList<>();
+
+		for (AssetEntryAssetCategoryRel assetEntryAssetCategoryRel :
+				assetEntryAssetCategoryRels) {
+
+			AssetCategory category =
+				AssetCategoryLocalServiceUtil.fetchAssetCategory(
+					assetEntryAssetCategoryRel.getAssetCategoryId());
+
+			if (category != null) {
+				categories.add(category);
+			}
+		}
+
+		return categories;
 	}
 
 }
