@@ -5,7 +5,7 @@
 
 package com.liferay.asset.categories.internal.service;
 
-import com.liferay.asset.categories.internal.util.comparator.AssetEntryAssetCategoryRelAssetCategoryIdComparator;
+import com.liferay.asset.categories.internal.util.comparator.AssetEntryAssetCategoryRelAssetCategoryRelIdComparator;
 import com.liferay.asset.entry.rel.model.AssetEntryAssetCategoryRel;
 import com.liferay.asset.entry.rel.service.AssetEntryAssetCategoryRelLocalService;
 import com.liferay.asset.kernel.model.AssetCategory;
@@ -121,7 +121,7 @@ public class AssetEntryAssetCategoryRelAssetCategoryLocalServiceWrapper
 			_assetEntryAssetCategoryRelLocalService.
 				getAssetEntryAssetCategoryRelsByAssetEntryId(
 					assetEntryId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					AssetEntryAssetCategoryRelAssetCategoryIdComparator.
+					AssetEntryAssetCategoryRelAssetCategoryRelIdComparator.
 						getInstance(true));
 
 		List<AssetCategory> categories = new ArrayList<>();
