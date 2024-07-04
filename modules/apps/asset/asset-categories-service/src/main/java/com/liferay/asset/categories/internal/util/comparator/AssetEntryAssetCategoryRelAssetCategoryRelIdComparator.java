@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: (c) 2023 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2024 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
@@ -9,18 +9,22 @@ import com.liferay.asset.entry.rel.model.AssetEntryAssetCategoryRel;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 /**
- * @author Eudaldo Alonso
+ * @author Rubén Pulido
  */
-public class AssetEntryAssetCategoryRelAssetCategoryIdComparator
+public class AssetEntryAssetCategoryRelAssetCategoryRelIdComparator
 	extends OrderByComparator<AssetEntryAssetCategoryRel> {
 
-	public static final String ORDER_BY_ASC = "assetCategoryId ASC";
+	public static final String ORDER_BY_ASC =
+		"assetEntryAssetCategoryRelId ASC";
 
-	public static final String ORDER_BY_DESC = "assetCategoryId DESC";
+	public static final String ORDER_BY_DESC =
+		"assetEntryAssetCategoryRelId DESC";
 
-	public static final String[] ORDER_BY_FIELDS = {"assetCategoryId"};
+	public static final String[] ORDER_BY_FIELDS = {
+		"assetEntryAssetCategoryRelId"
+	};
 
-	public static AssetEntryAssetCategoryRelAssetCategoryIdComparator
+	public static AssetEntryAssetCategoryRelAssetCategoryRelIdComparator
 		getInstance(boolean ascending) {
 
 		if (ascending) {
@@ -35,14 +39,14 @@ public class AssetEntryAssetCategoryRelAssetCategoryIdComparator
 		AssetEntryAssetCategoryRel assetEntryAssetCategoryRel1,
 		AssetEntryAssetCategoryRel assetEntryAssetCategoryRel2) {
 
-		long assetCategoryId1 =
-			assetEntryAssetCategoryRel1.getAssetCategoryId();
-		long assetCategoryId2 =
-			assetEntryAssetCategoryRel2.getAssetCategoryId();
+		long assetEntryAssetCategoryRelId1 =
+			assetEntryAssetCategoryRel1.getAssetEntryAssetCategoryRelId();
+		long assetEntryAssetCategoryRelId2 =
+			assetEntryAssetCategoryRel2.getAssetEntryAssetCategoryRelId();
 
 		int value = 1;
 
-		if (assetCategoryId1 <= assetCategoryId2) {
+		if (assetEntryAssetCategoryRelId1 <= assetEntryAssetCategoryRelId2) {
 			value = -1;
 		}
 
@@ -72,19 +76,19 @@ public class AssetEntryAssetCategoryRelAssetCategoryIdComparator
 		return _ascending;
 	}
 
-	private AssetEntryAssetCategoryRelAssetCategoryIdComparator(
+	private AssetEntryAssetCategoryRelAssetCategoryRelIdComparator(
 		boolean ascending) {
 
 		_ascending = ascending;
 	}
 
-	private static final AssetEntryAssetCategoryRelAssetCategoryIdComparator
+	private static final AssetEntryAssetCategoryRelAssetCategoryRelIdComparator
 		_INSTANCE_ASCENDING =
-			new AssetEntryAssetCategoryRelAssetCategoryIdComparator(true);
+			new AssetEntryAssetCategoryRelAssetCategoryRelIdComparator(true);
 
-	private static final AssetEntryAssetCategoryRelAssetCategoryIdComparator
+	private static final AssetEntryAssetCategoryRelAssetCategoryRelIdComparator
 		_INSTANCE_DESCENDING =
-			new AssetEntryAssetCategoryRelAssetCategoryIdComparator(false);
+			new AssetEntryAssetCategoryRelAssetCategoryRelIdComparator(false);
 
 	private final boolean _ascending;
 
