@@ -146,11 +146,15 @@ public class FriendlyURLEntryLocalServiceTest {
 		AssetCategory assetCategory2 = _assetCategoryLocalService.addCategory(
 			TestPropsValues.getUserId(), _group.getGroupId(), "cat2",
 			assetVocabulary.getVocabularyId(), serviceContext);
+		AssetCategory assetCategory3 = _assetCategoryLocalService.addCategory(
+			TestPropsValues.getUserId(), _group.getGroupId(), "cat3",
+			assetVocabulary.getVocabularyId(), serviceContext);
 
 		serviceContext.setAttribute(
 			"friendlyURLAssetCategoryIds",
 			new long[] {
-				assetCategory1.getCategoryId(), assetCategory2.getCategoryId()
+				assetCategory3.getCategoryId(), assetCategory1.getCategoryId(),
+				assetCategory2.getCategoryId()
 			});
 
 		FriendlyURLEntry friendlyURLEntry =
@@ -163,7 +167,7 @@ public class FriendlyURLEntryLocalServiceTest {
 				serviceContext);
 
 		Assert.assertEquals(
-			"cat1/cat2/url-title-en",
+			"cat3/cat1/cat2/url-title-en",
 			friendlyURLEntry.getCategorizedUrlTitle(
 				_language.getLanguageId(LocaleUtil.US)));
 	}
