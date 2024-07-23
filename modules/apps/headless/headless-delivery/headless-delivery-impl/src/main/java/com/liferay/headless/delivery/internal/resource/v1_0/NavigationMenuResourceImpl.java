@@ -376,7 +376,9 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 	}
 
 	private String _getType(NavigationMenuItem navigationMenuItem) {
-		if (navigationMenuItem.getLink() != null) {
+		if ((navigationMenuItem.getLink() != null) ||
+			(navigationMenuItem.getLink_i18n() != null)) {
+
 			return "layout";
 		}
 		else if (navigationMenuItem.getUrl() != null) {
