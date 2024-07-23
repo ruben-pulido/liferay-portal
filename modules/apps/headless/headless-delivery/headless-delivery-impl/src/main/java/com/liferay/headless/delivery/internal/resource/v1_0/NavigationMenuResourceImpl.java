@@ -395,7 +395,9 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 
 		UnicodeProperties unicodeProperties = new UnicodeProperties(true);
 
-		if (navigationMenuItem.getLink() != null) {
+		if ((navigationMenuItem.getLink() != null) ||
+			(navigationMenuItem.getLink_i18n() != null)) {
+
 			unicodeProperties.setProperty(
 				"defaultLanguageId",
 				LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
