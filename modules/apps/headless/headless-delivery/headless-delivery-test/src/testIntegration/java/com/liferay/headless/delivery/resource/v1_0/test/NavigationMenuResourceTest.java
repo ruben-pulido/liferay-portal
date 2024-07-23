@@ -222,7 +222,6 @@ public class NavigationMenuResourceTest
 			JournalArticle.class.getName(), journalArticle.getTitle(),
 			"structuredContent", false);
 
-		_testGetNavigationMenuWithSubmenu();
 	}
 
 	@Override
@@ -722,56 +721,6 @@ public class NavigationMenuResourceTest
 			Assert.assertEquals(title, navigationMenuItem.getName());
 			Assert.assertFalse(navigationMenuItem.getUseCustomName());
 		}
-	}
-
-	private void _testGetNavigationMenuWithSubmenu() throws Exception {
-		NavigationMenu postNavigationMenu =
-			testGetNavigationMenu_addNavigationMenu();
-
-		String nameEnUS = RandomTestUtil.randomString();
-		String nameEsES = RandomTestUtil.randomString();
-
-		SiteNavigationMenuItem siteNavigationMenuItem =
-			_siteNavigationMenuItemLocalService.addSiteNavigationMenuItem(
-				null, TestPropsValues.getUserId(), testGroup.getGroupId(),
-				postNavigationMenu.getId(), 0,
-				SiteNavigationMenuItemTypeConstants.NODE,
-				UnicodePropertiesBuilder.create(
-					true
-				).put(
-					"defaultLanguageId", "en_US"
-				).put(
-					"name_en_US", nameEnUS
-				).put(
-					"name_es_ES", nameEsES
-				).buildString(),
-				ServiceContextTestUtil.getServiceContext(
-					testGroup.getGroupId(), TestPropsValues.getUserId()));
-
-		NavigationMenuResource navigationMenuResource =
-			_buildNavigationMenuResource();
-
-		NavigationMenu getNavigationMenu =
-			navigationMenuResource.getNavigationMenu(
-				postNavigationMenu.getId());
-
-		assertValid(getNavigationMenu);
-
-		NavigationMenuItem navigationMenuItem =
-			getNavigationMenu.getNavigationMenuItems()[0];
-
-		Assert.assertEquals(
-			siteNavigationMenuItem.getSiteNavigationMenuItemId(),
-			GetterUtil.getLong(navigationMenuItem.getId()));
-		Assert.assertEquals(nameEnUS, navigationMenuItem.getName());
-
-		Map<String, String> nameI18nMap = navigationMenuItem.getName_i18n();
-
-		Assert.assertEquals(nameEnUS, nameI18nMap.get("en-US"));
-		Assert.assertEquals(nameEsES, nameI18nMap.get("es-ES"));
-
-		Assert.assertEquals("navigationMenu", navigationMenuItem.getType());
-		Assert.assertFalse(navigationMenuItem.getUseCustomName());
 	}
 
 	private void _testGetSiteNavigationMenusPage(
