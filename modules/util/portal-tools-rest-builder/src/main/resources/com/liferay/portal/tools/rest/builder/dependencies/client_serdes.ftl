@@ -59,7 +59,16 @@ public class ${schemaName}SerDes {
 		<#assign
 			enumSchemas = freeMarkerTool.getDTOEnumSchemas(configYAML, openAPIYAML, schema)
 			properties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, schema, allSchemas)
+			dtoParentClassName = freeMarkerTool.getDTOParentClassName(openAPIYAML, schemaName)!
 		/>
+
+		<#if dtoParentClassName?has_content>
+			<#assign
+				dtoParentSchema = allSchemas[dtoParentClassName]
+				enumSchemas = enumSchemas + freeMarkerTool.getDTOEnumSchemas(configYAML, openAPIYAML, dtoParentSchema)
+				properties = properties + freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, dtoParentSchema, allSchemas)
+			/>
+		</#if>
 
 		<#list properties?keys as propertyName>
 			<#assign propertyType = properties[propertyName] />
@@ -74,8 +83,14 @@ public class ${schemaName}SerDes {
 		<#list properties?keys as propertyName>
 			<#assign
 				capitalizedPropertyName = propertyName?cap_first
-				propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, schema, allSchemas)
+				propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, schema, allSchemas)!
 			/>
+
+			<#if dtoParentClassName?has_content>
+				<#if !propertySchema?has_content>
+					<#assign propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, dtoParentSchema, allSchemas) />
+				</#if>
+			</#if>
 
 			<#if enumSchemas?keys?seq_contains(properties[propertyName])>
 				<#assign capitalizedPropertyName = properties[propertyName] />
@@ -190,8 +205,14 @@ public class ${schemaName}SerDes {
 		<#list properties?keys as propertyName>
 			<#assign
 				capitalizedPropertyName = propertyName?cap_first
-				propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, schema, allSchemas)
+				propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, schema, allSchemas)!
 			/>
+
+			<#if dtoParentClassName?has_content>
+				<#if !propertySchema?has_content>
+					<#assign propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, dtoParentSchema, allSchemas) />
+				</#if>
+			</#if>
 
 			<#if enumSchemas?keys?seq_contains(properties[propertyName])>
 				<#assign capitalizedPropertyName = properties[propertyName] />
@@ -224,7 +245,12 @@ public class ${schemaName}SerDes {
 
 		@Override
 		protected ${schemaName} createDTO() {
-			return new ${schemaName}();
+			<#if schema.discriminator?has_content>
+				return null;
+			<#else>
+				return new ${schemaName}();
+			</#if>
+
 		}
 
 		@Override
@@ -235,7 +261,13 @@ public class ${schemaName}SerDes {
 		@Override
 		protected boolean parseMaps(String jsonParserFieldName) {
 			<#list properties?keys as propertyName>
-				<#assign propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, schema, allSchemas) />
+				<#assign propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, schema, allSchemas)! />
+
+				<#if dtoParentClassName?has_content>
+					<#if !propertySchema?has_content>
+						<#assign propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, dtoParentSchema, allSchemas) />
+					</#if>
+				</#if>
 
 				<#if !propertyName?is_first>
 					else
@@ -261,10 +293,47 @@ public class ${schemaName}SerDes {
 			return false;
 		}
 
+		<#if schema.discriminator?has_content>
+
+			<#assign propertyName = schema.discriminator.propertyName />
+
+			@Override
+			public ${schemaName} parseToDTO(String json) {
+
+				Map<String, Object> jsonMap = parseToMap(json);
+				Object ${propertyName} = jsonMap.get("${propertyName}");
+
+				if (${propertyName} != null) {
+					String ${propertyName}String = ${propertyName}.toString();
+
+					<#list schema.discriminator.mapping as mappingName, mappingSchema>
+
+						if (${propertyName}String.equals("${mappingName}")) {
+							return ${freeMarkerTool.getReferenceName(mappingSchema)}.toDTO(json);
+						} else
+					</#list>
+						{
+							throw new IllegalArgumentException(
+								"Unknown ${propertyName} '" + ${propertyName}String + "'");
+						}
+				} else {
+					throw new IllegalArgumentException(
+						"Missing ${propertyName} parameter");
+				}
+
+			}
+		</#if>
+
 		@Override
 		protected void setField(${schemaName} ${schemaVarName}, String jsonParserFieldName, Object jsonParserFieldValue) {
 			<#list properties?keys as propertyName>
-				<#assign propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, schema, allSchemas) />
+				<#assign propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, schema, allSchemas)! />
+
+				<#if dtoParentClassName?has_content>
+					<#if !propertySchema?has_content>
+						<#assign propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, dtoParentSchema, allSchemas) />
+					</#if>
+				</#if>
 
 				<#if !propertyName?is_first>
 					else

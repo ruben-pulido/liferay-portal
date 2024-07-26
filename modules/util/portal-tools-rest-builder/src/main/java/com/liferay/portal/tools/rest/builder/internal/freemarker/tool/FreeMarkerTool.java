@@ -280,23 +280,23 @@ public class FreeMarkerTool {
 
 		Map<String, Schema> schemas = getSchemas(openAPIYAML);
 
-		for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
-			Schema schema = entry.getValue();
+		Schema schema = schemas.get(schemaName);
 
-			if (schema.getOneOfSchemas() == null) {
-				continue;
-			}
+		if (schema != null) {
+			List<Schema> allOfSchemas = schema.getAllOfSchemas();
 
-			for (Schema oneOfSchema : schema.getOneOfSchemas()) {
-				Map<String, Schema> propertySchemas =
-					oneOfSchema.getPropertySchemas();
+			if (allOfSchemas != null) {
+				for (Schema allOfSchema : allOfSchemas) {
+					if (allOfSchema.getReference() != null) {
+						String allOfSchemaReferenceName = getReferenceName(
+							allOfSchema.getReference());
 
-				Set<String> keys = propertySchemas.keySet();
+						allOfSchema = schemas.get(allOfSchemaReferenceName);
 
-				Iterator<String> iterator = keys.iterator();
-
-				if (StringUtil.equalsIgnoreCase(schemaName, iterator.next())) {
-					return entry.getKey();
+						if (allOfSchema.getDiscriminator() != null) {
+							return allOfSchemaReferenceName;
+						}
+					}
 				}
 			}
 		}
@@ -746,6 +746,10 @@ public class FreeMarkerTool {
 		}
 
 		return null;
+	}
+
+	public String getReferenceName(String reference) {
+		return OpenAPIParserUtil.getReferenceName(reference);
 	}
 
 	public String getResourceArguments(

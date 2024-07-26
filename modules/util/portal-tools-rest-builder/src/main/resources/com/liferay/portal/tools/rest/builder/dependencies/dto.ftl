@@ -66,30 +66,26 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 
-<#if schema.oneOfSchemas?has_content>
+<#if schema.discriminator?has_content>
 	@JsonSubTypes(
 		{
-			<#list schema.oneOfSchemas as oneOfSchema>
-				<#assign propertySchemaName = oneOfSchema.propertySchemas?keys[0] />
+			<#list schema.discriminator.mapping as mappingName, mappingSchema>
+				@JsonSubTypes.Type(name = "${mappingName}", value=${freeMarkerTool.getReferenceName(mappingSchema)}.class)
 
-				@JsonSubTypes.Type(name = "${propertySchemaName}", value=${propertySchemaName?cap_first}.class)
-
-				<#if oneOfSchema_has_next>
+				<#if mappingName_has_next>
 					,
 				</#if>
 			</#list>
 		}
 	)
-	@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, property = "childType", use = JsonTypeInfo.Id.NAME)
+
+	@JsonTypeInfo(
+		include= JsonTypeInfo.As.PROPERTY, property="${schema.discriminator.propertyName}",
+		use= JsonTypeInfo.Id.NAME, visible = true
+	)
 </#if>
 
 <#assign dtoParentClassName = freeMarkerTool.getDTOParentClassName(openAPIYAML, schemaName)! />
-
-<#if dtoParentClassName?has_content>
-	@JsonTypeInfo(
-		defaultImpl = ${schemaName}.class, include = JsonTypeInfo.As.PROPERTY, property = "childType", use = JsonTypeInfo.Id.NAME
-	)
-</#if>
 
 @Generated("")
 @GraphQLName(
@@ -119,8 +115,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 		</#if>
 	)
 </#if>
+
 @XmlRootElement(name = "${schemaName}")
-public class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoParentClassName}</#if> implements Serializable {
+public <#if schema.discriminator?has_content>abstract</#if> class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoParentClassName}</#if> implements Serializable {
 
 	public static ${schemaName} toDTO(String json) {
 		return ObjectMapperUtil.readValue(${schemaName}.class, json);
