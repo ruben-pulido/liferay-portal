@@ -7882,7 +7882,7 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/ContentPageSpecification"
             # @review
-            tags: ["SitePage"]
+            tags: ["PageSpecification"]
     "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/permissions":
         get:
             parameters:
