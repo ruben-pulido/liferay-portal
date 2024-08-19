@@ -7408,7 +7408,7 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/ContentPageSpecification"
             # @review
-            tags: ["PageTemplate"]
+            tags: ["PageSpecification"]
     "/sites/{siteExternalReferenceCode}/page-templates/{pageTemplateExternalReferenceCode}/permissions":
         get:
             parameters:
