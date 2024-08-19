@@ -6,7 +6,11 @@
 package com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0;
 
 import com.liferay.portal.tools.rest.builder.test.client.function.UnsafeSupplier;
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedArrayItemsTestEntity.java
 import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0.NestedArrayItemsTestEntitySerDes;
+========
+import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0.NestedArrayItemsTestObjectSerDes;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedArrayItemsTestObject.java
 
 import java.io.Serializable;
 
@@ -19,10 +23,17 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedArrayItemsTestEntity.java
 public class NestedArrayItemsTestEntity implements Cloneable, Serializable {
 
 	public static NestedArrayItemsTestEntity toDTO(String json) {
 		return NestedArrayItemsTestEntitySerDes.toDTO(json);
+========
+public class NestedArrayItemsTestObject implements Cloneable, Serializable {
+
+	public static NestedArrayItemsTestObject toDTO(String json) {
+		return NestedArrayItemsTestObjectSerDes.toDTO(json);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedArrayItemsTestObject.java
 	}
 
 	public String getName() {
@@ -66,10 +77,17 @@ public class NestedArrayItemsTestEntity implements Cloneable, Serializable {
 	protected String[][] values;
 
 	@Override
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedArrayItemsTestEntity.java
 	public NestedArrayItemsTestEntity clone()
 		throws CloneNotSupportedException {
 
 		return (NestedArrayItemsTestEntity)super.clone();
+========
+	public NestedArrayItemsTestObject clone()
+		throws CloneNotSupportedException {
+
+		return (NestedArrayItemsTestObject)super.clone();
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedArrayItemsTestObject.java
 	}
 
 	@Override
@@ -78,6 +96,7 @@ public class NestedArrayItemsTestEntity implements Cloneable, Serializable {
 			return true;
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedArrayItemsTestEntity.java
 		if (!(object instanceof NestedArrayItemsTestEntity)) {
 			return false;
 		}
@@ -87,6 +106,17 @@ public class NestedArrayItemsTestEntity implements Cloneable, Serializable {
 
 		return Objects.equals(
 			toString(), nestedArrayItemsTestEntity.toString());
+========
+		if (!(object instanceof NestedArrayItemsTestObject)) {
+			return false;
+		}
+
+		NestedArrayItemsTestObject nestedArrayItemsTestObject =
+			(NestedArrayItemsTestObject)object;
+
+		return Objects.equals(
+			toString(), nestedArrayItemsTestObject.toString());
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedArrayItemsTestObject.java
 	}
 
 	@Override
@@ -97,7 +127,11 @@ public class NestedArrayItemsTestEntity implements Cloneable, Serializable {
 	}
 
 	public String toString() {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedArrayItemsTestEntity.java
 		return NestedArrayItemsTestEntitySerDes.toJSON(this);
+========
+		return NestedArrayItemsTestObjectSerDes.toJSON(this);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedArrayItemsTestObject.java
 	}
 
 }

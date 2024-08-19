@@ -5,7 +5,11 @@
 
 package com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0;
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 import com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0.JSONMapAttributeTestEntity;
+========
+import com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0.JSONMapAttributeTestObject;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 import com.liferay.portal.tools.rest.builder.test.client.json.BaseJSONParser;
 
 import java.util.Iterator;
@@ -21,6 +25,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 public class JSONMapAttributeTestEntitySerDes {
 
 	public static JSONMapAttributeTestEntity toDTO(String json) {
@@ -43,6 +48,30 @@ public class JSONMapAttributeTestEntitySerDes {
 		JSONMapAttributeTestEntity jsonMapAttributeTestEntity) {
 
 		if (jsonMapAttributeTestEntity == null) {
+========
+public class JSONMapAttributeTestObjectSerDes {
+
+	public static JSONMapAttributeTestObject toDTO(String json) {
+		JSONMapAttributeTestObjectJSONParser
+			jsonMapAttributeTestObjectJSONParser =
+				new JSONMapAttributeTestObjectJSONParser();
+
+		return jsonMapAttributeTestObjectJSONParser.parseToDTO(json);
+	}
+
+	public static JSONMapAttributeTestObject[] toDTOs(String json) {
+		JSONMapAttributeTestObjectJSONParser
+			jsonMapAttributeTestObjectJSONParser =
+				new JSONMapAttributeTestObjectJSONParser();
+
+		return jsonMapAttributeTestObjectJSONParser.parseToDTOs(json);
+	}
+
+	public static String toJSON(
+		JSONMapAttributeTestObject jsonMapAttributeTestObject) {
+
+		if (jsonMapAttributeTestObject == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			return "null";
 		}
 
@@ -50,7 +79,11 @@ public class JSONMapAttributeTestEntitySerDes {
 
 		sb.append("{");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 		if (jsonMapAttributeTestEntity.getDescription() != null) {
+========
+		if (jsonMapAttributeTestObject.getDescription() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -59,12 +92,20 @@ public class JSONMapAttributeTestEntitySerDes {
 
 			sb.append("\"");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 			sb.append(_escape(jsonMapAttributeTestEntity.getDescription()));
+========
+			sb.append(_escape(jsonMapAttributeTestObject.getDescription()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 		if (jsonMapAttributeTestEntity.getName() != null) {
+========
+		if (jsonMapAttributeTestObject.getName() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -73,29 +114,48 @@ public class JSONMapAttributeTestEntitySerDes {
 
 			sb.append("\"");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 			sb.append(_escape(jsonMapAttributeTestEntity.getName()));
+========
+			sb.append(_escape(jsonMapAttributeTestObject.getName()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 		if (jsonMapAttributeTestEntity.getProperties1() != null) {
+========
+		if (jsonMapAttributeTestObject.getProperties1() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
 			sb.append("\"properties1\": ");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 			sb.append(_toJSON(jsonMapAttributeTestEntity.getProperties1()));
 		}
 
 		if (jsonMapAttributeTestEntity.getProperties2() != null) {
+========
+			sb.append(_toJSON(jsonMapAttributeTestObject.getProperties1()));
+		}
+
+		if (jsonMapAttributeTestObject.getProperties2() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
 			sb.append("\"properties2\": ");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 			sb.append(_toJSON(jsonMapAttributeTestEntity.getProperties2()));
+========
+			sb.append(_toJSON(jsonMapAttributeTestObject.getProperties2()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 		}
 
 		sb.append("}");
@@ -104,6 +164,7 @@ public class JSONMapAttributeTestEntitySerDes {
 	}
 
 	public static Map<String, Object> toMap(String json) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 		JSONMapAttributeTestEntityJSONParser
 			jsonMapAttributeTestEntityJSONParser =
 				new JSONMapAttributeTestEntityJSONParser();
@@ -115,49 +176,92 @@ public class JSONMapAttributeTestEntitySerDes {
 		JSONMapAttributeTestEntity jsonMapAttributeTestEntity) {
 
 		if (jsonMapAttributeTestEntity == null) {
+========
+		JSONMapAttributeTestObjectJSONParser
+			jsonMapAttributeTestObjectJSONParser =
+				new JSONMapAttributeTestObjectJSONParser();
+
+		return jsonMapAttributeTestObjectJSONParser.parseToMap(json);
+	}
+
+	public static Map<String, String> toMap(
+		JSONMapAttributeTestObject jsonMapAttributeTestObject) {
+
+		if (jsonMapAttributeTestObject == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			return null;
 		}
 
 		Map<String, String> map = new TreeMap<>();
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 		if (jsonMapAttributeTestEntity.getDescription() == null) {
+========
+		if (jsonMapAttributeTestObject.getDescription() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			map.put("description", null);
 		}
 		else {
 			map.put(
 				"description",
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 				String.valueOf(jsonMapAttributeTestEntity.getDescription()));
 		}
 
 		if (jsonMapAttributeTestEntity.getName() == null) {
+========
+				String.valueOf(jsonMapAttributeTestObject.getDescription()));
+		}
+
+		if (jsonMapAttributeTestObject.getName() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			map.put("name", null);
 		}
 		else {
 			map.put(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 				"name", String.valueOf(jsonMapAttributeTestEntity.getName()));
 		}
 
 		if (jsonMapAttributeTestEntity.getProperties1() == null) {
+========
+				"name", String.valueOf(jsonMapAttributeTestObject.getName()));
+		}
+
+		if (jsonMapAttributeTestObject.getProperties1() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			map.put("properties1", null);
 		}
 		else {
 			map.put(
 				"properties1",
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 				String.valueOf(jsonMapAttributeTestEntity.getProperties1()));
 		}
 
 		if (jsonMapAttributeTestEntity.getProperties2() == null) {
+========
+				String.valueOf(jsonMapAttributeTestObject.getProperties1()));
+		}
+
+		if (jsonMapAttributeTestObject.getProperties2() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			map.put("properties2", null);
 		}
 		else {
 			map.put(
 				"properties2",
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 				String.valueOf(jsonMapAttributeTestEntity.getProperties2()));
+========
+				String.valueOf(jsonMapAttributeTestObject.getProperties2()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 		}
 
 		return map;
 	}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 	public static class JSONMapAttributeTestEntityJSONParser
 		extends BaseJSONParser<JSONMapAttributeTestEntity> {
 
@@ -169,6 +273,19 @@ public class JSONMapAttributeTestEntitySerDes {
 		@Override
 		protected JSONMapAttributeTestEntity[] createDTOArray(int size) {
 			return new JSONMapAttributeTestEntity[size];
+========
+	public static class JSONMapAttributeTestObjectJSONParser
+		extends BaseJSONParser<JSONMapAttributeTestObject> {
+
+		@Override
+		protected JSONMapAttributeTestObject createDTO() {
+			return new JSONMapAttributeTestObject();
+		}
+
+		@Override
+		protected JSONMapAttributeTestObject[] createDTOArray(int size) {
+			return new JSONMapAttributeTestObject[size];
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 		}
 
 		@Override
@@ -191,30 +308,50 @@ public class JSONMapAttributeTestEntitySerDes {
 
 		@Override
 		protected void setField(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 			JSONMapAttributeTestEntity jsonMapAttributeTestEntity,
+========
+			JSONMapAttributeTestObject jsonMapAttributeTestObject,
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 			String jsonParserFieldName, Object jsonParserFieldValue) {
 
 			if (Objects.equals(jsonParserFieldName, "description")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 					jsonMapAttributeTestEntity.setDescription(
+========
+					jsonMapAttributeTestObject.setDescription(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 						(String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "name")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 					jsonMapAttributeTestEntity.setName(
+========
+					jsonMapAttributeTestObject.setName(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 						(String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "properties1")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 					jsonMapAttributeTestEntity.setProperties1(
+========
+					jsonMapAttributeTestObject.setProperties1(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 						(Map<String, Object>)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "properties2")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestEntitySerDes.java
 					jsonMapAttributeTestEntity.setProperties2(
+========
+					jsonMapAttributeTestObject.setProperties2(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/JSONMapAttributeTestObjectSerDes.java
 						(Map<String, Object>)jsonParserFieldValue);
 				}
 			}

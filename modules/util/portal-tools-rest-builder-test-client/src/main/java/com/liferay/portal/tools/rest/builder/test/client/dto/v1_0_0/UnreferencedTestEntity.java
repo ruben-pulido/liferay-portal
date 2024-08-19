@@ -6,7 +6,11 @@
 package com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0;
 
 import com.liferay.portal.tools.rest.builder.test.client.function.UnsafeSupplier;
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/UnreferencedTestEntity.java
 import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0.UnreferencedTestEntitySerDes;
+========
+import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0.UnreferencedTestObjectSerDes;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/UnreferencedTestObject.java
 
 import java.io.Serializable;
 
@@ -19,10 +23,17 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/UnreferencedTestEntity.java
 public class UnreferencedTestEntity implements Cloneable, Serializable {
 
 	public static UnreferencedTestEntity toDTO(String json) {
 		return UnreferencedTestEntitySerDes.toDTO(json);
+========
+public class UnreferencedTestObject implements Cloneable, Serializable {
+
+	public static UnreferencedTestObject toDTO(String json) {
+		return UnreferencedTestObjectSerDes.toDTO(json);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/UnreferencedTestObject.java
 	}
 
 	public String getDescription() {
@@ -87,8 +98,13 @@ public class UnreferencedTestEntity implements Cloneable, Serializable {
 	protected String propertyWithHyphens;
 
 	@Override
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/UnreferencedTestEntity.java
 	public UnreferencedTestEntity clone() throws CloneNotSupportedException {
 		return (UnreferencedTestEntity)super.clone();
+========
+	public UnreferencedTestObject clone() throws CloneNotSupportedException {
+		return (UnreferencedTestObject)super.clone();
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/UnreferencedTestObject.java
 	}
 
 	@Override
@@ -97,6 +113,7 @@ public class UnreferencedTestEntity implements Cloneable, Serializable {
 			return true;
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/UnreferencedTestEntity.java
 		if (!(object instanceof UnreferencedTestEntity)) {
 			return false;
 		}
@@ -105,6 +122,16 @@ public class UnreferencedTestEntity implements Cloneable, Serializable {
 			(UnreferencedTestEntity)object;
 
 		return Objects.equals(toString(), unreferencedTestEntity.toString());
+========
+		if (!(object instanceof UnreferencedTestObject)) {
+			return false;
+		}
+
+		UnreferencedTestObject unreferencedTestObject =
+			(UnreferencedTestObject)object;
+
+		return Objects.equals(toString(), unreferencedTestObject.toString());
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/UnreferencedTestObject.java
 	}
 
 	@Override
@@ -115,7 +142,11 @@ public class UnreferencedTestEntity implements Cloneable, Serializable {
 	}
 
 	public String toString() {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/UnreferencedTestEntity.java
 		return UnreferencedTestEntitySerDes.toJSON(this);
+========
+		return UnreferencedTestObjectSerDes.toJSON(this);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/UnreferencedTestObject.java
 	}
 
 }

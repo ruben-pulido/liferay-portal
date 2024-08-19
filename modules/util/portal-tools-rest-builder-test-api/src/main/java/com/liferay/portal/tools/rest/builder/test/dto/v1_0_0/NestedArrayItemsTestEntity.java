@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Generated("")
 @GraphQLName(
 	description = "Test Component to test the REST Builder support for nested array items",
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedArrayItemsTestEntity.java
 	value = "NestedArrayItemsTestEntity"
 )
 @JsonFilter("Liferay.Vulcan")
@@ -53,6 +54,22 @@ public class NestedArrayItemsTestEntity implements Serializable {
 	public static NestedArrayItemsTestEntity unsafeToDTO(String json) {
 		return ObjectMapperUtil.unsafeReadValue(
 			NestedArrayItemsTestEntity.class, json);
+========
+	value = "NestedArrayItemsTestObject"
+)
+@JsonFilter("Liferay.Vulcan")
+@XmlRootElement(name = "NestedArrayItemsTestObject")
+public class NestedArrayItemsTestObject implements Serializable {
+
+	public static NestedArrayItemsTestObject toDTO(String json) {
+		return ObjectMapperUtil.readValue(
+			NestedArrayItemsTestObject.class, json);
+	}
+
+	public static NestedArrayItemsTestObject unsafeToDTO(String json) {
+		return ObjectMapperUtil.unsafeReadValue(
+			NestedArrayItemsTestObject.class, json);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedArrayItemsTestObject.java
 	}
 
 	@Schema
@@ -142,6 +159,7 @@ public class NestedArrayItemsTestEntity implements Serializable {
 			return true;
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedArrayItemsTestEntity.java
 		if (!(object instanceof NestedArrayItemsTestEntity)) {
 			return false;
 		}
@@ -151,6 +169,17 @@ public class NestedArrayItemsTestEntity implements Serializable {
 
 		return Objects.equals(
 			toString(), nestedArrayItemsTestEntity.toString());
+========
+		if (!(object instanceof NestedArrayItemsTestObject)) {
+			return false;
+		}
+
+		NestedArrayItemsTestObject nestedArrayItemsTestObject =
+			(NestedArrayItemsTestObject)object;
+
+		return Objects.equals(
+			toString(), nestedArrayItemsTestObject.toString());
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedArrayItemsTestObject.java
 	}
 
 	@Override
@@ -210,7 +239,11 @@ public class NestedArrayItemsTestEntity implements Serializable {
 
 	@Schema(
 		accessMode = Schema.AccessMode.READ_ONLY,
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedArrayItemsTestEntity.java
 		defaultValue = "com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.NestedArrayItemsTestEntity",
+========
+		defaultValue = "com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.NestedArrayItemsTestObject",
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedArrayItemsTestObject.java
 		name = "x-class-name"
 	)
 	public String xClassName;

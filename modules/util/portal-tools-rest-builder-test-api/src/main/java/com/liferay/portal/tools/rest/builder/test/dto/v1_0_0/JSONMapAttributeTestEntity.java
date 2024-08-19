@@ -42,6 +42,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Generated("")
 @GraphQLName(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/JSONMapAttributeTestEntity.java
 	description = "Test Component to test the generation of getValue method on Entities when one or multiple JSON Maps are present.",
 	value = "JSONMapAttributeTestEntity"
 )
@@ -57,6 +58,23 @@ public class JSONMapAttributeTestEntity implements Serializable {
 	public static JSONMapAttributeTestEntity unsafeToDTO(String json) {
 		return ObjectMapperUtil.unsafeReadValue(
 			JSONMapAttributeTestEntity.class, json);
+========
+	description = "Test Component to test the generation of getValue method on DTOs when one or multiple JSON Maps are present.",
+	value = "JSONMapAttributeTestObject"
+)
+@JsonFilter("Liferay.Vulcan")
+@XmlRootElement(name = "JSONMapAttributeTestObject")
+public class JSONMapAttributeTestObject implements Serializable {
+
+	public static JSONMapAttributeTestObject toDTO(String json) {
+		return ObjectMapperUtil.readValue(
+			JSONMapAttributeTestObject.class, json);
+	}
+
+	public static JSONMapAttributeTestObject unsafeToDTO(String json) {
+		return ObjectMapperUtil.unsafeReadValue(
+			JSONMapAttributeTestObject.class, json);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/JSONMapAttributeTestObject.java
 	}
 
 	@Schema
@@ -299,6 +317,7 @@ public class JSONMapAttributeTestEntity implements Serializable {
 			return true;
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/JSONMapAttributeTestEntity.java
 		if (!(object instanceof JSONMapAttributeTestEntity)) {
 			return false;
 		}
@@ -308,6 +327,17 @@ public class JSONMapAttributeTestEntity implements Serializable {
 
 		return Objects.equals(
 			toString(), jsonMapAttributeTestEntity.toString());
+========
+		if (!(object instanceof JSONMapAttributeTestObject)) {
+			return false;
+		}
+
+		JSONMapAttributeTestObject jsonMapAttributeTestObject =
+			(JSONMapAttributeTestObject)object;
+
+		return Objects.equals(
+			toString(), jsonMapAttributeTestObject.toString());
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/JSONMapAttributeTestObject.java
 	}
 
 	public Object getPropertyValue(String propertyName) {
@@ -460,7 +490,11 @@ public class JSONMapAttributeTestEntity implements Serializable {
 
 	@Schema(
 		accessMode = Schema.AccessMode.READ_ONLY,
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/JSONMapAttributeTestEntity.java
 		defaultValue = "com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.JSONMapAttributeTestEntity",
+========
+		defaultValue = "com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.JSONMapAttributeTestObject",
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/JSONMapAttributeTestObject.java
 		name = "x-class-name"
 	)
 	public String xClassName;

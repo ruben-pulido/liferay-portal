@@ -15,7 +15,11 @@ import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
 import com.liferay.portal.odata.sort.SortParserProvider;
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/resource/v1_0_0/TestEntityResource.java
 import com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.TestEntity;
+========
+import com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.TestObject;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/resource/v1_0_0/TestObjectResource.java
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineExportTaskResource;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineImportTaskResource;
@@ -47,6 +51,7 @@ import org.osgi.annotation.versioning.ProviderType;
 @CTAware
 @Generated("")
 @ProviderType
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/resource/v1_0_0/TestEntityResource.java
 public interface TestEntityResource {
 
 	public Response postReservedWord(Boolean booleanValue) throws Exception;
@@ -61,6 +66,22 @@ public interface TestEntityResource {
 
 	public Response postTestEntityBatch(String callbackURL, Object object)
 		throws Exception;
+========
+public interface TestObjectResource {
+
+	public Response postReservedWord(Boolean booleanValue) throws Exception;
+
+	public Page<TestObject> getTestObjectsPage() throws Exception;
+
+	public TestObject postTestObject(TestObject testObject) throws Exception;
+
+	public Response postTestObjectBatch(String callbackURL, Object object)
+		throws Exception;
+
+	public Integer getTestObjectCount() throws Exception;
+
+	public TestObject getTestObject(Long testObjectId) throws Exception;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/resource/v1_0_0/TestObjectResource.java
 
 	public Integer getTestEntityCount() throws Exception;
 
@@ -131,7 +152,11 @@ public interface TestEntityResource {
 	@ProviderType
 	public interface Builder {
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/resource/v1_0_0/TestEntityResource.java
 		public TestEntityResource build();
+========
+		public TestObjectResource build();
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/resource/v1_0_0/TestObjectResource.java
 
 		public Builder checkPermissions(boolean checkPermissions);
 

@@ -25,7 +25,11 @@ import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
 import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.tools.rest.builder.test.internal.security.permission.LiberalPermissionChecker;
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 import com.liferay.portal.tools.rest.builder.test.resource.v1_0_0.TestEntityResource;
+========
+import com.liferay.portal.tools.rest.builder.test.resource.v1_0_0.TestObjectResource;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 
 import java.lang.reflect.Constructor;
@@ -55,6 +59,7 @@ import org.osgi.service.component.annotations.ReferenceScope;
  * @generated
  */
 @Component(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 	property = "resource.locator.key=/test/1.0.0/TestEntity",
 	service = TestEntityResource.Factory.class
 )
@@ -68,16 +73,40 @@ public class TestEntityResourceFactoryImpl
 
 			@Override
 			public TestEntityResource build() {
+========
+	property = "resource.locator.key=/test/1.0.0/TestObject",
+	service = TestObjectResource.Factory.class
+)
+@Generated("")
+public class TestObjectResourceFactoryImpl
+	implements TestObjectResource.Factory {
+
+	@Override
+	public TestObjectResource.Builder create() {
+		return new TestObjectResource.Builder() {
+
+			@Override
+			public TestObjectResource build() {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 				if (_user == null) {
 					throw new IllegalArgumentException("User is not set");
 				}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 				Function<InvocationHandler, TestEntityResource>
 					testEntityResourceProxyProviderFunction =
 						ResourceProxyProviderFunctionHolder.
 							_testEntityResourceProxyProviderFunction;
 
 				return testEntityResourceProxyProviderFunction.apply(
+========
+				Function<InvocationHandler, TestObjectResource>
+					testObjectResourceProxyProviderFunction =
+						ResourceProxyProviderFunctionHolder.
+							_testObjectResourceProxyProviderFunction;
+
+				return testObjectResourceProxyProviderFunction.apply(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 					(proxy, method, arguments) -> _invoke(
 						method, arguments, _checkPermissions,
 						_httpServletRequest, _httpServletResponse,
@@ -85,7 +114,11 @@ public class TestEntityResourceFactoryImpl
 			}
 
 			@Override
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 			public TestEntityResource.Builder checkPermissions(
+========
+			public TestObjectResource.Builder checkPermissions(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 				boolean checkPermissions) {
 
 				_checkPermissions = checkPermissions;
@@ -94,7 +127,11 @@ public class TestEntityResourceFactoryImpl
 			}
 
 			@Override
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 			public TestEntityResource.Builder httpServletRequest(
+========
+			public TestObjectResource.Builder httpServletRequest(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 				HttpServletRequest httpServletRequest) {
 
 				_httpServletRequest = httpServletRequest;
@@ -103,7 +140,11 @@ public class TestEntityResourceFactoryImpl
 			}
 
 			@Override
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 			public TestEntityResource.Builder httpServletResponse(
+========
+			public TestObjectResource.Builder httpServletResponse(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 				HttpServletResponse httpServletResponse) {
 
 				_httpServletResponse = httpServletResponse;
@@ -112,7 +153,11 @@ public class TestEntityResourceFactoryImpl
 			}
 
 			@Override
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 			public TestEntityResource.Builder preferredLocale(
+========
+			public TestObjectResource.Builder preferredLocale(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 				Locale preferredLocale) {
 
 				_preferredLocale = preferredLocale;
@@ -121,14 +166,22 @@ public class TestEntityResourceFactoryImpl
 			}
 
 			@Override
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 			public TestEntityResource.Builder uriInfo(UriInfo uriInfo) {
+========
+			public TestObjectResource.Builder uriInfo(UriInfo uriInfo) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 				_uriInfo = uriInfo;
 
 				return this;
 			}
 
 			@Override
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 			public TestEntityResource.Builder user(User user) {
+========
+			public TestObjectResource.Builder user(User user) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 				_user = user;
 
 				return this;
@@ -144,6 +197,7 @@ public class TestEntityResourceFactoryImpl
 		};
 	}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 	private static Function<InvocationHandler, TestEntityResource>
 		_getProxyProviderFunction() {
 
@@ -154,6 +208,18 @@ public class TestEntityResourceFactoryImpl
 		try {
 			Constructor<TestEntityResource> constructor =
 				(Constructor<TestEntityResource>)proxyClass.getConstructor(
+========
+	private static Function<InvocationHandler, TestObjectResource>
+		_getProxyProviderFunction() {
+
+		Class<?> proxyClass = ProxyUtil.getProxyClass(
+			TestObjectResource.class.getClassLoader(),
+			TestObjectResource.class);
+
+		try {
+			Constructor<TestObjectResource> constructor =
+				(Constructor<TestObjectResource>)proxyClass.getConstructor(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 					InvocationHandler.class);
 
 			return invocationHandler -> {
@@ -195,14 +261,22 @@ public class TestEntityResourceFactoryImpl
 				new LiberalPermissionChecker(user));
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 		TestEntityResource testEntityResource =
 			_componentServiceObjects.getService();
 
 		testEntityResource.setContextAcceptLanguage(
+========
+		TestObjectResource testObjectResource =
+			_componentServiceObjects.getService();
+
+		testObjectResource.setContextAcceptLanguage(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 			new AcceptLanguageImpl(httpServletRequest, preferredLocale, user));
 
 		Company company = _companyLocalService.getCompany(user.getCompanyId());
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 		testEntityResource.setContextCompany(company);
 
 		testEntityResource.setContextHttpServletRequest(httpServletRequest);
@@ -221,12 +295,36 @@ public class TestEntityResourceFactoryImpl
 
 		try {
 			return method.invoke(testEntityResource, arguments);
+========
+		testObjectResource.setContextCompany(company);
+
+		testObjectResource.setContextHttpServletRequest(httpServletRequest);
+		testObjectResource.setContextHttpServletResponse(httpServletResponse);
+		testObjectResource.setContextUriInfo(uriInfo);
+		testObjectResource.setContextUser(user);
+		testObjectResource.setExpressionConvert(_expressionConvert);
+		testObjectResource.setFilterParserProvider(_filterParserProvider);
+		testObjectResource.setGroupLocalService(_groupLocalService);
+		testObjectResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		testObjectResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
+		testObjectResource.setRoleLocalService(_roleLocalService);
+		testObjectResource.setSortParserProvider(_sortParserProvider);
+
+		try {
+			return method.invoke(testObjectResource, arguments);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 		}
 		catch (InvocationTargetException invocationTargetException) {
 			throw invocationTargetException.getTargetException();
 		}
 		finally {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 			_componentServiceObjects.ungetService(testEntityResource);
+========
+			_componentServiceObjects.ungetService(testObjectResource);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 
 			PrincipalThreadLocal.setName(name);
 
@@ -238,7 +336,11 @@ public class TestEntityResourceFactoryImpl
 	private CompanyLocalService _companyLocalService;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 	private ComponentServiceObjects<TestEntityResource>
+========
+	private ComponentServiceObjects<TestObjectResource>
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 		_componentServiceObjects;
 
 	@Reference
@@ -272,8 +374,13 @@ public class TestEntityResourceFactoryImpl
 
 	private static class ResourceProxyProviderFunctionHolder {
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestEntityResourceFactoryImpl.java
 		private static final Function<InvocationHandler, TestEntityResource>
 			_testEntityResourceProxyProviderFunction =
+========
+		private static final Function<InvocationHandler, TestObjectResource>
+			_testObjectResourceProxyProviderFunction =
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-impl/src/main/java/com/liferay/portal/tools/rest/builder/test/internal/resource/v1_0_0/factory/TestObjectResourceFactoryImpl.java
 				_getProxyProviderFunction();
 
 	}

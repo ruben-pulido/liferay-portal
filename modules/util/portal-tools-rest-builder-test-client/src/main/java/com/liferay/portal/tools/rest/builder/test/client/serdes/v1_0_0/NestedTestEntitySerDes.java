@@ -5,7 +5,11 @@
 
 package com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0;
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 import com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0.NestedTestEntity;
+========
+import com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0.NestedTestObject;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 import com.liferay.portal.tools.rest.builder.test.client.json.BaseJSONParser;
 
 import java.text.DateFormat;
@@ -24,6 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 public class NestedTestEntitySerDes {
 
 	public static NestedTestEntity toDTO(String json) {
@@ -42,6 +47,26 @@ public class NestedTestEntitySerDes {
 
 	public static String toJSON(NestedTestEntity nestedTestEntity) {
 		if (nestedTestEntity == null) {
+========
+public class NestedTestObjectSerDes {
+
+	public static NestedTestObject toDTO(String json) {
+		NestedTestObjectJSONParser nestedTestObjectJSONParser =
+			new NestedTestObjectJSONParser();
+
+		return nestedTestObjectJSONParser.parseToDTO(json);
+	}
+
+	public static NestedTestObject[] toDTOs(String json) {
+		NestedTestObjectJSONParser nestedTestObjectJSONParser =
+			new NestedTestObjectJSONParser();
+
+		return nestedTestObjectJSONParser.parseToDTOs(json);
+	}
+
+	public static String toJSON(NestedTestObject nestedTestObject) {
+		if (nestedTestObject == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			return "null";
 		}
 
@@ -52,7 +77,11 @@ public class NestedTestEntitySerDes {
 		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssXX");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 		if (nestedTestEntity.getDateCreated() != null) {
+========
+		if (nestedTestObject.getDateCreated() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -63,12 +92,20 @@ public class NestedTestEntitySerDes {
 
 			sb.append(
 				liferayToJSONDateFormat.format(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 					nestedTestEntity.getDateCreated()));
+========
+					nestedTestObject.getDateCreated()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 		if (nestedTestEntity.getDateModified() != null) {
+========
+		if (nestedTestObject.getDateModified() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -79,12 +116,20 @@ public class NestedTestEntitySerDes {
 
 			sb.append(
 				liferayToJSONDateFormat.format(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 					nestedTestEntity.getDateModified()));
+========
+					nestedTestObject.getDateModified()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 		if (nestedTestEntity.getDescription() != null) {
+========
+		if (nestedTestObject.getDescription() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -93,22 +138,37 @@ public class NestedTestEntitySerDes {
 
 			sb.append("\"");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 			sb.append(_escape(nestedTestEntity.getDescription()));
+========
+			sb.append(_escape(nestedTestObject.getDescription()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 		if (nestedTestEntity.getId() != null) {
+========
+		if (nestedTestObject.getId() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
 			sb.append("\"id\": ");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 			sb.append(nestedTestEntity.getId());
 		}
 
 		if (nestedTestEntity.getName() != null) {
+========
+			sb.append(nestedTestObject.getId());
+		}
+
+		if (nestedTestObject.getName() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -117,19 +177,33 @@ public class NestedTestEntitySerDes {
 
 			sb.append("\"");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 			sb.append(_escape(nestedTestEntity.getName()));
+========
+			sb.append(_escape(nestedTestObject.getName()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 		if (nestedTestEntity.getTestEntity() != null) {
+========
+		if (nestedTestObject.getTestObject() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 			sb.append("\"testEntity\": ");
 
 			sb.append(String.valueOf(nestedTestEntity.getTestEntity()));
+========
+			sb.append("\"testObject\": ");
+
+			sb.append(String.valueOf(nestedTestObject.getTestObject()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 		}
 
 		sb.append("}");
@@ -138,6 +212,7 @@ public class NestedTestEntitySerDes {
 	}
 
 	public static Map<String, Object> toMap(String json) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 		NestedTestEntityJSONParser nestedTestEntityJSONParser =
 			new NestedTestEntityJSONParser();
 
@@ -146,6 +221,16 @@ public class NestedTestEntitySerDes {
 
 	public static Map<String, String> toMap(NestedTestEntity nestedTestEntity) {
 		if (nestedTestEntity == null) {
+========
+		NestedTestObjectJSONParser nestedTestObjectJSONParser =
+			new NestedTestObjectJSONParser();
+
+		return nestedTestObjectJSONParser.parseToMap(json);
+	}
+
+	public static Map<String, String> toMap(NestedTestObject nestedTestObject) {
+		if (nestedTestObject == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			return null;
 		}
 
@@ -154,32 +239,51 @@ public class NestedTestEntitySerDes {
 		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssXX");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 		if (nestedTestEntity.getDateCreated() == null) {
+========
+		if (nestedTestObject.getDateCreated() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			map.put("dateCreated", null);
 		}
 		else {
 			map.put(
 				"dateCreated",
 				liferayToJSONDateFormat.format(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 					nestedTestEntity.getDateCreated()));
 		}
 
 		if (nestedTestEntity.getDateModified() == null) {
+========
+					nestedTestObject.getDateCreated()));
+		}
+
+		if (nestedTestObject.getDateModified() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			map.put("dateModified", null);
 		}
 		else {
 			map.put(
 				"dateModified",
 				liferayToJSONDateFormat.format(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 					nestedTestEntity.getDateModified()));
 		}
 
 		if (nestedTestEntity.getDescription() == null) {
+========
+					nestedTestObject.getDateModified()));
+		}
+
+		if (nestedTestObject.getDescription() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			map.put("description", null);
 		}
 		else {
 			map.put(
 				"description",
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 				String.valueOf(nestedTestEntity.getDescription()));
 		}
 
@@ -203,11 +307,37 @@ public class NestedTestEntitySerDes {
 		else {
 			map.put(
 				"testEntity", String.valueOf(nestedTestEntity.getTestEntity()));
+========
+				String.valueOf(nestedTestObject.getDescription()));
+		}
+
+		if (nestedTestObject.getId() == null) {
+			map.put("id", null);
+		}
+		else {
+			map.put("id", String.valueOf(nestedTestObject.getId()));
+		}
+
+		if (nestedTestObject.getName() == null) {
+			map.put("name", null);
+		}
+		else {
+			map.put("name", String.valueOf(nestedTestObject.getName()));
+		}
+
+		if (nestedTestObject.getTestObject() == null) {
+			map.put("testObject", null);
+		}
+		else {
+			map.put(
+				"testObject", String.valueOf(nestedTestObject.getTestObject()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 		}
 
 		return map;
 	}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 	public static class NestedTestEntityJSONParser
 		extends BaseJSONParser<NestedTestEntity> {
 
@@ -219,6 +349,19 @@ public class NestedTestEntitySerDes {
 		@Override
 		protected NestedTestEntity[] createDTOArray(int size) {
 			return new NestedTestEntity[size];
+========
+	public static class NestedTestObjectJSONParser
+		extends BaseJSONParser<NestedTestObject> {
+
+		@Override
+		protected NestedTestObject createDTO() {
+			return new NestedTestObject();
+		}
+
+		@Override
+		protected NestedTestObject[] createDTOArray(int size) {
+			return new NestedTestObject[size];
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 		}
 
 		@Override
@@ -238,7 +381,11 @@ public class NestedTestEntitySerDes {
 			else if (Objects.equals(jsonParserFieldName, "name")) {
 				return false;
 			}
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 			else if (Objects.equals(jsonParserFieldName, "testEntity")) {
+========
+			else if (Objects.equals(jsonParserFieldName, "testObject")) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 				return false;
 			}
 
@@ -247,35 +394,56 @@ public class NestedTestEntitySerDes {
 
 		@Override
 		protected void setField(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 			NestedTestEntity nestedTestEntity, String jsonParserFieldName,
+========
+			NestedTestObject nestedTestObject, String jsonParserFieldName,
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 			Object jsonParserFieldValue) {
 
 			if (Objects.equals(jsonParserFieldName, "dateCreated")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 					nestedTestEntity.setDateCreated(
+========
+					nestedTestObject.setDateCreated(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 						toDate((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "dateModified")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 					nestedTestEntity.setDateModified(
+========
+					nestedTestObject.setDateModified(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 						toDate((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "description")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 					nestedTestEntity.setDescription(
+========
+					nestedTestObject.setDescription(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 						(String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "id")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 					nestedTestEntity.setId(
+========
+					nestedTestObject.setId(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 						Long.valueOf((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "name")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestEntitySerDes.java
 					nestedTestEntity.setName((String)jsonParserFieldValue);
 				}
 			}
@@ -283,6 +451,15 @@ public class NestedTestEntitySerDes {
 				if (jsonParserFieldValue != null) {
 					nestedTestEntity.setTestEntity(
 						TestEntitySerDes.toDTO((String)jsonParserFieldValue));
+========
+					nestedTestObject.setName((String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "testObject")) {
+				if (jsonParserFieldValue != null) {
+					nestedTestObject.setTestObject(
+						TestObjectSerDes.toDTO((String)jsonParserFieldValue));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedTestObjectSerDes.java
 				}
 			}
 		}

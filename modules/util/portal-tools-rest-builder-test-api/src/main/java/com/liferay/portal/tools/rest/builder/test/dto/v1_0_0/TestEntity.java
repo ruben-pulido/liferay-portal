@@ -48,12 +48,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Generated("")
 @GraphQLName(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 	description = "https://www.schema.org/Document", value = "TestEntity"
+========
+	description = "https://www.schema.org/Document", value = "TestObject"
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 )
 @JsonFilter("Liferay.Vulcan")
 @JsonSubTypes(
 	{
 		@JsonSubTypes.Type(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 			name = "ChildTestEntity1", value = ChildTestEntity1.class
 		),
 		@JsonSubTypes.Type(
@@ -61,11 +66,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 		),
 		@JsonSubTypes.Type(
 			name = "ChildTestEntity3", value = ChildTestEntity3.class
+========
+			name = "ChildTestObject1", value = ChildTestObject1.class
+		),
+		@JsonSubTypes.Type(
+			name = "ChildTestObject2", value = ChildTestObject2.class
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 		)
 	}
 )
 @JsonTypeInfo(
 	include = JsonTypeInfo.As.PROPERTY, property = "type",
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 	use = JsonTypeInfo.Id.NAME, visible = true
 )
 @XmlRootElement(name = "TestEntity")
@@ -77,6 +89,19 @@ public abstract class TestEntity implements Serializable {
 
 	public static TestEntity unsafeToDTO(String json) {
 		return ObjectMapperUtil.unsafeReadValue(TestEntity.class, json);
+========
+	use = JsonTypeInfo.Id.NAME
+)
+@XmlRootElement(name = "TestObject")
+public abstract class TestObject implements Serializable {
+
+	public static TestObject toDTO(String json) {
+		return ObjectMapperUtil.readValue(TestObject.class, json);
+	}
+
+	public static TestObject unsafeToDTO(String json) {
+		return ObjectMapperUtil.unsafeReadValue(TestObject.class, json);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 	}
 
 	@Schema
@@ -326,6 +351,7 @@ public abstract class TestEntity implements Serializable {
 
 	@Schema
 	@Valid
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 	public NestedTestEntity getNestedTestEntity() {
 		if (_nestedTestEntitySupplier != null) {
 			nestedTestEntity = _nestedTestEntitySupplier.get();
@@ -350,6 +376,32 @@ public abstract class TestEntity implements Serializable {
 		_nestedTestEntitySupplier = () -> {
 			try {
 				return nestedTestEntityUnsafeSupplier.get();
+========
+	public NestedTestObject getNestedTestObject() {
+		if (_nestedTestObjectSupplier != null) {
+			nestedTestObject = _nestedTestObjectSupplier.get();
+
+			_nestedTestObjectSupplier = null;
+		}
+
+		return nestedTestObject;
+	}
+
+	public void setNestedTestObject(NestedTestObject nestedTestObject) {
+		this.nestedTestObject = nestedTestObject;
+
+		_nestedTestObjectSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setNestedTestObject(
+		UnsafeSupplier<NestedTestObject, Exception>
+			nestedTestObjectUnsafeSupplier) {
+
+		_nestedTestObjectSupplier = () -> {
+			try {
+				return nestedTestObjectUnsafeSupplier.get();
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -362,10 +414,17 @@ public abstract class TestEntity implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 	protected NestedTestEntity nestedTestEntity;
 
 	@JsonIgnore
 	private Supplier<NestedTestEntity> _nestedTestEntitySupplier;
+========
+	protected NestedTestObject nestedTestObject;
+
+	@JsonIgnore
+	private Supplier<NestedTestObject> _nestedTestObjectSupplier;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 
 	@Schema
 	public String getSelf() {
@@ -408,6 +467,7 @@ public abstract class TestEntity implements Serializable {
 
 	@Schema
 	@Valid
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 	public TestEntity getTestEntities() {
 		if (_testEntitiesSupplier != null) {
 			testEntities = _testEntitiesSupplier.get();
@@ -431,6 +491,31 @@ public abstract class TestEntity implements Serializable {
 		_testEntitiesSupplier = () -> {
 			try {
 				return testEntitiesUnsafeSupplier.get();
+========
+	public TestObject getTestObjects() {
+		if (_testObjectsSupplier != null) {
+			testObjects = _testObjectsSupplier.get();
+
+			_testObjectsSupplier = null;
+		}
+
+		return testObjects;
+	}
+
+	public void setTestObjects(TestObject testObjects) {
+		this.testObjects = testObjects;
+
+		_testObjectsSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setTestObjects(
+		UnsafeSupplier<TestObject, Exception> testObjectsUnsafeSupplier) {
+
+		_testObjectsSupplier = () -> {
+			try {
+				return testObjectsUnsafeSupplier.get();
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -443,10 +528,17 @@ public abstract class TestEntity implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 	protected TestEntity testEntities;
 
 	@JsonIgnore
 	private Supplier<TestEntity> _testEntitiesSupplier;
+========
+	protected TestObject testObjects;
+
+	@JsonIgnore
+	private Supplier<TestObject> _testObjectsSupplier;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 
 	@JsonGetter("type")
 	@Schema
@@ -506,6 +598,7 @@ public abstract class TestEntity implements Serializable {
 			return true;
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 		if (!(object instanceof TestEntity)) {
 			return false;
 		}
@@ -513,6 +606,15 @@ public abstract class TestEntity implements Serializable {
 		TestEntity testEntity = (TestEntity)object;
 
 		return Objects.equals(toString(), testEntity.toString());
+========
+		if (!(object instanceof TestObject)) {
+			return false;
+		}
+
+		TestObject testObject = (TestObject)object;
+
+		return Objects.equals(toString(), testObject.toString());
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 	}
 
 	@Override
@@ -622,16 +724,28 @@ public abstract class TestEntity implements Serializable {
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 		NestedTestEntity nestedTestEntity = getNestedTestEntity();
 
 		if (nestedTestEntity != null) {
+========
+		NestedTestObject nestedTestObject = getNestedTestObject();
+
+		if (nestedTestObject != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 			sb.append("\"nestedTestEntity\": ");
 
 			sb.append(String.valueOf(nestedTestEntity));
+========
+			sb.append("\"nestedTestObject\": ");
+
+			sb.append(String.valueOf(nestedTestObject));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 		}
 
 		String self = getSelf();
@@ -650,16 +764,28 @@ public abstract class TestEntity implements Serializable {
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 		TestEntity testEntities = getTestEntities();
 
 		if (testEntities != null) {
+========
+		TestObject testObjects = getTestObjects();
+
+		if (testObjects != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 			sb.append("\"testEntities\": ");
 
 			sb.append(String.valueOf(testEntities));
+========
+			sb.append("\"testObjects\": ");
+
+			sb.append(String.valueOf(testObjects));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 		}
 
 		Type type = getType();
@@ -685,7 +811,11 @@ public abstract class TestEntity implements Serializable {
 
 	@Schema(
 		accessMode = Schema.AccessMode.READ_ONLY,
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 		defaultValue = "com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.TestEntity",
+========
+		defaultValue = "com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.TestObject",
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 		name = "x-class-name"
 	)
 	public String xClassName;
@@ -693,9 +823,14 @@ public abstract class TestEntity implements Serializable {
 	@GraphQLName("Type")
 	public static enum Type {
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestEntity.java
 		CHILD_TEST_ENTITY1("ChildTestEntity1"),
 		CHILD_TEST_ENTITY2("ChildTestEntity2"),
 		CHILD_TEST_ENTITY3("ChildTestEntity3");
+========
+		CHILD_TEST_OBJECT1("ChildTestObject1"),
+		CHILD_TEST_OBJECT2("ChildTestObject2");
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/TestObject.java
 
 		@JsonCreator
 		public static Type create(String value) {

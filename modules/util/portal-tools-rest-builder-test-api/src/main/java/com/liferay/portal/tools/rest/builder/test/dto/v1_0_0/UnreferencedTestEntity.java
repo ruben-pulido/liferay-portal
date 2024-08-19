@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 @Generated("")
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/UnreferencedTestEntity.java
 @GraphQLName("UnreferencedTestEntity")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "UnreferencedTestEntity")
@@ -47,6 +48,20 @@ public class UnreferencedTestEntity implements Serializable {
 	public static UnreferencedTestEntity unsafeToDTO(String json) {
 		return ObjectMapperUtil.unsafeReadValue(
 			UnreferencedTestEntity.class, json);
+========
+@GraphQLName("UnreferencedTestObject")
+@JsonFilter("Liferay.Vulcan")
+@XmlRootElement(name = "UnreferencedTestObject")
+public class UnreferencedTestObject implements Serializable {
+
+	public static UnreferencedTestObject toDTO(String json) {
+		return ObjectMapperUtil.readValue(UnreferencedTestObject.class, json);
+	}
+
+	public static UnreferencedTestObject unsafeToDTO(String json) {
+		return ObjectMapperUtil.unsafeReadValue(
+			UnreferencedTestObject.class, json);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/UnreferencedTestObject.java
 	}
 
 	@Schema
@@ -178,6 +193,7 @@ public class UnreferencedTestEntity implements Serializable {
 			return true;
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/UnreferencedTestEntity.java
 		if (!(object instanceof UnreferencedTestEntity)) {
 			return false;
 		}
@@ -186,6 +202,16 @@ public class UnreferencedTestEntity implements Serializable {
 			(UnreferencedTestEntity)object;
 
 		return Objects.equals(toString(), unreferencedTestEntity.toString());
+========
+		if (!(object instanceof UnreferencedTestObject)) {
+			return false;
+		}
+
+		UnreferencedTestObject unreferencedTestObject =
+			(UnreferencedTestObject)object;
+
+		return Objects.equals(toString(), unreferencedTestObject.toString());
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/UnreferencedTestObject.java
 	}
 
 	@Override
@@ -251,7 +277,11 @@ public class UnreferencedTestEntity implements Serializable {
 
 	@Schema(
 		accessMode = Schema.AccessMode.READ_ONLY,
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/UnreferencedTestEntity.java
 		defaultValue = "com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.UnreferencedTestEntity",
+========
+		defaultValue = "com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.UnreferencedTestObject",
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/UnreferencedTestObject.java
 		name = "x-class-name"
 	)
 	public String xClassName;

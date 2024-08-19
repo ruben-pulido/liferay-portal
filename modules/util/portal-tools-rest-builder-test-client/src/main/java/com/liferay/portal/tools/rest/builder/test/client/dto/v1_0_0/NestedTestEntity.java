@@ -6,7 +6,11 @@
 package com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0;
 
 import com.liferay.portal.tools.rest.builder.test.client.function.UnsafeSupplier;
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestEntity.java
 import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0.NestedTestEntitySerDes;
+========
+import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0.NestedTestObjectSerDes;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestObject.java
 
 import java.io.Serializable;
 
@@ -20,10 +24,17 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestEntity.java
 public class NestedTestEntity implements Cloneable, Serializable {
 
 	public static NestedTestEntity toDTO(String json) {
 		return NestedTestEntitySerDes.toDTO(json);
+========
+public class NestedTestObject implements Cloneable, Serializable {
+
+	public static NestedTestObject toDTO(String json) {
+		return NestedTestObjectSerDes.toDTO(json);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestObject.java
 	}
 
 	public Date getDateCreated() {
@@ -127,6 +138,7 @@ public class NestedTestEntity implements Cloneable, Serializable {
 
 	protected String name;
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestEntity.java
 	public TestEntity getTestEntity() {
 		return testEntity;
 	}
@@ -140,17 +152,40 @@ public class NestedTestEntity implements Cloneable, Serializable {
 
 		try {
 			testEntity = testEntityUnsafeSupplier.get();
+========
+	public TestObject getTestObject() {
+		return testObject;
+	}
+
+	public void setTestObject(TestObject testObject) {
+		this.testObject = testObject;
+	}
+
+	public void setTestObject(
+		UnsafeSupplier<TestObject, Exception> testObjectUnsafeSupplier) {
+
+		try {
+			testObject = testObjectUnsafeSupplier.get();
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestObject.java
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestEntity.java
 	protected TestEntity testEntity;
 
 	@Override
 	public NestedTestEntity clone() throws CloneNotSupportedException {
 		return (NestedTestEntity)super.clone();
+========
+	protected TestObject testObject;
+
+	@Override
+	public NestedTestObject clone() throws CloneNotSupportedException {
+		return (NestedTestObject)super.clone();
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestObject.java
 	}
 
 	@Override
@@ -159,6 +194,7 @@ public class NestedTestEntity implements Cloneable, Serializable {
 			return true;
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestEntity.java
 		if (!(object instanceof NestedTestEntity)) {
 			return false;
 		}
@@ -166,6 +202,15 @@ public class NestedTestEntity implements Cloneable, Serializable {
 		NestedTestEntity nestedTestEntity = (NestedTestEntity)object;
 
 		return Objects.equals(toString(), nestedTestEntity.toString());
+========
+		if (!(object instanceof NestedTestObject)) {
+			return false;
+		}
+
+		NestedTestObject nestedTestObject = (NestedTestObject)object;
+
+		return Objects.equals(toString(), nestedTestObject.toString());
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestObject.java
 	}
 
 	@Override
@@ -176,7 +221,11 @@ public class NestedTestEntity implements Cloneable, Serializable {
 	}
 
 	public String toString() {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestEntity.java
 		return NestedTestEntitySerDes.toJSON(this);
+========
+		return NestedTestObjectSerDes.toJSON(this);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/NestedTestObject.java
 	}
 
 }

@@ -6,7 +6,11 @@
 package com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0;
 
 import com.liferay.portal.tools.rest.builder.test.client.function.UnsafeSupplier;
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/JSONMapAttributeTestEntity.java
 import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0.JSONMapAttributeTestEntitySerDes;
+========
+import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0.JSONMapAttributeTestObjectSerDes;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/JSONMapAttributeTestObject.java
 
 import java.io.Serializable;
 
@@ -20,10 +24,17 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/JSONMapAttributeTestEntity.java
 public class JSONMapAttributeTestEntity implements Cloneable, Serializable {
 
 	public static JSONMapAttributeTestEntity toDTO(String json) {
 		return JSONMapAttributeTestEntitySerDes.toDTO(json);
+========
+public class JSONMapAttributeTestObject implements Cloneable, Serializable {
+
+	public static JSONMapAttributeTestObject toDTO(String json) {
+		return JSONMapAttributeTestObjectSerDes.toDTO(json);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/JSONMapAttributeTestObject.java
 	}
 
 	public String getDescription() {
@@ -111,10 +122,17 @@ public class JSONMapAttributeTestEntity implements Cloneable, Serializable {
 	protected Map<String, Object> properties2;
 
 	@Override
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/JSONMapAttributeTestEntity.java
 	public JSONMapAttributeTestEntity clone()
 		throws CloneNotSupportedException {
 
 		return (JSONMapAttributeTestEntity)super.clone();
+========
+	public JSONMapAttributeTestObject clone()
+		throws CloneNotSupportedException {
+
+		return (JSONMapAttributeTestObject)super.clone();
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/JSONMapAttributeTestObject.java
 	}
 
 	@Override
@@ -123,6 +141,7 @@ public class JSONMapAttributeTestEntity implements Cloneable, Serializable {
 			return true;
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/JSONMapAttributeTestEntity.java
 		if (!(object instanceof JSONMapAttributeTestEntity)) {
 			return false;
 		}
@@ -132,6 +151,17 @@ public class JSONMapAttributeTestEntity implements Cloneable, Serializable {
 
 		return Objects.equals(
 			toString(), jsonMapAttributeTestEntity.toString());
+========
+		if (!(object instanceof JSONMapAttributeTestObject)) {
+			return false;
+		}
+
+		JSONMapAttributeTestObject jsonMapAttributeTestObject =
+			(JSONMapAttributeTestObject)object;
+
+		return Objects.equals(
+			toString(), jsonMapAttributeTestObject.toString());
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/JSONMapAttributeTestObject.java
 	}
 
 	@Override
@@ -142,7 +172,11 @@ public class JSONMapAttributeTestEntity implements Cloneable, Serializable {
 	}
 
 	public String toString() {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/JSONMapAttributeTestEntity.java
 		return JSONMapAttributeTestEntitySerDes.toJSON(this);
+========
+		return JSONMapAttributeTestObjectSerDes.toJSON(this);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/dto/v1_0_0/JSONMapAttributeTestObject.java
 	}
 
 }

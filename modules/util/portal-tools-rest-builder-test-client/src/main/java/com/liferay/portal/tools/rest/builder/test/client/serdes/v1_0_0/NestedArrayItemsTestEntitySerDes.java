@@ -5,7 +5,11 @@
 
 package com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0;
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 import com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0.NestedArrayItemsTestEntity;
+========
+import com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0.NestedArrayItemsTestObject;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 import com.liferay.portal.tools.rest.builder.test.client.json.BaseJSONParser;
 
 import java.util.Iterator;
@@ -21,6 +25,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 public class NestedArrayItemsTestEntitySerDes {
 
 	public static NestedArrayItemsTestEntity toDTO(String json) {
@@ -43,6 +48,30 @@ public class NestedArrayItemsTestEntitySerDes {
 		NestedArrayItemsTestEntity nestedArrayItemsTestEntity) {
 
 		if (nestedArrayItemsTestEntity == null) {
+========
+public class NestedArrayItemsTestObjectSerDes {
+
+	public static NestedArrayItemsTestObject toDTO(String json) {
+		NestedArrayItemsTestObjectJSONParser
+			nestedArrayItemsTestObjectJSONParser =
+				new NestedArrayItemsTestObjectJSONParser();
+
+		return nestedArrayItemsTestObjectJSONParser.parseToDTO(json);
+	}
+
+	public static NestedArrayItemsTestObject[] toDTOs(String json) {
+		NestedArrayItemsTestObjectJSONParser
+			nestedArrayItemsTestObjectJSONParser =
+				new NestedArrayItemsTestObjectJSONParser();
+
+		return nestedArrayItemsTestObjectJSONParser.parseToDTOs(json);
+	}
+
+	public static String toJSON(
+		NestedArrayItemsTestObject nestedArrayItemsTestObject) {
+
+		if (nestedArrayItemsTestObject == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 			return "null";
 		}
 
@@ -50,7 +79,11 @@ public class NestedArrayItemsTestEntitySerDes {
 
 		sb.append("{");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 		if (nestedArrayItemsTestEntity.getName() != null) {
+========
+		if (nestedArrayItemsTestObject.getName() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -59,12 +92,20 @@ public class NestedArrayItemsTestEntitySerDes {
 
 			sb.append("\"");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 			sb.append(_escape(nestedArrayItemsTestEntity.getName()));
+========
+			sb.append(_escape(nestedArrayItemsTestObject.getName()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 		if (nestedArrayItemsTestEntity.getValues() != null) {
+========
+		if (nestedArrayItemsTestObject.getValues() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -73,12 +114,21 @@ public class NestedArrayItemsTestEntitySerDes {
 
 			sb.append("[");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 			for (int i = 0; i < nestedArrayItemsTestEntity.getValues().length;
 				 i++) {
 
 				sb.append(nestedArrayItemsTestEntity.getValues()[i]);
 
 				if ((i + 1) < nestedArrayItemsTestEntity.getValues().length) {
+========
+			for (int i = 0; i < nestedArrayItemsTestObject.getValues().length;
+				 i++) {
+
+				sb.append(nestedArrayItemsTestObject.getValues()[i]);
+
+				if ((i + 1) < nestedArrayItemsTestObject.getValues().length) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 					sb.append(", ");
 				}
 			}
@@ -92,6 +142,7 @@ public class NestedArrayItemsTestEntitySerDes {
 	}
 
 	public static Map<String, Object> toMap(String json) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 		NestedArrayItemsTestEntityJSONParser
 			nestedArrayItemsTestEntityJSONParser =
 				new NestedArrayItemsTestEntityJSONParser();
@@ -103,31 +154,60 @@ public class NestedArrayItemsTestEntitySerDes {
 		NestedArrayItemsTestEntity nestedArrayItemsTestEntity) {
 
 		if (nestedArrayItemsTestEntity == null) {
+========
+		NestedArrayItemsTestObjectJSONParser
+			nestedArrayItemsTestObjectJSONParser =
+				new NestedArrayItemsTestObjectJSONParser();
+
+		return nestedArrayItemsTestObjectJSONParser.parseToMap(json);
+	}
+
+	public static Map<String, String> toMap(
+		NestedArrayItemsTestObject nestedArrayItemsTestObject) {
+
+		if (nestedArrayItemsTestObject == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 			return null;
 		}
 
 		Map<String, String> map = new TreeMap<>();
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 		if (nestedArrayItemsTestEntity.getName() == null) {
+========
+		if (nestedArrayItemsTestObject.getName() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 			map.put("name", null);
 		}
 		else {
 			map.put(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 				"name", String.valueOf(nestedArrayItemsTestEntity.getName()));
 		}
 
 		if (nestedArrayItemsTestEntity.getValues() == null) {
+========
+				"name", String.valueOf(nestedArrayItemsTestObject.getName()));
+		}
+
+		if (nestedArrayItemsTestObject.getValues() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 			map.put("values", null);
 		}
 		else {
 			map.put(
 				"values",
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 				String.valueOf(nestedArrayItemsTestEntity.getValues()));
+========
+				String.valueOf(nestedArrayItemsTestObject.getValues()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 		}
 
 		return map;
 	}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 	public static class NestedArrayItemsTestEntityJSONParser
 		extends BaseJSONParser<NestedArrayItemsTestEntity> {
 
@@ -139,6 +219,19 @@ public class NestedArrayItemsTestEntitySerDes {
 		@Override
 		protected NestedArrayItemsTestEntity[] createDTOArray(int size) {
 			return new NestedArrayItemsTestEntity[size];
+========
+	public static class NestedArrayItemsTestObjectJSONParser
+		extends BaseJSONParser<NestedArrayItemsTestObject> {
+
+		@Override
+		protected NestedArrayItemsTestObject createDTO() {
+			return new NestedArrayItemsTestObject();
+		}
+
+		@Override
+		protected NestedArrayItemsTestObject[] createDTOArray(int size) {
+			return new NestedArrayItemsTestObject[size];
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 		}
 
 		@Override
@@ -155,18 +248,30 @@ public class NestedArrayItemsTestEntitySerDes {
 
 		@Override
 		protected void setField(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 			NestedArrayItemsTestEntity nestedArrayItemsTestEntity,
+========
+			NestedArrayItemsTestObject nestedArrayItemsTestObject,
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 			String jsonParserFieldName, Object jsonParserFieldValue) {
 
 			if (Objects.equals(jsonParserFieldName, "name")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 					nestedArrayItemsTestEntity.setName(
+========
+					nestedArrayItemsTestObject.setName(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 						(String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "values")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestEntitySerDes.java
 					nestedArrayItemsTestEntity.setValues(
+========
+					nestedArrayItemsTestObject.setValues(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/NestedArrayItemsTestObjectSerDes.java
 						(String[][])jsonParserFieldValue);
 				}
 			}

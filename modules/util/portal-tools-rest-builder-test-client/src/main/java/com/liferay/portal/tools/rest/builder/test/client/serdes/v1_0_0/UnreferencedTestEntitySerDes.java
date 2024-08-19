@@ -5,7 +5,11 @@
 
 package com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0_0;
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 import com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0.UnreferencedTestEntity;
+========
+import com.liferay.portal.tools.rest.builder.test.client.dto.v1_0_0.UnreferencedTestObject;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 import com.liferay.portal.tools.rest.builder.test.client.json.BaseJSONParser;
 
 import java.util.Iterator;
@@ -21,6 +25,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 public class UnreferencedTestEntitySerDes {
 
 	public static UnreferencedTestEntity toDTO(String json) {
@@ -39,6 +44,26 @@ public class UnreferencedTestEntitySerDes {
 
 	public static String toJSON(UnreferencedTestEntity unreferencedTestEntity) {
 		if (unreferencedTestEntity == null) {
+========
+public class UnreferencedTestObjectSerDes {
+
+	public static UnreferencedTestObject toDTO(String json) {
+		UnreferencedTestObjectJSONParser unreferencedTestObjectJSONParser =
+			new UnreferencedTestObjectJSONParser();
+
+		return unreferencedTestObjectJSONParser.parseToDTO(json);
+	}
+
+	public static UnreferencedTestObject[] toDTOs(String json) {
+		UnreferencedTestObjectJSONParser unreferencedTestObjectJSONParser =
+			new UnreferencedTestObjectJSONParser();
+
+		return unreferencedTestObjectJSONParser.parseToDTOs(json);
+	}
+
+	public static String toJSON(UnreferencedTestObject unreferencedTestObject) {
+		if (unreferencedTestObject == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 			return "null";
 		}
 
@@ -46,7 +71,11 @@ public class UnreferencedTestEntitySerDes {
 
 		sb.append("{");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 		if (unreferencedTestEntity.getDescription() != null) {
+========
+		if (unreferencedTestObject.getDescription() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -55,22 +84,37 @@ public class UnreferencedTestEntitySerDes {
 
 			sb.append("\"");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 			sb.append(_escape(unreferencedTestEntity.getDescription()));
+========
+			sb.append(_escape(unreferencedTestObject.getDescription()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 		if (unreferencedTestEntity.getId() != null) {
+========
+		if (unreferencedTestObject.getId() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
 			sb.append("\"id\": ");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 			sb.append(unreferencedTestEntity.getId());
 		}
 
 		if (unreferencedTestEntity.getPropertyWithHyphens() != null) {
+========
+			sb.append(unreferencedTestObject.getId());
+		}
+
+		if (unreferencedTestObject.getPropertyWithHyphens() != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -79,7 +123,11 @@ public class UnreferencedTestEntitySerDes {
 
 			sb.append("\"");
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 			sb.append(_escape(unreferencedTestEntity.getPropertyWithHyphens()));
+========
+			sb.append(_escape(unreferencedTestObject.getPropertyWithHyphens()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 
 			sb.append("\"");
 		}
@@ -90,6 +138,7 @@ public class UnreferencedTestEntitySerDes {
 	}
 
 	public static Map<String, Object> toMap(String json) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 		UnreferencedTestEntityJSONParser unreferencedTestEntityJSONParser =
 			new UnreferencedTestEntityJSONParser();
 
@@ -100,17 +149,34 @@ public class UnreferencedTestEntitySerDes {
 		UnreferencedTestEntity unreferencedTestEntity) {
 
 		if (unreferencedTestEntity == null) {
+========
+		UnreferencedTestObjectJSONParser unreferencedTestObjectJSONParser =
+			new UnreferencedTestObjectJSONParser();
+
+		return unreferencedTestObjectJSONParser.parseToMap(json);
+	}
+
+	public static Map<String, String> toMap(
+		UnreferencedTestObject unreferencedTestObject) {
+
+		if (unreferencedTestObject == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 			return null;
 		}
 
 		Map<String, String> map = new TreeMap<>();
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 		if (unreferencedTestEntity.getDescription() == null) {
+========
+		if (unreferencedTestObject.getDescription() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 			map.put("description", null);
 		}
 		else {
 			map.put(
 				"description",
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 				String.valueOf(unreferencedTestEntity.getDescription()));
 		}
 
@@ -122,18 +188,36 @@ public class UnreferencedTestEntitySerDes {
 		}
 
 		if (unreferencedTestEntity.getPropertyWithHyphens() == null) {
+========
+				String.valueOf(unreferencedTestObject.getDescription()));
+		}
+
+		if (unreferencedTestObject.getId() == null) {
+			map.put("id", null);
+		}
+		else {
+			map.put("id", String.valueOf(unreferencedTestObject.getId()));
+		}
+
+		if (unreferencedTestObject.getPropertyWithHyphens() == null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 			map.put("property-with-hyphens", null);
 		}
 		else {
 			map.put(
 				"property-with-hyphens",
 				String.valueOf(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 					unreferencedTestEntity.getPropertyWithHyphens()));
+========
+					unreferencedTestObject.getPropertyWithHyphens()));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 		}
 
 		return map;
 	}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 	public static class UnreferencedTestEntityJSONParser
 		extends BaseJSONParser<UnreferencedTestEntity> {
 
@@ -145,6 +229,19 @@ public class UnreferencedTestEntitySerDes {
 		@Override
 		protected UnreferencedTestEntity[] createDTOArray(int size) {
 			return new UnreferencedTestEntity[size];
+========
+	public static class UnreferencedTestObjectJSONParser
+		extends BaseJSONParser<UnreferencedTestObject> {
+
+		@Override
+		protected UnreferencedTestObject createDTO() {
+			return new UnreferencedTestObject();
+		}
+
+		@Override
+		protected UnreferencedTestObject[] createDTOArray(int size) {
+			return new UnreferencedTestObject[size];
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 		}
 
 		@Override
@@ -166,18 +263,30 @@ public class UnreferencedTestEntitySerDes {
 
 		@Override
 		protected void setField(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 			UnreferencedTestEntity unreferencedTestEntity,
+========
+			UnreferencedTestObject unreferencedTestObject,
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 			String jsonParserFieldName, Object jsonParserFieldValue) {
 
 			if (Objects.equals(jsonParserFieldName, "description")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 					unreferencedTestEntity.setDescription(
+========
+					unreferencedTestObject.setDescription(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 						(String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "id")) {
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 					unreferencedTestEntity.setId(
+========
+					unreferencedTestObject.setId(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 						Long.valueOf((String)jsonParserFieldValue));
 				}
 			}
@@ -185,7 +294,11 @@ public class UnreferencedTestEntitySerDes {
 						jsonParserFieldName, "property-with-hyphens")) {
 
 				if (jsonParserFieldValue != null) {
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestEntitySerDes.java
 					unreferencedTestEntity.setPropertyWithHyphens(
+========
+					unreferencedTestObject.setPropertyWithHyphens(
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-client/src/main/java/com/liferay/portal/tools/rest/builder/test/client/serdes/v1_0_0/UnreferencedTestObjectSerDes.java
 						(String)jsonParserFieldValue);
 				}
 			}

@@ -42,6 +42,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Generated("")
 @GraphQLName(
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestEntity.java
 	description = "https://www.schema.org/Folder", value = "NestedTestEntity"
 )
 @JsonFilter("Liferay.Vulcan")
@@ -54,6 +55,20 @@ public class NestedTestEntity implements Serializable {
 
 	public static NestedTestEntity unsafeToDTO(String json) {
 		return ObjectMapperUtil.unsafeReadValue(NestedTestEntity.class, json);
+========
+	description = "https://www.schema.org/Folder", value = "NestedTestObject"
+)
+@JsonFilter("Liferay.Vulcan")
+@XmlRootElement(name = "NestedTestObject")
+public class NestedTestObject implements Serializable {
+
+	public static NestedTestObject toDTO(String json) {
+		return ObjectMapperUtil.readValue(NestedTestObject.class, json);
+	}
+
+	public static NestedTestObject unsafeToDTO(String json) {
+		return ObjectMapperUtil.unsafeReadValue(NestedTestObject.class, json);
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestObject.java
 	}
 
 	@Schema
@@ -259,6 +274,7 @@ public class NestedTestEntity implements Serializable {
 
 	@Schema
 	@Valid
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestEntity.java
 	public TestEntity getTestEntity() {
 		if (_testEntitySupplier != null) {
 			testEntity = _testEntitySupplier.get();
@@ -282,6 +298,31 @@ public class NestedTestEntity implements Serializable {
 		_testEntitySupplier = () -> {
 			try {
 				return testEntityUnsafeSupplier.get();
+========
+	public TestObject getTestObject() {
+		if (_testObjectSupplier != null) {
+			testObject = _testObjectSupplier.get();
+
+			_testObjectSupplier = null;
+		}
+
+		return testObject;
+	}
+
+	public void setTestObject(TestObject testObject) {
+		this.testObject = testObject;
+
+		_testObjectSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setTestObject(
+		UnsafeSupplier<TestObject, Exception> testObjectUnsafeSupplier) {
+
+		_testObjectSupplier = () -> {
+			try {
+				return testObjectUnsafeSupplier.get();
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestObject.java
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -294,10 +335,17 @@ public class NestedTestEntity implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestEntity.java
 	protected TestEntity testEntity;
 
 	@JsonIgnore
 	private Supplier<TestEntity> _testEntitySupplier;
+========
+	protected TestObject testObject;
+
+	@JsonIgnore
+	private Supplier<TestObject> _testObjectSupplier;
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestObject.java
 
 	@Override
 	public boolean equals(Object object) {
@@ -305,6 +353,7 @@ public class NestedTestEntity implements Serializable {
 			return true;
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestEntity.java
 		if (!(object instanceof NestedTestEntity)) {
 			return false;
 		}
@@ -312,6 +361,15 @@ public class NestedTestEntity implements Serializable {
 		NestedTestEntity nestedTestEntity = (NestedTestEntity)object;
 
 		return Objects.equals(toString(), nestedTestEntity.toString());
+========
+		if (!(object instanceof NestedTestObject)) {
+			return false;
+		}
+
+		NestedTestObject nestedTestObject = (NestedTestObject)object;
+
+		return Objects.equals(toString(), nestedTestObject.toString());
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestObject.java
 	}
 
 	@Override
@@ -405,16 +463,28 @@ public class NestedTestEntity implements Serializable {
 			sb.append("\"");
 		}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestEntity.java
 		TestEntity testEntity = getTestEntity();
 
 		if (testEntity != null) {
+========
+		TestObject testObject = getTestObject();
+
+		if (testObject != null) {
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestObject.java
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestEntity.java
 			sb.append("\"testEntity\": ");
 
 			sb.append(String.valueOf(testEntity));
+========
+			sb.append("\"testObject\": ");
+
+			sb.append(String.valueOf(testObject));
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestObject.java
 		}
 
 		sb.append("}");
@@ -424,7 +494,11 @@ public class NestedTestEntity implements Serializable {
 
 	@Schema(
 		accessMode = Schema.AccessMode.READ_ONLY,
+<<<<<<<< HEAD:modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestEntity.java
 		defaultValue = "com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.NestedTestEntity",
+========
+		defaultValue = "com.liferay.portal.tools.rest.builder.test.dto.v1_0_0.NestedTestObject",
+>>>>>>>> 16dddedda3376 (LPD-31166 Following service builder pattern to deploy and test rest builder):modules/util/portal-tools-rest-builder-test-api/src/main/java/com/liferay/portal/tools/rest/builder/test/dto/v1_0_0/NestedTestObject.java
 		name = "x-class-name"
 	)
 	public String xClassName;
