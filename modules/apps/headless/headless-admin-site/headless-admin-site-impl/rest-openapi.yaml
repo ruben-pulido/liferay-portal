@@ -5184,7 +5184,7 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/PageElement"
             # @review
-            tags: ["PageElement"]
+            tags: ["FragmentComposition"]
     "/sites/{siteExternalReferenceCode}/page-elements/{pageElementExternalReferenceCode}/page-elements":
         get:
             # @review
