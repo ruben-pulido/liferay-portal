@@ -254,6 +254,11 @@ public class ServletDataImpl implements ServletData {
 							FragmentCompositionResourceImpl.class,
 							"putSiteSiteByExternalReferenceCodeFragmentComposition"));
 					put(
+						"mutation#createSiteSiteByExternalReferenceCodePageElementFragmentComposition",
+						new ObjectValuePair<>(
+							FragmentCompositionResourceImpl.class,
+							"postSiteSiteByExternalReferenceCodePageElementFragmentComposition"));
+					put(
 						"mutation#createSiteSiteByExternalReferenceCodeMasterPage",
 						new ObjectValuePair<>(
 							MasterPageResourceImpl.class,
@@ -303,11 +308,6 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							PageElementResourceImpl.class,
 							"putSiteSiteByExternalReferenceCodePageElement"));
-					put(
-						"mutation#createSiteSiteByExternalReferenceCodePageElementFragmentComposition",
-						new ObjectValuePair<>(
-							PageElementResourceImpl.class,
-							"postSiteSiteByExternalReferenceCodePageElementFragmentComposition"));
 					put(
 						"mutation#createSiteSiteByExternalReferenceCodePageExperiencePageElement",
 						new ObjectValuePair<>(
@@ -414,6 +414,21 @@ public class ServletDataImpl implements ServletData {
 							PageSpecificationResourceImpl.class,
 							"postSiteSiteByExternalReferenceCodePageSpecificationPublish"));
 					put(
+						"mutation#createSiteSiteByExternalReferenceCodePageTemplatePageSpecification",
+						new ObjectValuePair<>(
+							PageSpecificationResourceImpl.class,
+							"postSiteSiteByExternalReferenceCodePageTemplatePageSpecification"));
+					put(
+						"mutation#createSiteSiteByExternalReferenceCodeSitePagePageSpecification",
+						new ObjectValuePair<>(
+							PageSpecificationResourceImpl.class,
+							"postSiteSiteByExternalReferenceCodeSitePagePageSpecification"));
+					put(
+						"mutation#createSiteSiteByExternalReferenceCodeUtilityPagePageSpecification",
+						new ObjectValuePair<>(
+							PageSpecificationResourceImpl.class,
+							"postSiteSiteByExternalReferenceCodeUtilityPagePageSpecification"));
+					put(
 						"mutation#createSiteSiteByExternalReferenceCodePageTemplateSetPageTemplate",
 						new ObjectValuePair<>(
 							PageTemplateResourceImpl.class,
@@ -443,11 +458,6 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							PageTemplateResourceImpl.class,
 							"putSiteSiteByExternalReferenceCodePageTemplate"));
-					put(
-						"mutation#createSiteSiteByExternalReferenceCodePageTemplatePageSpecification",
-						new ObjectValuePair<>(
-							PageTemplateResourceImpl.class,
-							"postSiteSiteByExternalReferenceCodePageTemplatePageSpecification"));
 					put(
 						"mutation#updateSiteSiteExternalReferenceCodePageTemplatePermissionsPage",
 						new ObjectValuePair<>(
@@ -509,11 +519,6 @@ public class ServletDataImpl implements ServletData {
 							SitePageResourceImpl.class,
 							"putSiteSiteByExternalReferenceCodeSitePage"));
 					put(
-						"mutation#createSiteSiteByExternalReferenceCodeSitePagePageSpecification",
-						new ObjectValuePair<>(
-							SitePageResourceImpl.class,
-							"postSiteSiteByExternalReferenceCodeSitePagePageSpecification"));
-					put(
 						"mutation#updateSiteSiteExternalReferenceCodeSitePagePermissionsPage",
 						new ObjectValuePair<>(
 							SitePageResourceImpl.class,
@@ -543,11 +548,6 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							UtilityPageResourceImpl.class,
 							"putSiteSiteByExternalReferenceCodeUtilityPage"));
-					put(
-						"mutation#createSiteSiteByExternalReferenceCodeUtilityPagePageSpecification",
-						new ObjectValuePair<>(
-							UtilityPageResourceImpl.class,
-							"postSiteSiteByExternalReferenceCodeUtilityPagePageSpecification"));
 					put(
 						"mutation#updateSiteSiteExternalReferenceCodeUtilityPagePermissionsPage",
 						new ObjectValuePair<>(
@@ -710,10 +710,25 @@ public class ServletDataImpl implements ServletData {
 							PageRuleConditionResourceImpl.class,
 							"getSiteSiteByExternalReferenceCodePageRulePageRuleConditionsPage"));
 					put(
+						"query#siteByExternalReferenceCodeDisplayPageTemplatePageSpecifications",
+						new ObjectValuePair<>(
+							PageSpecificationResourceImpl.class,
+							"getSiteSiteByExternalReferenceCodeDisplayPageTemplatePageSpecificationsPage"));
+					put(
+						"query#siteByExternalReferenceCodeMasterPagePageSpecifications",
+						new ObjectValuePair<>(
+							PageSpecificationResourceImpl.class,
+							"getSiteSiteByExternalReferenceCodeMasterPagePageSpecificationsPage"));
+					put(
 						"query#siteByExternalReferenceCodePageSpecification",
 						new ObjectValuePair<>(
 							PageSpecificationResourceImpl.class,
 							"getSiteSiteByExternalReferenceCodePageSpecification"));
+					put(
+						"query#siteByExternalReferenceCodePageTemplatePageSpecifications",
+						new ObjectValuePair<>(
+							PageSpecificationResourceImpl.class,
+							"getSiteSiteByExternalReferenceCodePageTemplatePageSpecificationsPage"));
 					put(
 						"query#siteByExternalReferenceCodeSitePagePageSpecifications",
 						new ObjectValuePair<>(

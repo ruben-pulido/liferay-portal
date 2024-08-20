@@ -922,6 +922,58 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {siteByExternalReferenceCodeDisplayPageTemplatePageSpecifications(displayPageTemplateExternalReferenceCode: ___, siteExternalReferenceCode: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Retrieves all the page specifications of a display page template."
+	)
+	public PageSpecificationPage
+			siteByExternalReferenceCodeDisplayPageTemplatePageSpecifications(
+				@GraphQLName("siteExternalReferenceCode") String
+					siteExternalReferenceCode,
+				@GraphQLName("displayPageTemplateExternalReferenceCode") String
+					displayPageTemplateExternalReferenceCode)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_pageSpecificationResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			pageSpecificationResource -> new PageSpecificationPage(
+				pageSpecificationResource.
+					getSiteSiteByExternalReferenceCodeDisplayPageTemplatePageSpecificationsPage(
+						siteExternalReferenceCode,
+						displayPageTemplateExternalReferenceCode)));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {siteByExternalReferenceCodeMasterPagePageSpecifications(masterPageExternalReferenceCode: ___, siteExternalReferenceCode: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Retrieves all the page specifications of a master page."
+	)
+	public PageSpecificationPage
+			siteByExternalReferenceCodeMasterPagePageSpecifications(
+				@GraphQLName("siteExternalReferenceCode") String
+					siteExternalReferenceCode,
+				@GraphQLName("masterPageExternalReferenceCode") String
+					masterPageExternalReferenceCode)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_pageSpecificationResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			pageSpecificationResource -> new PageSpecificationPage(
+				pageSpecificationResource.
+					getSiteSiteByExternalReferenceCodeMasterPagePageSpecificationsPage(
+						siteExternalReferenceCode,
+						masterPageExternalReferenceCode)));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {siteByExternalReferenceCodePageSpecification(pageSpecificationExternalReferenceCode: ___, siteExternalReferenceCode: ___){externalReferenceCode, settings, type}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(description = "Retrieves a page specification.")
@@ -940,6 +992,32 @@ public class Query {
 					getSiteSiteByExternalReferenceCodePageSpecification(
 						siteExternalReferenceCode,
 						pageSpecificationExternalReferenceCode));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {siteByExternalReferenceCodePageTemplatePageSpecifications(pageTemplateExternalReferenceCode: ___, siteExternalReferenceCode: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Retrieves all the page specifications of a page template."
+	)
+	public PageSpecificationPage
+			siteByExternalReferenceCodePageTemplatePageSpecifications(
+				@GraphQLName("siteExternalReferenceCode") String
+					siteExternalReferenceCode,
+				@GraphQLName("pageTemplateExternalReferenceCode") String
+					pageTemplateExternalReferenceCode)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_pageSpecificationResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			pageSpecificationResource -> new PageSpecificationPage(
+				pageSpecificationResource.
+					getSiteSiteByExternalReferenceCodePageTemplatePageSpecificationsPage(
+						siteExternalReferenceCode,
+						pageTemplateExternalReferenceCode)));
 	}
 
 	/**

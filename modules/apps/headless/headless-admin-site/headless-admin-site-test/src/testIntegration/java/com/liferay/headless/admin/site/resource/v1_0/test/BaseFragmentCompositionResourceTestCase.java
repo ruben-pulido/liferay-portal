@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentComposition;
+import com.liferay.headless.admin.site.client.dto.v1_0.PageElement;
 import com.liferay.headless.admin.site.client.http.HttpInvoker;
 import com.liferay.headless.admin.site.client.pagination.Page;
 import com.liferay.headless.admin.site.client.pagination.Pagination;
@@ -757,6 +758,13 @@ public abstract class BaseFragmentCompositionResourceTestCase {
 	@Rule
 	public SearchTestRule searchTestRule = new SearchTestRule();
 
+	@Test
+	public void testPostSiteSiteByExternalReferenceCodePageElementFragmentComposition()
+		throws Exception {
+
+		Assert.assertTrue(true);
+	}
+
 	protected void assertContains(
 		FragmentComposition fragmentComposition,
 		List<FragmentComposition> fragmentCompositions) {
@@ -808,6 +816,14 @@ public abstract class BaseFragmentCompositionResourceTestCase {
 
 			assertEquals(fragmentComposition1, fragmentComposition2);
 		}
+	}
+
+	protected void assertEquals(
+		PageElement pageElement1, PageElement pageElement2) {
+
+		Assert.assertTrue(
+			pageElement1 + " does not equal " + pageElement2,
+			equals(pageElement1, pageElement2));
 	}
 
 	protected void assertEqualsIgnoringOrder(
@@ -997,7 +1013,77 @@ public abstract class BaseFragmentCompositionResourceTestCase {
 		}
 	}
 
+	protected void assertValid(PageElement pageElement) {
+		boolean valid = true;
+
+		for (String additionalAssertFieldName :
+				getAdditionalPageElementAssertFieldNames()) {
+
+			if (Objects.equals("definition", additionalAssertFieldName)) {
+				if (pageElement.getDefinition() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"externalReferenceCode", additionalAssertFieldName)) {
+
+				if (pageElement.getExternalReferenceCode() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("pageElements", additionalAssertFieldName)) {
+				if (pageElement.getPageElements() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"parentExternalReferenceCode", additionalAssertFieldName)) {
+
+				if (pageElement.getParentExternalReferenceCode() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("position", additionalAssertFieldName)) {
+				if (pageElement.getPosition() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("type", additionalAssertFieldName)) {
+				if (pageElement.getType() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			throw new IllegalArgumentException(
+				"Invalid additional assert field name " +
+					additionalAssertFieldName);
+		}
+
+		Assert.assertTrue(valid);
+	}
+
 	protected String[] getAdditionalAssertFieldNames() {
+		return new String[0];
+	}
+
+	protected String[] getAdditionalPageElementAssertFieldNames() {
 		return new String[0];
 	}
 
@@ -1241,6 +1327,93 @@ public abstract class BaseFragmentCompositionResourceTestCase {
 		}
 
 		return false;
+	}
+
+	protected boolean equals(
+		PageElement pageElement1, PageElement pageElement2) {
+
+		if (pageElement1 == pageElement2) {
+			return true;
+		}
+
+		for (String additionalAssertFieldName :
+				getAdditionalPageElementAssertFieldNames()) {
+
+			if (Objects.equals("definition", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						pageElement1.getDefinition(),
+						pageElement2.getDefinition())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"externalReferenceCode", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						pageElement1.getExternalReferenceCode(),
+						pageElement2.getExternalReferenceCode())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("pageElements", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						pageElement1.getPageElements(),
+						pageElement2.getPageElements())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"parentExternalReferenceCode", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						pageElement1.getParentExternalReferenceCode(),
+						pageElement2.getParentExternalReferenceCode())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("position", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						pageElement1.getPosition(),
+						pageElement2.getPosition())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("type", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						pageElement1.getType(), pageElement2.getType())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			throw new IllegalArgumentException(
+				"Invalid additional assert field name " +
+					additionalAssertFieldName);
+		}
+
+		return true;
 	}
 
 	protected java.lang.reflect.Field[] getDeclaredFields(Class clazz)
@@ -1781,6 +1954,16 @@ public abstract class BaseFragmentCompositionResourceTestCase {
 		throws Exception {
 
 		return randomFragmentComposition();
+	}
+
+	protected PageElement randomPageElement() throws Exception {
+		return new PageElement() {
+			{
+				externalReferenceCode = RandomTestUtil.randomString();
+				parentExternalReferenceCode = RandomTestUtil.randomString();
+				position = RandomTestUtil.randomInteger();
+			}
+		};
 	}
 
 	protected FragmentCompositionResource fragmentCompositionResource;

@@ -6,6 +6,7 @@
 package com.liferay.headless.admin.site.resource.v1_0;
 
 import com.liferay.headless.admin.site.dto.v1_0.FragmentComposition;
+import com.liferay.headless.admin.site.dto.v1_0.PageElement;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -81,6 +82,13 @@ public interface FragmentCompositionResource {
 			putSiteSiteByExternalReferenceCodeFragmentComposition(
 				String siteExternalReferenceCode,
 				String fragmentCompositionExternalReferenceCode,
+				FragmentComposition fragmentComposition)
+		throws Exception;
+
+	public PageElement
+			postSiteSiteByExternalReferenceCodePageElementFragmentComposition(
+				String siteExternalReferenceCode,
+				String pageElementExternalReferenceCode, Integer position,
 				FragmentComposition fragmentComposition)
 		throws Exception;
 
