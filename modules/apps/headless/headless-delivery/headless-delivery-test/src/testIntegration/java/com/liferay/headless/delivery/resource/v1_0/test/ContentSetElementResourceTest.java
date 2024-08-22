@@ -13,6 +13,7 @@ import com.liferay.asset.list.constants.AssetListEntryTypeConstants;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalServiceUtil;
 import com.liferay.blogs.model.BlogsEntry;
+import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.blogs.service.BlogsEntryLocalServiceUtil;
 import com.liferay.headless.delivery.client.dto.v1_0.ContentSetElement;
 import com.liferay.info.collection.provider.CollectionQuery;
@@ -22,6 +23,7 @@ import com.liferay.info.pagination.Pagination;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -279,6 +281,10 @@ public class ContentSetElementResourceTest
 	private AssetEntryLocalService _assetEntryLocalService;
 
 	private AssetListEntry _assetListEntry;
+
+	@Inject
+	private BlogsEntryLocalService _blogsEntryLocalService;
+
 	private String _contentSetProviderKey;
 	private AssetListEntry _depotAssetListEntry;
 	private ServiceContext _serviceContext;
@@ -315,6 +321,42 @@ public class ContentSetElementResourceTest
 					Math.min(assetEntries.size(), pagination.getEnd())),
 				Pagination.of(pagination.getEnd(), pagination.getStart()),
 				assetEntries.size());
+		}
+
+		@Override
+		public String getLabel(Locale locale) {
+			return StringPool.BLANK;
+		}
+
+	}
+
+	private class TestBlogsEntryInfoCollectionProvider
+		implements InfoCollectionProvider<BlogsEntry> {
+
+		@Override
+		public InfoPage<BlogsEntry> getCollectionInfoPage(
+			CollectionQuery collectionQuery) {
+
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			List<BlogsEntry> blogsEntries =
+				_blogsEntryLocalService.getGroupEntries(
+					serviceContext.getScopeGroupId(),
+					new QueryDefinition<>(WorkflowConstants.STATUS_ANY));
+
+			if (blogsEntries == null) {
+				blogsEntries = Collections.emptyList();
+			}
+
+			Pagination pagination = collectionQuery.getPagination();
+
+			return InfoPage.of(
+				blogsEntries.subList(
+					pagination.getStart(),
+					Math.min(blogsEntries.size(), pagination.getEnd())),
+				Pagination.of(pagination.getEnd(), pagination.getStart()),
+				blogsEntries.size());
 		}
 
 		@Override
