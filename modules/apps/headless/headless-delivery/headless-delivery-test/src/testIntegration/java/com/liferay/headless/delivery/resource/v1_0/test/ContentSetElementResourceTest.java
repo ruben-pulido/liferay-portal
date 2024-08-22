@@ -78,6 +78,7 @@ public class ContentSetElementResourceTest
 		throws Exception {
 
 		_testGetSiteContentSetProviderByKeyContentSetElementsPageAssetEntry();
+		_testGetSiteContentSetProviderByKeyContentSetElementsPageBlogsEntry();
 	}
 
 	@FeatureFlags("LPD-32867")
@@ -87,6 +88,7 @@ public class ContentSetElementResourceTest
 		throws Exception {
 
 		_testGetSiteContentSetProviderByKeyContentSetElementsPageWithPaginationAssetEntry();
+		_testGetSiteContentSetProviderByKeyContentSetElementsPageWithPaginationBlogsEntry();
 	}
 
 	@Rule
@@ -241,6 +243,21 @@ public class ContentSetElementResourceTest
 		serviceRegistration.unregister();
 	}
 
+	private void _testGetSiteContentSetProviderByKeyContentSetElementsPageBlogsEntry()
+		throws Exception {
+
+		ServiceRegistration<InfoCollectionProvider<?>> serviceRegistration =
+			_registerInfoCollectionProviderService(
+				new TestBlogsEntryInfoCollectionProvider());
+
+		_contentSetProviderKey =
+			TestBlogsEntryInfoCollectionProvider.class.getName();
+
+		super.testGetSiteContentSetProviderByKeyContentSetElementsPage();
+
+		serviceRegistration.unregister();
+	}
+
 	private void _testGetSiteContentSetProviderByKeyContentSetElementsPageWithPaginationAssetEntry()
 		throws Exception {
 
@@ -250,6 +267,22 @@ public class ContentSetElementResourceTest
 
 		_contentSetProviderKey =
 			TestAssetEntryInfoCollectionProvider.class.getName();
+
+		super.
+			testGetSiteContentSetProviderByKeyContentSetElementsPageWithPagination();
+
+		serviceRegistration.unregister();
+	}
+
+	private void _testGetSiteContentSetProviderByKeyContentSetElementsPageWithPaginationBlogsEntry()
+		throws Exception {
+
+		ServiceRegistration<InfoCollectionProvider<?>> serviceRegistration =
+			_registerInfoCollectionProviderService(
+				new TestBlogsEntryInfoCollectionProvider());
+
+		_contentSetProviderKey =
+			TestBlogsEntryInfoCollectionProvider.class.getName();
 
 		super.
 			testGetSiteContentSetProviderByKeyContentSetElementsPageWithPagination();
