@@ -78,6 +78,9 @@ public class ContentSetElementResourceTest
 		ServiceRegistration<InfoCollectionProvider<?>> serviceRegistration =
 			_registerInfoCollectionProviderService();
 
+		_contentSetProviderKey =
+			TestAssetEntryInfoCollectionProvider.class.getName();
+
 		super.testGetSiteContentSetProviderByKeyContentSetElementsPage();
 
 		serviceRegistration.unregister();
@@ -91,6 +94,9 @@ public class ContentSetElementResourceTest
 
 		ServiceRegistration<InfoCollectionProvider<?>> serviceRegistration =
 			_registerInfoCollectionProviderService();
+
+		_contentSetProviderKey =
+			TestAssetEntryInfoCollectionProvider.class.getName();
 
 		super.
 			testGetSiteContentSetProviderByKeyContentSetElementsPageWithPagination();
@@ -199,7 +205,7 @@ public class ContentSetElementResourceTest
 	protected String
 		testGetSiteContentSetProviderByKeyContentSetElementsPage_getKey() {
 
-		return TestAssetEntryInfoCollectionProvider.class.getName();
+		return _contentSetProviderKey;
 	}
 
 	private BlogsEntry _addBlogsEntry() throws Exception {
@@ -258,6 +264,7 @@ public class ContentSetElementResourceTest
 	private AssetEntryLocalService _assetEntryLocalService;
 
 	private AssetListEntry _assetListEntry;
+	private String _contentSetProviderKey;
 	private AssetListEntry _depotAssetListEntry;
 	private ServiceContext _serviceContext;
 
