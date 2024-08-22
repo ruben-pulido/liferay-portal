@@ -75,16 +75,7 @@ public class ContentSetElementResourceTest
 	public void testGetSiteContentSetProviderByKeyContentSetElementsPage()
 		throws Exception {
 
-		ServiceRegistration<InfoCollectionProvider<?>> serviceRegistration =
-			_registerInfoCollectionProviderService(
-				new TestAssetEntryInfoCollectionProvider());
-
-		_contentSetProviderKey =
-			TestAssetEntryInfoCollectionProvider.class.getName();
-
-		super.testGetSiteContentSetProviderByKeyContentSetElementsPage();
-
-		serviceRegistration.unregister();
+		_testGetSiteContentSetProviderByKeyContentSetElementsPageAssetEntry();
 	}
 
 	@FeatureFlags("LPD-32867")
@@ -93,17 +84,7 @@ public class ContentSetElementResourceTest
 	public void testGetSiteContentSetProviderByKeyContentSetElementsPageWithPagination()
 		throws Exception {
 
-		ServiceRegistration<InfoCollectionProvider<?>> serviceRegistration =
-			_registerInfoCollectionProviderService(
-				new TestAssetEntryInfoCollectionProvider());
-
-		_contentSetProviderKey =
-			TestAssetEntryInfoCollectionProvider.class.getName();
-
-		super.
-			testGetSiteContentSetProviderByKeyContentSetElementsPageWithPagination();
-
-		serviceRegistration.unregister();
+		_testGetSiteContentSetProviderByKeyContentSetElementsPageWithPaginationAssetEntry();
 	}
 
 	@Rule
@@ -241,6 +222,37 @@ public class ContentSetElementResourceTest
 			(Class<InfoCollectionProvider<?>>)
 				(Class<?>)InfoCollectionProvider.class,
 			infoCollectionProvider, null);
+	}
+
+	private void _testGetSiteContentSetProviderByKeyContentSetElementsPageAssetEntry()
+		throws Exception {
+
+		ServiceRegistration<InfoCollectionProvider<?>> serviceRegistration =
+			_registerInfoCollectionProviderService(
+				new TestAssetEntryInfoCollectionProvider());
+
+		_contentSetProviderKey =
+			TestAssetEntryInfoCollectionProvider.class.getName();
+
+		super.testGetSiteContentSetProviderByKeyContentSetElementsPage();
+
+		serviceRegistration.unregister();
+	}
+
+	private void _testGetSiteContentSetProviderByKeyContentSetElementsPageWithPaginationAssetEntry()
+		throws Exception {
+
+		ServiceRegistration<InfoCollectionProvider<?>> serviceRegistration =
+			_registerInfoCollectionProviderService(
+				new TestAssetEntryInfoCollectionProvider());
+
+		_contentSetProviderKey =
+			TestAssetEntryInfoCollectionProvider.class.getName();
+
+		super.
+			testGetSiteContentSetProviderByKeyContentSetElementsPageWithPagination();
+
+		serviceRegistration.unregister();
 	}
 
 	private ContentSetElement _toContentSetElement(BlogsEntry blogsEntry) {
