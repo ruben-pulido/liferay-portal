@@ -76,7 +76,8 @@ public class ContentSetElementResourceTest
 		throws Exception {
 
 		ServiceRegistration<InfoCollectionProvider<?>> serviceRegistration =
-			_registerInfoCollectionProviderService();
+			_registerInfoCollectionProviderService(
+				new TestAssetEntryInfoCollectionProvider());
 
 		_contentSetProviderKey =
 			TestAssetEntryInfoCollectionProvider.class.getName();
@@ -93,7 +94,8 @@ public class ContentSetElementResourceTest
 		throws Exception {
 
 		ServiceRegistration<InfoCollectionProvider<?>> serviceRegistration =
-			_registerInfoCollectionProviderService();
+			_registerInfoCollectionProviderService(
+				new TestAssetEntryInfoCollectionProvider());
 
 		_contentSetProviderKey =
 			TestAssetEntryInfoCollectionProvider.class.getName();
@@ -227,7 +229,8 @@ public class ContentSetElementResourceTest
 	}
 
 	private ServiceRegistration<InfoCollectionProvider<?>>
-		_registerInfoCollectionProviderService() {
+		_registerInfoCollectionProviderService(
+			InfoCollectionProvider<?> infoCollectionProvider) {
 
 		Bundle bundle = FrameworkUtil.getBundle(
 			ContentSetElementResourceTest.class);
@@ -237,7 +240,7 @@ public class ContentSetElementResourceTest
 		return bundleContext.registerService(
 			(Class<InfoCollectionProvider<?>>)
 				(Class<?>)InfoCollectionProvider.class,
-			new TestAssetEntryInfoCollectionProvider(), null);
+			infoCollectionProvider, null);
 	}
 
 	private ContentSetElement _toContentSetElement(BlogsEntry blogsEntry) {
