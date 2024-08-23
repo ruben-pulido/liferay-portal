@@ -14,14 +14,20 @@ import com.liferay.headless.delivery.dto.v1_0.ContentSetElement;
 import com.liferay.headless.delivery.resource.v1_0.ContentSetElementResource;
 import com.liferay.info.collection.provider.CollectionQuery;
 import com.liferay.info.collection.provider.InfoCollectionProvider;
+import com.liferay.info.field.InfoFieldValue;
+import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemServiceRegistry;
+import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.pagination.InfoPage;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.events.ServicePreAction;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.model.ClassedModel;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
@@ -34,7 +40,6 @@ import com.liferay.segments.provider.SegmentsEntryProviderRegistry;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -79,6 +84,28 @@ public class ContentSetElementResourceImpl
 			_assetListEntryService.getAssetListEntry(contentSetId), pagination);
 	}
 
+	public String getInfoCollectionItemsType(
+		Object result, String collectionItemClassName) {
+
+		String className;
+
+		if (result instanceof AssetEntry) {
+			AssetEntry assetEntry = (AssetEntry)result;
+
+			className = _portal.getClassName(assetEntry.getClassNameId());
+		}
+		else {
+			className = collectionItemClassName;
+		}
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)contextHttpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		return ResourceActionsUtil.getModelResource(
+			themeDisplay.getLocale(), className);
+	}
+
 	@Override
 	public Page<ContentSetElement> getSiteContentSetByKeyContentSetElementsPage(
 			Long siteId, String key, Pagination pagination)
@@ -118,7 +145,7 @@ public class ContentSetElementResourceImpl
 
 		serviceContext.setScopeGroupId(siteId);
 
-		InfoCollectionProvider<?> infoCollectionProvider =
+		InfoCollectionProvider<Object> infoCollectionProvider =
 			_infoItemServiceRegistry.getInfoItemService(
 				InfoCollectionProvider.class, key);
 
@@ -126,11 +153,7 @@ public class ContentSetElementResourceImpl
 			throw new NoSuchEntryException();
 		}
 
-		if (!infoCollectionProvider.isAvailable() ||
-			!Objects.equals(
-				AssetEntry.class.getName(),
-				infoCollectionProvider.getCollectionItemClassName())) {
-
+		if (!infoCollectionProvider.isAvailable()) {
 			return Page.of(Collections.emptyList());
 		}
 
@@ -140,13 +163,53 @@ public class ContentSetElementResourceImpl
 			com.liferay.info.pagination.Pagination.of(
 				pagination.getEndPosition(), pagination.getStartPosition()));
 
-		InfoPage<AssetEntry> infoPage =
-			(InfoPage<AssetEntry>)infoCollectionProvider.getCollectionInfoPage(
-				collectionQuery);
+		InfoPage infoPage = infoCollectionProvider.getCollectionInfoPage(
+			collectionQuery);
 
 		return Page.of(
-			transform(infoPage.getPageItems(), this::_toContentSetElement),
+			transform(
+				infoPage.getPageItems(),
+				o -> _toContentSetElement(
+					o, infoCollectionProvider.getCollectionItemClassName())),
 			pagination, infoPage.getTotalCount());
+	}
+
+	public String getTitle(Object object, String collectionItemClassName) {
+		InfoItemFieldValuesProvider infoItemFieldValuesProvider =
+			_infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemFieldValuesProvider.class, collectionItemClassName);
+
+		InfoItemFieldValues infoItemFieldValues =
+			infoItemFieldValuesProvider.getInfoItemFieldValues(object);
+
+		InfoFieldValue<Object> titleInfoFieldValue =
+			infoItemFieldValues.getInfoFieldValue("title");
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)contextHttpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		if (titleInfoFieldValue != null) {
+			return String.valueOf(
+				titleInfoFieldValue.getValue(themeDisplay.getLocale()));
+		}
+
+		InfoFieldValue<Object> nameInfoFieldValue =
+			infoItemFieldValues.getInfoFieldValue("name");
+
+		if (nameInfoFieldValue != null) {
+			return String.valueOf(
+				nameInfoFieldValue.getValue(themeDisplay.getLocale()));
+		}
+
+		if (object instanceof ClassedModel) {
+			ClassedModel classedModel = (ClassedModel)object;
+
+			return getInfoCollectionItemsType(object, collectionItemClassName) +
+				StringPool.COMMA_AND_SPACE + classedModel.getPrimaryKeyObj();
+		}
+
+		return getInfoCollectionItemsType(object, collectionItemClassName);
 	}
 
 	private Page<ContentSetElement> _getContentSetContentSetElementsPage(
@@ -233,6 +296,36 @@ public class ContentSetElementResourceImpl
 		};
 	}
 
+	private ContentSetElement _toContentSetElement(
+		Object object, String className) {
+
+		DTOConverter dtoConverter = _dtoConverterRegistry.getDTOConverter(
+			className);
+
+		return new ContentSetElement() {
+			{
+				setContent(
+					() -> {
+						if (dtoConverter == null) {
+							return null;
+						}
+
+						return dtoConverter.toDTO(
+							new DefaultDTOConverterContext(
+								contextAcceptLanguage.isAcceptAllLanguages(),
+								new HashMap<>(), _dtoConverterRegistry,
+								contextHttpServletRequest, null,
+								contextAcceptLanguage.getPreferredLocale(),
+								contextUriInfo, contextUser),
+							object);
+					});
+				setTitle(
+					() -> ContentSetElementResourceImpl.this.getTitle(
+						object, className));
+			}
+		};
+	}
+
 	@Reference
 	private AssetListAssetEntryProvider _assetListAssetEntryProvider;
 
@@ -244,6 +337,9 @@ public class ContentSetElementResourceImpl
 
 	@Reference
 	private InfoItemServiceRegistry _infoItemServiceRegistry;
+
+	@Reference
+	private Portal _portal;
 
 	@Reference
 	private RequestContextMapper _requestContextMapper;
