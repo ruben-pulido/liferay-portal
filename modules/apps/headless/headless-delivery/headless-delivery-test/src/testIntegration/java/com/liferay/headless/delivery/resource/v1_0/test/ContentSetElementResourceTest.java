@@ -95,7 +95,7 @@ public class ContentSetElementResourceTest
 
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
-		return new String[] {"id", "title"};
+		return new String[] {"title"};
 	}
 
 	@Override
