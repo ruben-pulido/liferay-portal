@@ -1,0 +1,226 @@
+components:
+    schemas:
+        ChildTestEntity1:
+            allOf:
+                - $ref: "#/components/schemas/TestEntity"
+                - properties:
+                      property1:
+                          type: string
+            type: object
+        ChildTestEntity2:
+            allOf:
+                - $ref: "#/components/schemas/TestEntity"
+                - properties:
+                      property2:
+                          type: string
+            type: object
+        ChildTestEntity3:
+            allOf:
+                - $ref: "#/components/schemas/TestEntity"
+            type: object
+        JSONMapAttributeTestEntity:
+            description:
+                Test Component to test the generation of getValue method on Entities when one or multiple JSON Maps are
+                present.
+            properties:
+                description:
+                    type: string
+                name:
+                    type: string
+                properties1:
+                    additionalProperties:
+                        type: object
+                    type: object
+                    x-json-map: true
+                properties2:
+                    additionalProperties:
+                        type: object
+                    type: object
+                    x-json-map: true
+            title: JSONMapAttributeTestEntity
+            type: object
+        NestedArrayItemsTestEntity:
+            description:
+                Test Component to test the REST Builder support for nested array items
+            properties:
+                name:
+                    type: string
+                values:
+                    items:
+                        items:
+                            type: string
+                        type: array
+                    type: array
+            title: NestedArrayItemsTestEntity
+            type: object
+        NestedTestEntity:
+            description:
+                "https://www.schema.org/Folder"
+            properties:
+                dateCreated:
+                    format: date-time
+                    type: string
+                dateModified:
+                    format: date-time
+                    type: string
+                description:
+                    type: string
+                id:
+                    format: int64
+                    type: integer
+                name:
+                    type: string
+                testEntity:
+                    $ref: "#/components/schemas/TestEntity"
+            type: object
+        TestEntity:
+            description:
+                "https://www.schema.org/Document"
+            discriminator:
+                mapping:
+                    ChildTestEntity1: "#/components/schemas/ChildTestEntity1"
+                    ChildTestEntity2: "#/components/schemas/ChildTestEntity2"
+                    ChildTestEntity3: "#/components/schemas/ChildTestEntity3"
+                propertyName: type
+            properties:
+                dateCreated:
+                    format: date-time
+                    type: string
+                dateModified:
+                    format: date-time
+                    type: string
+                description:
+                    type: string
+                documentId:
+                    format: int64
+                    type: integer
+                jsonProperty:
+                    type: string
+                    xml:
+                        name: xmlProperty
+                name:
+                    type: string
+                nestedTestEntity:
+                    $ref: "#/components/schemas/NestedTestEntity"
+                self:
+                    type: string
+                testEntities:
+                    $ref: "#/components/schemas/TestEntity"
+                type:
+                    enum:
+                        - ChildTestEntity1
+                        - ChildTestEntity2
+                        - ChildTestEntity3
+                    type: string
+            type: object
+        UnreferencedTestEntity:
+            properties:
+                description:
+                    type: string
+                id:
+                    format: int64
+                    type: integer
+                property-with-hyphens:
+                    type: string
+info:
+    license:
+        name: "Apache 2.0"
+        url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+    title: ""
+    version: "1.0.0"
+openapi: "3.0.1"
+paths:
+    /reserved-word:
+        post:
+            operationId: postReservedWord
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: boolean
+                    application/xml:
+                        schema:
+                            type: boolean
+                required: true
+            responses:
+                "200":
+                    description:
+                        "OK"
+            tags: ["TestEntity"]
+    /test-entities:
+        get:
+            operationId: getTestEntitiesPage
+            responses:
+                200:
+                    content:
+                        "application/json":
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/TestEntity"
+                                type: array
+                        "application/xml":
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/TestEntity"
+                                type: array
+                    description:
+                        "OK"
+            tags: ["TestEntity"]
+        post:
+            operationId: postTestEntity
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/TestEntity"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/TestEntity"
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/TestEntity"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/TestEntity"
+            tags: ["TestEntity"]
+    /test-entities/count:
+        get:
+            description:
+                Retrieves the count.
+            operationId: getTestEntityCount
+            responses:
+                200:
+                    content:
+                        text/plain:
+                            schema:
+                                example: 0
+                                format: int32
+                                type: integer
+                    description:
+                        "OK"
+            tags: ["TestEntity"]
+    /test-entities/{testEntityId}:
+        get:
+            operationId: getTestEntity
+            parameters:
+                - in: path
+                  name: testEntityId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        "application/json":
+                            schema:
+                                $ref: "#/components/schemas/TestEntity"
+                        "application/xml":
+                            schema:
+                                $ref: "#/components/schemas/TestEntity"
+                    description:
+                        "OK"
+            tags: ["TestEntity"]

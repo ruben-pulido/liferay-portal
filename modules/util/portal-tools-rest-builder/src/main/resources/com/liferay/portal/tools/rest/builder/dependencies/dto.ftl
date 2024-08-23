@@ -66,28 +66,22 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 
-<#if schema.oneOfSchemas?has_content>
+<#if schema.discriminator?has_content>
 	@JsonSubTypes(
 		{
-			<#list schema.oneOfSchemas as oneOfSchema>
-				<#assign propertySchemaName = oneOfSchema.propertySchemas?keys[0] />
+			<#list schema.discriminator.mapping as mappingName, mappingSchema>
+				@JsonSubTypes.Type(name = "${mappingName}", value=${freeMarkerTool.getReferenceName(mappingSchema)}.class)
 
-				@JsonSubTypes.Type(name = "${propertySchemaName}", value=${propertySchemaName?cap_first}.class)
-
-				<#if oneOfSchema_has_next>
+				<#if mappingName_has_next>
 					,
 				</#if>
 			</#list>
 		}
 	)
-	@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, property = "childType", use = JsonTypeInfo.Id.NAME)
-</#if>
 
-<#assign dtoParentClassName = freeMarkerTool.getDTOParentClassName(openAPIYAML, schemaName)! />
-
-<#if dtoParentClassName?has_content>
 	@JsonTypeInfo(
-		defaultImpl = ${schemaName}.class, include = JsonTypeInfo.As.PROPERTY, property = "childType", use = JsonTypeInfo.Id.NAME
+		include= JsonTypeInfo.As.PROPERTY, property="${schema.discriminator.propertyName}",
+		use= JsonTypeInfo.Id.NAME, visible = true
 	)
 </#if>
 
@@ -119,8 +113,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 		</#if>
 	)
 </#if>
+
 @XmlRootElement(name = "${schemaName}")
-public class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoParentClassName}</#if> implements Serializable {
+
+<#assign dtoParentClassName = freeMarkerTool.getDTOParentClassName(openAPIYAML, schemaName)! />
+
+public <#if schema.discriminator?has_content>abstract</#if> class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoParentClassName}</#if> implements Serializable {
 
 	public static ${schemaName} toDTO(String json) {
 		return ObjectMapperUtil.readValue(${schemaName}.class, json);
@@ -450,12 +448,26 @@ public class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoPare
 	}
 
 	public String toString() {
+
 		StringBundler sb = new StringBundler();
+
+		<#assign
+			toStringEnumSchemas = enumSchemas
+			toStringProperties = properties
+		/>
+
+		<#if dtoParentClassName?has_content>
+			<#assign
+				dtoParentSchema = allSchemas[dtoParentClassName]
+				toStringEnumSchemas = toStringEnumSchemas + freeMarkerTool.getDTOEnumSchemas(configYAML, openAPIYAML, dtoParentSchema)
+				toStringProperties = toStringProperties + freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, dtoParentSchema, allSchemas)
+			/>
+		</#if>
 
 		sb.append("{");
 
-		<#list properties?keys as propertyName>
-			<#assign propertyType = properties[propertyName] />
+		<#list toStringProperties?keys as propertyName>
+			<#assign propertyType = toStringProperties[propertyName] />
 
 			<#if stringUtil.equals(propertyType, "Date") || stringUtil.equals(propertyType, "Date[]")>
 				DateFormat liferayToJSONDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -464,14 +476,18 @@ public class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoPare
 			</#if>
 		</#list>
 
-		<#list properties?keys as propertyName>
+		<#list toStringProperties?keys as propertyName>
 			<#assign
 				capitalizedPropertyName = propertyName?cap_first
-				propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, schema, allSchemas)
-				propertyType = properties[propertyName]
+				propertyType = toStringProperties[propertyName]
+				propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, schema, allSchemas)!
 			/>
 
-			<#if enumSchemas?keys?seq_contains(propertyType)>
+			<#if dtoParentClassName?has_content && !propertySchema?has_content>
+				<#assign propertySchema = freeMarkerTool.getDTOPropertySchema(configYAML, propertyName, dtoParentSchema, allSchemas) />
+			</#if>
+
+			<#if toStringEnumSchemas?keys?seq_contains(propertyType)>
 				<#assign capitalizedPropertyName = propertyType />
 			</#if>
 
@@ -509,7 +525,7 @@ public class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoPare
 						sb.append("[");
 
 						for (int i = 0; i < ${propertyName}.length; i++) {
-							<#if stringUtil.equals(propertyType, "Date[]") || stringUtil.equals(propertyType, "Object[]") || stringUtil.equals(propertyType, "String[]") || enumSchemas?keys?seq_contains(propertyType)>
+							<#if stringUtil.equals(propertyType, "Date[]") || stringUtil.equals(propertyType, "Object[]") || stringUtil.equals(propertyType, "String[]") || toStringEnumSchemas?keys?seq_contains(propertyType)>
 								sb.append("\"");
 
 								<#if stringUtil.equals(propertyType, "Date[]")>
@@ -536,7 +552,7 @@ public class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoPare
 
 						sb.append("]");
 					<#else>
-						<#if stringUtil.equals(propertyType, "Date") || stringUtil.equals(propertyType, "String") || enumSchemas?keys?seq_contains(propertyType)>
+						<#if stringUtil.equals(propertyType, "Date") || stringUtil.equals(propertyType, "String") || toStringEnumSchemas?keys?seq_contains(propertyType)>
 							sb.append("\"");
 
 							<#if stringUtil.equals(propertyType, "Date")>
