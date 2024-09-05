@@ -234,6 +234,7 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 						LayoutConstants.TYPE_EMBEDDED,
 						LayoutConstants.TYPE_LINK_TO_LAYOUT,
 						LayoutConstants.TYPE_FULL_PAGE_APPLICATION,
+						LayoutConstants.TYPE_NODE,
 						LayoutConstants.TYPE_PANEL,
 						LayoutConstants.TYPE_PORTLET, LayoutConstants.TYPE_URL,
 						LayoutConstants.TYPE_UTILITY
