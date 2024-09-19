@@ -40,9 +40,7 @@ public class LayoutModelDocumentContributor
 
 	@Override
 	public void contribute(Document document, Layout layout) {
-		if (layout.isSystem() ||
-			(layout.getStatus() != WorkflowConstants.STATUS_APPROVED)) {
-
+		if (layout.isSystem()) {
 			return;
 		}
 
@@ -73,7 +71,7 @@ public class LayoutModelDocumentContributor
 	}
 
 	private void _addLayoutContentFields(Document document, Layout layout) {
-		if (!layout.isTypeContent() || !layout.isPublished()) {
+		if (!layout.isTypeContent()) {
 			return;
 		}
 
