@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {TCategory, createCategories} from '../../../helpers/CreateCategories';
 import {createAssetPublisherAndConfigure} from './createAssetPublisherAndConfigure';
-import {TCategory, createCategories} from './createCategories';
 import {createDPTandMarkAsDefault} from './createDPTandMarkAsDefault';
 
 import type {ApiHelpers} from '../../../helpers/ApiHelpers';
@@ -30,7 +30,7 @@ export async function blogsCategorizedFriendlyUrlSetup({
 }) {
 	const categories = await createCategories({
 		apiHelpers,
-		friendlyUrlCategories,
+		categoryNames: friendlyUrlCategories,
 		site,
 		vocabularyName,
 	});

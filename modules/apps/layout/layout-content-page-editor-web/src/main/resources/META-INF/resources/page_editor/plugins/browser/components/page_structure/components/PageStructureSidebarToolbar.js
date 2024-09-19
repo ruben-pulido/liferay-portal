@@ -12,6 +12,7 @@ import React from 'react';
 import hasDropZoneChild from '../../../../../app/components/layout_data_items/hasDropZoneChild';
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../../../app/config/constants/layoutDataItemTypes';
 import {VIEWPORT_SIZES} from '../../../../../app/config/constants/viewportSizes';
+import {useSetCopiedItemIds} from '../../../../../app/contexts/ClipboardContext';
 import {useSelectMultipleItems} from '../../../../../app/contexts/ControlsContext';
 import {
 	useDispatch,
@@ -28,10 +29,11 @@ export default function PageStructureSidebarToolbar({activeItemIds}) {
 	const dispatch = useDispatch();
 	const fragmentEntryLinks = useSelector((state) => state.fragmentEntryLinks);
 	const layoutData = useSelector((state) => state.layoutData);
+	const selectItems = useSelectMultipleItems();
 	const selectedViewportSize = useSelector(
 		(state) => state.selectedViewportSize
 	);
-	const selectItems = useSelectMultipleItems();
+	const setCopiedItemIds = useSetCopiedItemIds();
 	const widgets = useSelector((state) => state.widgets);
 
 	const itemsCanBeDeleted = () =>
@@ -86,6 +88,26 @@ export default function PageStructureSidebarToolbar({activeItemIds}) {
 		},
 		{
 			type: 'divider',
+		},
+		{
+			label: Liferay.Language.get('cut'),
+			onClick: () => {
+				if (itemsCanBeDeleted()) {
+					setCopiedItemIds(activeItemIds);
+					dispatch(
+						deleteItem({
+							itemIds: activeItemIds,
+							selectItems,
+						})
+					);
+				}
+			},
+			symbolLeft: 'cut',
+		},
+		{
+			label: Liferay.Language.get('copy'),
+			onClick: () => setCopiedItemIds(activeItemIds),
+			symbolLeft: 'copy',
 		},
 		{
 			label: Liferay.Language.get('duplicate'),

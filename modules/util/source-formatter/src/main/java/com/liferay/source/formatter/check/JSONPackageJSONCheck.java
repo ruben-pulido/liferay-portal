@@ -7,13 +7,20 @@ package com.liferay.source.formatter.check;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.json.JSONArrayImpl;
+import com.liferay.portal.json.JSONObjectImpl;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.source.formatter.check.comparator.PropertyValueComparator;
 import com.liferay.source.formatter.util.FileUtil;
 
-import java.io.IOException;
-
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
-
-import org.json.JSONObject;
 
 /**
  * @author Alan Huang
@@ -29,7 +36,7 @@ public class JSONPackageJSONCheck extends BaseFileCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws IOException {
+		throws JSONException {
 
 		if (!absolutePath.endsWith("/package.json") ||
 			(!absolutePath.contains("/modules/apps/") &&
@@ -47,7 +54,7 @@ public class JSONPackageJSONCheck extends BaseFileCheck {
 			return content;
 		}
 
-		JSONObject jsonObject = new JSONObject(content);
+		JSONObject jsonObject = new JSONObjectImpl(content);
 
 		if (jsonObject.isNull("scripts")) {
 			return content;
@@ -88,7 +95,7 @@ public class JSONPackageJSONCheck extends BaseFileCheck {
 		_checkScript(
 			fileName, scriptsJSONObject, "format", true, "fix", "format");
 
-		return content;
+		return _checkJest(content);
 	}
 
 	private void _checkIncorrectEntry(
@@ -97,6 +104,26 @@ public class JSONPackageJSONCheck extends BaseFileCheck {
 		if (!jsonObject.isNull(entryName)) {
 			addMessage(fileName, "Entry '" + entryName + "' is not allowed");
 		}
+	}
+
+	private String _checkJest(String content) throws JSONException {
+		JSONObject jsonObject = new JSONObjectImpl(content);
+
+		JSONObject jestJSONObject = jsonObject.getJSONObject("jest");
+
+		if (jestJSONObject == null) {
+			return content;
+		}
+
+		String testMatch = jestJSONObject.getString("testMatch");
+
+		if (Validator.isNotNull(testMatch)) {
+			jestJSONObject.put("testMatch", _sortTestMatch(testMatch));
+		}
+
+		jsonObject.put("jest", jestJSONObject);
+
+		return JSONUtil.toString(jsonObject) + "\n";
 	}
 
 	private void _checkScript(
@@ -152,6 +179,33 @@ public class JSONPackageJSONCheck extends BaseFileCheck {
 		}
 
 		addMessage(fileName, sb.toString());
+	}
+
+	private JSONArray _sortTestMatch(String testMatch) throws JSONException {
+		JSONArray testMatchJSONArray = new JSONArrayImpl(testMatch);
+
+		List<Object> objects = JSONUtil.toObjectList(testMatchJSONArray);
+
+		Collections.sort(objects, new TestMatchComparator());
+
+		testMatchJSONArray = new JSONArrayImpl();
+
+		for (Object object : objects) {
+			testMatchJSONArray.put(object);
+		}
+
+		return testMatchJSONArray;
+	}
+
+	private class TestMatchComparator implements Comparator<Object> {
+
+		@Override
+		public int compare(Object object1, Object object2) {
+			PropertyValueComparator comparator = new PropertyValueComparator();
+
+			return comparator.compare(object1.toString(), object2.toString());
+		}
+
 	}
 
 }

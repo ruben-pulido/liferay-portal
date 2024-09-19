@@ -4,6 +4,7 @@
  */
 
 import {CollectionItemLayoutDataItem} from '../../types/layout_data/CollectionItemLayoutDataItem';
+import {FormLayoutDataItem} from '../../types/layout_data/FormLayoutDataItem';
 import {LayoutData, LayoutDataItem} from '../../types/layout_data/LayoutData';
 import {
 	FragmentEntryLink,
@@ -161,6 +162,39 @@ export default {
 		);
 	},
 
+	moveStepper({
+		fragmentEntryLinkId,
+		itemId,
+		numberOfSteps,
+		onNetworkStatus,
+		parentItemId,
+		position,
+		segmentsExperienceId,
+	}: {
+		fragmentEntryLinkId: FragmentEntryLink['fragmentEntryLinkId'];
+		itemId: string;
+		numberOfSteps: number;
+		onNetworkStatus: OnNetworkStatus;
+		parentItemId: string;
+		position: number;
+		segmentsExperienceId: string;
+	}) {
+		return draftServiceFetch<LayoutData>(
+			config.moveStepperFragmentEntryLinkURL,
+			{
+				body: {
+					fragmentEntryLinkId,
+					itemId,
+					numberOfSteps,
+					parentItemId,
+					position,
+					segmentsExperienceId,
+				},
+			},
+			onNetworkStatus
+		);
+	},
+
 	restoreCollectionDisplayConfig({
 		filterFragmentEntryLinks,
 		itemConfig,
@@ -186,6 +220,41 @@ export default {
 					),
 					itemConfig: JSON.stringify(itemConfig),
 					itemId,
+					segmentsExperienceId,
+				},
+			},
+			onNetworkStatus
+		);
+	},
+
+	undoUpdateFormConfig({
+		addedItemIds,
+		itemConfig,
+		itemId,
+		movedItemIds,
+		onNetworkStatus,
+		removedItemIds,
+		segmentsExperienceId,
+	}: {
+		addedItemIds: string[];
+		itemConfig: FormLayoutDataItem['config'];
+		itemId: string;
+		movedItemIds: {itemId: string; parentId: string}[];
+		onNetworkStatus: OnNetworkStatus;
+		removedItemIds: string[];
+		segmentsExperienceId: string | null;
+	}) {
+		return draftServiceFetch<{
+			layoutData: LayoutData;
+		}>(
+			config.undoUpdateFormConfigURL,
+			{
+				body: {
+					addedItemIds,
+					config: JSON.stringify(itemConfig),
+					itemId,
+					movedItemIds: JSON.stringify(movedItemIds),
+					removedItemIds,
 					segmentsExperienceId,
 				},
 			},

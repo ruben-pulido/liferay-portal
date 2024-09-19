@@ -32,12 +32,15 @@ import {useDispatch, useSelectorRef} from '../../contexts/StoreContext';
 import selectLayoutDataItemLabel from '../../selectors/selectLayoutDataItemLabel';
 import addFragment from '../../thunks/addFragment';
 import addItem from '../../thunks/addItem';
+import addStepper from '../../thunks/addStepper';
 import addWidget from '../../thunks/addWidget';
 import moveItem from '../../thunks/moveItem';
+import moveStepper from '../../thunks/moveStepper';
 import checkAllowedChild from '../../utils/drag_and_drop/checkAllowedChild';
 import {TARGET_POSITIONS} from '../../utils/drag_and_drop/constants/targetPositions';
 import getDropData from '../../utils/drag_and_drop/getDropData';
 import itemIsAncestor from '../../utils/drag_and_drop/itemIsAncestor';
+import {getFormParent} from '../../utils/getFormParent';
 import {isMultistepForm} from '../../utils/isMultistepForm';
 import {isUnmappedCollection} from '../../utils/isUnmappedCollection';
 import {openFormConversionModal} from '../../utils/openFormConversionModal';
@@ -106,11 +109,17 @@ export default function KeyboardMovementManager() {
 						return;
 					}
 
-					thunk = moveItem({
-						itemId: source.itemId,
-						parentItemId: dropItemId,
-						position,
-					});
+					thunk = source.fieldTypes?.includes('stepper')
+						? moveStepper({
+								itemId: source.itemId,
+								parentItemId: dropItemId,
+								position,
+							})
+						: moveItem({
+								itemId: source.itemId,
+								parentItemId: dropItemId,
+								position,
+							});
 				}
 				else if (actionType === ACTION_TYPES.add) {
 					if (source.type === LAYOUT_DATA_ITEM_TYPES.fragment) {
@@ -123,9 +132,18 @@ export default function KeyboardMovementManager() {
 								selectItems,
 							});
 						}
+						else if (source.fieldTypes?.includes('stepper')) {
+							thunk = addStepper({
+								fragmentEntryKey: source.fragmentEntryKey,
+								groupId: source.groupId,
+								parentItemId: dropItemId,
+								position,
+								selectItems,
+								type: source.type,
+							});
+						}
 						else {
 							thunk = addFragment({
-								fieldTypes: source.fieldTypes,
 								fragmentEntryKey: source.fragmentEntryKey,
 								groupId: source.groupId,
 								parentItemId: dropItemId,
@@ -162,12 +180,15 @@ export default function KeyboardMovementManager() {
 				};
 
 				const targetItem = layoutDataRef.current.items[target.itemId];
+				const formParent = getFormParent(
+					targetItem,
+					layoutDataRef.current
+				);
 
 				if (
+					formParent &&
 					source.fieldTypes?.includes('stepper') &&
-					target.position === TARGET_POSITIONS.MIDDLE &&
-					targetItem.type === LAYOUT_DATA_ITEM_TYPES.form &&
-					isMultistepForm(targetItem)
+					!isMultistepForm(formParent)
 				) {
 					openFormConversionModal({
 						onContinue: () => executeAction(),

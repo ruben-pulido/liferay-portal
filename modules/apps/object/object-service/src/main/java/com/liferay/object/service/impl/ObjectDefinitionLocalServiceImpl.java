@@ -409,12 +409,13 @@ public class ObjectDefinitionLocalServiceImpl
 				continue;
 			}
 
-			_objectRelationshipLocalService.updateObjectRelationship(
-				objectRelationship.getExternalReferenceCode(),
-				objectRelationship.getObjectRelationshipId(),
-				objectRelationship.getParameterObjectFieldId(),
-				ObjectRelationshipConstants.DELETION_TYPE_CASCADE, true,
-				objectRelationship.getLabelMap(), null);
+			objectRelationship.setDeletionType(
+				ObjectRelationshipConstants.DELETION_TYPE_CASCADE);
+			objectRelationship.setEdge(true);
+
+			objectRelationship =
+				_objectRelationshipLocalService.updateObjectRelationship(
+					objectRelationship);
 
 			ObjectDefinition objectDefinition1 =
 				objectDefinitionLocalService.getObjectDefinition(
@@ -543,8 +544,6 @@ public class ObjectDefinitionLocalServiceImpl
 		_objectViewLocalService.deleteObjectViews(
 			objectDefinition.getObjectDefinitionId());
 
-		objectDefinitionPersistence.remove(objectDefinition);
-
 		_resourceLocalService.deleteResource(
 			objectDefinition.getCompanyId(), ObjectDefinition.class.getName(),
 			ResourceConstants.SCOPE_INDIVIDUAL,
@@ -578,6 +577,8 @@ public class ObjectDefinitionLocalServiceImpl
 			_registerTransactionCallbackForCluster(
 				_undeployObjectDefinitionMethodKey, objectDefinition);
 		}
+
+		objectDefinitionPersistence.remove(objectDefinition);
 
 		return objectDefinition;
 	}
@@ -1041,12 +1042,10 @@ public class ObjectDefinitionLocalServiceImpl
 				_objectRelationshipLocalService.getObjectRelationship(
 					edge.getObjectRelationshipId());
 
+			objectRelationship.setEdge(false);
+
 			_objectRelationshipLocalService.updateObjectRelationship(
-				objectRelationship.getExternalReferenceCode(),
-				objectRelationship.getObjectRelationshipId(),
-				objectRelationship.getParameterObjectFieldId(),
-				objectRelationship.getDeletionType(), false,
-				objectRelationship.getLabelMap(), null);
+				objectRelationship);
 		}
 	}
 

@@ -31,6 +31,7 @@ class MBPortlet {
 			confirmDiscardImages: CONFIRM_DISCARD_IMAGES,
 		},
 		viewTrashAttachmentsURL,
+		trashEnabled,
 	}) {
 		this._namespace = namespace;
 		this._constants = constants;
@@ -39,6 +40,7 @@ class MBPortlet {
 		this._replyToMessageId = replyToMessageId;
 		this._strings = strings;
 		this._viewTrashAttachmentsURL = viewTrashAttachmentsURL;
+		this._trashEnabled = trashEnabled;
 
 		this.rootNode = document.getElementById(rootNodeId);
 
@@ -104,7 +106,7 @@ class MBPortlet {
 				.get('contentBox')
 				.delegate(
 					'click',
-					this._removeAttachment.bind(this),
+					this._confirmRemoveAttachment.bind(this),
 					'.delete-attachment'
 				);
 		});
@@ -154,14 +156,40 @@ class MBPortlet {
 	}
 
 	/**
+	 * Show a confimation modal if trash is enabled
+	 *
+	 * @param {Event} event The click event that triggered the remove action
+	 */
+	_confirmRemoveAttachment(event) {
+		event.preventDefault();
+
+		if (this._trashEnabled) {
+			this._removeAttachment(event);
+		}
+		else {
+			openConfirmModal({
+				message: Liferay.Language.get(
+					'are-you-sure-you-want-to-delete-this'
+				),
+				onConfirm: (isConfirmed) => {
+					if (!isConfirmed) {
+						return;
+					}
+
+					this._removeAttachment(event);
+				},
+			});
+		}
+	}
+
+	/**
 	 * Sends a request to remove the selected attachment.
 	 *
 	 * @param {Event} event The click event that triggered the remove action
 	 */
 	_removeAttachment(event) {
 		const link = event.currentTarget;
-
-		const deleteURL = link.getAttribute('data-url');
+		const deleteURL = link.getAttribute('href');
 
 		fetch(deleteURL).then(() => {
 			Liferay.componentReady(this.searchContainerId).then(
@@ -270,9 +298,9 @@ class MBPortlet {
 											attachment.size,
 											`<a class="delete-attachment" data-rowId="${
 												attachment.id
-											}" data-url="${
+											}" href="${
 												attachment.deleteURL
-											}" href="javascript:void(0);">${Liferay.Language.get(
+											}">${Liferay.Language.get(
 												'delete'
 											)}</a>`,
 										],
@@ -286,13 +314,17 @@ class MBPortlet {
 					);
 				}
 
-				const deletedAttachmentsElement = document.getElementById(
+				const viewRemovedAttachmentsLink = document.getElementById(
 					'view-removed-attachments-link'
 				);
 
+				if (!viewRemovedAttachmentsLink) {
+					return;
+				}
+
 				if (attachments.deleted.length) {
-					deletedAttachmentsElement.style.display = 'initial';
-					deletedAttachmentsElement.innerHTML =
+					viewRemovedAttachmentsLink.style.display = 'initial';
+					viewRemovedAttachmentsLink.innerText =
 						sub(
 							attachments.deleted.length > 1
 								? RECENTLY_REMOVED_ATTACHMENTS.multiple
@@ -301,7 +333,7 @@ class MBPortlet {
 						) + ' &raquo';
 				}
 				else {
-					deletedAttachmentsElement.style.display = 'none';
+					viewRemovedAttachmentsLink.style.display = 'none';
 				}
 			});
 	}

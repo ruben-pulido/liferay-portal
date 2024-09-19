@@ -1162,18 +1162,18 @@ public class GroupFinderImpl
 			return;
 		}
 
+		if (params.containsKey("actionId")) {
+			Long userId = _getUserId(params);
+
+			queryPos.add(userId);
+			queryPos.add(userId);
+		}
+
 		for (Map.Entry<String, Object> entry : params.entrySet()) {
 			String key = entry.getKey();
 
 			if (key.equals("actionId")) {
-				Long userId = (Long)params.get("userId");
-
-				if (Validator.isNull(userId)) {
-					PermissionChecker permissionChecker =
-						PermissionThreadLocal.getPermissionChecker();
-
-					userId = permissionChecker.getUserId();
-				}
+				Long userId = _getUserId(params);
 
 				int hasUserRole = 0;
 
@@ -1189,8 +1189,6 @@ public class GroupFinderImpl
 				}
 
 				queryPos.add(hasUserRole);
-
-				queryPos.add(userId);
 
 				Role siteAdminRole = RoleLocalServiceUtil.fetchRole(
 					companyId, RoleConstants.SITE_ADMINISTRATOR);
@@ -1377,7 +1375,7 @@ public class GroupFinderImpl
 
 	private String _getCondition(String join) {
 		if (Validator.isNotNull(join)) {
-			int pos = join.indexOf("WHERE");
+			int pos = join.lastIndexOf("WHERE");
 
 			if (pos != -1) {
 				join = StringPool.OPEN_PARENTHESIS + join.substring(pos + 5);
@@ -1445,6 +1443,19 @@ public class GroupFinderImpl
 		_joinMap = joinMap;
 
 		return _joinMap;
+	}
+
+	private Long _getUserId(Map<String, Object> params) {
+		Long currentUserId = (Long)params.get("userId");
+
+		if (Validator.isNull(currentUserId)) {
+			PermissionChecker permissionChecker =
+				PermissionThreadLocal.getPermissionChecker();
+
+			currentUserId = permissionChecker.getUserId();
+		}
+
+		return currentUserId;
 	}
 
 	private Map<String, String> _getWhereMap() {
@@ -1574,7 +1585,7 @@ public class GroupFinderImpl
 
 	private String _removeWhere(String join) {
 		if (Validator.isNotNull(join)) {
-			int pos = join.indexOf("WHERE");
+			int pos = join.lastIndexOf("WHERE");
 
 			if (pos != -1) {
 				join = join.substring(0, pos);

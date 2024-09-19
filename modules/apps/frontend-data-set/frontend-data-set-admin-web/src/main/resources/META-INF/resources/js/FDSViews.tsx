@@ -31,6 +31,7 @@ const DEFAULT_ITEMS_PER_PAGE = 20;
 
 type FDSViewType = {
 	[OBJECT_RELATIONSHIP.FDS_ENTRY_FDS_VIEW]: FDSEntryType;
+	additionalAPIURLParameters: string;
 	defaultItemsPerPage: number;
 	defaultVisualizationMode: string;
 	description: string;

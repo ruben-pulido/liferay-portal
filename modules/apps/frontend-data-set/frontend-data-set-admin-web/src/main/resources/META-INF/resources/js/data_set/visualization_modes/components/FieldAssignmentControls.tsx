@@ -14,22 +14,31 @@ interface IFieldAssignmentControlsProps {
 	field?: IField;
 	label: string;
 	onClearSelection: () => void;
-	openSelectFieldModal: () => void;
+	openAddCustomFieldModal: () => void;
+	openAddDataSourceFieldsModal: () => void;
 }
 
 function FieldAssignmentControls({
 	field,
 	label,
 	onClearSelection,
-	openSelectFieldModal,
+	openAddCustomFieldModal,
+	openAddDataSourceFieldsModal,
 }: IFieldAssignmentControlsProps) {
 	return field ? (
 		<ClayDropDownWithItems
 			items={[
 				{
-					label: Liferay.Language.get('change-assignment'),
-					onClick: openSelectFieldModal,
-					symbolLeft: 'change',
+					label: Liferay.Language.get(
+						'change-field-from-data-source'
+					),
+					onClick: openAddDataSourceFieldsModal,
+					symbolLeft: 'fieldset',
+				},
+				{
+					label: Liferay.Language.get('change-field-manually'),
+					onClick: openAddCustomFieldModal,
+					symbolLeft: 'custom-field',
 				},
 				{
 					label: Liferay.Language.get('clear-assignment'),
@@ -51,12 +60,28 @@ function FieldAssignmentControls({
 			}
 		/>
 	) : (
-		<ClayButtonWithIcon
-			aria-label={Liferay.Language.get('assign-field')}
-			displayType="secondary"
-			onClick={openSelectFieldModal}
-			symbol="plus"
-			title={Liferay.Language.get('assign-field')}
+		<ClayDropDownWithItems
+			items={[
+				{
+					label: Liferay.Language.get('assign-from-data-source'),
+					onClick: openAddDataSourceFieldsModal,
+					symbolLeft: 'fieldset',
+				},
+				{
+					label: Liferay.Language.get('assign-field-manually'),
+					onClick: openAddCustomFieldModal,
+					symbolLeft: 'custom-field',
+				},
+			]}
+			trigger={
+				<ClayButtonWithIcon
+					aria-label={Liferay.Language.get('assign-field')}
+					displayType="secondary"
+					size="sm"
+					symbol="plus"
+					title={Liferay.Language.get('assign-field')}
+				/>
+			}
 		/>
 	);
 }

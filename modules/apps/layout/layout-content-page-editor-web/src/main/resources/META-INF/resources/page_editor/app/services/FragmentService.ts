@@ -159,17 +159,17 @@ export default {
 	},
 
 	addStepperFragmentEntryLink({
-		editableValues,
 		fragmentEntryKey,
 		groupId,
+		numberOfSteps,
 		onNetworkStatus,
 		parentItemId,
 		position,
 		segmentsExperienceId,
 	}: {
-		editableValues: FragmentEntryLink['editableValues'];
 		fragmentEntryKey: string;
 		groupId: string;
+		numberOfSteps: number;
 		onNetworkStatus: OnNetworkStatus;
 		parentItemId: string;
 		position: number;
@@ -183,9 +183,9 @@ export default {
 			config.addStepperFragmentEntryLinkURL,
 			{
 				body: {
-					editableValues: JSON.stringify(editableValues),
 					fragmentEntryKey,
 					groupId,
+					numberOfSteps,
 					parentItemId,
 					position,
 					segmentsExperienceId,
@@ -253,6 +253,35 @@ export default {
 					body,
 					commentId,
 					resolved,
+				},
+			},
+			onNetworkStatus
+		);
+	},
+
+	pasteItem({
+		itemIds,
+		onNetworkStatus,
+		parentItemId,
+		segmentsExperienceId,
+	}: {
+		itemIds: string[];
+		onNetworkStatus: OnNetworkStatus;
+		parentItemId: string;
+		segmentsExperienceId: string;
+	}) {
+		return draftServiceFetch<{
+			copiedFragmentEntryLinks: FragmentEntryLink[];
+			copiedItemIds: string[];
+			layoutData: LayoutData;
+			restrictedItemIds: string[];
+		}>(
+			config.copyItemsURL,
+			{
+				body: {
+					itemIds,
+					parentItemId,
+					segmentsExperienceId,
 				},
 			},
 			onNetworkStatus

@@ -9,6 +9,7 @@ import {FieldSelectModalPage} from '../../components/FieldSelectModalPage';
 import {DataSetPage} from '../DataSetPage';
 
 export class VisualizationModesPage {
+	readonly addCustomFieldInput: Locator;
 	private readonly addFieldsButton: Locator;
 	readonly cardsVisualizationModeContainer: Locator;
 	private readonly container: Locator;
@@ -19,7 +20,11 @@ export class VisualizationModesPage {
 	readonly tableVisualizationModeContainer: Locator;
 
 	constructor(page: Page) {
-		this.addFieldsButton = page.getByLabel('Add Fields');
+		this.addCustomFieldInput = page.getByPlaceholder('Type Field Here.');
+		this.addFieldsButton = page
+			.getByRole('tabpanel')
+			.getByRole('list')
+			.getByLabel('New');
 		this.cardsVisualizationModeContainer = page.locator(
 			'.cards-visualization-mode'
 		);
@@ -76,15 +81,34 @@ export class VisualizationModesPage {
 		await this.dataSetPage.selectTab('Visualization Modes');
 	}
 
-	async openAddFieldsModal() {
+	async openAddDataSourceFieldsModal() {
 		await this.addFieldsButton.click();
+
+		const assignDataSourceFieldsButton = await this.page.getByRole(
+			'menuitem',
+			{name: 'Assign from Data Source'}
+		);
+
+		await assignDataSourceFieldsButton.waitFor();
+		await assignDataSourceFieldsButton.click();
 
 		await this.fieldSelectModalPage.addFieldsDialog.fields
 			.first()
 			.waitFor();
 	}
 
-	async openAssignFieldModal({
+	async openAddCustomFieldModal() {
+		await this.addFieldsButton.click();
+
+		const assignCustomFieldButton = await this.page.getByRole('menuitem', {
+			name: 'Assign Field Manually',
+		});
+
+		await assignCustomFieldButton.waitFor();
+		await assignCustomFieldButton.click();
+	}
+
+	async openAssignDataSourceFieldsModal({
 		container,
 		sectionLabel,
 	}: {
@@ -96,9 +120,38 @@ export class VisualizationModesPage {
 			.filter({has: this.page.getByText(sectionLabel)})
 			.getByTitle('Assign Field')
 			.click();
+
+		const assignDataSourceFieldsButton = await this.page.getByRole(
+			'menuitem',
+			{name: 'Assign from Data Source'}
+		);
+
+		await assignDataSourceFieldsButton.waitFor();
+		await assignDataSourceFieldsButton.click();
 	}
 
-	async openChangeFieldModal({
+	async openAssignCustomFieldModal({
+		container,
+		sectionLabel,
+	}: {
+		container: Locator;
+		sectionLabel: string;
+	}) {
+		await container
+			.locator('tr')
+			.filter({has: this.page.getByText(sectionLabel)})
+			.getByTitle('Assign Field')
+			.click();
+
+		const assignCustomFieldButton = await this.page.getByRole('menuitem', {
+			name: 'Assign Field Manually',
+		});
+
+		await assignCustomFieldButton.waitFor();
+		await assignCustomFieldButton.click();
+	}
+
+	async openChangeDataSourceFieldsModal({
 		container,
 		sectionLabel,
 	}: {
@@ -111,8 +164,8 @@ export class VisualizationModesPage {
 			.getByTitle(`View ${sectionLabel} Options`)
 			.click();
 
-		const changeAssignmentButton = this.page.getByRole('menuitem', {
-			name: 'Change Assignment',
+		const changeAssignmentButton = await this.page.getByRole('menuitem', {
+			name: 'Change Field From Data Source',
 		});
 
 		await changeAssignmentButton.waitFor();
@@ -121,6 +174,29 @@ export class VisualizationModesPage {
 		await this.fieldSelectModalPage.fieldSelectModalContainer
 			.getByPlaceholder('Search')
 			.waitFor();
+	}
+
+	async openChangeCustomFieldModal({
+		container,
+		sectionLabel,
+	}: {
+		container: Locator;
+		sectionLabel: string;
+	}) {
+		await container
+			.locator('tr')
+			.filter({has: this.page.getByText(sectionLabel)})
+			.getByTitle(`View ${sectionLabel} Options`)
+			.click();
+
+		const changeAssignmentButton = await this.page.getByRole('menuitem', {
+			name: 'Change Field Manually',
+		});
+
+		await changeAssignmentButton.waitFor();
+		await changeAssignmentButton.click();
+
+		await this.page.getByRole('heading', {name: 'Add Field Manually'});
 	}
 
 	async searchAndSelectField(path: string) {

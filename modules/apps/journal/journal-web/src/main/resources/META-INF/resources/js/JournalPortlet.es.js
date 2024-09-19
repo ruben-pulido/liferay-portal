@@ -189,6 +189,8 @@ export default function _JournalPortlet({
 					defaultLanguageId.replaceAll('_', '-')
 				)
 			);
+
+			validateRequiredDDMFields();
 		}
 	};
 
@@ -256,9 +258,14 @@ export default function _JournalPortlet({
 				)
 			);
 
+			validateRequiredDDMFields();
+
 			lockHolder.lock?.unlock(true);
 		}
 		else {
+			Liferay.Form.get(formId).formValidator.validate();
+			validateRequiredDDMFields();
+
 			lockHolder.lock?.unlock(true);
 		}
 	};
@@ -488,6 +495,17 @@ export default function _JournalPortlet({
 			})
 		),
 	];
+
+	const validateRequiredDDMFields = () => {
+		Liferay.componentReady(`${namespace}dataEngineLayoutRenderer`).then(
+			(dataEngineLayoutRenderer) => {
+				const dataEngineLayoutRendererRef =
+					dataEngineLayoutRenderer?.reactComponentRef;
+
+				return dataEngineLayoutRendererRef.current.validate();
+			}
+		);
+	};
 
 	if (
 		autoSaveDraftEnabled &&

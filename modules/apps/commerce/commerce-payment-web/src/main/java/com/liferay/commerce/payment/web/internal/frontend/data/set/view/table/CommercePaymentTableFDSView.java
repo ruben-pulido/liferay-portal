@@ -55,7 +55,7 @@ public class CommercePaymentTableFDSView extends BaseTableFDSView {
 		).add(
 			"paymentStatusStatus", "status",
 			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(
-				"label")
+				"CommercePaymentStatusDataRenderer")
 		).build();
 	}
 

@@ -147,6 +147,14 @@ const reducer = (state, action) => {
 			);
 		}
 		else if (state.multiSelect === MULTI_SELECT_TYPES.range) {
+
+			// Avoid selection in range when directly selecting an item that
+			// is not a layout data item, such as editables.
+
+			if (!state.layoutData.items[itemId]) {
+				return nextState;
+			}
+
 			let initialActiveItemIds = state.activeItemIds;
 
 			// The last active item id is taken when the first item in the
@@ -161,7 +169,7 @@ const reducer = (state, action) => {
 				// the range is kept and the activeItemIds from the last range
 				// selection are removed.
 
-				startLimitId = state.rangeLimitIds.start;
+				startLimitId = state.rangeLimitIds.start || startLimitId;
 
 				initialActiveItemIds = state.activeItemIds.slice(
 					0,
@@ -174,18 +182,30 @@ const reducer = (state, action) => {
 
 			rangeLimitIds = {end: itemId, start: startLimitId};
 
-			const root =
-				state.layoutData.items[state.layoutData.rootItems.main];
+			if (
+				!rangeLimitIds.start ||
+				rangeLimitIds.end === rangeLimitIds.start
+			) {
 
-			nextActiveItemIds = getItemsWithinRange({
-				itemIds: root.children,
-				layoutDataItems: state.layoutData.items,
-				rangeLimitIds,
-			});
+				// If the start and end of the range are the same id, only
+				// this item is selected
 
-			nextActiveItemIds = [
-				...new Set([...initialActiveItemIds, ...nextActiveItemIds]),
-			];
+				nextActiveItemIds = [itemId];
+			}
+			else {
+				const root =
+					state.layoutData.items[state.layoutData.rootItems.main];
+
+				nextActiveItemIds = getItemsWithinRange({
+					itemIds: root.children,
+					layoutDataItems: state.layoutData.items,
+					rangeLimitIds,
+				});
+
+				nextActiveItemIds = [
+					...new Set([...initialActiveItemIds, ...nextActiveItemIds]),
+				];
+			}
 		}
 
 		nextState = {
@@ -357,8 +377,7 @@ const useSelectMultipleItems = () => {
 	);
 };
 
-const useMultiSelectIsActivated = () =>
-	useContext(ActiveStateContext).multiSelect;
+const useMultiSelectType = () => useContext(ActiveStateContext).multiSelect;
 
 export {
 	ControlsProvider,
@@ -373,7 +392,7 @@ export {
 	useHoverItem,
 	useIsActive,
 	useIsHovered,
-	useMultiSelectIsActivated,
+	useMultiSelectType,
 	useSelectItem,
 	useSelectMultipleItems,
 };

@@ -633,22 +633,18 @@ public abstract class BaseSitePageResourceTestCase {
 	}
 
 	@Test
-	public void testPostSiteSiteByExternalReferenceCodeSitePage()
-		throws Exception {
-
+	public void testPostByExternalReferenceCodeSitePage() throws Exception {
 		SitePage randomSitePage = randomSitePage();
 
 		SitePage postSitePage =
-			testPostSiteSiteByExternalReferenceCodeSitePage_addSitePage(
-				randomSitePage);
+			testPostByExternalReferenceCodeSitePage_addSitePage(randomSitePage);
 
 		assertEquals(randomSitePage, postSitePage);
 		assertValid(postSitePage);
 	}
 
-	protected SitePage
-			testPostSiteSiteByExternalReferenceCodeSitePage_addSitePage(
-				SitePage sitePage)
+	protected SitePage testPostByExternalReferenceCodeSitePage_addSitePage(
+			SitePage sitePage)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
@@ -1018,6 +1014,14 @@ public abstract class BaseSitePageResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("name_i18n", additionalAssertFieldName)) {
+				if (sitePage.getName_i18n() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("pageSettings", additionalAssertFieldName)) {
 				if (sitePage.getPageSettings() == null) {
 					valid = false;
@@ -1074,14 +1078,6 @@ public abstract class BaseSitePageResourceTestCase {
 				if (sitePage.getTaxonomyCategoryItemExternalReferences() ==
 						null) {
 
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("title_i18n", additionalAssertFieldName)) {
-				if (sitePage.getTitle_i18n() == null) {
 					valid = false;
 				}
 
@@ -1399,6 +1395,17 @@ public abstract class BaseSitePageResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("name_i18n", additionalAssertFieldName)) {
+				if (!equals(
+						(Map)sitePage1.getName_i18n(),
+						(Map)sitePage2.getName_i18n())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("pageSettings", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						sitePage1.getPageSettings(),
@@ -1471,17 +1478,6 @@ public abstract class BaseSitePageResourceTestCase {
 						sitePage1.getTaxonomyCategoryItemExternalReferences(),
 						sitePage2.
 							getTaxonomyCategoryItemExternalReferences())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("title_i18n", additionalAssertFieldName)) {
-				if (!equals(
-						(Map)sitePage1.getTitle_i18n(),
-						(Map)sitePage2.getTitle_i18n())) {
 
 					return false;
 				}
@@ -1876,6 +1872,11 @@ public abstract class BaseSitePageResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("name_i18n")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("pageSettings")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -1984,11 +1985,6 @@ public abstract class BaseSitePageResourceTestCase {
 		}
 
 		if (entityFieldName.equals("taxonomyCategoryItemExternalReferences")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
-
-		if (entityFieldName.equals("title_i18n")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}

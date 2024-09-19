@@ -10,8 +10,13 @@ import {featureFlagsTest} from '../../fixtures/featureFlagsTest';
 import {loginTest} from '../../fixtures/loginTest';
 import {pageEditorPagesTest} from '../../fixtures/pageEditorPagesTest';
 import {pageManagementSiteTest} from '../../fixtures/pageManagementSiteTest';
+import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
 import getRandomString from '../../utils/getRandomString';
-import {LEMON_OBJECT_ERC} from '../setup/page-management-site/constants';
+import {waitForSuccessAlert} from '../../utils/waitForSuccessAlert';
+import {
+	LEMON_OBJECT_ERC,
+	POTATO_OBJECT_ERC,
+} from '../setup/page-management-site/constants';
 import getFormContainerDefinition from './utils/getFormContainerDefinition';
 import getFragmentDefinition from './utils/getFragmentDefinition';
 import getPageDefinition from './utils/getPageDefinition';
@@ -165,298 +170,300 @@ test.describe('Relationships', () => {
 	});
 });
 
-test.describe('Multistep', {tag: '@LPD-10727'}, () => {
-	test('Can add and configure a Stepper fragment', async ({
-		apiHelpers,
-		page,
-		pageEditorPage,
-		pageManagementSite,
-	}) => {
+test.describe('Multistep', () => {
+	test(
+		'Change to multistep when adding a stepper fragment and remove it when changing to simple',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
 
-		// Get the id of Lemon object from the site initializer
+			// Create a page with a Form fragment
 
-		const {id: objectDefinitionId} =
-			await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
-				LEMON_OBJECT_ERC
+			const formId = getRandomString();
+
+			const formDefinition = getFormContainerDefinition({
+				id: formId,
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([formDefinition]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
+
+			// Go to edit mode
+
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
 			);
 
-		// Create a page with a Form fragment with a Stepper fragment
+			// Map the form to Lemon object and select fields
 
-		const stepperId = getRandomString();
+			await pageEditorPage.mapFormFragment(formId, 'Lemon', [
+				'Lemon Size',
+				'Lemon Basket Color',
+			]);
 
-		const stepperFragment = getFragmentDefinition({
-			id: stepperId,
-			key: 'INPUTS-stepper',
-		});
+			// Add stepper and check multistep modal is shown
 
-		const formId = getRandomString();
+			await pageEditorPage.addFragment('Form Components', 'Stepper');
 
-		const formDefinition = getFormContainerDefinition({
-			id: formId,
-			objectDefinitionId,
-			pageElements: [stepperFragment],
-		});
+			expect(
+				page.getByText(
+					'Adding a stepper fragment inside a simple form will turn it into a multistep form. Are you sure you want to continue?'
+				)
+			).toBeVisible();
 
-		const layout = await apiHelpers.headlessDelivery.createSitePage({
-			pageDefinition: getPageDefinition([formDefinition]),
-			siteId: pageManagementSite.id,
-			title: getRandomString(),
-		});
+			await page.getByRole('button', {name: 'Continue'}).click();
 
-		// Go to edit mode
+			// Check that the form is now multistep
 
-		await pageEditorPage.goto(layout, pageManagementSite.friendlyUrlPath);
-
-		// Check steps titles and bullets numbers are displayed
-
-		await page.locator('.multi-step-nav').getByText('Step 1').waitFor();
-
-		await page
-			.locator('.multi-step-icon[data-multi-step-icon="1"]')
-			.waitFor();
-
-		// Hide both and check they are not displayed
-
-		await pageEditorPage.changeFragmentConfiguration({
-			fieldLabel: 'Show Bullets Numbers',
-			fragmentId: stepperId,
-			tab: 'General',
-			value: false,
-		});
-
-		await pageEditorPage.changeFragmentConfiguration({
-			fieldLabel: 'Show Steps Titles',
-			fragmentId: stepperId,
-			tab: 'General',
-			value: false,
-		});
-
-		await expect(
-			page.locator('.multi-step-nav').getByText('Step 1')
-		).not.toBeVisible();
-
-		await expect(
-			page.locator('.multi-step-icon[data-multi-step-icon="1"]')
-		).not.toBeVisible();
-	});
-
-	test('Can configure multistep options for a form container', async ({
-		apiHelpers,
-		page,
-		pageEditorPage,
-		pageManagementSite,
-	}) => {
-
-		// Get the id of Lemon object from the site initializer
-
-		const {id: objectDefinitionId} =
-			await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
-				LEMON_OBJECT_ERC
+			await pageEditorPage.selectFragment(
+				await pageEditorPage.getFragmentId('Form Container')
 			);
 
-		// Create a page with a form container
+			await expect(
+				page.getByLabel('Form Type', {exact: true})
+			).toHaveValue('multistep');
 
-		const formId = getRandomString();
+			// Change to simple and check stepper is removed
 
-		const formDefinition = getFormContainerDefinition({
-			id: formId,
-			objectDefinitionId,
-		});
+			await pageEditorPage.changeFragmentConfiguration({
+				fieldLabel: 'Form Type',
+				fragmentId: formId,
+				tab: 'General',
+				value: 'simple',
+			});
 
-		const layout = await apiHelpers.headlessDelivery.createSitePage({
-			pageDefinition: getPageDefinition([formDefinition]),
-			siteId: pageManagementSite.id,
-			title: getRandomString(),
-		});
+			await page.getByRole('button', {name: 'Continue'}).click();
 
-		// Go to edit mode
+			await expect(
+				page.locator('[data-name="Stepper"]')
+			).not.toBeVisible();
+		}
+	);
 
-		await pageEditorPage.goto(layout, pageManagementSite.friendlyUrlPath);
+	test(
+		'Can add and configure a Stepper fragment',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
 
-		// Check steps are not displayed
+			// Get the id of Lemon object from the site initializer
 
-		await expect(page.locator('.page-editor__form-step')).toHaveCount(0);
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					LEMON_OBJECT_ERC
+				);
 
-		// Change to Multi Step and check first step is displayed
+			// Create a page with a Form fragment with a Stepper fragment
 
-		await pageEditorPage.changeFragmentConfiguration({
-			fieldLabel: 'Form Type',
-			fragmentId: formId,
-			tab: 'General',
-			value: 'Multi Step',
-		});
+			const stepperId = getRandomString();
 
-		await expect(page.locator('.page-editor__form-step')).toHaveCount(2);
+			const stepperFragment = getFragmentDefinition({
+				id: stepperId,
+				key: 'INPUTS-stepper',
+			});
 
-		await expect(
-			page.locator('.page-editor__form-step').nth(0)
-		).toBeVisible();
+			const formId = getRandomString();
 
-		await expect(
-			page.locator('.page-editor__form-step').nth(1)
-		).not.toBeVisible();
+			const formDefinition = getFormContainerDefinition({
+				id: formId,
+				objectDefinitionId,
+				pageElements: [stepperFragment],
+			});
 
-		// Check option to display all steps and check it works
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([formDefinition]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
 
-		await pageEditorPage.changeFragmentConfiguration({
-			fieldLabel: 'Display All Steps in Edit Mode',
-			fragmentId: formId,
-			tab: 'General',
-			value: true,
-		});
+			// Go to edit mode
 
-		await expect(
-			page.locator('.page-editor__form-step').nth(0)
-		).toBeVisible();
-
-		await expect(
-			page.locator('.page-editor__form-step').nth(1)
-		).toBeVisible();
-
-		// Change number of steps and check it works
-
-		await pageEditorPage.changeFragmentConfiguration({
-			fieldLabel: 'Number of Steps',
-			fragmentId: formId,
-			tab: 'General',
-			value: '3',
-		});
-
-		await expect(page.locator('.page-editor__form-step')).toHaveCount(3);
-	});
-
-	test('Can change step with the stepper fragment', async ({
-		apiHelpers,
-		page,
-		pageEditorPage,
-		pageManagementSite,
-	}) => {
-
-		// Get the id of Lemon object from the site initializer
-
-		const {id: objectDefinitionId} =
-			await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
-				LEMON_OBJECT_ERC
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
 			);
 
-		// Definition for the Stepper fragment
+			// Check steps titles and bullets numbers are displayed
 
-		const stepperFragment = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'INPUTS-stepper',
-		});
+			await page.locator('.multi-step-nav').getByText('Step 1').waitFor();
 
-		// Create a form with two steps and the Stepper
+			await page
+				.locator('.multi-step-icon[data-multi-step-icon="1"]')
+				.waitFor();
 
-		const headingDefinition = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'BASIC_COMPONENT-heading',
-		});
+			// Hide both and check they are not displayed
 
-		const buttonDefinition = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'BASIC_COMPONENT-button',
-		});
+			await pageEditorPage.changeFragmentConfiguration({
+				fieldLabel: 'Show Bullets Numbers',
+				fragmentId: stepperId,
+				tab: 'General',
+				value: false,
+			});
 
-		const formDefinition = getFormContainerDefinition({
-			id: getRandomString(),
-			objectDefinitionId,
-			pageElements: [stepperFragment],
-			steps: [[headingDefinition], [buttonDefinition]],
-		});
+			await pageEditorPage.changeFragmentConfiguration({
+				fieldLabel: 'Show Steps Titles',
+				fragmentId: stepperId,
+				tab: 'General',
+				value: false,
+			});
 
-		const layout = await apiHelpers.headlessDelivery.createSitePage({
-			pageDefinition: getPageDefinition([formDefinition]),
-			siteId: pageManagementSite.id,
-			title: getRandomString(),
-		});
+			await expect(
+				page.locator('.multi-step-nav').getByText('Step 1')
+			).not.toBeVisible();
 
-		// Go to edit mode
+			await expect(
+				page.locator('.multi-step-icon[data-multi-step-icon="1"]')
+			).not.toBeVisible();
+		}
+	);
 
-		await pageEditorPage.goto(layout, pageManagementSite.friendlyUrlPath);
+	test(
+		'Can configure multistep options for a form container',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
 
-		// Check step change works properly
+			// Get the id of Lemon object from the site initializer
 
-		const button = page.locator(
-			'.lfr-layout-structure-item-basic-component-button'
-		);
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					LEMON_OBJECT_ERC
+				);
 
-		const heading = page.locator(
-			'.lfr-layout-structure-item-basic-component-heading'
-		);
+			// Create a page with a form container
 
-		await expect(button).not.toBeVisible();
-		await expect(heading).toBeVisible();
+			const formId = getRandomString();
 
-		const stepButtons = await page.locator('.multi-step-icon').all();
-		await stepButtons[1].click();
+			const formDefinition = getFormContainerDefinition({
+				id: formId,
+				objectDefinitionId,
+			});
 
-		await expect(button).toBeVisible();
-		await expect(heading).not.toBeVisible();
-	});
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([formDefinition]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
 
-	test('Can change step with the form button fragment', async ({
-		apiHelpers,
-		page,
-		pageEditorPage,
-		pageManagementSite,
-	}) => {
+			// Go to edit mode
 
-		// Get the id of Lemon object from the site initializer
-
-		const {id: objectDefinitionId} =
-			await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
-				LEMON_OBJECT_ERC
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
 			);
 
-		// Create a form with two steps and two form buttons
+			// Check steps are not displayed
 
-		const headingDefinition = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'BASIC_COMPONENT-heading',
-		});
+			await expect(page.locator('.page-editor__form-step')).toHaveCount(
+				0
+			);
 
-		const formButtonNext = getFragmentDefinition({
-			fragmentConfig: {
-				type: 'next',
-			},
-			id: getRandomString(),
-			key: 'INPUTS-submit-button',
-		});
+			// Change to Multistep and check first step is displayed
 
-		const buttonDefinition = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'BASIC_COMPONENT-button',
-		});
+			await pageEditorPage.changeFragmentConfiguration({
+				fieldLabel: 'Form Type',
+				fragmentId: formId,
+				tab: 'General',
+				value: 'Multistep',
+			});
 
-		const formButtonPrevious = getFragmentDefinition({
-			fragmentConfig: {
-				type: 'previous',
-			},
-			id: getRandomString(),
-			key: 'INPUTS-submit-button',
-		});
+			await expect(page.locator('.page-editor__form-step')).toHaveCount(
+				2
+			);
 
-		const formDefinition = getFormContainerDefinition({
-			id: getRandomString(),
-			objectDefinitionId,
-			steps: [
-				[headingDefinition, formButtonNext],
-				[buttonDefinition, formButtonPrevious],
-			],
-		});
+			await expect(
+				page.locator('.page-editor__form-step').nth(0)
+			).toBeVisible();
 
-		const layout = await apiHelpers.headlessDelivery.createSitePage({
-			pageDefinition: getPageDefinition([formDefinition]),
-			siteId: pageManagementSite.id,
-			title: getRandomString(),
-		});
+			await expect(
+				page.locator('.page-editor__form-step').nth(1)
+			).not.toBeVisible();
 
-		// Create function that check form buttons behavior
+			// Check option to display all steps and check it works
 
-		const checkFormButtonsBehavior = async () => {
+			await pageEditorPage.changeFragmentConfiguration({
+				fieldLabel: 'Display All Steps in Edit Mode',
+				fragmentId: formId,
+				tab: 'General',
+				value: true,
+			});
 
-			// Check initial state
+			await expect(
+				page.locator('.page-editor__form-step').nth(0)
+			).toBeVisible();
+
+			await expect(
+				page.locator('.page-editor__form-step').nth(1)
+			).toBeVisible();
+
+			// Change number of steps and check it works
+
+			await pageEditorPage.changeFragmentConfiguration({
+				fieldLabel: 'Number of Steps',
+				fragmentId: formId,
+				tab: 'General',
+				value: '3',
+			});
+
+			await expect(page.locator('.page-editor__form-step')).toHaveCount(
+				3
+			);
+		}
+	);
+
+	test(
+		'Can change step with the stepper fragment',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+
+			// Get the id of Lemon object from the site initializer
+
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					LEMON_OBJECT_ERC
+				);
+
+			// Definition for the Stepper fragment
+
+			const stepperFragment = getFragmentDefinition({
+				id: getRandomString(),
+				key: 'INPUTS-stepper',
+			});
+
+			// Create a form with two steps and the Stepper
+
+			const headingDefinition = getFragmentDefinition({
+				id: getRandomString(),
+				key: 'BASIC_COMPONENT-heading',
+			});
+
+			const buttonDefinition = getFragmentDefinition({
+				id: getRandomString(),
+				key: 'BASIC_COMPONENT-button',
+			});
+
+			const formDefinition = getFormContainerDefinition({
+				id: getRandomString(),
+				objectDefinitionId,
+				pageElements: [stepperFragment],
+				steps: [[headingDefinition], [buttonDefinition]],
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([formDefinition]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
+
+			// Go to edit mode
+
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
+			);
+
+			// Check step change works properly
 
 			const button = page.locator(
 				'.lfr-layout-structure-item-basic-component-button'
@@ -466,190 +473,713 @@ test.describe('Multistep', {tag: '@LPD-10727'}, () => {
 				'.lfr-layout-structure-item-basic-component-heading'
 			);
 
-			await expect(heading).toBeVisible();
 			await expect(button).not.toBeVisible();
+			await expect(heading).toBeVisible();
 
-			// Check Next button works
+			const stepButtons = await page.locator('.multi-step-icon').all();
+			await stepButtons[1].click();
 
-			await page.locator('.btn', {hasText: 'Next'}).click();
+			await expect(button).toBeVisible();
+			await expect(heading).not.toBeVisible();
+		}
+	);
+
+	test(
+		'Can change step with the form button fragment',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+
+			// Get the id of Lemon object from the site initializer
+
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					LEMON_OBJECT_ERC
+				);
+
+			// Create a form with two steps and two form buttons
+
+			const headingDefinition = getFragmentDefinition({
+				id: getRandomString(),
+				key: 'BASIC_COMPONENT-heading',
+			});
+
+			const formButtonNext = getFragmentDefinition({
+				fragmentConfig: {
+					type: 'next',
+				},
+				id: getRandomString(),
+				key: 'INPUTS-submit-button',
+			});
+
+			const buttonDefinition = getFragmentDefinition({
+				id: getRandomString(),
+				key: 'BASIC_COMPONENT-button',
+			});
+
+			const formButtonPrevious = getFragmentDefinition({
+				fragmentConfig: {
+					type: 'previous',
+				},
+				id: getRandomString(),
+				key: 'INPUTS-submit-button',
+			});
+
+			const formDefinition = getFormContainerDefinition({
+				id: getRandomString(),
+				objectDefinitionId,
+				steps: [
+					[headingDefinition, formButtonNext],
+					[buttonDefinition, formButtonPrevious],
+				],
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([formDefinition]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
+
+			// Create function that check form buttons behavior
+
+			const checkFormButtonsBehavior = async () => {
+
+				// Check initial state
+
+				const button = page.locator(
+					'.lfr-layout-structure-item-basic-component-button'
+				);
+
+				const heading = page.locator(
+					'.lfr-layout-structure-item-basic-component-heading'
+				);
+
+				await expect(heading).toBeVisible();
+				await expect(button).not.toBeVisible();
+
+				// Check Next button works
+
+				await page
+					.locator('.btn', {hasText: 'Next'})
+					.click({position: {x: 10, y: 10}});
+
+				await expect(heading).not.toBeVisible();
+				await expect(button).toBeVisible();
+
+				// Check Previous button works
+
+				await page
+					.locator('.btn', {hasText: 'Previous'})
+					.click({position: {x: 10, y: 10}});
+
+				await expect(heading).toBeVisible();
+				await expect(button).not.toBeVisible();
+			};
+
+			// Check in view mode
+
+			await page.goto(
+				`/web${pageManagementSite.friendlyUrlPath}${layout.friendlyUrlPath}`
+			);
+
+			await checkFormButtonsBehavior();
+
+			// Check in edit mode
+
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
+			);
+
+			await checkFormButtonsBehavior();
+		}
+	);
+
+	test(
+		'Step change affects only desired form',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageManagementSite}) => {
+
+			// Get the id of Lemon object from the site initializer
+
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					LEMON_OBJECT_ERC
+				);
+
+			// Definition for the Steppers fragment
+
+			const stepperFragment1 = getFragmentDefinition({
+				id: getRandomString(),
+				key: 'INPUTS-stepper',
+			});
+
+			const stepperFragment2 = getFragmentDefinition({
+				id: getRandomString(),
+				key: 'INPUTS-stepper',
+			});
+
+			// Create two forms with two steps and the Stepper
+
+			const headingDefinition = getFragmentDefinition({
+				id: getRandomString(),
+				key: 'BASIC_COMPONENT-heading',
+			});
+
+			const buttonDefinition = getFragmentDefinition({
+				id: getRandomString(),
+				key: 'BASIC_COMPONENT-button',
+			});
+
+			const form1Definition = getFormContainerDefinition({
+				id: getRandomString(),
+				objectDefinitionId,
+				pageElements: [stepperFragment1],
+				steps: [[headingDefinition], []],
+			});
+
+			const form2Definition = getFormContainerDefinition({
+				id: getRandomString(),
+				objectDefinitionId,
+				pageElements: [stepperFragment2],
+				steps: [[buttonDefinition], []],
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([
+					form1Definition,
+					form2Definition,
+				]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
+
+			// Go to view mode of page
+
+			await page.goto(
+				`/web${pageManagementSite.friendlyUrlPath}${layout.friendlyUrlPath}`
+			);
+
+			// Check step change affects only desired form
+
+			const button = page.locator(
+				'.lfr-layout-structure-item-basic-component-button'
+			);
+
+			const heading = page.locator(
+				'.lfr-layout-structure-item-basic-component-heading'
+			);
+
+			await expect(button).toBeVisible();
+			await expect(heading).toBeVisible();
+
+			const firstForm = page
+				.locator('.lfr-layout-structure-item-form')
+				.first();
+
+			const firstFormSteps = await firstForm
+				.locator('.multi-step-icon')
+				.all();
+			await firstFormSteps[1].click();
 
 			await expect(heading).not.toBeVisible();
 			await expect(button).toBeVisible();
+		}
+	);
 
-			// Check Previous button works
+	test(
+		'Stepper gets number of steps from parent form',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
 
-			await page.locator('.btn', {hasText: 'Previous'}).click();
+			// Get the id of Lemon object from the site initializer
 
-			await expect(heading).toBeVisible();
-			await expect(button).not.toBeVisible();
-		};
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					LEMON_OBJECT_ERC
+				);
 
-		// Check in view mode
+			// Create a form with a Stepper
 
-		await page.goto(
-			`/web${pageManagementSite.friendlyUrlPath}${layout.friendlyUrlPath}`
-		);
+			const stepperId = getRandomString();
 
-		await checkFormButtonsBehavior();
+			const stepperFragment = getFragmentDefinition({
+				id: stepperId,
+				key: 'INPUTS-stepper',
+			});
 
-		// Check in edit mode
+			const formId = getRandomString();
 
-		await pageEditorPage.goto(layout, pageManagementSite.friendlyUrlPath);
+			const formDefinition = getFormContainerDefinition({
+				id: formId,
+				objectDefinitionId,
+				pageElements: [stepperFragment],
+				steps: [[]],
+			});
 
-		await checkFormButtonsBehavior();
-	});
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([formDefinition]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
 
-	test('Step change affects only desired form', async ({
-		apiHelpers,
-		page,
-		pageManagementSite,
-	}) => {
+			// Go to edit mode of page
 
-		// Get the id of Lemon object from the site initializer
-
-		const {id: objectDefinitionId} =
-			await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
-				LEMON_OBJECT_ERC
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
 			);
 
-		// Definition for the Steppers fragment
+			// Check changing number of stepps in Form affects the Stepper
 
-		const stepperFragment1 = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'INPUTS-stepper',
-		});
+			await pageEditorPage.changeFragmentConfiguration({
+				fieldLabel: 'Number of Steps',
+				fragmentId: formId,
+				tab: 'General',
+				value: '4',
+			});
 
-		const stepperFragment2 = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'INPUTS-stepper',
-		});
+			await expect(page.locator('.multi-step-indicator')).toHaveCount(4);
 
-		// Create two forms with two steps and the Stepper
+			// Delete the Stepper and check that when adding it again, it takes the correct number of steps
 
-		const headingDefinition = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'BASIC_COMPONENT-heading',
-		});
+			await pageEditorPage.deleteFragment(stepperId);
 
-		const buttonDefinition = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'BASIC_COMPONENT-button',
-		});
+			await pageEditorPage.addFragment('Form Components', 'Stepper');
 
-		const form1Definition = getFormContainerDefinition({
-			id: getRandomString(),
-			objectDefinitionId,
-			pageElements: [stepperFragment1],
-			steps: [[headingDefinition], []],
-		});
+			await expect(page.locator('.multi-step-indicator')).toHaveCount(4);
+		}
+	);
 
-		const form2Definition = getFormContainerDefinition({
-			id: getRandomString(),
-			objectDefinitionId,
-			pageElements: [stepperFragment2],
-			steps: [[buttonDefinition], []],
-		});
+	test(
+		'Undoing the action of adding a stepper to a simple form changes the form type to simple again',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
 
-		const layout = await apiHelpers.headlessDelivery.createSitePage({
-			pageDefinition: getPageDefinition([
-				form1Definition,
-				form2Definition,
-			]),
-			siteId: pageManagementSite.id,
-			title: getRandomString(),
-		});
+			// Get the id of Lemon object from the site initializer
 
-		// Go to view mode of page
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					LEMON_OBJECT_ERC
+				);
 
-		await page.goto(
-			`/web${pageManagementSite.friendlyUrlPath}${layout.friendlyUrlPath}`
-		);
+			// Create a page with a Form fragment
 
-		// Check step change affects only desired form
+			const formId = getRandomString();
 
-		const button = page.locator(
-			'.lfr-layout-structure-item-basic-component-button'
-		);
+			const formDefinition = getFormContainerDefinition({
+				id: formId,
+				objectDefinitionId,
+				pageElements: [],
+			});
 
-		const heading = page.locator(
-			'.lfr-layout-structure-item-basic-component-heading'
-		);
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([formDefinition]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
 
-		await expect(button).toBeVisible();
-		await expect(heading).toBeVisible();
+			// Go to edit mode
 
-		const firstForm = page
-			.locator('.lfr-layout-structure-item-form')
-			.first();
-
-		const firstFormSteps = await firstForm
-			.locator('.multi-step-icon')
-			.all();
-		await firstFormSteps[1].click();
-
-		await expect(heading).not.toBeVisible();
-		await expect(button).toBeVisible();
-	});
-
-	test('Stepper gets number of steps from parent form', async ({
-		apiHelpers,
-		page,
-		pageEditorPage,
-		pageManagementSite,
-	}) => {
-
-		// Get the id of Lemon object from the site initializer
-
-		const {id: objectDefinitionId} =
-			await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
-				LEMON_OBJECT_ERC
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
 			);
 
-		// Create a form with a Stepper
+			// Add a Stepper
 
-		const stepperId = getRandomString();
+			await pageEditorPage.addFragment(
+				'Form Components',
+				'Stepper',
+				page.locator('.page-editor__form .page-editor__container')
+			);
 
-		const stepperFragment = getFragmentDefinition({
-			id: stepperId,
-			key: 'INPUTS-stepper',
-		});
+			await page
+				.locator('.modal-title', {hasText: 'Convert to Multistep Form'})
+				.waitFor();
 
-		const formId = getRandomString();
+			await page.locator('.modal-footer').getByText('Continue').click();
 
-		const formDefinition = getFormContainerDefinition({
-			id: formId,
-			objectDefinitionId,
-			pageElements: [stepperFragment],
-			steps: [[]],
-		});
+			await pageEditorPage.waitForChangesSaved();
 
-		const layout = await apiHelpers.headlessDelivery.createSitePage({
-			pageDefinition: getPageDefinition([formDefinition]),
-			siteId: pageManagementSite.id,
-			title: getRandomString(),
-		});
+			// Check type changed to Multistep
 
-		// Go to edit mode of page
+			await pageEditorPage.selectFragment(formId);
 
-		await pageEditorPage.goto(layout, pageManagementSite.friendlyUrlPath);
+			await expect(
+				page.getByLabel('Form Type', {exact: true})
+			).toHaveValue('multistep');
 
-		// Check changing number of stepps in Form affects the Stepper
+			// Undo the action
 
-		await pageEditorPage.changeFragmentConfiguration({
-			fieldLabel: 'Number of Steps',
-			fragmentId: formId,
-			tab: 'General',
-			value: '4',
-		});
+			await pageEditorPage.undoButton.click();
 
-		await expect(page.locator('.multi-step-indicator')).toHaveCount(4);
+			await pageEditorPage.waitForChangesSaved();
 
-		// Delete the Stepper and check that when adding it again, it takes the correct number of steps
+			// Check Stepper disappeared and type changed to Simple again
 
-		await pageEditorPage.deleteFragment(stepperId);
+			await expect(
+				page.getByLabel('Form Type', {exact: true})
+			).toHaveValue('simple');
 
-		await pageEditorPage.addFragment('Form Components', 'Stepper');
+			await expect(page.locator('.multi-step-nav')).not.toBeVisible();
+		}
+	);
 
-		await expect(page.locator('.multi-step-indicator')).toHaveCount(4);
-	});
+	test(
+		'Undoing the action of moving a stepper from a multistep to a simple form changes the form type to simple again',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+
+			// Get the id of Lemon object from the site initializer
+
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					LEMON_OBJECT_ERC
+				);
+
+			// Create a page containing a multistep form with a stepper and a simple form
+
+			const stepperId = getRandomString();
+
+			const stepperFragment = getFragmentDefinition({
+				id: stepperId,
+				key: 'INPUTS-stepper',
+			});
+
+			const firstFormId = getRandomString();
+
+			const firstFormDefinition = getFormContainerDefinition({
+				id: firstFormId,
+				objectDefinitionId,
+				pageElements: [stepperFragment],
+				steps: [[]],
+			});
+
+			const secondFormId = getRandomString();
+
+			const secondFormDefinition = getFormContainerDefinition({
+				id: secondFormId,
+				objectDefinitionId,
+				pageElements: [],
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([
+					firstFormDefinition,
+					secondFormDefinition,
+				]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
+
+			// Go to edit mode
+
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
+			);
+
+			// Move the stepper to the second form
+
+			const stepper = pageEditorPage.getFragment(stepperId);
+
+			const secondForm = page
+				.locator('.page-editor__form .page-editor__container')
+				.last();
+
+			await stepper.dragTo(
+				secondForm.locator('.page-editor__no-fragments-state__message')
+			);
+
+			await page
+				.locator('.modal-title', {hasText: 'Convert to Multistep Form'})
+				.waitFor();
+
+			await page.locator('.modal-footer').getByText('Continue').click();
+
+			await pageEditorPage.waitForChangesSaved();
+
+			// Check type changed to Multistep
+
+			await pageEditorPage.selectFragment(secondFormId);
+
+			await expect(
+				page.getByLabel('Form Type', {exact: true})
+			).toHaveValue('multistep');
+
+			// Undo the action
+
+			await pageEditorPage.undoButton.click();
+
+			await pageEditorPage.waitForChangesSaved();
+
+			// Check Stepper disappeared and type changed to Simple again
+
+			await expect(
+				page.getByLabel('Form Type', {exact: true})
+			).toHaveValue('simple');
+
+			await expect(
+				secondForm.locator('.multi-step-nav')
+			).not.toBeVisible();
+		}
+	);
+
+	test(
+		'Correctly handle multistep form errors in view mode',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+
+			// Get the id of Potato object from the site initializer
+
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					POTATO_OBJECT_ERC
+				);
+
+			// Create a form with three steps and a stepper
+
+			const stepperId = getRandomString();
+
+			const stepperFragment = getFragmentDefinition({
+				fragmentConfig: {
+					numberOfSteps: 3,
+				},
+				id: stepperId,
+				key: 'INPUTS-stepper',
+			});
+
+			const textInputId = getRandomString();
+
+			const textInputFragment = getFragmentDefinition({
+				id: textInputId,
+				key: 'INPUTS-text-input',
+			});
+
+			const submitButtonFragment = getFragmentDefinition({
+				fragmentConfig: {
+					type: 'submit',
+				},
+				id: getRandomString(),
+				key: 'INPUTS-submit-button',
+			});
+
+			const formId = getRandomString();
+
+			const formDefinition = getFormContainerDefinition({
+				id: formId,
+				objectDefinitionId,
+				pageElements: [stepperFragment],
+				steps: [[], [textInputFragment], [submitButtonFragment]],
+			});
+
+			// Create page and go to edit mode
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([formDefinition]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
+
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
+			);
+
+			// Map text input fragment to Potato Origin field
+
+			await page.locator('[data-multi-step-icon="2"]').click();
+
+			await pageEditorPage.selectFragment(textInputId);
+
+			await page.getByLabel('Field', {exact: true}).waitFor();
+
+			await page
+				.getByLabel('Field', {exact: true})
+				.selectOption('Potato Origin*');
+
+			// Publish
+
+			await clickAndExpectToBeVisible({
+				target: page.locator('.modal-title', {hasText: 'Form Errors'}),
+				timeout: 3000,
+				trigger: pageEditorPage.publishButton,
+			});
+
+			await page.locator('.modal-footer').getByText('Publish').click();
+
+			await waitForSuccessAlert(
+				page,
+				'Success:The page was published successfully.'
+			);
+
+			// Go to view mode
+
+			await page.goto(
+				`/web${pageManagementSite.friendlyUrlPath}${layout.friendlyUrlPath}`
+			);
+
+			// Create function to submit form
+
+			const submitForm = async () => {
+				await expect(async () => {
+					await page.locator('[data-multi-step-icon="2"]').click();
+
+					const submitButton = page.getByRole('button', {
+						name: 'Submit',
+					});
+
+					await page.locator('[data-multi-step-icon="3"]').click();
+
+					await expect(submitButton).toBeVisible({timeout: 100});
+
+					await submitButton.click();
+				}).toPass();
+			};
+
+			// Try to submit and check it takes to step 2 because field is required
+
+			const field = page.getByLabel('Potato Origin');
+
+			await submitForm();
+
+			await field.waitFor();
+
+			// Fill field with incorrect value, submit and check it shows error
+
+			await field.fill('Madrid');
+
+			await submitForm();
+
+			await page
+				.getByText('Potato Origin should be Canary Islands')
+				.waitFor();
+
+			// Fill field with correct value, submit and check it submits
+
+			await page.getByLabel('Potato Origin').fill('Canary Islands');
+
+			await submitForm();
+
+			await expect(
+				page.getByText('Your information was successfully received')
+			).toBeVisible();
+		}
+	);
+});
+
+test.describe('Edit mode form errors', () => {
+	test(
+		'Show an error when there is no Submit Button',
+		{tag: '@LPS-151754'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+
+			// Get the id of Lemon object from the site initializer
+
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					LEMON_OBJECT_ERC
+				);
+
+			// Create a page with a Form fragment
+
+			const formId = getRandomString();
+
+			const formDefinition = getFormContainerDefinition({
+				id: formId,
+				objectDefinitionId,
+				pageElements: [],
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([formDefinition]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
+
+			// Go to edit mode
+
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
+			);
+
+			// Publish and check it shows Submit Button error
+
+			await clickAndExpectToBeVisible({
+				target: page.getByText('Submit Button Missing'),
+				timeout: 3000,
+				trigger: pageEditorPage.publishButton,
+			});
+		}
+	);
+
+	test(
+		'Show errors for empty steps and missing Next/Previous buttons',
+		{tag: '@LPD-10727'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+
+			// Get the id of Lemon object from the site initializer
+
+			const {id: objectDefinitionId} =
+				await apiHelpers.objectAdmin.getObjectDefinitionByExternalReferenceCode(
+					LEMON_OBJECT_ERC
+				);
+
+			// Create a forms with three steps, forcing errors
+
+			const nextButton = getFragmentDefinition({
+				fragmentConfig: {
+					type: 'next',
+				},
+				id: getRandomString(),
+				key: 'INPUTS-submit-button',
+			});
+
+			const previousButton = getFragmentDefinition({
+				fragmentConfig: {
+					type: 'previous',
+				},
+				id: getRandomString(),
+				key: 'INPUTS-submit-button',
+			});
+
+			const formDefinition = getFormContainerDefinition({
+				id: getRandomString(),
+				objectDefinitionId,
+				steps: [[nextButton], [previousButton], [], [nextButton]],
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([formDefinition]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
+
+			// Go to edit mode
+
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
+			);
+
+			// Publish and check errors
+
+			await clickAndExpectToBeVisible({
+				target: page.locator('.modal-title', {hasText: 'Form Errors'}),
+				timeout: 3000,
+				trigger: pageEditorPage.publishButton,
+			});
+
+			await expect(
+				page.getByText('Next button is hidden or missing in Step 2')
+			).toBeVisible();
+
+			await expect(
+				page.getByText('Previous button is hidden or missing in Step 4')
+			).toBeVisible();
+
+			await expect(page.getByText('Step 3 is empty')).toBeVisible();
+		}
+	);
 });

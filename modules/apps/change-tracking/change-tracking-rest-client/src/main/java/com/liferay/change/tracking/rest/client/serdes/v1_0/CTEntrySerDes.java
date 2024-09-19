@@ -84,6 +84,60 @@ public class CTEntrySerDes {
 			sb.append(ctEntry.getCtCollectionId());
 		}
 
+		if (ctEntry.getCtCollectionName() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"ctCollectionName\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(ctEntry.getCtCollectionName()));
+
+			sb.append("\"");
+		}
+
+		if (ctEntry.getCtCollectionStatus() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"ctCollectionStatus\": ");
+
+			sb.append(String.valueOf(ctEntry.getCtCollectionStatus()));
+		}
+
+		if (ctEntry.getCtCollectionStatusDate() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"ctCollectionStatusDate\": ");
+
+			sb.append("\"");
+
+			sb.append(
+				liferayToJSONDateFormat.format(
+					ctEntry.getCtCollectionStatusDate()));
+
+			sb.append("\"");
+		}
+
+		if (ctEntry.getCtCollectionStatusUserName() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"ctCollectionStatusUserName\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(ctEntry.getCtCollectionStatusUserName()));
+
+			sb.append("\"");
+		}
+
 		if (ctEntry.getDateCreated() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -211,6 +265,20 @@ public class CTEntrySerDes {
 			sb.append(String.valueOf(ctEntry.getStatus()));
 		}
 
+		if (ctEntry.getStatusMessage() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"statusMessage\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(ctEntry.getStatusMessage()));
+
+			sb.append("\"");
+		}
+
 		if (ctEntry.getTitle() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -280,6 +348,43 @@ public class CTEntrySerDes {
 		else {
 			map.put(
 				"ctCollectionId", String.valueOf(ctEntry.getCtCollectionId()));
+		}
+
+		if (ctEntry.getCtCollectionName() == null) {
+			map.put("ctCollectionName", null);
+		}
+		else {
+			map.put(
+				"ctCollectionName",
+				String.valueOf(ctEntry.getCtCollectionName()));
+		}
+
+		if (ctEntry.getCtCollectionStatus() == null) {
+			map.put("ctCollectionStatus", null);
+		}
+		else {
+			map.put(
+				"ctCollectionStatus",
+				String.valueOf(ctEntry.getCtCollectionStatus()));
+		}
+
+		if (ctEntry.getCtCollectionStatusDate() == null) {
+			map.put("ctCollectionStatusDate", null);
+		}
+		else {
+			map.put(
+				"ctCollectionStatusDate",
+				liferayToJSONDateFormat.format(
+					ctEntry.getCtCollectionStatusDate()));
+		}
+
+		if (ctEntry.getCtCollectionStatusUserName() == null) {
+			map.put("ctCollectionStatusUserName", null);
+		}
+		else {
+			map.put(
+				"ctCollectionStatusUserName",
+				String.valueOf(ctEntry.getCtCollectionStatusUserName()));
 		}
 
 		if (ctEntry.getDateCreated() == null) {
@@ -365,6 +470,14 @@ public class CTEntrySerDes {
 			map.put("status", String.valueOf(ctEntry.getStatus()));
 		}
 
+		if (ctEntry.getStatusMessage() == null) {
+			map.put("statusMessage", null);
+		}
+		else {
+			map.put(
+				"statusMessage", String.valueOf(ctEntry.getStatusMessage()));
+		}
+
 		if (ctEntry.getTitle() == null) {
 			map.put("title", null);
 		}
@@ -405,6 +518,24 @@ public class CTEntrySerDes {
 			else if (Objects.equals(jsonParserFieldName, "ctCollectionId")) {
 				return false;
 			}
+			else if (Objects.equals(jsonParserFieldName, "ctCollectionName")) {
+				return false;
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "ctCollectionStatus")) {
+
+				return false;
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "ctCollectionStatusDate")) {
+
+				return false;
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "ctCollectionStatusUserName")) {
+
+				return false;
+			}
 			else if (Objects.equals(jsonParserFieldName, "dateCreated")) {
 				return false;
 			}
@@ -438,6 +569,9 @@ public class CTEntrySerDes {
 			else if (Objects.equals(jsonParserFieldName, "status")) {
 				return false;
 			}
+			else if (Objects.equals(jsonParserFieldName, "statusMessage")) {
+				return false;
+			}
 			else if (Objects.equals(jsonParserFieldName, "title")) {
 				return false;
 			}
@@ -468,6 +602,35 @@ public class CTEntrySerDes {
 				if (jsonParserFieldValue != null) {
 					ctEntry.setCtCollectionId(
 						Long.valueOf((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "ctCollectionName")) {
+				if (jsonParserFieldValue != null) {
+					ctEntry.setCtCollectionName((String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "ctCollectionStatus")) {
+
+				if (jsonParserFieldValue != null) {
+					ctEntry.setCtCollectionStatus(
+						StatusSerDes.toDTO((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "ctCollectionStatusDate")) {
+
+				if (jsonParserFieldValue != null) {
+					ctEntry.setCtCollectionStatusDate(
+						toDate((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "ctCollectionStatusUserName")) {
+
+				if (jsonParserFieldValue != null) {
+					ctEntry.setCtCollectionStatusUserName(
+						(String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "dateCreated")) {
@@ -530,6 +693,11 @@ public class CTEntrySerDes {
 				if (jsonParserFieldValue != null) {
 					ctEntry.setStatus(
 						StatusSerDes.toDTO((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "statusMessage")) {
+				if (jsonParserFieldValue != null) {
+					ctEntry.setStatusMessage((String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "title")) {

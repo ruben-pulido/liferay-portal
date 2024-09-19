@@ -3,19 +3,11 @@
 		"pageElements": [
 			{
 				"definition": {
+					"fragmentStyle": {
+						"borderWidth": "0"
+					},
 					"indexed": true,
 					"layout": {
-						"borderWidth": 0,
-						"marginBottom": 0,
-						"marginLeft": 0,
-						"marginRight": 0,
-						"marginTop": 0,
-						"opacity": 100,
-						"paddingBottom": 0,
-						"paddingLeft": 0,
-						"paddingRight": 0,
-						"paddingTop": 0,
-						"widthType": "Fluid"
 					},
 					"name": "Resources Container"
 				},
@@ -25,19 +17,22 @@
 							"fragmentStyle": {
 								"backgroundFragmentImage": {
 									"title": {
-										"value": "banner-background-partner-portal.svg"
+										"value": "Library"
 									},
 									"url": {
 										"mapping": {
 											"fieldKey": "FileEntry_previewImage",
 											"itemReference": {
 												"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/banner-background-partner-portal.svg#]"
+												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/banner_background_partner_portal.svg#]"
 											}
 										}
 									}
 								},
-								"marginBottom": "5",
+								"borderRadius": "borderRadiusLg",
+								"borderWidth": "0",
+								"marginBottom": "4",
+								"marginTop": "4",
 								"paddingBottom": "7",
 								"paddingLeft": "7",
 								"paddingRight": "7",
@@ -46,19 +41,14 @@
 							"indexed": true,
 							"layout": {
 								"align": "Center",
-								"borderWidth": 0,
 								"contentDisplay": "FlexColumn",
 								"justify": "Center",
-								"marginBottom": 4,
-								"marginLeft": 0,
-								"marginRight": 0,
-								"marginTop": 0,
-								"opacity": 100,
+								"marginBottom": 2,
+								"marginTop": 2,
 								"paddingBottom": 8,
 								"paddingLeft": 8,
 								"paddingRight": 8,
-								"paddingTop": 8,
-								"widthType": "Fluid"
+								"paddingTop": 8
 							},
 							"name": "Search Container"
 						},
@@ -66,11 +56,10 @@
 							{
 								"definition": {
 									"fragment": {
-										"key": "DIALECT-dialect-text"
+										"key": "dialect-dialect-text"
 									},
 									"fragmentConfig": {
-										"textType": "h1",
-										"truncateText": false
+										"textType": "h1"
 									},
 									"fragmentFields": [
 										{
@@ -80,19 +69,19 @@
 												},
 												"text": {
 													"value_i18n": {
-														"ar_SA": "Partner Resources",
-														"ca_ES": "Partner Resources",
-														"de_DE": "Partner Resources",
-														"en_US": "Partner Resources",
-														"es_ES": "Partner Resources",
-														"fi_FI": "Partner Resources",
-														"fr_FR": "Partner Resources",
-														"hu_HU": "Partner Resources",
-														"ja_JP": "Partner Resources",
-														"nl_NL": "Partner Resources",
-														"pt_BR": "Partner Resources",
-														"sv_SE": "Partner Resources",
-														"zh_CN": "Partner Resources"
+														"ar_SA": "Library",
+														"ca_ES": "Library",
+														"de_DE": "Library",
+														"en_US": "<p>Library</p>\n",
+														"es_ES": "Library",
+														"fi_FI": "Library",
+														"fr_FR": "Library",
+														"hu_HU": "Library",
+														"ja_JP": "Library",
+														"nl_NL": "Library",
+														"pt_BR": "Library",
+														"sv_SE": "Library",
+														"zh_CN": "Library"
 													}
 												}
 											}
@@ -102,7 +91,53 @@
 										"fontWeight": "fontWeightBold",
 										"marginBottom": "5",
 										"textAlign": "center",
-										"textColor": "colorNeutral0"
+										"textColor": "colorBrandPrimaryLighten6"
+									},
+									"indexed": true,
+									"name": "Page Title"
+								},
+								"type": "Fragment"
+							},
+							{
+								"definition": {
+									"fragment": {
+										"key": "dialect-dialect-text"
+									},
+									"fragmentConfig": {
+										"textType": "h1"
+									},
+									"fragmentFields": [
+										{
+											"id": "element-text",
+											"value": {
+												"fragmentLink": {
+												},
+												"text": {
+													"value_i18n": {
+														"ar_SA": "Library",
+														"ca_ES": "Library",
+														"de_DE": "Library",
+														"en_US": "<p>The Library is under maintenance</p>\n",
+														"es_ES": "Library",
+														"fi_FI": "Library",
+														"fr_FR": "Library",
+														"hu_HU": "Library",
+														"ja_JP": "Library",
+														"nl_NL": "Library",
+														"pt_BR": "Library",
+														"sv_SE": "Library",
+														"zh_CN": "Library"
+													}
+												}
+											}
+										}
+									],
+									"fragmentStyle": {
+										"fontWeight": "fontWeightBold",
+										"hidden": true,
+										"marginBottom": "5",
+										"textAlign": "center",
+										"textColor": "colorNeutral10"
 									},
 									"indexed": true,
 									"name": "Page Title"
@@ -112,14 +147,25 @@
 							{
 								"definition": {
 									"fragmentStyle": {
-										"maxWidth": "600px",
-										"minWidth": "400px",
-										"width": "100%"
+										"minWidth": "600px"
 									},
 									"widgetInstance": {
 										"widgetConfig": {
+											"destination": "",
+											"displayStyle": "default",
+											"displayStyleGroupId": "11760433",
+											"federatedSearchKey": "",
+											"invisible": "false",
+											"keywordsParameterName": "q",
+											"scopeParameterName": "scope",
+											"searchScope": "this-site",
+											"showStagedResults": "false",
+											"suggestionsContributorConfigurations": "{\"contributorName\": \"basic\", \"displayGroupName\": \"suggestions\", \"size\": 5}",
+											"suggestionsDisplayThreshold": "2",
+											"suggestionsEnabled": "false",
+											"useAdvancedSearchSyntax": "false"
 										},
-										"widgetName": "com_liferay_portal_search_web_portlet_SearchPortlet"
+										"widgetName": "com_liferay_portal_search_web_search_bar_portlet_SearchBarPortlet"
 									}
 								},
 								"type": "Widget"
@@ -182,6 +228,7 @@
 										"definition": {
 											"fragmentStyle": {
 												"backgroundColor": "#F7F7F8",
+												"borderRadius": "borderRadiusSm",
 												"borderWidth": "0",
 												"paddingBottom": "4",
 												"paddingLeft": "4",
@@ -190,63 +237,14 @@
 											},
 											"indexed": true,
 											"layout": {
-												"borderWidth": 0,
-												"marginBottom": 0,
-												"marginLeft": 0,
-												"marginRight": 0,
-												"marginTop": 0,
-												"opacity": 100,
+												"contentDisplay": "FlexColumn",
 												"paddingBottom": 2,
 												"paddingLeft": 2,
 												"paddingRight": 2,
-												"paddingTop": 2,
-												"widthType": "Fluid"
+												"paddingTop": 2
 											}
 										},
 										"pageElements": [
-											{
-												"definition": {
-													"fragment": {
-														"key": "DIALECT-dialect-text"
-													},
-													"fragmentConfig": {
-														"textType": "h5",
-														"truncateText": false
-													},
-													"fragmentFields": [
-														{
-															"id": "element-text",
-															"value": {
-																"fragmentLink": {
-																},
-																"text": {
-																	"value_i18n": {
-																		"ar_SA": "filters",
-																		"ca_ES": "filters",
-																		"de_DE": "filters",
-																		"en_US": "filters",
-																		"es_ES": "filters",
-																		"fi_FI": "filters",
-																		"fr_FR": "filters",
-																		"hu_HU": "filters",
-																		"ja_JP": "filters",
-																		"nl_NL": "filters",
-																		"pt_BR": "filters",
-																		"sv_SE": "filters",
-																		"zh_CN": "filters"
-																	}
-																}
-															}
-														}
-													],
-													"fragmentStyle": {
-														"fontWeight": "fontWeightBold",
-														"marginBottom": "5"
-													},
-													"indexed": true
-												},
-												"type": "Fragment"
-											},
 											{
 												"definition": {
 													"fragmentStyle": {
@@ -270,15 +268,10 @@
 													},
 													"widgetInstance": {
 														"widgetConfig": {
-															"assetTypes": "com.liferay.document.library.kernel.model.DLFileEntry",
-															"displayStyle": "default",
-															"displayStyleGroupId": "[$GROUP_ID$]",
-															"frequenciesVisible": "true",
-															"frequencyThreshold": "1",
-															"order": "count:desc",
-															"parameterName": "type"
+															"federatedSearchKey": "",
+															"sxpBlueprintExternalReferenceCode": "bef56e14-276a-d066-bd03-2be48a6c87ab"
 														},
-														"widgetName": "com_liferay_portal_search_web_type_facet_portlet_TypeFacetPortlet"
+														"widgetName": "com_liferay_search_experiences_web_internal_blueprint_options_portlet_SXPBlueprintOptionsPortlet"
 													}
 												},
 												"type": "Widget"
@@ -286,47 +279,25 @@
 											{
 												"definition": {
 													"fragmentStyle": {
-														"backgroundColor": "#ffffff",
+														"backgroundColor": "bodyBgColor",
 														"borderRadius": "borderRadiusSm",
-														"borderWidth": "0",
-														"marginBottom": "3"
+														"height": "100%"
 													},
-													"indexed": true,
-													"layout": {
-														"borderWidth": 0,
-														"marginBottom": 1,
-														"marginLeft": 0,
-														"marginRight": 0,
-														"marginTop": 0,
-														"opacity": 100,
-														"paddingBottom": 0,
-														"paddingLeft": 0,
-														"paddingRight": 0,
-														"paddingTop": 0,
-														"widthType": "Fluid"
+													"widgetInstance": {
+														"widgetConfig": {
+															"displayStyle": "ddmTemplate_CATEGORY-FACET-VOCABULARY-FTL",
+															"displayStyleGroupId": "15078019",
+															"frequenciesVisible": "true",
+															"frequencyThreshold": "1",
+															"maxTerms": "100",
+															"order": "key:asc",
+															"parameterName": "filters",
+															"vocabularyIds": "15292493,15292519,15292538,15292576,15292601,15292605,15292615,15292634,15564154"
+														},
+														"widgetName": "com_liferay_portal_search_web_category_facet_portlet_CategoryFacetPortlet"
 													}
 												},
-												"pageElements": [
-													{
-														"definition": {
-															"widgetInstance": {
-																"widgetConfig": {
-																	"displayStyle": "ddmTemplate_CATEGORY-FACET-VOCABULARY-FTL",
-																	"displayStyleGroupId": "[$GROUP_ID$]",
-																	"frequenciesVisible": "true",
-																	"frequencyThreshold": "1",
-																	"maxTerms": "10",
-																	"order": "count:desc",
-																	"parameterName": "filters",
-																	"vocabularyIds": ""
-																},
-																"widgetName": "com_liferay_portal_search_web_category_facet_portlet_CategoryFacetPortlet"
-															}
-														},
-														"type": "Widget"
-													}
-												],
-												"type": "Section"
+												"type": "Widget"
 											}
 										],
 										"type": "Section"
@@ -363,16 +334,43 @@
 												"widgetConfig": {
 													"displayInDocumentForm": "false",
 													"displayStyle": "ddmTemplate_RESOURCES-SEARCH-RESULT",
-													"displayStyleGroupId": "[$GROUP_ID$]",
+													"displayStyleGroupId": "15095646",
 													"federatedSearchKey": "",
 													"fieldsToDisplay": "",
 													"highlightEnabled": "false",
 													"paginationDelta": "20",
 													"paginationDeltaParameterName": "delta",
 													"paginationStartParameterName": "start",
-													"viewInContext": "false"
+													"showEmptyResultMessage": "true",
+													"showPagination": "true",
+													"viewInContext": "true"
 												},
-												"widgetName": "com_liferay_portal_search_web_search_results_portlet_SearchResultsPortlet"
+												"widgetName": "com_liferay_portal_search_web_search_results_portlet_SearchResultsPortlet",
+												"widgetPermissions": [
+													{
+														"actionKeys": [
+															"VIEW"
+														],
+														"roleKey": "Site Member"
+													},
+													{
+														"actionKeys": [
+															"VIEW"
+														],
+														"roleKey": "Guest"
+													},
+													{
+														"actionKeys": [
+															"ADD_PORTLET_DISPLAY_TEMPLATE",
+															"PERMISSIONS",
+															"PREFERENCES",
+															"CONFIGURATION",
+															"VIEW",
+															"ADD_TO_PAGE"
+														],
+														"roleKey": "Owner"
+													}
+												]
 											}
 										},
 										"type": "Widget"

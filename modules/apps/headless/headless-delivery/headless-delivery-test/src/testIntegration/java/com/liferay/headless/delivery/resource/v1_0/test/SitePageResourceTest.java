@@ -65,6 +65,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocal
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.layout.util.structure.LayoutStructure;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -90,6 +91,7 @@ import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
@@ -278,6 +280,36 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		Assert.assertEquals(
 			_layoutLocalService.getLayoutsCount(testGroup.getGroupId(), false),
 			sitePagePage.getTotalCount());
+	}
+
+	@Test
+	@TestInfo("LPD-35928")
+	public void testGetSiteSitePagesPageSet() throws Exception {
+		_addLayout(testGroup);
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				testGroup.getGroupId(), TestPropsValues.getUserId());
+
+		Layout layout = _layoutLocalService.addLayout(
+			null, serviceContext.getUserId(), testGroup.getGroupId(), false,
+			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
+			RandomTestUtil.randomString(), StringPool.BLANK, StringPool.BLANK,
+			LayoutConstants.TYPE_NODE, false, StringPool.BLANK, serviceContext);
+
+		_layoutLocalService.addLayout(
+			null, serviceContext.getUserId(), testGroup.getGroupId(), false,
+			layout.getLayoutId(), RandomTestUtil.randomString(),
+			StringPool.BLANK, StringPool.BLANK, LayoutConstants.TYPE_PORTLET,
+			false, StringPool.BLANK, serviceContext);
+
+		Page<SitePage> sitePagePage = sitePageResource.getSiteSitePagesPage(
+			testGroup.getGroupId(), null, null, null, null, null);
+
+		List<String> pageTypes = TransformUtil.transform(
+			sitePagePage.getItems(), SitePage::getPageType);
+
+		Assert.assertTrue(pageTypes.contains("Page Set"));
 	}
 
 	@Override

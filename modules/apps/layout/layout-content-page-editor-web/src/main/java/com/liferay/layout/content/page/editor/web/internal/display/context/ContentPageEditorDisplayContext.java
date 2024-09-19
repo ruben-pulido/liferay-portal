@@ -302,6 +302,10 @@ public class ContentPageEditorDisplayContext {
 					LanguageResources.getResourceBundle(
 						themeDisplay.getLocale()))
 			).put(
+				"copyItemsURL",
+				getFragmentEntryActionURL(
+					"/layout_content_page_editor/copy_items")
+			).put(
 				"createLayoutPageTemplateEntryURL",
 				getFragmentEntryActionURL(
 					"/layout_content_page_editor" +
@@ -585,6 +589,11 @@ public class ContentPageEditorDisplayContext {
 				getFragmentEntryActionURL(
 					"/layout_content_page_editor/move_fragment_entry_link")
 			).put(
+				"moveStepperFragmentEntryLinkURL",
+				getFragmentEntryActionURL(
+					"/layout_content_page_editor" +
+						"/move_stepper_fragment_entry_link")
+			).put(
 				"paddingOptions",
 				() -> {
 					Set<Map.Entry<String, String>> entrySet =
@@ -681,6 +690,10 @@ public class ContentPageEditorDisplayContext {
 				"styleBooks", _getStyleBooks()
 			).put(
 				"themeColorsCssClasses", _getThemeColorsCssClasses()
+			).put(
+				"undoUpdateFormConfigURL",
+				getFragmentEntryActionURL(
+					"/layout_content_page_editor/undo_form_item_config")
 			).put(
 				"unmarkItemsForDeletionURL",
 				getFragmentEntryActionURL(

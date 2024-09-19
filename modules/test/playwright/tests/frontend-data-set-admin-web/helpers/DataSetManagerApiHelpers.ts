@@ -257,6 +257,7 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 		method,
 		modalSize = EModalActionVariant.FULL_SCREEN,
 		permissionKey,
+		requestBody = '{}',
 		successMessage_i18n,
 		title_i18n,
 		type = EItemActionType.LINK,
@@ -271,6 +272,7 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 		method?: EAsyncActionMethod;
 		modalSize?: EModalActionVariant;
 		permissionKey?: string;
+		requestBody?: string;
 		successMessage_i18n?: {[key: string]: string};
 		title_i18n?: {[key: string]: string};
 		type?: EItemActionType;
@@ -288,6 +290,7 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 			method,
 			modalSize,
 			permissionKey,
+			requestBody,
 			successMessage_i18n,
 			title_i18n,
 			type,
@@ -351,12 +354,14 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 	}
 
 	async updateDataSet({
+		additionalAPIURLParameters,
 		defaultItemsPerPage,
 		defaultVisualizationMode,
 		erc = DEFAULT_DATA_SET_ERC,
 		label,
 		listOfItemsPerPage,
 	}: {
+		additionalAPIURLParameters?: string;
 		defaultItemsPerPage?: number;
 		defaultVisualizationMode?: string;
 		erc?: string;
@@ -366,6 +371,7 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 		const url = `${this.baseUrl}data-set-manager/data-sets/by-external-reference-code/${erc}`;
 
 		const data = {
+			additionalAPIURLParameters,
 			defaultItemsPerPage,
 			defaultVisualizationMode,
 			label,

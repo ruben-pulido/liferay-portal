@@ -11,6 +11,7 @@ import React, {useCallback} from 'react';
 import {CheckboxField} from '../../../../../../app/components/fragment_configuration_fields/CheckboxField';
 import {SelectField} from '../../../../../../app/components/fragment_configuration_fields/SelectField';
 import {TextField} from '../../../../../../app/components/fragment_configuration_fields/TextField';
+import {FORM_DEFAULT_NUMBER_OF_STEPS} from '../../../../../../app/config/constants/formDefaultNumberOfSteps';
 import {FREEMARKER_FRAGMENT_ENTRY_PROCESSOR} from '../../../../../../app/config/constants/freemarkerFragmentEntryProcessor';
 import {
 	useItemLocalConfig,
@@ -25,7 +26,7 @@ import {getStepperChild} from '../../../../../../app/utils/getStepperChild';
 
 const FORM_TYPE_OPTIONS = [
 	{label: Liferay.Language.get('simple'), value: 'simple'},
-	{label: Liferay.Language.get('multi-step'), value: 'multistep'},
+	{label: Liferay.Language.get('multistep'), value: 'multistep'},
 ];
 
 export default function FormMultistepOptions({item, onValueSelect}) {
@@ -93,21 +94,35 @@ export default function FormMultistepOptions({item, onValueSelect}) {
 					if (formType === 'multistep') {
 						onValueSelect({
 							formType,
-							numberOfSteps: 2,
+							numberOfSteps: FORM_DEFAULT_NUMBER_OF_STEPS,
 						});
 					}
 					else {
-						openWarningModal({
-							onCancel: () => {
-								setFormType('multistep');
-							},
-							onContinue: () => {
-								onValueSelect({
-									formType: 'simple',
-									numberOfSteps: 1,
-								});
-							},
-						});
+						const stepper = getStepperChild(
+							item,
+							layoutData,
+							fragmentEntryLinks
+						);
+
+						if (stepper) {
+							openWarningModal({
+								onCancel: () => {
+									setFormType('multistep');
+								},
+								onContinue: () => {
+									onValueSelect({
+										formType: 'simple',
+										numberOfSteps: 1,
+									});
+								},
+							});
+						}
+						else {
+							onValueSelect({
+								formType: 'simple',
+								numberOfSteps: 1,
+							});
+						}
 					}
 				}}
 				value={formType}
@@ -130,7 +145,7 @@ export default function FormMultistepOptions({item, onValueSelect}) {
 					onValueSelect={(_, numberOfSteps) =>
 						updateNumberOfSteps(numberOfSteps)
 					}
-					value={numberOfSteps || 2}
+					value={numberOfSteps || FORM_DEFAULT_NUMBER_OF_STEPS}
 				/>
 			) : null}
 

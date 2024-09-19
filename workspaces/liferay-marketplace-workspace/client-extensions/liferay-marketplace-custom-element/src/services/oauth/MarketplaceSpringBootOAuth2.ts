@@ -94,6 +94,16 @@ export default class MarketplaceSpringBootOAuth2 extends OAuth2Client {
 		return response.json() as Promise<AnalyticsViews>;
 	}
 
+	async provisioningCloudApp(
+		orderId: number,
+		data: {orderItemId: number; projectId: string}
+	): Promise<any> {
+		return this.oAuth2Client.fetch(`/console/provisioning/${orderId}`, {
+			body: JSON.stringify(data),
+			method: 'POST',
+		});
+	}
+
 	async provisioningTrial(orderId: number): Promise<any> {
 
 		// No need to await the following request

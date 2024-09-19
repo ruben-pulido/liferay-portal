@@ -9,7 +9,8 @@ import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
 import ClayList from '@clayui/list';
 import classNames from 'classnames';
-import {fetch, navigate} from 'frontend-js-web';
+import {LearnMessage} from 'frontend-js-components-web';
+import {fetch, navigate, sub} from 'frontend-js-web';
 import React, {useRef, useState} from 'react';
 
 import {IDataSet} from '../../DataSets';
@@ -24,6 +25,34 @@ import openDefaultFailureToast from '../../utils/openDefaultFailureToast';
 import openDefaultSuccessToast from '../../utils/openDefaultSuccessToast';
 import {IDataSetSectionProps} from '../DataSet';
 
+const getURLPreview = ({
+	additionalAPIURLParameters = '',
+	restApplication,
+	restEndpoint,
+}: {
+	additionalAPIURLParameters: string;
+	restApplication: string;
+	restEndpoint: string;
+}) => {
+	const encodedAdditionalAPIURLParameters = encodeURI(
+		additionalAPIURLParameters.trim()
+	);
+
+	// This also removes the version (for example: `/v1.0`) in the rest endpoint
+	// to avoid repeating the version when combining the restApplication and
+	// restEndpoint.
+
+	return (
+		restApplication +
+		restEndpoint
+			.split('/')
+			.filter((_, index) => index !== 1)
+			.join('/') +
+		'?' +
+		encodedAdditionalAPIURLParameters
+	);
+};
+
 const Details = ({
 	backURL,
 	dataSet,
@@ -32,11 +61,36 @@ const Details = ({
 }: IDataSetSectionProps) => {
 	const [labelValidationError, setLabelValidationError] = useState(false);
 
+	const dataSetAsIDataSet = dataSet as IDataSet;
+
+	const [urlPreview, setURLPreview] = useState(
+		getURLPreview({
+			additionalAPIURLParameters:
+				dataSetAsIDataSet.additionalAPIURLParameters,
+			restApplication: dataSetAsIDataSet.restApplication,
+			restEndpoint: dataSetAsIDataSet.restEndpoint,
+		})
+	);
+
 	const descriptionRef = useRef<HTMLInputElement>(null);
 	const labelRef = useRef<HTMLInputElement>(null);
+	const parametersRef = useRef<HTMLInputElement>(null);
+
+	const handleKeyUpParameters = (
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		setURLPreview(
+			getURLPreview({
+				additionalAPIURLParameters: event.currentTarget.value,
+				restApplication: dataSetAsIDataSet.restApplication,
+				restEndpoint: dataSetAsIDataSet.restEndpoint,
+			})
+		);
+	};
 
 	const updateFDSView = async () => {
 		const body = {
+			additionalAPIURLParameters: parametersRef.current?.value,
 			description: descriptionRef.current?.value,
 			label: labelRef.current?.value,
 		};
@@ -193,6 +247,68 @@ const Details = ({
 					</ClayList.Item>
 				</ClayList>
 			</ClayLayout.SheetSection>
+
+			{Liferay.FeatureFlags['LPD-25230'] && (
+				<ClayLayout.SheetSection className="mb-4">
+					<h3 className="sheet-subtitle">
+						{Liferay.Language.get('advanced-optional-parameters')}
+					</h3>
+
+					<ClayForm.Group>
+						<label htmlFor={`${namespace}dataSetParametersInput`}>
+							{Liferay.Language.get('parameters')}
+
+							<span
+								className="label-icon lfr-portal-tooltip ml-2"
+								title={Liferay.Language.get(
+									'data-set-parameters-help'
+								)}
+							>
+								<ClayIcon symbol="question-circle-full" />
+							</span>
+						</label>
+
+						<ClayInput
+							component="textarea"
+							defaultValue={dataSet.additionalAPIURLParameters}
+							id={`${namespace}dataSetParametersInput`}
+							onChange={handleKeyUpParameters}
+							placeholder={sub(
+								Liferay.Language.get(
+									'data-set-parameters-placeholder'
+								),
+								'filter=dateCreated le 2012-05-29T00:00:00.000Z&flatten=true&sort=name'
+							)}
+							ref={parametersRef}
+							type="text"
+						/>
+					</ClayForm.Group>
+
+					<ClayForm.Group>
+						<label htmlFor={`${namespace}dataSetURLPreviewInput`}>
+							{Liferay.Language.get('url-preview')}
+
+							<span
+								className="label-icon lfr-portal-tooltip ml-2"
+								title={Liferay.Language.get('url-preview-help')}
+							>
+								<ClayIcon symbol="question-circle-full" />
+							</span>
+						</label>
+
+						<ClayInput
+							id={`${namespace}dataSetURLPreviewInput`}
+							readOnly
+							value={urlPreview}
+						/>
+					</ClayForm.Group>
+
+					<LearnMessage
+						resource="frontend-data-set-admin-web"
+						resourceKey="rest-parameters"
+					/>
+				</ClayLayout.SheetSection>
+			)}
 
 			<ClayLayout.SheetFooter>
 				<ClayButton.Group spaced>

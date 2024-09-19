@@ -93,6 +93,9 @@ export default function SaveButtons({
 				)
 			);
 		}
+		else {
+			validateRequiredFields();
+		}
 	};
 
 	const handleButtonClick = (action) => {
@@ -161,6 +164,18 @@ export default function SaveButtons({
 				}
 			}
 		);
+	};
+
+	const validateRequiredFields = () => {
+		Liferay.Form.get(formId).formValidator.validate();
+		Liferay.componentReady(
+			`${portletNamespace}dataEngineLayoutRenderer`
+		).then((dataEngineLayoutRenderer) => {
+			const dataEngineLayoutRendererRef =
+				dataEngineLayoutRenderer?.reactComponentRef;
+
+			return dataEngineLayoutRendererRef.current.validate();
+		});
 	};
 
 	useEffect(() => {
@@ -281,6 +296,9 @@ export default function SaveButtons({
 										defaultLanguageId.replaceAll('_', '-')
 									)
 								);
+							}
+							else {
+								validateRequiredFields();
 							}
 						}}
 						symbolLeft="date-time"

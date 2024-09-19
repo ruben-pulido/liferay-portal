@@ -25,6 +25,9 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		CookieKeys.COMMERCE_CONTINUE_AS_GUEST;
 		CookieKeys.ID;
 		CookieKeys.SCREEN_NAME;
+		
+		DDMStructureManagerUtil.getStructure(123, 123, "test123");
+		_ddmStructureManager.getStructure(123, 123, "test123");
 
 		DestinationNames.BASE_PRICE_LIST;
 		DestinationNames.ORDER_STATUS;
@@ -33,7 +36,11 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		DestinationNames.STOCK_QUANTITY;
 		DestinationNames.SUBSCRIPTION_STATUS;
 
+		DLUtil.getDownloadURL(null, null, null, null, null, null);
 		DLUtil.getImagePreviewURL(null, null, null);
+
+		ExpandoColumnLocalServiceUtil.getColumn(123, "test123");
+		_expandoColumnLocalService.getColumn(123, "test123");
 
 		FDSTableSchemaBuilder fDSTableSchemaBuilder = _fDSTableSchemaBuilderFactory.create();
 
@@ -370,6 +377,9 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 
 		PortletDisplayTemplateManager.DISPLAY_STYLE_PREFIX;
 		PortletDisplayTemplateManager.ENTRIES;
+		
+		RoleLocalServiceUtil.loadFetchRole(123, "test123");
+		_roleLocalService.loadFetchRole(123, "test123");
 
 		ServiceTrackerList<Class<T>, Class<E>> serviceTrackerList = ServiceTrackerListFactory.open(null, null);
 
@@ -670,6 +680,7 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		CommerceAddress commerceAddress, Country country, Region region) {
 
 		commerceAddress.getCountry().getTwoLettersISOCode();
+		country.getCommerceCountryId();
 		country.getTwoLettersISOCode();
 		country.setTwoLettersISOCode();
 		country.getThreeLettersISOCode();
@@ -684,6 +695,11 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		contact.getSuffixId();
 		contact.setPrefixId();
 		contact.setSuffixId();
+	}
+
+	public void method(DDMStructure ddmStructure, Fields ddmFields) {
+		_journalConverter.getContent(ddmStructure, null);
+		_journalConverter.getContent(ddmStructure, ddmFields);
 	}
 
 	public void method(HttpServletRequest httpServletRequest) {
@@ -732,6 +748,11 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		CommerceOrderItemLocalServiceUtil.deleteCommerceOrderItems(commerceOrderId);
 		_commerceOrderItemLocalService.deleteCommerceOrderItems(123);
 		_commerceOrderItemLocalService.deleteCommerceOrderItems(commerceOrderId);
+	}
+
+	public void method(long companyId, boolean readOnly) {
+		PrefsPropsUtil.getPreferences(123, readOnly);
+		PrefsPropsUtil.getPreferences(companyId, readOnly);
 	}
 
 	public void method(
@@ -796,6 +817,11 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		_userService.updateStatus(userId, status);
 	}
 
+	public void method(long companyId, long workflowTaskId) {
+		_workflowTaskManager.getWorkflowTask(123, workflowTaskId);
+		_workflowTaskManager.getWorkflowTask(companyId, workflowTaskId);
+	}
+
 	public void method(
 		long userId, long groupId, boolean privateLayout, long parentLayoutId,
 		long classNameId, long classPK, Map<java.util.Locale, String> nameMap,
@@ -846,6 +872,14 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		CPDefinitionLinkLocalServiceUtil.addCPDefinitionLinkByCProductId(cpDefinitionId, cProductId, priority, type, serviceContext);
 		_cpDefinitionLinkLocalService.addCPDefinitionLinkByCProductId(cpDefinitionId, cProductId, priority, type, serviceContext);
 	}
+
+	public void method(
+		long sourceCPDefinitionId, long groupId, int status) {
+
+		CPDefinitionLocalServiceUtil.copyCPDefinition(null, groupId);
+		CPDefinitionLocalServiceUtil.copyCPDefinition(sourceCPDefinitionId, groupId);
+		_cpDefinitionLocalService.copyCPDefinition(sourceCPDefinitionId, groupId);
+    }
 
 	public void method(
 		long commerceOrderId, long cpInstanceId, int quantity,
@@ -899,6 +933,16 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		AssetCategoryLocalServiceUtil.addCategory(123, groupId, parentCategoryId, titleMap, descriptionMap, vocabularyId, categoryProperties, serviceContext);
 		AssetCategoryLocalServiceUtil.addCategory(userId, groupId, parentCategoryId, titleMap, descriptionMap, vocabularyId, categoryProperties, serviceContext);
 		_assetCategoryLocalService.addCategory(userId, groupId, parentCategoryId, titleMap, descriptionMap, vocabularyId, categoryProperties, serviceContext);
+	}
+
+	public void method(
+		long userId, long repositoryId, long folderId,
+		String sourceFileName, String mimeType, byte[] bytes,
+		ServiceContext serviceContext) {
+		
+		_dlAppLocalService.addFileEntry(123, repositoryId, folderId, sourceFileName, mimeType, bytes, serviceContext);
+		_dlAppLocalService.addFileEntry(userId, repositoryId, folderId, sourceFileName, mimeType, bytes, serviceContext);
+		_dlAppService.addFileEntry(userId, repositoryId, folderId, sourceFileName, mimeType, bytes, serviceContext);
 	}
 
 	public void method(
@@ -1132,8 +1176,18 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		String searchEngineId, long companyId, Collection<Document> documents,
 		boolean commitImmediately) {
 
-		IndexWriterHelperUtil.updateDocument(searchEngineId, companyId, documents, commitImmediately);
+		IndexWriterHelperUtil.updateDocuments("test123", 123, null, null);
+		IndexWriterHelperUtil.updateDocuments(searchEngineId, companyId, documents, commitImmediately);
+		_indexWriterHelper.updateDocuments(searchEngineId, companyId, documents, commitImmediately);
+	}
+
+	public void method(
+		String searchEngineId, long companyId, Document document,
+		boolean commitImmediately) {
+
 		IndexWriterHelperUtil.updateDocument("test123", 123, null, null);
+		IndexWriterHelperUtil.updateDocument(searchEngineId, companyId, document, commitImmediately);
+		_indexWriterHelper.updateDocument(searchEngineId, companyId, document, commitImmediately);
 	}
 
 	public void method(
@@ -1155,6 +1209,15 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 	}
 
 	public void method(
+		String searchEngineId, long companyId, String className,
+		boolean commitImmediately) {
+
+		IndexWriterHelperUtil.deleteEntityDocuments("test123", companyId, className, commitImmediately);
+		IndexWriterHelperUtil.deleteEntityDocuments(searchEngineId, companyId, className, commitImmediately);
+		_indexWriterHelper.deleteEntityDocuments(searchEngineId, companyId, className, commitImmediately);
+	}
+
+	public void method(
 		String externalReferenceCode, long cProductId, String cpInstanceUuid,
 		long commercePriceListId, BigDecimal price, BigDecimal promoPrice,
 		ServiceContext serviceContext) {
@@ -1169,6 +1232,13 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 
 		_assetDisplayPageFriendlyURLProvider.getFriendlyURL(className, classPK, themeDisplay);
 		_assetDisplayPageFriendlyURLProvider.getFriendlyURL("test123", 123, themeDisplay);
+	}
+
+	public void method(String name, String type) {
+		ListTypeServiceUtil.getListTypes("test123");
+		ListTypeServiceUtil.getListTypes(type);
+		_listTypeLocalService.addListType("test123", type);
+		_listTypeLocalService.addListType(name, type);
 	}
 
 	public void method(String name, String label, BigDecimal amount) {
@@ -1261,6 +1331,9 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 	private CPInstanceService _cpInstanceService;
 
 	@Reference
+	private DDMStructureManager _ddmStructureManager;
+
+	@Reference
 	private DLAppLocalService _dlAppLocalService;
 
 	@Reference
@@ -1273,10 +1346,19 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 	private DLFolderService _dlFolderService;
 
 	@Reference
+	private ExpandoColumnLocalService _expandoColumnLocalService;
+
+	@Reference
 	private FDSTableSchemaBuilderFactory _fDSTableSchemaBuilderFactory;
 
 	@Reference
 	private Http _http;
+
+	@Reference
+	private IndexWriterHelper _indexWriterHelper;
+
+	@Reference
+	private JournalConverter _journalConverter;
 
 	@Reference
 	private JournalFolderLocalService _journalFolderLocalService;
@@ -1287,6 +1369,15 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 	@Reference
 	private LayoutService _layoutService;
 
+	@Reference
+	private ListTypeLocalService _listTypeLocalService;
+
+	@Reference
+	private PrefsProps _prefsProps;
+
+	@Reference
+	private RoleLocalService _roleLocalService;
+
 	private ServiceTrackerList<Class<T>, Class<E>> _serviceTrackerList;
 
 	@Reference
@@ -1294,5 +1385,8 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 
 	@Reference
 	private UserService _userService;
+
+	@Reference
+	private WorkflowTaskManager _workflowTaskManager;
 
 }

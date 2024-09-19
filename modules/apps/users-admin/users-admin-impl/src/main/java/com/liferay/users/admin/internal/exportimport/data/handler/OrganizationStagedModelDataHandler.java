@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.service.PasswordPolicyRelLocalService;
 import com.liferay.portal.kernel.service.PhoneLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.WebsiteLocalService;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
@@ -99,6 +100,23 @@ public class OrganizationStagedModelDataHandler
 	@Override
 	public String getDisplayName(Organization organization) {
 		return organization.getName();
+	}
+
+	@Override
+	public boolean validateReference(
+		PortletDataContext portletDataContext, Element referenceElement) {
+
+		Organization organization =
+			_organizationLocalService.fetchOrganizationByUuidAndCompanyId(
+				GetterUtil.getString(referenceElement.attributeValue("uuid")),
+				GetterUtil.getLong(
+					referenceElement.attributeValue("company-id")));
+
+		if (organization == null) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override

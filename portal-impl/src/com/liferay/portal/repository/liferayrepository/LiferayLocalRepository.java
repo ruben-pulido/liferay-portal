@@ -269,6 +269,34 @@ public class LiferayLocalRepository
 	}
 
 	@Override
+	public FileShortcut fetchFileShortcut(long fileShortcutId) {
+		DLFileShortcut dlFileShortcut =
+			dlFileShortcutLocalService.fetchDLFileShortcut(fileShortcutId);
+
+		if (dlFileShortcut != null) {
+			return new LiferayFileShortcut(dlFileShortcut);
+		}
+
+		return null;
+	}
+
+	@Override
+	public FileShortcut fetchFileShortcutByExternalReferenceCode(
+		String externalReferenceCode) {
+
+		DLFileShortcut dlFileShortcut =
+			dlFileShortcutLocalService.
+				fetchDLFileShortcutByExternalReferenceCode(
+					externalReferenceCode, getGroupId());
+
+		if (dlFileShortcut != null) {
+			return new LiferayFileShortcut(dlFileShortcut);
+		}
+
+		return null;
+	}
+
+	@Override
 	public Folder fetchFolderByExternalReferenceCode(
 		String externalReferenceCode) {
 

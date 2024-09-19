@@ -602,6 +602,28 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	}
 
 	@Override
+	public FileShortcut fetchFileShortcut(long fileShortcutId)
+		throws PortalException {
+
+		LocalRepository localRepository =
+			RepositoryProviderUtil.getFileShortcutLocalRepository(
+				fileShortcutId);
+
+		return localRepository.fetchFileShortcut(fileShortcutId);
+	}
+
+	@Override
+	public FileShortcut fetchFileShortcutByExternalReferenceCode(
+			String externalReferenceCode, long groupId)
+		throws PortalException {
+
+		LocalRepository localRepository = getLocalRepository(groupId);
+
+		return localRepository.fetchFileShortcutByExternalReferenceCode(
+			externalReferenceCode);
+	}
+
+	@Override
 	public Folder fetchFolderByExternalReferenceCode(
 			String externalReferenceCode, long groupId)
 		throws PortalException {
@@ -781,6 +803,17 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 				fileShortcutId);
 
 		return localRepository.getFileShortcut(fileShortcutId);
+	}
+
+	@Override
+	public FileShortcut getFileShortcutByExternalReferenceCode(
+			String externalReferenceCode, long groupId)
+		throws PortalException {
+
+		LocalRepository localRepository = getLocalRepository(groupId);
+
+		return localRepository.getFileShortcutByExternalReferenceCode(
+			externalReferenceCode);
 	}
 
 	/**

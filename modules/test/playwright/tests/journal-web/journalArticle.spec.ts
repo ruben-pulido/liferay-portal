@@ -10,6 +10,8 @@ import {applicationsMenuPageTest} from '../../fixtures/applicationsMenuPageTest'
 import {featureFlagsTest} from '../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../fixtures/loginTest';
+import {pageViewModePagesTest} from '../../fixtures/pageViewModePagesTest';
+import {pagesAdminPagesTest} from '../../fixtures/pagesAdminPagesTest';
 import {workflowPagesTest} from '../../fixtures/workflowPagesTest';
 import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
 import fillAndClickOutside from '../../utils/fillAndClickOutside';
@@ -46,6 +48,8 @@ const baseTest = mergeTests(
 	isolatedSiteTest,
 	journalPagesTest,
 	loginTest(),
+	pageViewModePagesTest,
+	pagesAdminPagesTest,
 	workflowPagesTest
 );
 
@@ -183,6 +187,25 @@ baseTest(
 		templateName = page.getByLabel('Template Name');
 
 		await expect(templateName).toHaveValue('Basic Web Content');
+	}
+);
+
+baseTest(
+	'LPD-36441: Navigate in ddm template selector',
+	async ({journalEditArticlePage, page, site}) => {
+		await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
+
+		await page.getByRole('link', {name: 'Default Template'}).click();
+
+		await page.getByRole('button', {exact: true, name: 'Select'}).waitFor();
+
+		await page.getByRole('button', {exact: true, name: 'Select'}).click();
+
+		const breadcrumb = page
+			.frameLocator('iframe[title="Templates"]')
+			.getByRole('link', {name: 'Sites and Libraries'});
+
+		await expect(breadcrumb).toBeVisible();
 	}
 );
 
@@ -771,7 +794,7 @@ translationTest(
 			trigger: translationFilterButton,
 		});
 
-		const fieldsWrapper = page.getByRole('button', {name: 'Fields'});
+		const fieldsWrapper = page.getByRole('link', {name: 'Fields'});
 
 		const metadataWapper = page.getByRole('button', {name: 'Metadata'});
 
@@ -1042,7 +1065,10 @@ translationTest(
 );
 
 translationTest(
-	'LPD-19627: A non-localizabled field is disabled when another translation language is selected',
+	'A non-localizabled field is disabled when another translation language is selected',
+	{
+		tag: '@LPD-19627',
+	},
 	async ({apiHelpers, journalEditArticlePage, page, site}) => {
 		const nonLocalizableFieldName = 'Text1234';
 		const structureName = 'Structure 1';
@@ -1072,11 +1098,15 @@ translationTest(
 			trigger: translationButton,
 		});
 
-		await expect(
-			page.getByRole('textbox', {
-				name: nonLocalizableFieldName,
-			})
-		).toBeDisabled();
+		const textBox = page.getByRole('textbox', {
+			name: nonLocalizableFieldName,
+		});
+
+		if (await textBox.isHidden()) {
+			await page.getByRole('link', {name: 'Fields'}).click();
+		}
+
+		await expect(textBox).toBeDisabled();
 	}
 );
 
@@ -1389,6 +1419,80 @@ baseTest(
 		expect(modifiedStructure.dataDefinitionFields[0].defaultValue).toEqual({
 			en_US: `${content}`,
 		});
+	}
+);
+
+baseTest(
+	'Can paginate Web Content in an Asset Publisher',
+	{
+		tag: '@LPD-35348',
+	},
+	async ({
+		journalEditArticlePage,
+		journalPage,
+		page,
+		pagesAdminPage,
+		site,
+		widgetPagePage,
+	}) => {
+		await journalPage.goto(site.friendlyUrlPath);
+
+		const title = getRandomString();
+
+		await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
+
+		await journalEditArticlePage.fillTitle(title);
+
+		await journalEditArticlePage.fillContent('page1 @page_break@ page2');
+
+		await journalEditArticlePage.publishButton.click();
+
+		await waitForSuccessAlert(
+			page,
+			`Success:${title} was created successfully.`
+		);
+
+		await pagesAdminPage.goto(site.friendlyUrlPath);
+
+		const name = getRandomString();
+		await pagesAdminPage.addWidgetPage({name});
+
+		await pagesAdminPage.goto(site.friendlyUrlPath);
+		await page.getByLabel(name, {exact: true}).click();
+
+		await widgetPagePage.addPortlet('Asset Publisher');
+		await page
+			.locator('.portlet-asset-publisher')
+			.first()
+			.getByLabel('Options')
+			.click();
+		await page
+			.getByRole('menuitem', {exact: true, name: 'Configuration'})
+			.click();
+		const configurationFrame = page.frameLocator(
+			'iframe[id="modalIframe"]'
+		);
+		await configurationFrame
+			.getByRole('tab', {name: 'Asset Selection'})
+			.click();
+		await configurationFrame.getByText('Dynamic').click();
+		await configurationFrame.getByLabel('close').click();
+		await configurationFrame
+			.getByRole('tab', {name: 'Display Settings'})
+			.click();
+		await configurationFrame.getByLabel('Display Template').click();
+		await configurationFrame
+			.getByRole('option', {name: 'Full Content'})
+			.click();
+		await configurationFrame.getByRole('button', {name: 'Save'}).click();
+		await page.getByLabel('close', {exact: true}).click();
+
+		await pagesAdminPage.goto(site.friendlyUrlPath);
+		await page.getByLabel(name, {exact: true}).click();
+
+		await page.getByLabel('Go to page, 2').click();
+
+		await expect(page.getByText('page2')).toBeVisible();
 	}
 );
 

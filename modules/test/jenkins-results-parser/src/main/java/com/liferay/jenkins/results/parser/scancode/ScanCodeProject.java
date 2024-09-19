@@ -31,8 +31,6 @@ public class ScanCodeProject {
 	public ScanCodeProject(String buildURL, String pipelineName) {
 		_buildURL = buildURL;
 		_pipelineName = pipelineName;
-
-		_s3URL = null;
 	}
 
 	public void addPipeline(String pipelineName)
@@ -41,9 +39,8 @@ public class ScanCodeProject {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("curl ");
-		sb.append(_API_URL);
-		sb.append(_projectID);
-		sb.append("/add_pipeline/");
+		sb.append(_projectAPIURL);
+		sb.append("add_pipeline/");
 		sb.append(" --data ");
 
 		JSONObject jsonObject = new JSONObject();
@@ -59,6 +56,8 @@ public class ScanCodeProject {
 		sb.append("'");
 		sb.append(" --header ");
 		sb.append(_CONTENT_TYPE);
+		sb.append(" --header ");
+		sb.append("\"Authorization:Token " + _API_KEY + '\"');
 		sb.append(" --request POST ");
 
 		Process process = JenkinsResultsParserUtil.executeBashCommands(
@@ -107,7 +106,7 @@ public class ScanCodeProject {
 		).put(
 			"input_urls", "docker://liferay/" + dockerTag
 		).put(
-			"labels", _LABELS
+			"labels", _getLabels("docker", dockerTag)
 		).put(
 			"name",
 			JenkinsResultsParserUtil.combine(
@@ -130,7 +129,7 @@ public class ScanCodeProject {
 			"https://github.com/liferay/liferay-portal/archive/refs/heads" +
 				"/master.tar.gz"
 		).put(
-			"labels", _LABELS
+			"labels", _getLabels("master")
 		).put(
 			"name", "Master Daily Scan-" + _simpleDateFormat.format(new Date())
 		).put(
@@ -166,7 +165,7 @@ public class ScanCodeProject {
 		).put(
 			"input_urls", inputURLS
 		).put(
-			"labels", _LABELS
+			"labels", _getLabels(portalReleaseVersion)
 		).put(
 			"name",
 			JenkinsResultsParserUtil.combine(
@@ -238,6 +237,8 @@ public class ScanCodeProject {
 		sb.append("'");
 		sb.append(" --header ");
 		sb.append(_CONTENT_TYPE);
+		sb.append(" --header ");
+		sb.append("\"Authorization:Token " + _API_KEY + "\"");
 		sb.append(" --request POST ");
 
 		Process process = JenkinsResultsParserUtil.executeBashCommands(
@@ -253,6 +254,7 @@ public class ScanCodeProject {
 
 			JSONObject outputJSONObject = new JSONObject(output);
 
+			_projectAPIURL = outputJSONObject.getString("url");
 			_projectID = outputJSONObject.getString("uuid");
 			_projectName = outputJSONObject.getString("name");
 		}
@@ -314,7 +316,7 @@ public class ScanCodeProject {
 		_projectNameFromURL = name + "-" + uid;
 
 		_projectURL =
-			"https://scancode.liferay.com/project/" + name + "-" + uid + "/";
+			"https://liferay1.scancode.io/project/" + name + "-" + uid + "/";
 	}
 
 	public void uploadResultsToBucket(String tarGzFilePath) {
@@ -337,10 +339,11 @@ public class ScanCodeProject {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("curl ");
-		sb.append(_API_URL);
-		sb.append(_projectID);
-		sb.append("/ --header ");
+		sb.append(_projectAPIURL);
+		sb.append(" --header ");
 		sb.append(_CONTENT_TYPE);
+		sb.append(" --header ");
+		sb.append("\"Authorization:Token " + _API_KEY + '\"');
 		sb.append(" --request GET ");
 
 		while (true) {
@@ -390,20 +393,44 @@ public class ScanCodeProject {
 		setProjectURL(_projectID, _projectName);
 	}
 
+	private List<String> _getLabels(String... labelsArray) {
+		List<String> labels = new ArrayList<>();
+
+		labels.add("automated");
+
+		for (String label : labelsArray) {
+			labels.add(label);
+		}
+
+		return labels;
+	}
+
+	private static final String _API_KEY;
+
 	private static final String _API_URL =
-		"https://scancode.liferay.com/api/projects/";
+		"https://liferay1.scancode.io/api/projects/";
 
 	private static final String _CONTENT_TYPE =
 		"'Content-Type: application/json;'";
 
-	private static final String[] _LABELS = {"automated"};
-
 	private static final String[] _RESULT_FILES_EXTENSIONS = {
-		"attribution", "cyclonedx", "json", "spdx", "xls"
+		"attribution", "cyclonedx", "spdx", "xls"
 	};
+
+	static {
+		try {
+			_API_KEY = JenkinsResultsParserUtil.getBuildProperty(
+				"scancode.api.key");
+		}
+		catch (IOException ioException) {
+			throw new RuntimeException(
+				"Unable to get ScanCode API key", ioException);
+		}
+	}
 
 	private final String _buildURL;
 	private final String _pipelineName;
+	private String _projectAPIURL;
 	private String _projectID;
 	private String _projectName;
 	private String _projectNameFromURL;

@@ -10,8 +10,10 @@ import {ProductMenuPage} from '../../pages/product-navigation-control-menu-web/P
 export class FormsPage {
 	readonly emptyResultNewFormButton: Locator;
 	readonly formsHeader: Locator;
+	readonly managementToolbarDeleteButton: Locator;
 	readonly managementToolbarNewButton: Locator;
 	readonly managementToolbarSearchForButton: Locator;
+	readonly managementToolbarSelectAllItems: Locator;
 	readonly page: Page;
 	readonly productMenuPage: ProductMenuPage;
 
@@ -23,22 +25,32 @@ export class FormsPage {
 			exact: true,
 			name: 'Forms',
 		});
+		this.managementToolbarDeleteButton = page.getByRole('button', {
+			name: 'Delete',
+		});
 		this.managementToolbarNewButton = page.getByText('New', {exact: true});
 		this.managementToolbarSearchForButton = page.getByRole('button', {
 			name: 'Search for',
 		});
+		this.managementToolbarSelectAllItems = page.getByLabel(
+			'Select All Items on the Page'
+		);
 		this.page = page;
 
 		this.productMenuPage = new ProductMenuPage(page);
 	}
 
+	async clickEmptyResultNewFormButton() {
+		await this.emptyResultNewFormButton.click();
+	}
+
+	async clickFormTitle(formTitle: string) {
+		await this.page.getByText(formTitle).click();
+	}
+
 	async clickManagementToolbarNewButton() {
 		await this.managementToolbarSearchForButton.isEnabled();
 		await this.managementToolbarNewButton.click();
-	}
-
-	async clickEmptyResultNewFormButton() {
-		await this.emptyResultNewFormButton.click();
 	}
 
 	async goTo() {

@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -91,6 +92,14 @@ public class CommerceAccountGroupItemSelectorViewDisplayContext {
 			params.put("accountEntryIds", new long[] {accountEntryId});
 		}
 
+		long permissionUserId = ParamUtil.getLong(
+			_commerceAccountItemSelectorRequestHelper.getRenderRequest(),
+			"permissionUserId");
+
+		if (permissionUserId > 0) {
+			params.put("permissionUserId", permissionUserId);
+		}
+
 		BaseModelSearchResult<AccountGroup> baseModelSearchResult =
 			_accountGroupLocalService.searchAccountGroups(
 				_commerceAccountItemSelectorRequestHelper.getCompanyId(),
@@ -122,9 +131,11 @@ public class CommerceAccountGroupItemSelectorViewDisplayContext {
 	}
 
 	private long[] _getCheckedCommerceAccountGroupIds() {
-		return ParamUtil.getLongValues(
-			_commerceAccountItemSelectorRequestHelper.getRenderRequest(),
-			"checkedCommerceAccountGroupIds");
+		return StringUtil.split(
+			ParamUtil.getString(
+				_commerceAccountItemSelectorRequestHelper.getRenderRequest(),
+				"checkedCommerceAccountGroupIds"),
+			0L);
 	}
 
 	private final AccountGroupLocalService _accountGroupLocalService;

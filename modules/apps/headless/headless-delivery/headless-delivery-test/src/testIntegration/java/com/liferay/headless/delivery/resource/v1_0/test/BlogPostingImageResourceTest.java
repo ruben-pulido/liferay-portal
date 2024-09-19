@@ -15,6 +15,7 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.constants.TestDataConstants;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
@@ -32,42 +33,14 @@ import org.junit.runner.RunWith;
 public class BlogPostingImageResourceTest
 	extends BaseBlogPostingImageResourceTestCase {
 
+	@Override
 	@Test
-	public void testPostSiteBlogPostingImageRollback() throws Exception {
-		Folder folder = BlogsEntryLocalServiceUtil.fetchAttachmentsFolder(
-			UserLocalServiceUtil.getGuestUserId(testGroup.getCompanyId()),
-			testGroup.getGroupId());
+	public void testPostSiteBlogPostingImage() throws Exception {
+		super.testPostSiteBlogPostingImage();
 
-		Assert.assertNull(folder);
-
-		BlogPostingImage blogPostingImage = randomBlogPostingImage();
-
-		try {
-			testPostSiteBlogPostingImage_addBlogPostingImage(
-				blogPostingImage,
-				HashMapBuilder.put(
-					"file",
-					() -> {
-						File tempFile = FileUtil.createTempFile("*,?", "txt");
-
-						FileUtil.write(
-							tempFile, TestDataConstants.TEST_BYTE_ARRAY);
-
-						return tempFile;
-					}
-				).build());
-
-			Assert.fail();
-		}
-		catch (Throwable throwable) {
-			Assert.assertTrue(throwable instanceof Problem.ProblemException);
-		}
-
-		folder = BlogsEntryLocalServiceUtil.fetchAttachmentsFolder(
-			UserLocalServiceUtil.getGuestUserId(testGroup.getCompanyId()),
-			testGroup.getGroupId());
-
-		Assert.assertNull(folder);
+		_testPostSiteBlogPostingImageRollback();
+		_testPostSiteBlogPostingImageWithDuplicateExternalReferenceCode();
+		_testPostSiteBlogPostingImageWithDuplicateTitle();
 	}
 
 	@Override
@@ -99,10 +72,34 @@ public class BlogPostingImageResourceTest
 	}
 
 	@Override
+	protected Long
+			testDeleteSiteBlogPostingImageByExternalReferenceCode_getSiteId()
+		throws Exception {
+
+		return testGroup.getGroupId();
+	}
+
+	@Override
+	protected Long
+			testGetSiteBlogPostingImageByExternalReferenceCode_getSiteId()
+		throws Exception {
+
+		return testGroup.getGroupId();
+	}
+
+	@Override
 	protected BlogPostingImage testGraphQLBlogPostingImage_addBlogPostingImage()
 		throws Exception {
 
 		return testDeleteBlogPostingImage_addBlogPostingImage();
+	}
+
+	@Override
+	protected Long
+			testGraphQLGetSiteBlogPostingImageByExternalReferenceCode_getSiteId()
+		throws Exception {
+
+		return testGroup.getGroupId();
 	}
 
 	private String _read(String url) throws Exception {
@@ -116,6 +113,90 @@ public class BlogPostingImageResourceTest
 		HttpInvoker.HttpResponse httpResponse = httpInvoker.invoke();
 
 		return httpResponse.getContent();
+	}
+
+	private void _testPostSiteBlogPostingImageRollback() throws Exception {
+		tearDown();
+		setUp();
+
+		Folder folder = BlogsEntryLocalServiceUtil.fetchAttachmentsFolder(
+			UserLocalServiceUtil.getGuestUserId(testGroup.getCompanyId()),
+			testGroup.getGroupId());
+
+		Assert.assertNull(folder);
+
+		BlogPostingImage blogPostingImage = randomBlogPostingImage();
+
+		blogPostingImage.setTitle("*,?" + blogPostingImage.getTitle());
+
+		try {
+			testPostSiteBlogPostingImage_addBlogPostingImage(
+				blogPostingImage, getMultipartFiles());
+
+			Assert.fail();
+		}
+		catch (Throwable throwable) {
+			Assert.assertTrue(throwable instanceof Problem.ProblemException);
+		}
+
+		folder = BlogsEntryLocalServiceUtil.fetchAttachmentsFolder(
+			UserLocalServiceUtil.getGuestUserId(testGroup.getCompanyId()),
+			testGroup.getGroupId());
+
+		Assert.assertNull(folder);
+	}
+
+	private void _testPostSiteBlogPostingImageWithDuplicateExternalReferenceCode()
+		throws Exception {
+
+		Map<String, File> multipartFiles = getMultipartFiles();
+
+		BlogPostingImage randomBlogPostingImage1 = randomBlogPostingImage();
+
+		testPostSiteBlogPostingImage_addBlogPostingImage(
+			randomBlogPostingImage1, multipartFiles);
+
+		BlogPostingImage randomBlogPostingImage2 = randomBlogPostingImage();
+
+		randomBlogPostingImage2.setExternalReferenceCode(
+			randomBlogPostingImage1.getExternalReferenceCode());
+
+		try {
+			testPostSiteBlogPostingImage_addBlogPostingImage(
+				randomBlogPostingImage2, multipartFiles);
+
+			Assert.fail();
+		}
+		catch (Throwable throwable) {
+			Assert.assertTrue(throwable instanceof Problem.ProblemException);
+		}
+	}
+
+	private void _testPostSiteBlogPostingImageWithDuplicateTitle()
+		throws Exception {
+
+		Map<String, File> multipartFiles = getMultipartFiles();
+
+		BlogPostingImage randomBlogPostingImage1 = randomBlogPostingImage();
+
+		BlogPostingImage blogPostingImage =
+			testPostSiteBlogPostingImage_addBlogPostingImage(
+				randomBlogPostingImage1, multipartFiles);
+
+		Assert.assertEquals(
+			randomBlogPostingImage1.getTitle(), blogPostingImage.getTitle());
+
+		BlogPostingImage randomBlogPostingImage2 = randomBlogPostingImage();
+
+		randomBlogPostingImage2.setTitle(randomBlogPostingImage1.getTitle());
+
+		blogPostingImage = testPostSiteBlogPostingImage_addBlogPostingImage(
+			randomBlogPostingImage2, multipartFiles);
+
+		Assert.assertEquals(
+			StringUtil.appendParentheticalSuffix(
+				randomBlogPostingImage2.getTitle(), 1),
+			blogPostingImage.getTitle());
 	}
 
 }

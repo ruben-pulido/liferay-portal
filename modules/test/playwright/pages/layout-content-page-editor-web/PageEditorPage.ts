@@ -56,11 +56,15 @@ export class PageEditorPage {
 		this.undoHistory = page.locator('.page-editor__undo-history');
 	}
 
-	async goto(layout: Layout, siteUrl?: Site['friendlyUrlPath']) {
+	async goto(
+		layout: Layout,
+		siteUrl?: Site['friendlyUrlPath'],
+		doAsUserId?: string
+	) {
 		await this.page.goto('/');
 
 		await this.page.goto(
-			`/web${siteUrl || '/guest'}${layout.friendlyUrlPath}?p_l_mode=edit`
+			`/web${siteUrl || '/guest'}${layout.friendlyUrlPath}?p_l_mode=edit${doAsUserId ? '&doAsUserId=' + doAsUserId : ''}`
 		);
 	}
 
@@ -88,7 +92,9 @@ export class PageEditorPage {
 			await this.page.keyboard.press('Enter');
 		}
 
-		await this.waitForChangesSaved();
+		if (name !== 'Stepper') {
+			await this.waitForChangesSaved();
+		}
 	}
 
 	async addFragmentComment(fragmentId: string, comment: string) {
@@ -363,6 +369,8 @@ export class PageEditorPage {
 
 		await nameInput.waitFor();
 
+		await expect(nameInput).toHaveAttribute('required');
+
 		await fillAndClickOutside(this.page, nameInput, name);
 
 		await this.page.locator('.modal-footer').getByText('Save').click();
@@ -424,22 +432,30 @@ export class PageEditorPage {
 	async duplicateFragment(fragmentId: string) {
 		await this.selectFragment(fragmentId);
 
-		await this.page.keyboard.press('Control+D');
+		await this.page.keyboard.press('Alt+Control+D');
 
 		await this.waitForChangesSaved();
 	}
 
-	async editHTMLEditable(
-		fragmentId: string,
-		editableId: string,
-		value: string
-	) {
+	async editHTMLEditable({
+		editableId,
+		fragmentId,
+		value,
+	}: {
+		editableId: string;
+		fragmentId: string;
+		useBackwardCompatibility?: boolean;
+		value: string;
+	}) {
 
 		// Select fragment and editable
 
 		await this.selectEditable(fragmentId, editableId);
 
-		const editable = this.getEditable(fragmentId, editableId);
+		const editable = this.getEditable({
+			editableId,
+			fragmentId,
+		});
 
 		// Enable editor
 
@@ -473,7 +489,10 @@ export class PageEditorPage {
 
 		// Click editable again to enable edition
 
-		const editable = this.getEditable(fragmentId, editableId);
+		const editable = this.getEditable({
+			editableId,
+			fragmentId,
+		});
 
 		await editable.click();
 
@@ -828,7 +847,7 @@ export class PageEditorPage {
 			await this.goToSidebarTab('Browser');
 
 			const treeNode = this.page.locator(
-				`.treeview-link[data-id*="${fragmentId}"]`
+				`.treeview-link[data-id$="${fragmentId}"]`
 			);
 
 			await treeNode.click();
@@ -844,11 +863,53 @@ export class PageEditorPage {
 	) {
 		await this.selectFragment(fragmentId, isDesktop);
 
-		const editable = this.getEditable(fragmentId, editableId, isDesktop);
+		const editable = this.getEditable({
+			editableId,
+			fragmentId,
+			isDesktop,
+		});
 
 		await editable.click();
 
 		await expect(editable).toHaveClass(/page-editor__editable--active/);
+	}
+
+	async selectVideo({
+		fragmentId,
+		isDesktop = true,
+		title,
+		videoURL,
+	}: {
+		fragmentId: string;
+		isDesktop?: boolean;
+		title?: string;
+		videoURL?: string;
+	}) {
+		await this.selectFragment(fragmentId, isDesktop);
+
+		await this.page.getByTitle('Select Video', {exact: true}).click();
+
+		const selectIframe = this.page.frameLocator('iframe[title="Select"]');
+
+		if (title) {
+			await selectIframe
+				.getByRole('link', {exact: true, name: 'Documents and Media'})
+				.click();
+
+			await selectIframe.getByTitle(title, {exact: true}).click();
+		}
+		else if (videoURL) {
+			await selectIframe.getByLabel('Video URL').fill(videoURL);
+
+			const addButton = selectIframe.getByRole('button', {
+				exact: true,
+				name: 'Add',
+			});
+
+			await addButton.isEnabled();
+
+			await addButton.click();
+		}
 	}
 
 	async setMappedItem({
@@ -1019,7 +1080,7 @@ export class PageEditorPage {
 	}
 
 	async waitForChangesSaved() {
-		await this.page.getByLabel('Saved').waitFor();
+		await this.page.getByLabel('Saved', {exact: true}).waitFor();
 
 		await this.page
 			.getByText(
@@ -1028,10 +1089,22 @@ export class PageEditorPage {
 			.waitFor();
 	}
 
-	getEditable(fragmentId: string, editableId: string, isDesktop = true) {
-		return this.getFragment(fragmentId, isDesktop)
-			.locator(`[data-lfr-editable-id="${editableId}"]`)
-			.first();
+	getEditable({
+		editableId,
+		fragmentId,
+		isDesktop = true,
+	}: {
+		editableId: string;
+		fragmentId: string;
+		isDesktop?: boolean;
+	}) {
+		const fragment = this.getFragment(fragmentId, isDesktop);
+		const dataAttributeLocator = fragment.locator(
+			`[data-lfr-editable-id="${editableId}"]`
+		);
+		const tagLocator = fragment.locator(`lfr-editable[id="${editableId}"]`);
+
+		return dataAttributeLocator.or(tagLocator).first();
 	}
 
 	getFragment(fragmentId: string, isDesktop = true) {

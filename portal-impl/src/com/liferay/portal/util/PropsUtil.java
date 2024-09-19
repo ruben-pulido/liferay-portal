@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -127,6 +128,12 @@ public class PropsUtil {
 		Configuration configuration = _getConfiguration();
 
 		return configuration.getArray(key, filter);
+	}
+
+	public static List<String> getLoadedSources() {
+		Configuration configuration = _getConfiguration();
+
+		return configuration.getLoadedSources();
 	}
 
 	public static Properties getProperties() {

@@ -329,6 +329,10 @@ export class ApplicationsMenuPage {
 		await this.sitesItem.click();
 	}
 
+	async goToGlobalSite() {
+		await this.goToSite('Global');
+	}
+
 	async goToSystemSettings() {
 		await this.goToControlPanel();
 		await this.systemSettingsItem.click();
@@ -384,8 +388,8 @@ export class ApplicationsMenuPage {
 		await this.paymentsMenuItem.click();
 	}
 
-	async goToProducts() {
-		await this.goToCommercePanel();
+	async goToProducts(checkTabVisibility = true) {
+		await this.goToCommercePanel(checkTabVisibility);
 		await this.productsMenuItem.click();
 	}
 

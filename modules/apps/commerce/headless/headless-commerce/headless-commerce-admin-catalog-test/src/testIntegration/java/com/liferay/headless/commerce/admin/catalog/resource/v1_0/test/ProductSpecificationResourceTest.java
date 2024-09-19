@@ -7,7 +7,9 @@ package com.liferay.headless.commerce.admin.catalog.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.commerce.product.model.CPDefinition;
+import com.liferay.commerce.product.model.CPOptionCategory;
 import com.liferay.commerce.product.model.CPSpecificationOption;
+import com.liferay.commerce.product.model.CProduct;
 import com.liferay.commerce.product.model.CommerceCatalog;
 import com.liferay.commerce.product.test.util.CPTestUtil;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.ProductSpecification;
@@ -39,6 +41,8 @@ public class ProductSpecificationResourceTest
 		_cpDefinition = CPTestUtil.addCPDefinition(
 			commerceCatalog.getGroupId());
 
+		_cpOptionCategory = CPTestUtil.addCPOptionCategory(
+			testGroup.getGroupId());
 		_cpSpecificationOption = CPTestUtil.addCPSpecificationOption(
 			testGroup.getGroupId());
 	}
@@ -63,6 +67,30 @@ public class ProductSpecificationResourceTest
 	}
 
 	@Override
+	@Test
+	public void testPostProductByExternalReferenceCodeProductSpecification()
+		throws Exception {
+
+		super.testPostProductByExternalReferenceCodeProductSpecification();
+
+		ProductSpecification
+			randomProductSpecificationWithExternalReferenceCode =
+				randomProductSpecificationWithExternalReferenceCode();
+
+		ProductSpecification postProductSpecification =
+			testPostProductByExternalReferenceCodeProductSpecification_addProductSpecification(
+				randomProductSpecificationWithExternalReferenceCode);
+
+		randomProductSpecificationWithExternalReferenceCode.setSpecificationKey(
+			_cpSpecificationOption.getKey());
+
+		assertEquals(
+			randomProductSpecificationWithExternalReferenceCode,
+			postProductSpecification);
+		assertValid(postProductSpecification);
+	}
+
+	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {"priority", "specificationKey", "value"};
 	}
@@ -71,8 +99,26 @@ public class ProductSpecificationResourceTest
 	protected ProductSpecification randomProductSpecification() {
 		return new ProductSpecification() {
 			{
+				optionCategoryExternalReferenceCode =
+					_cpOptionCategory.getExternalReferenceCode();
 				priority = RandomTestUtil.randomDouble();
 				specificationKey = _cpSpecificationOption.getKey();
+				value = LanguageUtils.getLanguageIdMap(
+					RandomTestUtil.randomLocaleStringMap());
+			}
+		};
+	}
+
+	protected ProductSpecification
+		randomProductSpecificationWithExternalReferenceCode() {
+
+		return new ProductSpecification() {
+			{
+				optionCategoryExternalReferenceCode =
+					_cpOptionCategory.getExternalReferenceCode();
+				priority = RandomTestUtil.randomDouble();
+				specificationExternalReferenceCode =
+					_cpSpecificationOption.getExternalReferenceCode();
 				value = LanguageUtils.getLanguageIdMap(
 					RandomTestUtil.randomLocaleStringMap());
 			}
@@ -86,6 +132,28 @@ public class ProductSpecificationResourceTest
 
 		return productSpecificationResource.postProductIdProductSpecification(
 			_cpDefinition.getCProductId(), randomProductSpecification());
+	}
+
+	@Override
+	protected ProductSpecification
+			testGetProductByExternalReferenceCodeProductSpecificationsPage_addProductSpecification(
+				String externalReferenceCode,
+				ProductSpecification productSpecification)
+		throws Exception {
+
+		return productSpecificationResource.
+			postProductByExternalReferenceCodeProductSpecification(
+				externalReferenceCode, productSpecification);
+	}
+
+	@Override
+	protected String
+			testGetProductByExternalReferenceCodeProductSpecificationsPage_getExternalReferenceCode()
+		throws Exception {
+
+		CProduct cProduct = _cpDefinition.getCProduct();
+
+		return cProduct.getExternalReferenceCode();
 	}
 
 	@Override
@@ -150,6 +218,19 @@ public class ProductSpecificationResourceTest
 
 	@Override
 	protected ProductSpecification
+			testPostProductByExternalReferenceCodeProductSpecification_addProductSpecification(
+				ProductSpecification productSpecification)
+		throws Exception {
+
+		CProduct cProduct = _cpDefinition.getCProduct();
+
+		return productSpecificationResource.
+			postProductByExternalReferenceCodeProductSpecification(
+				cProduct.getExternalReferenceCode(), productSpecification);
+	}
+
+	@Override
+	protected ProductSpecification
 			testPostProductIdProductSpecification_addProductSpecification(
 				ProductSpecification productSpecification)
 		throws Exception {
@@ -160,6 +241,9 @@ public class ProductSpecificationResourceTest
 
 	@DeleteAfterTestRun
 	private CPDefinition _cpDefinition;
+
+	@DeleteAfterTestRun
+	private CPOptionCategory _cpOptionCategory;
 
 	@DeleteAfterTestRun
 	private CPSpecificationOption _cpSpecificationOption;

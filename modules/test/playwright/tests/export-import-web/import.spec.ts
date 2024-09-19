@@ -11,9 +11,11 @@ import {getComparator} from 'playwright-core/lib/utils';
 import {apiHelpersTest} from '../../fixtures/apiHelpersTest';
 import {applicationsMenuPageTest} from '../../fixtures/applicationsMenuPageTest';
 import {dataApiHelpersTest} from '../../fixtures/dataApiHelpersTest';
+import {depotAdminPageTest} from '../../fixtures/depotAdminPageTest';
 import {documentLibraryPagesTest} from '../../fixtures/documentLibraryPages.fixtures';
 import {loginTest} from '../../fixtures/loginTest';
 import {productMenuPageTest} from '../../fixtures/productMenuPageTest';
+import {depotsPagesTest} from '../../tests/depot-web/fixtures/depotsPagesTest';
 import getRandomString from '../../utils/getRandomString';
 import {getTempDir} from '../../utils/temp';
 import {exportImportPagesTest} from './fixtures/exportImportPagesTest';
@@ -27,6 +29,8 @@ export const test = mergeTests(
 	productMenuPageTest,
 	exportImportPagesTest,
 	stagingPageTest,
+	depotsPagesTest,
+	depotAdminPageTest,
 	loginTest()
 );
 
@@ -57,6 +61,49 @@ async function getSiteHomePageScreenshot(
 	return screenshot;
 }
 
+test(
+	'can XSS with `searchContainerId` in Asset Libraries import',
+	{tag: '@LPS-195766'},
+	async ({apiHelpers, depotAdminPage, page}) => {
+		const depotName = getRandomString();
+
+		await apiHelpers.jsonWebServicesDepot.addDepotEntry(depotName);
+
+		await depotAdminPage.goToDepotByName(depotName);
+
+		await depotAdminPage.gotoImport();
+
+		const paramName =
+			'_com_liferay_exportimport_web_portlet_ImportPortlet_searchContainerId';
+
+		const requestPromise = page.waitForRequest(
+			(request) =>
+				request.method() === 'GET' && request.url().includes(paramName)
+		);
+
+		const request = await requestPromise;
+
+		const insertString = '%22%3E%3Cimg%20src=1%20onerror=alert(123)%3E';
+
+		const [urlBase, urlParam] = request.url().split(`${paramName}=`);
+
+		const newUrl = `${urlBase}${paramName}=${urlParam.replace(/([^&]+)/, `$1${insertString}`)}`;
+
+		let alertTriggered = false;
+
+		page.on('dialog', async (dialog) => {
+			if (dialog.type() === 'alert') {
+				alertTriggered = true;
+				await dialog.dismiss();
+			}
+		});
+
+		await page.goto(newUrl);
+
+		expect(alertTriggered).toBe(false);
+	}
+);
+
 test('can import a folder with document type restrictions and workflow', async ({
 	apiHelpers,
 	documentLibraryEditFolderPage,
@@ -70,7 +117,7 @@ test('can import a folder with document type restrictions and workflow', async (
 		path.join(__dirname, 'dependencies', 'folder.portlet.lar')
 	);
 	await exportImportFramePage.close();
-	await documentLibraryPage.editEntry('LPS-205933');
+	await documentLibraryPage.goToEditFolder('LPS-205933');
 
 	expect(
 		await documentLibraryEditFolderPage.getSelectedWorkflowDefinition()
@@ -112,12 +159,17 @@ test('can import a lar file selecting some items to import', async ({
 	).toBeVisible();
 });
 
-[{name: 'com.liferay.site.initializer.welcome'}].forEach(({name}) => {
+[
+	{name: 'com.liferay.site.initializer.masterclass', shouldFail: true},
+	{name: 'com.liferay.site.initializer.welcome'},
+].forEach(({name, shouldFail}) => {
 	test(`site initializer ${name} can be exported and imported`, async ({
 		apiHelpers,
 		page,
 		stagingPage,
-	}) => {
+	}, testInfo) => {
+		testInfo.fail(shouldFail);
+
 		const site = await apiHelpers.headlessSite.createSite({
 			name,
 			templateKey: name,

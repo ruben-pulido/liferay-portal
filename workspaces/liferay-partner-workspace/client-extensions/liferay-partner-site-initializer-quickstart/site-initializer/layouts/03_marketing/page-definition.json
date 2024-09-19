@@ -246,19 +246,19 @@
 															"value": {
 																"href": {
 																	"value_i18n": {
-																		"ar_SA": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"ca_ES": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"de_DE": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"en_US": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"es_ES": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"fi_FI": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"fr_FR": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"hu_HU": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"ja_JP": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"nl_NL": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"pt_BR": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"sv_SE": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
-																		"zh_CN": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing-resources-pdf/partner-marketing-program-guide.pdf$]"
+																		"ar_SA": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"ca_ES": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"de_DE": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"en_US": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"es_ES": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"fi_FI": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"fr_FR": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"hu_HU": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"ja_JP": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"nl_NL": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"pt_BR": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"sv_SE": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]",
+																		"zh_CN": "[$DOCUMENT_URL:/site-initializer/documents/group/marketing/marketing-resources-pdf/partner-marketing-program-guide.pdf$]"
 																	}
 																}
 															}
@@ -320,7 +320,7 @@
 																	"fieldKey": "FileEntry_previewImage",
 																	"itemReference": {
 																		"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																		"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/content-welcome-banner-resources/marketing-welcome-banner-bg.png#]"
+																		"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/content-welcome-banner-resources/marketing_welcome_banner_bg.png#]"
 																	}
 																}
 															}
@@ -769,7 +769,7 @@
 																											"fieldKey": "FileEntry_previewImage",
 																											"itemReference": {
 																												"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/quick-links-resources/dollar-sign-blue.png#]"
+																												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/quick-links-resources/dollar_sign_blue.png#]"
 																											}
 																										}
 																									}
@@ -1374,7 +1374,7 @@
 																											"fieldKey": "FileEntry_previewImage",
 																											"itemReference": {
 																												"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/quick-links-resources/book-green.png#]"
+																												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/quick-links-resources/book_green.png#]"
 																											}
 																										}
 																									}
@@ -1962,7 +1962,7 @@
 																											"fieldKey": "FileEntry_previewImage",
 																											"itemReference": {
 																												"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/quick-links-resources/video-green.png#]"
+																												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/quick-links-resources/video_green.png#]"
 																											}
 																										}
 																									}
@@ -3111,7 +3111,7 @@
 																											"fieldKey": "FileEntry_previewImage",
 																											"itemReference": {
 																												"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/quick-links-resources/calendar-blue.png#]"
+																												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/quick-links-resources/calendar_blue.png#]"
 																											}
 																										}
 																									}

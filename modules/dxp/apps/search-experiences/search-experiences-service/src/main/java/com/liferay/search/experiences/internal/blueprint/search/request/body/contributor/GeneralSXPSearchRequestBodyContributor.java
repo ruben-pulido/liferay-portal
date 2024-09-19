@@ -5,9 +5,11 @@
 
 package com.liferay.search.experiences.internal.blueprint.search.request.body.contributor;
 
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.search.experiences.internal.blueprint.parameter.SXPParameterData;
 import com.liferay.search.experiences.rest.dto.v1_0.Configuration;
@@ -31,7 +33,9 @@ public class GeneralSXPSearchRequestBodyContributor
 			return;
 		}
 
-		if (generalConfiguration.getClauseContributorsExcludes() != null) {
+		if (!ArrayUtil.isEmpty(
+				generalConfiguration.getClauseContributorsExcludes())) {
+
 			searchRequestBuilder.withSearchContext(
 				searchContext -> searchContext.setAttribute(
 					"search.full.query.clause.contributors.excludes",
@@ -39,7 +43,9 @@ public class GeneralSXPSearchRequestBodyContributor
 						generalConfiguration.getClauseContributorsExcludes())));
 		}
 
-		if (generalConfiguration.getClauseContributorsIncludes() != null) {
+		if (!ArrayUtil.isEmpty(
+				generalConfiguration.getClauseContributorsIncludes())) {
+
 			searchRequestBuilder.withSearchContext(
 				searchContext -> searchContext.setAttribute(
 					"search.full.query.clause.contributors.includes",
@@ -61,25 +67,27 @@ public class GeneralSXPSearchRequestBodyContributor
 				generalConfiguration.getIncludeResponseString());
 		}
 
-		if (generalConfiguration.getQueryString() != null) {
+		if (!Validator.isBlank(generalConfiguration.getQueryString())) {
 			searchRequestBuilder.queryString(
 				generalConfiguration.getQueryString());
 		}
 
-		if (generalConfiguration.getSearchableAssetTypes() != null) {
+		if (!ArrayUtil.isEmpty(
+				generalConfiguration.getSearchableAssetTypes())) {
+
 			searchRequestBuilder.entryClassNames(
 				generalConfiguration.getSearchableAssetTypes());
 			searchRequestBuilder.modelIndexerClassNames(
 				generalConfiguration.getSearchableAssetTypes());
 		}
 
-		if (generalConfiguration.getLanguageId() != null) {
+		if (!Validator.isBlank(generalConfiguration.getLanguageId())) {
 			searchRequestBuilder.locale(
 				LocaleUtil.fromLanguageId(
 					generalConfiguration.getLanguageId()));
 		}
 
-		if (generalConfiguration.getTimeZoneId() != null) {
+		if (!Validator.isBlank(generalConfiguration.getTimeZoneId())) {
 			searchRequestBuilder.withSearchContext(
 				searchContext -> searchContext.setTimeZone(
 					TimeZoneUtil.getTimeZone(

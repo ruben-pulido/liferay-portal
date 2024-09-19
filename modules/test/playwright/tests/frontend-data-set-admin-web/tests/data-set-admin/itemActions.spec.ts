@@ -29,6 +29,7 @@ export const test = mergeTests(
 	actionsPageTest,
 	dataSetManagerApiHelpersTest,
 	featureFlagsTest({
+		'LPD-34636': true,
 		'LPS-164563': true,
 		'LPS-178052': true,
 	}),
@@ -166,6 +167,14 @@ test(
 
 			await form.typeSelect.selectOption('Async');
 
+			await expect(form.requestBodyInput).toBeVisible();
+
+			await checkHelperTooltip({
+				formElement: form.requestBodyInput,
+				page,
+				text: 'This field must be a valid JSON that matches the schema of the endpoint used in this action. Use it to send data to the server.',
+			});
+
 			await actionsPage.selectTab({
 				container: actionsPage.statusMessagesTabs,
 				label: 'Success',
@@ -259,6 +268,32 @@ test(
 				page,
 			});
 		});
+
+		await test.step('Validate valid JSON in request body', async () => {
+			const requestBodyInput = form.requestBodyInput;
+
+			await form.typeSelect.selectOption('Headless');
+
+			await requestBodyInput.fill(getRandomString());
+
+			const parent = page
+				.locator('.form-group.has-error')
+				.filter({has: requestBodyInput});
+
+			expect(parent).toBeVisible();
+
+			expect(
+				parent.getByText('This field must contain a valid JSON.')
+			).toBeVisible();
+
+			await requestBodyInput.fill('{}');
+
+			expect(
+				parent.getByText('This field must contain a valid JSON.')
+			).not.toBeVisible();
+
+			await requestBodyInput.clear();
+		});
 	}
 );
 
@@ -274,6 +309,7 @@ test(
 		let icon: string = 'catalog';
 		let label: string = getRandomString();
 		let method: EAsyncActionMethod = EAsyncActionMethod.GET;
+		const requestBody: string = '{"Async": "async"}';
 		let successStatusMessage: string = getRandomString();
 		const type: EItemActionType = EItemActionType.ASYNC;
 		let url: string = getRandomString();
@@ -291,6 +327,7 @@ test(
 				icon,
 				label,
 				method,
+				requestBody,
 				successStatusMessage,
 				type,
 				url,
@@ -343,6 +380,7 @@ test(
 			await expect(form.iconInput).toHaveValue(icon);
 			await expect(form.labelInput).toHaveValue(label);
 			await expect(form.methodSelect).toHaveValue(method);
+			await expect(form.requestBodyInput).toHaveValue(requestBody);
 			await expect(form.successStatusMessageInput).toHaveValue(
 				successStatusMessage
 			);
@@ -373,6 +411,8 @@ test(
 				type,
 				url,
 			});
+
+			await actionsPage.actionForm.requestBodyInput.clear();
 
 			await actionsPage.actionForm.saveButton.click();
 
@@ -418,6 +458,7 @@ test(
 		let headlessActionKey: string = getRandomString();
 		let icon: string = 'heading';
 		let label: string = getRandomString();
+		const requestBody: string = '{"Headless": "sdfs"}';
 		let successStatusMessage: string = getRandomString();
 		const type: EItemActionType = EItemActionType.HEADLESS;
 
@@ -433,6 +474,7 @@ test(
 				headlessActionKey,
 				icon,
 				label,
+				requestBody,
 				successStatusMessage,
 				type,
 			});
@@ -483,6 +525,7 @@ test(
 			);
 			await expect(form.iconInput).toHaveValue(icon);
 			await expect(form.labelInput).toHaveValue(label);
+			await expect(form.requestBodyInput).toHaveValue(requestBody);
 			await expect(form.successStatusMessageInput).toHaveValue(
 				successStatusMessage
 			);
@@ -508,6 +551,8 @@ test(
 				successStatusMessage,
 				type,
 			});
+
+			await actionsPage.actionForm.requestBodyInput.clear();
 
 			await actionsPage.actionForm.saveButton.click();
 

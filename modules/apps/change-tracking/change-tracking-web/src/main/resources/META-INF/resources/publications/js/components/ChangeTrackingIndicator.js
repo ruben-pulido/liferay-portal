@@ -70,7 +70,6 @@ export default function ChangeTrackingIndicator({
 	const COLUMN_NAME = 'name';
 
 	const [ascending, setAscending] = useState(orderByAscending === 'true');
-	const [closeWarning, setCloseWarning] = useState(false);
 	const [column, setColumn] = useState(
 		orderByColumn === COLUMN_NAME ? COLUMN_NAME : COLUMN_MODIFIED_DATE
 	);
@@ -463,6 +462,14 @@ export default function ChangeTrackingIndicator({
 								displayType="unstyled"
 								onClick={() => {
 									setShowWarning(false);
+
+									if (popoverCheckbox) {
+										savePortalPreferences(
+											'hideContextChangeWarningDuration',
+											saveDisplayPreferenceURL,
+											hideContextChangeWarningDuration
+										);
+									}
 								}}
 								size="xs"
 								symbol="times"
@@ -471,7 +478,17 @@ export default function ChangeTrackingIndicator({
 						</ClayLayout.ContentCol>
 					</ClayLayout.ContentRow>
 				}
-				onShowChange={setShowWarning}
+				onShowChange={(value) => {
+					setShowWarning(value);
+
+					if (popoverCheckbox) {
+						savePortalPreferences(
+							'hideContextChangeWarningDuration',
+							saveDisplayPreferenceURL,
+							hideContextChangeWarningDuration
+						);
+					}
+				}}
 				show={showWarning}
 				style={{maxWidth: contextChangeButtons ? '711px' : '421px'}}
 				trigger={renderTrigger}
@@ -540,7 +557,7 @@ export default function ChangeTrackingIndicator({
 									<ClayButton
 										displayType="secondary"
 										onClick={() => {
-											setCloseWarning(true);
+											setShowWarning(false);
 
 											if (popoverCheckbox) {
 												savePortalPreferences(
@@ -567,7 +584,7 @@ export default function ChangeTrackingIndicator({
 										displayType="secondary"
 										onClick={() => {
 											setShowModal(true);
-											setCloseWarning(true);
+											setShowWarning(false);
 
 											if (popoverCheckbox) {
 												savePortalPreferences(
@@ -654,6 +671,7 @@ export default function ChangeTrackingIndicator({
 			return (
 				<ClayDropDown
 					alignmentPosition={Align.BottomCenter}
+					menuElementAttrs={{style: {maxWidth: '303px'}}}
 					renderMenuOnClick
 					trigger={
 						<ClayButton
@@ -703,9 +721,7 @@ export default function ChangeTrackingIndicator({
 				</ClayLayout.ContentCol>
 
 				<ClayLayout.ContentCol>
-					{showWarning && !closeWarning
-						? renderWarning()
-						: renderDropdown()}
+					{showWarning ? renderWarning() : renderDropdown()}
 				</ClayLayout.ContentCol>
 
 				<ClayLayout.ContentCol>

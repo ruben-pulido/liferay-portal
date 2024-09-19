@@ -85,6 +85,10 @@ public class OpenAPIResourceImpl {
 
 	private final Set<Class<?>> _resourceClasses = new HashSet<Class<?>>() {
 		{
+			add(AssetAppearsOnHistogramMetricResourceImpl.class);
+
+			add(AssetHistogramMetricResourceImpl.class);
+
 			add(AssetMetricResourceImpl.class);
 
 			add(OpenAPIResourceImpl.class);

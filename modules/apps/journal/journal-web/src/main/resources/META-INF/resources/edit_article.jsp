@@ -144,7 +144,7 @@ journalEditArticleDisplayContext.setViewAttributes();
 				<li class="tbar-item">
 					<div class="c-gap-3 form-group-sm journal-article-button-row mb-0 tbar-section text-right">
 						<c:choose>
-							<c:when test='<%= FeatureFlagManagerUtil.isEnabled("LPD-11228") %>'>
+							<c:when test='<%= FeatureFlagManagerUtil.isEnabled("LPD-11228") && !JournalUtil.isEditDefaultValues(article) %>'>
 								<div class="align-items-center d-none small text-danger" id="<portlet:namespace />lockErrorIndicator">
 									<liferay-ui:message key="autosave-error" />
 
@@ -367,7 +367,7 @@ journalEditArticleDisplayContext.setViewAttributes();
 												<%
 												StringBundler sb = new StringBundler(3);
 
-												sb.append(LanguageUtil.get(request, "changing-the-friendly-url-will-affect-all-web-content-article-versions-even-when-saving-it-as-a-draft"));
+												sb.append(LanguageUtil.get(request, "changing-the-friendly-url-will-affect-all-web-content-article-versions-even-when-autosaving"));
 												sb.append(StringPool.SPACE);
 												sb.append(LanguageUtil.get(request, "the-friendly-url-may-be-modified-to-ensure-uniqueness"));
 												%>

@@ -8,6 +8,7 @@ package com.liferay.jenkins.results.parser.testray;
 import com.liferay.jenkins.results.parser.Dom4JUtil;
 import com.liferay.jenkins.results.parser.JenkinsMaster;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
+import com.liferay.jenkins.results.parser.NotificationUtil;
 import com.liferay.jenkins.results.parser.TestrayResultsParserUtil;
 import com.liferay.jenkins.results.parser.TopLevelBuild;
 
@@ -298,20 +299,34 @@ public class TestrayServer {
 	}
 
 	public String requestGet(String urlPath) throws IOException {
-		return JenkinsResultsParserUtil.toString(
-			getTestrayURL(urlPath), true,
-			JenkinsResultsParserUtil.HttpRequestMethod.GET, null,
-			getHTTPAuthorization());
+		try {
+			return JenkinsResultsParserUtil.toString(
+				getTestrayURL(urlPath), true, 2,
+				JenkinsResultsParserUtil.HttpRequestMethod.GET, null, 5,
+				_MILLIS_REQUEST_TIMEOUT_DEFAULT, getHTTPAuthorization(), true);
+		}
+		catch (IOException ioException) {
+			_sendCommunicationFailureNotification(ioException.getMessage());
+
+			throw ioException;
+		}
 	}
 
 	public String requestPost(
 			boolean checkCache, String urlPath, String requestData)
 		throws IOException {
 
-		return JenkinsResultsParserUtil.toString(
-			getTestrayURL(urlPath), checkCache,
-			JenkinsResultsParserUtil.HttpRequestMethod.POST, requestData,
-			getHTTPAuthorization());
+		try {
+			return JenkinsResultsParserUtil.toString(
+				getTestrayURL(urlPath), checkCache, 2,
+				JenkinsResultsParserUtil.HttpRequestMethod.POST, requestData, 5,
+				_MILLIS_REQUEST_TIMEOUT_DEFAULT, getHTTPAuthorization(), false);
+		}
+		catch (IOException ioException) {
+			_sendCommunicationFailureNotification(ioException.getMessage());
+
+			throw ioException;
+		}
 	}
 
 	public String requestPost(String urlPath, String requestData)
@@ -444,13 +459,20 @@ public class TestrayServer {
 				requestPost(
 					checkCache, "/o/graphql", requestJSONObject.toString()));
 
-			String duration = JenkinsResultsParserUtil.toDurationString(
-				JenkinsResultsParserUtil.getCurrentTimeMillis() - start);
+			long duration =
+				JenkinsResultsParserUtil.getCurrentTimeMillis() - start;
+
+			if (duration > 180000) {
+				_sendCommunicationFailureNotification(
+					"Slow response time: Testray GraphQL query took " +
+						duration + " ms");
+			}
 
 			System.out.println(
 				JenkinsResultsParserUtil.combine(
 					String.valueOf(getURL()), "/o/graphql query: ",
-					sb.toString(), " in ", duration));
+					sb.toString(), " in ",
+					JenkinsResultsParserUtil.toDurationString(duration)));
 
 			try {
 				JSONObject dataJSONObject = responseJSONObject.getJSONObject(
@@ -627,6 +649,20 @@ public class TestrayServer {
 		testrayS3Bucket.createTestrayS3Object(
 			"inbox/" + resultsTarGzFile.getName(), resultsTarGzFile);
 	}
+
+	private void _sendCommunicationFailureNotification(String message) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(message);
+		sb.append("\n");
+		sb.append(System.getenv("TOP_LEVEL_BUILD_URL"));
+
+		NotificationUtil.sendSlackNotification(
+			sb.toString(), "#ci-notifications", ":testray:",
+			"Testray Communication Failure", "Liferay CI");
+	}
+
+	private static final int _MILLIS_REQUEST_TIMEOUT_DEFAULT = 60000;
 
 	private static final Map<Long, TestrayBuild> _testrayBuilds =
 		new HashMap<>();

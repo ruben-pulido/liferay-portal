@@ -41,6 +41,7 @@ export interface IDataSet {
 			method: string;
 		};
 	};
+	additionalAPIURLParameters: string;
 	defaultItemsPerPage: number;
 	defaultVisualizationMode: string;
 	description: string;

@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {ClayButtonWithIcon} from '@clayui/button';
+import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown, {Align} from '@clayui/drop-down';
 import ClayLayout from '@clayui/layout';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
-import ClayPanel from '@clayui/panel';
+import ClayModal, {useModal} from '@clayui/modal';
+import {FrontendDataSet} from '@liferay/frontend-data-set-web';
 import {createPortletURL, fetch, getPortletId} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
@@ -28,8 +29,15 @@ const PublicationTimeline = ({
 	timelineEditURL,
 	timelineItemsURL,
 }) => {
+	const MAX_DROPDOWN_ITEMS_SHOWN = 6;
 	const [timelineItems, setTimelineItems] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [showModal, setShowModal] = useState(false);
+
+	/* eslint-disable no-unused-vars */
+	const {observer, onClose} = useModal({
+		onClose: () => setShowModal(false),
+	});
 
 	const createMVCRenderCommandURL = (
 		ctCollectionId,
@@ -61,10 +69,208 @@ const PublicationTimeline = ({
 			{revert: true}
 		);
 	};
+
 	const getReviewURL = (ctCollectionId) => {
 		return createMVCRenderCommandURL(
 			ctCollectionId,
 			'/change_tracking/view_changes'
+		);
+	};
+
+	const renderModal = () => {
+		if (!showModal) {
+			return '';
+		}
+
+		return (
+			<ClayModal
+				className="entity-history-modal"
+				observer={observer}
+				size="full-screen"
+				spritemap={spritemap}
+			>
+				<ClayModal.Header>
+					<div className="autofit-row">
+						{Liferay.Language.get('view-all-history')}
+					</div>
+				</ClayModal.Header>
+
+				<ClayModal.Body
+					style={{borderTop: 0, marginTop: 0, paddingTop: 0}}
+				>
+					<FrontendDataSet
+						creationMenu={null}
+						id="PublicationTimelineEntityHistoryTable"
+						items={timelineItems}
+						itemsPerPage={10}
+						namespace={namespace}
+						selectedItemsKey="id"
+						showManagementBar={false}
+						showPagination={true}
+						showSearch={false}
+						views={[
+							{
+								contentRenderer: 'table',
+								label: 'Table',
+								name: 'table',
+								schema: {
+									fields: [
+										{
+											actionId: 'view',
+											contentRenderer: 'actionLink',
+											fieldName: 'name',
+											label: Liferay.Language.get(
+												'publication'
+											),
+											sortable: true,
+										},
+										{
+											contentRenderer: 'status',
+											fieldName: 'status',
+											label: Liferay.Language.get(
+												'status'
+											),
+											sortable: true,
+										},
+										{
+											fieldName: 'ctEntryUser',
+											label: Liferay.Language.get('user'),
+											sortable: true,
+										},
+										{
+											fieldName: 'ctEntryChangeType',
+											label: Liferay.Language.get(
+												'changed'
+											),
+											sortable: true,
+										},
+										{
+											contentRenderer: 'dateTime',
+											fieldName: 'ctEntryDateModified',
+											label: Liferay.Language.get(
+												'last-modified'
+											),
+											sortable: true,
+										},
+									],
+								},
+								thumbnail: 'table',
+							},
+						]}
+					/>
+				</ClayModal.Body>
+
+				<ClayModal.Footer
+					last={
+						<ClayButton
+							aria-label={Liferay.Language.get('done')}
+							displayType="primary"
+							onClick={() => {
+								onClose();
+							}}
+						>
+							{Liferay.Language.get('done')}
+						</ClayButton>
+					}
+				/>
+			</ClayModal>
+		);
+	};
+
+	const renderTimelineItemRow = (timelineItem) => {
+		return (
+			<ClayDropDown.Item key={timelineItem.id}>
+				<ClayLayout.ContentRow className="c-mb-1">
+					<ClayLayout.ContentCol expand>
+						<div className="align-items-center d-flex">
+							<span className="c-pr-2">{timelineItem.name}</span>
+
+							<WorkflowStatusLabel
+								workflowStatus={timelineItem.status.code}
+							/>
+						</div>
+
+						<div className="text-secondary">
+							{timelineItem.description}
+						</div>
+
+						<div className="text-secondary">
+							{Liferay.FeatureFlags['LPD-20556']
+								? timelineItem.ctEntryStatusMessage
+								: timelineItem.statusMessage}
+						</div>
+					</ClayLayout.ContentCol>
+
+					<ClayLayout.ContentCol>
+						{Liferay.FeatureFlags['LPD-20556'] ? (
+							<>
+								{timelineItem.actions.get ? (
+									<ClayDropDown
+										alignmentPosition={Align.BottomLeft}
+										renderMenuOnClick
+										spritemap={spritemap}
+										trigger={
+											<ClayButtonWithIcon
+												aria-label="timeline-actions"
+												displayType="unstyled"
+												size="sm"
+												spritemap={spritemap}
+												symbol="ellipsis-v"
+											/>
+										}
+									>
+										<TimelineDropdownMenu
+											namespace={namespace}
+											navigate={navigate}
+											timelineClassNameId={
+												timelineClassNameId
+											}
+											timelineClassPK={timelineClassPK}
+											timelineEditURL={timelineEditURL}
+											timelineItem={timelineItem}
+										/>
+									</ClayDropDown>
+								) : null}
+							</>
+						) : (
+							<>
+								{timelineItem.actions ? (
+									<TimelineDropdownMenu
+										deleteURL={
+											timelineItem.status.code ===
+												WORKFLOW_STATUS_DRAFT &&
+											!!timelineItem.actions.delete
+												? timelineItem.actions.delete
+														.href
+												: undefined
+										}
+										editURL={
+											timelineItem.status.code ===
+												WORKFLOW_STATUS_DRAFT &&
+											!!timelineItem.actions.update
+												? getEditURL(timelineItem.id)
+												: undefined
+										}
+										revertURL={
+											timelineItem.status.code ===
+											WORKFLOW_STATUS_APPROVED
+												? getRevertURL(timelineItem.id)
+												: undefined
+										}
+										reviewURL={
+											timelineItem.status.code !==
+												WORKFLOW_STATUS_PENDING &&
+											!!timelineItem.actions.get
+												? getReviewURL(timelineItem.id)
+												: undefined
+										}
+									/>
+								) : null}
+							</>
+						)}
+					</ClayLayout.ContentCol>
+				</ClayLayout.ContentRow>
+			</ClayDropDown.Item>
 		);
 	};
 
@@ -77,11 +283,34 @@ const PublicationTimeline = ({
 			.then((response) => {
 				return response.json();
 			})
-			.then((jsonResponse) => {
-				setTimelineItems(jsonResponse.items);
+			.then(async (jsonResponse) => {
+				const tempTimelineItems = jsonResponse.items;
+
+				for (let i = 0; i < tempTimelineItems.length; i++) {
+					await fetch(
+						`/o/change-tracking-rest/v1.0/ct-collections/${tempTimelineItems[i].id}/ct-entries/by-model-class-name-id/${timelineClassNameId}/by-model-class-pk/${timelineClassPK}`,
+						{method: 'GET'}
+					)
+						.then((response) => {
+							return response.json();
+						})
+						.then((jsonResponse) => {
+							tempTimelineItems[i].ctEntryChangeType =
+								jsonResponse.changeType;
+							tempTimelineItems[i].ctEntryDateModified =
+								jsonResponse.dateModified;
+							tempTimelineItems[i].ctEntryId = jsonResponse.id;
+							tempTimelineItems[i].ctEntryStatusMessage =
+								jsonResponse.statusMessage;
+							tempTimelineItems[i].ctEntryUser =
+								jsonResponse.ownerName;
+						});
+				}
+
+				setTimelineItems(tempTimelineItems);
 				setLoading(false);
 			});
-	}, [timelineItemsURL]);
+	}, [timelineClassNameId, timelineClassPK, timelineItems, timelineItemsURL]);
 
 	if (loading) {
 		return (
@@ -92,136 +321,39 @@ const PublicationTimeline = ({
 	}
 	if (timelineItems && !!timelineItems.length) {
 		return (
-			<div className="publication-timeline">
-				{timelineItems.map((timelineItem) => (
-					<ClayPanel
-						key={timelineItem.id}
-						style={{
-							borderBottomColor: '#e7e7ed',
-							marginBottom: 0,
-						}}
-					>
-						<ClayPanel.Body>
-							<ClayLayout.ContentRow>
-								<ClayLayout.ContentCol expand>
-									<div>
-										<span style={{paddingRight: '10px'}}>
-											{timelineItem.name}
-										</span>
+			<>
+				{renderModal()}
 
-										<WorkflowStatusLabel
-											workflowStatus={
-												timelineItem.status.code
-											}
-										/>
-									</div>
+				<div className="publication-timeline">
+					<ClayDropDown.ItemList className="c-mb-0">
+						{Liferay.FeatureFlags['LPD-20556']
+							? timelineItems
+									.slice(0, MAX_DROPDOWN_ITEMS_SHOWN)
+									.map((timelineItem) =>
+										renderTimelineItemRow(timelineItem)
+									)
+							: timelineItems.map((timelineItem) =>
+									renderTimelineItemRow(timelineItem)
+								)}
+					</ClayDropDown.ItemList>
 
-									<div className="text-secondary">
-										{timelineItem.description}
-									</div>
-
-									<div className="text-secondary">
-										{timelineItem.statusMessage}
-									</div>
-								</ClayLayout.ContentCol>
-
-								<ClayLayout.ContentCol>
-									{Liferay.FeatureFlags['LPD-20556'] ? (
-										<>
-											{timelineItem.actions.get ? (
-												<ClayDropDown
-													alignmentPosition={
-														Align.BottomLeft
-													}
-													renderMenuOnClick
-													spritemap={spritemap}
-													trigger={
-														<ClayButtonWithIcon
-															aria-label="timeline-actions"
-															displayType="unstyled"
-															size="sm"
-															spritemap={
-																spritemap
-															}
-															symbol="ellipsis-v"
-														/>
-													}
-												>
-													<TimelineDropdownMenu
-														namespace={namespace}
-														navigate={navigate}
-														timelineClassNameId={
-															timelineClassNameId
-														}
-														timelineClassPK={
-															timelineClassPK
-														}
-														timelineEditURL={
-															timelineEditURL
-														}
-														timelineItem={
-															timelineItem
-														}
-													/>
-												</ClayDropDown>
-											) : null}
-										</>
-									) : (
-										<>
-											{timelineItem.actions ? (
-												<TimelineDropdownMenu
-													deleteURL={
-														timelineItem.status
-															.code ===
-															WORKFLOW_STATUS_DRAFT &&
-														!!timelineItem.actions
-															.delete
-															? timelineItem
-																	.actions
-																	.delete.href
-															: undefined
-													}
-													editURL={
-														timelineItem.status
-															.code ===
-															WORKFLOW_STATUS_DRAFT &&
-														!!timelineItem.actions
-															.update
-															? getEditURL(
-																	timelineItem.id
-																)
-															: undefined
-													}
-													revertURL={
-														timelineItem.status
-															.code ===
-														WORKFLOW_STATUS_APPROVED
-															? getRevertURL(
-																	timelineItem.id
-																)
-															: undefined
-													}
-													reviewURL={
-														timelineItem.status
-															.code !==
-															WORKFLOW_STATUS_PENDING &&
-														!!timelineItem.actions
-															.get
-															? getReviewURL(
-																	timelineItem.id
-																)
-															: undefined
-													}
-												/>
-											) : null}
-										</>
-									)}
-								</ClayLayout.ContentCol>
-							</ClayLayout.ContentRow>
-						</ClayPanel.Body>
-					</ClayPanel>
-				))}
-			</div>
+					{timelineItems.length > MAX_DROPDOWN_ITEMS_SHOWN &&
+					Liferay.FeatureFlags['LPD-20556'] ? (
+						<div className="dropdown-section" role="presentation">
+							<ClayButton
+								aria-label={Liferay.Language.get('view-more')}
+								className="btn-block"
+								displayType="secondary"
+								onClick={() => {
+									setShowModal(true);
+								}}
+							>
+								{Liferay.Language.get('view-more')}
+							</ClayButton>
+						</div>
+					) : null}
+				</div>
+			</>
 		);
 	}
 

@@ -2091,9 +2091,9 @@ components:
         PageSettings:
             discriminator:
                 mapping:
-                    CollectionPage: "#/components/schemas/CollectionPageSettings"
-                    ContentPage: "#/components/schemas/ContentPageSettings"
-                    WidgetPage: "#/components/schemas/WidgetPageSettings"
+                    CollectionPageSettings: "#/components/schemas/CollectionPageSettings"
+                    ContentPageSettings: "#/components/schemas/ContentPageSettings"
+                    WidgetPageSettings: "#/components/schemas/WidgetPageSettings"
                 propertyName: type
             properties:
                 customMetaTags:
@@ -2661,6 +2661,13 @@ components:
                         $ref: "../../headless-admin-taxonomy/headless-admin-taxonomy-impl/rest-openapi.yaml#Keyword"
                     readOnly: true
                     type: array
+                name_i18n:
+                    additionalProperties:
+                        type: string
+                    # @review
+                    description:
+                        The localized page's names.
+                    type: object
                 pageSettings:
                     $ref: "#/components/schemas/PageSettings"
                     # @review
@@ -2701,13 +2708,6 @@ components:
                     items:
                         "$ref": "#/components/schemas/ItemExternalReference"
                     type: array
-                title_i18n:
-                    additionalProperties:
-                        type: string
-                    # @review
-                    description:
-                        The localized page's titles.
-                    type: object
                 type:
                     enum:
                         - CollectionPage
@@ -7529,7 +7529,7 @@ paths:
             # @review
             description:
                 Adds a new site page
-            operationId: postSiteSiteByExternalReferenceCodeSitePage
+            operationId: postByExternalReferenceCodeSitePage
             parameters:
                 - in: path
                   name: siteExternalReferenceCode

@@ -24,6 +24,7 @@ type TOrder = {
 	channelId?: number;
 	currencyCode?: string;
 	id?: number;
+	name?: string;
 	orderItems?: TOrderItem[];
 	orderStatus?: string;
 	orderStatusInfo?: number;
@@ -73,6 +74,15 @@ export class HeadlessCommerceAdminOrderApiHelper {
 	}
 
 	async deleteOrder(orderId: number) {
+		const shipments =
+			await this.apiHelpers.headlessCommerceAdminShipment.getShipments();
+
+		for (const shipment of shipments.items) {
+			await this.apiHelpers.headlessCommerceAdminShipment.deleteShipment(
+				shipment.id
+			);
+		}
+
 		return this.apiHelpers.delete(
 			`${this.apiHelpers.baseUrl}${this.basePath}/orders/${orderId}`
 		);

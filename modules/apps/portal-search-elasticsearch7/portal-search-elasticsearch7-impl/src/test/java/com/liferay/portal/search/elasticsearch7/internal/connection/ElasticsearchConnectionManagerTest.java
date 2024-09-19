@@ -6,6 +6,8 @@
 package com.liferay.portal.search.elasticsearch7.internal.connection;
 
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.search.elasticsearch7.configuration.RESTClientLoggerLevel;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
@@ -166,6 +168,7 @@ public class ElasticsearchConnectionManagerTest {
 		).thenReturn(
 			null
 		);
+
 		Mockito.when(
 			elasticsearchConnection.isActive()
 		).thenReturn(
@@ -194,6 +197,7 @@ public class ElasticsearchConnectionManagerTest {
 		).thenReturn(
 			null
 		);
+
 		Mockito.when(
 			elasticsearchConnection.isActive()
 		).thenReturn(
@@ -222,6 +226,7 @@ public class ElasticsearchConnectionManagerTest {
 		).thenReturn(
 			"test"
 		);
+
 		Mockito.when(
 			elasticsearchConnection.isActive()
 		).thenReturn(
@@ -253,6 +258,7 @@ public class ElasticsearchConnectionManagerTest {
 		).thenReturn(
 			"test"
 		);
+
 		Mockito.when(
 			elasticsearchConnection.isActive()
 		).thenReturn(
@@ -269,6 +275,62 @@ public class ElasticsearchConnectionManagerTest {
 		Mockito.verify(
 			elasticsearchConnection, Mockito.never()
 		).connect();
+	}
+
+	@Test
+	public void testApplyProxyConfigurationInElasticsearchConnection() {
+		_enableRemoteMode();
+
+		String[] networkHostAddresses = RandomTestUtil.randomStrings(10);
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.networkHostAddresses()
+		).thenReturn(
+			networkHostAddresses
+		);
+
+		String proxyHost = RandomTestUtil.randomString();
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.proxyHost()
+		).thenReturn(
+			proxyHost
+		);
+
+		String proxyPassword = RandomTestUtil.randomString();
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.proxyPassword()
+		).thenReturn(
+			proxyPassword
+		);
+
+		int proxyPort = RandomTestUtil.randomInt();
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.proxyPort()
+		).thenReturn(
+			proxyPort
+		);
+
+		String proxyUserName = RandomTestUtil.randomString();
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.proxyUserName()
+		).thenReturn(
+			proxyUserName
+		);
+
+		_elasticsearchConnectionManager.applyConfigurations();
+
+		ProxyConfig proxyConfig = ReflectionTestUtil.getFieldValue(
+			_elasticsearchConnectionManager.getElasticsearchConnection(),
+			"_proxyConfig");
+
+		Assert.assertEquals(proxyHost, proxyConfig.getHost());
+		Assert.assertEquals(proxyPassword, proxyConfig.getPassword());
+		Assert.assertEquals(proxyPort, proxyConfig.getPort());
+		Assert.assertEquals(proxyUserName, proxyConfig.getUserName());
 	}
 
 	@Test
@@ -651,11 +713,13 @@ public class ElasticsearchConnectionManagerTest {
 		).thenReturn(
 			ConnectionConstants.REMOTE_CONNECTION_ID
 		);
+
 		Mockito.when(
 			_defaultRemoteElasticsearchConnection.getRestHighLevelClient()
 		).thenReturn(
 			Mockito.mock(RestHighLevelClient.class)
 		);
+
 		Mockito.when(
 			_defaultRemoteElasticsearchConnection.isActive()
 		).thenReturn(
@@ -691,11 +755,13 @@ public class ElasticsearchConnectionManagerTest {
 		).thenReturn(
 			_REMOTE_1_CONNECTION_ID
 		);
+
 		Mockito.when(
 			_remoteElasticsearchConnection1.getRestHighLevelClient()
 		).thenReturn(
 			Mockito.mock(RestHighLevelClient.class)
 		);
+
 		Mockito.when(
 			_remoteElasticsearchConnection1.isActive()
 		).thenReturn(
@@ -709,11 +775,13 @@ public class ElasticsearchConnectionManagerTest {
 		).thenReturn(
 			_REMOTE_2_CONNECTION_ID
 		);
+
 		Mockito.when(
 			_remoteElasticsearchConnection2.getRestHighLevelClient()
 		).thenReturn(
 			Mockito.mock(RestHighLevelClient.class)
 		);
+
 		Mockito.when(
 			_remoteElasticsearchConnection2.isActive()
 		).thenReturn(
@@ -727,11 +795,13 @@ public class ElasticsearchConnectionManagerTest {
 		).thenReturn(
 			_REMOTE_3_CONNECTION_ID
 		);
+
 		Mockito.when(
 			_remoteElasticsearchConnection3.getRestHighLevelClient()
 		).thenReturn(
 			null
 		);
+
 		Mockito.when(
 			_remoteElasticsearchConnection3.isActive()
 		).thenReturn(
@@ -745,11 +815,13 @@ public class ElasticsearchConnectionManagerTest {
 		).thenReturn(
 			ConnectionConstants.SIDECAR_CONNECTION_ID
 		);
+
 		Mockito.when(
 			_sidecarElasticsearchConnection.getRestHighLevelClient()
 		).thenReturn(
 			Mockito.mock(RestHighLevelClient.class)
 		);
+
 		Mockito.when(
 			_sidecarElasticsearchConnection.isActive()
 		).thenReturn(

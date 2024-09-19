@@ -49,6 +49,7 @@ const DEFAULT_PAGINATION_PAGE_NUMBER = 1;
 const FrontendDataSet = ({
 	actionParameterName,
 	activeViewSettings,
+	additionalAPIURLParameters,
 	apiURL,
 	appURL,
 	bulkActions,
@@ -219,9 +220,11 @@ const FrontendDataSet = ({
 			searchParam,
 			paginationDelta,
 			pageNumber,
-			activeSorts
+			activeSorts,
+			additionalAPIURLParameters
 		);
 	}, [
+		additionalAPIURLParameters,
 		apiURL,
 		currentURL,
 		paginationDelta,
@@ -646,18 +649,25 @@ const FrontendDataSet = ({
 	function executeAsyncItemAction({
 		errorMessage,
 		method = 'GET',
+		requestBody,
 		setActionItemLoading,
 		successMessage,
 		url,
 	}) {
-		return fetch(url, {
+		const requestOptions = {
 			headers: {
 				'Accept': 'application/json',
 				'Accept-Language': Liferay.ThemeDisplay.getBCP47LanguageId(),
 				'Content-Type': 'application/json',
 			},
 			method,
-		})
+		};
+
+		if (method !== 'GET') {
+			requestOptions.body = requestBody ? requestBody : '{}';
+		}
+
+		return fetch(url, requestOptions)
 			.then((response) => {
 				if (response.ok) {
 					Liferay.fire(EVENTS.ACTION_PERFORMED, {

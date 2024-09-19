@@ -54,9 +54,50 @@ export default function FormStepHandler({formId}) {
 
 	Liferay.on('formFragment:changeStep', onStepChange);
 
+	// Set active step when there's an error
+
+	const group = form.querySelector('.form-group.has-error');
+
+	if (group) {
+		const step = group.closest('[data-step-index]');
+
+		const index = Number(step.dataset.stepIndex);
+
+		if (index) {
+			Liferay.fire('formFragment:changeStep', {
+				emitter: form,
+				step: index,
+			});
+		}
+	}
+
+	// Set active step when there's an invalid field
+
+	const onSubmit = () => {
+		const fields = form.querySelectorAll('input');
+
+		for (const field of Array.from(fields)) {
+			if (!field.checkValidity()) {
+				const step = field.closest('[data-step-index]');
+
+				const index = Number(step.dataset.stepIndex);
+
+				Liferay.fire('formFragment:changeStep', {
+					emitter: form,
+					step: index,
+				});
+
+				break;
+			}
+		}
+	};
+
+	Liferay.on('formFragment:submit', onSubmit);
+
 	return {
 		dispose: () => {
 			Liferay.detach('formFragment:changeStep', onStepChange);
+			Liferay.detach('formFragment:submit', onSubmit);
 		},
 	};
 }

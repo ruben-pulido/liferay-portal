@@ -14,14 +14,10 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.Validator;
-
-import java.text.DateFormat;
-import java.text.ParseException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +29,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Carolina Barbosa
@@ -44,19 +42,14 @@ public class DateParameterUtil {
 			return null;
 		}
 
-		try {
-			DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
-				_PATTERN);
+		Matcher matcher = _pattern.matcher(dateString);
 
-			return LocalDate.parse(
-				dateFormat.format(dateFormat.parse(dateString)),
-				DateTimeFormatter.ofPattern(_PATTERN));
-		}
-		catch (ParseException parseException) {
-			_log.error(parseException);
+		if (!matcher.find()) {
+			return null;
 		}
 
-		return null;
+		return LocalDate.parse(
+			matcher.group(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	}
 
 	public static LocalDateTime getLocalDateTime(String dateTimeString) {
@@ -216,13 +209,13 @@ public class DateParameterUtil {
 		return null;
 	}
 
-	private static final String _PATTERN = "yyyy-MM-dd";
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		DateParameterUtil.class);
 
 	private static final List<String> _dateTimePatterns = Arrays.asList(
 		"yyyy-MM-dd H:mm", "yyyy-MM-dd HH:mm:ss",
 		"EEE MMM dd HH:mm:ss zzz yyyy");
+	private static final Pattern _pattern = Pattern.compile(
+		"^\\d{4}-\\d{2}-\\d{2}");
 
 }

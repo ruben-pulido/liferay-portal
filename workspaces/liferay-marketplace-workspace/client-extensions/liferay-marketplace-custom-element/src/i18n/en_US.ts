@@ -37,7 +37,13 @@ export default {
 	'an-unexpected-error-occurred': 'An unexpected error ocurred',
 	'and': 'and',
 	'app-build': 'App Build',
+	'app-documentation-url': 'App Documentation URL',
+	'app-installation-and-uninstallation-guide-url':
+		'App installation and uninstallation guide URL',
 	'app-name': 'App Name',
+	'app-provisioning': 'App Provisioning',
+	'app-storefront': 'App Storefront',
+	'app-support-and-help': 'App Support and Help',
 	'app-type': 'App Type',
 	'app-x-submitted': 'App <b>{0}</b> submitted',
 	'apply-to-your-use-of-this-service-the-name-on-your-liferay-account-will-be-used-in-this-liferay-marketplace-publisher-profile-it-may-appear-where-you-contribute-and-be-changed-at-any-time':
@@ -83,6 +89,7 @@ export default {
 	'content-media-type': 'Content Media Type',
 	'content-policy': 'Content policy',
 	'continue': 'Continue',
+	'continue-to-install': 'Continue to Install',
 	'coupon-code': 'Coupon Code',
 	'create': 'Create',
 	'create-a-cloud-app-to-be-delivered-as-a-live-service':
@@ -112,6 +119,8 @@ export default {
 	'define-profile-company-information-for-your-solution-this-will-inform-users-about-this-versions-updates-on-the-storefront':
 		'Define profile company information for your solution. This will inform users about this version’s updates on the storefront.',
 	'define-the-solution-profile': 'Define the solution profile',
+	'define-the-support-and-help-references-users-can-access-these-resources-pre-and-post-purchase-to-find-out-more-information-about-your-app-or-solution':
+		'Define the support and help references. Users can access these resources pre and post purchase to find out more information about your app or solution.',
 	'delete': 'Delete',
 	'deleting': 'Deleting',
 	'description': 'Description',
@@ -163,8 +172,10 @@ export default {
 	'get-started': 'Get Started',
 	'go-back-to-marketplace': 'Go Back to Marketplace',
 	'go-to-console': 'Go to Console',
+	'go-to-dashboard': 'Go to Dashboard',
 	'go-to-dxp': 'Go to DXP',
 	'go-to-marketplace': 'Go to Marketplace',
+	'go-to-my-apps': 'Go to My Apps',
 	'go-to-trial': 'Go to Trial',
 	'header': 'Header',
 	'host-name': 'Host Name',
@@ -184,6 +195,7 @@ export default {
 		'In the future, you will be able to submit your app source code for additional support and partnership opportunities with Liferay.',
 	'income': 'Income',
 	'insert-text-here': 'Insert text here',
+	'install': 'Install',
 	'installation': 'Installation',
 	'instance-size': 'Instance Size',
 	'insufficient-resource-requirements': 'Insufficient Resource Requirements',
@@ -206,7 +218,10 @@ export default {
 	'license-type': 'License Type',
 	'licenses': 'Licenses',
 	'liferay-learn': 'Liferay Learn',
+	'liferay-paas': 'Liferay PaaS',
 	'liferay-s': 'Liferay’s',
+	'liferay-saas': 'Liferay SaaS',
+	'liferay-self-hosted': 'Liferay Self-Hosted',
 	'limit-reached': 'Limit Reached',
 	'list-with-latest-published-apps': 'List with latest published apps',
 	'lorem-ipsum-dolor-sit-amet-consectetur':
@@ -310,7 +325,6 @@ export default {
 		'Select the offering of Liferay your app is compatible with. The compatibility selections will determine on what platforms your app is tested.',
 	'select-the-versions-of-liferay-that-your-app-is-compatible-with':
 		'Select the versions of Liferay that your app is compatible with.',
-	'self-hosted': 'Self-Hosted',
 	'self-managed': 'Self-Managed',
 	'send-request': 'Send Request',
 	'sign-in-with-a-different-account': 'Sign in with a different Account',
@@ -331,6 +345,9 @@ export default {
 	'subtotal-discount': 'Subtotal Discount',
 	'success': 'success',
 	'summary': 'Summary',
+	'support-email': 'Support Email',
+	'support-phone': 'Support Phone',
+	'support-url': 'Support URL',
 	'supported-version': 'Supported Version',
 	'tags': 'Tags',
 	'tags-help-to-describe-your-solution-in-the-marketplace-select-the-tags-most-relevant-to-your-solution-they-can-be-changed-if-needed':
@@ -429,6 +446,8 @@ export default {
 		'You can upload one or many ZIP files. Max total size is 500MB.',
 	'you-cannot-upload-more-than-x-files':
 		'You cannot upload more than {0} files.',
+	'you-currently-do-not-have-access-to-any-cloud-projects-please-login-as-a-user-that-has-access-to-a-project-or-contact-your-project-administrator-to-add-you-to-a-project':
+		'You currently do not have access to any Cloud Projects. Please login as a user that has access to a project or contact your project administrator to add you to a project.',
 	'your-request-completed-successfully':
 		'Your request completed successfully',
 	'zip-files-must-be-in-universal-file-format-archive-uffa-the-specially-structured-zip-encoded-archive-used-to-package-client-extension-project-outputs-this-format-must-support-the-following-use-cases-deliver-batch-engine-data-files-compatible-with-all-deployment-targets-deliver-dxp-configuration-resource-compatible-with-all-deployment-targets-deliver-static-resources-compatible-with-all-deployment-targets-deliver-the-infrastructure-metadata-necessary-to-deploy-to-lxc-sm-for-more-information-see':

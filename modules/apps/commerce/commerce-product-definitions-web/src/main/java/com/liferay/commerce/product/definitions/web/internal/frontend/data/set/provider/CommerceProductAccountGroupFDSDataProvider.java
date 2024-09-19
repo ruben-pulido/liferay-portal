@@ -12,14 +12,19 @@ import com.liferay.account.service.AccountGroupRelLocalService;
 import com.liferay.commerce.product.definitions.web.internal.constants.CommerceProductFDSNames;
 import com.liferay.commerce.product.definitions.web.internal.model.CProductAccountGroup;
 import com.liferay.commerce.product.model.CPDefinition;
+import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.frontend.data.set.provider.FDSDataProvider;
 import com.liferay.frontend.data.set.provider.search.FDSKeywords;
 import com.liferay.frontend.data.set.provider.search.FDSPagination;
+import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.util.ParamUtil;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +55,9 @@ public class CommerceProductAccountGroupFDSDataProvider
 
 		List<AccountGroupRel> accountGroupRels =
 			_accountGroupRelLocalService.getAccountGroupRels(
+				TransformUtil.transformToLongArray(
+					_getAccountGroups(httpServletRequest),
+					AccountGroup::getAccountGroupId),
 				CPDefinition.class.getName(), cpDefinitionId,
 				fdsKeywords.getKeywords(), fdsPagination.getStartPosition(),
 				fdsPagination.getEndPosition());
@@ -77,7 +85,38 @@ public class CommerceProductAccountGroupFDSDataProvider
 			httpServletRequest, "cpDefinitionId");
 
 		return _accountGroupRelLocalService.getAccountGroupRelsCount(
-			CPDefinition.class.getName(), cpDefinitionId);
+			TransformUtil.transformToLongArray(
+				_getAccountGroups(httpServletRequest),
+				AccountGroup::getAccountGroupId),
+			CPDefinition.class.getName(), cpDefinitionId,
+			fdsKeywords.getKeywords());
+	}
+
+	private List<AccountGroup> _getAccountGroups(
+			HttpServletRequest httpServletRequest)
+		throws PortalException {
+
+		long cpDefinitionId = ParamUtil.getLong(
+			httpServletRequest, "cpDefinitionId");
+
+		CPDefinition cpDefinition = _cpDefinitionLocalService.getCPDefinition(
+			cpDefinitionId);
+
+		LinkedHashMap<String, Object> params = new LinkedHashMap<>();
+
+		long permissionUserId = ParamUtil.getLong(
+			httpServletRequest, "permissionUserId");
+
+		if (permissionUserId > 0) {
+			params.put("permissionUserId", permissionUserId);
+		}
+
+		BaseModelSearchResult<AccountGroup> baseModelSearchResult =
+			_accountGroupLocalService.searchAccountGroups(
+				cpDefinition.getCompanyId(), null, params, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null);
+
+		return baseModelSearchResult.getBaseModels();
 	}
 
 	@Reference
@@ -85,5 +124,8 @@ public class CommerceProductAccountGroupFDSDataProvider
 
 	@Reference
 	private AccountGroupRelLocalService _accountGroupRelLocalService;
+
+	@Reference
+	private CPDefinitionLocalService _cpDefinitionLocalService;
 
 }

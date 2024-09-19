@@ -41,6 +41,7 @@ import selectCanUpdateItemConfiguration from '../../selectors/selectCanUpdateIte
 import selectCanUpdatePageStructure from '../../selectors/selectCanUpdatePageStructure';
 import selectLayoutDataItemLabel from '../../selectors/selectLayoutDataItemLabel';
 import moveItem from '../../thunks/moveItem';
+import moveStepper from '../../thunks/moveStepper';
 import switchSidebarPanel from '../../thunks/switchSidebarPanel';
 import {deepEqual} from '../../utils/checkDeepEqual';
 import {TARGET_POSITIONS} from '../../utils/drag_and_drop/constants/targetPositions';
@@ -157,49 +158,46 @@ function TopperContent({
 		deepEqual
 	);
 
-	const onDragEnd = (parentItemId, position) => {
-		dispatch(
-			moveItem({
-				itemId: item.itemId,
-				parentItemId,
-				position,
-			})
-		);
+	const onDragBegin = () => {
+		if (!isActive) {
+			selectItem(item.itemId, {
+				origin: ITEM_ACTIVATION_ORIGINS.layout,
+			});
+		}
 	};
 
-	const {handlerRef: itemHandlerRef, isDraggingSource: itemIsDraggingSource} =
-		useDragItem(
-			{...item, fieldTypes, fragmentEntryType, isWidget, name},
-			onDragEnd,
-			() => {
-				if (!isActive) {
-					selectItem(item.itemId, {
-						origin: ITEM_ACTIVATION_ORIGINS.layout,
-					});
-				}
-			}
-		);
-
-	const {
-		handlerRef: topperHandlerRef,
-		isDraggingSource: topperIsDraggingSource,
-	} = useDragItem(
-		{...item, fieldTypes, fragmentEntryType, name},
-		onDragEnd,
-		() => {
-			if (!isActive) {
-				selectItem(item.itemId, {
-					origin: ITEM_ACTIVATION_ORIGINS.layout,
+	const onDragEnd = (parentItemId, position) => {
+		const thunk = fieldTypes?.includes('stepper')
+			? moveStepper({
+					itemId: item.itemId,
+					parentItemId,
+					position,
+				})
+			: moveItem({
+					itemId: item.itemId,
+					parentItemId,
+					position,
 				});
-			}
-		}
+
+		dispatch(thunk);
+	};
+
+	const dragSource = {...item, fieldTypes, fragmentEntryType, isWidget, name};
+
+	const {handlerRef: itemRef, isDraggingSource: draggingItem} = useDragItem(
+		dragSource,
+		onDragEnd,
+		onDragBegin
 	);
+
+	const {handlerRef: topperRef, isDraggingSource: draggingTopper} =
+		useDragItem(dragSource, onDragEnd, onDragBegin);
 
 	const keyboardMovementSource = useMovementSource();
 
 	const isDraggingSource =
-		itemIsDraggingSource ||
-		topperIsDraggingSource ||
+		draggingItem ||
+		draggingTopper ||
 		keyboardMovementSource?.itemId === item.itemId;
 
 	const {elementRef, isFocusable} = useLayoutKeyboardNavigation(item);
@@ -268,7 +266,7 @@ function TopperContent({
 			}}
 			ref={(element) => {
 				if (canBeDragged) {
-					itemHandlerRef(element);
+					itemRef(element);
 				}
 
 				elementRef.current = element;
@@ -284,7 +282,7 @@ function TopperContent({
 						{canBeDragged && (
 							<li
 								className="page-editor__topper__drag-handler page-editor__topper__item tbar-item"
-								ref={topperHandlerRef}
+								ref={topperRef}
 							>
 								<ClayIcon
 									className="page-editor__topper__drag-icon page-editor__topper__icon"

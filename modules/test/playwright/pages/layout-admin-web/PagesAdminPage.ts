@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {FrameLocator, Locator, Page} from '@playwright/test';
+import {FrameLocator, Locator, Page, expect} from '@playwright/test';
 
 import {clickAndExpectToBeHidden} from '../../utils/clickAndExpectToBeHidden';
 import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
@@ -63,10 +63,10 @@ export class PagesAdminPage {
 		);
 	}
 
-	async addCSSClientExtension(clientExtensionName: string) {
+	private async addCSSClientExtension(clientExtensionName: string) {
 		await this.page
-			.locator('.portlet-body li', {
-				has: this.page.getByText('Design'),
+			.getByRole('link', {
+				name: 'Design',
 			})
 			.click();
 
@@ -78,7 +78,7 @@ export class PagesAdminPage {
 
 		// Wait for "Select Items" checkbox label to be visible which occurs when JavaScript hydration is complete.
 
-		await iframe.getByText('Select Items').waitFor({state: 'visible'});
+		await iframe.getByLabel(clientExtensionName).check({trial: true});
 
 		await iframe.getByLabel(clientExtensionName).check();
 
@@ -99,10 +99,10 @@ export class PagesAdminPage {
 		await this.configurationSaveButton.click();
 	}
 
-	async addJavaScriptClientExtension(clientExtensionName: string) {
+	private async addJavaScriptClientExtension(clientExtensionName: string) {
 		await this.page
-			.locator('.portlet-body li', {
-				has: this.page.getByText('Design'),
+			.getByRole('link', {
+				name: 'Design',
 			})
 			.click();
 
@@ -225,6 +225,30 @@ export class PagesAdminPage {
 		await waitForSuccessAlert(this.page, successMessage);
 	}
 
+	private async addThemeFaviconClientExtension(clientExtensionName: string) {
+		await this.page
+			.getByRole('link', {
+				name: 'Design',
+			})
+			.click();
+
+		await this.page.getByLabel('Select Favicon', {exact: true}).click();
+
+		const iframe = this.page.frameLocator('iframe[title="Select Favicon"]');
+
+		await iframe
+			.getByRole('link', {exact: true, name: 'Client Extension'})
+			.click();
+
+		await iframe.getByText(clientExtensionName).click();
+
+		await expect(
+			this.page.getByAltText(clientExtensionName, {exact: true})
+		).toBeVisible();
+
+		await this.configurationSaveButton.click();
+	}
+
 	async addWidgetPage({
 		addButtonLabel = 'Page',
 		name,
@@ -238,6 +262,53 @@ export class PagesAdminPage {
 			name,
 			template: 'Widget Page',
 		});
+	}
+
+	async changeFavicon(
+		layoutTitle: string,
+		filePath: string,
+		siteUrl: string
+	) {
+		await this.goto(siteUrl);
+
+		await this.clickOnAction('Configure', layoutTitle);
+
+		const fileChooserPromise = this.page.waitForEvent('filechooser');
+
+		await this.page
+			.locator('.portlet-body li', {
+				has: this.page.getByText('Design'),
+			})
+			.click();
+
+		await this.page
+			.getByLabel('Select Favicon', {exact: true})
+			.waitFor({state: 'visible'});
+
+		await this.page.getByLabel('Select Favicon', {exact: true}).click();
+
+		const iframe = this.page.frameLocator('iframe[title="Select Favicon"]');
+
+		await expect(
+			iframe.getByText('Drag & Drop Your Files or Browse to Upload')
+		).toBeVisible();
+
+		await iframe
+			.getByText('Drag & Drop Your Files or Browse to Upload')
+			.click();
+
+		const fileChooser = await fileChooserPromise;
+
+		await fileChooser.setFiles(filePath);
+
+		await iframe.getByRole('button', {exact: true, name: 'Add'}).click();
+
+		await this.configurationSaveButton.click();
+
+		await waitForSuccessAlert(
+			this.page,
+			'Success:The page was updated successfully.'
+		);
 	}
 
 	async clickOnJavaScriptClientExtensionsTab() {
@@ -257,6 +328,47 @@ export class PagesAdminPage {
 				.locator('li', {has: this.page.getByText(title)})
 				.getByRole('button', {name: 'Open Page Options Menu'}),
 		});
+	}
+
+	async clearThemeFaviconClientExtension({
+		layoutTitle,
+		siteUrl,
+	}: {
+		layoutTitle?: string;
+		siteUrl?: Site['friendlyUrlPath'];
+	}) {
+		if (!layoutTitle) {
+			await this.gotoPagesConfiguration(siteUrl);
+		}
+		else {
+			await this.goto(siteUrl);
+
+			await this.clickOnAction('Configure', layoutTitle);
+		}
+
+		await this.page
+			.locator('.portlet-body li', {
+				has: this.page.getByText('Design'),
+			})
+			.click();
+
+		await this.page.getByLabel('Clear Favicon', {exact: true}).click();
+
+		await expect(
+			this.page.getByAltText('Favicon from Theme', {exact: true})
+		).toBeVisible();
+
+		await this.configurationSaveButton.click();
+
+		if (!layoutTitle) {
+			await waitForSuccessAlert(this.page);
+		}
+		else {
+			await waitForSuccessAlert(
+				this.page,
+				'Success:The page was updated successfully.'
+			);
+		}
 	}
 
 	async createNewPage({
@@ -377,28 +489,35 @@ export class PagesAdminPage {
 	async selectClientExtension({
 		clientExtensionName,
 		layoutTitle,
+		openConfiguration = true,
 		siteUrl,
 		type,
 	}: {
 		clientExtensionName: string;
 		layoutTitle?: string;
+		openConfiguration?: boolean;
 		siteUrl?: Site['friendlyUrlPath'];
-		type?: string;
+		type?: 'globalCSS' | 'globalJS' | 'themeFavicon';
 	}) {
-		if (!layoutTitle) {
-			await this.gotoPagesConfiguration(siteUrl);
-		}
-		else {
-			await this.goto(siteUrl);
+		if (openConfiguration) {
+			if (!layoutTitle) {
+				await this.gotoPagesConfiguration(siteUrl);
+			}
+			else {
+				await this.goto(siteUrl);
 
-			await this.clickOnAction('Configure', layoutTitle);
+				await this.clickOnAction('Configure', layoutTitle);
+			}
 		}
 
 		if (type && type === 'globalCSS') {
 			await this.addCSSClientExtension(clientExtensionName);
 		}
-		else {
+		else if (type && type === 'globalJS') {
 			await this.addJavaScriptClientExtension(clientExtensionName);
+		}
+		else {
+			await this.addThemeFaviconClientExtension(clientExtensionName);
 		}
 
 		if (!layoutTitle) {

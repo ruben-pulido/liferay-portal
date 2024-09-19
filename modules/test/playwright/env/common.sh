@@ -75,15 +75,37 @@ function default_tear_down {
 }
 
 function deploy_client_extensions {
-	if [[ -n ${1} ]]
+	local client_extensions_list_file=${1}
+
+	if [[ -n $(cat ${client_extensions_list_file}) ]]
 	then
-		for client_extension_dir in ${@}
+		echo "Deploying client extensions in ${client_extensions_list_file}."
+
+		local client_extension_name
+
+		for client_extension_name in $(cat ${client_extensions_list_file})
 		do
-			client_extension_dir=${_PORTAL_PROJECT_DIR}/${client_extension_dir}
+			local client_extension_dir=$(find ${_PORTAL_PROJECT_DIR}/workspaces -type d -name "${client_extension_name}" | grep -v .releng | grep -v .npmscripts | grep -v node_modules)
+
+			if [[ $(echo ${client_extension_dir} | wc -w | grep -o -E '[0-9]+') > 1 ]]
+			then
+				echo "Duplicate client extensions found for ${client_extension_name}:"
+
+				printf "%s\n" ${client_extension_dir}
+
+				echo "Replace \"${client_extension_name}\" in ${client_extensions_list_file} with one of the following:"
+
+				for dir in ${client_extension_dir}
+				do
+					echo "${dir/${_PORTAL_PROJECT_DIR}\/workspaces\/}"
+				done
+
+				client_extension_dir=$(echo ${client_extension_dir} | awk '{print $1}')
+			fi
 
 			if [[ -d ${client_extension_dir} ]]
 			then
-				echo "Deploy '${client_extension_dir}'"
+				echo "Deploying ${client_extension_dir}."
 
 				cd ${client_extension_dir}
 
@@ -93,7 +115,7 @@ function deploy_client_extensions {
 
 				wait_for_portal_log_inactivity
 			else
-				echo "The directory ${client_extension_dir} does not exist."
+				echo "Unable to find client extension in ${client_extension_dir}."
 			fi
 		done
 	fi
@@ -122,17 +144,37 @@ function deploy_osgi_configs {
 }
 
 function deploy_osgi_modules {
-	if [[ -n ${1} ]]
-	then
-		mkdir -p ${LIFERAY_HOME}/deploy
+	local osgi_modules_list_file=${1}
 
-		for osgi_module_dir in ${@}
+	if [[ -n $(cat ${osgi_modules_list_file}) ]]
+	then
+		echo "Deploying OSGi modules in ${osgi_modules_list_file}."
+
+		local osgi_module_name
+
+		for osgi_module_name in $(cat ${osgi_modules_list_file})
 		do
-			osgi_module_dir=${_PORTAL_PROJECT_DIR}/${osgi_module_dir}
+			local osgi_module_dir=$(find ${_PORTAL_PROJECT_DIR}/modules -type d -name "${osgi_module_name}" | grep -v .releng | grep -v .npmscripts | grep -v node_modules)
+
+			if [[ $(echo ${osgi_module_dir} | wc -w | grep -o -E '[0-9]+') > 1 ]]
+			then
+				echo "Duplicate OSGi modules found for ${osgi_module_name}:"
+
+				printf "%s\n" ${osgi_module_dir}
+
+				echo "Replace \"${osgi_module_name}\" in ${osgi_modules_list_file} with one of the following:"
+
+				for dir in ${osgi_module_dir}
+				do
+					echo "${dir/${_PORTAL_PROJECT_DIR}\/modules\/}"
+				done
+
+				osgi_module_dir=$(echo ${osgi_module_dir} | awk '{print $1}')
+			fi
 
 			if [[ -f ${osgi_module_dir}/build.gradle ]]
 			then
-				echo "Deploying ${osgi_module_dir}"
+				echo "Deploying ${osgi_module_dir}."
 
 				cd ${osgi_module_dir}
 
@@ -142,7 +184,7 @@ function deploy_osgi_modules {
 
 				wait_for_portal_log_inactivity
 			else
-				echo "The directory ${osgi_module_dir} does not exist."
+				echo "Unable to find OSGi module in ${osgi_module_dir}."
 			fi
 		done
 	fi
@@ -153,7 +195,7 @@ function deploy_parent_project_client_extensions {
 	do
 		if [[ -f ${parent_playwright_project_dir}/env/client-extensions.list ]]
 		then
-			deploy_client_extensions $(cat ${parent_playwright_project_dir}/env/client-extensions.list)
+			deploy_client_extensions ${parent_playwright_project_dir}/env/client-extensions.list
 		fi
 	done
 }
@@ -181,7 +223,7 @@ function deploy_parent_project_osgi_modules {
 	do
 		if [[ -f ${parent_playwright_project_dir}/env/osgi-modules.list ]]
 		then
-			deploy_osgi_modules $(cat ${parent_playwright_project_dir}/env/osgi-modules.list)
+			deploy_osgi_modules ${parent_playwright_project_dir}/env/osgi-modules.list
 		fi
 	done
 }
@@ -191,7 +233,7 @@ function deploy_project_client_extensions {
 
 	if [[ -f ${playwright_project_dir}/env/client-extensions.list ]]
 	then
-		deploy_client_extensions $(cat ${playwright_project_dir}/env/client-extensions.list)
+		deploy_client_extensions ${playwright_project_dir}/env/client-extensions.list
 	fi
 }
 
@@ -208,7 +250,7 @@ function deploy_project_osgi_modules {
 
 	if [[ -f ${playwright_project_dir}/env/osgi-modules.list ]]
 	then
-		deploy_osgi_modules $(cat ${playwright_project_dir}/env/osgi-modules.list)
+		deploy_osgi_modules ${playwright_project_dir}/env/osgi-modules.list
 	fi
 }
 

@@ -7,6 +7,7 @@ import {Page, expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../fixtures/apiHelpersTest';
 import {displayPageTemplatesPagesTest} from '../../fixtures/displayPageTemplatesPagesTest';
+import {documentLibraryPagesTest} from '../../fixtures/documentLibraryPages.fixtures';
 import {featureFlagsTest} from '../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../fixtures/loginTest';
@@ -40,6 +41,7 @@ import getPageDefinition from './utils/getPageDefinition';
 const test = mergeTests(
 	apiHelpersTest,
 	displayPageTemplatesPagesTest,
+	documentLibraryPagesTest,
 	featureFlagsTest({
 		'LPS-178052': true,
 	}),
@@ -660,41 +662,326 @@ test.describe('Dropdown Fragment', () => {
 	});
 });
 
+test.describe('External Video', () => {
+	test(
+		'Uses External Video fragment and display a video from document library',
+		{
+			tag: '@LPS-130453',
+		},
+		async ({
+			apiHelpers,
+			documentLibraryEditFilePage,
+			documentLibraryPage,
+			page,
+			pageEditorPage,
+			site,
+		}) => {
+
+			// Add document library external video shortcut
+
+			await documentLibraryPage.goto(site.friendlyUrlPath);
+
+			await clickAndExpectToBeVisible({
+				autoClick: true,
+				target: page.getByRole('menuitem', {
+					exact: true,
+					name: 'External Video Shortcut',
+				}),
+				trigger: page.getByRole('button', {exact: true, name: 'New'}),
+			});
+
+			await page
+				.getByLabel('Video URL')
+				.fill('https://www.youtube.com/watch?v=2EPZxIC5ogU');
+
+			await expect(page.getByLabel('Title')).toHaveValue(
+				'Life at Liferay - A Look into Liferay Culture'
+			);
+
+			await documentLibraryEditFilePage.publishFileEntry();
+
+			// Create page with a Video URL fragment and go to edit mode
+
+			const fragmentId = getRandomString();
+
+			const fragment = getFragmentDefinition({
+				id: fragmentId,
+				key: 'BASIC_COMPONENT-external-video',
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([fragment]),
+				siteId: site.id,
+				title: getRandomString(),
+			});
+
+			await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+			// Edit video URL and publish the page
+
+			await pageEditorPage.selectVideo({
+				fragmentId,
+				title: 'Life at Liferay - A Look into Liferay Culture',
+			});
+
+			await pageEditorPage.publishPage();
+
+			// Go to view mode and assert video
+
+			await page.goto(
+				`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`
+			);
+
+			const videoIframeLocator = page
+				.locator('.video-container')
+				.frameLocator('iframe');
+
+			await expect(
+				videoIframeLocator.getByText(
+					'Life at Liferay - A Look into Liferay Culture'
+				)
+			).toBeVisible();
+		}
+	);
+
+	test(
+		'Uses External Video fragment and display a video from URL',
+		{
+			tag: '@LPS-130453',
+		},
+		async ({apiHelpers, page, pageEditorPage, site}) => {
+
+			// Create page with a Video URL fragment and go to edit mode
+
+			const fragmentId = getRandomString();
+
+			const fragment = getFragmentDefinition({
+				id: fragmentId,
+				key: 'BASIC_COMPONENT-external-video',
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([fragment]),
+				siteId: site.id,
+				title: getRandomString(),
+			});
+
+			await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+			await pageEditorPage.selectVideo({
+				fragmentId,
+				videoURL: 'https://www.youtube.com/watch?v=2EPZxIC5ogU',
+			});
+
+			// Select video URL and publish the page
+
+			await pageEditorPage.publishPage();
+
+			// Go to view mode and assert video
+
+			await page.goto(
+				`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`
+			);
+
+			const videoIframeLocator = page
+				.locator('.video-container')
+				.frameLocator('iframe');
+
+			await expect(
+				videoIframeLocator.getByText(
+					'Life at Liferay - A Look into Liferay Culture'
+				)
+			).toBeVisible();
+		}
+	);
+});
+
+test.describe('Heading Fragment', () => {
+	test(
+		'Can edit text editable',
+		{tag: ['@LPS-78726', '@LPS-85872']},
+		async ({apiHelpers, page, pageEditorPage, site}) => {
+
+			// Create page with a heading fragment and go to edit mode
+
+			const fragmentId = getRandomString();
+
+			const fragment = getFragmentDefinition({
+				id: fragmentId,
+				key: 'BASIC_COMPONENT-heading',
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([fragment]),
+				siteId: site.id,
+				title: getRandomString(),
+			});
+
+			await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+			// Check heading editable can be edited
+
+			await pageEditorPage.editTextEditable(
+				fragmentId,
+				'element-text',
+				'New editable fragment text'
+			);
+
+			await expect(
+				page.getByText('New editable fragment text')
+			).toBeAttached();
+		}
+	);
+});
+
 test.describe('HTML Fragment', () => {
-	test('Can edit html editable', async ({
-		apiHelpers,
-		page,
-		pageEditorPage,
-		site,
-	}) => {
+	const CUSTOM_FRAGMENT_HTML = `<lfr-editable id="element-html" type="html">
+		<h1>HTML Example</h1>
+	</lfr-editable>`;
 
-		// Create page with a HTML fragment and go to edit mode
+	test(
+		'Can edit custom html editable with lfr-editable',
+		{tag: '@LPS-98553'},
+		async ({apiHelpers, page, pageEditorPage, site}) => {
 
-		const fragmentId = getRandomString();
+			// Create a fragment with lfr-editable
 
-		const fragment = getFragmentDefinition({
-			id: fragmentId,
-			key: 'BASIC_COMPONENT-html',
-		});
+			const {fragmentCollectionId} =
+				await apiHelpers.jsonWebServicesFragmentCollection.addFragmentCollection(
+					{
+						groupId: site.id,
+						name: getRandomString(),
+					}
+				);
 
-		const layout = await apiHelpers.headlessDelivery.createSitePage({
-			pageDefinition: getPageDefinition([fragment]),
-			siteId: site.id,
-			title: getRandomString(),
-		});
+			const fragmentEntryName = getRandomString();
 
-		await pageEditorPage.goto(layout, site.friendlyUrlPath);
+			await apiHelpers.jsonWebServicesFragmentEntry.addFragmentEntry({
+				fragmentCollectionId,
+				groupId: site.id,
+				html: CUSTOM_FRAGMENT_HTML,
+				name: fragmentEntryName,
+			});
 
-		// Check html editable can be edited
+			// Create a content page with Wem Site's Apple fragment
 
-		await pageEditorPage.editHTMLEditable(
-			fragmentId,
-			'element-html',
-			'<div class="text-success"><h1>test html</h1></div>'
-		);
+			const fragmentName = getRandomString();
 
-		await expect(page.getByText('test html')).toBeAttached();
-	});
+			const fragmentDefinition = getFragmentDefinition({
+				id: fragmentName,
+				key: fragmentEntryName,
+			});
+
+			// Create a content page and go to edit mode
+
+			const layoutTitle = getRandomString();
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([fragmentDefinition]),
+				siteId: site.id,
+				title: layoutTitle,
+			});
+
+			await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+			// Check html editable can be edited
+
+			await pageEditorPage.editHTMLEditable({
+				editableId: 'element-html',
+				fragmentId: fragmentName,
+				value: '<div class="text-success"><h1>test html</h1></div>',
+			});
+
+			await expect(page.getByText('test html')).toBeAttached();
+		}
+	);
+
+	test(
+		'Can edit html editable',
+		{tag: '@LPS-98553'},
+		async ({apiHelpers, page, pageEditorPage, site}) => {
+
+			// Create page with a HTML fragment and go to edit mode
+
+			const fragmentId = getRandomString();
+
+			const fragment = getFragmentDefinition({
+				id: fragmentId,
+				key: 'BASIC_COMPONENT-html',
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([fragment]),
+				siteId: site.id,
+				title: getRandomString(),
+			});
+
+			await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+			// Check html editable can be edited
+
+			await pageEditorPage.editHTMLEditable({
+				editableId: 'element-html',
+				fragmentId,
+				value: '<div class="text-success"><h1>test html</h1></div>',
+			});
+
+			await expect(page.getByText('test html')).toBeAttached();
+		}
+	);
+});
+
+test.describe('Image Fragment', () => {
+	test(
+		'Select image from document and media',
+		{tag: ['@LPS-95045', '@LPS-101328']},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+
+			// Create a page with an image fragment
+
+			const imageId = getRandomString();
+
+			const imageFragment = getFragmentDefinition({
+				id: imageId,
+				key: 'BASIC_COMPONENT-image',
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([imageFragment]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
+
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
+			);
+
+			// Select the image directly
+
+			await pageEditorPage.selectEditable(imageId, 'image-square');
+
+			await page.getByTitle('Select Image').click();
+
+			const imageCard = page
+				.frameLocator('iframe[title="Select"]')
+				.getByText('poodle.jpg');
+
+			await clickAndExpectToBeHidden({
+				target: page.locator('.modal-dialog'),
+				trigger: imageCard,
+			});
+
+			await pageEditorPage.waitForChangesSaved();
+
+			expect(
+				await page
+					.locator('.component-image img')
+					.first()
+					.getAttribute('src')
+			).toContain('poodle-jpg');
+		}
+	);
 });
 
 test.describe('Multiselect Fragment', () => {
@@ -792,6 +1079,44 @@ test.describe('Multiselect Fragment', () => {
 					'Thank you. Your information was successfully received.'
 				)
 			).toBeVisible();
+		}
+	);
+});
+
+test.describe('Paragraph Fragment', () => {
+	test(
+		'Can edit text editable',
+		{tag: ['@LPS-127732']},
+		async ({apiHelpers, page, pageEditorPage, site}) => {
+
+			// Create page with a paragraph fragment and go to edit mode
+
+			const fragmentId = getRandomString();
+
+			const fragment = getFragmentDefinition({
+				id: fragmentId,
+				key: 'BASIC_COMPONENT-paragraph',
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([fragment]),
+				siteId: site.id,
+				title: getRandomString(),
+			});
+
+			await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+			// Check paragraph editable can be edited
+
+			await pageEditorPage.editTextEditable(
+				fragmentId,
+				'element-text',
+				'New editable fragment text'
+			);
+
+			await expect(
+				page.getByText('New editable fragment text')
+			).toBeAttached();
 		}
 	);
 });
@@ -1351,4 +1676,59 @@ test.describe('Tags Fragment', () => {
 			value: true,
 		});
 	});
+});
+
+test.describe('Video URL', () => {
+	test(
+		'Uses Video URL fragment and display a video',
+		{
+			tag: '@LPS-99176',
+		},
+		async ({apiHelpers, page, pageEditorPage, site}) => {
+
+			// Create page with a Video URL fragment and go to edit mode
+
+			const fragmentId = getRandomString();
+
+			const fragment = getFragmentDefinition({
+				id: fragmentId,
+				key: 'BASIC_COMPONENT-video',
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([fragment]),
+				siteId: site.id,
+				title: getRandomString(),
+			});
+
+			await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+			// Edit video URL and publish the page
+
+			await pageEditorPage.changeFragmentConfiguration({
+				fieldLabel: 'URL',
+				fragmentId,
+				tab: 'General',
+				value: 'https://www.youtube.com/watch?v=2EPZxIC5ogU',
+			});
+
+			await pageEditorPage.publishPage();
+
+			// Go to view mode and assert video
+
+			await page.goto(
+				`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`
+			);
+
+			const videoIframeLocator = page.frameLocator(
+				'iframe[title="Life at Liferay - A Look into Liferay Culture"]'
+			);
+
+			await expect(
+				videoIframeLocator.getByText(
+					'Life at Liferay - A Look into Liferay Culture'
+				)
+			).toBeVisible();
+		}
+	);
 });

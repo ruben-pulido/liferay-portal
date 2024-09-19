@@ -7,18 +7,23 @@ import {LayoutData} from '../../types/layout_data/LayoutData';
 import addFragmentEntryLinks from '../actions/addFragmentEntryLinks';
 import addItem from '../actions/addItem';
 import addRule from '../actions/addRule';
+import addStepper from '../actions/addStepper';
 import deleteItem from '../actions/deleteItem';
 import deleteRule from '../actions/deleteRule';
 import duplicateItem from '../actions/duplicateItem';
 import moveItem from '../actions/moveItem';
+import moveStepper from '../actions/moveStepper';
 import {
 	ADD_FRAGMENT_ENTRY_LINKS,
 	ADD_ITEM,
 	ADD_RULE,
+	ADD_STEPPER,
 	DELETE_ITEM,
 	DELETE_RULE,
 	DUPLICATE_ITEM,
 	MOVE_ITEM,
+	MOVE_STEPPER,
+	PASTE_ITEM,
 	UPDATE_COLLECTION_DISPLAY_COLLECTION,
 	UPDATE_COL_SIZE,
 	UPDATE_FORM_ITEM_CONFIG,
@@ -52,10 +57,13 @@ export default function layoutDataReducer(
 		| ReturnType<typeof addFragmentEntryLinks>
 		| ReturnType<typeof addItem>
 		| ReturnType<typeof addRule>
+		| ReturnType<typeof addStepper>
 		| ReturnType<typeof deleteItem>
 		| ReturnType<typeof deleteRule>
 		| ReturnType<typeof duplicateItem>
+		| ReturnType<typeof pasteItem>
 		| ReturnType<typeof moveItem>
+		| ReturnType<typeof moveStepper>
 		| ReturnType<typeof updateCollectionDisplayCollection>
 		| ReturnType<typeof updateColSize>
 		| ReturnType<typeof updateFormItemConfig>
@@ -69,10 +77,13 @@ export default function layoutDataReducer(
 		case ADD_FRAGMENT_ENTRY_LINKS:
 		case ADD_ITEM:
 		case ADD_RULE:
+		case ADD_STEPPER:
 		case DELETE_ITEM:
 		case DELETE_RULE:
 		case DUPLICATE_ITEM:
+		case PASTE_ITEM:
 		case MOVE_ITEM:
+		case MOVE_STEPPER:
 		case UPDATE_COL_SIZE:
 		case UPDATE_COLLECTION_DISPLAY_COLLECTION:
 		case UPDATE_FRAGMENT_ENTRY_LINK_CONFIGURATION:

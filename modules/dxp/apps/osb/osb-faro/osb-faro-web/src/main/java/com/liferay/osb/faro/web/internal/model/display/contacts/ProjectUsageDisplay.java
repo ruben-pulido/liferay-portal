@@ -15,7 +15,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Marcos Martins
@@ -132,7 +134,19 @@ public class ProjectUsageDisplay {
 					"monthlyValues");
 
 				if (monthlyValuesJSONObject != null) {
-					_monthlyValues = monthlyValuesJSONObject.toMap();
+					_monthlyValues = new LinkedHashMap<>();
+
+					for (String key : monthlyValuesJSONObject.keySet()) {
+						JSONObject monthlyValueJSONObject =
+							monthlyValuesJSONObject.getJSONObject(key);
+
+						_monthlyValues.put(
+							key,
+							new MonthlyValue(
+								monthlyValueJSONObject.getInt("count"),
+								monthlyValueJSONObject.getInt(
+									"countSinceLastAnniversary")));
+					}
 				}
 			}
 
@@ -141,7 +155,31 @@ public class ProjectUsageDisplay {
 				"totalSinceLastAnniversary");
 		}
 
-		public Map<String, Object> getMonthlyValues() {
+		@Override
+		public boolean equals(Object object) {
+			if (this == object) {
+				return true;
+			}
+
+			if (!(object instanceof CountsDisplay)) {
+				return false;
+			}
+
+			CountsDisplay countsDisplay = (CountsDisplay)object;
+
+			if (Objects.equals(_monthlyValues, countsDisplay._monthlyValues) &&
+				Objects.equals(_total, countsDisplay._total) &&
+				Objects.equals(
+					_totalSinceLastAnniversary,
+					countsDisplay._totalSinceLastAnniversary)) {
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public Map<String, MonthlyValue> getMonthlyValues() {
 			return _monthlyValues;
 		}
 
@@ -153,9 +191,63 @@ public class ProjectUsageDisplay {
 			return _totalSinceLastAnniversary;
 		}
 
-		private Map<String, Object> _monthlyValues;
+		@Override
+		public int hashCode() {
+			return Objects.hash(
+				_monthlyValues, _total, _totalSinceLastAnniversary);
+		}
+
+		private Map<String, MonthlyValue> _monthlyValues;
 		private int _total;
 		private int _totalSinceLastAnniversary;
+
+	}
+
+	public static class MonthlyValue {
+
+		public MonthlyValue(int count, int countSinceLastAnniversary) {
+			_count = count;
+			_countSinceLastAnniversary = countSinceLastAnniversary;
+		}
+
+		@Override
+		public boolean equals(Object object) {
+			if (this == object) {
+				return true;
+			}
+
+			if (!(object instanceof MonthlyValue)) {
+				return false;
+			}
+
+			MonthlyValue monthlyValue = (MonthlyValue)object;
+
+			if (Objects.equals(_count, monthlyValue._count) &&
+				Objects.equals(
+					_countSinceLastAnniversary,
+					monthlyValue._countSinceLastAnniversary)) {
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public int getCount() {
+			return _count;
+		}
+
+		public int getCountSinceLastAnniversary() {
+			return _countSinceLastAnniversary;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(_count, _countSinceLastAnniversary);
+		}
+
+		private final int _count;
+		private final int _countSinceLastAnniversary;
 
 	}
 

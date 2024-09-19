@@ -29,7 +29,7 @@ export default function ShortcutModal({onCloseModal}) {
 
 				<KeyboardShorcut
 					description={Liferay.Language.get('duplicate-fragment')}
-					keyCombinations={[KEY_LABEL, 'D']}
+					keyCombinations={[KEY_LABEL, OPTION_KEY_LABEL, 'D']}
 				/>
 
 				<KeyboardShorcut
@@ -53,6 +53,27 @@ export default function ShortcutModal({onCloseModal}) {
 					description={Liferay.Language.get('rename')}
 					keyCombinations={[KEY_LABEL, OPTION_KEY_LABEL, 'R']}
 				/>
+
+				{Liferay.FeatureFlags['LPD-18221'] && (
+					<KeyboardShorcut
+						description={Liferay.Language.get('cut')}
+						keyCombinations={[KEY_LABEL, 'X']}
+					/>
+				)}
+
+				{Liferay.FeatureFlags['LPD-18221'] && (
+					<KeyboardShorcut
+						description={Liferay.Language.get('copy')}
+						keyCombinations={[KEY_LABEL, 'C']}
+					/>
+				)}
+
+				{Liferay.FeatureFlags['LPD-18221'] && (
+					<KeyboardShorcut
+						description={Liferay.Language.get('paste')}
+						keyCombinations={[KEY_LABEL, 'V']}
+					/>
+				)}
 
 				<p className="sheet-subtitle text-secondary">
 					{Liferay.Language.get('selection')}

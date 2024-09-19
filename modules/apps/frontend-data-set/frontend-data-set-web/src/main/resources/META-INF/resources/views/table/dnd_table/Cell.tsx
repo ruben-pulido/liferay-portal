@@ -11,13 +11,12 @@ import ViewsContext, {
 	IViewsContext,
 	TViewsContextDispatch,
 } from '../../ViewsContext';
+import getCellColumnClassName from '../../utils/getCellColumnClassName';
 
 // @ts-ignore
 
 import {VIEWS_ACTION_TYPES} from '../../viewsReducer';
 import TableContext from './TableContext';
-
-const MINIMUM_COLUMN_WIDTH = 140;
 
 const Cell = ({
 	children,
@@ -54,13 +53,6 @@ const Cell = ({
 	useEffect(() => {
 		if (columnName && heading && !isFixed && cellRef.current) {
 			const boundingClientRect = cellRef.current.getBoundingClientRect();
-
-			if (
-				columnName !== 'item-actions' &&
-				boundingClientRect.width < MINIMUM_COLUMN_WIDTH
-			) {
-				boundingClientRect.width = MINIMUM_COLUMN_WIDTH;
-			}
 
 			viewsDispatch({
 				type: VIEWS_ACTION_TYPES.UPDATE_FIELD,
@@ -127,7 +119,11 @@ const Cell = ({
 
 	return (
 		<div
-			className={classNames(heading ? 'dnd-th' : 'dnd-td', className)}
+			className={classNames(
+				heading ? 'dnd-th' : 'dnd-td',
+				getCellColumnClassName(columnName),
+				className
+			)}
 			ref={cellRef}
 			style={{
 				width: width ?? defaultWidth,

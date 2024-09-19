@@ -5,12 +5,10 @@
 
 import addFragmentEntryLinks from '../actions/addFragmentEntryLinks';
 import {FRAGMENT_ENTRY_TYPES} from '../config/constants/fragmentEntryTypes';
-import {FREEMARKER_FRAGMENT_ENTRY_PROCESSOR} from '../config/constants/freemarkerFragmentEntryProcessor';
 import FragmentService from '../services/FragmentService';
 import selectFirstControlsItem from '../utils/selectFirstControlsItem';
 
 export default function addFragment({
-	fieldTypes,
 	fragmentEntryKey,
 	groupId,
 	parentItemId,
@@ -57,26 +55,6 @@ export default function addFragment({
 			);
 		}
 		else {
-			if (fieldTypes.includes('stepper')) {
-				const form = getState().layoutData.items[parentItemId];
-
-				params.editableValues = {
-					[FREEMARKER_FRAGMENT_ENTRY_PROCESSOR]: {
-						numberOfSteps: form.config.numberOfSteps,
-					},
-				};
-
-				return FragmentService.addStepperFragmentEntryLink(params).then(
-					({addedItemId, fragmentEntryLink, layoutData}) => {
-						updateState(
-							[fragmentEntryLink],
-							layoutData,
-							addedItemId
-						);
-					}
-				);
-			}
-
 			return FragmentService.addFragmentEntryLink(params).then(
 				({addedItemId, fragmentEntryLink, layoutData}) => {
 					updateState([fragmentEntryLink], layoutData, addedItemId);

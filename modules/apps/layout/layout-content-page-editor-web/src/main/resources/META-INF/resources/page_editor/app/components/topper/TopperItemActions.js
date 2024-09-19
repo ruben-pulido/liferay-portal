@@ -13,12 +13,17 @@ import React, {useMemo, useState} from 'react';
 import {getLayoutDataItemPropTypes} from '../../../prop_types/index';
 import {LAYOUT_DATA_ITEM_TYPES} from '../../config/constants/layoutDataItemTypes';
 import {
+	useCopiedItemIds,
+	useSetCopiedItemIds,
+} from '../../contexts/ClipboardContext';
+import {
 	useSelectItem,
 	useSelectMultipleItems,
 } from '../../contexts/ControlsContext';
 import {useDispatch, useSelector} from '../../contexts/StoreContext';
 import deleteItem from '../../thunks/deleteItem';
 import duplicateItem from '../../thunks/duplicateItem';
+import pasteItem from '../../thunks/pasteItem';
 import canBeDuplicated from '../../utils/canBeDuplicated';
 import canBeRemoved from '../../utils/canBeRemoved';
 import canBeSaved from '../../utils/canBeSaved';
@@ -34,10 +39,12 @@ import hasDropZoneChild from '../layout_data_items/hasDropZoneChild';
 
 export default function TopperItemActions({disabled, item}) {
 	const [active, setActive] = useState(false);
+	const copiedItemIds = useCopiedItemIds();
 	const dispatch = useDispatch();
 	const hasRequiredChild = useHasRequiredChild(item.itemId);
 	const selectItem = useSelectItem();
 	const selectMultipleItems = useSelectMultipleItems();
+	const setCopiedItemIds = useSetCopiedItemIds();
 	const widgets = useSelector((state) => state.widgets);
 
 	const selectItems = Liferay.FeatureFlags['LPD-18221']
@@ -97,6 +104,35 @@ export default function TopperItemActions({disabled, item}) {
 			});
 		}
 
+		if (
+			Liferay.FeatureFlags['LPD-18221'] &&
+			canBeRemoved(item, layoutData)
+		) {
+			items.push({
+				action: () => {
+					setCopiedItemIds([item.itemId]);
+					dispatch(
+						deleteItem({
+							itemIds: [item.itemId],
+							selectItems,
+						})
+					);
+				},
+				icon: 'cut',
+				label: Liferay.Language.get('cut'),
+			});
+
+			if (
+				canBeDuplicated(fragmentEntryLinks, item, layoutData, widgets)
+			) {
+				items.push({
+					action: () => setCopiedItemIds([item.itemId]),
+					icon: 'copy',
+					label: Liferay.Language.get('copy'),
+				});
+			}
+		}
+
 		if (canBeDuplicated(fragmentEntryLinks, item, layoutData, widgets)) {
 			items.push({
 				action: () =>
@@ -108,6 +144,31 @@ export default function TopperItemActions({disabled, item}) {
 					),
 				icon: 'copy',
 				label: Liferay.Language.get('duplicate'),
+			});
+
+			if (!Liferay.FeatureFlags['LPD-18221']) {
+				items.push({
+					type: 'separator',
+				});
+			}
+		}
+
+		if (
+			Liferay.FeatureFlags['LPD-18221'] &&
+			canBeDuplicated(fragmentEntryLinks, item, layoutData, widgets)
+		) {
+			items.push({
+				action: () =>
+					dispatch(
+						pasteItem({
+							copiedItemIds,
+							parentItemId: item.itemId,
+							selectItems,
+						})
+					),
+				disabled: !copiedItemIds?.length,
+				icon: 'paste',
+				label: Liferay.Language.get('paste'),
 			});
 
 			items.push({
@@ -131,12 +192,14 @@ export default function TopperItemActions({disabled, item}) {
 
 		return items;
 	}, [
+		copiedItemIds,
 		dispatch,
 		fragmentEntryLinks,
 		hasRequiredChild,
 		item,
 		layoutData,
 		selectedViewportSize,
+		setCopiedItemIds,
 		selectItems,
 		widgets,
 	]);
@@ -181,6 +244,7 @@ export default function TopperItemActions({disabled, item}) {
 						) : (
 							<React.Fragment key={index}>
 								<ClayDropDown.Item
+									disabled={dropdownItem.disabled}
 									onClick={(event) => {
 										event.stopPropagation();
 

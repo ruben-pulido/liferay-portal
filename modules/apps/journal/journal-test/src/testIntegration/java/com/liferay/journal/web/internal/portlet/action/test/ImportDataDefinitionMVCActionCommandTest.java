@@ -8,8 +8,6 @@ package com.liferay.journal.web.internal.portlet.action.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.data.engine.rest.dto.v2_0.DataDefinition;
 import com.liferay.data.engine.rest.dto.v2_0.DataDefinitionField;
-import com.liferay.data.engine.rest.dto.v2_0.DataLayout;
-import com.liferay.data.engine.rest.dto.v2_0.DataLayoutRow;
 import com.liferay.data.engine.rest.resource.v2_0.DataDefinitionResource;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -60,7 +58,6 @@ import org.springframework.mock.web.MockMultipartHttpServletRequest;
 
 /**
  * @author Rodrigo Paulino
- * @author Rebeca Silva
  */
 @RunWith(Arquillian.class)
 public class ImportDataDefinitionMVCActionCommandTest {
@@ -73,81 +70,6 @@ public class ImportDataDefinitionMVCActionCommandTest {
 	@Before
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
-	}
-
-	@Test
-	public void testDataLayoutFieldNamesAreEqualToDataDefinitionFieldNames()
-		throws Exception {
-
-		MockLiferayPortletActionRequest mockLiferayPortletActionRequest =
-			_createMockLiferayPortletActionRequest(
-				"valid_data_definition.json", "Imported Structure");
-
-		_setUpUploadPortletRequest(mockLiferayPortletActionRequest);
-
-		_mvcActionCommand.processAction(
-			mockLiferayPortletActionRequest,
-			new MockLiferayPortletActionResponse());
-
-		DataDefinition dataDefinition = _getImportedDataDefinition();
-
-		DataDefinitionField[] dataDefinitionFields =
-			dataDefinition.getDataDefinitionFields();
-
-		DataLayout dataLayout = dataDefinition.getDefaultDataLayout();
-
-		DataLayoutRow[] dataLayoutRows =
-			dataLayout.getDataLayoutPages()[0].getDataLayoutRows();
-
-		Assert.assertEquals(
-			dataDefinitionFields[0].getName(),
-			dataLayoutRows[0].getDataLayoutColumns()[0].getFieldNames()[0]);
-		Assert.assertEquals(
-			dataDefinitionFields[1].getName(),
-			dataLayoutRows[1].getDataLayoutColumns()[0].getFieldNames()[0]);
-	}
-
-	@Test
-	public void testImportDataDefinitionWithUniqueFieldNames()
-		throws Exception {
-
-		MockLiferayPortletActionRequest mockLiferayPortletActionRequest =
-			_createMockLiferayPortletActionRequest(
-				"valid_data_definition.json", "Imported Structure");
-
-		_setUpUploadPortletRequest(mockLiferayPortletActionRequest);
-
-		_mvcActionCommand.processAction(
-			mockLiferayPortletActionRequest,
-			new MockLiferayPortletActionResponse());
-
-		DataDefinition dataDefinition = _getImportedDataDefinition();
-
-		DataDefinitionField[] dataDefinitionFields =
-			dataDefinition.getDataDefinitionFields();
-
-		String previousTextFieldName = "Text12293201";
-
-		Assert.assertNotEquals(
-			previousTextFieldName, dataDefinitionFields[0].getName());
-
-		String previousFieldsGroupFieldName = "FieldsGroup19507604";
-
-		Assert.assertNotEquals(
-			previousFieldsGroupFieldName, dataDefinitionFields[1].getName());
-
-		DataDefinitionField[] nestedDataDefinitionFields =
-			dataDefinitionFields[1].getNestedDataDefinitionFields();
-
-		String previousNumericFieldName = "Numeric34461674";
-
-		Assert.assertNotEquals(
-			previousNumericFieldName, nestedDataDefinitionFields[0].getName());
-
-		String previousDateFieldName = "Date46675757";
-
-		Assert.assertNotEquals(
-			previousDateFieldName, nestedDataDefinitionFields[1].getName());
 	}
 
 	@Test
@@ -307,6 +229,13 @@ public class ImportDataDefinitionMVCActionCommandTest {
 			SessionMessages.get(
 				mockLiferayPortletActionRequest,
 				"importDataDefinitionSuccessMessage"));
+
+		DataDefinition dataDefinition = _getImportedDataDefinition();
+
+		DataDefinitionField[] dataDefinitionFields =
+			dataDefinition.getDataDefinitionFields();
+
+		Assert.assertEquals("Text32861154", dataDefinitionFields[0].getName());
 	}
 
 	private void _assertFailure(

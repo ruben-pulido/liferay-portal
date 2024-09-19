@@ -99,11 +99,19 @@ export interface Config {
 	deleteRuleURL: string;
 	deleteSegmentsExperienceURL: string;
 	discardDraftURL: string;
+	copyItemsURL: string;
 	duplicateItemURL: string;
 	duplicateSegmentsExperienceURL: string;
 	editFragmentEntryLinkCommentURL: string;
 	editFragmentEntryLinkURL: string;
 	editSegmentsEntryURL: string;
+	formTypes: Array<{
+		className: string;
+		isRestricted: boolean;
+		label: string;
+		subtypes: Array<{label: string; value: string}>;
+		value: string;
+	}>;
 	frontendTokens: {
 		[key: string]:
 			| {
@@ -163,6 +171,7 @@ export interface Config {
 	}>;
 	masterUsed: boolean;
 	moveItemURL: string;
+	moveStepperFragmentEntryLinkURL: string;
 	paddingOptions: Array<{
 		label: string;
 		value: string;
@@ -204,6 +213,7 @@ export interface Config {
 	themeColorsCssClasses: string[];
 	toolbarId: string;
 
+	undoUpdateFormConfigURL: string;
 	unmarkItemsForDeletionURL: string;
 	updateCollectionDisplayConfigURL: string;
 	updateConfigurationValuesURL: string;

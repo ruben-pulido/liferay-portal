@@ -6,6 +6,7 @@
 import {filesize} from 'filesize';
 
 import {DropzoneUpload} from '../../../../../components/DropzoneUpload/DropzoneUpload';
+import {FileList} from '../../../../../components/FileList/FileList';
 import {
 	NewAppTypes,
 	useNewAppContext,
@@ -19,6 +20,9 @@ type NewAppUploadAppPackagesComponentProps = {
 	versionName: string;
 };
 
+const MAX_FILES = 10;
+export const UPLOAD_MAX_SIZE = 500_000_000;
+
 export const acceptFileTypes = {
 	[ProductType.CLOUD]: {
 		'application/java-archive': ['.zip'],
@@ -28,8 +32,6 @@ export const acceptFileTypes = {
 		'application/octet-stream': ['.war'],
 	},
 };
-
-export const UPLOAD_MAX_SIZE = 500_000_000;
 
 export function NewAppUploadAppPackagesComponent({
 	isProcessing,
@@ -44,7 +46,27 @@ export function NewAppUploadAppPackagesComponent({
 
 	const enableUploadFiles =
 		!isProcessing &&
-		(!liferayPackages?.length || liferayPackages?.length < 10);
+		(!liferayPackages?.length || liferayPackages?.length < MAX_FILES);
+
+	const handleRemoveAppPackages = (fileId: string) => {
+		const _liferayPackages = liferayPackages.map((liferayPackage) => {
+			if (liferayPackage.version === versionName) {
+				return {
+					...liferayPackage,
+					file: liferayPackage.file.filter(({id}) => id !== fileId),
+				};
+			}
+
+			return liferayPackage;
+		});
+
+		dispatch({
+			payload: {
+				liferayPackages: _liferayPackages,
+			},
+			type: NewAppTypes.SET_BUILD,
+		});
+	};
 
 	const handleUploadAppPackages = (files: File[]) => {
 		const newUploadedPackages = files.map((file) => ({
@@ -59,11 +81,22 @@ export function NewAppUploadAppPackagesComponent({
 			versionName,
 		}));
 
+		const _liferayPackages = liferayPackages.map((liferayPackage) => {
+			if (liferayPackage.version === versionName) {
+				return {
+					...liferayPackage,
+					file: liferayPackage.file.length
+						? [...liferayPackage.file, ...newUploadedPackages]
+						: newUploadedPackages,
+				};
+			}
+
+			return liferayPackage;
+		});
+
 		dispatch({
 			payload: {
-				liferayPackages: [
-					{file: newUploadedPackages, version: versionName as string},
-				],
+				liferayPackages: _liferayPackages,
 			},
 			type: NewAppTypes.SET_BUILD,
 		});
@@ -71,6 +104,19 @@ export function NewAppUploadAppPackagesComponent({
 
 	return (
 		<>
+			<FileList
+				isProcessing={isProcessing}
+				onDelete={handleRemoveAppPackages}
+				type="document"
+				uploadedFiles={
+					liferayPackages.find(
+						(liferayPackage) =>
+							liferayPackage.version === versionName
+					)?.file ?? []
+				}
+				versionName={versionName}
+			/>
+
 			{enableUploadFiles && (
 				<DropzoneUpload
 					acceptFileTypes={
@@ -90,7 +136,7 @@ export function NewAppUploadAppPackagesComponent({
 									'only-jar-war-files-are-allowed-max-file-size-is-500mb'
 								)
 					}
-					maxFiles={1}
+					maxFiles={MAX_FILES}
 					maxSize={UPLOAD_MAX_SIZE}
 					multiple={true}
 					onHandleUpload={handleUploadAppPackages}

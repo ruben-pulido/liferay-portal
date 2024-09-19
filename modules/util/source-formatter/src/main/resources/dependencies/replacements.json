@@ -1,6 +1,20 @@
 [
 	{
 		"classNames": [
+			"CPDefinitionLocalService",
+			"CPDefinitionLocalServiceUtil",
+			"CPDefinitionService",
+			"CPDefinitionServiceUtil"
+		],
+		"from": "copyCPDefinition(long paramName, long paramName)",
+		"issueKey": "LPD-7741",
+		"newImports": [
+			"com.liferay.portal.kernel.workflow.WorkflowConstants"
+		],
+		"to": "copyCPDefinition(param#0#, param#1#, WorkflowConstants.STATUS_DRAFT)"
+	},
+	{
+		"classNames": [
 			"Product"
 		],
 		"from": "getConfiguration",
@@ -15,6 +29,15 @@
 		"from": "fetchCommerceCatalogByExternalReferenceCode(long paramName, String paramName)",
 		"issueKey": "LPD-7751",
 		"to": "fetchCommerceCatalogByExternalReferenceCode(param#1#, param#0#)"
+	},
+	{
+		"from": "regex:serviceLocator[\\n\\s]*\\.[\\n\\s]*findService\\([\\n\\s]*\"com\\.liferay\\.dynamic\\.data\\.mapping\\.storage\\.StorageEngine\"\\)",
+		"issueKey": "LPD-7762",
+		"skipParametersValidation": true,
+		"to": "staticUtil[\"com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil\"]",
+		"validExtensions": [
+			"ftl"
+		]
 	},
 	{
 		"classNames": [
@@ -48,9 +71,10 @@
 	},
 	{
 		"classNames": [
+			"IndexWriterHelper",
 			"IndexWriterHelperUtil"
 		],
-		"from": "updateDocument(String paramName, long paramName, Collection<Document> paramName, boolean paramName)",
+		"from": "updateDocument(String paramName, long paramName, Document paramName, boolean paramName)",
 		"issueKey": "LPD-8003",
 		"to": "updateDocument(param#1#, param#2#)"
 	},
@@ -3167,6 +3191,140 @@
 		"to": "CPTaxCategoryCreateDateComparator.getInstance(param#0#)"
 	},
 	{
+		"classNames": [
+			"UserLocalService",
+			"UserLocalServiceUtil",
+			"UserService",
+			"UserServiceUtil"
+		],
+		"from": "addUser(long paramName, long paramName, boolean paramName, String paramName, String paramName, boolean paramName, String paramName, String paramName, long paramName, String paramName, Locale paramName, String paramName, String paramName, String paramName, long paramName, long paramName, boolean paramName, int paramName, int paramName, int paramName, String paramName, long[] paramName, long[] paramName, long[] paramName, long[] paramName, boolean paramName, ServiceContext paramName)",
+		"issueKey": "LPD-30564",
+		"newImports": [
+			"com.liferay.portal.kernel.model.UserConstants"
+		],
+		"to": "addUser(param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#, param#16#, param#17#, param#18#, param#19#, param#20#, UserConstants.TYPE_REGULAR, param#21#, param#22#, param#23#, param#24#, param#25#, param#26#)"
+	},
+	{
+		"classNames": [
+			"WorkflowTaskManager"
+		],
+		"from": "getWorkflowTask(long paramName, long paramName)",
+		"issueKey": "LPD-30629",
+		"to": "getWorkflowTask(param#1#)"
+	},
+	{
+		"classNames": [
+			"Country"
+		],
+		"from": "getCommerceCountryId",
+		"issueKey": "LPD-35065",
+		"to": "getCountryId"
+	},
+	{
+		"classNames": [
+			"IndexWriterHelper",
+			"IndexWriterHelperUtil"
+		],
+		"from": "updateDocuments(String paramName, long paramName, Collection<Document> paramName, boolean paramName)",
+		"issueKey": "LPD-35137",
+		"to": "updateDocuments(param#1#, param#2#, param#3#)"
+	},
+	{
+		"classNames": [
+			"ListTypeLocalService"
+		],
+		"from": "addListType(String paramName, String paramName)",
+		"issueKey": "LPD-35238",
+		"newImports": [
+			"com.liferay.portal.kernel.security.auth.CompanyThreadLocal"
+		],
+		"to": "addListType(CompanyThreadLocal.getCompanyId(), param#0#, param#1#)"
+	},
+	{
+		"classNames": [
+			"IndexWriterHelper",
+			"IndexWriterHelperUtil"
+		],
+		"from": "deleteEntityDocuments(String paramName, long paramName, String paramName, boolean paramName)",
+		"issueKey": "LPD-35275",
+		"to": "deleteEntityDocuments(param#1#, param#2#, param#3#)"
+	},
+	{
+		"classNames": [
+			"ListTypeServiceUtil"
+		],
+		"from": "getListTypes(String paramName)",
+		"issueKey": "LPD-35890",
+		"newImports": [
+			"com.liferay.portal.kernel.security.auth.CompanyThreadLocal"
+		],
+		"to": "getListTypes(CompanyThreadLocal.getCompanyId(), param#0#)"
+	},
+	{
+		"classNames": [
+			"PrefsPropsUtil"
+		],
+		"from": "getPreferences(long paramName, boolean paramName)",
+		"issueKey": "LPD-35897",
+		"to": "getPreferences(param#0#)"
+	},
+	{
+		"from": "regex:DLUtil\\.(?<methodName>getDownloadURL|getImagePreviewURL)",
+		"issueKey": "LPD-35983",
+		"newImports": [
+			"com.liferay.document.library.util.DLURLHelperUtil"
+		],
+		"to": "DLURLHelperUtil.${methodName}",
+		"validExtensions": [
+			"java",
+			"jsp"
+		]
+	},
+	{
+		"classNames": [
+			"JournalConverter"
+		],
+		"from": "getContent(DDMStructure paramName, Fields paramName)",
+		"issueKey": "LPD-36121",
+		"to": "getContent(param#0#, param#1#, param#0#.getGroupId())"
+	},
+	{
+		"classNames": [
+			"ExpandoColumnLocalService",
+			"ExpandoColumnLocalServiceUtil"
+		],
+		"from": "getColumn",
+		"issueKey": "LPD-36261",
+		"to": "fetchColumn"
+	},
+	{
+		"classNames": [
+			"DLAppLocalService",
+			"DLAppService"
+		],
+		"from": "addFileEntry(long paramName, long paramName, long paramName, String paramName, String paramName, byte[] paramName, ServiceContext paramName)",
+		"issueKey": "LPD-36311",
+		"to": "addFileEntry(null, param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, null, null, param#6#)"
+	},
+	{
+		"classNames": [
+			"DDMStructureManager",
+			"DDMStructureManagerUtil"
+		],
+		"from": "getStructure",
+		"issueKey": "LPD-36506",
+		"to": "fetchStructure"
+	},
+	{
+		"classNames": [
+			"RoleLocalService",
+			"RoleLocalServiceUtil"
+		],
+		"from": "loadFetchRole",
+		"issueKey": "LPD-36509",
+		"to": "fetchRole"
+	},
+	{
 		"from": "CookieKeys.COMMERCE_CONTINUE_AS_GUEST",
 		"issueKey": "LPS-159679",
 		"newImports": [
@@ -3288,18 +3446,6 @@
 			"com.liferay.portal.kernel.service.ServiceContextThreadLocal"
 		],
 		"to": "updateCommerceAddress(param#0#.getCommerceAddressId(), param#0#.getName(), param#0#.getDescription(), param#0#.getStreet1(), param#0#.getStreet2(), param#0#.getStreet3(), param#0#.getCity(), param#0#.getZip(), param#0#.getRegionId(), param#0#.getCountryId(), param#0#.getPhoneNumber(), param#0#.getType(), ServiceContextThreadLocal.getServiceContext())"
-	},
-	{
-		"from": "DLUtil.getImagePreviewURL",
-		"issueKey": "LPS-187531",
-		"newImports": [
-			"com.liferay.document.library.util.DLURLHelperUtil"
-		],
-		"to": "DLURLHelperUtil.getImagePreviewURL",
-		"validExtensions": [
-			"java",
-			"jsp"
-		]
 	},
 	{
 		"classNames": [
@@ -3457,17 +3603,6 @@
 		"from": "addUser(long paramName, boolean paramName, String paramName, String paramName, boolean paramName, String paramName, String paramName, long paramName, String paramName, Locale paramName, String paramName, String paramName, String paramName, long paramName, long paramName, boolean paramName, int paramName, int paramName, int paramName, String paramName, long[] paramName, long[] paramName, long[] paramName, long[] paramName, List<Address> paramName, List<EmailAddress> paramName, List<Phone> paramName, List<Website> paramName, List<AnnouncementsDelivery> paramName, boolean paramName, ServiceContext paramName)",
 		"issueKey": "LPS-192661",
 		"to": "addUser(param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, param#6#, param#9#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#, param#16#, param#17#, param#18#, param#19#, param#20#, param#21#, param#22#, param#23#, param#24#, param#25#, param#26#, param#27#, param#28#, param#29#, param#30#)"
-	},
-	{
-		"classNames": [
-			"UserLocalService",
-			"UserLocalServiceUtil",
-			"UserService",
-			"UserServiceUtil"
-		],
-		"from": "addUser(long paramName, long paramName, boolean paramName, String paramName, String paramName, boolean paramName, String paramName, String paramName, long paramName, String paramName, Locale paramName, String paramName, String paramName, String paramName, long paramName, long paramName, boolean paramName, int paramName, int paramName, int paramName, String paramName, long[] paramName, long[] paramName, long[] paramName, long[] paramName, boolean paramName, ServiceContext paramName)",
-		"issueKey": "LPS-192661",
-		"to": "addUser(param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#, param#16#, param#17#, param#18#, param#19#, param#20#, 0, param#21#, param#22#, param#23#, param#24#, param#25#, param#26#)"
 	},
 	{
 		"classNames": [

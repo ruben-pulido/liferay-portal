@@ -113,7 +113,8 @@ export async function loadData(
 	searchParam,
 	delta,
 	page = 1,
-	sorts = []
+	sorts = [],
+	additionalAPIURLParameters
 ) {
 	const fullUrl = apiURL.startsWith('/')
 		? themeDisplay.getPortalURL() + themeDisplay.getPathContext() + apiURL
@@ -148,12 +149,94 @@ export async function loadData(
 	}
 
 	if (sorts.length) {
-		url.searchParams.delete('sort');
-
-		url.searchParams.append(
+		url.searchParams.set(
 			'sort',
 			sorts.map((item) => `${item.key}:${item.direction}`).join(',')
 		);
+	}
+
+	if (Liferay.FeatureFlags['LPD-25230'] && additionalAPIURLParameters) {
+		const additionalAPIURLParametersArray =
+			additionalAPIURLParameters.split('&');
+
+		additionalAPIURLParametersArray.forEach((parameter) => {
+			const [key, value] = parameter.split('=');
+
+			const existingFilter = url.searchParams.get('filter');
+
+			if (key === 'filter' && existingFilter) {
+				url.searchParams.set(
+					'filter',
+					`(${existingFilter}) and (${value})`
+				);
+			}
+			else if (key === 'sort' && url.searchParams.get('sort')) {
+				const newSortParams = [];
+
+				const existingSortArray = url.searchParams
+					.get('sort')
+					.split(',');
+
+				const existingSortParamFields = existingSortArray.map(
+					(sort) => sort.split(':')[0]
+				);
+
+				const additionalAPIURLParametersSortValueArray =
+					value.split(',');
+
+				additionalAPIURLParametersSortValueArray.forEach(
+					(additionalAPIURLParametersSortValueItem) => {
+						if (
+							!existingSortParamFields.includes(
+								additionalAPIURLParametersSortValueItem.split(
+									':'
+								)[0]
+							)
+						) {
+							newSortParams.push(
+								additionalAPIURLParametersSortValueItem
+							);
+						}
+					}
+				);
+
+				url.searchParams.set(
+					'sort',
+					existingSortArray.concat(newSortParams).join(',')
+				);
+			}
+			else if (
+				key === 'nestedFields' &&
+				url.searchParams.get('nestedFields')
+			) {
+				const existingNestedFieldsArray = url.searchParams
+					.get('nestedFields')
+					.split(',');
+				const additionalAPIURLParametersNestedFieldsValueArray =
+					value.split(',');
+
+				const newNestedFields = [...existingNestedFieldsArray];
+
+				additionalAPIURLParametersNestedFieldsValueArray.forEach(
+					(additionalAPIURLParametersNestedFieldsItem) => {
+						if (
+							!existingNestedFieldsArray.includes(
+								additionalAPIURLParametersNestedFieldsItem
+							)
+						) {
+							newNestedFields.push(
+								additionalAPIURLParametersNestedFieldsItem
+							);
+						}
+					}
+				);
+
+				url.searchParams.set('nestedFields', newNestedFields);
+			}
+			else {
+				url.searchParams.append(key, value);
+			}
+		});
 	}
 
 	const response = await fetch(url, {

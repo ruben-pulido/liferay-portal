@@ -12,11 +12,14 @@ import com.liferay.info.item.InfoItemReference;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.cookies.CookiesManagerUtil;
 import com.liferay.portal.kernel.cookies.constants.CookiesConstants;
+import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.HtmlParser;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.ArrayList;
 
@@ -40,6 +43,9 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		CookiesConstants.NAME_COMMERCE_CONTINUE_AS_GUEST;
 		CookiesConstants.NAME_ID;
 		CookiesConstants.NAME_USER_UUID;
+		
+		DDMStructureManagerUtil.fetchStructure(123, 123, "test123");
+		_ddmStructureManager.fetchStructure(123, 123, "test123");
 
 		DestinationNames.COMMERCE_BASE_PRICE_LIST;
 		DestinationNames.COMMERCE_ORDER_STATUS;
@@ -48,7 +54,11 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		DestinationNames.COMMERCE_STOCK_QUANTITY;
 		DestinationNames.COMMERCE_SUBSCRIPTION_STATUS;
 
+		DLURLHelperUtil.getDownloadURL(null, null, null, null, null, null);
 		DLURLHelperUtil.getImagePreviewURL(null, null, null);
+
+		ExpandoColumnLocalServiceUtil.fetchColumn(123, "test123");
+		_expandoColumnLocalService.fetchColumn(123, "test123");
 
 		FDSTableSchemaBuilder fDSTableSchemaBuilder = _fDSTableSchemaBuilderFactory.create();
 
@@ -385,6 +395,9 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 
 		PortletDisplayTemplateConstants.DISPLAY_STYLE_PREFIX;
 		PortletDisplayTemplateConstants.ENTRIES;
+		
+		RoleLocalServiceUtil.fetchRole(123, "test123");
+		_roleLocalService.fetchRole(123, "test123");
 
 		ServiceTrackerList<Class<E>> serviceTrackerList = ServiceTrackerListFactory.open(null, null);
 
@@ -684,6 +697,7 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		CommerceAddress commerceAddress, Country country, Region region) {
 
 		commerceAddress.getCountry().getA2();
+		country.getCountryId();
 		country.getA2();
 		country.setA2();
 		country.getA3();
@@ -698,6 +712,11 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		contact.getSuffixListTypeId();
 		contact.setPrefixListTypeId();
 		contact.setSuffixListTypeId();
+	}
+
+	public void method(DDMStructure ddmStructure, Fields ddmFields) {
+		_journalConverter.getContent(ddmStructure, null);
+		_journalConverter.getContent(ddmStructure, ddmFields, ddmStructure.getGroupId());
 	}
 
 	public void method(HttpServletRequest httpServletRequest) {
@@ -744,6 +763,11 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		CommerceOrderItemLocalServiceUtil.deleteCommerceOrderItems(0, commerceOrderId);
 		_commerceOrderItemLocalService.deleteCommerceOrderItems(123);
 		_commerceOrderItemLocalService.deleteCommerceOrderItems(0, commerceOrderId);
+	}
+
+	public void method(long companyId, boolean readOnly) {
+		PrefsPropsUtil.getPreferences(123, readOnly);
+		PrefsPropsUtil.getPreferences(companyId);
 	}
 
 	public void method(
@@ -808,6 +832,11 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		_userService.updateStatus(userId, status, ServiceContextThreadLocal.getServiceContext());
 	}
 
+	public void method(long companyId, long workflowTaskId) {
+		_workflowTaskManager.getWorkflowTask(123, workflowTaskId);
+		_workflowTaskManager.getWorkflowTask(workflowTaskId);
+	}
+
 	public void method(
 		long userId, long groupId, boolean privateLayout, long parentLayoutId,
 		long classNameId, long classPK, Map<java.util.Locale, String> nameMap,
@@ -843,11 +872,11 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		long[] organizationIds, long[] roleIds, long[] userGroupIds,
 		boolean sendEmail, ServiceContext serviceContext) {
 
-		UserLocalServiceUtil.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, 0, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		UserLocalServiceUtil.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, UserConstants.TYPE_REGULAR, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
 		UserServiceUtil.addUser(123, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, facebookId, openId, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
-		UserServiceUtil.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, 0, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
-		_userLocalService.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, 0, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
-		_userService.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, 0, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		UserServiceUtil.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, UserConstants.TYPE_REGULAR, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		_userLocalService.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, UserConstants.TYPE_REGULAR, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		_userService.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, UserConstants.TYPE_REGULAR, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
 	}
 
 	public void method(
@@ -858,6 +887,14 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		CPDefinitionLinkLocalServiceUtil.addCPDefinitionLinkByCProductId(cpDefinitionId, cProductId, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, true, priority, type, serviceContext);
 		_cpDefinitionLinkLocalService.addCPDefinitionLinkByCProductId(cpDefinitionId, cProductId, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, true, priority, type, serviceContext);
 	}
+
+	public void method(
+		long sourceCPDefinitionId, long groupId, int status) {
+
+		CPDefinitionLocalServiceUtil.copyCPDefinition(null, groupId);
+		CPDefinitionLocalServiceUtil.copyCPDefinition(sourceCPDefinitionId, groupId, WorkflowConstants.STATUS_DRAFT);
+		_cpDefinitionLocalService.copyCPDefinition(sourceCPDefinitionId, groupId, WorkflowConstants.STATUS_DRAFT);
+    }
 
 	public void method(
 		long commerceOrderId, long cpInstanceId, int quantity,
@@ -911,6 +948,16 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		AssetCategoryLocalServiceUtil.addCategory(123, groupId, parentCategoryId, titleMap, descriptionMap, vocabularyId, categoryProperties, serviceContext);
 		AssetCategoryLocalServiceUtil.addCategory(null, userId, groupId, parentCategoryId, titleMap, descriptionMap, vocabularyId, categoryProperties, serviceContext);
 		_assetCategoryLocalService.addCategory(null, userId, groupId, parentCategoryId, titleMap, descriptionMap, vocabularyId, categoryProperties, serviceContext);
+	}
+
+	public void method(
+		long userId, long repositoryId, long folderId,
+		String sourceFileName, String mimeType, byte[] bytes,
+		ServiceContext serviceContext) {
+		
+		_dlAppLocalService.addFileEntry(123, repositoryId, folderId, sourceFileName, mimeType, bytes, serviceContext);
+		_dlAppLocalService.addFileEntry(null, userId, repositoryId, folderId, sourceFileName, mimeType, bytes, null, null, serviceContext);
+		_dlAppService.addFileEntry(null, userId, repositoryId, folderId, sourceFileName, mimeType, bytes, null, null, serviceContext);
 	}
 
 	public void method(
@@ -1141,8 +1188,18 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 		String searchEngineId, long companyId, Collection<Document> documents,
 		boolean commitImmediately) {
 
-		IndexWriterHelperUtil.updateDocument(companyId, documents);
+		IndexWriterHelperUtil.updateDocuments("test123", 123, null, null);
+		IndexWriterHelperUtil.updateDocuments(companyId, documents, commitImmediately);
+		_indexWriterHelper.updateDocuments(companyId, documents, commitImmediately);
+	}
+
+	public void method(
+		String searchEngineId, long companyId, Document document,
+		boolean commitImmediately) {
+
 		IndexWriterHelperUtil.updateDocument("test123", 123, null, null);
+		IndexWriterHelperUtil.updateDocument(companyId, document);
+		_indexWriterHelper.updateDocument(companyId, document);
 	}
 
 	public void method(
@@ -1164,6 +1221,15 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 	}
 
 	public void method(
+		String searchEngineId, long companyId, String className,
+		boolean commitImmediately) {
+
+		IndexWriterHelperUtil.deleteEntityDocuments("test123", companyId, className, commitImmediately);
+		IndexWriterHelperUtil.deleteEntityDocuments(companyId, className, commitImmediately);
+		_indexWriterHelper.deleteEntityDocuments(companyId, className, commitImmediately);
+	}
+
+	public void method(
 		String externalReferenceCode, long cProductId, String cpInstanceUuid,
 		long commercePriceListId, BigDecimal price, BigDecimal promoPrice,
 		ServiceContext serviceContext) {
@@ -1178,6 +1244,13 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 
 		_assetDisplayPageFriendlyURLProvider.getFriendlyURL(new InfoItemReference(className, classPK), themeDisplay);
 		_assetDisplayPageFriendlyURLProvider.getFriendlyURL("test123", 123, themeDisplay);
+	}
+
+	public void method(String name, String type) {
+		ListTypeServiceUtil.getListTypes("test123");
+		ListTypeServiceUtil.getListTypes(CompanyThreadLocal.getCompanyId(), type);
+		_listTypeLocalService.addListType("test123", type);
+		_listTypeLocalService.addListType(CompanyThreadLocal.getCompanyId(), name, type);
 	}
 
 	public void method(String name, String label, BigDecimal amount) {
@@ -1270,6 +1343,9 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 	private CPInstanceService _cpInstanceService;
 
 	@Reference
+	private DDMStructureManager _ddmStructureManager;
+
+	@Reference
 	private DLAppLocalService _dlAppLocalService;
 
 	@Reference
@@ -1282,6 +1358,9 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 	private DLFolderService _dlFolderService;
 
 	@Reference
+	private ExpandoColumnLocalService _expandoColumnLocalService;
+
+	@Reference
 	private FDSTableSchemaBuilderFactory _fDSTableSchemaBuilderFactory;
 
 	@Reference
@@ -1289,6 +1368,12 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 
 	@Reference
 	private Http _http;
+
+	@Reference
+	private IndexWriterHelper _indexWriterHelper;
+
+	@Reference
+	private JournalConverter _journalConverter;
 
 	@Reference
 	private JournalFolderLocalService _journalFolderLocalService;
@@ -1299,6 +1384,15 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 	@Reference
 	private LayoutService _layoutService;
 
+	@Reference
+	private ListTypeLocalService _listTypeLocalService;
+
+	@Reference
+	private PrefsProps _prefsProps;
+
+	@Reference
+	private RoleLocalService _roleLocalService;
+
 	private ServiceTrackerList<Class<E>> _serviceTrackerList;
 
 	@Reference
@@ -1306,5 +1400,8 @@ public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 
 	@Reference
 	private UserService _userService;
+
+	@Reference
+	private WorkflowTaskManager _workflowTaskManager;
 
 }

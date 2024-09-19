@@ -1,5 +1,8 @@
 import com.liferay.gradle.util.GradleUtil
 
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
 String gradleVersion = "8.5"
 
 if (Boolean.getBoolean("gradle.test.enabled")) {
@@ -13,7 +16,7 @@ tasks.eclipse {
 dependencies {
 	api group: "com.github.jk1", name: "gradle-license-report", version: "2.0"
 	api group: "com.gradle.publish", name: "plugin-publish-plugin", version: "0.11.0"
-	api group: "com.liferay", name: "com.liferay.gradle.plugins", version: "15.0.78"
+	api group: "com.liferay", name: "com.liferay.gradle.plugins", version: "15.0.85"
 	api group: "com.liferay", name: "com.liferay.gradle.plugins.app.javadoc.builder", version: "1.2.6"
 	api group: "com.liferay", name: "com.liferay.gradle.plugins.baseline", version: "7.0.3"
 	api group: "com.liferay", name: "com.liferay.gradle.plugins.cache", version: "1.0.19"

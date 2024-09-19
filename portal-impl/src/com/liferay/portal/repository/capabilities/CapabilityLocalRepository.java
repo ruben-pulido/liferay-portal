@@ -260,6 +260,19 @@ public class CapabilityLocalRepository
 	}
 
 	@Override
+	public FileShortcut fetchFileShortcut(long fileShortcutId) {
+		return getRepository().fetchFileShortcut(fileShortcutId);
+	}
+
+	@Override
+	public FileShortcut fetchFileShortcutByExternalReferenceCode(
+		String externalReferenceCode) {
+
+		return getRepository().fetchFileShortcutByExternalReferenceCode(
+			externalReferenceCode);
+	}
+
+	@Override
 	public Folder fetchFolderByExternalReferenceCode(
 		String externalReferenceCode) {
 
@@ -372,6 +385,15 @@ public class CapabilityLocalRepository
 		throws PortalException {
 
 		return getRepository().getFileShortcut(fileShortcutId);
+	}
+
+	@Override
+	public FileShortcut getFileShortcutByExternalReferenceCode(
+			String externalReferenceCode)
+		throws PortalException {
+
+		return getRepository().getFileShortcutByExternalReferenceCode(
+			externalReferenceCode);
 	}
 
 	@Override

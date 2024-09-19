@@ -4,6 +4,7 @@
  */
 
 import {expect, mergeTests} from '@playwright/test';
+import path from 'path';
 
 import {apiHelpersTest} from '../../fixtures/apiHelpersTest';
 import {featureFlagsTest} from '../../fixtures/featureFlagsTest';
@@ -541,12 +542,12 @@ test.describe('CSS Client Extensions', () => {
 
 			// Apply CSS client extension to master page
 
-			await masterPagesPage.goto(site.friendlyUrlPath);
-			await masterPagesPage.gotoConfiguration(
-				layoutPageTemplateEntryName
-			);
-
-			await pagesAdminPage.addCSSClientExtension(clientExtensionName);
+			await masterPagesPage.selectClientExtension({
+				clientExtensionName,
+				layoutTitle: layoutPageTemplateEntryName,
+				siteUrl: site.friendlyUrlPath,
+				type: 'globalCSS',
+			});
 
 			// Publish master page
 
@@ -679,6 +680,7 @@ test.describe('JavaScript Client Extensions', () => {
 				clientExtensionName,
 				layoutTitle,
 				siteUrl: site.friendlyUrlPath,
+				type: 'globalJS',
 			});
 
 			// Check JS is attached to the page in view mode
@@ -737,14 +739,12 @@ test.describe('JavaScript Client Extensions', () => {
 
 			// Apply JS client extension to master page
 
-			await masterPagesPage.goto(site.friendlyUrlPath);
-			await masterPagesPage.gotoConfiguration(
-				layoutPageTemplateEntryName
-			);
-
-			await pagesAdminPage.addJavaScriptClientExtension(
-				clientExtensionName
-			);
+			await masterPagesPage.selectClientExtension({
+				clientExtensionName,
+				layoutTitle: layoutPageTemplateEntryName,
+				siteUrl: site.friendlyUrlPath,
+				type: 'globalJS',
+			});
 
 			// Publish master page
 
@@ -812,6 +812,7 @@ test.describe('JavaScript Client Extensions', () => {
 			await pagesAdminPage.selectClientExtension({
 				clientExtensionName,
 				siteUrl: site.friendlyUrlPath,
+				type: 'globalJS',
 			});
 
 			// Create a layout
@@ -840,6 +841,270 @@ test.describe('JavaScript Client Extensions', () => {
 			// Clean up
 
 			await deleteClientExtension(apiHelpers, clientExtension);
+		}
+	);
+});
+
+test.describe('Theme Favicon', () => {
+	test(
+		'Add theme favicon to page',
+		{
+			tag: ['@LPS-153654', '@LPS-153903'],
+		},
+		async ({apiHelpers, page, pagesAdminPage, site}) => {
+
+			// Create a new theme favicon client extension
+
+			const clientExtensionName = getRandomString();
+
+			const clientExtension =
+				await apiHelpers.jsonWebServicesClientExtension.addClientExtension(
+					{
+						name: clientExtensionName,
+						type: 'themeFavicon',
+						url: 'https://www.google.com/favicon.ico',
+					}
+				);
+
+			// Create a layout
+
+			const layoutTitle = getRandomString();
+
+			await apiHelpers.jsonWebServicesLayout.addLayout({
+				groupId: site.id,
+				title: layoutTitle,
+			});
+
+			// Assert default theme favicon in view mode
+
+			await page.goto(`/web${site.friendlyUrlPath}/${layoutTitle}`);
+
+			await expect(
+				page.locator(
+					'link[href*="classic-theme/images/favicon.ico"][rel="icon"]'
+				)
+			).toBeAttached();
+
+			// Apply theme favicon client extension to page
+
+			await pagesAdminPage.changeFavicon(
+				layoutTitle,
+				path.join(__dirname, '/dependencies/thumbnail.jpg'),
+				site.friendlyUrlPath
+			);
+
+			// Assert custom theme favicon in view mode
+
+			await page.goto(`/web${site.friendlyUrlPath}/${layoutTitle}`);
+
+			await expect(
+				page.locator('link[href*="thumbnail.jpg"][rel="icon"]')
+			).toBeAttached();
+
+			// Clear theme favicon
+
+			await pagesAdminPage.clearThemeFaviconClientExtension({
+				layoutTitle,
+				siteUrl: site.friendlyUrlPath,
+			});
+
+			// Assert default theme favicon in view mode
+
+			await page.goto(`/web${site.friendlyUrlPath}/${layoutTitle}`);
+
+			await expect(
+				page.locator(
+					'link[href*="classic-theme/images/favicon.ico"][rel="icon"]'
+				)
+			).toBeAttached();
+
+			// Clean up
+
+			await deleteClientExtension(apiHelpers, clientExtension);
+		}
+	);
+
+	test(
+		'Add theme favicon extension client extension to pages',
+		{
+			tag: '@LPS-153654',
+		},
+		async ({apiHelpers, page, pagesAdminPage, site}) => {
+
+			// Create a new theme favicon client extension
+
+			const clientExtensionName = getRandomString();
+
+			const clientExtension =
+				await apiHelpers.jsonWebServicesClientExtension.addClientExtension(
+					{
+						name: clientExtensionName,
+						type: 'themeFavicon',
+						url: 'https://www.google.com/favicon.ico',
+					}
+				);
+
+			// Create a layout
+
+			const layoutTitle = getRandomString();
+
+			await apiHelpers.jsonWebServicesLayout.addLayout({
+				groupId: site.id,
+				title: layoutTitle,
+			});
+
+			// Assert default theme favicon in view mode
+
+			await page.goto(`/web${site.friendlyUrlPath}/${layoutTitle}`);
+
+			await expect(
+				page.locator(
+					'link[href*="classic-theme/images/favicon.ico"][rel="icon"]'
+				)
+			).toBeAttached();
+
+			// Apply theme favicon client extension to page
+
+			await pagesAdminPage.selectClientExtension({
+				clientExtensionName,
+				siteUrl: site.friendlyUrlPath,
+				type: 'themeFavicon',
+			});
+
+			// Assert custom theme favicon in view mode
+
+			await page.goto(`/web${site.friendlyUrlPath}/${layoutTitle}`);
+
+			await expect(
+				page.locator(
+					'link[href*="https://www.google.com/favicon.ico"][rel="icon"]'
+				)
+			).toBeAttached();
+
+			// Clear theme favicon
+
+			await pagesAdminPage.clearThemeFaviconClientExtension({
+				siteUrl: site.friendlyUrlPath,
+			});
+
+			// Assert default theme favicon in view mode
+
+			await page.goto(`/web${site.friendlyUrlPath}/${layoutTitle}`);
+
+			await expect(
+				page.locator(
+					'link[href*="classic-theme/images/favicon.ico"][rel="icon"]'
+				)
+			).toBeAttached();
+
+			// Clean up
+
+			await deleteClientExtension(apiHelpers, clientExtension);
+		}
+	);
+
+	test(
+		'Inherited theme favicon client extension from master pages',
+		{
+			tag: '@LPS-153654',
+		},
+		async ({apiHelpers, masterPagesPage, page, pagesAdminPage, site}) => {
+
+			// Create a new theme favicon client extension
+
+			const clientExtensionName1 = getRandomString();
+
+			const clientExtension1 =
+				await apiHelpers.jsonWebServicesClientExtension.addClientExtension(
+					{
+						name: clientExtensionName1,
+						type: 'themeFavicon',
+						url: 'https://www.google.com/favicon.ico',
+					}
+				);
+
+			const clientExtensionName2 = getRandomString();
+
+			const clientExtension2 =
+				await apiHelpers.jsonWebServicesClientExtension.addClientExtension(
+					{
+						name: clientExtensionName2,
+						type: 'themeFavicon',
+						url: 'https://www.nba.com/favicon.ico',
+					}
+				);
+
+			// Add master page
+
+			const layoutPageTemplateEntryName = getRandomString();
+
+			const masterPage =
+				await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.addLayoutPageTemplateEntry(
+					{
+						groupId: site.id,
+						name: layoutPageTemplateEntryName,
+						type: 'master-layout',
+					}
+				);
+
+			// Apply theme favicon client extension to master page
+
+			await masterPagesPage.selectClientExtension({
+				clientExtensionName: clientExtensionName1,
+				layoutTitle: layoutPageTemplateEntryName,
+				siteUrl: site.friendlyUrlPath,
+				type: 'themeFavicon',
+			});
+
+			// Publish master page
+
+			await masterPagesPage.goto(site.friendlyUrlPath);
+			await masterPagesPage.publishMaster(layoutPageTemplateEntryName);
+
+			// Create a layout
+
+			const layoutTitle = getRandomString();
+
+			await apiHelpers.jsonWebServicesLayout.addLayout({
+				groupId: site.id,
+				masterLayoutPlid: masterPage.plid,
+				title: layoutTitle,
+			});
+
+			// Assert custom master theme favicon in view mode
+
+			await page.goto(`/web${site.friendlyUrlPath}/${layoutTitle}`);
+
+			await expect(
+				page.locator(
+					'link[href*="https://www.google.com/favicon.ico"][rel="icon"]'
+				)
+			).toBeAttached();
+
+			// Apply theme favicon client extension to page
+
+			await pagesAdminPage.selectClientExtension({
+				clientExtensionName: clientExtensionName2,
+				layoutTitle,
+				siteUrl: site.friendlyUrlPath,
+				type: 'themeFavicon',
+			});
+
+			// Assert custom page theme favicon in view mode
+
+			await page.goto(`/web${site.friendlyUrlPath}/${layoutTitle}`);
+
+			await expect(
+				page.locator(
+					'link[href*="https://www.nba.com/favicon.ico"][rel="icon"]'
+				)
+			).toBeAttached();
+
+			// Clean up
+
+			await deleteClientExtension(apiHelpers, clientExtension1);
+
+			await deleteClientExtension(apiHelpers, clientExtension2);
 		}
 	);
 });

@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.GuestOrUserUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -157,6 +158,27 @@ public class AccountGroupRelLocalServiceImpl
 
 	@Override
 	public List<AccountGroupRel> getAccountGroupRels(
+		long[] accountGroupIds, String className, long classPK, String keywords,
+		int start, int end) {
+
+		return dslQuery(
+			DSLQueryFactoryUtil.select(
+				AccountGroupRelTable.INSTANCE
+			).from(
+				AccountGroupRelTable.INSTANCE
+			).innerJoinON(
+				AccountGroupTable.INSTANCE,
+				AccountGroupTable.INSTANCE.accountGroupId.eq(
+					AccountGroupRelTable.INSTANCE.accountGroupId)
+			).where(
+				_getPredicate(accountGroupIds, className, classPK, keywords)
+			).limit(
+				start, end
+			));
+	}
+
+	@Override
+	public List<AccountGroupRel> getAccountGroupRels(
 		String className, long classPK) {
 
 		return accountGroupRelPersistence.findByC_C(
@@ -171,44 +193,6 @@ public class AccountGroupRelLocalServiceImpl
 		return accountGroupRelPersistence.findByC_C(
 			_classNameLocalService.getClassNameId(className), classPK, start,
 			end, orderByComparator);
-	}
-
-	@Override
-	public List<AccountGroupRel> getAccountGroupRels(
-		String className, long classPK, String keywords, int start, int end) {
-
-		return dslQuery(
-			DSLQueryFactoryUtil.select(
-				AccountGroupRelTable.INSTANCE
-			).from(
-				AccountGroupRelTable.INSTANCE
-			).innerJoinON(
-				AccountGroupTable.INSTANCE,
-				AccountGroupTable.INSTANCE.accountGroupId.eq(
-					AccountGroupRelTable.INSTANCE.accountGroupId)
-			).where(
-				() -> {
-					Predicate predicate =
-						AccountGroupRelTable.INSTANCE.classNameId.eq(
-							_classNameLocalService.getClassNameId(className)
-						).and(
-							AccountGroupRelTable.INSTANCE.classPK.eq(classPK)
-						);
-
-					if (Validator.isNotNull(keywords)) {
-						return Predicate.withParentheses(
-							predicate.and(
-								_customSQL.getKeywordsPredicate(
-									DSLFunctionFactoryUtil.lower(
-										AccountGroupTable.INSTANCE.name),
-									_customSQL.keywords(keywords, true))));
-					}
-
-					return predicate;
-				}
-			).limit(
-				start, end
-			));
 	}
 
 	@Override
@@ -228,6 +212,24 @@ public class AccountGroupRelLocalServiceImpl
 	}
 
 	@Override
+	public int getAccountGroupRelsCount(
+		long[] accountGroupIds, String className, long classPK,
+		String keywords) {
+
+		return dslQueryCount(
+			DSLQueryFactoryUtil.count(
+			).from(
+				AccountGroupRelTable.INSTANCE
+			).innerJoinON(
+				AccountGroupTable.INSTANCE,
+				AccountGroupTable.INSTANCE.accountGroupId.eq(
+					AccountGroupRelTable.INSTANCE.accountGroupId)
+			).where(
+				_getPredicate(accountGroupIds, className, classPK, keywords)
+			));
+	}
+
+	@Override
 	public int getAccountGroupRelsCount(String className, long classPK) {
 		return accountGroupRelPersistence.countByC_C(
 			_classNameLocalService.getClassNameId(className), classPK);
@@ -236,6 +238,31 @@ public class AccountGroupRelLocalServiceImpl
 	@Override
 	public long getAccountGroupRelsCountByAccountGroupId(long accountGroupId) {
 		return accountGroupRelPersistence.countByAccountGroupId(accountGroupId);
+	}
+
+	private Predicate _getPredicate(
+		long[] accountGroupIds, String className, long classPK,
+		String keywords) {
+
+		Predicate predicate = AccountGroupRelTable.INSTANCE.classNameId.eq(
+			_classNameLocalService.getClassNameId(className)
+		).and(
+			AccountGroupRelTable.INSTANCE.classPK.eq(classPK)
+		).and(
+			AccountGroupRelTable.INSTANCE.accountGroupId.in(
+				ArrayUtil.toArray(accountGroupIds))
+		);
+
+		if (Validator.isNotNull(keywords)) {
+			return Predicate.withParentheses(
+				predicate.and(
+					_customSQL.getKeywordsPredicate(
+						DSLFunctionFactoryUtil.lower(
+							AccountGroupTable.INSTANCE.name),
+						_customSQL.keywords(keywords, true))));
+		}
+
+		return predicate;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

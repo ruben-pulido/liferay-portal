@@ -6,17 +6,17 @@
 import ClayIcon from '@clayui/icon';
 import {Link, Outlet, useNavigate, useParams} from 'react-router-dom';
 
-import useGetProductByOrderId from '../../../../../hooks/useGetProductByOrderId';
-import i18n from '../../../../../i18n';
-import OrderDetailsHeader from '../../../components/OrderDetailsHeader';
-
-import './App.scss';
 import Navbar, {NavbarProps} from '../../../../../components/Navbar';
 import {PageRenderer} from '../../../../../components/Page';
 import {useMarketplaceContext} from '../../../../../context/MarketplaceContext';
 import {ORDER_WORKFLOW_STATUS_CODE} from '../../../../../enums/Order';
-import {isTrialSKU} from '../../../../../utils/productUtils';
+import {ProductType} from '../../../../../enums/ProductType';
+import useGetProductByOrderId from '../../../../../hooks/useGetProductByOrderId';
+import i18n from '../../../../../i18n';
 import getProductPriceModel from '../../../../GetApp/utils/getProductPriceModel';
+import OrderDetailsHeader from '../../../components/OrderDetailsHeader';
+
+import './App.scss';
 
 type BaseOutletProps = {
 	backTitle: string;
@@ -29,11 +29,10 @@ const BaseOutlet: React.FC<BaseOutletProps> = ({
 	backURL = '..',
 	routes,
 }) => {
+	const navigate = useNavigate();
 	const {orderId} = useParams();
 	const {data, error, isLoading} = useGetProductByOrderId(orderId as string);
 	const product = data?.product;
-
-	const navigate = useNavigate();
 
 	const placedOrderItems = data?.placedOrder.placedOrderItems ?? [];
 	const productCreatorAccountName = data?.product?.catalogName || '';
@@ -80,35 +79,60 @@ const AppOutlet = () => {
 	return (
 		<BaseOutlet
 			backTitle={i18n.translate('back-to-my-apps')}
-			routes={({data, placedOrderItems, product}: any) => [
-				{
-					name: i18n.translate('details'),
-					path: '',
-				},
-				{
-					name: i18n.translate('download'),
-					path: 'download',
-					visible:
-						properties.featureFlags?.includes('LPD-21582') &&
-						data?.placedOrder.workflowStatusInfo.code ===
-							ORDER_WORKFLOW_STATUS_CODE.COMPLETED &&
-						placedOrderItems.some(
-							(item: PlacedOrderItems) =>
-								item.virtualItems?.length
-						),
-				},
-				{
-					name: i18n.translate('licenses'),
-					path: 'licenses',
-					visible: !(
-						getProductPriceModel(product).isFreeApp ||
-						(placedOrderItems[0]?.price?.price === 0 &&
-							product?.skus?.some((sku: any) =>
-								isTrialSKU(sku as unknown as SKU)
-							))
-					),
-				},
-			]}
+			routes={({data, placedOrderItems, product}: any) => {
+				const {isPaidApp} = getProductPriceModel(product);
+
+				const productType = product?.productSpecifications?.find(
+					(speficication: ProductSpecification) =>
+						speficication?.specificationKey === 'type'
+				)?.value;
+
+				const isCompletedOrderWithVirtualItems =
+					data?.placedOrder.workflowStatusInfo.code ===
+						ORDER_WORKFLOW_STATUS_CODE.COMPLETED &&
+					placedOrderItems.some(
+						(item: PlacedOrderItems) => item.virtualItems?.length
+					);
+
+				const tabs = [
+					{
+						name: i18n.translate('details'),
+						path: '',
+					},
+				];
+
+				if (productType === ProductType.CLOUD) {
+					return [
+						...tabs,
+						{
+							name: i18n.translate('app-provisioning'),
+							path: 'cloud-provisioning',
+							visible:
+								properties.featureFlags.includes('LPD-34129'),
+						},
+					];
+				}
+
+				if (productType === ProductType.DXP) {
+					return [
+						...tabs,
+						{
+							name: i18n.translate('download'),
+							path: 'download',
+							visible:
+								properties.featureFlags.includes('LPD-21582') &&
+								isCompletedOrderWithVirtualItems,
+						},
+						{
+							name: i18n.translate('licenses'),
+							path: 'licenses',
+							visible: isPaidApp,
+						},
+					];
+				}
+
+				return tabs;
+			}}
 		/>
 	);
 };

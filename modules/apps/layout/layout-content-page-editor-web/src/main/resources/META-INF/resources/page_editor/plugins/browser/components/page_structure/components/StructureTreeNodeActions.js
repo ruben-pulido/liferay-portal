@@ -17,6 +17,10 @@ import hasDropZoneChild from '../../../../../app/components/layout_data_items/ha
 import {ITEM_ACTIVATION_ORIGINS} from '../../../../../app/config/constants/itemActivationOrigins';
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../../../app/config/constants/layoutDataItemTypes';
 import {
+	useCopiedItemIds,
+	useSetCopiedItemIds,
+} from '../../../../../app/contexts/ClipboardContext';
+import {
 	useSelectItem,
 	useSelectMultipleItems,
 } from '../../../../../app/contexts/ControlsContext';
@@ -28,6 +32,7 @@ import {
 } from '../../../../../app/contexts/StoreContext';
 import deleteItem from '../../../../../app/thunks/deleteItem';
 import duplicateItem from '../../../../../app/thunks/duplicateItem';
+import pasteItem from '../../../../../app/thunks/pasteItem';
 import canBeDuplicated from '../../../../../app/utils/canBeDuplicated';
 import canBeRemoved from '../../../../../app/utils/canBeRemoved';
 import canBeRenamed from '../../../../../app/utils/canBeRenamed';
@@ -132,10 +137,12 @@ export default function StructureTreeNodeActions({disabled, item, visible}) {
 }
 
 const ActionList = ({item, setActive, setOpenSaveModal}) => {
+	const copiedItemIds = useCopiedItemIds();
 	const dispatch = useDispatch();
 	const hasRequiredChild = useHasRequiredChild(item.id);
 	const selectItem = useSelectItem();
 	const selectMultipleItems = useSelectMultipleItems();
+	const setCopiedItemIds = useSetCopiedItemIds();
 	const setEditedNodeId = useSetEditedNodeId();
 	const setText = useSetMovementText();
 	const widgets = useSelector((state) => state.widgets);
@@ -210,6 +217,41 @@ const ActionList = ({item, setActive, setOpenSaveModal}) => {
 			});
 		}
 
+		if (
+			Liferay.FeatureFlags['LPD-18221'] &&
+			canBeRemoved(item, layoutData)
+		) {
+			items.push({
+				action: () => {
+					setCopiedItemIds([item.id]);
+					dispatch(
+						deleteItem({
+							itemIds: [item.id],
+							selectItems,
+						})
+					);
+					setText(Liferay.Language.get('item-was-cut'));
+				},
+				icon: 'cut',
+				label: Liferay.Language.get('cut'),
+			});
+		}
+
+		if (
+			Liferay.FeatureFlags['LPD-18221'] &&
+			canBeDuplicated(fragmentEntryLinks, item, layoutData, widgets)
+		) {
+			items.push({
+				action: () => {
+					setCopiedItemIds([item.id]);
+
+					setText(Liferay.Language.get('item-copied'));
+				},
+				icon: 'copy',
+				label: Liferay.Language.get('copy'),
+			});
+		}
+
 		if (canBeDuplicated(fragmentEntryLinks, item, layoutData, widgets)) {
 			items.push({
 				action: () => {
@@ -224,6 +266,28 @@ const ActionList = ({item, setActive, setOpenSaveModal}) => {
 				},
 				icon: 'copy',
 				label: Liferay.Language.get('duplicate'),
+			});
+		}
+
+		if (
+			Liferay.FeatureFlags['LPD-18221'] &&
+			canBeDuplicated(fragmentEntryLinks, item, layoutData, widgets)
+		) {
+			items.push({
+				action: () => {
+					dispatch(
+						pasteItem({
+							copiedItemIds,
+							parentItemId: item.id,
+							selectItems,
+						})
+					);
+
+					setText(Liferay.Language.get('item-pasted'));
+				},
+				disabled: !copiedItemIds?.length,
+				icon: 'paste',
+				label: Liferay.Language.get('paste'),
 			});
 		}
 
@@ -259,6 +323,7 @@ const ActionList = ({item, setActive, setOpenSaveModal}) => {
 
 		return items;
 	}, [
+		copiedItemIds,
 		dispatch,
 		fragmentEntryLinks,
 		hasRequiredChild,
@@ -267,6 +332,7 @@ const ActionList = ({item, setActive, setOpenSaveModal}) => {
 		selectedViewportSize,
 		selectItem,
 		widgets,
+		setCopiedItemIds,
 		setEditedNodeId,
 		setOpenSaveModal,
 		setText,
@@ -289,6 +355,7 @@ const ActionList = ({item, setActive, setOpenSaveModal}) => {
 									aria-label={Liferay.Language.get(
 										dropdownItem.label
 									)}
+									disabled={dropdownItem.disabled}
 									onClick={() => {
 										setActive(false);
 

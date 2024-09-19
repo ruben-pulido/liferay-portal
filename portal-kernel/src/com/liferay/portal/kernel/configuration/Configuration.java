@@ -5,6 +5,7 @@
 
 package com.liferay.portal.kernel.configuration;
 
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -25,6 +26,8 @@ public interface Configuration {
 	public String[] getArray(String key);
 
 	public String[] getArray(String key, Filter filter);
+
+	public List<String> getLoadedSources();
 
 	public Properties getProperties();
 

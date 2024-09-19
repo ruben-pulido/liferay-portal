@@ -4,6 +4,7 @@
  */
 
 import {expect, mergeTests} from '@playwright/test';
+import {createReadStream} from 'fs';
 import moment from 'moment';
 import path from 'path';
 
@@ -12,6 +13,7 @@ import {documentLibraryPagesTest} from '../../fixtures/documentLibraryPages.fixt
 import {featureFlagsTest} from '../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../fixtures/loginTest';
+import {createCategories} from '../../helpers/CreateCategories';
 import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
 import getRandomString from '../../utils/getRandomString';
 import {performLogout} from '../../utils/performLogin';
@@ -20,6 +22,7 @@ import getPageDefinition from '../layout-content-page-editor-web/utils/getPageDe
 import getWidgetDefinition from '../layout-content-page-editor-web/utils/getWidgetDefinition';
 
 const baseTest = mergeTests(
+	apiHelpersTest,
 	documentLibraryPagesTest,
 	isolatedSiteTest,
 	loginTest()
@@ -32,15 +35,6 @@ export const testSearchInDlPortlet = mergeTests(
 		'LPS-178052': true,
 	})
 );
-export const testFeatureFlagsEnabled = mergeTests(
-	baseTest,
-	featureFlagsTest({
-		'LPD-10701': true,
-	})
-);
-
-export const testUploadMultipleFieldsWithCustomDocumentType =
-	mergeTests(baseTest);
 
 baseTest(
 	'Check order by Relevance in Search of DL',
@@ -117,7 +111,7 @@ baseTest(
 	}
 );
 
-testFeatureFlagsEnabled(
+baseTest(
 	'LPD-16658 Show a success message after scheduling a new file',
 	async ({documentLibraryEditFilePage, documentLibraryPage, page}) => {
 		const scheduleDate = `01/01/${new Date().getFullYear() + 1}`;
@@ -145,7 +139,7 @@ testFeatureFlagsEnabled(
 	}
 );
 
-testFeatureFlagsEnabled(
+baseTest(
 	'LPD-16313 Identify at a glance if a Document is visible for guests',
 	async ({documentLibraryEditFilePage, documentLibraryPage}) => {
 		const title = getRandomString();
@@ -170,7 +164,7 @@ testFeatureFlagsEnabled(
 	}
 );
 
-testFeatureFlagsEnabled(
+baseTest(
 	'LPD-16313 Show icon in the content admin and content editor',
 	async ({documentLibraryEditFilePage, documentLibraryPage, page}) => {
 		const title = getRandomString();
@@ -195,7 +189,7 @@ testFeatureFlagsEnabled(
 	}
 );
 
-testFeatureFlagsEnabled(
+baseTest(
 	'LPD-16313 Show icon in the DL item selector',
 	async ({
 		documentLibraryEditDocumentTypesPage,
@@ -245,7 +239,7 @@ testFeatureFlagsEnabled(
 	}
 );
 
-testUploadMultipleFieldsWithCustomDocumentType(
+baseTest(
 	'Error uploading multiples files with custom document type',
 	{
 		tag: '@LPD-29609',
@@ -318,5 +312,85 @@ testSearchInDlPortlet(
 				.locator('.portlet-document-library')
 				.getByRole('link', {name: title})
 		).toBeVisible();
+	}
+);
+
+baseTest(
+	'Replace option does not work on Categories Selector',
+	{
+		tag: '@LPD-27899',
+	},
+
+	async ({
+		apiHelpers,
+		documentLibraryEditFilePage,
+		documentLibraryPage,
+		page,
+		site,
+	}) => {
+		const vocabularyName = getRandomString();
+
+		const categories = await createCategories({
+			apiHelpers,
+			categoryNames: [
+				{name: 'Books'},
+				{name: 'Plants'},
+				{name: 'Pets'},
+				{name: 'Furniture'},
+			],
+			site,
+			vocabularyName,
+		});
+
+		const document1 = await apiHelpers.headlessDelivery.postDocument(
+			site.id,
+			createReadStream(path.join(__dirname, '/dependencies/image1.jpeg')),
+			{
+				description: getRandomString(),
+				fileName: getRandomString(),
+				taxonomyCategoryIds: [categories[0].id, categories[1].id],
+				title: getRandomString(),
+			}
+		);
+
+		const document2 = await apiHelpers.headlessDelivery.postDocument(
+			site.id,
+			createReadStream(path.join(__dirname, '/dependencies/image1.jpeg')),
+			{
+				description: getRandomString(),
+				fileName: getRandomString(),
+				taxonomyCategoryIds: [categories[0].id, categories[2].id],
+				title: getRandomString(),
+			}
+		);
+
+		await documentLibraryPage.goto(site.friendlyUrlPath);
+
+		await documentLibraryPage.openBulkEditCategoriesModal([
+			document1.title,
+			document2.title,
+		]);
+
+		await expect(
+			page.locator('.modal .label-item-expand', {hasText: 'Books'})
+		).toBeVisible();
+
+		await documentLibraryPage.goto(site.friendlyUrlPath);
+
+		await documentLibraryPage.replaceCategoriesUsingBulkEditCategoriesModal(
+			[document1.title, document2.title],
+			[{categoryNames: ['Furniture'], vocabularyName}]
+		);
+
+		await waitForSuccessAlert(page, 'Success:Changes Saved');
+
+		for (const document of [document1, document2]) {
+			await documentLibraryPage.goto(site.friendlyUrlPath);
+			await documentLibraryPage.editFileEntry(document.title);
+			await documentLibraryEditFilePage.openFieldset('Categorization');
+			await page.getByText(vocabularyName).waitFor();
+
+			await expect(await page.getByText(document.title)).toBeVisible();
+		}
 	}
 );

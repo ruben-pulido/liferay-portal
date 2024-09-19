@@ -46,6 +46,7 @@ import {
 } from '../../../../../app/contexts/StoreContext';
 import selectCanUpdatePageStructure from '../../../../../app/selectors/selectCanUpdatePageStructure';
 import moveItem from '../../../../../app/thunks/moveItem';
+import moveStepper from '../../../../../app/thunks/moveStepper';
 import updateItemConfig from '../../../../../app/thunks/updateItemConfig';
 import canBeRenamed from '../../../../../app/utils/canBeRenamed';
 import {deepEqual} from '../../../../../app/utils/checkDeepEqual';
@@ -216,14 +217,21 @@ function StructureTreeNodeContent({
 
 	const {handlerRef, isDraggingSource: itemIsDraggingSource} = useDragItem(
 		{...item, fieldTypes, fragmentEntryType, isWidget},
-		(parentItemId, position) =>
-			dispatch(
-				moveItem({
-					itemId: node.id,
-					parentItemId,
-					position,
-				})
-			)
+		(parentItemId, position) => {
+			const thunk = fieldTypes?.includes('stepper')
+				? moveStepper({
+						itemId: node.id,
+						parentItemId,
+						position,
+					})
+				: moveItem({
+						itemId: node.id,
+						parentItemId,
+						position,
+					});
+
+			dispatch(thunk);
+		}
 	);
 
 	const {
@@ -649,20 +657,29 @@ function computeHover({
 		const targetIsCollectionNotMapped =
 			targetItem.type === LAYOUT_DATA_ITEM_TYPES.collection &&
 			!collectionIsMapped(targetItem);
+
 		const targetIsColumn =
 			targetItem.type === LAYOUT_DATA_ITEM_TYPES.column;
+
 		const targetIsFragment =
 			targetItem.type === LAYOUT_DATA_ITEM_TYPES.fragment;
+
 		const targetIsContainer =
 			targetItem.type === LAYOUT_DATA_ITEM_TYPES.container ||
 			targetItem.type === LAYOUT_DATA_ITEM_TYPES.form;
+
 		const targetIsEmpty =
 			layoutDataRef.current.items[targetItem.itemId]?.children.length ===
 			0;
+
 		const targetIsFormNotMapped =
 			targetItem.type === LAYOUT_DATA_ITEM_TYPES.form &&
 			!formIsMapped(targetItem);
+
 		const targetIsParent = sourceItem.parentId === targetItem.itemId;
+
+		const targetIsFormStep =
+			targetItem.type === LAYOUT_DATA_ITEM_TYPES.formStep;
 
 		return (
 			targetPositionWithMiddle === TARGET_POSITIONS.MIDDLE &&
@@ -670,7 +687,8 @@ function computeHover({
 				targetIsCollectionNotMapped ||
 				targetIsColumn ||
 				targetIsContainer ||
-				targetIsFormNotMapped) &&
+				targetIsFormNotMapped ||
+				targetIsFormStep) &&
 			!targetIsFragment &&
 			!targetIsParent
 		);

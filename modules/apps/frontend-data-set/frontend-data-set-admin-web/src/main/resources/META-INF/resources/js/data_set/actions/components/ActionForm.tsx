@@ -137,6 +137,8 @@ const ActionForm = ({
 	const [labelTranslations, setLabelTranslations] = useState(
 		initialValues?.label_i18n ?? {}
 	);
+	const [requestBodyValidationError, setRequestBodyValidationError] =
+		useState(false);
 	const [labelValidationError, setLabelValidationError] = useState(false);
 	const [permissionKeyValidationError, setPermissionKeyValidationError] =
 		useState(false);
@@ -157,10 +159,30 @@ const ActionForm = ({
 		method: initialValues?.method ?? '',
 		modalSize: initialValues?.modalSize ?? '',
 		permissionKey: initialValues?.permissionKey ?? '',
+		requestBody: initialValues?.requestBody ?? '',
 		title: initialValues?.title ?? '',
 		type: initialValues?.type ?? 'link',
 		url: initialValues?.url ?? '',
 	} as IAction);
+
+	const isRequestBodyInputValid = (value: string | undefined) => {
+		if (!value) {
+			return true;
+		}
+
+		if (!value.match(/{[^}]*}/)) {
+			return false;
+		}
+
+		try {
+			JSON.parse(value);
+
+			return true;
+		}
+		catch {
+			return false;
+		}
+	};
 
 	const onActionTypeChange = (event: any) => {
 		const type = event.target.value;
@@ -186,6 +208,7 @@ const ActionForm = ({
 			method,
 			modalSize,
 			permissionKey,
+			requestBody,
 			type,
 			url,
 		} = actionData;
@@ -207,6 +230,10 @@ const ActionForm = ({
 			type,
 			url,
 		} as any;
+
+		if (Liferay.FeatureFlags['LPD-34636']) {
+			body.requestBody = requestBody;
+		}
 
 		if (Object.keys(confirmationMessageTranslations).length) {
 			body.confirmationMessageType = confirmationMessageType;
@@ -256,7 +283,7 @@ const ActionForm = ({
 	const validate = () => {
 		let valid: boolean = true;
 
-		const {permissionKey, type, url} = actionData;
+		const {permissionKey, requestBody, type, url} = actionData;
 
 		if (
 			!translationExists({
@@ -272,6 +299,17 @@ const ActionForm = ({
 			valid = false;
 
 			setURLValidationError(true);
+		}
+
+		if (
+			Liferay.FeatureFlags['LPD-34636'] &&
+			(type === EActionType.ASYNC || type === EActionType.HEADLESS)
+		) {
+			if (!isRequestBodyInputValid(requestBody)) {
+				valid = false;
+
+				setRequestBodyValidationError(true);
+			}
 		}
 
 		if (!permissionKey && type === EActionType.HEADLESS) {
@@ -312,14 +350,15 @@ const ActionForm = ({
 		getIcons();
 	}, [spritemap]);
 
-	const iconFormElementId = `${namespace}Icon`;
 	const confirmationMessageFormElementId = `${namespace}ConfirmationMessage`;
 	const confirmationMessageTypeFormElementId = `${namespace}ConfirmationMessageType`;
 	const errorMessageFormElementId = `${namespace}ErrorMessage`;
+	const iconFormElementId = `${namespace}Icon`;
 	const labelFormElementId = `${namespace}Label`;
 	const methodFormElementId = `${namespace}Method`;
 	const modalSizeFormElementId = `${namespace}ModalSize`;
 	const permissionKeyFormElementId = `${namespace}PermissionKey`;
+	const requestBodyFormElementId = `${namespace}RequestBody`;
 	const successMessageFormElementId = `${namespace}SuccessMessage`;
 	const titleFormElementId = `${namespace}Title`;
 	const typeFormElementId = `${namespace}Type`;
@@ -680,6 +719,70 @@ const ActionForm = ({
 							</ClayLayout.Col>
 						</ClayLayout.Row>
 					)}
+
+					{Liferay.FeatureFlags['LPD-34636'] &&
+						(actionData.type === EActionType.HEADLESS ||
+							actionData.type === EActionType.ASYNC) && (
+							<ClayLayout.Row justify="start">
+								<ClayLayout.Col lg>
+									<ClayForm.Group
+										className={classNames({
+											'has-error':
+												requestBodyValidationError,
+										})}
+									>
+										<label
+											htmlFor={requestBodyFormElementId}
+										>
+											{Liferay.Language.get(
+												'request-body'
+											)}
+
+											<span
+												className="label-icon lfr-portal-tooltip ml-2"
+												title={Liferay.Language.get(
+													'request-body-help'
+												)}
+											>
+												<ClayIcon symbol="question-circle-full" />
+											</span>
+										</label>
+
+										<ClayInput
+											component="textarea"
+											id={requestBodyFormElementId}
+											onChange={(event) => {
+												const requestBody =
+													event.target.value;
+
+												setActionData({
+													...actionData,
+													requestBody,
+												});
+
+												setRequestBodyValidationError(
+													!isRequestBodyInputValid(
+														requestBody
+													)
+												);
+											}}
+											placeholder={Liferay.Language.get(
+												'add-a-request-body-here'
+											)}
+											value={actionData.requestBody}
+										/>
+
+										{requestBodyValidationError && (
+											<ValidationFeedback
+												message={Liferay.Language.get(
+													'this-field-must-contain-a-valid-json'
+												)}
+											/>
+										)}
+									</ClayForm.Group>
+								</ClayLayout.Col>
+							</ClayLayout.Row>
+						)}
 
 					<ClayLayout.Row justify="start">
 						<ClayLayout.Col>

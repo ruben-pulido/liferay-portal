@@ -7,6 +7,7 @@ package com.liferay.headless.commerce.admin.catalog.internal.dto.v1_0.converter;
 
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionSpecificationOptionValue;
+import com.liferay.commerce.product.model.CPOptionCategory;
 import com.liferay.commerce.product.model.CPSpecificationOption;
 import com.liferay.commerce.product.service.CPDefinitionSpecificationOptionValueService;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductSpecification;
@@ -55,6 +56,17 @@ public class ProductSpecificationDTOConverter
 				setLabel(
 					() -> LanguageUtils.getLanguageIdMap(
 						cpSpecificationOption.getTitleMap()));
+				setOptionCategoryExternalReferenceCode(
+					() -> {
+						CPOptionCategory cpOptionCategory =
+							cpSpecificationOption.getCPOptionCategory();
+
+						if (cpOptionCategory == null) {
+							return null;
+						}
+
+						return cpOptionCategory.getExternalReferenceCode();
+					});
 				setOptionCategoryId(
 					cpDefinitionSpecificationOptionValue::
 						getCPOptionCategoryId);
@@ -67,6 +79,8 @@ public class ProductSpecificationDTOConverter
 
 						return cpDefinition.getCProductId();
 					});
+				setSpecificationExternalReferenceCode(
+					cpSpecificationOption::getExternalReferenceCode);
 				setSpecificationId(
 					cpSpecificationOption::getCPSpecificationOptionId);
 				setSpecificationKey(cpSpecificationOption::getKey);

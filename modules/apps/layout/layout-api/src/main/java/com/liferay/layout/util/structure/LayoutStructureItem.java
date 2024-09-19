@@ -19,7 +19,7 @@ import java.util.Objects;
 /**
  * @author Víctor Galán
  */
-public abstract class LayoutStructureItem {
+public abstract class LayoutStructureItem implements Cloneable {
 
 	public static LayoutStructureItem of(JSONObject jsonObject) {
 		String parentId = jsonObject.getString("parentId");
@@ -70,11 +70,26 @@ public abstract class LayoutStructureItem {
 	}
 
 	public void addChildrenItem(int position, String itemId) {
-		_childrenItemIds.add(position, itemId);
+		if ((position >= 0) && (position <= _childrenItemIds.size())) {
+			_childrenItemIds.add(position, itemId);
+		}
+		else {
+			_childrenItemIds.add(itemId);
+		}
 	}
 
 	public void addChildrenItem(String itemId) {
 		_childrenItemIds.add(itemId);
+	}
+
+	@Override
+	public LayoutStructureItem clone() {
+		try {
+			return (LayoutStructureItem)super.clone();
+		}
+		catch (CloneNotSupportedException cloneNotSupportedException) {
+			throw new RuntimeException(cloneNotSupportedException);
+		}
 	}
 
 	public void deleteChildrenItem(String itemId) {

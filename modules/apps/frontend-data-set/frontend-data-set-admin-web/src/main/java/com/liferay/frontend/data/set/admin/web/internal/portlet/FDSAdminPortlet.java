@@ -219,6 +219,32 @@ public class FDSAdminPortlet extends MVCPortlet {
 						ObjectFieldConstants.DB_TYPE_STRING, true, false, null,
 						_language.get(locale, "url"), "url", false)));
 
+		if (FeatureFlagManagerUtil.isEnabled("LPD-34636")) {
+			ObjectField requestBodyObjectField =
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_LONG_TEXT,
+					ObjectFieldConstants.DB_TYPE_CLOB, true, false, null,
+					_language.get(locale, "request-body"), "requestBody",
+					false);
+
+			_objectFieldLocalService.addCustomObjectField(
+				requestBodyObjectField.getExternalReferenceCode(), userId,
+				requestBodyObjectField.getListTypeDefinitionId(),
+				fdsActionObjectDefinition.getObjectDefinitionId(),
+				requestBodyObjectField.getBusinessType(),
+				requestBodyObjectField.getDBType(),
+				requestBodyObjectField.isIndexed(),
+				requestBodyObjectField.isIndexedAsKeyword(),
+				requestBodyObjectField.getIndexedLanguageId(),
+				requestBodyObjectField.getLabelMap(), false,
+				requestBodyObjectField.getName(),
+				requestBodyObjectField.getReadOnly(),
+				requestBodyObjectField.getReadOnlyConditionExpression(),
+				requestBodyObjectField.isRequired(),
+				requestBodyObjectField.isState(),
+				requestBodyObjectField.getObjectFieldSettings());
+		}
+
 		_enableLocalization(fdsActionObjectDefinition);
 
 		_addLocalizedCustomObjectField(
@@ -809,6 +835,11 @@ public class FDSAdminPortlet extends MVCPortlet {
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 						ObjectFieldConstants.DB_TYPE_STRING, true, false, null,
+						_language.get(locale, "additional-api-url-parameters"),
+						"additionalAPIURLParameters", false),
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, false, null,
 						_language.get(locale, "list-of-items-per-page"),
 						"listOfItemsPerPage", true),
 					ObjectFieldUtil.createObjectField(
@@ -880,6 +911,11 @@ public class FDSAdminPortlet extends MVCPortlet {
 						ObjectFieldConstants.DB_TYPE_STRING, true, false, null,
 						_language.get(locale, "description"), "description",
 						false),
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, false, null,
+						_language.get(locale, "additionalAPIURLParameters"),
+						"additionalAPIURLParameters", false),
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 						ObjectFieldConstants.DB_TYPE_STRING, true, false, null,

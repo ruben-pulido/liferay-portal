@@ -37,6 +37,8 @@ public class PendingCommerceOrderTableFDSView extends BaseTableFDSView {
 			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(
 				"actionLink")
 		).add(
+			"name", "name"
+		).add(
 			"orderType", "order-type"
 		).add(
 			"externalReferenceCode", "erc"
@@ -67,6 +69,7 @@ public class PendingCommerceOrderTableFDSView extends BaseTableFDSView {
 		).setLabel(
 			"account"
 		);
+
 		stringFDSTableSchemaField.setTruncate(true);
 
 		return stringFDSTableSchemaField;

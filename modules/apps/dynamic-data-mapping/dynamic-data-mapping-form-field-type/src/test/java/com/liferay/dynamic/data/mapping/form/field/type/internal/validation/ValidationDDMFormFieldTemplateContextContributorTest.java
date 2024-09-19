@@ -5,7 +5,6 @@
 
 package com.liferay.dynamic.data.mapping.form.field.type.internal.validation;
 
-import com.liferay.dynamic.data.mapping.form.field.type.BaseDDMFormFieldTypeSettingsTestCase;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.petra.string.StringPool;
@@ -27,8 +26,7 @@ import org.junit.Test;
  * @author Carolina Barbosa
  * @author Matheus Almeida
  */
-public class ValidationDDMFormFieldTemplateContextContributorTest
-	extends BaseDDMFormFieldTypeSettingsTestCase {
+public class ValidationDDMFormFieldTemplateContextContributorTest {
 
 	@ClassRule
 	@Rule
@@ -36,10 +34,7 @@ public class ValidationDDMFormFieldTemplateContextContributorTest
 		LiferayUnitTestRule.INSTANCE;
 
 	@Before
-	@Override
 	public void setUp() throws Exception {
-		super.setUp();
-
 		_setUpJSONFactory();
 	}
 

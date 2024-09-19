@@ -13,18 +13,19 @@ dependencies {
 	compileOnly group: "org.osgi", name: "org.osgi.service.cm", version: "1.6.0"
 	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.4.0"
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
+	compileOnly project(":apps:asset:asset-entry-rel-api")
 	compileOnly project(":apps:change-tracking:change-tracking-spi")
 	compileOnly project(":apps:export-import:export-import-api")
 	compileOnly project(":apps:friendly-url:friendly-url-api")
 	compileOnly project(":apps:normalizer:normalizer-api")
 	compileOnly project(":apps:portal-configuration:portal-configuration-module-configuration-api")
 	compileOnly project(":apps:portal:portal-aop-api")
-	compileOnly project(":apps:portal:portal-encryptor")
 	compileOnly project(":apps:redirect:redirect-api")
 	compileOnly project(":apps:site:site-api")
 	compileOnly project(":apps:staging:staging-api")
 	compileOnly project(":apps:static:portal-configuration:portal-configuration-metatype-api")
 	compileOnly project(":apps:static:portal-configuration:portal-configuration-persistence-api")
+	compileOnly project(":apps:static:portal:portal-encryptor")
 	compileOnly project(":apps:static:portal:portal-upgrade-api")
 	compileOnly project(":apps:xstream:xstream-configurator-api")
 	compileOnly project(":core:petra:petra-function")

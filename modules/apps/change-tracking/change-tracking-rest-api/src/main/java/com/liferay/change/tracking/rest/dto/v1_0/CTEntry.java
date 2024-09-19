@@ -180,6 +180,175 @@ public class CTEntry implements Serializable {
 	private Supplier<Long> _ctCollectionIdSupplier;
 
 	@Schema
+	public String getCtCollectionName() {
+		if (_ctCollectionNameSupplier != null) {
+			ctCollectionName = _ctCollectionNameSupplier.get();
+
+			_ctCollectionNameSupplier = null;
+		}
+
+		return ctCollectionName;
+	}
+
+	public void setCtCollectionName(String ctCollectionName) {
+		this.ctCollectionName = ctCollectionName;
+
+		_ctCollectionNameSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setCtCollectionName(
+		UnsafeSupplier<String, Exception> ctCollectionNameUnsafeSupplier) {
+
+		_ctCollectionNameSupplier = () -> {
+			try {
+				return ctCollectionNameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected String ctCollectionName;
+
+	@JsonIgnore
+	private Supplier<String> _ctCollectionNameSupplier;
+
+	@Schema
+	@Valid
+	public Status getCtCollectionStatus() {
+		if (_ctCollectionStatusSupplier != null) {
+			ctCollectionStatus = _ctCollectionStatusSupplier.get();
+
+			_ctCollectionStatusSupplier = null;
+		}
+
+		return ctCollectionStatus;
+	}
+
+	public void setCtCollectionStatus(Status ctCollectionStatus) {
+		this.ctCollectionStatus = ctCollectionStatus;
+
+		_ctCollectionStatusSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setCtCollectionStatus(
+		UnsafeSupplier<Status, Exception> ctCollectionStatusUnsafeSupplier) {
+
+		_ctCollectionStatusSupplier = () -> {
+			try {
+				return ctCollectionStatusUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Status ctCollectionStatus;
+
+	@JsonIgnore
+	private Supplier<Status> _ctCollectionStatusSupplier;
+
+	@Schema
+	public Date getCtCollectionStatusDate() {
+		if (_ctCollectionStatusDateSupplier != null) {
+			ctCollectionStatusDate = _ctCollectionStatusDateSupplier.get();
+
+			_ctCollectionStatusDateSupplier = null;
+		}
+
+		return ctCollectionStatusDate;
+	}
+
+	public void setCtCollectionStatusDate(Date ctCollectionStatusDate) {
+		this.ctCollectionStatusDate = ctCollectionStatusDate;
+
+		_ctCollectionStatusDateSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setCtCollectionStatusDate(
+		UnsafeSupplier<Date, Exception> ctCollectionStatusDateUnsafeSupplier) {
+
+		_ctCollectionStatusDateSupplier = () -> {
+			try {
+				return ctCollectionStatusDateUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Date ctCollectionStatusDate;
+
+	@JsonIgnore
+	private Supplier<Date> _ctCollectionStatusDateSupplier;
+
+	@Schema
+	public String getCtCollectionStatusUserName() {
+		if (_ctCollectionStatusUserNameSupplier != null) {
+			ctCollectionStatusUserName =
+				_ctCollectionStatusUserNameSupplier.get();
+
+			_ctCollectionStatusUserNameSupplier = null;
+		}
+
+		return ctCollectionStatusUserName;
+	}
+
+	public void setCtCollectionStatusUserName(
+		String ctCollectionStatusUserName) {
+
+		this.ctCollectionStatusUserName = ctCollectionStatusUserName;
+
+		_ctCollectionStatusUserNameSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setCtCollectionStatusUserName(
+		UnsafeSupplier<String, Exception>
+			ctCollectionStatusUserNameUnsafeSupplier) {
+
+		_ctCollectionStatusUserNameSupplier = () -> {
+			try {
+				return ctCollectionStatusUserNameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected String ctCollectionStatusUserName;
+
+	@JsonIgnore
+	private Supplier<String> _ctCollectionStatusUserNameSupplier;
+
+	@Schema
 	public Date getDateCreated() {
 		if (_dateCreatedSupplier != null) {
 			dateCreated = _dateCreatedSupplier.get();
@@ -629,6 +798,47 @@ public class CTEntry implements Serializable {
 	@JsonIgnore
 	private Supplier<Status> _statusSupplier;
 
+	@Schema(description = "Info on when a change was made.")
+	public String getStatusMessage() {
+		if (_statusMessageSupplier != null) {
+			statusMessage = _statusMessageSupplier.get();
+
+			_statusMessageSupplier = null;
+		}
+
+		return statusMessage;
+	}
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
+
+		_statusMessageSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setStatusMessage(
+		UnsafeSupplier<String, Exception> statusMessageUnsafeSupplier) {
+
+		_statusMessageSupplier = () -> {
+			try {
+				return statusMessageUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(description = "Info on when a change was made.")
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected String statusMessage;
+
+	@JsonIgnore
+	private Supplier<String> _statusMessageSupplier;
+
 	@Schema
 	public String getTitle() {
 		if (_titleSupplier != null) {
@@ -781,6 +991,66 @@ public class CTEntry implements Serializable {
 			sb.append(ctCollectionId);
 		}
 
+		String ctCollectionName = getCtCollectionName();
+
+		if (ctCollectionName != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"ctCollectionName\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(ctCollectionName));
+
+			sb.append("\"");
+		}
+
+		Status ctCollectionStatus = getCtCollectionStatus();
+
+		if (ctCollectionStatus != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"ctCollectionStatus\": ");
+
+			sb.append(String.valueOf(ctCollectionStatus));
+		}
+
+		Date ctCollectionStatusDate = getCtCollectionStatusDate();
+
+		if (ctCollectionStatusDate != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"ctCollectionStatusDate\": ");
+
+			sb.append("\"");
+
+			sb.append(liferayToJSONDateFormat.format(ctCollectionStatusDate));
+
+			sb.append("\"");
+		}
+
+		String ctCollectionStatusUserName = getCtCollectionStatusUserName();
+
+		if (ctCollectionStatusUserName != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"ctCollectionStatusUserName\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(ctCollectionStatusUserName));
+
+			sb.append("\"");
+		}
+
 		Date dateCreated = getDateCreated();
 
 		if (dateCreated != null) {
@@ -927,6 +1197,22 @@ public class CTEntry implements Serializable {
 			sb.append("\"status\": ");
 
 			sb.append(String.valueOf(status));
+		}
+
+		String statusMessage = getStatusMessage();
+
+		if (statusMessage != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"statusMessage\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(statusMessage));
+
+			sb.append("\"");
 		}
 
 		String title = getTitle();

@@ -11,12 +11,13 @@ import {
 	ESCAPE_KEY_CODE,
 	META_KEY_CODE,
 	SHIFT_KEY_CODE,
+	SPACE_KEY_CODE,
 } from '../config/constants/keyboardCodes';
 import {MULTI_SELECT_TYPES} from '../config/constants/multiSelectTypes';
 import {
 	useActivateMultiSelect,
 	useActiveItemIds,
-	useMultiSelectIsActivated,
+	useMultiSelectType,
 	useSelectItem,
 } from '../contexts/ControlsContext';
 import isCtrlOrMeta from '../utils/isCtrlOrMeta';
@@ -25,7 +26,7 @@ export default function MultiSelectManager() {
 	const activeItemIds = useActiveItemIds();
 	const activateMultiSelect = useActivateMultiSelect();
 	const keymapRef = useRef(null);
-	const multiSelectIsActivated = useMultiSelectIsActivated();
+	const multiSelectType = useMultiSelectType();
 	const selectItem = useSelectItem();
 
 	keymapRef.current = {
@@ -35,6 +36,7 @@ export default function MultiSelectManager() {
 			},
 			disableKeyCombination: (event) => event.key === SHIFT_KEY_CODE,
 			keyCombination: (event) => event.shiftKey,
+			keyboardActivation: () => true,
 		},
 		simpleMultiSelect: {
 			action: () => {
@@ -43,6 +45,8 @@ export default function MultiSelectManager() {
 			disableKeyCombination: (event) =>
 				event.key === CONTROL_KEY_CODE || event.key === META_KEY_CODE,
 			keyCombination: (event) => isCtrlOrMeta(event),
+			keyboardActivation: (event) =>
+				event.key === ENTER_KEY_CODE || event.key === SPACE_KEY_CODE,
 		},
 	};
 
@@ -54,8 +58,7 @@ export default function MultiSelectManager() {
 		const onClick = (event) => {
 			const multiSelection = Object.values(keymapRef.current).find(
 				(multiSelection) =>
-					!multiSelectIsActivated &&
-					multiSelection.keyCombination(event)
+					!multiSelectType && multiSelection.keyCombination(event)
 			);
 
 			if (multiSelection) {
@@ -66,11 +69,10 @@ export default function MultiSelectManager() {
 		const onKeydown = (event) => {
 			const multiSelection = Object.values(keymapRef.current).find(
 				(multiSelection) =>
-					!multiSelectIsActivated &&
-					multiSelection.keyCombination(event)
+					!multiSelectType && multiSelection.keyCombination(event)
 			);
 
-			if (multiSelection && event.key === ENTER_KEY_CODE) {
+			if (multiSelection && multiSelection.keyboardActivation(event)) {
 				multiSelection.action(event);
 			}
 
@@ -82,7 +84,7 @@ export default function MultiSelectManager() {
 		const onKeyup = (event) => {
 			const multiSelection = Object.values(keymapRef.current).find(
 				(multiSelection) =>
-					multiSelectIsActivated &&
+					multiSelectType &&
 					multiSelection.disableKeyCombination(event)
 			);
 
@@ -100,12 +102,7 @@ export default function MultiSelectManager() {
 			window.removeEventListener('keydown', onKeydown, true);
 			window.removeEventListener('keyup', onKeyup, true);
 		};
-	}, [
-		activeItemIds,
-		activateMultiSelect,
-		multiSelectIsActivated,
-		selectItem,
-	]);
+	}, [activeItemIds, activateMultiSelect, multiSelectType, selectItem]);
 
 	return null;
 }

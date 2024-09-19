@@ -59,13 +59,23 @@ const zodSchema = {
 			.min(1, {message: 'Please enter a phone number to continue.'}),
 	}),
 	appPublishing: {
+		build: z.object({
+			cloudCompatible: z.boolean(),
+			compatibleOffering: z.array(z.string()).min(1),
+			liferayPackages: z.array(z.any()).min(1),
+		}),
 		profile: z.object({
 			categories: z.array(z.any()).nonempty(),
 			description: z.string().min(3),
 			name: z.string().min(3),
 			tags: z.array(z.any()).nonempty(),
 		}),
+		storefront: z.object({images: z.array(z.any()).min(1).max(10)}),
 		termsAndConditions: z.boolean().refine((data) => data === true),
+		version: z.object({
+			notes: z.string(),
+			version: z.string(),
+		}),
 	},
 	becomePublisherForm: z.object({
 		emailAddress: z.string().email('Please fill in valid email'),

@@ -1,6 +1,6 @@
 {
 	"friendlyURL": "/sales/pricing-calculator",
-	"hidden": false,
+	"hidden": true,
 	"name_i18n": {
 		"en_US": "Pricing Calculator"
 	},

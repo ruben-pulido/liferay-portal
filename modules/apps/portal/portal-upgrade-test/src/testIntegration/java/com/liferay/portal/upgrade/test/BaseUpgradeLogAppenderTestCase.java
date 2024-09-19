@@ -10,22 +10,24 @@ import com.liferay.petra.io.unsync.UnsyncStringWriter;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.db.partition.util.DBPartitionUtil;
 import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.db.partition.DBPartition;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.model.ReleaseConstants;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -48,15 +50,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
+
+import java.net.URI;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,8 +99,11 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
-		_db.runSQL("DROP_TABLE_IF_EXISTS(UpgradeReportTable1)");
-		_db.runSQL("DROP_TABLE_IF_EXISTS(UpgradeReportTable2)");
+		DBPartitionUtil.forEachCompanyId(
+			companyId -> {
+				_db.runSQL("DROP_TABLE_IF_EXISTS(UpgradeReportTable1)");
+				_db.runSQL("DROP_TABLE_IF_EXISTS(UpgradeReportTable2)");
+			});
 
 		ReflectionTestUtil.setFieldValue(
 			DBUpgrader.class, "_upgradeClient", _originalUpgradeClient);
@@ -412,6 +423,22 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 	}
 
 	@Test
+	public void testJVMArguments() throws Exception {
+		_appender.start();
+
+		_appender.stop();
+
+		RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+
+		List<String> inputArguments = runtimeMXBean.getInputArguments();
+
+		_assertLogContextContains(
+			"upgrade.report.jvm.arguments", inputArguments.get(0));
+
+		_assertReport(inputArguments.get(0));
+	}
+
+	@Test
 	public void testLogEvents() throws Exception {
 		_appender.start();
 
@@ -558,33 +585,31 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 		_appender.stop();
 
 		_assertLogContextContains(
-			"upgrade.report.properties.set.by.user",
-			"Properties set with environment variables");
-		_assertLogContextContains(
-			"upgrade.report.properties.set.by.user",
-			"my.environment.property: my environment property value");
-		_assertReport("Properties set with environment variables");
-		_assertReport("my.environment.property: my environment property value");
+			"upgrade.report.properties",
+			"my.environment.property=my environment property value");
+
+		_assertReport("my.environment.property=my environment property value");
 	}
 
 	@Test
 	public void testPropertiesSetByUserWithFile() throws Exception {
-		File propertiesFile = temporaryFolder.newFile("test.properties");
+		List<String> loadedSources = PropsUtil.getLoadedSources();
 
-		String[] originalIncludeAndOverride = PropsUtil.getArray(
-			"include-and-override");
+		File file = temporaryFolder.newFile("test.properties");
 
-		String[] includeAndOverride = ArrayUtil.append(
-			originalIncludeAndOverride, propertiesFile.getAbsolutePath());
+		URI uri = file.toURI();
 
-		PropsUtil.set(
-			"include-and-override", StringUtil.merge(includeAndOverride));
+		String loadedSource = "file:" + uri.getPath();
+
+		loadedSources.add(loadedSource);
 
 		Properties properties = new Properties();
 
 		properties.setProperty("my.property", "my property value");
 
-		try (Writer writer = new FileWriter(propertiesFile)) {
+		PropsUtil.addProperties(properties);
+
+		try (Writer writer = new FileWriter(file)) {
 			properties.store(writer, null);
 
 			_appender.start();
@@ -592,18 +617,14 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 			_appender.stop();
 
 			_assertLogContextContains(
-				"upgrade.report.properties.set.by.user",
-				propertiesFile.getAbsolutePath());
+				"upgrade.report.properties.files", file.getAbsolutePath());
 			_assertLogContextContains(
-				"upgrade.report.properties.set.by.user",
-				"my.property: my property value");
-			_assertReport(propertiesFile.getAbsolutePath());
-			_assertReport("my.property: my property value");
+				"upgrade.report.properties", "my.property=my property value");
+			_assertReport(file.getAbsolutePath());
+			_assertReport("my.property=my property value");
 		}
 		finally {
-			PropsUtil.set(
-				"include-and-override",
-				StringUtil.merge(originalIncludeAndOverride));
+			loadedSources.remove(loadedSource);
 		}
 	}
 
@@ -676,6 +697,96 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 	}
 
 	@Test
+	public void testSQLStatementsWithClassNameAndDuration() throws Exception {
+		String sql1 = "insert into UpgradeReportTable1 (id_) values (2)";
+
+		UpgradeProcess upgradeProcess1 = UpgradeProcessFactory.runSQL(sql1);
+
+		Class<?> upgradeProcess1Class = upgradeProcess1.getClass();
+
+		List<String> upgradeProcess1ClassNames = new CopyOnWriteArrayList<>();
+
+		String sql2 = "delete from UpgradeReportTable1 where id_ = 2";
+
+		UpgradeProcess upgradeProcess2 = UpgradeProcessFactory.runSQL(sql2);
+
+		Class<?> upgradeProcess2Class = upgradeProcess2.getClass();
+
+		List<String> upgradeProcess2ClassNames = new CopyOnWriteArrayList<>();
+
+		DBPartitionUtil.forEachCompanyId(
+			companyId -> {
+				if (DBPartition.isPartitionEnabled()) {
+					upgradeProcess1ClassNames.add(
+						upgradeProcess1Class.getName() + StringPool.AT +
+							CompanyThreadLocal.getCompanyId());
+
+					upgradeProcess2ClassNames.add(
+						upgradeProcess2Class.getName() + StringPool.AT +
+							CompanyThreadLocal.getCompanyId());
+				}
+				else {
+					upgradeProcess1ClassNames.add(
+						upgradeProcess1Class.getName());
+
+					upgradeProcess2ClassNames.add(
+						upgradeProcess2Class.getName());
+				}
+			});
+
+		_appender.start();
+
+		upgradeProcess1.upgrade();
+
+		upgradeProcess2.upgrade();
+
+		_appender.stop();
+
+		if (_reportContent == null) {
+			_reportContent = _getReportContent();
+		}
+
+		for (String upgradeProcessClassName : upgradeProcess1ClassNames) {
+			_assertLogContextContains(
+				"upgrade.report.longest.running.sqls",
+				String.format("%s:%s", upgradeProcessClassName, sql1));
+			_assertReport(
+				String.format(
+					"Upgrade Process: %s\nSQL: %s", upgradeProcessClassName,
+					sql1));
+		}
+
+		for (String upgradeProcessClassName : upgradeProcess2ClassNames) {
+			_assertLogContextContains(
+				"upgrade.report.longest.running.sqls",
+				String.format("%s:%s", upgradeProcessClassName, sql2));
+			_assertReport(
+				String.format(
+					"Upgrade Process: %s\nSQL: %s", upgradeProcessClassName,
+					sql2));
+		}
+
+		Map<String, Long> sqlExecutionTimes = ReflectionTestUtil.invoke(
+			_upgradeRecorder, "getSQLExecutionTimes", new Class<?>[0]);
+
+		for (Map.Entry<String, Long> entry : sqlExecutionTimes.entrySet()) {
+			Long duration = entry.getValue();
+
+			String sql = entry.getKey();
+
+			String[] parts = sql.split("\\|");
+
+			_assertLogContextContains(
+				"upgrade.report.longest.running.sqls",
+				String.format("%s:%s:%d ms", parts[0], parts[1], duration));
+			_assertReport(
+				String.format(
+					"Upgrade Process: %s\nSQL: %s\nDuration: %d ms", parts[0],
+					parts[1], duration));
+		}
+	}
+
+	@Test
 	public void testUpgradeReportDirectory() throws Exception {
 		String originalUpgradeReportDir =
 			ReflectionTestUtil.getAndSetFieldValue(
@@ -715,10 +826,15 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 	protected static void setUpClass(boolean upgradeClient) throws Exception {
 		_db = DBManagerUtil.getDB();
 
-		_db.runSQL(
-			"create table UpgradeReportTable1 (id_ LONG not null primary key)");
-		_db.runSQL(
-			"create table UpgradeReportTable2 (id_ LONG not null primary key)");
+		DBPartitionUtil.forEachCompanyId(
+			companyId -> {
+				_db.runSQL(
+					"create table UpgradeReportTable1 (id_ LONG not null " +
+						"primary key)");
+				_db.runSQL(
+					"create table UpgradeReportTable2 (id_ LONG not null " +
+						"primary key)");
+			});
 
 		_originalNewRelease = ReflectionTestUtil.getFieldValue(
 			StartupHelperUtil.class, "_newRelease");

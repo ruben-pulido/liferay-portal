@@ -8,14 +8,18 @@ package com.liferay.blogs.internal.exportimport.portlet.preferences.processor.te
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.blogs.constants.BlogsPortletKeys;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerRegistryUtil;
 import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessor;
 import com.liferay.exportimport.test.util.ExportImportTestUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
+import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -76,6 +80,27 @@ public class BlogsAggregatorExportImportPortletPreferencesProcessorTest {
 
 		_portletDataContextImport.setPortletId(
 			BlogsPortletKeys.BLOGS_AGGREGATOR);
+	}
+
+	@Test
+	public void testOrganizationMissingRefValidation() throws Exception {
+		StagedModelDataHandler<?> stagedModelDataHandler =
+			StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(
+				Organization.class.getName());
+
+		Portlet portlet = _portletLocalService.getPortletById(
+			_portletDataContextExport.getCompanyId(),
+			BlogsPortletKeys.BLOGS_AGGREGATOR);
+
+		_portletDataContextImport.addReferenceElement(
+			portlet, _portletDataContextExport.getExportDataRootElement(),
+			_organization, PortletDataContext.REFERENCE_TYPE_DEPENDENCY, true);
+
+		Assert.assertTrue(
+			stagedModelDataHandler.validateReference(
+				_portletDataContextImport,
+				_portletDataContextImport.getMissingReferenceElement(
+					_organization)));
 	}
 
 	@Test
@@ -142,5 +167,8 @@ public class BlogsAggregatorExportImportPortletPreferencesProcessorTest {
 
 	private PortletDataContext _portletDataContextExport;
 	private PortletDataContext _portletDataContextImport;
+
+	@Inject
+	private PortletLocalService _portletLocalService;
 
 }

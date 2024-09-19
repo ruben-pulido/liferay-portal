@@ -66,10 +66,45 @@ test.describe('Manage object entries through Page Templates', () => {
 	}) => {
 		const {objectDefinitions} = createdEntities;
 
+		const objectFields = [
+			{
+				DBType: 'String',
+				businessType: 'Text',
+				externalReferenceCode: 'textField',
+				indexed: true,
+				indexedAsKeyword: false,
+				indexedLanguageId: '',
+				label: {en_US: 'textField'},
+				listTypeDefinitionId: 0,
+				localized: true,
+				name: 'textField',
+				required: false,
+				system: false,
+				type: 'String',
+			},
+		];
+
+		const objectDefinitionExternalReferenceCode =
+			'ObjectDefinition' + getRandomInt();
+
 		const objectDefinition1 =
-			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+			await apiHelpers.objectAdmin.postObjectDefinition({
+				active: true,
+				enableLocalization: true,
+				externalReferenceCode: objectDefinitionExternalReferenceCode,
+				label: {
+					en_US: objectDefinitionExternalReferenceCode,
+				},
+				name: objectDefinitionExternalReferenceCode,
+				objectFields,
 				objectFolderExternalReferenceCode: 'default',
+				pluralLabel: {
+					en_US: objectDefinitionExternalReferenceCode,
+				},
+				portlet: true,
+				scope: 'company',
 				status: {code: 0},
+				titleObjectFieldName: 'textField',
 			});
 
 		objectDefinitions.push(objectDefinition1);
@@ -109,30 +144,31 @@ test.describe('Manage object entries through Page Templates', () => {
 		const applicationName =
 			'c/' + objectDefinition1.name.toLowerCase() + 's';
 
-		const textObjectEntry = {
-			textField: 'entry',
-		};
-
-		const objectEntries = [];
+		const itemValues = [];
 
 		for (let i = 0; i <= 15; i++) {
 			const objectEntry = await apiHelpers.objectEntry.postObjectEntry(
-				textObjectEntry,
+				{
+					textField_i18n: {
+						en_US: 'entry_en_US' + i,
+						pt_BR: 'entry_pt_BR' + i,
+					},
+				},
 				applicationName
 			);
 
-			objectEntries.push(objectEntry.id);
+			itemValues.push(objectEntry.textField_i18n['pt_BR']);
 		}
 
-		await viewObjectEntriesPage.goto(objectDefinition2.id);
-		await viewObjectEntriesPage.clickAddObjectEntry(
-			objectDefinition2.label['en_US']
-		);
-		await page.getByPlaceholder('Search', {exact: true}).click();
+		await viewObjectEntriesPage.goto(objectDefinition2.id, 'pt');
 
-		objectEntries.forEach((objectEntryId) => {
+		await viewObjectEntriesPage.clickAddObjectEntry();
+
+		await page.getByPlaceholder('Buscar', {exact: true}).click();
+
+		itemValues.forEach((itemValue) => {
 			expect(
-				page.getByRole('menuitem', {name: objectEntryId})
+				page.getByRole('menuitem', {exact: true, name: itemValue})
 			).toBeVisible();
 		});
 	});
@@ -443,8 +479,9 @@ test.describe('Manage object entries through View Object Entries', () => {
 		}
 	});
 
-	test('can delete attachment field from object entry', async ({
+	test('can download and delete a file from the Attachment field when adding an object entry', async ({
 		apiHelpers,
+		page,
 		viewObjectEntriesPage,
 	}) => {
 		const {objectDefinitions} = createdEntities;
@@ -491,11 +528,27 @@ test.describe('Manage object entries through View Object Entries', () => {
 
 		await expect(viewObjectEntriesPage.successMessage).toBeVisible();
 
+		await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+		await expect(viewObjectEntriesPage.successMessage).toBeVisible();
+
+		const downloadPromise = page.waitForEvent('download');
+
+		await page.getByRole('button', {name: ATTACHMENT_FILE_NAME}).hover();
+
+		await page.locator('.lexicon-icon-download').click();
+
+		expect((await downloadPromise).suggestedFilename()).toStrictEqual(
+			`${ATTACHMENT_FILE_NAME}`
+		);
+
 		await viewObjectEntriesPage.deleteFileButton.click();
 
 		await viewObjectEntriesPage.saveObjectEntryButton.click();
 
-		await expect(viewObjectEntriesPage.successMessage).toBeVisible();
+		await expect(
+			viewObjectEntriesPage.successMessage.first()
+		).toBeVisible();
 	});
 
 	test('can view all entries related to an object in the relationship field using autocomplete', async ({
@@ -574,38 +627,34 @@ test.describe('Manage object entries through View Object Entries', () => {
 		await expect(page.getByRole('menu')).toContainText('test 1');
 		await expect(page.getByRole('menu')).toContainText('test 2');
 	});
-});
 
-test('can view success message entirely in arabic', async ({
-	apiHelpers,
-	viewObjectEntriesPage,
-}) => {
-	const {objectDefinitions} = createdEntities;
+	test('can view success message entirely in arabic', async ({
+		apiHelpers,
+		viewObjectEntriesPage,
+	}) => {
+		const {objectDefinitions} = createdEntities;
 
-	// Create object definition with an attachment field
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				objectFields: [
+					mockedObjectFields.attachmentFieldDocumentsAndMedia,
+				],
+				objectFolderExternalReferenceCode: 'default',
+				status: {code: 0},
+			});
 
-	const objectDefinition =
-		await apiHelpers.objectAdmin.postRandomObjectDefinition({
-			objectFields: [mockedObjectFields.attachmentFieldDocumentsAndMedia],
-			objectFolderExternalReferenceCode: 'default',
-			status: {code: 0},
-		});
+		objectDefinitions.push(objectDefinition);
 
-	objectDefinitions.push(objectDefinition);
+		await viewObjectEntriesPage.goto(objectDefinition.id, 'ar');
 
-	// Add an entry to the created definition
+		await viewObjectEntriesPage.addObjectEntryButton.click();
 
-	await viewObjectEntriesPage.goto(objectDefinition.id, 'ar');
+		await viewObjectEntriesPage.selectFileFromDocumentsAndMediaArabic();
 
-	await viewObjectEntriesPage.addObjectEntryButton.click();
+		await viewObjectEntriesPage.saveObjectEntryButtonArabic.click();
 
-	await viewObjectEntriesPage.selectFileFromDocumentsAndMediaArabic();
-
-	await viewObjectEntriesPage.saveObjectEntryButtonArabic.click();
-
-	// Verify the success message
-
-	await expect(viewObjectEntriesPage.successMessageArabic).toBeVisible();
+		await expect(viewObjectEntriesPage.successMessageArabic).toBeVisible();
+	});
 });
 
 test.describe('Manage object entries through Workflow', () => {

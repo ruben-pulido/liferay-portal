@@ -5,7 +5,6 @@
 
 package com.liferay.dynamic.data.mapping.form.field.type.internal.select;
 
-import com.liferay.dynamic.data.mapping.form.field.type.BaseDDMFormFieldTypeSettingsTestCase;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldOptionsFactory;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
@@ -54,8 +53,7 @@ import org.mockito.Mockito;
 /**
  * @author Marcellus Tavares
  */
-public class SelectDDMFormFieldTemplateContextContributorTest
-	extends BaseDDMFormFieldTypeSettingsTestCase {
+public class SelectDDMFormFieldTemplateContextContributorTest {
 
 	@ClassRule
 	@Rule
@@ -63,10 +61,7 @@ public class SelectDDMFormFieldTemplateContextContributorTest
 		LiferayUnitTestRule.INSTANCE;
 
 	@Before
-	@Override
 	public void setUp() throws Exception {
-		super.setUp();
-
 		_setUpDDMFormInstanceLocalService();
 
 		PropsTestUtil.setProps("collator.rules", "<<<");

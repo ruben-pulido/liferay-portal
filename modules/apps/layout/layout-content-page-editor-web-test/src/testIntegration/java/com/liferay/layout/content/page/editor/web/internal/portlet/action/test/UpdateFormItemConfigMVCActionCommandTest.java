@@ -75,7 +75,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -334,13 +333,12 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 		ReflectionTestUtil.invoke(
 			_mvcActionCommand, "_updateFormStyledLayoutStructureItemFormType",
 			new Class<?>[] {
-				FormStyledLayoutStructureItem.class, String.class, Layout.class,
+				FormStyledLayoutStructureItem.class, String.class,
 				LayoutStructure.class, Locale.class, int.class, String.class,
-				int.class, long.class, ServiceContext.class
+				int.class
 			},
-			formStyledLayoutStructureItem, "multistep", _layout,
-			layoutStructure, LocaleUtil.getSiteDefault(), 2, "simple", 2, 0,
-			_serviceContext);
+			formStyledLayoutStructureItem, "multistep", layoutStructure,
+			LocaleUtil.getSiteDefault(), 2, "simple", 2);
 
 		List<String> childrenItemIds =
 			formStyledLayoutStructureItem.getChildrenItemIds();
@@ -369,7 +367,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 		childrenItemIds = layoutStructureItem.getChildrenItemIds();
 
 		Assert.assertEquals(
-			childrenItemIds.toString(), 2, childrenItemIds.size());
+			childrenItemIds.toString(), 1, childrenItemIds.size());
 
 		layoutStructureItem = layoutStructure.getLayoutStructureItem(
 			childrenItemIds.get(0));
@@ -378,7 +376,6 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 			layoutStructureItem instanceof ContainerStyledLayoutStructureItem);
 	}
 
-	@FeatureFlags("LPD-20213")
 	@Test
 	public void testUpdateFormItemConfigMVCActionCommandMappingFormChangingFormTypeSimple()
 		throws Exception {
@@ -392,29 +389,28 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 		ReflectionTestUtil.invoke(
 			_mvcActionCommand, "_updateFormStyledLayoutStructureItemFormType",
 			new Class<?>[] {
-				FormStyledLayoutStructureItem.class, String.class, Layout.class,
+				FormStyledLayoutStructureItem.class, String.class,
 				LayoutStructure.class, Locale.class, int.class, String.class,
-				int.class, long.class, ServiceContext.class
+				int.class
 			},
-			formStyledLayoutStructureItem, "multistep", _layout,
-			layoutStructure, LocaleUtil.getSiteDefault(), 2, "simple", 2, 0,
-			_serviceContext);
+			formStyledLayoutStructureItem, "multistep", layoutStructure,
+			LocaleUtil.getSiteDefault(), 2, "simple", 2);
 
 		ReflectionTestUtil.invoke(
 			_mvcActionCommand, "_updateFormStyledLayoutStructureItemFormType",
 			new Class<?>[] {
-				FormStyledLayoutStructureItem.class, String.class, Layout.class,
+				FormStyledLayoutStructureItem.class, String.class,
 				LayoutStructure.class, Locale.class, int.class, String.class,
-				int.class, long.class, ServiceContext.class
+				int.class
 			},
-			formStyledLayoutStructureItem, "simple", _layout, layoutStructure,
-			LocaleUtil.getSiteDefault(), 2, "multistep", 2, 0, _serviceContext);
+			formStyledLayoutStructureItem, "simple", layoutStructure,
+			LocaleUtil.getSiteDefault(), 2, "multistep", 2);
 
 		List<String> childrenItemIds =
 			formStyledLayoutStructureItem.getChildrenItemIds();
 
 		Assert.assertEquals(
-			childrenItemIds.toString(), 2, childrenItemIds.size());
+			childrenItemIds.toString(), 1, childrenItemIds.size());
 
 		LayoutStructureItem layoutStructureItem =
 			layoutStructure.getLayoutStructureItem(childrenItemIds.get(0));
@@ -1075,7 +1071,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 			addedFragmentEntryLinksJSONObject.length());
 
 		JSONArray removedLayoutStructureItemsJSONArray =
-			jsonObject.getJSONArray("removedFragmentEntryLinkIds");
+			jsonObject.getJSONArray("removedItemIds");
 
 		Assert.assertEquals(
 			expectedRemovedLayoutStructureItems,
