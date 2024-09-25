@@ -322,6 +322,7 @@ public class ExportTaskResourceTest {
 	 * Modify the value of _testableClassNames to test specific class names.
 	 */
 	private static Collection<String> _testableClassNames = Arrays.asList(
+		"com.liferay.headless.admin.site.dto.v1_0.SitePage"
 		//"com.liferay.data.engine.rest.dto.v2_0.DataDefinition",
 		//"com.liferay.data.engine.rest.dto.v2_0.DataDefinitionFieldLink"
 	);
