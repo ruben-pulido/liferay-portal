@@ -169,6 +169,17 @@ public class WidgetPageWidgetInstanceResourceTest
 
 	@Override
 	@Test
+	public void testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance()
+		throws Exception {
+
+		_testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceInstanceable();
+		_testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceInstanceableInvalidExternalReferenceCode();
+		_testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceNoninstanceable();
+		_testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceNoninstanceableInvalidExternalReferenceCode();
+	}
+
+	@Override
+	@Test
 	public void testPutSiteSiteByExternalReferenceCodeWidgetInstanceWidgetInstanceExternalReferenceCode()
 		throws Exception {
 
@@ -193,8 +204,7 @@ public class WidgetPageWidgetInstanceResourceTest
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {
-			"externalReferenceCode", "parentSectionId", "position",
-			"widgetInstanceId", "widgetName"
+			"externalReferenceCode", "parentSectionId", "position", "widgetName"
 		};
 	}
 
@@ -202,22 +212,8 @@ public class WidgetPageWidgetInstanceResourceTest
 	protected WidgetPageWidgetInstance randomWidgetPageWidgetInstance()
 		throws Exception {
 
-		WidgetPageWidgetInstance widgetPageWidgetInstance =
-			new WidgetPageWidgetInstance();
-
-		String portletName = AssetPublisherPortletKeys.ASSET_PUBLISHER;
-
-		String portletId = PortletIdCodec.encode(portletName);
-
-		widgetPageWidgetInstance.setExternalReferenceCode(portletId);
-
-		widgetPageWidgetInstance.setParentSectionId("column-1");
-		widgetPageWidgetInstance.setPosition(_position++);
-		widgetPageWidgetInstance.setWidgetInstanceId(
-			PortletIdCodec.decodeInstanceId(portletId));
-		widgetPageWidgetInstance.setWidgetName(portletName);
-
-		return widgetPageWidgetInstance;
+		return _randomWidgetPageWidgetInstance(
+			null, true, AssetPublisherPortletKeys.ASSET_PUBLISHER);
 	}
 
 	@Override
@@ -268,6 +264,130 @@ public class WidgetPageWidgetInstanceResourceTest
 			postSiteSiteByExternalReferenceCodeSitePageWidgetInstance(
 				testGroup.getExternalReferenceCode(),
 				_layout.getExternalReferenceCode(), widgetPageWidgetInstance);
+	}
+
+	private WidgetPageWidgetInstance _randomWidgetPageWidgetInstance(
+		String externalReferenceCode, boolean instanceable,
+		String portletName) {
+
+		WidgetPageWidgetInstance widgetPageWidgetInstance =
+			new WidgetPageWidgetInstance();
+
+		String portletId = PortletIdCodec.encode(portletName);
+
+		if (!instanceable) {
+			portletId = PortletIdCodec.encode(portletName, 0);
+		}
+
+		if (externalReferenceCode == null) {
+			externalReferenceCode = portletId;
+		}
+
+		widgetPageWidgetInstance.setExternalReferenceCode(
+			externalReferenceCode);
+		widgetPageWidgetInstance.setParentSectionId("column-1");
+		widgetPageWidgetInstance.setPosition(_position++);
+		widgetPageWidgetInstance.setWidgetInstanceId(
+			PortletIdCodec.decodeInstanceId(portletId));
+		widgetPageWidgetInstance.setWidgetName(portletName);
+
+		return widgetPageWidgetInstance;
+	}
+
+	private void _testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceInstanceable()
+		throws Exception {
+
+		WidgetPageWidgetInstance randomWidgetPageWidgetInstance =
+			randomWidgetPageWidgetInstance();
+
+		WidgetPageWidgetInstance postWidgetPageWidgetInstance =
+			testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance_addWidgetPageWidgetInstance(
+				randomWidgetPageWidgetInstance);
+
+		assertEquals(
+			randomWidgetPageWidgetInstance, postWidgetPageWidgetInstance);
+		assertValid(postWidgetPageWidgetInstance);
+		Assert.assertNotNull(
+			postWidgetPageWidgetInstance.getWidgetInstanceId());
+		Assert.assertEquals(
+			PortletIdCodec.decodeInstanceId(
+				postWidgetPageWidgetInstance.getExternalReferenceCode()),
+			postWidgetPageWidgetInstance.getWidgetInstanceId());
+
+		_position = 0;
+	}
+
+	private void _testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceInstanceableInvalidExternalReferenceCode()
+		throws Exception {
+
+		WidgetPageWidgetInstance randomWidgetPageWidgetInstance =
+			_randomWidgetPageWidgetInstance(
+				RandomTestUtil.randomString(), true,
+				AssetPublisherPortletKeys.ASSET_PUBLISHER);
+
+		try {
+			testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance_addWidgetPageWidgetInstance(
+				randomWidgetPageWidgetInstance);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertNull(problem.getTitle());
+		}
+
+		_position = 0;
+	}
+
+	private void _testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceNoninstanceable()
+		throws Exception {
+
+		WidgetPageWidgetInstance randomWidgetPageWidgetInstance =
+			_randomWidgetPageWidgetInstance(
+				null, false,
+				"com_liferay_cookies_banner_web_portlet_CookiesBanner" +
+					"ConfigurationPortlet");
+
+		WidgetPageWidgetInstance postWidgetPageWidgetInstance =
+			testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance_addWidgetPageWidgetInstance(
+				randomWidgetPageWidgetInstance);
+
+		assertEquals(
+			randomWidgetPageWidgetInstance, postWidgetPageWidgetInstance);
+		assertValid(postWidgetPageWidgetInstance);
+		Assert.assertNull(postWidgetPageWidgetInstance.getWidgetInstanceId());
+		Assert.assertEquals(
+			postWidgetPageWidgetInstance.getWidgetName(),
+			postWidgetPageWidgetInstance.getExternalReferenceCode());
+
+		_position = 0;
+	}
+
+	private void _testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceNoninstanceableInvalidExternalReferenceCode()
+		throws Exception {
+
+		WidgetPageWidgetInstance randomWidgetPageWidgetInstance =
+			_randomWidgetPageWidgetInstance(
+				RandomTestUtil.randomString(), false,
+				"com_liferay_cookies_banner_web_portlet_CookiesBanner" +
+					"ConfigurationPortlet");
+
+		try {
+			testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance_addWidgetPageWidgetInstance(
+				randomWidgetPageWidgetInstance);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertNull(problem.getTitle());
+		}
+
+		_position = 0;
 	}
 
 	private Layout _layout;
