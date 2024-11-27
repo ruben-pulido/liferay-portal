@@ -54,11 +54,15 @@ public class WidgetPageWidgetInstanceResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
-		Layout layout = _layoutLocalService.getLayoutByExternalReferenceCode(
+		Layout layout = _layoutLocalService.fetchLayoutByExternalReferenceCode(
 			sitePageExternalReferenceCode,
 			GroupUtil.getGroupId(
 				false, contextCompany.getCompanyId(),
 				siteExternalReferenceCode));
+
+		if (layout == null) {
+			throw new UnsupportedOperationException();
+		}
 
 		LayoutType layoutType = layout.getLayoutType();
 
@@ -94,11 +98,15 @@ public class WidgetPageWidgetInstanceResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
-		Layout layout = _layoutLocalService.getLayoutByExternalReferenceCode(
+		Layout layout = _layoutLocalService.fetchLayoutByExternalReferenceCode(
 			sitePageExternalReferenceCode,
 			GroupUtil.getGroupId(
 				false, contextCompany.getCompanyId(),
 				siteExternalReferenceCode));
+
+		if (layout == null) {
+			throw new UnsupportedOperationException();
+		}
 
 		LayoutType layoutType = layout.getLayoutType();
 
@@ -127,11 +135,15 @@ public class WidgetPageWidgetInstanceResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
-		Layout layout = _layoutLocalService.getLayoutByExternalReferenceCode(
+		Layout layout = _layoutLocalService.fetchLayoutByExternalReferenceCode(
 			sitePageExternalReferenceCode,
 			GroupUtil.getGroupId(
 				false, contextCompany.getCompanyId(),
 				siteExternalReferenceCode));
+
+		if (layout == null) {
+			throw new UnsupportedOperationException();
+		}
 
 		LayoutType layoutType = layout.getLayoutType();
 
@@ -164,11 +176,15 @@ public class WidgetPageWidgetInstanceResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
-		Layout layout = _layoutLocalService.getLayoutByExternalReferenceCode(
+		Layout layout = _layoutLocalService.fetchLayoutByExternalReferenceCode(
 			sitePageExternalReferenceCode,
 			GroupUtil.getGroupId(
 				false, contextCompany.getCompanyId(),
 				siteExternalReferenceCode));
+
+		if (layout == null) {
+			throw new UnsupportedOperationException();
+		}
 
 		LayoutType layoutType = layout.getLayoutType();
 
@@ -179,6 +195,14 @@ public class WidgetPageWidgetInstanceResourceImpl
 		String portletId = PortletIdCodec.encode(
 			widgetPageWidgetInstance.getWidgetName(),
 			widgetPageWidgetInstance.getWidgetInstanceId());
+
+		if ((widgetPageWidgetInstance.getExternalReferenceCode() != null) &&
+			!Objects.equals(
+				widgetPageWidgetInstance.getExternalReferenceCode(),
+				portletId)) {
+
+			throw new UnsupportedOperationException();
+		}
 
 		return _addPortletId(
 			widgetPageWidgetInstance.getParentSectionId(), layout, portletId,
@@ -198,11 +222,15 @@ public class WidgetPageWidgetInstanceResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
-		Layout layout = _layoutLocalService.getLayoutByExternalReferenceCode(
+		Layout layout = _layoutLocalService.fetchLayoutByExternalReferenceCode(
 			sitePageExternalReferenceCode,
 			GroupUtil.getGroupId(
 				false, contextCompany.getCompanyId(),
 				siteExternalReferenceCode));
+
+		if (layout == null) {
+			throw new UnsupportedOperationException();
+		}
 
 		LayoutType layoutType = layout.getLayoutType();
 
@@ -210,12 +238,16 @@ public class WidgetPageWidgetInstanceResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
-		LayoutTypePortlet layoutTypePortlet =
-			(LayoutTypePortlet)layout.getLayoutType();
-
 		String portletId = PortletIdCodec.encode(
 			widgetPageWidgetInstance.getWidgetName(),
 			widgetPageWidgetInstance.getWidgetInstanceId());
+
+		if (!Objects.equals(widgetInstanceExternalReferenceCode, portletId)) {
+			throw new UnsupportedOperationException();
+		}
+
+		LayoutTypePortlet layoutTypePortlet =
+			(LayoutTypePortlet)layout.getLayoutType();
 
 		if (!layoutTypePortlet.hasPortletId(portletId)) {
 			return _addPortletId(
