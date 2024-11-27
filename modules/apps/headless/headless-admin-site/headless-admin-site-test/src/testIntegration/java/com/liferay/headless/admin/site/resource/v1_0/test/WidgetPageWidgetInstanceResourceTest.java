@@ -172,10 +172,33 @@ public class WidgetPageWidgetInstanceResourceTest
 	public void testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance()
 		throws Exception {
 
-		_testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceInstanceable();
-		_testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceInstanceableInvalidExternalReferenceCode();
-		_testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceNoninstanceable();
-		_testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceNoninstanceableInvalidExternalReferenceCode();
+		// KO
+
+		//		_testPostWidgetInstanceFailsERCNullWidgetInstanceIdNotNullWidgetNameNull();
+		//		_testPostWidgetInstanceFailsERCNullWidgetInstanceIdNullWidgetNameNull();
+		//		_testPostWidgetInstanceFailsERCNullWidgetInstanceIdNullWidgetNameNotNullWidgetNotExist();
+
+		_testPostWidgetInstanceFailsWidgetInstanceableERCNotNullDoesNotContainWidgetNameWidgetInstanceIdNotNullWidgetNameNotNull(); //5x
+		_testPostWidgetInstanceFailsWidgetInstanceableERCNotNullDoesNotContainWidgetInstanceIdWidgetInstanceNotNullWidgetNameNotNull(); //5x
+		_testPostWidgetInstanceFailsWidgetInstanceableERCNotNullWidgetInstanceIdNullWidgetNameNotNullWidgetInstanceAlreadyExists();
+
+		//		_testPostWidgetInstanceFailsWidgetInstanceableERCNullWidgetInstanceNotNullWidgetNameNotNull();
+		//		_testPostWidgetInstanceFailsWidgetInstanceableERCNullWidgetInstanceNullWidgetNameNotNull();
+		//		_testPostWidgetInstanceFailsWidgetInstanceableERCNullWidgetInstanceNullWidgetNameNull();
+
+		//		_testPostWidgetInstanceFailsWidgetNoninstanceableERCNotNullWithInstanceSeparatorWidgetInstanceNullWidgetNameNotNull();
+		//		_testPostWidgetInstanceFailsWidgetNoninstanceableERCNullWidgetInstanceNotNullWidgetNameNotNull();
+		//		_testPostWidgetInstanceFailsWidgetNoninstanceableERCNotNullWidgetInstanceNullWidgetNameNotNullWidgetInstanceAlreadyExists();
+
+		// OK
+
+		_testPostWidgetInstanceSucceedsWidgetInstanceableERCNotNullWidgetInstanceIdNotNullWidgetNameNotNull();
+		_testPostWidgetInstanceSucceedsWidgetInstanceableERCNotNullWidgetInstanceIdNullWidgetNameNotNull();
+		_testPostWidgetInstanceSucceedsWidgetInstanceableERCNullWidgetInstanceIdNotNullWidgetNameNotNull();
+		_testPostWidgetInstanceSucceedsWidgetInstanceableERCNullWidgetInstanceIdNullWidgetNameNotNull();
+		_testPostWidgetInstanceSucceedsWidgetNoninstanceableERCNotNullWidgetInstanceIdNullWidgetNameNotNull();
+		_testPostWidgetInstanceSucceedsWidgetNoninstanceableERCNullWidgetInstanceIdNullWidgetNameNotNull();
+		_testPostWidgetInstanceSucceedsWidgetNoninstanceableERCNullWidgetInstanceIdNullWidgetNameNull();
 	}
 
 	@Override
@@ -203,9 +226,7 @@ public class WidgetPageWidgetInstanceResourceTest
 
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
-		return new String[] {
-			"externalReferenceCode", "parentSectionId", "position", "widgetName"
-		};
+		return new String[] {"parentSectionId", "position"};
 	}
 
 	@Override
@@ -213,7 +234,7 @@ public class WidgetPageWidgetInstanceResourceTest
 		throws Exception {
 
 		return _randomWidgetPageWidgetInstance(
-			null, true, AssetPublisherPortletKeys.ASSET_PUBLISHER);
+			null, null, AssetPublisherPortletKeys.ASSET_PUBLISHER);
 	}
 
 	@Override
@@ -266,68 +287,44 @@ public class WidgetPageWidgetInstanceResourceTest
 				_layout.getExternalReferenceCode(), widgetPageWidgetInstance);
 	}
 
+	private String _encodePortletId(String portletName, String instanceId) {
+		return portletName + "_INSTANCE_" + instanceId;
+	}
+
 	private WidgetPageWidgetInstance _randomWidgetPageWidgetInstance(
-		String externalReferenceCode, boolean instanceable,
-		String portletName) {
+		String externalReferenceCode, String widgetInstanceId,
+		String widgetName) {
 
 		WidgetPageWidgetInstance widgetPageWidgetInstance =
 			new WidgetPageWidgetInstance();
-
-		String portletId = PortletIdCodec.encode(portletName);
-
-		if (!instanceable) {
-			portletId = PortletIdCodec.encode(portletName, 0);
-		}
-
-		if (externalReferenceCode == null) {
-			externalReferenceCode = portletId;
-		}
 
 		widgetPageWidgetInstance.setExternalReferenceCode(
 			externalReferenceCode);
 		widgetPageWidgetInstance.setParentSectionId("column-1");
 		widgetPageWidgetInstance.setPosition(_position++);
-		widgetPageWidgetInstance.setWidgetInstanceId(
-			PortletIdCodec.decodeInstanceId(portletId));
-		widgetPageWidgetInstance.setWidgetName(portletName);
+		widgetPageWidgetInstance.setWidgetInstanceId(widgetInstanceId);
+		widgetPageWidgetInstance.setWidgetName(widgetName);
 
 		return widgetPageWidgetInstance;
 	}
 
-	private void _testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceInstanceable()
-		throws Exception {
-
-		WidgetPageWidgetInstance randomWidgetPageWidgetInstance =
-			randomWidgetPageWidgetInstance();
-
-		WidgetPageWidgetInstance postWidgetPageWidgetInstance =
-			testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance_addWidgetPageWidgetInstance(
-				randomWidgetPageWidgetInstance);
-
-		assertEquals(
-			randomWidgetPageWidgetInstance, postWidgetPageWidgetInstance);
-		assertValid(postWidgetPageWidgetInstance);
-		Assert.assertNotNull(
-			postWidgetPageWidgetInstance.getWidgetInstanceId());
-		Assert.assertEquals(
-			PortletIdCodec.decodeInstanceId(
-				postWidgetPageWidgetInstance.getExternalReferenceCode()),
-			postWidgetPageWidgetInstance.getWidgetInstanceId());
-
-		_position = 0;
-	}
-
-	private void _testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceInstanceableInvalidExternalReferenceCode()
+	private void _testPostWidgetInstanceFails(
+			String externalReferenceCode, String widgetInstanceId,
+			String widgetName, boolean repeat)
 		throws Exception {
 
 		WidgetPageWidgetInstance randomWidgetPageWidgetInstance =
 			_randomWidgetPageWidgetInstance(
-				RandomTestUtil.randomString(), true,
-				AssetPublisherPortletKeys.ASSET_PUBLISHER);
+				externalReferenceCode, widgetInstanceId, widgetName);
 
 		try {
 			testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance_addWidgetPageWidgetInstance(
 				randomWidgetPageWidgetInstance);
+
+			if (repeat) {
+				testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance_addWidgetPageWidgetInstance(
+					randomWidgetPageWidgetInstance);
+			}
 
 			Assert.fail();
 		}
@@ -341,14 +338,45 @@ public class WidgetPageWidgetInstanceResourceTest
 		_position = 0;
 	}
 
-	private void _testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceNoninstanceable()
+	private void _testPostWidgetInstanceFailsWidgetInstanceableERCNotNullDoesNotContainWidgetInstanceIdWidgetInstanceNotNullWidgetNameNotNull()
+		throws Exception {
+
+		_testPostWidgetInstanceFails(
+			AssetPublisherPortletKeys.ASSET_PUBLISHER + "_INSTANCE_" +
+				RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(),
+			AssetPublisherPortletKeys.ASSET_PUBLISHER, false);
+	}
+
+	private void _testPostWidgetInstanceFailsWidgetInstanceableERCNotNullDoesNotContainWidgetNameWidgetInstanceIdNotNullWidgetNameNotNull()
+		throws Exception {
+
+		String widgetInstanceId = RandomTestUtil.randomString();
+
+		_testPostWidgetInstanceFails(
+			RandomTestUtil.randomString() + "_INSTANCE_" + widgetInstanceId,
+			widgetInstanceId, AssetPublisherPortletKeys.ASSET_PUBLISHER, false);
+	}
+
+	private void _testPostWidgetInstanceFailsWidgetInstanceableERCNotNullWidgetInstanceIdNullWidgetNameNotNullWidgetInstanceAlreadyExists()
+		throws Exception {
+
+		_testPostWidgetInstanceFails(
+			AssetPublisherPortletKeys.ASSET_PUBLISHER + "_INSTANCE_" +
+				RandomTestUtil.randomString(),
+			null, AssetPublisherPortletKeys.ASSET_PUBLISHER, true);
+	}
+
+	private void _testPostWidgetInstanceSucceeds(
+			boolean instanceable, String expectedExternalReferenceCode,
+			String expectedWidgetInstanceId, String expectedWidgetName,
+			String externalReferenceCode, String widgetInstanceId,
+			String widgetName)
 		throws Exception {
 
 		WidgetPageWidgetInstance randomWidgetPageWidgetInstance =
 			_randomWidgetPageWidgetInstance(
-				null, false,
-				"com_liferay_cookies_banner_web_portlet_CookiesBanner" +
-					"ConfigurationPortlet");
+				externalReferenceCode, widgetInstanceId, widgetName);
 
 		WidgetPageWidgetInstance postWidgetPageWidgetInstance =
 			testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance_addWidgetPageWidgetInstance(
@@ -357,38 +385,124 @@ public class WidgetPageWidgetInstanceResourceTest
 		assertEquals(
 			randomWidgetPageWidgetInstance, postWidgetPageWidgetInstance);
 		assertValid(postWidgetPageWidgetInstance);
-		Assert.assertNull(postWidgetPageWidgetInstance.getWidgetInstanceId());
+
+		String actualExternalReferenceCode =
+			postWidgetPageWidgetInstance.getExternalReferenceCode();
+
+		if (expectedExternalReferenceCode != null) {
+			Assert.assertEquals(
+				expectedExternalReferenceCode, actualExternalReferenceCode);
+		}
+
+		Assert.assertNotNull(actualExternalReferenceCode);
+
+		if (instanceable) {
+			Assert.assertNotNull(
+				postWidgetPageWidgetInstance.getWidgetInstanceId());
+			Assert.assertTrue(
+				actualExternalReferenceCode,
+				actualExternalReferenceCode.contains("_INSTANCE_"));
+			Assert.assertEquals(
+				postWidgetPageWidgetInstance.getWidgetInstanceId(),
+				actualExternalReferenceCode.split("_INSTANCE_")[1]);
+			Assert.assertEquals(
+				postWidgetPageWidgetInstance.getWidgetName(),
+				actualExternalReferenceCode.split("_INSTANCE_")[0]);
+		}
+		else {
+			Assert.assertNull(
+				postWidgetPageWidgetInstance.getWidgetInstanceId());
+			Assert.assertFalse(
+				actualExternalReferenceCode,
+				actualExternalReferenceCode.contains("_INSTANCE_"));
+			Assert.assertEquals(
+				postWidgetPageWidgetInstance.getWidgetName(),
+				actualExternalReferenceCode);
+		}
+
+		if (expectedWidgetInstanceId != null) {
+			Assert.assertEquals(
+				expectedWidgetInstanceId,
+				postWidgetPageWidgetInstance.getWidgetInstanceId());
+		}
+
 		Assert.assertEquals(
-			postWidgetPageWidgetInstance.getWidgetName(),
-			postWidgetPageWidgetInstance.getExternalReferenceCode());
+			expectedWidgetName, postWidgetPageWidgetInstance.getWidgetName());
 
 		_position = 0;
 	}
 
-	private void _testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstanceNoninstanceableInvalidExternalReferenceCode()
+	private void _testPostWidgetInstanceSucceedsWidgetInstanceableERCNotNullWidgetInstanceIdNotNullWidgetNameNotNull()
 		throws Exception {
 
-		WidgetPageWidgetInstance randomWidgetPageWidgetInstance =
-			_randomWidgetPageWidgetInstance(
-				RandomTestUtil.randomString(), false,
-				"com_liferay_cookies_banner_web_portlet_CookiesBanner" +
-					"ConfigurationPortlet");
+		String widgetInstanceId = RandomTestUtil.randomString(12);
 
-		try {
-			testPostSiteSiteByExternalReferenceCodeSitePageWidgetInstance_addWidgetPageWidgetInstance(
-				randomWidgetPageWidgetInstance);
-
-			Assert.fail();
-		}
-		catch (Problem.ProblemException problemException) {
-			Problem problem = problemException.getProblem();
-
-			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
-			Assert.assertNull(problem.getTitle());
-		}
-
-		_position = 0;
+		_testPostWidgetInstanceSucceeds(
+			true,
+			_encodePortletId(
+				AssetPublisherPortletKeys.ASSET_PUBLISHER, widgetInstanceId),
+			widgetInstanceId, AssetPublisherPortletKeys.ASSET_PUBLISHER, null,
+			widgetInstanceId, AssetPublisherPortletKeys.ASSET_PUBLISHER);
 	}
+
+	private void _testPostWidgetInstanceSucceedsWidgetInstanceableERCNotNullWidgetInstanceIdNullWidgetNameNotNull()
+		throws Exception {
+
+		_testPostWidgetInstanceSucceeds(
+			true, null, null, AssetPublisherPortletKeys.ASSET_PUBLISHER, null,
+			null, AssetPublisherPortletKeys.ASSET_PUBLISHER);
+	}
+
+	private void _testPostWidgetInstanceSucceedsWidgetInstanceableERCNullWidgetInstanceIdNotNullWidgetNameNotNull()
+		throws Exception {
+
+		String widgetInstanceId = RandomTestUtil.randomString(12);
+
+		_testPostWidgetInstanceSucceeds(
+			true,
+			_encodePortletId(
+				AssetPublisherPortletKeys.ASSET_PUBLISHER, widgetInstanceId),
+			widgetInstanceId, AssetPublisherPortletKeys.ASSET_PUBLISHER, null,
+			widgetInstanceId, AssetPublisherPortletKeys.ASSET_PUBLISHER);
+	}
+
+	private void _testPostWidgetInstanceSucceedsWidgetInstanceableERCNullWidgetInstanceIdNullWidgetNameNotNull()
+		throws Exception {
+
+		_testPostWidgetInstanceSucceeds(
+			true, null, null, AssetPublisherPortletKeys.ASSET_PUBLISHER, null,
+			null, AssetPublisherPortletKeys.ASSET_PUBLISHER);
+	}
+
+	private void _testPostWidgetInstanceSucceedsWidgetNoninstanceableERCNotNullWidgetInstanceIdNullWidgetNameNotNull()
+		throws Exception {
+
+		_testPostWidgetInstanceSucceeds(
+			false, _NONINSTANCEABLE_PORTLET_NAME, null,
+			_NONINSTANCEABLE_PORTLET_NAME, _NONINSTANCEABLE_PORTLET_NAME, null,
+			_NONINSTANCEABLE_PORTLET_NAME);
+	}
+
+	private void _testPostWidgetInstanceSucceedsWidgetNoninstanceableERCNullWidgetInstanceIdNullWidgetNameNotNull()
+		throws Exception {
+
+		_testPostWidgetInstanceSucceeds(
+			false, _NONINSTANCEABLE_PORTLET_NAME, null,
+			_NONINSTANCEABLE_PORTLET_NAME, null, null,
+			_NONINSTANCEABLE_PORTLET_NAME);
+	}
+
+	private void _testPostWidgetInstanceSucceedsWidgetNoninstanceableERCNullWidgetInstanceIdNullWidgetNameNull()
+		throws Exception {
+
+		_testPostWidgetInstanceSucceeds(
+			false, _NONINSTANCEABLE_PORTLET_NAME, null,
+			_NONINSTANCEABLE_PORTLET_NAME, null, null, null);
+	}
+
+	private static final String _NONINSTANCEABLE_PORTLET_NAME =
+		"com_liferay_cookies_banner_web_portlet_CookiesBannerConfiguration" +
+			"Portlet";
 
 	private Layout _layout;
 
