@@ -19,8 +19,10 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
+import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Http;
@@ -147,6 +149,8 @@ public class ExportTaskResourceTest {
 			"siteId", String.valueOf(TestPropsValues.getGroupId())
 		).build();
 
+		Group importGroup = GroupTestUtil.addGroup();
+
 		_importTaskResource = ImportTaskResource.builder(
 		).authentication(
 			"test@liferay.com", PropsValues.DEFAULT_ADMIN_PASSWORD
@@ -155,7 +159,7 @@ public class ExportTaskResourceTest {
 		).header(
 			HttpHeaders.CONTENT_TYPE, ContentTypes.APPLICATION_JSON
 		).parameter(
-			"siteId", String.valueOf(TestPropsValues.getGroupId())
+			"siteId", String.valueOf(importGroup.getGroupId())
 		).build();
 	}
 
