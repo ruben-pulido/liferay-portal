@@ -159,6 +159,8 @@ public class ExportTaskResourceTest {
 		).header(
 			HttpHeaders.CONTENT_TYPE, ContentTypes.APPLICATION_JSON
 		).parameter(
+			"siteExternalReferenceCode", importGroup.getExternalReferenceCode()
+		).parameter(
 			"siteId", String.valueOf(importGroup.getGroupId())
 		).build();
 	}
