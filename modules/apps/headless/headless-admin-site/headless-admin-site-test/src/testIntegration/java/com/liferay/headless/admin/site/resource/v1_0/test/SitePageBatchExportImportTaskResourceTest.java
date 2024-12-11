@@ -3,30 +3,32 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-package com.liferay.headless.batch.engine.resource.v1_0.test;
+package com.liferay.headless.admin.site.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.headless.admin.site.client.dto.v1_0.SitePage;
+import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPageSettings;
+import com.liferay.headless.admin.site.client.pagination.Page;
+import com.liferay.headless.admin.site.client.pagination.Pagination;
+import com.liferay.headless.admin.site.client.resource.v1_0.SitePageResource;
 import com.liferay.headless.batch.engine.client.dto.v1_0.ExportTask;
 import com.liferay.headless.batch.engine.client.dto.v1_0.ImportTask;
 import com.liferay.headless.batch.engine.client.http.HttpInvoker;
 import com.liferay.headless.batch.engine.client.resource.v1_0.ExportTaskResource;
 import com.liferay.headless.batch.engine.client.resource.v1_0.ImportTaskResource;
-import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
-import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.kernel.util.Http;
-import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LoggerTestUtil;
@@ -34,91 +36,36 @@ import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.vulcan.batch.engine.VulcanBatchEngineTaskItemDelegate;
-import com.liferay.portal.vulcan.batch.engine.VulcanBatchEngineTaskItemDelegateRegistry;
 
 import java.io.InputStream;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.zip.ZipInputStream;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Modify the value of _testableClassNames to test specific class names.
- *
- * @author Raymond Augé
- * @author Brian Wing Shun Chan
+ * @author Rubén Pulido
  */
 @FeatureFlags("LPS-35443")
 @RunWith(Arquillian.class)
-public class ExportTaskResourceTest {
+public class SitePageBatchExportImportTaskResourceTest {
 
 	@ClassRule
 	@Rule
 	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
 		new LiferayIntegrationTestRule();
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-		if (!_testableClassNames.isEmpty()) {
-			return;
-		}
-
-		long companyId = TestPropsValues.getCompanyId();
-
-		_testableClassNames = ListUtil.sort(
-			TransformUtil.transform(
-				_vulcanBatchEngineTaskItemDelegateRegistry.getEntityClassNames(
-					companyId),
-				className -> {
-					if (!_vulcanBatchEngineTaskItemDelegateRegistry.
-							isBatchPlannerExportEnabled(companyId, className) ||
-						!_vulcanBatchEngineTaskItemDelegateRegistry.
-							isBatchPlannerImportEnabled(companyId, className)) {
-
-						return null;
-					}
-
-					VulcanBatchEngineTaskItemDelegate
-						vulcanBatchEngineTaskItemDelegate =
-							_vulcanBatchEngineTaskItemDelegateRegistry.
-								getVulcanBatchEngineTaskItemDelegate(
-									companyId, className);
-
-					Set<String> availableCreateStrategies =
-						vulcanBatchEngineTaskItemDelegate.
-							getAvailableCreateStrategies();
-
-					if ((availableCreateStrategies == null) ||
-						!availableCreateStrategies.contains("UPSERT") ||
-						_untestableDTOClassNames.contains(className) ||
-						StringUtil.startsWith(
-							className,
-							"com.liferay.object.rest.dto.v1_0.ObjectEntry#" +
-								"C_")) {
-
-						return null;
-					}
-
-					return className;
-				}));
-	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -140,16 +87,18 @@ public class ExportTaskResourceTest {
 			HttpHeaders.ACCEPT, ContentTypes.APPLICATION_OCTET_STREAM
 		).build();
 
+		_exportGroup = GroupTestUtil.addGroup();
+
 		_exportTaskResource = ExportTaskResource.builder(
 		).authentication(
 			"test@liferay.com", PropsValues.DEFAULT_ADMIN_PASSWORD
 		).header(
 			HttpHeaders.ACCEPT, ContentTypes.APPLICATION_JSON
 		).parameter(
-			"siteId", String.valueOf(TestPropsValues.getGroupId())
+			"siteId", String.valueOf(_exportGroup.getGroupId())
 		).build();
 
-		Group importGroup = GroupTestUtil.addGroup();
+		_importGroup = GroupTestUtil.addGroup();
 
 		_importTaskResource = ImportTaskResource.builder(
 		).authentication(
@@ -159,9 +108,16 @@ public class ExportTaskResourceTest {
 		).header(
 			HttpHeaders.CONTENT_TYPE, ContentTypes.APPLICATION_JSON
 		).parameter(
-			"siteExternalReferenceCode", importGroup.getExternalReferenceCode()
-		).parameter(
-			"siteId", String.valueOf(importGroup.getGroupId())
+			"siteExternalReferenceCode", _importGroup.getExternalReferenceCode()
+//		).parameter(
+//			"siteId", String.valueOf(_importGroup.getGroupId())
+		).build();
+
+		_sitePageResource = SitePageResource.builder(
+		).authentication(
+			"test@liferay.com", PropsValues.DEFAULT_ADMIN_PASSWORD
+		).header(
+			"X-Liferay-Accept-All-Languages", "true"
 		).build();
 	}
 
@@ -171,30 +127,69 @@ public class ExportTaskResourceTest {
 	}
 
 	@Test
-	public void testPostExportTask() {
-		Assert.assertFalse(_testableClassNames.isEmpty());
+	public void testBatchExportImportSitePages() throws Exception {
+		StringBundler sb = new StringBundler(4);
 
-		StringBundler sb = new StringBundler();
+		String className = "com.liferay.headless.admin.site.dto.v1_0.SitePage";
 
-		for (String className : _testableClassNames) {
-			try {
-				if (_log.isInfoEnabled()) {
-					_log.info("Testing " + className);
-				}
+		SitePage sitePage1 =
+			_sitePageResource.postByExternalReferenceCodeSitePage(
+				_exportGroup.getExternalReferenceCode(), _randomSitePage());
+		SitePage sitePage2 =
+			_sitePageResource.postByExternalReferenceCodeSitePage(
+				_exportGroup.getExternalReferenceCode(), _randomSitePage());
 
-				_testPostExportTask(className);
-			}
-			catch (Throwable throwable) {
-				sb.append(className);
-				sb.append(": ");
-				sb.append(throwable.getMessage());
-				sb.append("\n");
-			}
+		try {
+			JSONArray itemsJSONArray = _getExportedItemsJSONArray(className);
+
+			_testPostImportTask(className, itemsJSONArray);
+
+			Page<SitePage> page =
+				_sitePageResource.
+					getSiteSiteByExternalReferenceCodeSitePagesPage(
+						_importGroup.getExternalReferenceCode(), null, null,
+						null, Pagination.of(1, 10), null);
+
+			Assert.assertEquals(2, page.getTotalCount());
+
+			_assertEquals(
+				sitePage1,
+				_sitePageResource.getSiteSiteByExternalReferenceCodeSitePage(
+					_importGroup.getExternalReferenceCode(),
+					sitePage1.getExternalReferenceCode()));
+			_assertEquals(
+				sitePage2,
+				_sitePageResource.getSiteSiteByExternalReferenceCodeSitePage(
+					_importGroup.getExternalReferenceCode(),
+					sitePage2.getExternalReferenceCode()));
+		}
+		catch (Throwable throwable) {
+			sb.append(className);
+			sb.append(": ");
+			sb.append(throwable.getMessage());
+			sb.append("\n");
 		}
 
 		if (sb.length() > 0) {
 			throw new AssertionError(sb.toString());
 		}
+	}
+
+	private void _assertEquals(
+		SitePage expectedSitePage, SitePage actualSitePage) {
+
+		expectedSitePage.setDateCreated((Date)null);
+		expectedSitePage.setDateModified((Date)null);
+		expectedSitePage.setDatePublished((Date)null);
+		expectedSitePage.setSiteExternalReferenceCode((String)null);
+
+		actualSitePage.setDateCreated((Date)null);
+		actualSitePage.setDateModified((Date)null);
+		actualSitePage.setDatePublished((Date)null);
+		actualSitePage.setSiteExternalReferenceCode((String)null);
+
+		Assert.assertEquals(
+			expectedSitePage.toString(), actualSitePage.toString());
 	}
 
 	private void _assertExecuteStatusEquals(
@@ -224,23 +219,9 @@ public class ExportTaskResourceTest {
 		}
 	}
 
-	private Map<String, String> _splitClassName(String className) {
-		Map<String, String> classNamePartsMap = new HashMap<>();
+	private JSONArray _getExportedItemsJSONArray(String className)
+		throws Exception {
 
-		if (className.contains("#")) {
-			String[] classNameParts = className.split("#");
-
-			classNamePartsMap.put("className", classNameParts[0]);
-			classNamePartsMap.put("taskItemDelegateName", classNameParts[1]);
-		}
-		else {
-			classNamePartsMap.put("className", className);
-		}
-
-		return classNamePartsMap;
-	}
-
-	private void _testPostExportTask(String className) throws Exception {
 		Map<String, String> classNamePartsMap = _splitClassName(className);
 
 		ExportTask exportTask = _exportTaskResource.postExportTask(
@@ -283,14 +264,87 @@ public class ExportTaskResourceTest {
 
 		Assert.assertNotNull(createBatchJSONObject.getString("href"));
 
-		JSONArray itemsJSONArray = jsonObject.getJSONArray("items");
+		return jsonObject.getJSONArray("items");
+	}
+
+	private SitePage _randomSitePage() throws Exception {
+		return new SitePage() {
+			{
+				creatorExternalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				dateCreated = RandomTestUtil.nextDate();
+				dateModified = RandomTestUtil.nextDate();
+				datePublished = RandomTestUtil.nextDate();
+				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				uuid = StringUtil.toLowerCase(RandomTestUtil.randomString());
+
+				setFriendlyUrlPath_i18n(
+					HashMapBuilder.put(
+						LocaleUtil.toBCP47LanguageId(LocaleUtil.SPAIN),
+						() -> {
+							String randomString = StringUtil.toLowerCase(
+								RandomTestUtil.randomString());
+
+							return StringPool.FORWARD_SLASH + randomString;
+						}
+					).put(
+						LocaleUtil.toBCP47LanguageId(LocaleUtil.US),
+						() -> {
+							String randomString = StringUtil.toLowerCase(
+								RandomTestUtil.randomString());
+
+							return StringPool.FORWARD_SLASH + randomString;
+						}
+					).build());
+				setName_i18n(
+					HashMapBuilder.put(
+						LocaleUtil.toBCP47LanguageId(LocaleUtil.US),
+						RandomTestUtil.randomString()
+					).put(
+						LocaleUtil.toBCP47LanguageId(LocaleUtil.SPAIN),
+						RandomTestUtil.randomString()
+					).build());
+				setPageSettings(
+					new WidgetPageSettings() {
+						{
+							setHiddenFromNavigation(false);
+							setLayoutTemplateId("1_column");
+							setType(Type.WIDGET_PAGE_SETTINGS);
+						}
+					});
+				setType(SitePage.Type.WIDGET_PAGE);
+			}
+		};
+	}
+
+	private Map<String, String> _splitClassName(String className) {
+		Map<String, String> classNamePartsMap = new HashMap<>();
+
+		if (className.contains("#")) {
+			String[] classNameParts = className.split("#");
+
+			classNamePartsMap.put("className", classNameParts[0]);
+			classNamePartsMap.put("taskItemDelegateName", classNameParts[1]);
+		}
+		else {
+			classNamePartsMap.put("className", className);
+		}
+
+		return classNamePartsMap;
+	}
+
+	private void _testPostImportTask(String className, JSONArray itemsJSONArray)
+		throws Exception {
+
+		Map<String, String> classNamePartsMap = _splitClassName(className);
 
 		ImportTask importTask = _importTaskResource.postImportTask(
 			classNamePartsMap.get("className"), null, "INSERT", null, null,
 			null, null, classNamePartsMap.get("taskItemDelegateName"),
 			itemsJSONArray);
 
-		externalReferenceCode = importTask.getExternalReferenceCode();
+		String externalReferenceCode = importTask.getExternalReferenceCode();
 
 		while (true) {
 			importTask =
@@ -314,40 +368,16 @@ public class ExportTaskResourceTest {
 		}
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		ExportTaskResourceTest.class);
-
-	/**
-	 * Modify the value of _testableClassNames to test specific class names.
-	 */
-	private static Collection<String> _testableClassNames =
-		Collections.singleton(
-			"com.liferay.headless.admin.site.dto.v1_0.SitePage");
-
-	private static final List<String> _untestableDTOClassNames = Arrays.asList(
-		"com.liferay.headless.admin.user.dto.v1_0.PostalAddress",
-		"com.liferay.object.admin.rest.dto.v1_0.ObjectRelationship",
-		"com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyCategory",
-		"com.liferay.headless.delivery.dto.v1_0.WikiPage");
-
-	@Inject
-	private static VulcanBatchEngineTaskItemDelegateRegistry
-		_vulcanBatchEngineTaskItemDelegateRegistry;
-
 	private ExportTaskResource _contentExportTaskResource;
+	private Group _exportGroup;
 	private ExportTaskResource _exportTaskResource;
-
-	@Inject
-	private GroupLocalService _groupLocalService;
-
-	@Inject
-	private Http _http;
-
+	private Group _importGroup;
 	private ImportTaskResource _importTaskResource;
 
 	@Inject
 	private JSONFactory _jsonFactory;
 
 	private final List<LogCapture> _logCaptures = new ArrayList<>();
+	private SitePageResource _sitePageResource;
 
 }
