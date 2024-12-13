@@ -7,26 +7,31 @@ import {Locator, Page, expect, mergeTests} from '@playwright/test';
 
 import {dataApiHelpersTest} from '../../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../../fixtures/featureFlagsTest';
-import {loginTest} from '../../../../fixtures/loginTest';
 import {liferayConfig} from '../../../../liferay.config';
 import getRandomString from '../../../../utils/getRandomString';
-import performLogin, {
-	performLogout,
-	performUserSwitch,
-} from '../../../../utils/performLogin';
+import performLogin, {performUserSwitch} from '../../../../utils/performLogin';
 import {waitForAlert} from '../../../../utils/waitForAlert';
 import {dataSetManagerApiHelpersTest} from '../../fixtures/dataSetManagerApiHelpersTest';
+import clickRowAction from '../../utils/clickRowAction';
+import getRowByText from '../../utils/getRowByText';
+import saveFromModal from '../../utils/saveFromModal';
 import {setupUserRoleAndLoginAsUser} from '../../utils/setupUserRoleAndLoginAsUser';
+import {EItemActionTarget} from '../../utils/types';
+import {actionsPageTest} from './fixtures/actionsPageTest';
 import {customDataSetsPageTest} from './fixtures/customDataSetsPageTest';
+import {filtersPageTest} from './fixtures/filtersPageTest';
+import {sortingPageTest} from './fixtures/sortingPageTest';
 
 export const test = mergeTests(
+	actionsPageTest,
 	customDataSetsPageTest,
 	dataApiHelpersTest,
 	dataSetManagerApiHelpersTest,
 	featureFlagsTest({
 		'LPS-178052': true,
 	}),
-	loginTest()
+	filtersPageTest,
+	sortingPageTest
 );
 
 const createdDataSetERCs = [];
@@ -56,33 +61,11 @@ async function openActionsDropdown({page, text}: {page: Page; text: string}) {
 }
 
 test.beforeEach(async ({page}) => {
-	if (
-		await page
-			.getByRole('button', {
-				name: 'Sign In',
-			})
-			.isVisible()
-	) {
-		await test.step('Sign in as admin', async () => {
-			await performLogin(page, 'test');
-		});
-	}
+	await performLogin(page, 'test');
 });
 
 test.afterEach(async ({apiHelpers, dataSetManagerApiHelpers, page}) => {
-	if (await page.getByLabel('Test Test User Profile').isHidden()) {
-		if (
-			await page
-				.getByRole('button', {
-					name: 'Sign In',
-				})
-				.isHidden()
-		) {
-			await performLogout(page);
-		}
-
-		await performLogin(page, 'test');
-	}
+	await performUserSwitch(page, 'test');
 
 	for (const erc of createdDataSetERCs) {
 		await dataSetManagerApiHelpers.deleteDataSet({
@@ -357,12 +340,18 @@ test('A user with "Delete" permission', async ({
 });
 
 test('Check "Edit" permission', async ({
+	actionsPage,
 	apiHelpers,
 	customDataSetsPage,
 	dataSetManagerApiHelpers,
+	filtersPage,
 	page,
+	sortingPage,
 }) => {
+	const actionLabel = getRandomString();
 	const blogPostDataSetERC = getRandomString();
+	const filterLabel = getRandomString();
+	const sortingLabel = getRandomString();
 	let userAccount;
 
 	await test.step('Create a data set', async () => {
@@ -372,6 +361,28 @@ test('Check "Edit" permission', async ({
 			...blogPostsDataSetConfig,
 			erc: blogPostDataSetERC,
 			label: blogPostsDataSetConfig.name,
+		});
+	});
+
+	await test.step('Create data set filters, sorting and actions', async () => {
+		await dataSetManagerApiHelpers.createDataSetDateFilter({
+			dataSetERC: blogPostDataSetERC,
+			fieldName: 'dateCreated',
+			label_i18n: {en_US: filterLabel},
+			type: 'date',
+		});
+
+		await dataSetManagerApiHelpers.createDataSetSort({
+			dataSetERC: blogPostDataSetERC,
+			fieldName: 'id',
+			label_i18n: {en_US: sortingLabel},
+		});
+
+		await dataSetManagerApiHelpers.createDataSetItemAction({
+			dataSetERC: blogPostDataSetERC,
+			icon: 'pencil',
+			label_i18n: {en_US: actionLabel},
+			target: EItemActionTarget.LINK,
 		});
 	});
 
@@ -487,6 +498,127 @@ test('Check "Edit" permission', async ({
 		await expect(
 			page.getByRole('heading', {name: 'Details'})
 		).toBeVisible();
+	});
+
+	const confirmDeleteButton = page.getByRole('button', {
+		name: 'Delete',
+	});
+
+	let filtersTableRow: Locator;
+
+	await test.step('Check that the user can edit data set filters', async () => {
+		await filtersPage.selectTab('Filters');
+
+		filtersTableRow = await getRowByText({
+			page,
+			table: filtersPage.filterTable,
+			text: filterLabel,
+		});
+
+		await clickRowAction({
+			actionLabel: 'Edit',
+			page,
+			row: filtersTableRow,
+		});
+
+		const nameInput = filtersPage.newDateRangeFilterForm.nameInput;
+
+		await expect(nameInput).toBeInViewport();
+
+		await filtersPage.saveAddFilterForm();
+
+		await waitForAlert(page);
+	});
+
+	await test.step('Check that the user can delete data set filters', async () => {
+		await clickRowAction({
+			actionLabel: 'Delete',
+			page,
+			row: filtersTableRow,
+		});
+
+		await confirmDeleteButton.waitFor();
+
+		await confirmDeleteButton.click();
+
+		await waitForAlert(page);
+	});
+
+	let sortingsTableRow: Locator;
+
+	await test.step('Check that the user can edit data set sortings', async () => {
+		await sortingPage.selectTab('Sorting');
+
+		sortingsTableRow = await getRowByText({
+			page,
+			table: sortingPage.sortingTable,
+			text: sortingLabel,
+		});
+
+		await clickRowAction({
+			actionLabel: 'Edit',
+			page,
+			row: sortingsTableRow,
+		});
+
+		await expect(
+			sortingPage.page.getByLabel('Use as Default Sorting')
+		).toBeInViewport();
+
+		await saveFromModal({page: sortingPage.page});
+	});
+
+	await test.step('Check that the user can delete data set sortings', async () => {
+		await clickRowAction({
+			actionLabel: 'Delete',
+			page,
+			row: sortingsTableRow,
+		});
+
+		await confirmDeleteButton.waitFor();
+
+		await confirmDeleteButton.click();
+
+		await waitForAlert(page);
+	});
+
+	let actionsTableRow: Locator;
+
+	await test.step('Check that the user can edit data set actions', async () => {
+		await actionsPage.dataSetPage.selectTab('Actions');
+		await expect(actionsPage.itemActionsTab).toBeInViewport();
+
+		actionsTableRow = await getRowByText({
+			page,
+			table: actionsPage.itemActionsTable,
+			text: actionLabel,
+		});
+
+		await clickRowAction({
+			actionLabel: 'Edit',
+			page,
+			row: actionsTableRow,
+		});
+
+		await expect(actionsPage.actionForm.changeIconButton).toBeInViewport();
+
+		await actionsPage.actionForm.saveButton.click();
+
+		await waitForAlert(actionsPage.page);
+	});
+
+	await test.step('Check that the user can delete data set actions', async () => {
+		await clickRowAction({
+			actionLabel: 'Delete',
+			page,
+			row: actionsTableRow,
+		});
+
+		await confirmDeleteButton.waitFor();
+
+		await confirmDeleteButton.click();
+
+		await waitForAlert(page);
 	});
 });
 

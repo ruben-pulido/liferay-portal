@@ -59,7 +59,7 @@ export class FiltersPage {
 	private readonly dataSetPage: DataSetPage;
 	readonly fieldSelectModalPage: FieldSelectModalPage;
 
-	private readonly filterTable: Locator;
+	readonly filterTable: Locator;
 	readonly newClientExtensionFilterForm: NewClientExtensionFilterForm;
 	readonly newDateRangeFilterForm: NewDateRangeFilterForm;
 	readonly newFilterButton: Locator;
@@ -439,5 +439,9 @@ export class FiltersPage {
 
 	async saveAddFilterForm() {
 		await this.newFilterForm.saveButton.click();
+	}
+
+	async selectTab(tabLabel: string) {
+		await this.dataSetPage.selectTab(tabLabel);
 	}
 }

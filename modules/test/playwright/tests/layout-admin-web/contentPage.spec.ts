@@ -18,6 +18,7 @@ import {
 	disableSystemFeatureFlag,
 	enableSystemFeatureFlag,
 } from '../../utils/systemFeatureFlag';
+import {waitForAlert} from '../../utils/waitForAlert';
 import getFragmentDefinition from '../layout-content-page-editor-web/utils/getFragmentDefinition';
 import getPageDefinition from '../layout-content-page-editor-web/utils/getPageDefinition';
 import getWidgetDefinition from '../layout-content-page-editor-web/utils/getWidgetDefinition';
@@ -210,6 +211,99 @@ test(
 		expect(await page.title()).toBe(
 			`${pageName} - ${site.name} - Liferay DXP`
 		);
+	}
+);
+
+test(
+	'Discarding a draft will revert a content page back to its most recent published version',
+	{
+		tag: ['@LPS-78726', '@LPS-168168'],
+	},
+	async ({apiHelpers, page, pageEditorPage, pagesAdminPage, site}) => {
+
+		// Create a page with a heading fragment
+
+		const fragmentId = getRandomString();
+
+		const fragmentDefinition = getFragmentDefinition({
+			id: fragmentId,
+			key: 'BASIC_COMPONENT-heading',
+		});
+
+		const layoutTitle = getRandomString();
+
+		const layout = await apiHelpers.headlessDelivery.createSitePage({
+			pageDefinition: getPageDefinition([fragmentDefinition]),
+			siteId: site.id,
+			title: layoutTitle,
+		});
+
+		// Go to edit mode and remove fragment
+
+		await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+		await pageEditorPage.removeFragment(fragmentId);
+
+		// Discard draft
+
+		await pagesAdminPage.goto(site.friendlyUrlPath);
+
+		page.on('dialog', (dialog) => dialog.accept());
+
+		await pagesAdminPage.clickOnAction('Discard Draft', layoutTitle);
+
+		await waitForAlert(page);
+
+		// Go to edit mode and assert fragment is present
+
+		await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+		await expect(page.getByText('Heading Example')).toBeVisible();
+	}
+);
+
+test(
+	'In edit mode the page should still show the elements of the page that are not from the page itself, like the header, footer, or elements defined by the theme',
+	{
+		tag: '@LPS-81870',
+	},
+	async ({apiHelpers, page, pageEditorPage, site}) => {
+
+		// Create a page and go to edit mode
+
+		const layout = await apiHelpers.headlessDelivery.createSitePage({
+			pageDefinition: getPageDefinition(),
+			siteId: site.id,
+			title: getRandomString(),
+		});
+
+		await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+		// Assert header and footer
+
+		await expect(page.getByTitle(`Go to ${site.name}`)).toBeVisible();
+
+		await expect(
+			page.getByText('This search bar is not visible to users yet.')
+		).toBeVisible();
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByText(
+				'This area is defined by the theme. You can change the theme settings by clicking More in the Page Design Options panel on the sidebar.'
+			),
+			trigger: page.locator('#banner'),
+		});
+
+		await expect(page.getByText('Powered by ')).toBeAttached();
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByText(
+				'This area is defined by the theme. You can change the theme settings by clicking More in the Page Design Options panel on the sidebar.'
+			),
+			trigger: page.locator('#footer'),
+		});
 	}
 );
 
