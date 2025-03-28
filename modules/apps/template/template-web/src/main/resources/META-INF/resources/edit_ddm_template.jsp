@@ -87,6 +87,7 @@ else {
 						/>
 
 						<clay:button
+							disabled="<%= true %>"
 							displayType="secondary"
 							id='<%= liferayPortletResponse.getNamespace() + "saveAndContinueButton" %>'
 							label="save-and-continue"
@@ -94,6 +95,7 @@ else {
 						/>
 
 						<clay:button
+							disabled="<%= true %>"
 							displayType="primary"
 							id='<%= liferayPortletResponse.getNamespace() + "saveButton" %>'
 							label="save"

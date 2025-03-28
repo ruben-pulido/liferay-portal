@@ -3,24 +3,29 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Locator, Page} from '@playwright/test';
+import {expect, Locator, Page} from '@playwright/test';
 import path from 'path';
 
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import fillAndClickOutside from '../../../utils/fillAndClickOutside';
 import {PORTLET_URLS} from '../../../utils/portletUrls';
 import {waitForAlert} from '../../../utils/waitForAlert';
+import {screen} from "@testing-library/react";
 
 export class TemplatesPage {
 	readonly page: Page;
 
 	readonly newButton: Locator;
+	readonly goToTemplates: Locator;
+	readonly saveAndContinueButton: Locator;
 	readonly saveButton: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
 
 		this.newButton = page.getByRole('button', {name: 'Add'});
+		this.goToTemplates = page.getByText('Save and Continue',{exact: true});
+		this.saveAndContinueButton = page.getByRole('button', {exact: true, name: 'Save and Continue'});
 		this.saveButton = page.getByRole('button', {exact: true, name: 'Save'});
 	}
 
@@ -120,7 +125,7 @@ export class TemplatesPage {
 			name
 		);
 
-		await this.saveTemplate();
+		await this.saveTemplate(name);
 	}
 
 	async deleteInformationTemplate(title: string) {
@@ -163,13 +168,23 @@ export class TemplatesPage {
 		await waitForAlert(this.page, `Success:${fileName} Imported`);
 	}
 
-	async saveTemplate() {
-		await this.saveButton.click();
+	async saveTemplate(name?: string) {
+		await this.saveAndContinueButton.click();
+		// await this.goToTemplates.click();
 
 		// Wait for the redirection to the templates admin when the template is saved
 
-		await this.page.waitForURL(
-			(url) => !url.href.includes('ddmTemplateId=')
-		);
+		// await this.page.waitForURL(
+		// 	(url) => !url.href.includes('ddmTemplateId=')
+		// );
+
+		// await this.page.waitForURL(
+		// 	(url) => !url.href.includes('edit_ddm_template')
+		// );
+		//
+		// await expect(this.page.getByRole('link', {
+		// 	name,
+		// 	exact: true
+		// })).toBeVisible();
 	}
 }

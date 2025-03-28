@@ -86,6 +86,9 @@ export function Editor({autocompleteData, initialScript, mode}) {
 			`${portletNamespace}saveButton`
 		);
 
+		saveAndContinueButton.disabled = true;
+		saveButton.disabled = true;
+
 		const saveTemplate = (redirect) => {
 			const form = document.getElementById(`${portletNamespace}fm`);
 
@@ -176,10 +179,12 @@ export function Editor({autocompleteData, initialScript, mode}) {
 				'click',
 				onSaveAndContinueButtonClick
 			);
+			saveAndContinueButton.disabled = false;
 		}
 
 		if (saveButton) {
 			saveButton.addEventListener('click', onSaveButtonClick);
+			saveButton.disabled = false;
 		}
 
 		return () => {
