@@ -5,7 +5,6 @@
 
 import ClayForm from '@clayui/form';
 import ClayLayout from '@clayui/layout';
-import {FrontendDataSet} from '@liferay/frontend-data-set-web';
 import classNames from 'classnames';
 import {InputLocalized, ManagementToolbar} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
@@ -26,41 +25,6 @@ export default function PicklistBuilder({config}: {config: Config}) {
 	});
 	const [erc, setErc] = useState<string>(getRandomId());
 
-	const views = [
-		{
-			schema: {
-				fields: [
-					{
-						contentRenderer: 'selectTableCellRenderer',
-						fieldName: 'select',
-						label: '',
-					},
-					{
-						contentRenderer: 'nameTableCellRenderer',
-						fieldName: 'name',
-						label: 'Name',
-						sortable: true,
-					},
-					{
-						contentRenderer: 'keyTableCellRenderer',
-						fieldName: 'key',
-						label: 'Key',
-					},
-					{
-						contentRenderer: 'ercTableCellRenderer',
-						fieldName: ['erc'],
-						label: 'ERC',
-					},
-				],
-			},
-			default: false,
-			thumbnail: 'table',
-			name: 'table',
-			contentRenderer: 'table',
-			label: 'Table',
-		},
-	];
-
 	return (
 		<div className="d-flex flex-column">
 			<ManagementBar title={Liferay.Language.get('new-picklist')}>
@@ -74,7 +38,9 @@ export default function PicklistBuilder({config}: {config: Config}) {
 			</ManagementBar>
 
 			<ClayLayout.ContainerFluid className="px-4" size="md" view>
-				<ClayForm.Group className={classNames({'has-error': !name})}>
+				<ClayForm.Group
+					className={classNames('ml-n3', {'has-error': !name})}
+				>
 					<InputLocalized
 						aria-label={Liferay.Language.get('structure-label')}
 						error={
@@ -95,68 +61,16 @@ export default function PicklistBuilder({config}: {config: Config}) {
 					/>
 
 					<ERCInput onValueChange={setErc} value={erc} />
+
+					<div className="panel-unstyled">
+						<h3 className="panel-header panel-title text-secondary">
+							{sub(
+								Liferay.Language.get('x-options'),
+								Liferay.Language.get('picklist')
+							)}
+						</h3>
+					</div>
 				</ClayForm.Group>
-
-				<div className="panel-unstyled">
-					<h3 className="panel-header panel-title text-secondary">
-						{sub(
-							Liferay.Language.get('x-options'),
-							Liferay.Language.get('picklist')
-						)}
-					</h3>
-				</div>
-
-				<FrontendDataSet
-					creationMenu={{
-						primaryItems: [
-							{
-								label: Liferay.Language.get('new'),
-								onClick: () => console.log('add new'),
-							},
-						],
-					}}
-					emptyState={{
-						description: Liferay.Language.get(
-							'fortunately-it-is-very-easy-to-add-new-ones'
-						),
-						image: '/states/cms_empty_state.svg',
-						title: sub(
-							Liferay.Language.get('there-are-no-x'),
-							Liferay.Language.get('options')
-						),
-					}}
-					id="ViewTags"
-					items={[
-						{
-							erc: '9501cdf5-9f99-406e-b7dd-75ef01cd3925',
-							key: 'keyItem1',
-							name: 'Item 1',
-						},
-					]}
-					itemsActions={[
-						{
-							data: {
-								id: 'edit',
-							},
-							icon: 'pencil',
-							label: 'Edit',
-							onClick: () => console.log('edit'),
-							type: 'item',
-						},
-						{
-							data: {
-								id: 'remove',
-							},
-							icon: 'pencil',
-							label: 'Remove',
-							onClick: () => console.log('remove'),
-							type: 'item',
-						},
-					]}
-					showManagementBar={true}
-					showSearch={true}
-					views={views}
-				/>
 			</ClayLayout.ContainerFluid>
 		</div>
 	);
