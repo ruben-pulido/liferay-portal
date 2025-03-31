@@ -1,0 +1,17 @@
+{
+	"friendlyURL": "/picklists",
+	"hidden": false,
+	"name_i18n": {
+		"en_US": "Picklists"
+	},
+	"permissions": [
+		{
+			"actionIds": [],
+			"roleName": "Guest",
+			"scope": 4
+		}
+	],
+	"private": false,
+	"system": false,
+	"type": "content"
+}
