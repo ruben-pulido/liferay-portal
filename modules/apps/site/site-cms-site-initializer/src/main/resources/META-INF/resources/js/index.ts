@@ -11,4 +11,5 @@ export {default as ViewTags} from './main/categorization/tags/ViewTags';
 export {default as ViewVocabularies} from './main/categorization/vocabularies/ViewVocabularies';
 export {default as SpacesSticker} from './main/components/SpaceSticker';
 export {default as SpacesNavigation} from './main/spaces_navigation/SpacesNavigation';
+export {default as PicklistBuilder} from './picklist_builder/PicklistBuilder';
 export {default as StructureBuilder} from './structure_builder/components/StructureBuilder';
