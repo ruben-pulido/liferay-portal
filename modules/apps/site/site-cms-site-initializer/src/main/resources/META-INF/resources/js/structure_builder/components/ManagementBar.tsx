@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayIcon from '@clayui/icon';
-import ClayLink from '@clayui/link';
 import {ManagementToolbar, openToast} from 'frontend-js-components-web';
 import React from 'react';
 
+import AsyncButton from '../../common/AsyncButton';
+import BaseManagementBar from '../../common/BaseManagementBar';
 import {useSelector, useStateDispatch} from '../contexts/StateContext';
 import selectStructureERC from '../selectors/selectStructureERC';
 import selectStructureFields from '../selectors/selectStructureFields';
@@ -19,53 +19,29 @@ import selectStructureSpaces from '../selectors/selectStructureSpaces';
 import selectStructureStatus from '../selectors/selectStructureStatus';
 import StructureService from '../services/StructureService';
 import {useValidate} from '../utils/validation';
-import AsyncButton from './AsyncButton';
 
 export default function ManagementBar() {
 	const label = useSelector(selectStructureLocalizedLabel);
 	const status = useSelector(selectStructureStatus);
 
 	return (
-		<ManagementToolbar.Container className="border">
-			<ManagementToolbar.ItemList className="c-gap-3" expand>
+		<BaseManagementBar
+			title={
+				status === 'published'
+					? label
+					: Liferay.Language.get('new-structure')
+			}
+		>
+			{status !== 'published' ? (
 				<ManagementToolbar.Item>
-					<ClayLink
-						aria-label={Liferay.Language.get('back')}
-						className="btn btn-monospaced btn-outline-borderless btn-outline-secondary btn-sm"
-						href="structures"
-					>
-						<ClayIcon symbol="angle-left" />
-					</ClayLink>
+					<SaveButton />
 				</ManagementToolbar.Item>
+			) : null}
 
-				<ManagementToolbar.Item className="nav-item-expand">
-					<h2 className="font-weight-semi-bold m-0 text-5">
-						{status === 'published'
-							? label
-							: Liferay.Language.get('new-structure')}
-					</h2>
-				</ManagementToolbar.Item>
-
-				<ManagementToolbar.Item>
-					<ClayLink
-						className="btn btn-outline-borderless btn-outline-secondary btn-sm"
-						href="structures"
-					>
-						{Liferay.Language.get('cancel')}
-					</ClayLink>
-				</ManagementToolbar.Item>
-
-				{status !== 'published' ? (
-					<ManagementToolbar.Item>
-						<SaveButton />
-					</ManagementToolbar.Item>
-				) : null}
-
-				<ManagementToolbar.Item>
-					<PublishButton />
-				</ManagementToolbar.Item>
-			</ManagementToolbar.ItemList>
-		</ManagementToolbar.Container>
+			<ManagementToolbar.Item>
+				<PublishButton />
+			</ManagementToolbar.Item>
+		</BaseManagementBar>
 	);
 }
 
