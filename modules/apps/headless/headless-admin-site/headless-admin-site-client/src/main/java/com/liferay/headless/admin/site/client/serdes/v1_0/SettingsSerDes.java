@@ -136,6 +136,16 @@ public class SettingsSerDes {
 			sb.append("]");
 		}
 
+		if (settings.getIconItemExternalReference() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"iconItemExternalReference\": ");
+
+			sb.append(String.valueOf(settings.getIconItemExternalReference()));
+		}
+
 		if (settings.getJavascript() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -276,6 +286,15 @@ public class SettingsSerDes {
 				String.valueOf(settings.getGlobalJSClientExtensions()));
 		}
 
+		if (settings.getIconItemExternalReference() == null) {
+			map.put("iconItemExternalReference", null);
+		}
+		else {
+			map.put(
+				"iconItemExternalReference",
+				String.valueOf(settings.getIconItemExternalReference()));
+		}
+
 		if (settings.getJavascript() == null) {
 			map.put("javascript", null);
 		}
@@ -367,6 +386,11 @@ public class SettingsSerDes {
 			}
 			else if (Objects.equals(
 						jsonParserFieldName, "globalJSClientExtensions")) {
+
+				return false;
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "iconItemExternalReference")) {
 
 				return false;
 			}
@@ -467,6 +491,15 @@ public class SettingsSerDes {
 
 					settings.setGlobalJSClientExtensions(
 						globalJSClientExtensionsArray);
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "iconItemExternalReference")) {
+
+				if (jsonParserFieldValue != null) {
+					settings.setIconItemExternalReference(
+						ItemExternalReferenceSerDes.toDTO(
+							(String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "javascript")) {

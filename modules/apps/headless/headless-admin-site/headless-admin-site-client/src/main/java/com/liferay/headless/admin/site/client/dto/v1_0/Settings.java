@@ -137,6 +137,31 @@ public class Settings implements Cloneable, Serializable {
 
 	protected ClientExtension[] globalJSClientExtensions;
 
+	public ItemExternalReference getIconItemExternalReference() {
+		return iconItemExternalReference;
+	}
+
+	public void setIconItemExternalReference(
+		ItemExternalReference iconItemExternalReference) {
+
+		this.iconItemExternalReference = iconItemExternalReference;
+	}
+
+	public void setIconItemExternalReference(
+		UnsafeSupplier<ItemExternalReference, Exception>
+			iconItemExternalReferenceUnsafeSupplier) {
+
+		try {
+			iconItemExternalReference =
+				iconItemExternalReferenceUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected ItemExternalReference iconItemExternalReference;
+
 	public String getJavascript() {
 		return javascript;
 	}
