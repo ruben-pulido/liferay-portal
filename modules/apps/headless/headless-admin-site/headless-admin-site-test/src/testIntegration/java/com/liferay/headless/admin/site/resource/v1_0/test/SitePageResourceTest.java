@@ -617,6 +617,12 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				sitePage.getParentSitePageExternalReferenceCode());
 		}
 
+		PageSettings pageSettings = sitePage.getPageSettings();
+
+		Assert.assertEquals(
+			layout.getPriority(),
+			GetterUtil.get(pageSettings.getPriority(), 0));
+
 		Assert.assertEquals(layout.getUuid(), sitePage.getUuid());
 
 		if (Objects.equals(layout.getType(), LayoutConstants.TYPE_CONTENT)) {
