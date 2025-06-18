@@ -779,6 +779,9 @@ public class LayoutLocalServiceTest {
 		Layout layout4 = LayoutTestUtil.addTypeContentPublishedLayout(
 			_group, RandomTestUtil.randomString(),
 			WorkflowConstants.STATUS_APPROVED);
+		Layout layout5 = LayoutTestUtil.addTypeContentPublishedLayout(
+			_group, RandomTestUtil.randomString(),
+			WorkflowConstants.STATUS_APPROVED);
 
 		int priority1 = 0;
 
@@ -817,6 +820,13 @@ public class LayoutLocalServiceTest {
 		layout3 = _layoutLocalService.fetchLayout(layout3.getPlid());
 
 		Assert.assertEquals(priority3 + 1, layout3.getPriority());
+
+		int priority5 = layout3.getPriority() + 2;
+
+		layout5 = _layoutLocalService.updatePriority(
+			layout5.getPlid(), priority5);
+
+		Assert.assertEquals(layout3.getPriority() + 1, layout5.getPriority());
 	}
 
 	@Test
