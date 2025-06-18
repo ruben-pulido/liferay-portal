@@ -37,7 +37,7 @@
 									"fragmentFields": [
 									],
 									"fragmentStyle": {
-										"marginBottom": "3"
+										"marginBottom": "5"
 									},
 									"indexed": true
 								},
@@ -81,12 +81,32 @@
 									{
 										"definition": {
 											"fragment": {
-												"key": "INPUTS-text-input"
+												"key": "INPUTS-inline-text-input"
 											},
 											"fragmentConfig": {
 												"inputFieldId": "ObjectField_title",
-												"placeholder": "",
+												"placeholder": {
+													"en_US": "New External Video"
+												},
 												"showCharactersCount": false
+											},
+											"fragmentFields": [
+											],
+											"fragmentStyle": {
+												"marginBottom": "5",
+												"marginLeft": "-16px"
+											},
+											"indexed": true
+										},
+										"id": "efe5de0d-3648-65db-24bb-cf71fbd0baef",
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "com.liferay.site.cms.site.initializer.internal.fragment.renderer.SpaceListFragmentRenderer"
+											},
+											"fragmentConfig": {
 											},
 											"fragmentFields": [
 											],
@@ -95,7 +115,7 @@
 											},
 											"indexed": true
 										},
-										"id": "efe5de0d-3648-65db-24bb-cf71fbd0baef",
+										"id": "a1c3f2b7-4d29-65db-89a1-9e3f8c02e4dd",
 										"type": "Fragment"
 									},
 									{
@@ -109,11 +129,29 @@
 											"fragmentFields": [
 											],
 											"fragmentStyle": {
-												"marginBottom": "3"
+												"marginBottom": "5"
 											},
 											"indexed": true
 										},
 										"id": "eae2d9ca-a716-fa32-2e30-de3adea8dba2",
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "INPUTS-video-previewer-input"
+											},
+											"fragmentConfig": {
+												"inputFieldId": "ObjectField_videoURL"
+											},
+											"fragmentFields": [
+											],
+											"fragmentStyle": {
+												"marginBottom": "3"
+											},
+											"indexed": true
+										},
+										"id": "9f47b6c2-3f85-4e99-8c1a-9b6fcd2a4b7f",
 										"type": "Fragment"
 									}
 								],

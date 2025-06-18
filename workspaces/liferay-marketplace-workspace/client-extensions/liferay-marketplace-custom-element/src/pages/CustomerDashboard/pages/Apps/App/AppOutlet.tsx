@@ -18,7 +18,7 @@ import {MarketplaceDeliveryProduct} from '../../../../../entity/MarketplaceDeliv
 import {OrderTypes, OrderWorkflowStatusCode} from '../../../../../enums/Order';
 import useGetProductByOrderId from '../../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../../i18n';
-import getProductPriceModel from '../../../../GetApp/utils/getProductPriceModel';
+import {getProductPriceModel} from '../../../../../utils/productUtils';
 import OrderDetailsHeader from '../../../components/OrderDetailsHeader';
 
 import './App.scss';

@@ -524,6 +524,13 @@ public class ObjectEntryLocalServiceUtil {
 		return getService().getObjectEntryByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static List<ObjectEntry> getObjectEntryFolderObjectEntries(
+		long groupId, long objectEntryFolderId, int start, int end) {
+
+		return getService().getObjectEntryFolderObjectEntries(
+			groupId, objectEntryFolderId, start, end);
+	}
+
 	public static int getObjectEntryFolderObjectEntriesCount(
 		long groupId, long objectEntryFolderId) {
 
@@ -548,6 +555,14 @@ public class ObjectEntryLocalServiceUtil {
 
 		return getService().getOneToManyObjectEntriesCount(
 			groupId, objectRelationshipId, primaryKey, related, search);
+	}
+
+	public static ObjectEntry getOrAddIncompleteObjectEntry(
+			String externalReferenceCode, long userId, long objectDefinitionId)
+		throws PortalException {
+
+		return getService().getOrAddIncompleteObjectEntry(
+			externalReferenceCode, userId, objectDefinitionId);
 	}
 
 	/**

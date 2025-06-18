@@ -35,6 +35,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.seo.model.LayoutSEOEntryCustomMetaTagProperty;
 import com.liferay.layout.seo.service.LayoutSEOEntryService;
+import com.liferay.layout.util.LayoutServiceContextHelper;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -780,29 +781,31 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 				new long[] {segmentsExperience.getSegmentsExperienceId()});
 		}
 
-		contextHttpServletRequest.setAttribute(
-			WebKeys.THEME_DISPLAY, _getThemeDisplay(layout));
+		try (AutoCloseable autoCloseable =
+				_layoutServiceContextHelper.getServiceContextAutoCloseable(
+					layout, contextUser)) {
 
-		layout.includeLayoutContent(
-			contextHttpServletRequest, contextHttpServletResponse);
+			layout.includeLayoutContent(
+				contextHttpServletRequest, contextHttpServletResponse);
 
-		StringBundler sb =
-			(StringBundler)contextHttpServletRequest.getAttribute(
-				WebKeys.LAYOUT_CONTENT);
+			StringBundler sb =
+				(StringBundler)contextHttpServletRequest.getAttribute(
+					WebKeys.LAYOUT_CONTENT);
 
-		LayoutSet layoutSet = layout.getLayoutSet();
+			LayoutSet layoutSet = layout.getLayoutSet();
 
-		Document document = Jsoup.parse(
-			ThemeUtil.include(
-				ServletContextPool.get(StringPool.BLANK),
-				contextHttpServletRequest, contextHttpServletResponse,
-				"portal_normal.ftl", layoutSet.getTheme(), false));
+			Document document = Jsoup.parse(
+				ThemeUtil.include(
+					ServletContextPool.get(StringPool.BLANK),
+					contextHttpServletRequest, contextHttpServletResponse,
+					"portal_normal.ftl", layoutSet.getTheme(), false));
 
-		Element bodyElement = document.body();
+			Element bodyElement = document.body();
 
-		bodyElement.html(sb.toString());
+			bodyElement.html(sb.toString());
 
-		return document.html();
+			return document.html();
+		}
 	}
 
 	private SitePage _toSitePage(
@@ -1029,6 +1032,9 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 
 	@Reference
 	private LayoutService _layoutService;
+
+	@Reference
+	private LayoutServiceContextHelper _layoutServiceContextHelper;
 
 	@Reference
 	private LayoutsImporter _layoutsImporter;

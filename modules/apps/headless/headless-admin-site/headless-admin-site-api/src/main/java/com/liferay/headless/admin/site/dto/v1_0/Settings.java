@@ -280,6 +280,56 @@ public class Settings implements Serializable {
 	private Supplier<ClientExtension[]> _globalJSClientExtensionsSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "A reference to the icon which will be shown in the navigation menu. This property is only applied if the page specification belongs to a site page or a page template."
+	)
+	@Valid
+	public ItemExternalReference getIconItemExternalReference() {
+		if (_iconItemExternalReferenceSupplier != null) {
+			iconItemExternalReference =
+				_iconItemExternalReferenceSupplier.get();
+
+			_iconItemExternalReferenceSupplier = null;
+		}
+
+		return iconItemExternalReference;
+	}
+
+	public void setIconItemExternalReference(
+		ItemExternalReference iconItemExternalReference) {
+
+		this.iconItemExternalReference = iconItemExternalReference;
+
+		_iconItemExternalReferenceSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setIconItemExternalReference(
+		UnsafeSupplier<ItemExternalReference, Exception>
+			iconItemExternalReferenceUnsafeSupplier) {
+
+		_iconItemExternalReferenceSupplier = () -> {
+			try {
+				return iconItemExternalReferenceUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "A reference to the icon which will be shown in the navigation menu. This property is only applied if the page specification belongs to a site page or a page template."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected ItemExternalReference iconItemExternalReference;
+
+	@JsonIgnore
+	private Supplier<ItemExternalReference> _iconItemExternalReferenceSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The page specification's JavaScript."
 	)
 	public String getJavascript() {
@@ -736,6 +786,19 @@ public class Settings implements Serializable {
 			}
 
 			sb.append("]");
+		}
+
+		ItemExternalReference iconItemExternalReference =
+			getIconItemExternalReference();
+
+		if (iconItemExternalReference != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"iconItemExternalReference\": ");
+
+			sb.append(String.valueOf(iconItemExternalReference));
 		}
 
 		String javascript = getJavascript();

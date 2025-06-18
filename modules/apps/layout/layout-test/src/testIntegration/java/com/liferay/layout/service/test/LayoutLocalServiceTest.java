@@ -766,6 +766,70 @@ public class LayoutLocalServiceTest {
 	}
 
 	@Test
+	public void testUpdatePriority() throws Exception {
+		Layout layout1 = LayoutTestUtil.addTypeContentPublishedLayout(
+			_group, RandomTestUtil.randomString(),
+			WorkflowConstants.STATUS_APPROVED);
+		Layout layout2 = LayoutTestUtil.addTypeContentPublishedLayout(
+			_group, RandomTestUtil.randomString(),
+			WorkflowConstants.STATUS_APPROVED);
+		Layout layout3 = LayoutTestUtil.addTypeContentPublishedLayout(
+			_group, RandomTestUtil.randomString(),
+			WorkflowConstants.STATUS_APPROVED);
+		Layout layout4 = LayoutTestUtil.addTypeContentPublishedLayout(
+			_group, RandomTestUtil.randomString(),
+			WorkflowConstants.STATUS_APPROVED);
+		Layout layout5 = LayoutTestUtil.addTypeContentPublishedLayout(
+			_group, RandomTestUtil.randomString(),
+			WorkflowConstants.STATUS_APPROVED);
+
+		int priority1 = 0;
+
+		layout1 = _layoutLocalService.updatePriority(
+			layout1.getPlid(), priority1);
+
+		Assert.assertEquals(priority1, layout1.getPriority());
+
+		int priority2 = 1;
+
+		layout2 = _layoutLocalService.updatePriority(
+			layout2.getPlid(), priority2);
+
+		Assert.assertEquals(priority2, layout2.getPriority());
+
+		int priority3 = 2;
+
+		layout3 = _layoutLocalService.updatePriority(
+			layout3.getPlid(), priority3);
+
+		Assert.assertEquals(priority3, layout3.getPriority());
+
+		layout4 = _layoutLocalService.updatePriority(
+			layout4.getPlid(), priority2);
+
+		Assert.assertEquals(priority2, layout4.getPriority());
+
+		layout1 = _layoutLocalService.fetchLayout(layout1.getPlid());
+
+		Assert.assertEquals(priority1, layout1.getPriority());
+
+		layout2 = _layoutLocalService.fetchLayout(layout2.getPlid());
+
+		Assert.assertEquals(priority2 + 1, layout2.getPriority());
+
+		layout3 = _layoutLocalService.fetchLayout(layout3.getPlid());
+
+		Assert.assertEquals(priority3 + 1, layout3.getPriority());
+
+		int priority5 = layout3.getPriority() + 2;
+
+		layout5 = _layoutLocalService.updatePriority(
+			layout5.getPlid(), priority5);
+
+		Assert.assertEquals(layout3.getPriority() + 1, layout5.getPriority());
+	}
+
+	@Test
 	public void testUpdateTypeSettings() throws Exception {
 		LayoutPrototype layoutPrototype = LayoutTestUtil.addLayoutPrototype(
 			RandomTestUtil.randomString());

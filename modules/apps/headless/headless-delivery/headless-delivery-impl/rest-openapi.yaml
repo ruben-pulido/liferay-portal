@@ -3481,11 +3481,6 @@ components:
                         type: string
                     readOnly: true
                     type: array
-                contentURL:
-                    # @review
-                    description:
-                        The navigation menu item's content API REST URL.
-                    type: string
                 creator:
                     $ref: "#/components/schemas/Creator"
                     # @review
@@ -3523,20 +3518,6 @@ components:
                         The navigation menu item's ID.
                     format: int64
                     type: integer
-                link:
-                    # @review
-                    description:
-                        The link to a page on the server.
-                    format: uri
-                    type: string
-                link_i18n:
-                    additionalProperties:
-                        format: uri
-                        type: string
-                    # @review
-                    description:
-                        The localized links to a page on the server.
-                    type: object
                 name:
                     # @review
                     description:
@@ -3563,25 +3544,21 @@ components:
                     format: int64
                     readOnly: true
                     type: integer
-                sitePageURL:
-                    # @review
-                    description:
-                        The navigation menu item's linked site page URL.
-                    readOnly: true
-                    type: string
                 type:
                     # @review
                     description:
                         The navigation menu item's type.
-                    readOnly: true
                     type: string
-                url:
-                    # @review
+                typeSettings:
+                    additionalProperties:
+                        type: string
                     description:
-                        The navigation menu item's linked URL.
-                    type: string
+                        The navigation menu item's type settings.
+                    type: object
                 useCustomName:
                     type: boolean
+            required:
+                -   typeSettings
         NoneActionExecutionResult:
             # @review
             description:

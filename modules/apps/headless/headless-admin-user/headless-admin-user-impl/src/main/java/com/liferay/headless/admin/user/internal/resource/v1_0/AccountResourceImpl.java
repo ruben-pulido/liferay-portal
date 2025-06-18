@@ -15,12 +15,11 @@ import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryOrganizationRelLocalService;
 import com.liferay.account.service.AccountEntryService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
-import com.liferay.account.service.AccountGroupLocalService;
 import com.liferay.account.service.AccountGroupRelService;
 import com.liferay.account.service.AccountGroupService;
 import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.asset.kernel.model.AssetCategory;
-import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetCategoryService;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
@@ -69,10 +68,9 @@ import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.ContactService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ListTypeLocalService;
-import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.OrganizationService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
-import com.liferay.portal.kernel.service.RoleLocalService;
+import com.liferay.portal.kernel.service.RoleService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Base64;
@@ -570,9 +568,8 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 
 		try {
 			AccountGroup accountGroup =
-				_accountGroupLocalService.getOrAddIncompleteAccountGroup(
-					externalReferenceCode, accountEntry.getCompanyId(),
-					contextUser.getUserId(), accountGroupBrief.getName());
+				_accountGroupService.getOrAddIncompleteAccountGroup(
+					externalReferenceCode, accountGroupBrief.getName());
 
 			_accountGroupRelService.addAccountGroupRel(
 				accountGroup.getAccountGroupId(), AccountEntry.class.getName(),
@@ -719,9 +716,8 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 				}
 
 				AssetCategory assetCategory =
-					_assetCategoryLocalService.getOrAddIncompleteCategory(
-						externalReferenceCode, contextUser.getUserId(),
-						group.getGroupId());
+					_assetCategoryService.getOrAddIncompleteCategory(
+						externalReferenceCode, group.getGroupId());
 
 				return assetCategory.getCategoryId();
 			},
@@ -1031,11 +1027,9 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 					if (FeatureFlagManagerUtil.isEnabled("LPD-47858")) {
 						com.liferay.portal.kernel.model.Organization
 							organization =
-								_organizationLocalService.
+								_organizationService.
 									getOrAddIncompleteOrganization(
 										externalReferenceCode,
-										contextCompany.getCompanyId(),
-										contextUser.getUserId(),
 										StringPool.BLANK);
 
 						return organization.getOrganizationId();
@@ -1342,8 +1336,8 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 
 		return ResourcePermissionUtil.setResourcePermissions(
 			accountEntry, accountEntry.getCompanyId(), account.getPermissions(),
-			_resourcePermissionLocalService, _roleLocalService,
-			_roleTypeContributorProvider, contextUser.getUserId());
+			_resourcePermissionLocalService, _roleService,
+			_roleTypeContributorProvider);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -1371,9 +1365,6 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 	private AccountEntryUserRelLocalService _accountEntryUserRelLocalService;
 
 	@Reference
-	private AccountGroupLocalService _accountGroupLocalService;
-
-	@Reference
 	private AccountGroupRelService _accountGroupRelService;
 
 	@Reference
@@ -1389,7 +1380,7 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 	private AddressLocalService _addressLocalService;
 
 	@Reference
-	private AssetCategoryLocalService _assetCategoryLocalService;
+	private AssetCategoryService _assetCategoryService;
 
 	@Reference
 	private ContactService _contactService;
@@ -1418,9 +1409,6 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 	@Reference
 	private ListTypeLocalService _listTypeLocalService;
 
-	@Reference
-	private OrganizationLocalService _organizationLocalService;
-
 	@Reference(
 		target = DTOConverterConstants.ORGANIZATION_RESOURCE_DTO_CONVERTER
 	)
@@ -1438,7 +1426,7 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 	private ResourcePermissionLocalService _resourcePermissionLocalService;
 
 	@Reference
-	private RoleLocalService _roleLocalService;
+	private RoleService _roleService;
 
 	@Reference
 	private RoleTypeContributorProvider _roleTypeContributorProvider;

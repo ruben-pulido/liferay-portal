@@ -1559,55 +1559,46 @@ public class JournalDisplayContext {
 			return _articleSearchContainer;
 		}
 
+		List<Document> documents = new ArrayList<>();
+
 		SearchContainer<Object> articleAndFolderSearchContainer =
 			_getArticleAndFolderSearchContainer();
 
 		int end = articleAndFolderSearchContainer.getEnd();
 		int start = articleAndFolderSearchContainer.getStart();
 
-		int delta = end - start;
-
 		SearchResponse journalFolderSearchResponse =
 			JournalSearcherUtil.searchJournalFolders(
 				searchContext -> _populateSearchContext(
 					start, end, searchContext, false));
 
-		int articlesCount;
-		List<Document> documents = new ArrayList<>();
 		int foldersCount = journalFolderSearchResponse.getTotalHits();
 
+		int journalArticlesStart = start - foldersCount;
+
+		int delta = end - start;
+
+		int journalArticlesEnd = delta + journalArticlesStart;
+
 		if (start < foldersCount) {
-			List<Document> folderDocuments =
-				journalFolderSearchResponse.getDocuments71();
+			documents.addAll(journalFolderSearchResponse.getDocuments71());
 
-			documents.addAll(
-				folderDocuments.subList(start, Math.min(end, foldersCount)));
+			journalArticlesEnd = Math.max(1, delta - documents.size());
 
-			SearchResponse articleSearchResponse =
-				_getJournalArticleSearchResponse(0, delta - documents.size());
-
-			articlesCount = articleSearchResponse.getTotalHits();
-
-			if (delta > documents.size()) {
-				documents.addAll(articleSearchResponse.getDocuments71());
-			}
+			journalArticlesStart = 0;
 		}
-		else {
-			int journalArticlesStart = start - foldersCount;
 
-			SearchResponse articleSearchResponse =
-				_getJournalArticleSearchResponse(
-					journalArticlesStart, delta + journalArticlesStart);
+		SearchResponse articleSearchResponse = _getJournalArticleSearchResponse(
+			journalArticlesStart, journalArticlesEnd);
 
+		if (documents.size() < delta) {
 			documents.addAll(articleSearchResponse.getDocuments71());
-
-			articlesCount = articleSearchResponse.getTotalHits();
 		}
 
 		articleAndFolderSearchContainer.setResultsAndTotal(
 			() -> JournalSearcherUtil.transformJournalArticleAndFolders(
 				documents),
-			articlesCount + foldersCount);
+			articleSearchResponse.getTotalHits() + foldersCount);
 
 		_articleSearchContainer = articleAndFolderSearchContainer;
 

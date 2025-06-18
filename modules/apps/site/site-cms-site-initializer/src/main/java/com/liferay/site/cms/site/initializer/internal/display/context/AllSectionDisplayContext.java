@@ -7,15 +7,14 @@ package com.liferay.site.cms.site.initializer.internal.display.context;
 
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
-import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.Portal;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -32,22 +31,13 @@ public class AllSectionDisplayContext extends BaseSectionDisplayContext {
 		GroupLocalService groupLocalService,
 		HttpServletRequest httpServletRequest, Language language,
 		ObjectDefinitionService objectDefinitionService,
-		ObjectDefinitionSettingLocalService
-			objectDefinitionSettingLocalService) {
+		ObjectDefinitionSettingLocalService objectDefinitionSettingLocalService,
+		Portal portal) {
 
 		super(
 			depotEntryLocalService, groupLocalService, httpServletRequest,
 			language, objectDefinitionService,
-			objectDefinitionSettingLocalService);
-	}
-
-	@Override
-	public CreationMenu getCreationMenu() {
-		return new CreationMenu() {
-			{
-				addStructureContentDropdownItems(this);
-			}
-		};
+			objectDefinitionSettingLocalService, portal);
 	}
 
 	@Override
@@ -79,7 +69,13 @@ public class AllSectionDisplayContext extends BaseSectionDisplayContext {
 	}
 
 	@Override
-	public String[] getObjectFolderExternalReferenceCodes() {
+	protected String getCMSSectionFilterString() {
+		return "(cmsSection eq 'contents' or cmsSection eq 'files') and " +
+			"cmsKind eq 'object'";
+	}
+
+	@Override
+	protected String[] getObjectFolderExternalReferenceCodes() {
 		return new String[] {
 			ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENT_STRUCTURES,
 			ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_FILE_TYPES
@@ -87,8 +83,8 @@ public class AllSectionDisplayContext extends BaseSectionDisplayContext {
 	}
 
 	@Override
-	protected String getCMSSectionFilterString() {
-		return StringPool.BLANK;
+	protected String getRootObjectEntryFolderExternalReferenceCode() {
+		return null;
 	}
 
 }

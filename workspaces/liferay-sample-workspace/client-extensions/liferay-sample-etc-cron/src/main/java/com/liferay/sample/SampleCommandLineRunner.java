@@ -29,6 +29,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Gregory Amerson
@@ -72,7 +73,12 @@ public class SampleCommandLineRunner
 				).put(
 					HttpHeaders.AUTHORIZATION, _getAuthorization()
 				).build(),
-				"/dad/joke");
+				UriComponentsBuilder.fromUriString(
+					_getWebClientBaseURL()
+				).path(
+					"/dad/joke"
+				).build(
+				).toUri());
 
 			if ((dadJoke != null) && _log.isInfoEnabled()) {
 				_log.info("Dad joke: " + dadJoke);
@@ -81,19 +87,6 @@ public class SampleCommandLineRunner
 		catch (Exception exception) {
 			_log.error(exception);
 		}
-	}
-
-	@Override
-	protected String getWebClientBaseURL() {
-		String homePageURL = LiferayOAuth2Util.getHomePageURL(
-			"liferay-sample-etc-spring-boot-oauth-application-user-agent",
-			_lxcDXPMainDomain, _lxcDXPServerProtocol);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("Home page URL: " + homePageURL);
-		}
-
-		return homePageURL;
 	}
 
 	private void _countMessageBoardThreads(
@@ -157,6 +150,18 @@ public class SampleCommandLineRunner
 	private String _getAuthorization() {
 		return _liferayOAuth2AccessTokenManager.getAuthorization(
 			"liferay-sample-etc-cron-oauth-application-headless-server");
+	}
+
+	private String _getWebClientBaseURL() {
+		String homePageURL = LiferayOAuth2Util.getHomePageURL(
+			"liferay-sample-etc-spring-boot-oauth-application-user-agent",
+			_lxcDXPMainDomain, _lxcDXPServerProtocol);
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("Home page URL: " + homePageURL);
+		}
+
+		return homePageURL;
 	}
 
 	private static final Log _log = LogFactory.getLog(

@@ -1231,8 +1231,8 @@ public class JournalArticleLocalServiceImpl
 
 		// Article localization
 
-		_journalArticleLocalizationPersistence.removeByArticlePK(
-			article.getId());
+		_journalArticleLocalizationPersistence.removeByC_A(
+			article.getCompanyId(), article.getId());
 
 		// Asset
 
@@ -2358,17 +2358,21 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	@Override
-	public String getArticleDescription(long articlePK, Locale locale) {
+	public String getArticleDescription(
+		long companyId, long articlePK, Locale locale) {
+
 		String languageId = LocaleUtil.toLanguageId(locale);
 
-		return getArticleDescription(articlePK, languageId);
+		return getArticleDescription(companyId, articlePK, languageId);
 	}
 
 	@Override
-	public String getArticleDescription(long articlePK, String languageId) {
+	public String getArticleDescription(
+		long companyId, long articlePK, String languageId) {
+
 		JournalArticleLocalization journalArticleLocalization =
-			_journalArticleLocalizationPersistence.fetchByA_L(
-				articlePK, languageId);
+			_journalArticleLocalizationPersistence.fetchByC_A_L(
+				companyId, articlePK, languageId);
 
 		if (journalArticleLocalization == null) {
 			return null;
@@ -2378,12 +2382,15 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	@Override
-	public Map<Locale, String> getArticleDescriptionMap(long articlePK) {
+	public Map<Locale, String> getArticleDescriptionMap(
+		long companyId, long articlePK) {
+
 		Map<Locale, String> journalArticleLocalizationDescriptionMap =
 			new HashMap<>();
 
 		List<JournalArticleLocalization> journalArticleLocalizationList =
-			_journalArticleLocalizationPersistence.findByArticlePK(articlePK);
+			_journalArticleLocalizationPersistence.findByC_A(
+				companyId, articlePK);
 
 		for (JournalArticleLocalization journalArticleLocalization :
 				journalArticleLocalizationList) {
@@ -2643,9 +2650,12 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	@Override
-	public List<String> getArticleLocalizationLanguageIds(long articlePK) {
+	public List<String> getArticleLocalizationLanguageIds(
+		long companyId, long articlePK) {
+
 		return TransformUtil.transform(
-			_journalArticleLocalizationPersistence.findByArticlePK(articlePK),
+			_journalArticleLocalizationPersistence.findByC_A(
+				companyId, articlePK),
 			journalArticleLocalization ->
 				journalArticleLocalization.getLanguageId());
 	}
@@ -3093,17 +3103,21 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	@Override
-	public String getArticleTitle(long articlePK, Locale locale) {
+	public String getArticleTitle(
+		long companyId, long articlePK, Locale locale) {
+
 		String languageId = LocaleUtil.toLanguageId(locale);
 
-		return getArticleTitle(articlePK, languageId);
+		return getArticleTitle(companyId, articlePK, languageId);
 	}
 
 	@Override
-	public String getArticleTitle(long articlePK, String languageId) {
+	public String getArticleTitle(
+		long companyId, long articlePK, String languageId) {
+
 		JournalArticleLocalization journalArticleLocalization =
-			_journalArticleLocalizationPersistence.fetchByA_L(
-				articlePK, languageId);
+			_journalArticleLocalizationPersistence.fetchByC_A_L(
+				companyId, articlePK, languageId);
 
 		if (journalArticleLocalization == null) {
 			return null;
@@ -3113,12 +3127,15 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	@Override
-	public Map<Locale, String> getArticleTitleMap(long articlePK) {
+	public Map<Locale, String> getArticleTitleMap(
+		long companyId, long articlePK) {
+
 		Map<Locale, String> journalArticleLocalizationTitleMap =
 			new HashMap<>();
 
 		List<JournalArticleLocalization> journalArticleLocalizationList =
-			_journalArticleLocalizationPersistence.findByArticlePK(articlePK);
+			_journalArticleLocalizationPersistence.findByC_A(
+				companyId, articlePK);
 
 		for (JournalArticleLocalization journalArticleLocalization :
 				journalArticleLocalizationList) {
@@ -4420,12 +4437,12 @@ public class JournalArticleLocalServiceImpl
 		}
 
 		JournalArticleLocalization journalArticleLocalization =
-			_journalArticleLocalizationPersistence.fetchByA_L(
-				article.getId(), languageId);
+			_journalArticleLocalizationPersistence.fetchByC_A_L(
+				article.getCompanyId(), article.getId(), languageId);
 
 		if (journalArticleLocalization != null) {
-			_journalArticleLocalizationPersistence.removeByA_L(
-				article.getId(), languageId);
+			_journalArticleLocalizationPersistence.removeByC_A_L(
+				article.getCompanyId(), article.getId(), languageId);
 		}
 
 		_removeArticleLocale(article, languageId);
@@ -6071,16 +6088,30 @@ public class JournalArticleLocalServiceImpl
 
 				Folder folder = article.addImagesFolder();
 
-				String fileEntryName = DLUtil.getUniqueFileName(
-					folder.getGroupId(), folder.getFolderId(),
-					tempFileEntry.getFileName(), false);
+				FileEntry portletFileEntry =
+					_portletFileRepository.
+						fetchPortletFileEntryByExternalReferenceCode(
+							tempFileEntry.getUuid(), folder.getGroupId());
 
-				fileEntry = _portletFileRepository.addPortletFileEntry(
-					null, folder.getGroupId(), tempFileEntry.getUserId(),
-					JournalArticle.class.getName(),
-					article.getResourcePrimKey(), JournalConstants.SERVICE_NAME,
-					folder.getFolderId(), tempFileEntry.getContentStream(),
-					fileEntryName, tempFileEntry.getMimeType(), false);
+				if (portletFileEntry == null) {
+					String fileEntryName = DLUtil.getUniqueFileName(
+						folder.getGroupId(), folder.getFolderId(),
+						tempFileEntry.getFileName(), false);
+
+					// See LPD-52357
+
+					fileEntry = _portletFileRepository.addPortletFileEntry(
+						tempFileEntry.getUuid(), folder.getGroupId(),
+						tempFileEntry.getUserId(),
+						JournalArticle.class.getName(),
+						article.getResourcePrimKey(),
+						JournalConstants.SERVICE_NAME, folder.getFolderId(),
+						tempFileEntry.getContentStream(), fileEntryName,
+						tempFileEntry.getMimeType(), false);
+				}
+				else {
+					fileEntry = portletFileEntry;
+				}
 			}
 
 			String previewURL = _dlURLHelper.getPreviewURL(
@@ -7490,8 +7521,8 @@ public class JournalArticleLocalServiceImpl
 		String languageId) {
 
 		JournalArticleLocalization journalArticleLocalization =
-			_journalArticleLocalizationPersistence.fetchByA_L(
-				articlePK, languageId);
+			_journalArticleLocalizationPersistence.fetchByC_A_L(
+				companyId, articlePK, languageId);
 
 		if (journalArticleLocalization == null) {
 			long journalArticleLocalizationId = counterLocalService.increment();
@@ -8349,8 +8380,8 @@ public class JournalArticleLocalServiceImpl
 
 		List<JournalArticleLocalization> oldJournalArticleLocalizations =
 			new ArrayList<>(
-				_journalArticleLocalizationPersistence.findByArticlePK(
-					articleId));
+				_journalArticleLocalizationPersistence.findByC_A(
+					companyId, articleId));
 
 		List<JournalArticleLocalization> newJournalArticleLocalizations =
 			_addArticleLocalizedFields(
@@ -8374,8 +8405,8 @@ public class JournalArticleLocalServiceImpl
 		String languageId) {
 
 		JournalArticleLocalization journalArticleLocalization =
-			_journalArticleLocalizationPersistence.fetchByA_L(
-				articleId, languageId);
+			_journalArticleLocalizationPersistence.fetchByC_A_L(
+				companyId, articleId, languageId);
 
 		if (journalArticleLocalization == null) {
 			return _addArticleLocalizedFields(

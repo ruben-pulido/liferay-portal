@@ -36,6 +36,7 @@ import com.liferay.list.type.entry.util.ListTypeEntryUtil;
 import com.liferay.list.type.model.ListTypeDefinition;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeDefinitionLocalService;
+import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.constants.ObjectActionConstants;
 import com.liferay.object.constants.ObjectActionExecutorConstants;
 import com.liferay.object.constants.ObjectActionTriggerConstants;
@@ -111,6 +112,7 @@ import com.liferay.object.validation.rule.ObjectValidationRuleEngine;
 import com.liferay.object.validation.rule.ObjectValidationRuleResult;
 import com.liferay.object.validation.rule.setting.builder.ObjectValidationRuleSettingBuilder;
 import com.liferay.petra.function.UnsafeRunnable;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.sql.dsl.Column;
 import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.string.StringBundler;
@@ -129,6 +131,7 @@ import com.liferay.portal.kernel.exception.NoSuchResourceActionException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ModelListener;
@@ -2307,6 +2310,40 @@ public class ObjectEntryLocalServiceTest {
 	}
 
 	@Test
+	@TestInfo("LPD-55656")
+	public void testAddObjectEntryWithMissingListTypeEntryReference()
+		throws Exception {
+
+		String listTypeEntryKey = RandomTestUtil.randomString();
+
+		ListTypeEntry listTypeEntry =
+			_listTypeEntryLocalService.fetchListTypeEntry(
+				_listTypeDefinition.getListTypeDefinitionId(),
+				listTypeEntryKey);
+
+		Assert.assertNull(listTypeEntry);
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			_addObjectEntry(
+				HashMapBuilder.<String, Serializable>put(
+					"emailAddressRequired", "bob@liferay.com"
+				).put(
+					"listTypeEntryKeyRequired", listTypeEntryKey
+				).build());
+
+			listTypeEntry = _listTypeEntryLocalService.fetchListTypeEntry(
+				_listTypeDefinition.getListTypeDefinitionId(),
+				listTypeEntryKey);
+
+			Assert.assertNotNull(listTypeEntry);
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_INCOMPLETE, listTypeEntry.getStatus());
+		}
+	}
+
+	@Test
 	public void testAddObjectEntryWithMultiselectPicklistObjectField()
 		throws Exception {
 
@@ -3142,6 +3179,12 @@ public class ObjectEntryLocalServiceTest {
 			ObjectDefinitionTestUtil.publishObjectDefinition(
 				true, Collections.emptyList());
 
+		companyObjectDefinition.setFriendlyURLSeparator("test1");
+
+		companyObjectDefinition =
+			_objectDefinitionLocalService.updateObjectDefinition(
+				companyObjectDefinition);
+
 		ObjectEntry companyObjectEntry1 = _addObjectEntry(
 			0, companyObjectDefinition.getObjectDefinitionId(),
 			Collections.emptyMap());
@@ -3236,6 +3279,7 @@ public class ObjectEntryLocalServiceTest {
 		ObjectDefinition siteObjectDefinition =
 			ObjectDefinitionTestUtil.publishObjectDefinition();
 
+		siteObjectDefinition.setFriendlyURLSeparator("test2");
 		siteObjectDefinition.setScope(ObjectDefinitionConstants.SCOPE_SITE);
 
 		siteObjectDefinition =
@@ -3729,6 +3773,7 @@ public class ObjectEntryLocalServiceTest {
 			_objectDefinition.isEnableObjectEntryDraft(),
 			_objectDefinition.isEnableObjectEntryHistory(),
 			_objectDefinition.isEnableObjectEntryVersioning(),
+			_objectDefinition.getFriendlyURLSeparator(),
 			_objectDefinition.getLabelMap(), _objectDefinition.getName(),
 			_objectDefinition.getPanelAppOrder(),
 			_objectDefinition.getPanelCategoryKey(),
@@ -4274,6 +4319,40 @@ public class ObjectEntryLocalServiceTest {
 			NoSuchObjectEntryException.class,
 			"No ObjectEntry exists with the primary key 0",
 			() -> _objectEntryLocalService.getValues(0));
+	}
+
+	@Test
+	@TestInfo("LPD-55658")
+	public void testGetOrAddIncompleteObjectEntry() throws Throwable {
+
+		// Lazy referencing disabled
+
+		String externalReferenceCode = RandomTestUtil.randomString();
+
+		AssertUtils.assertFailure(
+			NoSuchObjectEntryException.class,
+			String.format(
+				"No ObjectEntry exists with the key {externalReference" +
+					"Code=%s, companyId=%s, objectDefinitionId=%s}",
+				externalReferenceCode, _objectDefinition.getCompanyId(),
+				_objectDefinition.getObjectDefinitionId()),
+			() -> _objectEntryLocalService.getOrAddIncompleteObjectEntry(
+				externalReferenceCode, TestPropsValues.getUserId(),
+				_objectDefinition.getObjectDefinitionId()));
+
+		// Lazy referencing enabled
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			ObjectEntry objectEntry =
+				_objectEntryLocalService.getOrAddIncompleteObjectEntry(
+					RandomTestUtil.randomString(), TestPropsValues.getUserId(),
+					_objectDefinition.getObjectDefinitionId());
+
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_INCOMPLETE, objectEntry.getStatus());
+		}
 	}
 
 	@Test
@@ -5204,6 +5283,30 @@ public class ObjectEntryLocalServiceTest {
 
 			_objectValidationRuleLocalService.deleteObjectValidationRule(
 				objectValidationRule);
+		}
+	}
+
+	@Test
+	@TestInfo("LPD-55658")
+	public void testUpdateIncompleteObjectEntry() throws Throwable {
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			ObjectEntry objectEntry =
+				_objectEntryLocalService.getOrAddIncompleteObjectEntry(
+					RandomTestUtil.randomString(), TestPropsValues.getUserId(),
+					_irrelevantObjectDefinition.getObjectDefinitionId());
+
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_INCOMPLETE, objectEntry.getStatus());
+
+			objectEntry = _objectEntryLocalService.updateObjectEntry(
+				objectEntry.getUserId(), objectEntry.getObjectEntryId(),
+				Collections.emptyMap(),
+				ServiceContextTestUtil.getServiceContext());
+
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_APPROVED, objectEntry.getStatus());
 		}
 	}
 
@@ -7920,6 +8023,9 @@ public class ObjectEntryLocalServiceTest {
 
 	@Inject
 	private ListTypeDefinitionLocalService _listTypeDefinitionLocalService;
+
+	@Inject
+	private ListTypeEntryLocalService _listTypeEntryLocalService;
 
 	@Inject
 	private Localization _localization;

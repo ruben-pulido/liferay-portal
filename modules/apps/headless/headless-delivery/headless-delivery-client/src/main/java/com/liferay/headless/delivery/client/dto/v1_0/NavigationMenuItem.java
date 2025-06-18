@@ -48,27 +48,6 @@ public class NavigationMenuItem implements Cloneable, Serializable {
 
 	protected String[] availableLanguages;
 
-	public String getContentURL() {
-		return contentURL;
-	}
-
-	public void setContentURL(String contentURL) {
-		this.contentURL = contentURL;
-	}
-
-	public void setContentURL(
-		UnsafeSupplier<String, Exception> contentURLUnsafeSupplier) {
-
-		try {
-			contentURL = contentURLUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected String contentURL;
-
 	public Creator getCreator() {
 		return creator;
 	}
@@ -201,47 +180,6 @@ public class NavigationMenuItem implements Cloneable, Serializable {
 
 	protected Long id;
 
-	public String getLink() {
-		return link;
-	}
-
-	public void setLink(String link) {
-		this.link = link;
-	}
-
-	public void setLink(UnsafeSupplier<String, Exception> linkUnsafeSupplier) {
-		try {
-			link = linkUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected String link;
-
-	public Map<String, String> getLink_i18n() {
-		return link_i18n;
-	}
-
-	public void setLink_i18n(Map<String, String> link_i18n) {
-		this.link_i18n = link_i18n;
-	}
-
-	public void setLink_i18n(
-		UnsafeSupplier<Map<String, String>, Exception>
-			link_i18nUnsafeSupplier) {
-
-		try {
-			link_i18n = link_i18nUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected Map<String, String> link_i18n;
-
 	public String getName() {
 		return name;
 	}
@@ -328,27 +266,6 @@ public class NavigationMenuItem implements Cloneable, Serializable {
 
 	protected Long parentNavigationMenuId;
 
-	public String getSitePageURL() {
-		return sitePageURL;
-	}
-
-	public void setSitePageURL(String sitePageURL) {
-		this.sitePageURL = sitePageURL;
-	}
-
-	public void setSitePageURL(
-		UnsafeSupplier<String, Exception> sitePageURLUnsafeSupplier) {
-
-		try {
-			sitePageURL = sitePageURLUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected String sitePageURL;
-
 	public String getType() {
 		return type;
 	}
@@ -368,24 +285,27 @@ public class NavigationMenuItem implements Cloneable, Serializable {
 
 	protected String type;
 
-	public String getUrl() {
-		return url;
+	public Map<String, String> getTypeSettings() {
+		return typeSettings;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setTypeSettings(Map<String, String> typeSettings) {
+		this.typeSettings = typeSettings;
 	}
 
-	public void setUrl(UnsafeSupplier<String, Exception> urlUnsafeSupplier) {
+	public void setTypeSettings(
+		UnsafeSupplier<Map<String, String>, Exception>
+			typeSettingsUnsafeSupplier) {
+
 		try {
-			url = urlUnsafeSupplier.get();
+			typeSettings = typeSettingsUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected String url;
+	protected Map<String, String> typeSettings;
 
 	public Boolean getUseCustomName() {
 		return useCustomName;

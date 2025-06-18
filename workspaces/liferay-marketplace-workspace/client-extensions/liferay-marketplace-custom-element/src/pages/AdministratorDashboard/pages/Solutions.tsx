@@ -8,15 +8,24 @@ import {ComponentProps} from 'react';
 import {useNavigate} from 'react-router-dom';
 
 import ListView from '../../../components/ListView';
+import {ListViewTypes} from '../../../components/ListView/hooks/ListViewContext';
 import Page from '../../../components/Page';
 import SearchBuilder from '../../../core/SearchBuilder';
 import {
 	ProductTypeVocabulary,
 	ProductWorkflowDisplayType,
+	ProductWorkflowStatusCode,
+	ProductWorkflowStatusLabel,
 } from '../../../enums/Product';
 import i18n from '../../../i18n';
 import HeadlessCommerceAdminCatalog from '../../../services/rest/HeadlessCommerceAdminCatalog';
 import {formatDate} from '../../../utils/date';
+
+const productStatuses = [
+	ProductWorkflowStatusCode.APPROVED,
+	ProductWorkflowStatusCode.DRAFT,
+	ProductWorkflowStatusCode.PENDING,
+];
 
 export default function Solutions() {
 	const navigate = useNavigate();
@@ -24,8 +33,30 @@ export default function Solutions() {
 	return (
 		<Page pageRendererProps={{className: 'border py-2'}} title="Solutions">
 			<ListView<Product>
-				id="administrator-apps"
-				managementToolbarProps={{visible: true}}
+				id="administrator-solutions"
+				managementToolbarProps={{
+					filterItems: [
+						{
+							children: productStatuses.map((status) => ({
+								name: ProductWorkflowStatusLabel[status] || '',
+								onClick: (dispatch) => {
+									dispatch({
+										payload: {
+											filters: {
+												filter: {
+													statusCode: `${status}`,
+												},
+											},
+										},
+										type: ListViewTypes.SET_FILTERS,
+									});
+								},
+							})),
+							name: i18n.translate('status'),
+						},
+					],
+					visible: true,
+				}}
 				resource={function getProducts({
 					filters,
 					keywords,
@@ -67,9 +98,8 @@ export default function Solutions() {
 					actions: [
 						{
 							name: i18n.translate('view-details'),
-							onClick: (row) => {
-								navigate(`/solutions/${row.productId}`);
-							},
+							onClick: (row) =>
+								navigate(`/solutions/${row.productId}`),
 						},
 					],
 					columns: [

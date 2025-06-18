@@ -14,6 +14,8 @@ definition {
 		task ("Given a new Site") {
 			HeadlessSite.addSite(siteName = "Site Name");
 
+			Walkthrough.enableWalkthroughFF();
+
 			ApplicationsMenu.gotoSite(site = "Site Name");
 		}
 

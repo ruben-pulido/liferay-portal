@@ -356,7 +356,7 @@ export class HeadlessCommerceAdminCatalogApiHelper {
 		return this.apiHelpers.get(
 			`${this.apiHelpers.baseUrl}${
 				this.basePath
-			}/products?${searchParams.toString()}`
+			}/products?nestedFields=skus&${searchParams.toString()}`
 		);
 	}
 
@@ -628,6 +628,15 @@ export class HeadlessCommerceAdminCatalogApiHelper {
 		}
 
 		return product;
+	}
+
+	async postProductBatch(products: TProduct[]): Promise<TProduct[]> {
+		products = await this.apiHelpers.post(
+			`${this.apiHelpers.baseUrl}${this.basePath}/products/batch`,
+			{data: products}
+		);
+
+		return products;
 	}
 
 	async postProductConfiguration(

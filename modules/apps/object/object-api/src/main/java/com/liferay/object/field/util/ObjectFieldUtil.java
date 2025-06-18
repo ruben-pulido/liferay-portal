@@ -478,7 +478,8 @@ public class ObjectFieldUtil {
 	private static final Set<String> _metadataObjectFieldNames =
 		Collections.unmodifiableSet(
 			SetUtil.fromArray(
-				"createDate", "creator", "externalReferenceCode", "id",
-				"modifiedDate", "status"));
+				"createDate", "creator", "displayDate", "expirationDate",
+				"externalReferenceCode", "id", "modifiedDate", "reviewDate",
+				"status"));
 
 }

@@ -6,12 +6,13 @@
 import ClayForm from '@clayui/form';
 import {Toggle} from '@liferay/object-js-components-web';
 import {sub} from 'frontend-js-web';
-import React from 'react';
+import React, {useRef} from 'react';
 
 interface ConfigurationContainerProps {
 	hasUpdateObjectDefinitionPermission: boolean;
 	isLinkedObjectDefinition?: boolean;
 	isRootDescendantNode: boolean;
+	onScheduleToggleChange: (toggled: boolean) => void;
 	onSubmit?: (editedObjectDefinition?: Partial<ObjectDefinition>) => void;
 	setValues: (values: Partial<ObjectDefinition>) => void;
 	values: Partial<ObjectDefinition>;
@@ -21,6 +22,7 @@ export function ConfigurationContainer({
 	hasUpdateObjectDefinitionPermission,
 	isLinkedObjectDefinition,
 	isRootDescendantNode,
+	onScheduleToggleChange,
 	onSubmit,
 	setValues,
 	values,
@@ -31,6 +33,8 @@ export function ConfigurationContainer({
 		!hasUpdateObjectDefinitionPermission ||
 		isLinkedObjectDefinition ||
 		isReadOnly;
+
+	const scheduleToggleRef = useRef<boolean>(false);
 
 	return (
 		<div className="lfr-objects__object-definition-details-configuration">
@@ -176,6 +180,31 @@ export function ConfigurationContainer({
 					toggled={values.enableObjectEntryDraft}
 				/>
 			</ClayForm.Group>
+
+			{Liferay.FeatureFlags['LPD-17564'] && (
+				<ClayForm.Group>
+					<Toggle
+						disabled={true}
+						label={Liferay.Language.get(
+							'allow-users-to-schedule-a-display-expiration-and-review-date-for-entries'
+						)}
+						name="enableObjectEntrySchedule"
+						onBlur={(event) => {
+							event.stopPropagation();
+
+							if (scheduleToggleRef.current && onSubmit) {
+								onSubmit();
+							}
+						}}
+						onToggle={(toggled) => {
+							scheduleToggleRef.current = toggled;
+
+							onScheduleToggleChange(toggled);
+						}}
+						toggled={values.enableObjectEntrySchedule}
+					/>
+				</ClayForm.Group>
+			)}
 		</div>
 	);
 }

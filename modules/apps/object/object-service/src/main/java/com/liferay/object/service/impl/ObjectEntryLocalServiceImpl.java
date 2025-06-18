@@ -24,6 +24,7 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.dynamic.data.mapping.util.NumberUtil;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
+import com.liferay.list.type.exception.NoSuchListTypeEntryException;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.action.engine.ObjectActionEngine;
@@ -40,12 +41,14 @@ import com.liferay.object.constants.ObjectFilterConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.definition.setting.util.ObjectDefinitionSettingUtil;
 import com.liferay.object.definition.util.ObjectDefinitionThreadLocal;
+import com.liferay.object.definition.util.ObjectDefinitionUtil;
 import com.liferay.object.entry.ObjectEntryContext;
 import com.liferay.object.entry.contributor.ObjectEntryValuesContributor;
 import com.liferay.object.entry.util.ObjectEntryThreadLocal;
 import com.liferay.object.entry.util.ObjectEntryValuesUtil;
 import com.liferay.object.exception.DuplicateObjectEntryExternalReferenceCodeException;
 import com.liferay.object.exception.NoSuchObjectDefinitionException;
+import com.liferay.object.exception.NoSuchObjectEntryException;
 import com.liferay.object.exception.ObjectDefinitionScopeException;
 import com.liferay.object.exception.ObjectEntryDefaultLanguageIdException;
 import com.liferay.object.exception.ObjectEntryFolderScopeException;
@@ -155,6 +158,7 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
@@ -199,7 +203,9 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService;
 import com.liferay.portal.kernel.service.permission.ModelPermissions;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.BigDecimalUtil;
@@ -373,6 +379,10 @@ public class ObjectEntryLocalServiceImpl
 
 		_setExternalReferenceCode(objectEntry, values);
 		_setRootObjectEntryId(objectDefinition, objectEntry, values);
+		_setDisplayDate(objectDefinition.getCompanyId(), objectEntry, values);
+		_setExpirationDate(
+			objectDefinition.getCompanyId(), objectEntry, values);
+		_setReviewDate(objectDefinition.getCompanyId(), objectEntry, values);
 
 		objectEntry.setStatus(WorkflowConstants.STATUS_DRAFT);
 		objectEntry.setStatusByUserId(user.getUserId());
@@ -387,21 +397,7 @@ public class ObjectEntryLocalServiceImpl
 			objectEntry.setValues(insertedValues);
 		}
 
-		if (ListUtil.isNotEmpty(
-				_resourceActions.getModelResourceActions(
-					objectDefinition.getClassName()))) {
-
-			_resourcePermissionLocalService.addResourcePermissions(
-				objectEntry.getCompanyId(), objectEntry.getGroupId(),
-				objectEntry.getUserId(), objectDefinition.getClassName(),
-				String.valueOf(objectEntry.getPrimaryKey()), false,
-				new ServiceContext() {
-					{
-						setIndexingEnabled(false);
-						setStrictAdd(true);
-					}
-				});
-		}
+		_addResourcePermissions(objectDefinition, objectEntry);
 
 		if (objectDefinition.isRootDescendantNode() ||
 			(workflowAction == WorkflowConstants.ACTION_SAVE_DRAFT)) {
@@ -469,25 +465,10 @@ public class ObjectEntryLocalServiceImpl
 			ObjectDefinition objectDefinition, long objectEntryFolderId)
 		throws PortalException {
 
-		ObjectEntry objectEntry = objectEntryPersistence.create(
-			counterLocalService.increment());
-
-		objectEntry.setExternalReferenceCode(externalReferenceCode);
-
-		User user = _userLocalService.getUser(userId);
-
-		objectEntry.setCompanyId(user.getCompanyId());
-		objectEntry.setUserId(user.getUserId());
-		objectEntry.setUserName(user.getFullName());
-
-		objectEntry.setObjectDefinitionId(
-			objectDefinition.getObjectDefinitionId());
-		objectEntry.setObjectEntryFolderId(objectEntryFolderId);
-		objectEntry.setTreePath(objectEntry.buildTreePath());
-		objectEntry.setStatus(WorkflowConstants.STATUS_DRAFT);
-		objectEntry.setStatusDate(new Date());
-
-		return objectEntryPersistence.updateImpl(objectEntry);
+		return _addObjectEntry(
+			externalReferenceCode, userId,
+			objectDefinition.getObjectDefinitionId(), objectEntryFolderId,
+			WorkflowConstants.STATUS_DRAFT);
 	}
 
 	@Override
@@ -1177,6 +1158,14 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	@Override
+	public List<ObjectEntry> getObjectEntryFolderObjectEntries(
+		long groupId, long objectEntryFolderId, int start, int end) {
+
+		return objectEntryPersistence.findByG_OEFI(
+			groupId, objectEntryFolderId, start, end);
+	}
+
+	@Override
 	public int getObjectEntryFolderObjectEntriesCount(
 		long groupId, long objectEntryFolderId) {
 
@@ -1223,6 +1212,50 @@ public class ObjectEntryLocalServiceImpl
 		}
 
 		return objectEntryPersistence.dslQueryCount(dslQuery);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public ObjectEntry getOrAddIncompleteObjectEntry(
+			String externalReferenceCode, long userId, long objectDefinitionId)
+		throws PortalException {
+
+		ObjectEntry objectEntry = fetchObjectEntry(
+			externalReferenceCode, objectDefinitionId);
+
+		if (objectEntry != null) {
+			return objectEntry;
+		}
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
+
+		if (!LazyReferencingThreadLocal.isEnabled()) {
+			throw new NoSuchObjectEntryException(
+				String.format(
+					"No ObjectEntry exists with the key {externalReference" +
+						"Code=%s, companyId=%s, objectDefinitionId=%s}",
+					externalReferenceCode, objectDefinition.getCompanyId(),
+					objectDefinitionId));
+		}
+
+		objectEntry = _addObjectEntry(
+			externalReferenceCode, userId, objectDefinitionId,
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			WorkflowConstants.STATUS_INCOMPLETE);
+
+		_addResourcePermissions(objectDefinition, objectEntry);
+
+		_insertIntoTable(
+			_getDynamicObjectDefinitionTable(objectDefinitionId),
+			new HashMap<>(), objectEntry.getObjectEntryId(), false,
+			new HashMap<>());
+		_insertIntoTable(
+			_getExtensionDynamicObjectDefinitionTable(objectDefinitionId),
+			new HashMap<>(), objectEntry.getObjectEntryId(), false,
+			new HashMap<>());
+
+		return objectEntry;
 	}
 
 	public List<Long> getPrimaryKeys(
@@ -2136,7 +2169,10 @@ public class ObjectEntryLocalServiceImpl
 			ServiceContext serviceContext, Map<String, Serializable> values)
 		throws PortalException {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-21926")) {
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-21926") ||
+			ObjectDefinitionUtil.isDefaultFriendlyURLSeparator(
+				objectDefinition.getFriendlyURLSeparator())) {
+
 			return;
 		}
 
@@ -2294,6 +2330,31 @@ public class ObjectEntryLocalServiceImpl
 		}
 	}
 
+	private ObjectEntry _addObjectEntry(
+			String externalReferenceCode, long userId, long objectDefinitionId,
+			long objectEntryFolderId, int status)
+		throws PortalException {
+
+		ObjectEntry objectEntry = objectEntryPersistence.create(
+			counterLocalService.increment());
+
+		objectEntry.setExternalReferenceCode(externalReferenceCode);
+
+		User user = _userLocalService.getUser(userId);
+
+		objectEntry.setCompanyId(user.getCompanyId());
+		objectEntry.setUserId(user.getUserId());
+		objectEntry.setUserName(user.getFullName());
+
+		objectEntry.setObjectDefinitionId(objectDefinitionId);
+		objectEntry.setObjectEntryFolderId(objectEntryFolderId);
+		objectEntry.setTreePath(objectEntry.buildTreePath());
+		objectEntry.setStatus(status);
+		objectEntry.setStatusDate(new Date());
+
+		return objectEntryPersistence.updateImpl(objectEntry);
+	}
+
 	private ObjectEntry _addObjectEntryVersion(
 			ObjectDefinition objectDefinition, ObjectEntry objectEntry)
 		throws PortalException {
@@ -2377,6 +2438,29 @@ public class ObjectEntryLocalServiceImpl
 			values.put(
 				objectRelationshipERCObjectFieldName, externalReferenceCode);
 		}
+	}
+
+	private void _addResourcePermissions(
+			ObjectDefinition objectDefinition, ObjectEntry objectEntry)
+		throws PortalException {
+
+		if (ListUtil.isEmpty(
+				_resourceActions.getModelResourceActions(
+					objectDefinition.getClassName()))) {
+
+			return;
+		}
+
+		_resourcePermissionLocalService.addResourcePermissions(
+			objectEntry.getCompanyId(), objectEntry.getGroupId(),
+			objectEntry.getUserId(), objectDefinition.getClassName(),
+			String.valueOf(objectEntry.getPrimaryKey()), false,
+			new ServiceContext() {
+				{
+					setIndexingEnabled(false);
+					setStrictAdd(true);
+				}
+			});
 	}
 
 	private void _contributeValues(
@@ -5028,6 +5112,24 @@ public class ObjectEntryLocalServiceImpl
 		}
 	}
 
+	private void _setDisplayDate(
+		long companyId, ObjectEntry objectEntry,
+		Map<String, Serializable> values) {
+
+		if (FeatureFlagManagerUtil.isEnabled(companyId, "LPD-17564")) {
+			objectEntry.setDisplayDate((Date)values.get("displayDate"));
+		}
+	}
+
+	private void _setExpirationDate(
+		long companyId, ObjectEntry objectEntry,
+		Map<String, Serializable> values) {
+
+		if (FeatureFlagManagerUtil.isEnabled(companyId, "LPD-17564")) {
+			objectEntry.setExpirationDate((Date)values.get("expirationDate"));
+		}
+	}
+
 	private void _setExternalReferenceCode(
 		ObjectEntry objectEntry, Map<String, Serializable> values) {
 
@@ -5046,6 +5148,15 @@ public class ObjectEntryLocalServiceImpl
 
 				objectEntry.setExternalReferenceCode(externalReferenceCode);
 			}
+		}
+	}
+
+	private void _setReviewDate(
+		long companyId, ObjectEntry objectEntry,
+		Map<String, Serializable> values) {
+
+		if (FeatureFlagManagerUtil.isEnabled(companyId, "LPD-17564")) {
+			objectEntry.setReviewDate((Date)values.get("reviewDate"));
 		}
 	}
 
@@ -5384,6 +5495,10 @@ public class ObjectEntryLocalServiceImpl
 		objectEntry.setModifiedDate(serviceContext.getModifiedDate(null));
 
 		_setRootObjectEntryId(objectDefinition, objectEntry, values);
+		_setDisplayDate(objectDefinition.getCompanyId(), objectEntry, values);
+		_setExpirationDate(
+			objectDefinition.getCompanyId(), objectEntry, values);
+		_setReviewDate(objectDefinition.getCompanyId(), objectEntry, values);
 
 		if ((workflowAction == WorkflowConstants.ACTION_SAVE_DRAFT) &&
 			!objectEntry.isPending()) {
@@ -5841,15 +5956,22 @@ public class ObjectEntryLocalServiceImpl
 			List<ValidationError> validationErrors)
 		throws PortalException {
 
-		ListTypeEntry listTypeEntry =
-			_listTypeEntryLocalService.fetchListTypeEntry(
-				objectField.getListTypeDefinitionId(), listTypeEntryKey);
+		try {
+			_listTypeEntryLocalService.getOrAddIncompleteListTypeEntry(
+				objectField.getUserId(), objectField.getListTypeDefinitionId(),
+				listTypeEntryKey);
+		}
+		catch (NoSuchListTypeEntryException noSuchListTypeEntryException) {
+			if (Validator.isNotNull(listTypeEntryKey)) {
+				_handle(
+					new ObjectEntryValuesException.ListTypeEntry(
+						objectField.getName()),
+					validationErrors);
+			}
 
-		if ((listTypeEntry == null) && Validator.isNotNull(listTypeEntryKey)) {
-			_handle(
-				new ObjectEntryValuesException.ListTypeEntry(
-					objectField.getName()),
-				validationErrors);
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchListTypeEntryException);
+			}
 		}
 	}
 

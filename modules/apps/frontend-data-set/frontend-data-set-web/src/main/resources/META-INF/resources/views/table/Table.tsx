@@ -153,7 +153,7 @@ const Body = ({
 		apiURL?: string;
 		defaultBodyContent?: Record<string, any>;
 	};
-	itemInlineChanges?: Array<any>;
+	itemInlineChanges?: {[key: string]: any};
 	items: Array<any>;
 	itemsActions: Array<IItemsActions>;
 	onItemSelectionChange: Function;

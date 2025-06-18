@@ -10,6 +10,7 @@ import 'dotenv/config';
 import {config as accessibilityMenuWeb} from './tests/accessibility-menu-web/main/config';
 import {config as accountAdminWebConfig} from './tests/account-admin-web/main/config';
 import {config as addressWebConfig} from './tests/address-web/main/config';
+import {config as analyticsClientJs} from './tests/analytics-client-js/main/config';
 import {config as analyticsReportsJsComponentsWeb} from './tests/analytics-reports-js-components-web/main/config';
 import {config as analyticsSettingsWebConfig} from './tests/analytics-settings-web/main/config';
 import {config as analyticsWebConfig} from './tests/analytics-web/main/config';
@@ -32,6 +33,7 @@ import {config as commerceChannelWebConfig} from './tests/commerce/commerce-chan
 import {config as commerceCheckoutWebConfig} from './tests/commerce/commerce-checkout-web/main/config';
 import {config as commerceCurrencyWebConfig} from './tests/commerce/commerce-currency-web/main/config';
 import {config as commerceDiscountContentWebConfig} from './tests/commerce/commerce-discount-content-web/main/config';
+import {config as commerceInitializerUtilConfig} from './tests/commerce/commerce-initializer-util/main/config';
 import {config as commerceOrderContentWebConfig} from './tests/commerce/commerce-order-content-web/main/config';
 import {config as commerceOrderWebConfig} from './tests/commerce/commerce-order-web/main/config';
 import {config as commercePaymentsWebConfig} from './tests/commerce/commerce-payment-web/main/config';
@@ -159,6 +161,7 @@ export default defineConfig({
 		accessibilityMenuWeb,
 		accountAdminWebConfig,
 		addressWebConfig,
+		analyticsClientJs,
 		analyticsReportsJsComponentsWeb,
 		analyticsSettingsWebConfig,
 		analyticsWebConfig,
@@ -181,6 +184,7 @@ export default defineConfig({
 		commerceCheckoutWebConfig,
 		commerceCurrencyWebConfig,
 		commerceDiscountContentWebConfig,
+		commerceInitializerUtilConfig,
 		commerceOrderWebConfig,
 		commerceOrderContentWebConfig,
 		commercePaymentsWebConfig,

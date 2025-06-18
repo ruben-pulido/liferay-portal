@@ -35,6 +35,8 @@ public interface BuildDatabase {
 
 	public Job getJob(String key);
 
+	public List<Job> getJobs();
+
 	public JSONObject getJSONObject();
 
 	public Properties getProperties(String key);
@@ -43,9 +45,13 @@ public interface BuildDatabase {
 
 	public PullRequest getPullRequest(String key);
 
+	public List<PullRequest> getPullRequests();
+
 	public Workspace getWorkspace(String key);
 
 	public WorkspaceGitRepository getWorkspaceGitRepository(String key);
+
+	public List<Workspace> getWorkspaces();
 
 	public boolean hasBuildData(String key);
 

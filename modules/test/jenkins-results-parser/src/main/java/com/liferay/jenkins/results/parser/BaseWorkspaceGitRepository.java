@@ -94,6 +94,22 @@ public abstract class BaseWorkspaceGitRepository
 	}
 
 	@Override
+	public String getBaseBranchSHAShort() {
+		String baseBranchSHA = getBaseBranchSHA();
+
+		if (baseBranchSHA == null) {
+			return null;
+		}
+
+		if (baseBranchSHA.length() > _MAX_BASE_BRANCH_SHA_LENGTH) {
+			baseBranchSHA = baseBranchSHA.substring(
+				0, _MAX_BASE_BRANCH_SHA_LENGTH);
+		}
+
+		return baseBranchSHA;
+	}
+
+	@Override
 	public String getBranchName() {
 		if (_branchName != null) {
 			return _branchName;
@@ -192,6 +208,21 @@ public abstract class BaseWorkspaceGitRepository
 	@Override
 	public String getSenderBranchSHA() {
 		return getString("sender_branch_sha");
+	}
+
+	@Override
+	public String getSenderBranchSHAShort() {
+		String senderBranchSHA = getSenderBranchSHA();
+
+		if (senderBranchSHA == null) {
+			return null;
+		}
+
+		if (senderBranchSHA.length() >= 7) {
+			senderBranchSHA = senderBranchSHA.substring(0, 7);
+		}
+
+		return senderBranchSHA;
 	}
 
 	@Override
@@ -966,6 +997,8 @@ public abstract class BaseWorkspaceGitRepository
 	private void _setSnapshot(boolean snapshot) {
 		put("snapshot", snapshot);
 	}
+
+	private static final int _MAX_BASE_BRANCH_SHA_LENGTH = 7;
 
 	private static final String[] _REQUIRED_KEYS = {
 		"base_branch_head_sha", "base_branch_sha", "base_branch_username",

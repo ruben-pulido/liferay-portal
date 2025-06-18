@@ -15,6 +15,7 @@ export class CommerceAdminChannelDetailsPage {
 	readonly addTaxRateFrame: FrameLocator;
 	readonly allowMultishippingToggle: Locator;
 	readonly applicationsMenuPage: ApplicationsMenuPage;
+	readonly channelCurrencySelect: Locator;
 	readonly channelNameLink: (channelName: string) => Locator;
 	readonly closeSidePanelFrame: (
 		isNestedFrame: boolean,
@@ -83,6 +84,10 @@ export class CommerceAdminChannelDetailsPage {
 		buttonName: string,
 		tableName: string
 	) => Promise<Locator>;
+	readonly sidePanelFrameInput: (
+		input: string,
+		tableName: string
+	) => Promise<Locator>;
 	readonly sidePanelFrameEditMenuItem: (
 		tableName: string
 	) => Promise<Locator>;
@@ -113,6 +118,7 @@ export class CommerceAdminChannelDetailsPage {
 			.frameLocator('iframe');
 		this.allowMultishippingToggle = page.getByLabel('Allow Multishipping');
 		this.applicationsMenuPage = new ApplicationsMenuPage(page);
+		this.channelCurrencySelect = page.locator("select[title='Currency']");
 		this.channelNameLink = (channelName: string) =>
 			page.getByRole('link', {
 				exact: true,
@@ -312,6 +318,12 @@ export class CommerceAdminChannelDetailsPage {
 				{exact: true, name: buttonName}
 			);
 		};
+		this.sidePanelFrameInput = async (
+			inputName: string,
+			tableName: string
+		) => {
+			return (await this.sidePanelFrame(tableName)).getByLabel(inputName);
+		};
 		this.sidePanelFrameEditMenuItem = async (tableName: string) => {
 			return (await this.sidePanelFrame(tableName)).getByRole(
 				'menuitem',
@@ -366,6 +378,20 @@ export class CommerceAdminChannelDetailsPage {
 			await isActiveCheckbox.check();
 		}
 		await (await this.isActive(tableName)).check();
+		await (await this.frameSaveButton(false, tableName)).click();
+		await waitForAlert(await this.sidePanelFrame(tableName));
+		await (await this.closeSidePanelFrame(false, tableName)).click();
+	}
+
+	async deactivateChannelConfiguration(name: string, tableName: string) {
+		const isActiveCheckbox = await this.isActive(tableName);
+
+		await (await this.generalCommerceAdminChannelTableLink(name)).click();
+
+		if (await isActiveCheckbox.isChecked()) {
+			await isActiveCheckbox.uncheck();
+		}
+		await (await this.isActive(tableName)).uncheck();
 		await (await this.frameSaveButton(false, tableName)).click();
 		await waitForAlert(await this.sidePanelFrame(tableName));
 		await (await this.closeSidePanelFrame(false, tableName)).click();
@@ -474,6 +500,14 @@ export class CommerceAdminChannelDetailsPage {
 		await expect(
 			await this.generalCommerceAdminChannelTableLink('Fixed Tax Rate')
 		).toBeVisible();
+	}
+
+	async changeChannelDefaultCurrency(currency: string) {
+		await this.channelCurrencySelect.selectOption(currency);
+
+		await expect(this.channelCurrencySelect).toHaveValue(currency);
+
+		await this.saveButton.click();
 	}
 
 	async editFixedTaxRate(newAmount: string, name: string) {

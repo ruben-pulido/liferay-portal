@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Felipe Franca
@@ -96,7 +97,10 @@ public class ObjectActionBusinessEventRestController
 		try {
 			post(
 				"Bearer " + jwt.getTokenValue(), businessEventVersionJSON,
-				"/o/c/businesseventversions");
+				UriComponentsBuilder.fromPath(
+					"/o/c/businesseventversions"
+				).build(
+				).toUri());
 		}
 		catch (Exception exception) {
 			throw new Exception(
@@ -166,8 +170,11 @@ public class ObjectActionBusinessEventRestController
 		JSONObject koroneikiAccountJSONObject = new JSONObject(
 			get(
 				_getAuthorization(),
-				"/o/c/koroneikiaccounts/by-external-reference-code/" +
-					externalReferenceCode));
+				UriComponentsBuilder.fromPath(
+					"/o/c/koroneikiaccounts/by-external-reference-code/" +
+						externalReferenceCode
+				).build(
+				).toUri()));
 
 		if (koroneikiAccountJSONObject.isEmpty()) {
 			throw new Exception(
@@ -208,8 +215,11 @@ public class ObjectActionBusinessEventRestController
 		JSONObject notificationTemplateJSONObject = new JSONObject(
 			get(
 				_getAuthorization(),
-				"/o/notification/v1.0/notification-templates" +
-					"/by-external-reference-code/" + externalReferenceCode));
+				UriComponentsBuilder.fromPath(
+					"/o/notification/v1.0/notification-templates" +
+						"/by-external-reference-code/" + externalReferenceCode
+				).build(
+				).toUri()));
 
 		if (notificationTemplateJSONObject.isEmpty()) {
 			throw new Exception(
@@ -306,15 +316,19 @@ public class ObjectActionBusinessEventRestController
 			String accountExternalReferenceCode)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append("/o/c/accountsubscriptions?filter=accountKey eq '");
-		sb.append(accountExternalReferenceCode);
-		sb.append("' and contains(name, 'Technical Account Management ");
-		sb.append("Services')");
-
 		JSONObject accountSubscriptionsJSONObject = new JSONObject(
-			get(_getAuthorization(), sb.toString()));
+			get(
+				_getAuthorization(),
+				UriComponentsBuilder.fromPath(
+					"/o/c/accountsubscriptions"
+				).queryParam(
+					"filter",
+					StringBundler.concat(
+						"accountKey eq '", accountExternalReferenceCode,
+						"' and contains(name, 'Technical Account Management ",
+						"Services')")
+				).build(
+				).toUri()));
 
 		JSONArray accountSubscriptionsJSONArray =
 			accountSubscriptionsJSONObject.getJSONArray("items");
@@ -398,7 +412,10 @@ public class ObjectActionBusinessEventRestController
 			).put(
 				"type", "email"
 			).toString(),
-			"/o/notification/v1.0/notification-queue-entries");
+			UriComponentsBuilder.fromPath(
+				"/o/notification/v1.0/notification-queue-entries"
+			).build(
+			).toUri());
 	}
 
 	private static final Log _log = LogFactory.getLog(

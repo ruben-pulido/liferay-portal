@@ -23,15 +23,18 @@ export class PersonalDataErasurePage {
 	readonly allApplicationsRadioButton: Locator;
 	readonly allSelectedButton: Locator;
 	readonly anonymizeButton: Locator;
+	readonly anonymizedAllRemainingDataMessage: Locator;
 	readonly anonymizeLink: Locator;
 	readonly anonymizeMenuItem: Locator;
 	readonly applicationsMenuPage: ApplicationsMenuPage;
 	readonly blogsRadioButton: Locator;
 	readonly contactsCenterRadioButton: Locator;
+	readonly deleteLink: Locator;
 	readonly deleteMenuItem: Locator;
 	readonly dlFileEntryText: Locator;
 	readonly dlFolderText: Locator;
 	readonly documentsAndMediaRadioButton: Locator;
+	readonly editMenuItem: Locator;
 	readonly emptyMessage: Locator;
 	readonly formsRadioButton: Locator;
 	readonly infoPanelButton: Locator;
@@ -39,7 +42,7 @@ export class PersonalDataErasurePage {
 	readonly infoPanelSidebar: Locator;
 	readonly instanceRadioButton: Locator;
 	readonly journalArticleCheckBox: (articleRowId: string) => Locator;
-	readonly menuItemDelete: Locator;
+	readonly journalArticleRadioButton: Locator;
 	readonly objectCheckBox: (
 		objectId: string,
 		objectTitle: string,
@@ -54,6 +57,7 @@ export class PersonalDataErasurePage {
 	readonly orderMenuItem: (option: string) => Locator;
 	readonly page: Page;
 	readonly pageTitle: Locator;
+	readonly personalSiteRadioButton: Locator;
 	readonly regularSitesRadioButton: Locator;
 	readonly remainingItemsCount: (number: string) => Locator;
 	readonly reviewDataLink: Locator;
@@ -64,6 +68,9 @@ export class PersonalDataErasurePage {
 		value: string,
 		strictEqual?: boolean
 	) => Promise<{column: Locator; row: Locator}>;
+	readonly userAssociatedDataTableRowActions: (
+		name: string
+	) => Promise<Locator>;
 	readonly userAssociatedDataTableRowCheckBox: (
 		name: string
 	) => Promise<Locator>;
@@ -113,6 +120,9 @@ export class PersonalDataErasurePage {
 			.getByRole('button');
 		this.applicationsMenuPage = new ApplicationsMenuPage(page);
 		this.anonymizeButton = page.getByRole('button', {name: 'Anonymize'});
+		this.anonymizedAllRemainingDataMessage = page.getByText(
+			'You have successfully anonymized all remaining data.'
+		);
 		this.anonymizeLink = page.getByRole('link', {
 			exact: true,
 			name: 'Anonymize',
@@ -126,12 +136,14 @@ export class PersonalDataErasurePage {
 		this.contactsCenterRadioButton = page.locator(
 			'input[type="radio"][value="com.liferay.contacts.uad"]'
 		);
+		this.deleteLink = page.getByRole('link', {name: 'Delete'});
 		this.deleteMenuItem = page.getByRole('menuitem', {name: 'Delete'});
 		this.dlFileEntryText = page.getByText('DLFILEENTRY');
 		this.dlFolderText = page.getByText('DLFOLDER');
 		this.documentsAndMediaRadioButton = page.locator(
 			'input[type="radio"][value="com.liferay.document.library.uad"]'
 		);
+		this.editMenuItem = page.getByRole('menuitem', {name: 'Edit'});
 		this.emptyMessage = page.getByText(
 			'All data that requires review has been anonymized.'
 		);
@@ -160,7 +172,9 @@ export class PersonalDataErasurePage {
 				)
 				.getByRole('checkbox');
 		};
-		this.menuItemDelete = page.getByRole('menuitem', {name: 'Delete'});
+		this.journalArticleRadioButton = page.locator(
+			'input[type="radio"][value="com.liferay.journal.model.JournalArticle"]'
+		);
 		this.objectCheckBox = (
 			objectId: string,
 			objectTitle: string,
@@ -192,6 +206,9 @@ export class PersonalDataErasurePage {
 		this.orderMenuItem = (option: string) =>
 			page.getByRole('menuitem', {name: option});
 		this.page = page;
+		this.personalSiteRadioButton = page.getByLabel('Personal Site', {
+			exact: true,
+		});
 		this.regularSitesRadioButton = page.getByLabel('Regular Sites', {
 			exact: true,
 		});
@@ -227,6 +244,16 @@ export class PersonalDataErasurePage {
 				strictEqual
 			);
 		};
+		this.userAssociatedDataTableRowActions = async (name: string) => {
+			const userAssociatedDataTableRow =
+				await this.userAssociatedDataTableRow(1, name, true);
+
+			if (userAssociatedDataTableRow && userAssociatedDataTableRow.row) {
+				return userAssociatedDataTableRow.row.getByRole('button');
+			}
+
+			throw new Error(`Cannot locate row with name ${name}`);
+		};
 		this.userAssociatedDataTableRowCheckBox = async (name: string) => {
 			const userAssociatedDataTableRow =
 				await this.userAssociatedDataTableRow(1, name, true);
@@ -235,7 +262,7 @@ export class PersonalDataErasurePage {
 				return userAssociatedDataTableRow.row.getByTitle('Select');
 			}
 
-			throw new Error(`Cannot locate account row with name ${name}`);
+			throw new Error(`Cannot locate row with name ${name}`);
 		};
 		this.objectRadioButtonLabelCount = (name: string, number: string) =>
 			page.getByText(`${name} (${number})`);

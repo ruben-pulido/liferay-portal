@@ -59,13 +59,24 @@ export const test = mergeTests(
 	usersAndOrganizationsPagesTest
 );
 
+let displayPageId: string;
 let siteLanguage = 'en';
 
-test.afterEach(async ({page}) => {
+test.afterEach(async ({apiHelpers, page}) => {
 	if (siteLanguage !== 'en') {
 		await page.goto('en');
 
 		siteLanguage = 'en';
+	}
+
+	if (displayPageId) {
+		await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.deleteLayoutPageTemplateEntry(
+			{
+				layoutPageTemplateEntryId: displayPageId,
+			}
+		);
+
+		displayPageId = '';
 	}
 });
 
@@ -112,7 +123,8 @@ test.describe('Manage object entries through Friendly URL', () => {
 			type: 'objectDefinition',
 		});
 
-		_objectEntryFriendlyURLPath = '/l/C_' + _objectDefinition.name + '/';
+		_objectEntryFriendlyURLPath =
+			'/c_' + _objectDefinition.name.toLowerCase() + '/';
 
 		await viewObjectEntriesPage.goto(
 			_objectDefinition.className,
@@ -126,92 +138,109 @@ test.describe('Manage object entries through Friendly URL', () => {
 	test('can access object entry via friendly URL', async ({
 		apiHelpers,
 		displayPageTemplatesPage,
+		editObjectDetailsPage,
 		page,
 		pageEditorPage,
 		site,
 		viewObjectEntriesPage,
 	}) => {
-
-		// Create object entry with friendly URL
-
-		const friendlyUrl = page.getByLabel('Friendly URL').nth(1);
-
-		await friendlyUrl.fill('Test URL');
-
+		let displayPage: LayoutPageTemplateEntry;
+		const displayPageTemplateName = getRandomString();
 		const objectFieldValue = getRandomString();
 
-		await page.getByTestId('visibleChangeInput').fill(objectFieldValue);
+		await test.step('Create object entry with friendly URL', async () => {
+			const friendlyUrl = page.getByLabel('Friendly URL').nth(1);
 
-		await viewObjectEntriesPage.saveObjectEntryButton.click();
+			await friendlyUrl.fill('Test URL');
 
-		await expect(viewObjectEntriesPage.successMessage).toBeVisible();
+			await page.getByTestId('visibleChangeInput').fill(objectFieldValue);
 
-		await expect(friendlyUrl).toHaveValue('test-url');
+			await viewObjectEntriesPage.saveObjectEntryButton.click();
 
-		// Create display page template
+			await expect(viewObjectEntriesPage.successMessage).toBeVisible();
 
-		const className =
-			await apiHelpers.jsonWebServicesClassName.fetchClassName(
-				_objectDefinition.className
-			);
+			await expect(friendlyUrl).toHaveValue('test-url');
+		});
 
-		const displayPageTemplateName = getRandomString();
+		await test.step('Create display page template', async () => {
+			const className =
+				await apiHelpers.jsonWebServicesClassName.fetchClassName(
+					_objectDefinition.className
+				);
 
-		const displayPage =
-			await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.addDisplayPageLayoutPageTemplateEntry(
+			displayPage =
+				await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.addDisplayPageLayoutPageTemplateEntry(
+					{
+						classNameId: className.classNameId,
+						groupId: site.id,
+						name: displayPageTemplateName,
+					}
+				);
+
+			displayPageId = displayPage.layoutPageTemplateEntryId;
+
+			await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.markAsDefaultDisplayPageLayoutPageTemplateEntry(
 				{
-					classNameId: className.classNameId,
-					groupId: site.id,
-					name: displayPageTemplateName,
+					layoutPageTemplateEntryId:
+						displayPage.layoutPageTemplateEntryId,
+				}
+			);
+		});
+
+		await test.step('Add heading fragment and map it to the object field', async () => {
+			displayPageTemplatesPage.goto(site.friendlyUrlPath);
+
+			displayPageTemplatesPage.editTemplate(displayPageTemplateName);
+
+			await pageEditorPage.addFragment('Basic Components', 'Heading');
+
+			await page.getByText('Heading Example', {exact: true}).click();
+
+			await pageEditorPage.setMappingConfiguration({
+				mapping: {
+					field: _objectField.label['en_US'],
+				},
+				source: 'structure',
+			});
+
+			await displayPageTemplatesPage.publishTemplate();
+		});
+
+		await test.step('Access the object entry via friendly URL', async () => {
+			await page.goto(
+				`/web${site.friendlyUrlPath}${_objectEntryFriendlyURLPath}` +
+					'test-url',
+				{
+					waitUntil: 'networkidle',
 				}
 			);
 
-		await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.markAsDefaultDisplayPageLayoutPageTemplateEntry(
-			{
-				layoutPageTemplateEntryId:
-					displayPage.layoutPageTemplateEntryId,
-			}
-		);
-
-		// Add heading fragment and map it to the object field
-
-		displayPageTemplatesPage.goto(site.friendlyUrlPath);
-
-		displayPageTemplatesPage.editTemplate(displayPageTemplateName);
-
-		await pageEditorPage.addFragment('Basic Components', 'Heading');
-
-		await page.getByText('Heading Example', {exact: true}).click();
-
-		await pageEditorPage.setMappingConfiguration({
-			mapping: {
-				field: _objectField.label['en_US'],
-			},
-			source: 'structure',
+			await expect(page.getByText(objectFieldValue)).toBeVisible();
 		});
 
-		await displayPageTemplatesPage.publishTemplate();
+		await test.step('Change the object friendly URL separator and access the object entry again', async () => {
+			const newObjectFriendlyURLSeparator = 'c_separator_updated';
 
-		// Access the object entry via friendly URL
+			await editObjectDetailsPage.goto(_objectDefinition.label['en_US']);
 
-		await page.goto(
-			`/web${site.friendlyUrlPath}${_objectEntryFriendlyURLPath}` +
-				'test-url',
-			{
-				waitUntil: 'networkidle',
-			}
-		);
+			await page
+				.getByRole('textbox', {name: 'Object Entry URL Separator'})
+				.fill(newObjectFriendlyURLSeparator);
 
-		await expect(page.getByText(objectFieldValue)).toBeVisible();
+			await editObjectDetailsPage.saveObjectDefinition();
 
-		// Delete the display page template
+			await page.waitForLoadState('networkidle');
 
-		await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.deleteLayoutPageTemplateEntry(
-			{
-				layoutPageTemplateEntryId:
-					displayPage.layoutPageTemplateEntryId,
-			}
-		);
+			await page.goto(
+				`/web${site.friendlyUrlPath}/${newObjectFriendlyURLSeparator}/` +
+					'test-url',
+				{
+					waitUntil: 'networkidle',
+				}
+			);
+
+			await expect(page.getByText(objectFieldValue)).toBeVisible();
+		});
 	});
 
 	test('can restore old friendly URL', async ({
@@ -259,15 +288,13 @@ test.describe('Manage object entries through Friendly URL', () => {
 		await page.getByRole('button', {name: 'History'}).click();
 
 		await expect(page.getByText('Active URL')).toBeVisible();
-		await expect(
-			page.getByText('C_' + _objectDefinition.name + '/second-url')
-		).toBeVisible();
+		await expect(page.getByText('second-url')).toBeVisible();
 
 		// Restore the friendly URL to its first value
 
 		await page.getByText('first-url').hover();
 
-		await page.locator("button[data-title='Restore URL']").nth(1).click();
+		await page.locator("button[data-title='Restore URL']").click();
 
 		await page.getByRole('button', {name: 'Close'}).click();
 
@@ -819,105 +846,130 @@ test.describe('Manage object entries through View Object Entries', () => {
 		).toBeVisible();
 	});
 
-	test('can deselect the last selected option in multiple select picklist and the field is not removed from the DOM when doing so', async ({
-		apiHelpers,
-		page,
-		viewObjectEntriesPage,
-	}) => {
-		const {listTypeDefinition, objectEntry, objectFields} =
-			await mockObjectFields({
-				apiHelpers,
-				objectEntryReturn: {format: 'UI'},
-				objectFieldBusinessTypes: [
-					'autoIncrement',
-					'boolean',
-					'date',
-					'decimal',
-					'integer',
-					'longInteger',
-					'longText',
-					'multiselectPicklist',
-					'precisionDecimal',
-					'richText',
-					'text',
-				],
+	test(
+		'multiselect picklist field does not flicker',
+		{tag: ['@LPD-26139', '@LPD-56673']},
+		async ({apiHelpers, page, viewObjectEntriesPage}) => {
+			let objectEntry: Partial<ObjectEntry>;
+			let objectFields: ObjectField[];
+			let textFieldData: ObjectField;
+
+			const placeHolderText = 'Choose Options';
+
+			const multiselectPicklistFieldKeepsAttached = async () => {
+				return await evaluateKeepCheckingAfterFound({
+					duration: 4000,
+					page,
+					selector: `input[placeholder="${placeHolderText}"]`,
+				});
+			};
+
+			await test.step('setup and navigate to add object entry', async () => {
+				const mockedObjectFields = await mockObjectFields({
+					apiHelpers,
+					objectEntryReturn: {format: 'UI'},
+					objectFieldBusinessTypes: ['text', 'multiselectPicklist'],
+				});
+
+				const listTypeDefinition =
+					mockedObjectFields.listTypeDefinition;
+
+				objectFields = mockedObjectFields.objectFields;
+
+				objectEntry = mockedObjectFields.objectEntry;
+
+				textFieldData = objectFields[0];
+
+				textFieldData.required = true;
+
+				apiHelpers.data.push({
+					id: listTypeDefinition.id,
+					type: 'listTypeDefinition',
+				});
+
+				const objectDefinitionAPIClient =
+					await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+				const {body: objectDefinition} =
+					await objectDefinitionAPIClient.postObjectDefinition({
+						active: true,
+						externalReferenceCode: getRandomString(),
+						label: {
+							en_US: getRandomString(),
+						},
+						name: 'ObjectDefinitionName' + getRandomInt(),
+						objectFields,
+						panelCategoryKey: 'control_panel.object',
+						pluralLabel: {
+							en_US: 'NewObject',
+						},
+						portlet: true,
+						scope: 'company',
+						status: {
+							code: 0,
+						},
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition.id,
+					type: 'objectDefinition',
+				});
+
+				await viewObjectEntriesPage.goto(objectDefinition.className);
+
+				await viewObjectEntriesPage.clickAddObjectEntry(
+					objectDefinition.label['en_US']
+				);
+
+				await page.waitForLoadState('domcontentloaded');
 			});
 
-		apiHelpers.data.push({
-			id: listTypeDefinition.id,
-			type: 'listTypeDefinition',
-		});
+			await test.step('Assert that it does not flicker when option is deselected', async () => {
+				await expect(
+					page.getByPlaceholder(placeHolderText)
+				).toBeVisible();
 
-		const objectDefinitionAPIClient =
-			await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+				await page.getByPlaceholder(placeHolderText).click();
 
-		const {body: objectDefinition} =
-			await objectDefinitionAPIClient.postObjectDefinition({
-				active: true,
-				externalReferenceCode: getRandomString(),
-				label: {
-					en_US: getRandomString(),
-				},
-				name: 'ObjectDefinitionName' + getRandomInt(),
-				objectFields,
-				panelCategoryKey: 'control_panel.object',
-				pluralLabel: {
-					en_US: 'NewObject',
-				},
-				portlet: true,
-				scope: 'company',
-				status: {
-					code: 0,
-				},
+				const multiselectPicklistField = objectFields.find(
+					({businessType}) => businessType === 'MultiselectPicklist'
+				);
+
+				const firstOptionName =
+					objectEntry[multiselectPicklistField.name][0];
+
+				await page.getByTestId(`labelItem-${firstOptionName}`).click();
+
+				await expect
+					.soft(page.getByText(firstOptionName, {exact: true}))
+					.toBeVisible({timeout: 50});
+
+				const removeOptionButton = page.getByLabel(
+					'Remove ' + firstOptionName
+				);
+
+				await removeOptionButton.click();
+
+				expect
+					.soft(await multiselectPicklistFieldKeepsAttached())
+					.toBeTruthy();
 			});
 
-		apiHelpers.data.push({
-			id: objectDefinition.id,
-			type: 'objectDefinition',
-		});
+			await test.step('Assert that it does not flicker when interacting with mandatory field', async () => {
+				const textField = page.getByLabel(textFieldData.label['en_US']);
 
-		await viewObjectEntriesPage.goto(objectDefinition.className);
+				await textField.focus();
 
-		await viewObjectEntriesPage.clickAddObjectEntry(
-			objectDefinition.label['en_US']
-		);
+				await textField.press('a');
 
-		await page.waitForLoadState('domcontentloaded');
+				expect
+					.soft(await multiselectPicklistFieldKeepsAttached())
+					.toBeTruthy();
+			});
 
-		const placeHolderText = 'Choose Options';
-
-		await expect(page.getByPlaceholder(placeHolderText)).toBeVisible();
-
-		await page.getByPlaceholder(placeHolderText).click();
-
-		const multiselectPicklistField = objectFields.find(
-			({businessType}) => businessType === 'MultiselectPicklist'
-		);
-
-		const firstOptionName = objectEntry[multiselectPicklistField.name][0];
-
-		await page.getByTestId(`labelItem-${firstOptionName}`).click();
-
-		await expect
-			.soft(page.getByText(firstOptionName, {exact: true}))
-			.toBeVisible({timeout: 50});
-
-		const removeOptionButton = page.getByLabel('Remove ' + firstOptionName);
-
-		await removeOptionButton.click();
-
-		const keepsAttached = await evaluateKeepCheckingAfterFound({
-			duration: 4000,
-			page,
-			selector: `input[placeholder="${placeHolderText}"]`,
-		});
-
-		expect.soft(keepsAttached).toBeTruthy();
-
-		await expect.soft(removeOptionButton).not.toBeVisible();
-
-		expect(test.info().errors).toHaveLength(0);
-	});
+			expect(test.info().errors).toHaveLength(0);
+		}
+	);
 
 	test('can download and delete a file from the Attachment field when adding an object entry', async ({
 		apiHelpers,

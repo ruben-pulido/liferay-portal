@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
@@ -49,36 +50,7 @@ import org.osgi.service.component.annotations.Reference;
 public class RenderStructureFieldMVCResourceCommand
 	extends BaseMVCResourceCommand {
 
-	@Override
-	protected void doServeResource(
-			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
-		throws Exception {
-
-		HttpServletResponse httpServletResponse =
-			_portal.getHttpServletResponse(resourceResponse);
-
-		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
-			resourceRequest);
-
-		DDMFormField ddmFormField = _getDDMFormField(httpServletRequest);
-
-		DDMFormFieldRenderer ddmFormFieldRenderer =
-			_ddmFormFieldRendererRegistry.getDDMFormFieldRenderer(
-				ddmFormField.getType());
-
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
-			_createDDMFormFieldRenderingContext(
-				httpServletRequest, httpServletResponse);
-
-		String ddmFormFieldHTML = ddmFormFieldRenderer.render(
-			ddmFormField, ddmFormFieldRenderingContext);
-
-		httpServletResponse.setContentType(ContentTypes.TEXT_HTML);
-
-		ServletResponseUtil.write(httpServletResponse, ddmFormFieldHTML);
-	}
-
-	private DDMFormFieldRenderingContext _createDDMFormFieldRenderingContext(
+	protected DDMFormFieldRenderingContext createDDMFormFieldRenderingContext(
 		HttpServletRequest httpServletRequest,
 		HttpServletResponse httpServletResponse) {
 
@@ -91,8 +63,8 @@ public class RenderStructureFieldMVCResourceCommand
 			httpServletRequest.setAttribute(WebKeys.PORTLET_ID, portletId);
 		}
 
-		String portletNamespace = ParamUtil.getString(
-			httpServletRequest, "portletNamespace");
+		String portletNamespace = HtmlUtil.escapeAttribute(
+			ParamUtil.getString(httpServletRequest, "portletNamespace"));
 
 		httpServletRequest.setAttribute(
 			"aui:form:portletNamespace", portletNamespace);
@@ -111,12 +83,42 @@ public class RenderStructureFieldMVCResourceCommand
 		ddmFormFieldRenderingContext.setMode(
 			ParamUtil.getString(httpServletRequest, "mode"));
 		ddmFormFieldRenderingContext.setNamespace(
-			ParamUtil.getString(httpServletRequest, "namespace"));
+			HtmlUtil.escapeAttribute(
+				ParamUtil.getString(httpServletRequest, "namespace")));
 		ddmFormFieldRenderingContext.setPortletNamespace(portletNamespace);
 		ddmFormFieldRenderingContext.setReadOnly(
 			ParamUtil.getBoolean(httpServletRequest, "readOnly"));
 
 		return ddmFormFieldRenderingContext;
+	}
+
+	@Override
+	protected void doServeResource(
+			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
+		throws Exception {
+
+		HttpServletResponse httpServletResponse =
+			_portal.getHttpServletResponse(resourceResponse);
+
+		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
+			resourceRequest);
+
+		DDMFormField ddmFormField = _getDDMFormField(httpServletRequest);
+
+		DDMFormFieldRenderer ddmFormFieldRenderer =
+			_ddmFormFieldRendererRegistry.getDDMFormFieldRenderer(
+				ddmFormField.getType());
+
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
+			createDDMFormFieldRenderingContext(
+				httpServletRequest, httpServletResponse);
+
+		String ddmFormFieldHTML = ddmFormFieldRenderer.render(
+			ddmFormField, ddmFormFieldRenderingContext);
+
+		httpServletResponse.setContentType(ContentTypes.TEXT_HTML);
+
+		ServletResponseUtil.write(httpServletResponse, ddmFormFieldHTML);
 	}
 
 	private DDMFormField _getDDMFormField(

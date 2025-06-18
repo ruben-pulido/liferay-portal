@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Nilton Vieira
@@ -87,11 +88,6 @@ public class ObjectActionExamResultsSynchronizationRestController
 		return new ResponseEntity<>(json, HttpStatus.OK);
 	}
 
-	@Override
-	protected String getWebClientBaseURL() {
-		return "";
-	}
-
 	private String _getAuthorization() {
 		return _liferayOAuth2AccessTokenManager.getAuthorization(
 			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
@@ -101,12 +97,19 @@ public class ObjectActionExamResultsSynchronizationRestController
 		JSONObject jsonObject = new JSONObject(
 			get(
 				_getAuthorization(),
-				StringBundler.concat(
-					lxcDXPServerProtocol, "://", lxcDXPMainDomain,
-					"/o/c/p2s3examresultssynchronizations/scopes/",
-					_siteGroupId,
-					"?fields=dateCreated&filter=synchronizationStatus eq ",
-					"'Successful'&pageSize=1&sort=dateCreated:desc")));
+				UriComponentsBuilder.fromPath(
+					"/o/c/p2s3examresultssynchronizations/scopes/" +
+						_siteGroupId
+				).queryParam(
+					"fields", "dateCreated"
+				).queryParam(
+					"filter", "synchronizationStatus eq 'Successful'"
+				).queryParam(
+					"pageSize", 1
+				).queryParam(
+					"sort", "dateCreated:desc"
+				).build(
+				).toUri()));
 
 		JSONArray itemsJSONArray = jsonObject.getJSONArray("items");
 
@@ -201,8 +204,14 @@ public class ObjectActionExamResultsSynchronizationRestController
 					offsetDateTime.format(
 						DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss"))
 				).toString(),
-				"https://webassessor.com/WebAssessorWebServices/jaxrs" +
-					"/wawebservices/processRequest"));
+				UriComponentsBuilder.fromPath(
+					"/WebAssessorWebServices/jaxrs/wawebservices/processRequest"
+				).host(
+					"webassessor.com"
+				).scheme(
+					"https"
+				).build(
+				).toUri()));
 
 		if (jsonArray.get(0) instanceof String) {
 			return 0;
@@ -214,11 +223,13 @@ public class ObjectActionExamResultsSynchronizationRestController
 			JSONObject jsonObject2 = new JSONObject(
 				put(
 					_getAuthorization(), _getPayload(jsonObject1),
-					StringBundler.concat(
-						lxcDXPServerProtocol, "://", lxcDXPMainDomain,
-						"/o/c/p2s3examresults/scopes/", _siteGroupId,
-						"/by-external-reference-code/",
-						jsonObject1.getLong("id"))));
+					UriComponentsBuilder.fromPath(
+						StringBundler.concat(
+							"/o/c/p2s3examresults/scopes/", _siteGroupId,
+							"/by-external-reference-code/",
+							jsonObject1.getLong("id"))
+					).build(
+					).toUri()));
 
 			put(
 				_getAuthorization(),
@@ -235,10 +246,11 @@ public class ObjectActionExamResultsSynchronizationRestController
 						"roleName", "Guest"
 					)
 				).toString(),
-				StringBundler.concat(
-					lxcDXPServerProtocol, "://", lxcDXPMainDomain,
-					"/o/c/p2s3examresults/", jsonObject2.getLong("id"),
-					"/permissions"));
+				UriComponentsBuilder.fromPath(
+					"/o/c/p2s3examresults/" + jsonObject2.getLong("id") +
+						"/permissions"
+				).build(
+				).toUri());
 		}
 
 		return jsonArray.length();
@@ -258,9 +270,10 @@ public class ObjectActionExamResultsSynchronizationRestController
 			).put(
 				"synchronizationStatus", synchronizationStatus
 			).toString(),
-			StringBundler.concat(
-				lxcDXPServerProtocol, "://", lxcDXPMainDomain,
-				"/o/c/p2s3examresultssynchronizations/", classPK));
+			UriComponentsBuilder.fromPath(
+				"/o/c/p2s3examresultssynchronizations/" + classPK
+			).build(
+			).toUri());
 	}
 
 	private static final Log _log = LogFactory.getLog(

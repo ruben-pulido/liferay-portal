@@ -138,6 +138,89 @@ public class GeneralConfiguration implements Serializable {
 	private Supplier<String[]> _clauseContributorsIncludesSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema
+	public Boolean getCollectionProvider() {
+		if (_collectionProviderSupplier != null) {
+			collectionProvider = _collectionProviderSupplier.get();
+
+			_collectionProviderSupplier = null;
+		}
+
+		return collectionProvider;
+	}
+
+	public void setCollectionProvider(Boolean collectionProvider) {
+		this.collectionProvider = collectionProvider;
+
+		_collectionProviderSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setCollectionProvider(
+		UnsafeSupplier<Boolean, Exception> collectionProviderUnsafeSupplier) {
+
+		_collectionProviderSupplier = () -> {
+			try {
+				return collectionProviderUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Boolean collectionProvider;
+
+	@JsonIgnore
+	private Supplier<Boolean> _collectionProviderSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema
+	public String getCollectionProviderType() {
+		if (_collectionProviderTypeSupplier != null) {
+			collectionProviderType = _collectionProviderTypeSupplier.get();
+
+			_collectionProviderTypeSupplier = null;
+		}
+
+		return collectionProviderType;
+	}
+
+	public void setCollectionProviderType(String collectionProviderType) {
+		this.collectionProviderType = collectionProviderType;
+
+		_collectionProviderTypeSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setCollectionProviderType(
+		UnsafeSupplier<String, Exception>
+			collectionProviderTypeUnsafeSupplier) {
+
+		_collectionProviderTypeSupplier = () -> {
+			try {
+				return collectionProviderTypeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String collectionProviderType;
+
+	@JsonIgnore
+	private Supplier<String> _collectionProviderTypeSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema
 	public Boolean getEmptySearchEnabled() {
 		if (_emptySearchEnabledSupplier != null) {
 			emptySearchEnabled = _emptySearchEnabledSupplier.get();
@@ -504,6 +587,34 @@ public class GeneralConfiguration implements Serializable {
 			}
 
 			sb.append("]");
+		}
+
+		Boolean collectionProvider = getCollectionProvider();
+
+		if (collectionProvider != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"collectionProvider\": ");
+
+			sb.append(collectionProvider);
+		}
+
+		String collectionProviderType = getCollectionProviderType();
+
+		if (collectionProviderType != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"collectionProviderType\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(collectionProviderType));
+
+			sb.append("\"");
 		}
 
 		Boolean emptySearchEnabled = getEmptySearchEnabled();

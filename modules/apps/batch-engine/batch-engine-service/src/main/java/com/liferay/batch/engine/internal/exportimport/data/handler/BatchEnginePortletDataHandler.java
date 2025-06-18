@@ -11,6 +11,7 @@ import com.liferay.batch.engine.BatchEngineTaskExecuteStatus;
 import com.liferay.batch.engine.BatchEngineTaskOperation;
 import com.liferay.batch.engine.constants.BatchEngineImportTaskConstants;
 import com.liferay.batch.engine.constants.CreateStrategy;
+import com.liferay.batch.engine.internal.lar.PortletDataContextThreadLocal;
 import com.liferay.batch.engine.model.BatchEngineImportTask;
 import com.liferay.batch.engine.service.BatchEngineExportTaskService;
 import com.liferay.batch.engine.service.BatchEngineImportTaskService;
@@ -22,8 +23,10 @@ import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerControl;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
+import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.io.unsync.UnsyncByteArrayOutputStream;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -35,7 +38,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.StringUtil;
 
 import jakarta.portlet.PortletPreferences;
 
@@ -63,7 +65,8 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 		BatchEngineExportTaskService batchEngineExportTaskService,
 		BatchEngineImportTaskExecutor batchEngineImportTaskExecutor,
 		BatchEngineImportTaskService batchEngineImportTaskService,
-		String className, String itemClassName, String scope,
+		String className, String itemClassName,
+		ExportImportVulcanBatchEngineTaskItemDelegate.Scope scope,
 		String taskItemDelegateName) {
 
 		_batchEngineExportTaskExecutor = batchEngineExportTaskExecutor;
@@ -77,7 +80,9 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 		_deletionsFileName = taskItemDelegateName + "_deletions.json";
 		_fileName = taskItemDelegateName + ".json";
 
-		if (StringUtil.equalsIgnoreCase(scope, "company")) {
+		if (ExportImportVulcanBatchEngineTaskItemDelegate.Scope.COMPANY.equals(
+				scope)) {
+
 			setDataLevel(DataLevel.PORTAL);
 		}
 		else {
@@ -184,38 +189,44 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			PortletPreferences portletPreferences)
 		throws Exception {
 
-		BatchEngineExportTaskExecutor.Result result =
-			_batchEngineExportTaskExecutor.execute(
-				_batchEngineExportTaskService.addBatchEngineExportTask(
-					null, portletDataContext.getCompanyId(), _getUserId(), null,
-					_className, "JSON",
-					BatchEngineTaskExecuteStatus.INITIAL.name(),
-					Collections.emptyList(),
-					BatchEnginePortletDataHandlerUtil.buildExportParameters(
-						portletDataContext),
-					_taskItemDelegateName),
-				new BatchEngineExportTaskExecutor.Settings() {
+		try (SafeCloseable safeCloseable =
+				PortletDataContextThreadLocal.
+					setPortletDataContextWithSafeCloseable(
+						portletDataContext)) {
 
-					@Override
-					public boolean isCompressContent() {
-						return false;
-					}
+			BatchEngineExportTaskExecutor.Result result =
+				_batchEngineExportTaskExecutor.execute(
+					_batchEngineExportTaskService.addBatchEngineExportTask(
+						null, portletDataContext.getCompanyId(), _getUserId(),
+						null, _className, "JSON",
+						BatchEngineTaskExecuteStatus.INITIAL.name(),
+						Collections.emptyList(),
+						BatchEnginePortletDataHandlerUtil.buildExportParameters(
+							portletDataContext),
+						_taskItemDelegateName),
+					new BatchEngineExportTaskExecutor.Settings() {
 
-					@Override
-					public boolean isPersistContent() {
-						return false;
-					}
+						@Override
+						public boolean isCompressContent() {
+							return false;
+						}
 
-				});
+						@Override
+						public boolean isPersistContent() {
+							return false;
+						}
 
-		portletDataContext.addZipEntry(
-			_normalize(_fileName, portletDataContext.getScopeGroupId()),
-			result.getInputStream());
+					});
 
-		portletDataContext.setValidateExistingDataHandler(true);
+			portletDataContext.addZipEntry(
+				_normalize(_fileName, portletDataContext.getScopeGroupId()),
+				result.getInputStream());
 
-		return getExportDataRootElementString(
-			addExportDataRootElement(portletDataContext));
+			portletDataContext.setValidateExistingDataHandler(true);
+
+			return getExportDataRootElementString(
+				addExportDataRootElement(portletDataContext));
+		}
 	}
 
 	@Override
@@ -254,8 +265,14 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			TransactionInvokerUtil.invoke(
 				transactionConfig,
 				() -> {
-					_batchEngineImportTaskExecutor.execute(
-						finalBatchEngineImportTask);
+					try (SafeCloseable safeCloseable =
+							PortletDataContextThreadLocal.
+								setPortletDataContextWithSafeCloseable(
+									portletDataContext)) {
+
+						_batchEngineImportTaskExecutor.execute(
+							finalBatchEngineImportTask);
+					}
 
 					return null;
 				});

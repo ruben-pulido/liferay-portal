@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import java.net.URL;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -76,6 +77,23 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 	}
 
 	@Override
+	public List<Job> getJobs() {
+		List<Job> jobs = new ArrayList<>();
+
+		JSONObject jobsJSONObject = _jsonObject.getJSONObject("jobs");
+
+		for (String key : jobsJSONObject.keySet()) {
+			JSONObject jobJSONObject = jobsJSONObject.getJSONObject(key);
+
+			if ((jobJSONObject != null) && !jobJSONObject.isEmpty()) {
+				jobs.add(JobFactory.newJob(jobJSONObject));
+			}
+		}
+
+		return jobs;
+	}
+
+	@Override
 	public JSONObject getJSONObject() {
 		return new JSONObject(_jsonObject.toString());
 	}
@@ -137,6 +155,28 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 	}
 
 	@Override
+	public List<PullRequest> getPullRequests() {
+		List<PullRequest> pullRequests = new ArrayList<>();
+
+		JSONObject pullRequestsJSONObject = _jsonObject.getJSONObject(
+			"pull_requests");
+
+		for (String key : pullRequestsJSONObject.keySet()) {
+			JSONObject pullRequestJSONObject =
+				pullRequestsJSONObject.getJSONObject(key);
+
+			if ((pullRequestJSONObject != null) &&
+				!pullRequestJSONObject.isEmpty()) {
+
+				pullRequests.add(
+					PullRequestFactory.newPullRequest(pullRequestJSONObject));
+			}
+		}
+
+		return pullRequests;
+	}
+
+	@Override
 	public Workspace getWorkspace(String key) {
 		if (!hasWorkspace(key)) {
 			throw new RuntimeException("Unable to find workspace");
@@ -164,6 +204,28 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 
 		return GitRepositoryFactory.getWorkspaceGitRepository(
 			workspaceGitRepositoryJSONObject);
+	}
+
+	@Override
+	public List<Workspace> getWorkspaces() {
+		List<Workspace> workspaces = new ArrayList<>();
+
+		JSONObject workspacesJSONObject = _jsonObject.getJSONObject(
+			"workspaces");
+
+		for (String key : workspacesJSONObject.keySet()) {
+			JSONObject workspaceJSONObject = workspacesJSONObject.getJSONObject(
+				key);
+
+			if ((workspaceJSONObject != null) &&
+				!workspaceJSONObject.isEmpty()) {
+
+				workspaces.add(
+					WorkspaceFactory.newWorkspace(workspaceJSONObject));
+			}
+		}
+
+		return workspaces;
 	}
 
 	@Override

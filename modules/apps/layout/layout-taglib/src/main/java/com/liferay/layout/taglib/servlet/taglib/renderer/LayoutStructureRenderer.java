@@ -1060,12 +1060,21 @@ public class LayoutStructureRenderer {
 			jspWriter.write(style);
 		}
 
-		jspWriter.write("\"><input name=\"redirect\" type=\"hidden\" value=\"");
-		jspWriter.write(
+		jspWriter.write("\">");
+
+		String redirect =
 			_renderLayoutStructureDisplayContext.
 				getFormStyledLayoutStructureItemRedirect(
-					formStyledLayoutStructureItem));
-		jspWriter.write("\"><input name=\"backURL\" type=\"hidden\" value=\"");
+					formStyledLayoutStructureItem);
+
+		if (Validator.isNotNull(redirect)) {
+			jspWriter.write(
+				"<input name=\"redirect\" type=\"hidden\" value=\"");
+			jspWriter.write(redirect);
+			jspWriter.write("\">");
+		}
+
+		jspWriter.write("<input name=\"backURL\" type=\"hidden\" value=\"");
 		jspWriter.write(_themeDisplay.getURLCurrent());
 		jspWriter.write(
 			"\"><input name=\"classNameId\" type=\"hidden\" value=\"");
