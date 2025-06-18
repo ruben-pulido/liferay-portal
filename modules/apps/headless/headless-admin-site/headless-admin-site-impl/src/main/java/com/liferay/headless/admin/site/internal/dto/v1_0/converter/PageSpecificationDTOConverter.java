@@ -245,6 +245,29 @@ public class PageSpecificationDTOConverter
 					() -> _getClientExtensions(
 						classNameId, layout.getPlid(),
 						ClientExtensionEntryConstants.TYPE_GLOBAL_JS));
+				setIconItemExternalReference(
+					() -> {
+						long iconImageId = layout.getIconImageId();
+
+						if (iconImageId == 0) {
+							return null;
+						}
+
+						FileEntry fileEntry = _dlAppService.getFileEntry(
+							iconImageId);
+
+						if (fileEntry == null) {
+							return null;
+						}
+
+						return new ItemExternalReference() {
+							{
+								setClassName(() -> FileEntry.class.getName());
+								setExternalReferenceCode(
+									fileEntry::getExternalReferenceCode);
+							}
+						};
+					});
 				setJavascript(
 					() -> unicodeProperties.getProperty("javascript", null));
 				setMasterPageItemExternalReference(
