@@ -80,6 +80,13 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+
+		_externalReferenceCodePriorityMap = new HashMap<>();
+	}
+
+	@Override
 	@Test
 	public void testDeleteSiteSiteByExternalReferenceCodeSitePage()
 		throws Exception {
@@ -695,6 +702,10 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 				pageSettings.setHiddenFromNavigation(
 					RandomTestUtil::randomBoolean);
+				pageSettings.setPriority(
+					_externalReferenceCodePriorityMap.merge(
+						curParentSitePageExternalReferenceCode, 0,
+						(oldPriority, defaultPriority) -> oldPriority + 1));
 
 				return pageSettings;
 			});
@@ -920,6 +931,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				sitePage.getUuid()));
 	}
 
+	private Map<String, Integer> _externalReferenceCodePriorityMap;
 	private static final List<SitePage.Type> _types = Arrays.asList(
 		SitePage.Type.CONTENT_PAGE, SitePage.Type.WIDGET_PAGE);
 
