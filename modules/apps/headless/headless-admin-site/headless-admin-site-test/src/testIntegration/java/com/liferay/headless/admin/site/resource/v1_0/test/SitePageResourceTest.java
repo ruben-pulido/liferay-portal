@@ -59,6 +59,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -79,6 +80,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
 
+	@Before
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -300,6 +302,12 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	public void testPutSiteSiteByExternalReferenceCodeSitePage()
 		throws Exception {
 
+		// Execute _testPutSiteSiteByExternalReferenceCodeSitePageWithPriority
+		// first since it needs a clean site
+
+		_testPutSiteSiteByExternalReferenceCodeSitePageWithPriority(
+			SitePage.Type.CONTENT_PAGE);
+
 		_testPutSiteSiteByExternalReferenceCodeSitePage(
 			SitePage.Type.CONTENT_PAGE);
 		_testPutSiteSiteByExternalReferenceCodeSitePage(
@@ -430,6 +438,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		for (Layout layout : layouts) {
 			_assertProblemException(
+				null,
 				() ->
 					sitePageResource.
 						deleteSiteSiteByExternalReferenceCodeSitePage(
@@ -482,6 +491,31 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			layout, sitePage.getPageSpecifications());
 	}
 
+	private void _assertParentAndPriority(
+			SitePage expectedParentSitePage, int expectedPriority,
+			SitePage sitePage)
+		throws Exception {
+
+		SitePage getSitePage =
+			sitePageResource.getSiteSiteByExternalReferenceCodeSitePage(
+				testGroup.getExternalReferenceCode(),
+				sitePage.getExternalReferenceCode());
+
+		if (expectedParentSitePage == null) {
+			Assert.assertNull(
+				getSitePage.getParentSitePageExternalReferenceCode());
+		}
+		else {
+			Assert.assertEquals(
+				expectedParentSitePage.getExternalReferenceCode(),
+				getSitePage.getParentSitePageExternalReferenceCode());
+		}
+
+		PageSettings pageSettings = getSitePage.getPageSettings();
+
+		Assert.assertEquals(expectedPriority, (int)pageSettings.getPriority());
+	}
+
 	private void _assertPatchSiteSiteByExternalReferenceCodeSitePage(
 			SitePage expectedSitePage, SitePage sitePage)
 		throws Exception {
@@ -519,6 +553,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		throws Exception {
 
 		_assertProblemException(
+			null,
 			() -> sitePageResource.patchSiteSiteByExternalReferenceCodeSitePage(
 				testGroup.getExternalReferenceCode(),
 				sitePage.getExternalReferenceCode(), sitePage));
@@ -530,6 +565,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		throws Exception {
 
 		_assertProblemException(
+			null,
 			() ->
 				sitePageResource.
 					postSiteSiteByExternalReferenceCodeSitePagePageSpecification(
@@ -546,7 +582,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	}
 
 	private void _assertProblemException(
-			UnsafeRunnable<Exception> unsafeRunnable)
+			String title, UnsafeRunnable<Exception> unsafeRunnable)
 		throws Exception {
 
 		try {
@@ -557,7 +593,14 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			Problem problem = problemException.getProblem();
 
 			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
-			Assert.assertNull(problem.getTitle());
+
+			if (title == null) {
+				Assert.assertNull(problem.getTitle());
+			}
+			else {
+				Assert.assertTrue(
+					StringUtil.startsWith(problem.getTitle(), title));
+			}
 		}
 	}
 
@@ -580,6 +623,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		throws Exception {
 
 		_assertProblemException(
+			null,
 			() -> sitePageResource.putSiteSiteByExternalReferenceCodeSitePage(
 				testGroup.getExternalReferenceCode(),
 				sitePage.getExternalReferenceCode(), sitePage));
@@ -937,9 +981,111 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				sitePage.getUuid()));
 	}
 
-	private Map<String, Integer> _externalReferenceCodePriorityMap;
+	private void _testPutSiteSiteByExternalReferenceCodeSitePageWithPriority(
+			SitePage.Type type)
+		throws Exception {
+
+		SitePage sitePage1 =
+			testPostByExternalReferenceCodeSitePage_addSitePage(
+				_getRandomSitePage(
+					StringUtil.toLowerCase(RandomTestUtil.randomString()), null,
+					type, null));
+		SitePage sitePage2 =
+			testPostByExternalReferenceCodeSitePage_addSitePage(
+				_getRandomSitePage(
+					StringUtil.toLowerCase(RandomTestUtil.randomString()), null,
+					type, null));
+		SitePage sitePage3 =
+			testPostByExternalReferenceCodeSitePage_addSitePage(
+				_getRandomSitePage(
+					StringUtil.toLowerCase(RandomTestUtil.randomString()), null,
+					type, null));
+		SitePage sitePage4 =
+			testPostByExternalReferenceCodeSitePage_addSitePage(
+				_getRandomSitePage(
+					StringUtil.toLowerCase(RandomTestUtil.randomString()), null,
+					type, null));
+		SitePage sitePage5 =
+			testPostByExternalReferenceCodeSitePage_addSitePage(
+				_getRandomSitePage(
+					StringUtil.toLowerCase(RandomTestUtil.randomString()), null,
+					type, null));
+
+		_assertParentAndPriority(null, 0, sitePage1);
+		_assertParentAndPriority(null, 1, sitePage2);
+		_assertParentAndPriority(null, 2, sitePage3);
+		_assertParentAndPriority(null, 3, sitePage4);
+		_assertParentAndPriority(null, 4, sitePage5);
+
+		_updateParentAndPriority(null, 1, sitePage4);
+		_assertParentAndPriority(null, 0, sitePage1);
+		_assertParentAndPriority(null, 1, sitePage4);
+		_assertParentAndPriority(null, 2, sitePage2);
+		_assertParentAndPriority(null, 3, sitePage3);
+		_assertParentAndPriority(null, 4, sitePage5);
+
+		_updateParentAndPriority(null, 5, sitePage5);
+		_assertParentAndPriority(null, 0, sitePage1);
+		_assertParentAndPriority(null, 1, sitePage4);
+		_assertParentAndPriority(null, 2, sitePage2);
+		_assertParentAndPriority(null, 3, sitePage3);
+		_assertParentAndPriority(null, 4, sitePage5);
+
+		_updateParentAndPriority(sitePage1, 2, sitePage2);
+		_assertParentAndPriority(null, 0, sitePage1);
+		_assertParentAndPriority(null, 1, sitePage4);
+		_assertParentAndPriority(null, 3, sitePage3);
+		_assertParentAndPriority(null, 4, sitePage5);
+		_assertParentAndPriority(sitePage1, 0, sitePage2);
+
+		_updateParentAndPriority(sitePage1, 2, sitePage4);
+		_assertParentAndPriority(null, 0, sitePage1);
+		_assertParentAndPriority(null, 3, sitePage3);
+		_assertParentAndPriority(null, 4, sitePage5);
+		_assertParentAndPriority(sitePage1, 0, sitePage2);
+		_assertParentAndPriority(sitePage1, 1, sitePage4);
+
+		_updateParentAndPriority(sitePage1, 3, sitePage3);
+		_assertParentAndPriority(null, 0, sitePage1);
+		_assertParentAndPriority(null, 4, sitePage5);
+		_assertParentAndPriority(sitePage1, 0, sitePage2);
+		_assertParentAndPriority(sitePage1, 1, sitePage4);
+		_assertParentAndPriority(sitePage1, 2, sitePage3);
+
+		SitePage finalSitePage1 = sitePage1;
+
+		_assertProblemException(
+			"pageSettings.priority must be greater than or equal to 0",
+			() -> _updateParentAndPriority(null, -1, finalSitePage1));
+	}
+
+	private void _updateParentAndPriority(
+			SitePage parentSitePage, Integer priority, SitePage sitePage)
+		throws Exception {
+
+		String parentSitePageExternalReferenceCode = null;
+
+		if (parentSitePage != null) {
+			parentSitePageExternalReferenceCode =
+				parentSitePage.getExternalReferenceCode();
+		}
+
+		sitePage.setParentSitePageExternalReferenceCode(
+			parentSitePageExternalReferenceCode);
+
+		PageSettings pageSettings = sitePage.getPageSettings();
+
+		pageSettings.setPriority(priority);
+
+		sitePageResource.putSiteSiteByExternalReferenceCodeSitePage(
+			testGroup.getExternalReferenceCode(),
+			sitePage.getExternalReferenceCode(), sitePage);
+	}
+
 	private static final List<SitePage.Type> _types = Arrays.asList(
 		SitePage.Type.CONTENT_PAGE, SitePage.Type.WIDGET_PAGE);
+
+	private Map<String, Integer> _externalReferenceCodePriorityMap;
 
 	@Inject
 	private JSONFactory _jsonFactory;
