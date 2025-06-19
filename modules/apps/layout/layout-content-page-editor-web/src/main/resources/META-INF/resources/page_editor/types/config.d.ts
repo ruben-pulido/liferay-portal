@@ -161,7 +161,6 @@ export interface Config {
 	infoItemSelectorURL: string;
 	isCMS: boolean;
 	isConversionDraft: boolean;
-	isMarketplaceButtonVisited: boolean;
 	isPrivateLayoutsEnabled: boolean;
 	layoutConversionWarningMessages: string[] | null;
 	layoutItemSelectorURL: String;
@@ -186,6 +185,7 @@ export interface Config {
 	portletNamespace: string;
 	publishURL: string;
 	redirectURL: string;
+	regenerateDisplayPageURL: string;
 	renderFragmentEntriesURL: string;
 	restoreCollectionDisplayConfigURL: string;
 	searchContainerPageMaxDelta: number;

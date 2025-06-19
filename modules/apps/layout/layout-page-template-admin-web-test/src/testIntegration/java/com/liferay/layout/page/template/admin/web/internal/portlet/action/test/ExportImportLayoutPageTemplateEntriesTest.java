@@ -1441,7 +1441,7 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, false, true, false,
-				false, false,
+				false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null,
 				"control_panel.sites",
@@ -1596,7 +1596,7 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 		HttpServletRequest httpServletRequest = new MockHttpServletRequest();
 
 		httpServletRequest.setAttribute(
-			JavaConstants.JAVAX_PORTLET_RESPONSE,
+			JavaConstants.JAKARTA_PORTLET_RESPONSE,
 			new MockLiferayPortletActionResponse());
 		httpServletRequest.setAttribute(
 			WebKeys.THEME_DISPLAY, _getThemeDisplay(httpServletRequest));

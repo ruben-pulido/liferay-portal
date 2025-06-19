@@ -308,9 +308,8 @@ public class SearchSearchRequestAssemblerImpl
 	@Reference
 	private GroupByRequestFactory _groupByRequestFactory;
 
-	@Reference
-	private GroupByTranslator _groupByTranslator;
-
+	private final GroupByTranslator _groupByTranslator =
+		new GroupByTranslator();
 	private final HighlightTranslator _highlightTranslator =
 		new HighlightTranslator();
 
@@ -320,8 +319,7 @@ public class SearchSearchRequestAssemblerImpl
 	@Reference
 	private SortFieldTranslator<SortOptions> _sortFieldTranslator;
 
-	@Reference
-	private SortTranslator _sortTranslator;
+	private final SortTranslator _sortTranslator = new SortTranslator();
 
 	@Reference
 	private StatsRequestBuilderFactory _statsRequestBuilderFactory;

@@ -150,6 +150,10 @@ public class EditorTag extends BaseValidatorTagSupport {
 		return _autoCreate;
 	}
 
+	public boolean isDisabled() {
+		return _disabled;
+	}
+
 	public boolean isInlineEdit() {
 		return _inlineEdit;
 	}
@@ -200,6 +204,10 @@ public class EditorTag extends BaseValidatorTagSupport {
 
 	public void setData(Map<String, Object> data) {
 		_data = data;
+	}
+
+	public void setDisabled(boolean disabled) {
+		_disabled = disabled;
 	}
 
 	public void setEditorName(String editorName) {
@@ -286,6 +294,7 @@ public class EditorTag extends BaseValidatorTagSupport {
 		_contentsLanguageId = null;
 		_cssClass = null;
 		_data = null;
+		_disabled = false;
 		_editorName = null;
 		_fileBrowserParams = null;
 		_height = null;
@@ -369,6 +378,8 @@ public class EditorTag extends BaseValidatorTagSupport {
 
 		setNamespacedAttribute(
 			httpServletRequest, "required", String.valueOf(_required));
+		setNamespacedAttribute(
+			httpServletRequest, "disabled", String.valueOf(_disabled));
 		setNamespacedAttribute(
 			httpServletRequest, "resizable", String.valueOf(_resizable));
 		setNamespacedAttribute(
@@ -485,10 +496,10 @@ public class EditorTag extends BaseValidatorTagSupport {
 
 		PortletRequest portletRequest =
 			(PortletRequest)httpServletRequest.getAttribute(
-				JavaConstants.JAVAX_PORTLET_REQUEST);
+				JavaConstants.JAKARTA_PORTLET_REQUEST);
 		PortletResponse portletResponse =
 			(PortletResponse)httpServletRequest.getAttribute(
-				JavaConstants.JAVAX_PORTLET_RESPONSE);
+				JavaConstants.JAKARTA_PORTLET_RESPONSE);
 
 		if ((portletRequest == null) || (portletResponse == null)) {
 			return AUIUtil.getNamespace(httpServletRequest);
@@ -504,7 +515,7 @@ public class EditorTag extends BaseValidatorTagSupport {
 
 		PortletRequest portletRequest =
 			(PortletRequest)httpServletRequest.getAttribute(
-				JavaConstants.JAVAX_PORTLET_REQUEST);
+				JavaConstants.JAKARTA_PORTLET_REQUEST);
 
 		if (portletRequest == null) {
 			return RequestBackedPortletURLFactoryUtil.create(
@@ -550,6 +561,7 @@ public class EditorTag extends BaseValidatorTagSupport {
 	private String _contentsLanguageId;
 	private String _cssClass;
 	private Map<String, Object> _data;
+	private boolean _disabled;
 	private String _editorName;
 	private Map<String, String> _fileBrowserParams;
 	private String _height;

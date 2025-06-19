@@ -32,6 +32,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Amos Fong
@@ -44,8 +45,11 @@ public class GoogleCloudStorageService extends BaseService {
 
 		delete(
 			"Bearer " + _getAccessToken(), "",
-			StringBundler.concat(
-				"/storage/v1/b/", bucketName, "/o/", objectName));
+			UriComponentsBuilder.fromUriString(
+				getBaseURL() + "/storage/v1/b/{bucketName}/o/{objectName}"
+			).build(
+				bucketName, objectName
+			));
 	}
 
 	public String getDownloadURL(String bucketName, String objectName)
@@ -77,19 +81,22 @@ public class GoogleCloudStorageService extends BaseService {
 	}
 
 	public String getUploadSessionURL(
-			String origin, String bucketName, String objectName)
+			String origin, String bucketName, String objectName,
+			String fileSize)
 		throws Exception {
 
 		ResponseEntity<String> responseEntity = WebClient.create(
 		).post(
 		).uri(
 			StringBundler.concat(
-				getWebClientBaseURL(), "/upload/storage/v1/b/", bucketName,
+				getBaseURL(), "/upload/storage/v1/b/", bucketName,
 				"/o?uploadType=resumable&name=", objectName)
 		).accept(
 			MediaType.APPLICATION_JSON
 		).header(
 			HttpHeaders.AUTHORIZATION, "Bearer " + _getAccessToken()
+		).header(
+			HttpHeaders.CONTENT_LENGTH, fileSize
 		).header(
 			HttpHeaders.ORIGIN, origin
 		).retrieve(
@@ -104,8 +111,7 @@ public class GoogleCloudStorageService extends BaseService {
 		return uri.toString();
 	}
 
-	@Override
-	protected String getWebClientBaseURL() {
+	protected String getBaseURL() {
 		return "https://storage.googleapis.com";
 	}
 

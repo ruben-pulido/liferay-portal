@@ -13,10 +13,12 @@ import {PersonalDataErasurePage} from '../pages/user-associated-data-web/Persona
 import {UserAssociatedDataAnnouncementPage} from '../pages/user-associated-data-web/announcement-web/UserAssociatedAnnouncementPage';
 import {UserAssociatedDataBlogPage} from '../pages/user-associated-data-web/blog-web/UserAssociatedDataBlogPage';
 import {UserAssociatedDataDocumentLibraryPage} from '../pages/user-associated-data-web/document-library-web/UserAssociatedDataDocumentLibraryPage';
+import {UserAssociatedDataEditDocumentPage} from '../pages/user-associated-data-web/document-library-web/UserAssociatedDataEditDocumentPage';
 import {UserAssociatedDataFormPage} from '../pages/user-associated-data-web/form-web/UserAssociatedDataFormPage';
 import {UserAssociatedDataJournalPage} from '../pages/user-associated-data-web/journal-article-web/UserAssociatedDataJournalPage';
 import {UserAssociatedDataEditMessageBoardThreadPage} from '../pages/user-associated-data-web/message-board-web/UserAssociatedDataEditMessageBoardThreadPage';
 import {UserAssociatedDataMessageBoardPage} from '../pages/user-associated-data-web/message-board-web/UserAssociatedDataMessageBoardPage';
+import {UserAssociatedDataMessageBoardWidgetPage} from '../pages/user-associated-data-web/message-board-web/UserAssociatedDataMessageBoardWidgetPage';
 import {UserAssociatedDataSiteStagingPage} from '../pages/user-associated-data-web/site-staging-web/UserAssociatedDataSiteStagingPage';
 import {AssignUsersPage} from '../pages/users-admin-web/AssignUsersPage';
 import {EditOrganizationPage} from '../pages/users-admin-web/EditOrganizationPage';
@@ -48,10 +50,12 @@ const usersAndOrganizationsPagesTest = test.extend<{
 	userAssociatedDataAnnouncementPage: UserAssociatedDataAnnouncementPage;
 	userAssociatedDataBlogPage: UserAssociatedDataBlogPage;
 	userAssociatedDataDocumentLibraryPage: UserAssociatedDataDocumentLibraryPage;
+	userAssociatedDataEditDocumentPage: UserAssociatedDataEditDocumentPage;
 	userAssociatedDataEditMessageBoardThreadPage: UserAssociatedDataEditMessageBoardThreadPage;
 	userAssociatedDataFormPage: UserAssociatedDataFormPage;
 	userAssociatedDataJournalPage: UserAssociatedDataJournalPage;
 	userAssociatedDataMessageBoardPage: UserAssociatedDataMessageBoardPage;
+	userAssociatedDataMessageBoardWidgetPage: UserAssociatedDataMessageBoardWidgetPage;
 	userAssociatedDataSiteStagingPage: UserAssociatedDataSiteStagingPage;
 	userDocumentLibraryPage: DocumentLibraryPage;
 	userLocaleOptionsPage: UserLocaleOptionsPage;
@@ -106,6 +110,9 @@ const usersAndOrganizationsPagesTest = test.extend<{
 	userAssociatedDataDocumentLibraryPage: async ({page}, use) => {
 		await use(new UserAssociatedDataDocumentLibraryPage(page));
 	},
+	userAssociatedDataEditDocumentPage: async ({page}, use) => {
+		await use(new UserAssociatedDataEditDocumentPage(page));
+	},
 	userAssociatedDataEditMessageBoardThreadPage: async ({page}, use) => {
 		await use(new UserAssociatedDataEditMessageBoardThreadPage(page));
 	},
@@ -117,6 +124,9 @@ const usersAndOrganizationsPagesTest = test.extend<{
 	},
 	userAssociatedDataMessageBoardPage: async ({page}, use) => {
 		await use(new UserAssociatedDataMessageBoardPage(page));
+	},
+	userAssociatedDataMessageBoardWidgetPage: async ({page}, use) => {
+		await use(new UserAssociatedDataMessageBoardWidgetPage(page));
 	},
 	userAssociatedDataSiteStagingPage: async ({page}, use) => {
 		await use(new UserAssociatedDataSiteStagingPage(page));

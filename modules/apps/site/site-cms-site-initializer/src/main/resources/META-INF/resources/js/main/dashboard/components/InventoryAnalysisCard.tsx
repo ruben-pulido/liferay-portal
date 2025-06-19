@@ -3,13 +3,23 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {ClayButtonWithIcon} from '@clayui/button';
 import {Body, Cell, Head, Row, Table, Text} from '@clayui/core';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 
+import {ViewDashboardContext} from '../ViewDashboardContext';
+import {AllCategoriesDropdown} from './AllCategoriesDropdown';
+import {AllStructureTypesDropdown} from './AllStructureTypesDropdown';
+import {AllTagsDropdown} from './AllTagsDropdown';
+import {AllVocabulariesDropdown} from './AllVocabulariesDropdown';
 import {BaseCard} from './BaseCard';
-import {FilterDropdown} from './FilterDropdown';
+import {Item} from './FilterDropdown';
+import {GroupByDropdown, IStructureProps} from './GroupByDropdown';
+
+export interface IAllFiltersDropdown extends React.HTMLAttributes<HTMLElement> {
+	item: Item;
+	onSelectItem: (item: Item) => void;
+}
 
 const VolumeChart = ({
 	percentage,
@@ -33,61 +43,6 @@ const VolumeChart = ({
 		</div>
 	);
 };
-
-const structureTypes = [
-	{
-		label: Liferay.Language.get('structure-type'),
-		value: 'all',
-	},
-	{
-		label: Liferay.Language.get('structure-02'),
-		value: 'structure02',
-	},
-];
-
-const structures = [
-	{
-		label: Liferay.Language.get('all-structure'),
-		value: 'all',
-	},
-	{
-		label: Liferay.Language.get('structure-02'),
-		value: 'structure02',
-	},
-];
-
-const vocabularies = [
-	{
-		label: Liferay.Language.get('all-vocabularies'),
-		value: 'all',
-	},
-	{
-		label: Liferay.Language.get('vocabulary-02'),
-		value: 'vocabulary02',
-	},
-];
-
-const categories = [
-	{
-		label: Liferay.Language.get('all-categories'),
-		value: 'all',
-	},
-	{
-		label: Liferay.Language.get('category-02'),
-		value: 'category02',
-	},
-];
-
-const tags = [
-	{
-		label: Liferay.Language.get('all-tags'),
-		value: 'all',
-	},
-	{
-		label: Liferay.Language.get('tag-02'),
-		value: 'tag02',
-	},
-];
 
 type Data = {
 	assets: {count: number; title: string}[];
@@ -128,16 +83,57 @@ const mapData = (data: Data) => {
 	});
 };
 
-export function InventoryAnalysisCard() {
-	const [structureTypeId, setStructureTypeId] = useState(
-		structureTypes[0].value
-	);
-	const [structureId, setStructureId] = useState(structures[0].value);
-	const [vocabularyId, setVocabularyId] = useState(vocabularies[0].value);
-	const [categoryId, setCategoryId] = useState(categories[0].value);
-	const [tagId, setTagId] = useState(tags[0].value);
+export const initialStructureType = {
+	label: Liferay.Language.get('category'),
+	value: 'category',
+};
 
+export const initialCategory = {
+	label: Liferay.Language.get('all-categories'),
+	value: 'all',
+};
+
+export const initialStructure = {
+	label: Liferay.Language.get('all-structures'),
+	value: 'all',
+};
+
+export const initialTag = {
+	label: Liferay.Language.get('all-tags'),
+	value: 'all',
+};
+
+export const initialVocabulary = {
+	label: Liferay.Language.get('all-vocabularies'),
+	value: 'all',
+};
+
+export function InventoryAnalysisCard() {
 	const [delta, setDelta] = useState(4);
+
+	const [category, setCategory] = useState<Item>(initialCategory);
+	const [structure, setStructure] = useState<Item>(initialStructure);
+	const [structureType, setStructureType] =
+		useState<Item>(initialStructureType);
+
+	// TODO LPD-50207
+
+	const [_structureTypeData, setStructureTypeData] =
+		useState<IStructureProps>();
+
+	const [tag, setTag] = useState<Item>(initialTag);
+	const [vocabulary, setVocabulary] = useState<Item>(initialVocabulary);
+
+	const {
+		filters: {space},
+	} = useContext(ViewDashboardContext);
+
+	useEffect(() => {
+		setCategory(initialCategory);
+		setStructure(initialStructure);
+		setTag(initialTag);
+		setVocabulary(initialVocabulary);
+	}, [space?.value]);
 
 	const deltas = [
 		{
@@ -159,39 +155,22 @@ export function InventoryAnalysisCard() {
 	return (
 		<div className="cms-dashboard__inventory-analysis">
 			<BaseCard
-				Preferences={
-					<ClayButtonWithIcon
-						aria-label={Liferay.Language.get('download')}
-						borderless
-						displayType="secondary"
-						size="sm"
-						symbol="download"
-					/>
-				}
 				description={Liferay.Language.get(
 					'this-report-provides-a-breakdown-of-total-assets-by-categorization,-structure-type,-or-space'
 				)}
 				title={Liferay.Language.get('inventory-analysis')}
 			>
 				<div className="align-items-center d-flex">
-					<span className="mr-2">
+					<span className="ml-1 mr-2">
 						<Text size={3} weight="semi-bold">
 							{Liferay.Language.get('group-by')}
 						</Text>
 					</span>
 
-					<FilterDropdown
-						active={structureTypeId}
-						filterByValue="structureTypes"
-						items={structureTypes}
-						onSelectItem={(structureType) =>
-							setStructureTypeId(structureType.value)
-						}
-						triggerLabel={
-							structureTypes.find(
-								({value}) => value === structureTypeId
-							)?.label ?? ''
-						}
+					<GroupByDropdown
+						item={structureType}
+						onSelectItem={setStructureType}
+						setStructureTypeData={setStructureTypeData}
 					/>
 
 					<span className="ml-3 mr-2">
@@ -200,59 +179,22 @@ export function InventoryAnalysisCard() {
 						</Text>
 					</span>
 
-					<FilterDropdown
-						active={structureId}
-						filterByValue="structures"
-						icon="edit-layout"
-						items={structures}
-						onSelectItem={(structure) =>
-							setStructureId(structure.value)
-						}
-						triggerLabel={
-							structures.find(({value}) => value === structureId)
-								?.label ?? ''
-						}
+					<AllStructureTypesDropdown
+						item={structure}
+						onSelectItem={setStructure}
 					/>
 
-					<FilterDropdown
-						active={vocabularyId}
-						filterByValue="vocabularies"
-						icon="vocabulary"
-						items={vocabularies}
-						onSelectItem={(vocabulary) =>
-							setVocabularyId(vocabulary.value)
-						}
-						triggerLabel={
-							vocabularies.find(
-								({value}) => value === vocabularyId
-							)?.label ?? ''
-						}
+					<AllVocabulariesDropdown
+						item={vocabulary}
+						onSelectItem={setVocabulary}
 					/>
 
-					<FilterDropdown
-						active={categoryId}
-						filterByValue="categories"
-						icon="categories"
-						items={categories}
-						onSelectItem={(category) =>
-							setCategoryId(category.value)
-						}
-						triggerLabel={
-							categories.find(({value}) => value === categoryId)
-								?.label ?? ''
-						}
+					<AllCategoriesDropdown
+						item={category}
+						onSelectItem={setCategory}
 					/>
 
-					<FilterDropdown
-						active={tagId}
-						filterByValue="tags"
-						icon="tag"
-						items={tags}
-						onSelectItem={(tag) => setTagId(tag.value)}
-						triggerLabel={
-							tags.find(({value}) => value === tagId)?.label ?? ''
-						}
-					/>
+					<AllTagsDropdown item={tag} onSelectItem={setTag} />
 				</div>
 
 				<Table
@@ -265,7 +207,7 @@ export function InventoryAnalysisCard() {
 						items={[
 							{
 								id: 'title',
-								name: Liferay.Language.get('structure-title'),
+								name: Liferay.Language.get('structure-label'),
 								width: '200px',
 							},
 							{

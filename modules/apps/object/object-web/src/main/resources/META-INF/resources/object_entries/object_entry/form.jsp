@@ -72,6 +72,10 @@ portletDisplay.setURLBack(backURL);
 						props='<%=
 							HashMapBuilder.<String, Object>put(
 								"portletNamespace", portletNamespace
+							).put(
+								"scheduleProperties", objectEntryDisplayContext.getScheduleProperties()
+							).put(
+								"submitRef", portletNamespace + "submitObjectEntry"
 							).build()
 						%>'
 					/>
@@ -84,7 +88,7 @@ portletDisplay.setURLBack(backURL);
 
 	<c:if test="<%= !objectEntryDisplayContext.isReadOnly() %>">
 		<c:choose>
-			<c:when test='<%= FeatureFlagManagerUtil.isEnabled("LPD-17564") %>'>
+			<c:when test='<%= FeatureFlagManagerUtil.isEnabled("LPD-17564") && (objectEntryDisplayContext.getObjectLayoutTab() == null) %>'>
 				<div>
 					<react:component
 						module="{ObjectEntryFooter} from object-web"
@@ -102,7 +106,6 @@ portletDisplay.setURLBack(backURL);
 				<liferay-frontend:edit-form-footer>
 					<liferay-frontend:edit-form-buttons
 						redirect="<%= backURL %>"
-						submitId="saveObjectEntryButton"
 						submitOnClick='<%= "event.preventDefault(); " + portletNamespace + "submitObjectEntry();" %>'
 					/>
 				</liferay-frontend:edit-form-footer>
@@ -113,6 +116,9 @@ portletDisplay.setURLBack(backURL);
 
 <c:if test="<%= !objectEntryDisplayContext.isReadOnly() %>">
 	<aui:script sandbox="<%= true %>">
+		const hasObjectLayout =
+			<%= objectEntryDisplayContext.getObjectLayoutTab() != null %>;
+
 		function <portlet:namespace />getExternalReferenceCode() {
 			return String(
 				'<%= (objectEntry == null) ? "" : objectEntry.getExternalReferenceCode() %>'
@@ -132,16 +138,16 @@ portletDisplay.setURLBack(backURL);
 				`/scopes/\${themeDisplay.getSiteGroupId()}`
 			);
 
-			const postPath = scope === 'site' ? pathScopedBySite : contextPath;
+			let path = scope === 'site' ? pathScopedBySite : contextPath;
 
-			let patchPath = scope === 'site' ? pathScopedBySite : contextPath;
+			if (!externalReferenceCode) {
+				return path;
+			}
 
-			patchPath = patchPath.concat(
+			return path.concat(
 				'/by-external-reference-code/',
 				`\${externalReferenceCode}`
 			);
-
-			return externalReferenceCode ? patchPath : postPath;
 		}
 
 		function <portlet:namespace />getValues(fields) {
@@ -175,6 +181,17 @@ portletDisplay.setURLBack(backURL);
 
 		function hasEmptyString(object) {
 			return Object.values(object).some((value) => value === '');
+		}
+
+		function isPastDate(date) {
+			if (!date) {
+				return false;
+			}
+
+			const currentDateTime = new Date();
+			const dateTime = new Date(date);
+
+			return currentDateTime >= dateTime;
 		}
 
 		Liferay.provide(window, '<portlet:namespace />submitObjectEntry', () => {
@@ -221,23 +238,27 @@ portletDisplay.setURLBack(backURL);
 						}
 					});
 
+					let scheduleContainerInputValue;
+
 					const scheduleContainerInput = document.getElementById(
 						'<portlet:namespace />scheduleContainer'
 					);
 
-					const scheduleContainerInputValue = JSON.parse(
-						scheduleContainerInput
-					);
+					if (Liferay.FeatureFlags['LPD-17564'] && scheduleContainerInput) {
+						scheduleContainerInputValue = JSON.parse(
+							scheduleContainerInput.value
+						);
 
-					if (
-						scheduleContainerInput &&
-						hasEmptyString(scheduleContainerInputValue)
-					) {
-						shouldSubmitForm = false;
+						if (
+							hasEmptyString(scheduleContainerInputValue) ||
+							isPastDate(scheduleContainerInputValue.expirationDate)
+						) {
+							shouldSubmitForm = false;
 
-						loadingElement.remove();
+							loadingElement.remove();
 
-						return false;
+							return false;
+						}
 					}
 
 					if (shouldSubmitForm) {
@@ -302,12 +323,21 @@ portletDisplay.setURLBack(backURL);
 							});
 						}
 
-						if (scheduleContainerInput) {
+						if (
+							Liferay.FeatureFlags['LPD-17564'] &&
+							scheduleContainerInputValue
+						) {
 							values = {
 								...values,
 								...scheduleContainerInputValue,
 							};
 						}
+
+						const method = !externalReferenceCode
+							? 'POST'
+							: hasObjectLayout
+								? 'PATCH'
+								: 'PUT';
 
 						Liferay.Util.fetch(path, {
 							body: JSON.stringify(values),
@@ -317,7 +347,7 @@ portletDisplay.setURLBack(backURL);
 									'<%= LanguageUtil.getBCP47LanguageId(request) %>',
 								'Content-Type': 'application/json',
 							}),
-							method: externalReferenceCode ? 'PATCH' : 'POST',
+							method: method,
 						})
 							.then((response) => {
 								Liferay.fire('submitButtonClicked');
@@ -329,8 +359,8 @@ portletDisplay.setURLBack(backURL);
 									Liferay.Util.openToast({
 										message:
 											'<%=
-												HtmlUtil.escapeJS(LanguageUtil.get(
-													LocaleUtil.fromLanguageId(LanguageUtil.getBCP47LanguageId(request)), "your-request-completed-successfully")) %>',
+													HtmlUtil.escapeJS(LanguageUtil.get(
+														LocaleUtil.fromLanguageId(LanguageUtil.getBCP47LanguageId(request)), "your-request-completed-successfully")) %>',
 										type: 'success',
 									});
 

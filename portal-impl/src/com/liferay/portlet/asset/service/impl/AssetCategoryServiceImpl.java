@@ -287,6 +287,14 @@ public class AssetCategoryServiceImpl extends AssetCategoryServiceBaseImpl {
 			String externalReferenceCode, long groupId)
 		throws PortalException {
 
+		AssetCategory category =
+			assetCategoryService.fetchCategoryByExternalReferenceCode(
+				externalReferenceCode, groupId);
+
+		if (category != null) {
+			return category;
+		}
+
 		AssetCategoriesPermission.check(
 			getPermissionChecker(), groupId, ActionKeys.ADD_CATEGORY);
 

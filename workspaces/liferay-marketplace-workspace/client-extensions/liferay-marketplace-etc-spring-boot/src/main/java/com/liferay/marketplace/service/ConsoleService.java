@@ -21,7 +21,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import reactor.util.retry.Retry;
 
@@ -34,7 +34,14 @@ public class ConsoleService extends BaseService {
 	public void deleteProject(String projectId) throws Exception {
 		String projectName = _consoleProjectPrefix + "-ext" + projectId;
 
-		delete(getAuthorization(), "", "/projects/" + projectName);
+		delete(
+			getAuthorization(), "",
+			UriComponentsBuilder.fromUriString(
+				_consoleAuthURL
+			).path(
+				"/projects/" + projectName
+			).build(
+			).toUri());
 	}
 
 	public JSONObject deployApp(
@@ -50,7 +57,12 @@ public class ConsoleService extends BaseService {
 				).put(
 					"userEmail", emailAddress
 				).toString(),
-				"/admin/projects/" + projectId + "/apps"));
+				UriComponentsBuilder.fromUriString(
+					_consoleAuthURL
+				).path(
+					"/admin/projects/" + projectId + "/apps"
+				).build(
+				).toUri()));
 
 		if (_log.isInfoEnabled()) {
 			_log.info("Deployed app for project " + projectId);
@@ -74,7 +86,12 @@ public class ConsoleService extends BaseService {
 			).put(
 				"password", _consoleAuthPassword
 			).toString(),
-			"/login");
+			UriComponentsBuilder.fromUriString(
+				_consoleAuthURL
+			).path(
+				"/login"
+			).build(
+			).toUri());
 
 		if (json == null) {
 			throw new Exception("Unable to get authorization");
@@ -96,13 +113,14 @@ public class ConsoleService extends BaseService {
 	public String getProjectsUsage(String userEmail) throws Exception {
 		return get(
 			getAuthorization(),
-			_defaultUriBuilderFactory.builder(
+			UriComponentsBuilder.fromUriString(
+				_consoleAuthURL
 			).path(
 				"/admin/user-projects-plan-usage"
 			).queryParam(
 				"userEmail", userEmail
 			).build(
-			).toString());
+			).toUri());
 	}
 
 	public String getProjectUsage(String emailAddress, String projectId)
@@ -161,12 +179,14 @@ public class ConsoleService extends BaseService {
 	}
 
 	public void uninstallApp(long orderId) throws Exception {
-		delete(getAuthorization(), "", "/apps/" + orderId);
-	}
-
-	@Override
-	protected String getWebClientBaseURL() {
-		return _consoleAuthURL;
+		delete(
+			getAuthorization(), "",
+			UriComponentsBuilder.fromUriString(
+				_consoleAuthURL
+			).path(
+				"/apps/" + orderId
+			).build(
+			).toUri());
 	}
 
 	@Override
@@ -202,7 +222,12 @@ public class ConsoleService extends BaseService {
 			).put(
 				"role", "admin"
 			).toString(),
-			"/projects/" + projectId + "/invite");
+			UriComponentsBuilder.fromUriString(
+				_consoleAuthURL
+			).path(
+				"/projects/" + projectId + "/invite"
+			).build(
+			).toUri());
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
@@ -225,7 +250,12 @@ public class ConsoleService extends BaseService {
 			).put(
 				"extensionProjectUid", extensionProjectUid
 			).toString(),
-			"/lxc-extension-links");
+			UriComponentsBuilder.fromUriString(
+				_consoleAuthURL
+			).path(
+				"/lxc-extension-links"
+			).build(
+			).toUri());
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
@@ -253,7 +283,12 @@ public class ConsoleService extends BaseService {
 				).put(
 					"projectId", projectId
 				).toString(),
-				"/projects"));
+				UriComponentsBuilder.fromUriString(
+					_consoleAuthURL
+				).path(
+					"/projects"
+				).build(
+				).toUri()));
 
 		if (_log.isInfoEnabled()) {
 			_log.info("Created project " + jsonObject);
@@ -284,8 +319,6 @@ public class ConsoleService extends BaseService {
 	@Value("${liferay.marketplace.console.project.uid}")
 	private String _consoleProjectUid;
 
-	private final DefaultUriBuilderFactory _defaultUriBuilderFactory =
-		new DefaultUriBuilderFactory();
 	private long _tokenExpirationMillis;
 
 	@Value("${liferay.marketplace.trial.admin.email.address}")

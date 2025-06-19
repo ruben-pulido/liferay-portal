@@ -10,7 +10,7 @@ import {ClayInput} from '@clayui/form';
 import Icon from '@clayui/icon';
 import {ClayResultsBar} from '@clayui/management-toolbar';
 import ManagementToolbar from '@clayui/management-toolbar/lib/ManagementToolbar';
-import {useContext, useState} from 'react';
+import {ReactElement, useContext, useState} from 'react';
 
 import i18n from '../../../i18n';
 import {
@@ -29,11 +29,14 @@ export type FilterOption = Omit<Item, 'onClick'> & {
 };
 
 export type ManagementToolbarProps = {
+	actionButton?: ({filter}: {filter: string}) => ReactElement;
 	filterItems?: FilterGroup[];
+	hasOrderExportCSV?: boolean;
 	results?: number;
 };
 
 export function ListViewManagementToolbar({
+	actionButton,
 	filterItems,
 	results,
 }: ManagementToolbarProps) {
@@ -56,6 +59,7 @@ export function ListViewManagementToolbar({
 		<ManagementToolbar>
 			{filterItems && (
 				<DropDown
+					closeOnClick
 					trigger={
 						<Button className="nav-link" displayType="unstyled">
 							<span className="mr-3">
@@ -105,7 +109,7 @@ export function ListViewManagementToolbar({
 					<ClayInput.GroupItem>
 						<ClayInput
 							aria-label="Search"
-							className="form-control input-group-inset input-group-inset-after"
+							className="bg-white form-control input-group-inset input-group-inset-after"
 							onChange={(event) =>
 								setSearchInput(event.target.value)
 							}
@@ -114,7 +118,11 @@ export function ListViewManagementToolbar({
 							value={searchInput}
 						/>
 
-						<ClayInput.GroupInsetItem after tag="span">
+						<ClayInput.GroupInsetItem
+							after
+							className="bg-white"
+							tag="span"
+						>
 							<ClayButtonWithIcon
 								aria-label="Search"
 								displayType="unstyled"
@@ -139,6 +147,8 @@ export function ListViewManagementToolbar({
 					</ClayInput.GroupItem>
 				</ClayInput.Group>
 			</ManagementToolbar.Search>
+
+			{actionButton && actionButton({filter})}
 
 			{(filter || keywords) && (
 				<div className="d-block w-100">

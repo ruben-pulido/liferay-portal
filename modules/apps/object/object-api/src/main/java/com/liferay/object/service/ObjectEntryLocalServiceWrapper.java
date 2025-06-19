@@ -97,6 +97,13 @@ public class ObjectEntryLocalServiceWrapper
 			objectEntryFolderId, values, serviceContext);
 	}
 
+	@Override
+	public void checkObjectEntries(long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_objectEntryLocalService.checkObjectEntries(companyId);
+	}
+
 	/**
 	 * Creates a new object entry with the primary key. Does not add the object entry to the database.
 	 *
@@ -303,12 +310,12 @@ public class ObjectEntryLocalServiceWrapper
 
 	@Override
 	public com.liferay.object.model.ObjectEntry expireObjectEntry(
-			long userId, long objectEntryId, int version,
+			long userId, long objectEntryId,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _objectEntryLocalService.expireObjectEntry(
-			userId, objectEntryId, version, serviceContext);
+			userId, objectEntryId, serviceContext);
 	}
 
 	@Override
@@ -598,6 +605,15 @@ public class ObjectEntryLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.liferay.object.model.ObjectEntry>
+		getObjectEntryFolderObjectEntries(
+			long groupId, long objectEntryFolderId, int start, int end) {
+
+		return _objectEntryLocalService.getObjectEntryFolderObjectEntries(
+			groupId, objectEntryFolderId, start, end);
+	}
+
+	@Override
 	public int getObjectEntryFolderObjectEntriesCount(
 		long groupId, long objectEntryFolderId) {
 
@@ -625,6 +641,15 @@ public class ObjectEntryLocalServiceWrapper
 
 		return _objectEntryLocalService.getOneToManyObjectEntriesCount(
 			groupId, objectRelationshipId, primaryKey, related, search);
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectEntry getOrAddIncompleteObjectEntry(
+			String externalReferenceCode, long userId, long objectDefinitionId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectEntryLocalService.getOrAddIncompleteObjectEntry(
+			externalReferenceCode, userId, objectDefinitionId);
 	}
 
 	/**

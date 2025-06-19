@@ -304,8 +304,17 @@ export class ApiHelpers {
 
 	async post<T>(url: string, options: RequestOptions<T> = {}) {
 		const response = await this.postResponse(url, options);
+		const status = response.status();
 
-		if (response.status() === 204) {
+		if (!response.ok()) {
+			const error = await response.text();
+
+			throw new Error(
+				`POST request to ${url} failed with code ${status}:\n\n${error}`
+			);
+		}
+
+		if (status === 204) {
 			return;
 		}
 
@@ -440,6 +449,9 @@ export class DataApiHelpers extends ApiHelpers {
 			}
 			else if (item.type === 'accountGroup') {
 				await this.headlessAdminUser.deleteAccountGroup(item.id);
+			}
+			else if (item.type === 'address') {
+				await this.headlessAdminUser.deletePostalAddress(item.id);
 			}
 			else if (item.type === 'announcement') {
 				await this.jsonWebServicesAnnouncementsEntryApiHelper.deleteEntry(

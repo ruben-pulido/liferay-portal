@@ -14,8 +14,11 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.db.partition.DBPartition;
+import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.module.framework.ThrowableCollector;
 import com.liferay.portal.kernel.security.auth.CompanyInheritableThreadLocalCallable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -47,13 +50,13 @@ import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -205,28 +208,27 @@ public abstract class BaseDBProcess implements DBProcess {
 					" does not exist"));
 		}
 
-		if (hasColumnType(tableName, oldColumnName, newColumnType)) {
-			DBInspector dbInspector = new DBInspector(connection);
-
-			if (StringUtil.equals(
-					dbInspector.normalizeName(oldColumnName),
-					dbInspector.normalizeName(newColumnName))) {
-
-				return;
-			}
-
-			DB db = DBManagerUtil.getDB();
-
-			db.alterColumnName(
-				connection, tableName, oldColumnName, newColumnDefinition);
-		}
-		else {
+		if (!hasColumnType(tableName, oldColumnName, newColumnType)) {
 			throw new SQLException(
 				StringBundler.concat(
 					"Type change is not allowed when altering column name. ",
 					"Column ", tableName, StringPool.PERIOD, oldColumnName,
 					" has different type than ", newColumnType));
 		}
+
+		DBInspector dbInspector = new DBInspector(connection);
+
+		if (StringUtil.equals(
+				dbInspector.normalizeName(oldColumnName),
+				dbInspector.normalizeName(newColumnName))) {
+
+			return;
+		}
+
+		DB db = DBManagerUtil.getDB();
+
+		db.alterColumnName(
+			connection, tableName, oldColumnName, newColumnDefinition);
 	}
 
 	protected void alterColumnType(
@@ -252,21 +254,21 @@ public abstract class BaseDBProcess implements DBProcess {
 			String tableName, String columnName, String columnType)
 		throws Exception {
 
-		if (hasColumn(tableName, columnName)) {
-			if (!hasColumnType(tableName, columnName, columnType)) {
-				throw new SQLException(
-					StringBundler.concat(
-						"Column ", tableName, StringPool.PERIOD, columnName,
-						" already exists with different type than ",
-						columnType));
-			}
+		if (!hasColumn(tableName, columnName)) {
+			DB db = DBManagerUtil.getDB();
+
+			db.alterTableAddColumn(
+				connection, tableName, columnName, columnType);
 
 			return;
 		}
 
-		DB db = DBManagerUtil.getDB();
-
-		db.alterTableAddColumn(connection, tableName, columnName, columnType);
+		if (!hasColumnType(tableName, columnName, columnType)) {
+			throw new SQLException(
+				StringBundler.concat(
+					"Column ", tableName, StringPool.PERIOD, columnName,
+					" already exists with different type than ", columnType));
+		}
 	}
 
 	protected void alterTableDropColumn(String tableName, String columnName)
@@ -290,14 +292,16 @@ public abstract class BaseDBProcess implements DBProcess {
 
 	protected void closeConnections() {
 		Map<Thread, Connection> connectionsMap = _connectionsMaps.get(
-			CompanyThreadLocal.getCompanyId());
+			DBPartition.isPartitionEnabled() ?
+				CompanyThreadLocal.getCompanyId() : CompanyConstants.SYSTEM);
 
 		_closeConnections(connectionsMap);
 	}
 
 	protected void closeConnections(Thread thread) {
 		Map<Thread, Connection> connectionsMap = _connectionsMaps.get(
-			CompanyThreadLocal.getCompanyId());
+			DBPartition.isPartitionEnabled() ?
+				CompanyThreadLocal.getCompanyId() : CompanyConstants.SYSTEM);
 
 		_closeConnections(connectionsMap, thread);
 	}
@@ -553,6 +557,8 @@ public abstract class BaseDBProcess implements DBProcess {
 					connectionsMap.remove(entry.getKey());
 
 					connection.close();
+
+					return;
 				}
 			}
 		}
@@ -620,6 +626,42 @@ public abstract class BaseDBProcess implements DBProcess {
 		}
 	}
 
+	private int _getFixedThreadPoolSize() {
+		if (_fixedThreadPoolSize.get() != 0) {
+			return _fixedThreadPoolSize.get();
+		}
+
+		long[] companyIds = PortalInstancePool.getCompanyIds();
+
+		int maximumPoolSize = GetterUtil.getInteger(
+			PropsUtil.get("jdbc.default.maximumPoolSize"));
+
+		Runtime runtime = Runtime.getRuntime();
+
+		int expectedMaxConnectionsCount =
+			Math.min(companyIds.length - 1, runtime.availableProcessors()) *
+				runtime.availableProcessors();
+
+		if (expectedMaxConnectionsCount > (0.9 * maximumPoolSize)) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					StringBundler.concat(
+						"The database is close to reaching ", maximumPoolSize,
+						" connections. Consider increasing the property ",
+						"\"jdbc.default.maximumPoolSize\" to improve ",
+						"performance. Upgrade processes will continue in ",
+						"single threaded mode."));
+			}
+
+			_fixedThreadPoolSize.set(1);
+		}
+		else {
+			_fixedThreadPoolSize.set(runtime.availableProcessors());
+		}
+
+		return _fixedThreadPoolSize.get();
+	}
+
 	private InputStream _getInputStream(String path) {
 		ClassLoader classLoader = PortalClassLoaderUtil.getClassLoader();
 
@@ -657,15 +699,13 @@ public abstract class BaseDBProcess implements DBProcess {
 			Objects.requireNonNull(unsafeBiConsumer);
 		}
 
-		Runtime runtime = Runtime.getRuntime();
-
 		ExecutorService executorService = Executors.newFixedThreadPool(
-			runtime.availableProcessors());
+			_getFixedThreadPoolSize());
 
 		List<Future<Void>> futures = new ArrayList<>();
 		Map<Thread, PreparedStatement> preparedStatementHashMap =
 			new ConcurrentHashMap<>();
-		Set<Thread> threads = new HashSet<>();
+		Set<Thread> threads = new CopyOnWriteArraySet<>();
 		ThrowableCollector throwableCollector = new ThrowableCollector();
 
 		try {
@@ -764,7 +804,10 @@ public abstract class BaseDBProcess implements DBProcess {
 
 	private static final Log _log = LogFactoryUtil.getLog(BaseDBProcess.class);
 
-	private static final Map<Long, Map<Thread, Connection>> _connectionsMaps =
+	private static final AtomicInteger _fixedThreadPoolSize = new AtomicInteger(
+		0);
+
+	private final Map<Long, Map<Thread, Connection>> _connectionsMaps =
 		new ConcurrentHashMap<>();
 
 	private class ConnectionThreadProxyInvocationHandler
@@ -788,12 +831,30 @@ public abstract class BaseDBProcess implements DBProcess {
 
 			Map<Thread, Connection> connectionsMap =
 				_connectionsMaps.computeIfAbsent(
-					CompanyThreadLocal.getCompanyId(),
+					DBPartition.isPartitionEnabled() ?
+						CompanyThreadLocal.getCompanyId() :
+							CompanyConstants.SYSTEM,
 					key -> new ConcurrentHashMap<>());
 
 			return method.invoke(
-				connectionsMap.computeIfAbsent(
-					Thread.currentThread(), thread -> _getConnection()),
+				connectionsMap.compute(
+					Thread.currentThread(),
+					(thread, connection) -> {
+						try {
+							if ((connection != null) &&
+								!connection.isClosed()) {
+
+								return connection;
+							}
+						}
+						catch (Exception exception) {
+							if (_log.isDebugEnabled()) {
+								_log.debug(exception);
+							}
+						}
+
+						return _getConnection();
+					}),
 				args);
 		}
 

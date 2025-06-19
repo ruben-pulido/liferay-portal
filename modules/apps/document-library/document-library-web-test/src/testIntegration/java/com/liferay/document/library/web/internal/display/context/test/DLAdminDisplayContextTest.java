@@ -8,6 +8,7 @@ package com.liferay.document.library.web.internal.display.context.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.document.library.test.util.DLAppTestUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -49,6 +50,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.Writer;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -105,6 +107,25 @@ public class DLAdminDisplayContextTest {
 		Assert.assertEquals(25, searchContainer.getTotal());
 	}
 
+	@Test
+	public void testSearchContainerContainsFolderWithNavigationMine()
+		throws Exception {
+
+		DLAppTestUtil.addFolder(_group.getGroupId());
+
+		MockLiferayPortletActionRequest mockLiferayPortletActionRequest =
+			_getMockLiferayPortletActionRequest();
+
+		mockLiferayPortletActionRequest.setParameter("navigation", "mine");
+
+		SearchContainer<Object> searchContainer = _getSearchContainer(
+			mockLiferayPortletActionRequest);
+
+		List<Object> results = searchContainer.getResults();
+
+		Assert.assertEquals(results.toString(), 1, results.size());
+	}
+
 	private FileEntry _addDLFileEntry(String fileName, String content)
 		throws Exception {
 
@@ -127,12 +148,12 @@ public class DLAdminDisplayContextTest {
 			new MockLiferayPortletActionRequest();
 
 		mockLiferayPortletActionRequest.setAttribute(
-			JavaConstants.JAVAX_PORTLET_CONFIG, null);
+			JavaConstants.JAKARTA_PORTLET_CONFIG, null);
 		mockLiferayPortletActionRequest.setAttribute(
-			JavaConstants.JAVAX_PORTLET_REQUEST,
+			JavaConstants.JAKARTA_PORTLET_REQUEST,
 			mockLiferayPortletActionRequest);
 		mockLiferayPortletActionRequest.setAttribute(
-			JavaConstants.JAVAX_PORTLET_RESPONSE, new MockActionResponse());
+			JavaConstants.JAKARTA_PORTLET_RESPONSE, new MockActionResponse());
 		mockLiferayPortletActionRequest.setAttribute(
 			WebKeys.THEME_DISPLAY, _getThemeDisplay());
 

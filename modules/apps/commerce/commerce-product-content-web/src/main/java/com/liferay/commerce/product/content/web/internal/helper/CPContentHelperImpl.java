@@ -31,6 +31,8 @@ import com.liferay.commerce.product.content.render.CPContentRendererRegistry;
 import com.liferay.commerce.product.content.util.CPMedia;
 import com.liferay.commerce.product.content.web.internal.util.CPMediaImpl;
 import com.liferay.commerce.product.content.web.internal.util.CPMediaUtil;
+import com.liferay.commerce.product.helper.CPDefinitionHelper;
+import com.liferay.commerce.product.helper.CPInstanceHelper;
 import com.liferay.commerce.product.model.CPAttachmentFileEntry;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionOptionRel;
@@ -53,8 +55,6 @@ import com.liferay.commerce.product.type.CPType;
 import com.liferay.commerce.product.type.CPTypeRegistry;
 import com.liferay.commerce.product.util.CPContentContributor;
 import com.liferay.commerce.product.util.CPContentContributorRegistry;
-import com.liferay.commerce.product.util.CPDefinitionHelper;
-import com.liferay.commerce.product.util.CPInstanceHelper;
 import com.liferay.commerce.service.CPDefinitionInventoryLocalService;
 import com.liferay.commerce.util.CommerceUtil;
 import com.liferay.commerce.wish.list.model.CommerceWishList;
@@ -79,6 +79,7 @@ import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermi
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
@@ -712,6 +713,15 @@ public class CPContentHelperImpl implements CPContentHelper {
 	}
 
 	@Override
+	public boolean hasRequiredCPDefinitionOptionRels(long cpDefinitionId) {
+		return ListUtil.isNotEmpty(
+			ListUtil.filter(
+				_cpDefinitionOptionRelLocalService.getCPDefinitionOptionRels(
+					cpDefinitionId),
+				CPDefinitionOptionRel::isRequired));
+	}
+
+	@Override
 	public boolean isDirectReplacement(CPSku cpSku) throws Exception {
 		if ((cpSku == null) || cpSku.isDiscontinued()) {
 			return false;
@@ -788,7 +798,7 @@ public class CPContentHelperImpl implements CPContentHelper {
 
 		RenderRequest renderRequest =
 			(RenderRequest)httpServletRequest.getAttribute(
-				JavaConstants.JAVAX_PORTLET_REQUEST);
+				JavaConstants.JAKARTA_PORTLET_REQUEST);
 
 		CPContentRenderer cpContentRenderer =
 			_cpContentRendererRegistry.getCPContentRenderer(

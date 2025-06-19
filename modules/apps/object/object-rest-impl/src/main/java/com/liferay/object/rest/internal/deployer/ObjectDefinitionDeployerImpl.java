@@ -60,12 +60,10 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.db.partition.util.DBPartitionUtil;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
@@ -106,6 +104,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -289,14 +288,6 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		ObjectScopeProvider objectScopeProvider) {
 
 		try {
-			String factoryPid =
-				"com.liferay.portal.vulcan.internal.configuration." +
-					"VulcanCompanyConfiguration";
-
-			Configuration configuration =
-				_configurationAdmin.createFactoryConfiguration(
-					factoryPid, StringPool.QUESTION);
-
 			Method[] methods = BaseObjectEntryResourceImpl.class.getMethods();
 
 			List<String> excludedOperationIds = new ArrayList<>();
@@ -323,17 +314,56 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				}
 			}
 
-			configuration.update(
-				HashMapDictionaryBuilder.put(
-					ExtendedObjectClassDefinition.Scope.COMPANY.
-						getPropertyKey(),
-					String.valueOf(objectDefinition.getCompanyId())
-				).put(
-					"excludedOperationIds",
-					StringUtil.merge(excludedOperationIds, ",")
-				).put(
-					"path", objectDefinition.getRESTContextPath()
-				).build());
+			Collections.sort(excludedOperationIds);
+
+			String excludedOperationIdsString = StringUtil.merge(
+				excludedOperationIds, ",");
+
+			String factoryPid =
+				"com.liferay.portal.vulcan.internal.configuration." +
+					"VulcanCompanyConfiguration";
+
+			String path = objectDefinition.getRESTContextPath();
+
+			Configuration[] configurations =
+				_configurationAdmin.listConfigurations(
+					StringBundler.concat(
+						"(&(",
+						ExtendedObjectClassDefinition.Scope.COMPANY.
+							getPropertyKey(),
+						"=", objectDefinition.getCompanyId(), ")(path=", path,
+						")(service.factoryPid=", factoryPid, "))"));
+
+			if ((configurations == null) || (configurations.length != 1)) {
+				Configuration configuration =
+					_configurationAdmin.createFactoryConfiguration(
+						factoryPid, StringPool.QUESTION);
+
+				configuration.update(
+					HashMapDictionaryBuilder.put(
+						ExtendedObjectClassDefinition.Scope.COMPANY.
+							getPropertyKey(),
+						String.valueOf(objectDefinition.getCompanyId())
+					).put(
+						"excludedOperationIds", excludedOperationIdsString
+					).put(
+						"path", path
+					).build());
+			}
+			else {
+				Dictionary<String, Object> dictionary =
+					configurations[0].getProperties();
+
+				if (!Objects.equals(
+						excludedOperationIdsString,
+						dictionary.get("excludedOperationIds"))) {
+
+					dictionary.put(
+						"excludedOperationIds", excludedOperationIdsString);
+
+					configurations[0].update(dictionary);
+				}
+			}
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
@@ -447,9 +477,6 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 			collaboratorResourceServiceRegistration.setProperties(properties);
 		}
 
-		boolean featureFlagEnabled = FeatureFlagManagerUtil.isEnabled(
-			CompanyConstants.SYSTEM, "LPD-35914");
-
 		_scopedServiceRegistrationsMap.compute(
 			restContextPath,
 			(key1, serviceRegistrationsMap) -> {
@@ -518,9 +545,6 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 								ObjectEntry.class.getName() + "#" +
 									objectDefinition.getName()
 							).put(
-								"batch.engine.scope",
-								objectDefinition.getScope()
-							).put(
 								"batch.engine.task.item.delegate", "true"
 							).put(
 								"batch.engine.task.item.delegate.class.name",
@@ -532,10 +556,6 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 							).put(
 								"batch.engine.task.item.delegate.name",
 								objectDefinition.getName()
-							).put(
-								"batch.engine.task.item.delegate.portlet.id",
-								featureFlagEnabled ?
-									objectDefinition.getPortletId() : null
 							).put(
 								"batch.planner.export.enabled", "true"
 							).put(

@@ -302,15 +302,7 @@ test(
 		).toBeVisible();
 
 		await personalDataErasurePage.webContentRadioButton.check();
-
-		await apiHelpers.jsonWebServicesJournal.getArticleByUrlTitle(
-			site.id,
-			webContent1Name
-		);
-		await apiHelpers.jsonWebServicesJournal.getArticleByUrlTitle(
-			site.id,
-			webContent2Name
-		);
+		await personalDataErasurePage.journalArticleRadioButton.check();
 
 		await personalDataErasurePage.journalArticleCheckBox('1').check();
 		await personalDataErasurePage.journalArticleCheckBox('4').check();
@@ -1411,5 +1403,98 @@ test(
 			await passwordPoliciesAdminConfigPage.goTo();
 			await passwordPoliciesAdminConfigPage.resetDefaultPasswordPolicy();
 		}
+	}
+);
+
+test(
+	'Can delete and anonymize all entries',
+	{tag: '@LPD-56476'},
+	async ({
+		apiHelpers,
+		page,
+		personalDataErasurePage,
+		usersAndOrganizationsPage,
+	}) => {
+		page.on('dialog', (dialog) => {
+			dialog.accept().catch(() => {});
+		});
+
+		const userAccount =
+			await apiHelpers.headlessAdminUser.postUserAccount();
+
+		userData[userAccount.alternateName] = {
+			name: userAccount.givenName,
+			password: 'test',
+			surname: userAccount.familyName,
+		};
+
+		const role =
+			await apiHelpers.headlessAdminUser.getRoleByName('Administrator');
+
+		await apiHelpers.headlessAdminUser.postRoleByExternalReferenceCodeUserAccountAssociation(
+			role.externalReferenceCode,
+			userAccount.id
+		);
+
+		await performLogout(page);
+		await performLoginViaApi({page, screenName: userAccount.alternateName});
+
+		const site = await apiHelpers.headlessSite.createSite({
+			name: getRandomString(),
+		});
+
+		apiHelpers.data.push({id: site.id, type: 'site'});
+
+		await apiHelpers.headlessDelivery.postDocument(
+			site.id,
+			createReadStream(
+				path.join(__dirname, '/dependencies/attachment.txt')
+			),
+			{
+				fileName: 'Document' + getRandomInt(),
+			}
+		);
+
+		await apiHelpers.headlessDelivery.postBlog(site.id, {
+			headline: 'Blog' + getRandomInt(),
+		});
+
+		await performLogout(page);
+		await performLoginViaApi({page, screenName: 'test'});
+
+		await usersAndOrganizationsPage.goToUsers(false);
+		await (
+			await usersAndOrganizationsPage.usersTableRowActions(
+				userAccount.alternateName
+			)
+		).click();
+		await usersAndOrganizationsPage.deletePersonalDataMenuItem.click();
+
+		await waitForAlert(page);
+
+		await expect(
+			personalDataErasurePage.selectAllItemsOnPageCheckbox
+		).toBeVisible();
+
+		await personalDataErasurePage.selectAllItemsOnPageCheckbox.check();
+		await personalDataErasurePage.actionsButton.click();
+		await personalDataErasurePage.deleteMenuItem.click();
+
+		await expect(personalDataErasurePage.anonymizeButton).toBeVisible();
+
+		await personalDataErasurePage.anonymizeButton.click();
+		await personalDataErasurePage.reviewDataLink.click();
+
+		await expect(
+			personalDataErasurePage.anonymizedAllRemainingDataMessage
+		).toBeVisible();
+
+		await waitForAlert(page, 'Success:User successfully deleted.');
+
+		await usersAndOrganizationsPage.goToUsers(true);
+
+		await expect(
+			usersAndOrganizationsPage.usersTableCell(userAccount.name)
+		).not.toBeVisible();
 	}
 );

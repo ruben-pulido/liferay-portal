@@ -139,6 +139,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
@@ -156,6 +157,7 @@ import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalService;
@@ -814,8 +816,7 @@ public class BundleSiteInitializerTest {
 					"TESTCOMMERCECATALOG1", _group.getCompanyId());
 
 		Assert.assertNotNull(commerceCatalog);
-		Assert.assertEquals(
-			"Test Commerce Catalog 1", commerceCatalog.getName());
+		Assert.assertEquals(_group.getGroupKey(), commerceCatalog.getName());
 
 		commerceCatalog =
 			_commerceCatalogLocalService.
@@ -825,6 +826,23 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(commerceCatalog);
 		Assert.assertEquals(
 			"Test Commerce Catalog 2", commerceCatalog.getName());
+
+		commerceCatalog =
+			_commerceCatalogLocalService.
+				fetchCommerceCatalogByExternalReferenceCode(
+					"TESTCOMMERCECATALOG3", _group.getCompanyId());
+
+		Assert.assertNotNull(commerceCatalog);
+		Assert.assertEquals(_group.getGroupKey(), commerceCatalog.getName());
+
+		Company company = _companyLocalService.getCompany(
+			_serviceContext.getCompanyId());
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.fetchGroupVocabulary(
+				company.getGroupId(), _group.getGroupKey());
+
+		Assert.assertNotNull(assetVocabulary);
 
 		_assertCPDefinition();
 		_assertCPOption();
@@ -2555,7 +2573,7 @@ public class BundleSiteInitializerTest {
 
 		_assertObjectActions(4, objectDefinition);
 		_assertObjectEntries(_group.getGroupId(), objectDefinition, 0);
-		_assertObjectFields(objectDefinition, 10);
+		_assertObjectFields(objectDefinition, 13);
 		_assertObjectRelationships1(objectDefinition, _serviceContext);
 
 		objectDefinition = _objectDefinitionLocalService.fetchObjectDefinition(
@@ -2568,7 +2586,7 @@ public class BundleSiteInitializerTest {
 
 		_assertObjectActions(2, objectDefinition);
 		_assertObjectEntries(_group.getGroupId(), objectDefinition, 0);
-		_assertObjectFields(objectDefinition, 8);
+		_assertObjectFields(objectDefinition, 11);
 
 		objectDefinition = _objectDefinitionLocalService.fetchObjectDefinition(
 			_group.getCompanyId(), "C_TestObjectDefinition3");
@@ -2582,7 +2600,7 @@ public class BundleSiteInitializerTest {
 
 		_assertObjectActions(0, objectDefinition);
 		_assertObjectEntries(0, objectDefinition, 5);
-		_assertObjectFields(objectDefinition, 7);
+		_assertObjectFields(objectDefinition, 10);
 
 		objectDefinition = _objectDefinitionLocalService.fetchObjectDefinition(
 			_group.getCompanyId(), "C_TestObjectDefinition4");
@@ -2607,7 +2625,7 @@ public class BundleSiteInitializerTest {
 
 		_assertObjectActions(4, objectDefinition);
 		_assertObjectEntries(_group.getGroupId(), objectDefinition, 0);
-		_assertObjectFields(objectDefinition, 10);
+		_assertObjectFields(objectDefinition, 13);
 		_assertObjectRelationships2(objectDefinition, _serviceContext);
 
 		objectDefinition = _objectDefinitionLocalService.fetchObjectDefinition(
@@ -2626,7 +2644,7 @@ public class BundleSiteInitializerTest {
 
 		_assertObjectActions(2, objectDefinition);
 		_assertObjectEntries(_group.getGroupId(), objectDefinition, 0);
-		_assertObjectFields(objectDefinition, 8);
+		_assertObjectFields(objectDefinition, 11);
 
 		objectDefinition = _objectDefinitionLocalService.fetchObjectDefinition(
 			_group.getCompanyId(), "C_TestObjectDefinition3");
@@ -2641,7 +2659,7 @@ public class BundleSiteInitializerTest {
 
 		_assertObjectActions(0, objectDefinition);
 		_assertObjectEntries(0, objectDefinition, 5);
-		_assertObjectFields(objectDefinition, 7);
+		_assertObjectFields(objectDefinition, 10);
 
 		objectDefinition = _objectDefinitionLocalService.fetchObjectDefinition(
 			_group.getCompanyId(), "C_TestObjectDefinition4");
@@ -4620,6 +4638,9 @@ public class BundleSiteInitializerTest {
 	@Inject
 	private CommerceNotificationTemplateLocalService
 		_commerceNotificationTemplateLocalService;
+
+	@Inject
+	private CompanyLocalService _companyLocalService;
 
 	@Inject
 	private CPDefinitionLocalService _cpDefinitionLocalService;

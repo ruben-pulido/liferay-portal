@@ -64,6 +64,8 @@ function isTierPriceChanged(
 }
 
 export default class AppPublish extends BaseAppPublish {
+	private config: ProductConfig = {isDraft: false};
+
 	constructor(private context: NewAppInitialState) {
 		super();
 	}
@@ -156,7 +158,18 @@ export default class AppPublish extends BaseAppPublish {
 		);
 	}
 
-	async syncProfile(config: ProductConfig) {
+	private getProductStatus() {
+		const productStatus = this.config.isDraft
+			? ProductWorkflowStatusCode.DRAFT
+			: ProductWorkflowStatusCode.PENDING;
+
+		return {
+			productStatus,
+			workflowStatusInfo: productStatus,
+		};
+	}
+
+	async syncProfile() {
 		const {
 			_product,
 			catalog,
@@ -175,10 +188,6 @@ export default class AppPublish extends BaseAppPublish {
 			...tags,
 			categories,
 		].map(normalizeCategory);
-
-		const productStatus = config.isDraft
-			? ProductWorkflowStatusCode.DRAFT
-			: ProductWorkflowStatusCode.PENDING;
 
 		if (_product) {
 			if (file && (!file?.uploaded || file?.changed)) {
@@ -205,12 +214,19 @@ export default class AppPublish extends BaseAppPublish {
 					categories: productCategories,
 					description: {en_US: description},
 					name: {en_US: name},
-					productStatus,
-					workflowStatusInfo: productStatus,
+					...this.getProductStatus(),
 				}
 			);
 
-			return _product;
+			const product = await HeadlessCommerceAdminCatalogImpl.getProduct(
+				_product.productId,
+				new URLSearchParams({
+					nestedFields:
+						'attachments,catalog,images,productSpecifications,productOptions,productVirtualSettings,skus',
+				})
+			);
+
+			return product;
 		}
 
 		const product =
@@ -219,8 +235,7 @@ export default class AppPublish extends BaseAppPublish {
 				categories: productCategories,
 				description,
 				name,
-				productStatus,
-				workflowStatusInfo: productStatus,
+				...this.getProductStatus(),
 			});
 
 		product.productSpecifications = [
@@ -265,7 +280,7 @@ export default class AppPublish extends BaseAppPublish {
 		const specifications = [
 			{
 				key: ProductSpecificationKey.APP_TYPE,
-				value: appType,
+				value: appType as string,
 			},
 		];
 
@@ -281,7 +296,7 @@ export default class AppPublish extends BaseAppPublish {
 				},
 			];
 
-			specifications.push(...(resourceRequirementSpecifications as any));
+			specifications.push(...resourceRequirementSpecifications);
 		}
 
 		const {
@@ -304,22 +319,23 @@ export default class AppPublish extends BaseAppPublish {
 			product.productId,
 			{
 				categories: [...product.categories, ...compatibleOfferings],
-				productStatus: product.productStatus,
-				workflowStatusInfo: product.workflowStatusInfo.code,
+				...this.getProductStatus(),
 			}
 		);
 
-		for (const liferayPackage of liferayPackages) {
-			const {files, version} = liferayPackage;
+		const liferayVersions = [];
 
-			for (const file of files) {
+		for (const liferayPackage of liferayPackages) {
+			const {file, versions} = liferayPackage;
+
+			if (file && file.file) {
 				const formData = new FormData();
-				const blob = new Blob([file]);
+				const blob = new Blob([file.file]);
 
 				formData.append('file', blob, file.fileName);
 				formData.append(
 					'productVirtualSettingsFileEntry',
-					JSON.stringify({version})
+					JSON.stringify({version: versions.toString()})
 				);
 
 				await createProductVirtualEntry({
@@ -328,18 +344,22 @@ export default class AppPublish extends BaseAppPublish {
 					virtualSettingId: _product?.productVirtualSettings.id ?? '',
 				});
 			}
+
+			liferayVersions.push(...versions);
 		}
 
-		const liferayVersions = [
-			...new Set(liferayPackages.map(({version}) => version)),
-		].map((specification) => ({
-			key: ProductSpecificationKey.LIFERAY_VERSION,
-			value: specification,
-		}));
+		const liferayVersionSpecifications = Array.from(
+			new Set(liferayVersions)
+		)
+			.toSorted()
+			.map((version) => ({
+				key: ProductSpecificationKey.LIFERAY_VERSION,
+				value: version,
+			}));
 
 		await BaseAppPublish.updateSpecifications(product, [
 			...specifications,
-			...liferayVersions,
+			...liferayVersionSpecifications,
 		]);
 	}
 
@@ -460,8 +480,10 @@ export default class AppPublish extends BaseAppPublish {
 	public async sync(config: ProductConfig) {
 		let product;
 
+		this.config = config;
+
 		try {
-			product = await this.syncProfile(config);
+			product = await this.syncProfile();
 
 			this.context._product = product;
 

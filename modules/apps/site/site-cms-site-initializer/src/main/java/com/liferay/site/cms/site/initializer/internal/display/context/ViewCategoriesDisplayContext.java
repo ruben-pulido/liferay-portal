@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
@@ -57,12 +58,27 @@ public class ViewCategoriesDisplayContext {
 			WebKeys.THEME_DISPLAY);
 	}
 
+	public String getAPIURL() {
+		if (getCategoryId() == 0) {
+			return getCategoriesByVocabularyIdAPIURL();
+		}
+
+		return getCategoriesByCategoryIdAPIURL();
+	}
+
 	public Map<String, Object> getBreadcrumbReactData() throws Exception {
 		return HashMapBuilder.<String, Object>put(
 			"breadcrumbItems",
-			CategorizationBreadcrumbUtil.getBreadcrumbsJSONArray(
-				true, getVocabularyId(), _themeDisplay)
+			CategorizationBreadcrumbUtil.getNavigationBreadcrumbsJSONArray(
+				getVocabularyId(), getCategoryId(), _themeDisplay)
 		).build();
+	}
+
+	public String getCategoriesByCategoryIdAPIURL() {
+		return StringBundler.concat(
+			"/o/headless-admin-taxonomy/v1.0/taxonomy-categories/",
+			getCategoryId(),
+			"/taxonomy-categories?nestedFields=taxonomyCategoryUsageCount");
 	}
 
 	public String getCategoriesByVocabularyIdAPIURL() {
@@ -71,21 +87,64 @@ public class ViewCategoriesDisplayContext {
 			getVocabularyId(), "/taxonomy-categories");
 	}
 
+	public long getCategoryId() {
+		if (_categoryId != null) {
+			return _categoryId;
+		}
+
+		_categoryId = ParamUtil.getLong(_httpServletRequest, "categoryId");
+
+		return _categoryId;
+	}
+
 	public CreationMenu getCreationMenu() {
+		long parentCategoryId = getCategoryId();
+
+		if (parentCategoryId == 0) {
+			return CreationMenuBuilder.addPrimaryDropdownItem(
+				item -> {
+					item.setHref(
+						HttpComponentsUtil.addParameter(
+							_portal.getLayoutFullURL(
+								_layoutLocalService.getLayoutByFriendlyURL(
+									_themeDisplay.getScopeGroupId(), false,
+									"/categorization/new_category"),
+								_themeDisplay),
+							"vocabularyId", getVocabularyId()));
+
+					item.setLabel(
+						_language.get(_httpServletRequest, "new-category"));
+				}
+			).build();
+		}
+
 		return CreationMenuBuilder.addPrimaryDropdownItem(
 			item -> {
 				item.setHref(
-					HttpComponentsUtil.addParameter(
+					HttpComponentsUtil.addParameters(
 						_portal.getLayoutFullURL(
 							_layoutLocalService.getLayoutByFriendlyURL(
 								_themeDisplay.getScopeGroupId(), false,
 								"/categorization/new_category"),
 							_themeDisplay),
-						"vocabularyId", getVocabularyId()));
+						"parentCategoryId", parentCategoryId, "vocabularyId",
+						getVocabularyId()));
 
 				item.setLabel(
-					_language.get(_httpServletRequest, "new-category"));
+					_language.get(_httpServletRequest, "new-subcategory"));
 			}
+		).build();
+	}
+
+	public Map<String, Object> getEmptyState() {
+		return HashMapBuilder.<String, Object>put(
+			"description",
+			_language.get(
+				_httpServletRequest, "click-new-to-create-your-first-category")
+		).put(
+			"image", "/states/cms_empty_state_categorization.svg"
+		).put(
+			"title", _language.get(_httpServletRequest, "no-categories-yet")
 		).build();
 	}
 
@@ -100,14 +159,34 @@ public class ViewCategoriesDisplayContext {
 							_themeDisplay.getScopeGroupId(), false,
 							"/categorization/edit_category"),
 						_themeDisplay),
-					"categoryId", "{id}", "vocabularyId",
-					"{taxonomyVocabularyId}"),
+					"categoryId", "{id}", "parentCategoryId", getCategoryId(),
+					"vocabularyId", "{taxonomyVocabularyId}"),
 				"pencil", "edit", _language.get(_httpServletRequest, "edit"),
 				"get", "update", null),
 			new FDSActionDropdownItem(
-				"TODO: Add Subcategory URL", null, "add-subcategory",
+				HttpComponentsUtil.addParameters(
+					_portal.getLayoutFullURL(
+						_layoutLocalService.getLayoutByFriendlyURL(
+							_themeDisplay.getScopeGroupId(), false,
+							"/categorization/edit_category"),
+						_themeDisplay),
+					"parentCategoryId", "{id}", "vocabularyId",
+					"{taxonomyVocabularyId}"),
+				null, "add-subcategory",
 				_language.get(_httpServletRequest, "add-subcategory"), "get",
 				"update", null),
+			new FDSActionDropdownItem(
+				HttpComponentsUtil.addParameters(
+					PortalUtil.getLayoutFullURL(
+						LayoutLocalServiceUtil.getLayoutByFriendlyURL(
+							_themeDisplay.getScopeGroupId(), false,
+							"/categorization/view_categories"),
+						_themeDisplay),
+					"categoryId", "{id}", "vocabularyId",
+					"{taxonomyVocabularyId}"),
+				null, "view-categories",
+				_language.get(_httpServletRequest, "view-subcategories"), "get",
+				null, null),
 			new FDSActionDropdownItem(
 				HttpComponentsUtil.addParameter(
 					PortalUtil.getLayoutFullURL(
@@ -128,7 +207,7 @@ public class ViewCategoriesDisplayContext {
 				_language.get(_httpServletRequest, "permissions"), "get", null,
 				"modal-permissions"),
 			new FDSActionDropdownItem(
-				null, "times-circle", "delete",
+				null, "trash", "delete",
 				_language.get(_httpServletRequest, "delete"), null, "delete",
 				null));
 	}
@@ -166,6 +245,7 @@ public class ViewCategoriesDisplayContext {
 		ViewCategoriesDisplayContext.class);
 
 	private final AssetVocabularyLocalService _assetVocabularyLocalService;
+	private Long _categoryId;
 	private final HttpServletRequest _httpServletRequest;
 	private final Language _language;
 	private final LayoutLocalService _layoutLocalService;

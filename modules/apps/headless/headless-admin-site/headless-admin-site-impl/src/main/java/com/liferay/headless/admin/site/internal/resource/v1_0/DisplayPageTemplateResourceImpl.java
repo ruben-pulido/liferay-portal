@@ -18,6 +18,7 @@ import com.liferay.headless.admin.site.dto.v1_0.SitemapSettings;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.FileEntryUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.GroupUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
+import com.liferay.headless.admin.site.internal.resource.v1_0.util.PageSpecificationUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.ServiceContextUtil;
 import com.liferay.headless.admin.site.resource.v1_0.DisplayPageTemplateResource;
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
@@ -54,6 +55,7 @@ import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -332,6 +334,9 @@ public class DisplayPageTemplateResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
+		DisplayPageTemplateSettings displayPageTemplateSettings =
+			displayPageTemplate.getDisplayPageTemplateSettings();
+
 		long classTypeId = _getClassTypeId(contentTypeReference, groupId);
 
 		if (!className.equals(layoutPageTemplateEntry.getClassName()) ||
@@ -368,12 +373,24 @@ public class DisplayPageTemplateResourceImpl
 		Layout layout = _layoutLocalService.getLayout(
 			layoutPageTemplateEntry.getPlid());
 
-		LayoutUtil.updateContentLayout(
-			layout, layout.getNameMap(), layout.getTitleMap(),
-			layout.getDescriptionMap(), layout.getRobotsMap(),
+		layout = LayoutUtil.updateContentLayout(
+			layout, _getUnicodeProperties(displayPageTemplateSettings),
+			layout.getNameMap(), layout.getTitleMap(),
+			layout.getDescriptionMap(),
+			_getRobotsMap(displayPageTemplateSettings),
 			LocalizedMapUtil.getLocalizedMap(
 				displayPageTemplate.getFriendlyUrlPath_i18n()),
-			null, _getServiceContext(displayPageTemplate, groupId));
+			displayPageTemplate.getPageSpecifications(),
+			_getServiceContext(displayPageTemplate, groupId));
+
+		if (!layoutPageTemplateEntry.isApproved() &&
+			LayoutUtil.isPublished(layout)) {
+
+			layoutPageTemplateEntry =
+				_layoutPageTemplateEntryService.updateStatus(
+					layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
+					WorkflowConstants.STATUS_APPROVED);
+		}
 
 		return _displayPageTemplateDTOConverter.toDTO(
 			_layoutPageTemplateEntryService.updateLayoutPageTemplateEntry(
@@ -391,9 +408,19 @@ public class DisplayPageTemplateResourceImpl
 				displayPageTemplate::getContentTypeReference);
 		}
 
+		if (displayPageTemplate.getDisplayPageTemplateSettings() != null) {
+			existingDisplayPageTemplate.setDisplayPageTemplateSettings(
+				displayPageTemplate::getDisplayPageTemplateSettings);
+		}
+
 		if (displayPageTemplate.getFriendlyUrlPath_i18n() != null) {
 			existingDisplayPageTemplate.setFriendlyUrlPath_i18n(
 				displayPageTemplate::getFriendlyUrlPath_i18n);
+		}
+
+		if (displayPageTemplate.getPageSpecifications() != null) {
+			existingDisplayPageTemplate.setPageSpecifications(
+				displayPageTemplate::getPageSpecifications);
 		}
 
 		if (displayPageTemplate.getParentFolder() != null) {
@@ -422,84 +449,9 @@ public class DisplayPageTemplateResourceImpl
 		Map<Locale, String> nameMap = Collections.singletonMap(
 			_portal.getSiteDefaultLocale(groupId),
 			displayPageTemplate.getName());
-		Map<Locale, String> robotsMap = null;
-		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
 		DisplayPageTemplateSettings displayPageTemplateSettings =
 			displayPageTemplate.getDisplayPageTemplateSettings();
-
-		if (displayPageTemplateSettings != null) {
-			DisplayPageTemplateOpenGraphSettings
-				displayPageTemplateOpenGraphSettings =
-					displayPageTemplateSettings.getOpenGraphSettings();
-
-			if (displayPageTemplateOpenGraphSettings != null) {
-				unicodeProperties.setProperty(
-					"mapped-openGraphDescription",
-					displayPageTemplateOpenGraphSettings.
-						getDescriptionTemplate());
-				unicodeProperties.setProperty(
-					"mapped-openGraphImageAlt",
-					displayPageTemplateOpenGraphSettings.getImageAltTemplate());
-				unicodeProperties.setProperty(
-					"mapped-openGraphImage",
-					displayPageTemplateOpenGraphSettings.getImageTemplate());
-				unicodeProperties.setProperty(
-					"mapped-openGraphTitle",
-					displayPageTemplateOpenGraphSettings.getTitleTemplate());
-			}
-
-			SitemapSettings sitemapSettings = null;
-
-			DisplayPageTemplateSEOSettings displayPageTemplateSEOSettings =
-				displayPageTemplateSettings.getSeoSettings();
-
-			if (displayPageTemplateSEOSettings != null) {
-				robotsMap = LocalizedMapUtil.getLocalizedMap(
-					contextAcceptLanguage.getPreferredLocale(), null,
-					displayPageTemplateSEOSettings.getRobots_i18n());
-
-				sitemapSettings =
-					displayPageTemplateSEOSettings.getSitemapSettings();
-
-				unicodeProperties.setProperty(
-					"mapped-description",
-					displayPageTemplateSEOSettings.getDescriptionTemplate());
-				unicodeProperties.setProperty(
-					"mapped-title",
-					displayPageTemplateSEOSettings.getHtmlTitleTemplate());
-			}
-
-			if (sitemapSettings != null) {
-				SitemapSettings.ChangeFrequency changeFrequency =
-					sitemapSettings.getChangeFrequency();
-
-				if (changeFrequency != null) {
-					unicodeProperties.setProperty(
-						LayoutTypePortletConstants.SITEMAP_CHANGEFREQ,
-						StringUtil.lowerCaseFirstLetter(
-							changeFrequency.toString()));
-				}
-
-				Boolean include = sitemapSettings.getInclude();
-
-				if (include != null) {
-					String sitemapInclude = "0";
-
-					if (include) {
-						sitemapInclude = "1";
-					}
-
-					unicodeProperties.setProperty(
-						LayoutTypePortletConstants.SITEMAP_INCLUDE,
-						sitemapInclude);
-				}
-
-				unicodeProperties.setProperty(
-					LayoutTypePortletConstants.SITEMAP_PRIORITY,
-					String.valueOf(sitemapSettings.getPagePriority()));
-			}
-		}
 
 		ServiceContext serviceContext = _getServiceContext(
 			displayPageTemplate, groupId);
@@ -512,8 +464,9 @@ public class DisplayPageTemplateResourceImpl
 
 		Layout layout = LayoutUtil.addContentLayout(
 			groupId, displayPageTemplate.getPageSpecifications(), false,
-			nameMap, nameMap, null, robotsMap,
-			LayoutConstants.TYPE_ASSET_DISPLAY, unicodeProperties, true, true,
+			nameMap, nameMap, null, _getRobotsMap(displayPageTemplateSettings),
+			LayoutConstants.TYPE_ASSET_DISPLAY,
+			_getUnicodeProperties(displayPageTemplateSettings), true, true,
 			LocalizedMapUtil.getLocalizedMap(
 				displayPageTemplate.getFriendlyUrlPath_i18n()),
 			WorkflowConstants.STATUS_APPROVED, serviceContext);
@@ -528,7 +481,9 @@ public class DisplayPageTemplateResourceImpl
 				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
 				FileEntryUtil.getPreviewFileEntryId(
 					groupId, displayPageTemplate.getThumbnail()),
-				false, 0L, layout.getPlid(), 0L, WorkflowConstants.STATUS_DRAFT,
+				false, 0L, layout.getPlid(), 0L,
+				PageSpecificationUtil.getPublishedStatus(
+					displayPageTemplate.getPageSpecifications()),
 				serviceContext));
 	}
 
@@ -596,6 +551,25 @@ public class DisplayPageTemplateResourceImpl
 		return layoutPageTemplateCollection.getLayoutPageTemplateCollectionId();
 	}
 
+	private Map<Locale, String> _getRobotsMap(
+		DisplayPageTemplateSettings displayPageTemplateSettings) {
+
+		Map<Locale, String> robotsMap = new HashMap<>();
+
+		if ((displayPageTemplateSettings != null) &&
+			(displayPageTemplateSettings.getSeoSettings() != null)) {
+
+			DisplayPageTemplateSEOSettings displayPageTemplateSEOSettings =
+				displayPageTemplateSettings.getSeoSettings();
+
+			robotsMap = LocalizedMapUtil.getLocalizedMap(
+				contextAcceptLanguage.getPreferredLocale(), null,
+				displayPageTemplateSEOSettings.getRobots_i18n());
+		}
+
+		return robotsMap;
+	}
+
 	private ServiceContext _getServiceContext(
 		DisplayPageTemplate displayPageTemplate, long groupId) {
 
@@ -609,6 +583,83 @@ public class DisplayPageTemplateResourceImpl
 		serviceContext.setUuid(displayPageTemplate.getUuid());
 
 		return serviceContext;
+	}
+
+	private UnicodeProperties _getUnicodeProperties(
+		DisplayPageTemplateSettings displayPageTemplateSettings) {
+
+		UnicodeProperties unicodeProperties = new UnicodeProperties();
+
+		if (displayPageTemplateSettings == null) {
+			return unicodeProperties;
+		}
+
+		DisplayPageTemplateOpenGraphSettings
+			displayPageTemplateOpenGraphSettings =
+				displayPageTemplateSettings.getOpenGraphSettings();
+
+		if (displayPageTemplateOpenGraphSettings != null) {
+			unicodeProperties.setProperty(
+				"mapped-openGraphDescription",
+				displayPageTemplateOpenGraphSettings.getDescriptionTemplate());
+			unicodeProperties.setProperty(
+				"mapped-openGraphImageAlt",
+				displayPageTemplateOpenGraphSettings.getImageAltTemplate());
+			unicodeProperties.setProperty(
+				"mapped-openGraphImage",
+				displayPageTemplateOpenGraphSettings.getImageTemplate());
+			unicodeProperties.setProperty(
+				"mapped-openGraphTitle",
+				displayPageTemplateOpenGraphSettings.getTitleTemplate());
+		}
+
+		SitemapSettings sitemapSettings = null;
+
+		DisplayPageTemplateSEOSettings displayPageTemplateSEOSettings =
+			displayPageTemplateSettings.getSeoSettings();
+
+		if (displayPageTemplateSEOSettings != null) {
+			sitemapSettings =
+				displayPageTemplateSEOSettings.getSitemapSettings();
+
+			unicodeProperties.setProperty(
+				"mapped-description",
+				displayPageTemplateSEOSettings.getDescriptionTemplate());
+			unicodeProperties.setProperty(
+				"mapped-title",
+				displayPageTemplateSEOSettings.getHtmlTitleTemplate());
+		}
+
+		if (sitemapSettings != null) {
+			SitemapSettings.ChangeFrequency changeFrequency =
+				sitemapSettings.getChangeFrequency();
+
+			if (changeFrequency != null) {
+				unicodeProperties.setProperty(
+					LayoutTypePortletConstants.SITEMAP_CHANGEFREQ,
+					StringUtil.lowerCaseFirstLetter(
+						changeFrequency.toString()));
+			}
+
+			Boolean include = sitemapSettings.getInclude();
+
+			if (include != null) {
+				String sitemapInclude = "0";
+
+				if (include) {
+					sitemapInclude = "1";
+				}
+
+				unicodeProperties.setProperty(
+					LayoutTypePortletConstants.SITEMAP_INCLUDE, sitemapInclude);
+			}
+
+			unicodeProperties.setProperty(
+				LayoutTypePortletConstants.SITEMAP_PRIORITY,
+				String.valueOf(sitemapSettings.getPagePriority()));
+		}
+
+		return unicodeProperties;
 	}
 
 	@Reference

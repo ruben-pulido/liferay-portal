@@ -81,6 +81,7 @@ import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.SecureRandomUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
@@ -144,6 +145,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -542,7 +544,7 @@ public class JournalArticleLocalServiceTest {
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID, "Test-1",
 			RandomTestUtil.randomString());
 
-		JournalArticle thirdArticle = JournalTestUtil.addArticle(
+		JournalArticle thirdJournalArticle = JournalTestUtil.addArticle(
 			_group.getGroupId(),
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID, "Test-2",
 			oldJournalArticle.getContent());
@@ -555,7 +557,7 @@ public class JournalArticleLocalServiceTest {
 
 		Assert.assertNotEquals(oldJournalArticle, newJournalArticle);
 		Assert.assertNotEquals(
-			thirdArticle.getUrlTitle(), newJournalArticle.getUrlTitle());
+			thirdJournalArticle.getUrlTitle(), newJournalArticle.getUrlTitle());
 
 		List<ResourcePermission> oldResourcePermissions =
 			_resourcePermissionLocalService.getResourcePermissions(
@@ -2197,6 +2199,35 @@ public class JournalArticleLocalServiceTest {
 	}
 
 	@Test
+	public void testUpdateArticleWithoutDisplayDate() throws Exception {
+		JournalArticle journalArticle1 = JournalTestUtil.addArticle(
+			_group.getGroupId(),
+			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
+
+		Assert.assertNotNull(journalArticle1.getDisplayDate());
+
+		JournalArticle journalArticle2 = JournalTestUtil.updateArticle(
+			journalArticle1);
+
+		Assert.assertEquals(
+			journalArticle1.getDisplayDate(), journalArticle2.getDisplayDate());
+
+		Calendar calendar = Calendar.getInstance();
+
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		Date date = calendar.getTime();
+
+		journalArticle2 = JournalTestUtil.updateArticle(
+			journalArticle2.getUserId(), journalArticle2,
+			journalArticle2.getTitleMap(), journalArticle2.getContent(), date,
+			false, true, ServiceContextTestUtil.getServiceContext());
+
+		Assert.assertEquals(date, journalArticle2.getDisplayDate());
+	}
+
+	@Test
 	public void testUpdateDDMStructurePredefinedValues() throws Exception {
 		Tuple tuple = _createJournalArticleWithPredefinedValues("Test Article");
 
@@ -2239,6 +2270,9 @@ public class JournalArticleLocalServiceTest {
 				fileName);
 
 		return TempFileEntryUtil.addTempFileEntry(
+			String.valueOf(
+				new UUID(
+					SecureRandomUtil.nextLong(), SecureRandomUtil.nextLong())),
 			_group.getGroupId(), TestPropsValues.getUserId(),
 			JournalArticle.class.getName(), fileName, inputStream,
 			ContentTypes.IMAGE_JPEG);

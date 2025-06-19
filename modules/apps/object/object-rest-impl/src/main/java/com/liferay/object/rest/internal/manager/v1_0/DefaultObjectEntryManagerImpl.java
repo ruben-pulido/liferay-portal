@@ -6,6 +6,7 @@
 package com.liferay.object.rest.internal.manager.v1_0;
 
 import com.liferay.account.exception.NoSuchGroupException;
+import com.liferay.batch.engine.attachment.BatchEngineAttachmentManager;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.object.action.engine.ObjectActionEngine;
 import com.liferay.object.constants.ObjectActionTriggerConstants;
@@ -16,6 +17,7 @@ import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.entry.util.ObjectEntryDTOConverterUtil;
 import com.liferay.object.exception.NoSuchObjectEntryException;
+import com.liferay.object.exception.ObjectEntryValuesException;
 import com.liferay.object.field.attachment.AttachmentManager;
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.field.business.type.ObjectFieldBusinessTypeRegistry;
@@ -58,6 +60,7 @@ import com.liferay.object.service.ObjectRelationshipService;
 import com.liferay.object.system.SystemObjectDefinitionManager;
 import com.liferay.object.system.SystemObjectDefinitionManagerRegistry;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -67,6 +70,7 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
@@ -127,7 +131,9 @@ import jakarta.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.Serializable;
 
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 import java.text.ParseException;
 
@@ -385,12 +391,25 @@ public class DefaultObjectEntryManagerImpl
 	}
 
 	@Override
+	public ObjectEntry expireObjectEntry(
+			DTOConverterContext dtoConverterContext, long objectEntryId)
+		throws Exception {
+
+		com.liferay.object.model.ObjectEntry objectEntry =
+			_objectEntryService.expireObjectEntry(
+				dtoConverterContext.getUserId(), objectEntryId,
+				ServiceContextUtil.createServiceContext(objectEntryId));
+
+		return _objectEntryDTOConverter.toDTO(dtoConverterContext, objectEntry);
+	}
+
+	@Override
 	public ObjectEntry expireObjectEntryByVersion(
 			DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition, long objectEntryId, int version)
 		throws Exception {
 
-		return _expireObjectEntry(
+		return _expireObjectEntryVersion(
 			dtoConverterContext, objectDefinition,
 			_objectEntryService.getObjectEntry(objectEntryId), version);
 	}
@@ -402,7 +421,7 @@ public class DefaultObjectEntryManagerImpl
 			int version)
 		throws Exception {
 
-		return _expireObjectEntry(
+		return _expireObjectEntryVersion(
 			dtoConverterContext, objectDefinition,
 			_objectEntryService.getObjectEntry(
 				externalReferenceCode, objectDefinition.getCompanyId(),
@@ -1147,10 +1166,32 @@ public class DefaultObjectEntryManagerImpl
 							serviceBuilderObjectEntry.getPrimaryKey());
 					}
 
-					nestedObjectEntry = objectEntryManager.updateObjectEntry(
-						objectDefinition.getCompanyId(), dtoConverterContext,
-						nestedObjectEntry.getExternalReferenceCode(),
-						relatedObjectDefinition, nestedObjectEntry, scopeKey);
+					try {
+						nestedObjectEntry =
+							objectEntryManager.updateObjectEntry(
+								objectDefinition.getCompanyId(),
+								dtoConverterContext,
+								nestedObjectEntry.getExternalReferenceCode(),
+								relatedObjectDefinition, nestedObjectEntry,
+								scopeKey);
+					}
+					catch (ObjectEntryValuesException.Required
+								objectEntryValuesException) {
+
+						if (!LazyReferencingThreadLocal.isEnabled()) {
+							throw objectEntryValuesException;
+						}
+
+						nestedObjectEntry = _toObjectEntry(
+							dtoConverterContext, relatedObjectDefinition,
+							objectEntryLocalService.
+								getOrAddIncompleteObjectEntry(
+									nestedObjectEntry.
+										getExternalReferenceCode(),
+									dtoConverterContext.getUserId(),
+									relatedObjectDefinition.
+										getObjectDefinitionId()));
+					}
 
 					if (!manyToOneObjectRelationship) {
 						_relateNestedObjectEntry(
@@ -1350,7 +1391,7 @@ public class DefaultObjectEntryManagerImpl
 			dtoConverterContext.getUserId());
 	}
 
-	private ObjectEntry _expireObjectEntry(
+	private ObjectEntry _expireObjectEntryVersion(
 			DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition,
 			com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry,
@@ -1360,11 +1401,11 @@ public class DefaultObjectEntryManagerImpl
 		_checkObjectEntryObjectDefinitionId(
 			objectDefinition, serviceBuilderObjectEntry);
 
-		_objectEntryService.expireObjectEntry(
-			dtoConverterContext.getUserId(),
-			serviceBuilderObjectEntry.getObjectEntryId(), version,
+		_objectEntryVersionService.expireObjectEntryVersion(
+			serviceBuilderObjectEntry,
 			ServiceContextUtil.createServiceContext(
-				serviceBuilderObjectEntry.getObjectEntryId()));
+				serviceBuilderObjectEntry.getObjectEntryId()),
+			dtoConverterContext.getUserId(), version);
 
 		dtoConverterContext.setAttribute(
 			"objectEntryVersion",
@@ -1741,7 +1782,8 @@ public class DefaultObjectEntryManagerImpl
 				 FeatureFlagManagerUtil.isEnabled("LPD-39967")) {
 
 			try {
-				URL url = new URL(fileEntry.getFileURL());
+				URL url = _batchEngineAttachmentManager.getURL(
+					fileEntry.getFileURL());
 
 				if (Objects.equals(url.getProtocol(), "file")) {
 					throw new UnsupportedOperationException(
@@ -1751,21 +1793,22 @@ public class DefaultObjectEntryManagerImpl
 							url.getProtocol()));
 				}
 
-				Http.Options options = new Http.Options();
+				URLConnection urlConnection = url.openConnection();
 
-				options.setLocation(url.toString());
+				if ((urlConnection instanceof
+						HttpURLConnection httpURLConnection) &&
+					(httpURLConnection.getResponseCode() !=
+						HttpURLConnection.HTTP_OK)) {
 
-				fileContent = _http.URLtoByteArray(options);
-
-				Http.Response response = options.getResponse();
-
-				if (response.getResponseCode() != 200) {
 					throw new IllegalArgumentException(
 						StringBundler.concat(
 							"Unable to download file from ",
 							fileEntry.getFileURL(), ", unexpected HTTP code: ",
-							response.getResponseCode()));
+							httpURLConnection.getResponseCode()));
 				}
+
+				fileContent = StreamUtil.toByteArray(
+					urlConnection.getInputStream());
 			}
 			catch (IOException ioException) {
 				_log.error(ioException);
@@ -1997,6 +2040,22 @@ public class DefaultObjectEntryManagerImpl
 					ActionKeys.DELETE, "deleteObjectEntry",
 					serviceBuilderObjectEntry, dtoConverterContext.getUriInfo())
 			).put(
+				"expire",
+				() -> {
+					if (!FeatureFlagManagerUtil.isEnabled(
+							objectDefinition.getCompanyId(), "LPD-17564") ||
+						serviceBuilderObjectEntry.isDraft() ||
+						serviceBuilderObjectEntry.isPending()) {
+
+						return null;
+					}
+
+					return _addAction(
+						ActionKeys.UPDATE, "postObjectEntryExpire",
+						serviceBuilderObjectEntry,
+						dtoConverterContext.getUriInfo());
+				}
+			).put(
 				"get",
 				_addAction(
 					ActionKeys.VIEW, "getObjectEntry",
@@ -2175,6 +2234,10 @@ public class DefaultObjectEntryManagerImpl
 				objectField.getName(), _getValue(locale, objectField, value));
 		}
 
+		values.put("displayDate", objectEntry.getDisplayDate());
+		values.put("expirationDate", objectEntry.getExpirationDate());
+		values.put("reviewDate", objectEntry.getReviewDate());
+
 		return values;
 	}
 
@@ -2234,6 +2297,9 @@ public class DefaultObjectEntryManagerImpl
 
 	@Reference
 	private AttachmentManager _attachmentManager;
+
+	@Reference
+	private BatchEngineAttachmentManager _batchEngineAttachmentManager;
 
 	@Reference
 	private DLAppLocalService _dlAppLocalService;

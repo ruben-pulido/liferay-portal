@@ -4,7 +4,7 @@ definition {
 	property osgi.modules.includes = "frontend-js-walkthrough-sample-web";
 	property portal.release = "true";
 	property portal.upstream = "true";
-	property testray.main.component.name = "User Interface";
+	property testray.main.component.name = "Frontend JS";
 
 	setUp {
 		TestCase.setUpPortalInstance();
@@ -13,6 +13,8 @@ definition {
 
 		task ("Given walkthrough enabled site-level") {
 			HeadlessSite.addSite(siteName = "Site Name");
+
+			Walkthrough.enableWalkthroughFF();
 
 			ApplicationsMenu.gotoSite(site = "Site Name");
 

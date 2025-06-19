@@ -31,6 +31,15 @@ public class ObjectEntryManagerUtil {
 			existingObjectEntry.setDateModified(objectEntry::getDateModified);
 		}
 
+		if (objectEntry.getDisplayDate() != null) {
+			existingObjectEntry.setDisplayDate(objectEntry::getDisplayDate);
+		}
+
+		if (objectEntry.getExpirationDate() != null) {
+			existingObjectEntry.setExpirationDate(
+				objectEntry::getExpirationDate);
+		}
+
 		if (objectEntry.getExternalReferenceCode() != null) {
 			existingObjectEntry.setExternalReferenceCode(
 				objectEntry::getExternalReferenceCode);
@@ -89,6 +98,10 @@ public class ObjectEntryManagerUtil {
 			existingProperties.putAll(properties);
 
 			existingObjectEntry.setProperties(() -> existingProperties);
+		}
+
+		if (objectEntry.getReviewDate() != null) {
+			existingObjectEntry.setReviewDate(objectEntry::getReviewDate);
 		}
 
 		if (objectEntry.getStatus() != null) {

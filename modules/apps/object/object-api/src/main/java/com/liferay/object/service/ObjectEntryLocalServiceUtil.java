@@ -97,6 +97,12 @@ public class ObjectEntryLocalServiceUtil {
 			objectEntryFolderId, values, serviceContext);
 	}
 
+	public static void checkObjectEntries(long companyId)
+		throws PortalException {
+
+		getService().checkObjectEntries(companyId);
+	}
+
 	/**
 	 * Creates a new object entry with the primary key. Does not add the object entry to the database.
 	 *
@@ -272,12 +278,12 @@ public class ObjectEntryLocalServiceUtil {
 	}
 
 	public static ObjectEntry expireObjectEntry(
-			long userId, long objectEntryId, int version,
+			long userId, long objectEntryId,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().expireObjectEntry(
-			userId, objectEntryId, version, serviceContext);
+			userId, objectEntryId, serviceContext);
 	}
 
 	public static ObjectEntry fetchManyToOneObjectEntry(
@@ -524,6 +530,13 @@ public class ObjectEntryLocalServiceUtil {
 		return getService().getObjectEntryByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static List<ObjectEntry> getObjectEntryFolderObjectEntries(
+		long groupId, long objectEntryFolderId, int start, int end) {
+
+		return getService().getObjectEntryFolderObjectEntries(
+			groupId, objectEntryFolderId, start, end);
+	}
+
 	public static int getObjectEntryFolderObjectEntriesCount(
 		long groupId, long objectEntryFolderId) {
 
@@ -548,6 +561,14 @@ public class ObjectEntryLocalServiceUtil {
 
 		return getService().getOneToManyObjectEntriesCount(
 			groupId, objectRelationshipId, primaryKey, related, search);
+	}
+
+	public static ObjectEntry getOrAddIncompleteObjectEntry(
+			String externalReferenceCode, long userId, long objectDefinitionId)
+		throws PortalException {
+
+		return getService().getOrAddIncompleteObjectEntry(
+			externalReferenceCode, userId, objectDefinitionId);
 	}
 
 	/**

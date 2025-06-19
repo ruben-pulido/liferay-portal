@@ -21,11 +21,21 @@ export type ObjectField = {
 	system?: boolean;
 };
 
+export type ObjectRelationship = {
+	deletionType: string;
+	label: Liferay.Language.LocalizedValue<string>;
+	name: string;
+	objectDefinitionExternalReferenceCode1: string;
+	objectDefinitionExternalReferenceCode2: string;
+	type: string;
+};
+
 export type ObjectDefinition = {
 	enableFriendlyURLCustomization: boolean;
 	enableIndexSearch: boolean;
 	enableLocalization: boolean;
 	enableObjectEntryDraft: boolean;
+	enableObjectEntryVersioning: boolean;
 	externalReferenceCode: string;
 	id?: number;
 	label: Liferay.Language.LocalizedValue<string>;
@@ -36,6 +46,7 @@ export type ObjectDefinition = {
 	}[];
 	objectFields?: ObjectField[];
 	objectFolderExternalReferenceCode?: string;
+	objectRelationships?: ObjectRelationship[];
 	pluralLabel: Liferay.Language.LocalizedValue<string>;
 	scope: 'company' | 'depot' | 'site';
 	status?: {

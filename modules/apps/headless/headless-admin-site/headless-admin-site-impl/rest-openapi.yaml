@@ -2157,6 +2157,15 @@ components:
                     # @review
                     description:
                         The page's Open Graph settings.
+                priority:
+                    # @review
+                    description:
+                        The priority of the page, determining the order in which the page will be listed, for example
+                        within the page administration.
+                    format: int32
+                    maximum: 2147483647
+                    minimum: 0
+                    type: integer
                 seoSettings:
                     $ref: "#/components/schemas/SEOSettings"
                     # @review
@@ -2186,6 +2195,11 @@ components:
                     type: string
                 settings:
                     $ref: "#/components/schemas/Settings"
+                siteTemplatePageSpecificationExternalReferenceCode:
+                    # @review
+                    description:
+                        The site template page specification's external reference code.
+                    type: string
                 status:
                     # @review
                     description:
@@ -2584,6 +2598,12 @@ components:
                     items:
                         $ref: "#/components/schemas/ClientExtension"
                     type: array
+                iconItemExternalReference:
+                    $ref: "#/components/schemas/ItemExternalReference"
+                    # @review
+                    description:
+                        A reference to the icon which will be shown in the navigation menu. This property is only
+                        applied if the page specification belongs to a site page or a page template.
                 javascript:
                     # @review
                     description:
@@ -3527,7 +3547,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.site.client', and version '1.0.10'."
+        'com.liferay.headless.admin.site.client', and version '1.0.11'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

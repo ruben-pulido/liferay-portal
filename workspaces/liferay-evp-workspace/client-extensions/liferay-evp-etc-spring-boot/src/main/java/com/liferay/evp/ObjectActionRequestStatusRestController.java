@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Elvison Victor
@@ -48,11 +48,10 @@ public class ObjectActionRequestStatusRestController
 		JSONObject evpOrganizationJSONObject = new JSONObject(
 			get(
 				jwt.toString(),
-				_defaultUriBuilderFactory.builder(
-				).path(
+				UriComponentsBuilder.fromPath(
 					"/o/c/evporganizations/" + evpOrganizationId
 				).build(
-				).toString()));
+				).toUri()));
 
 		String organizationStatus = evpOrganizationJSONObject.getJSONObject(
 			"organizationStatus"
@@ -73,18 +72,14 @@ public class ObjectActionRequestStatusRestController
 						).build()
 					).build()
 				).toString(),
-				_defaultUriBuilderFactory.builder(
-				).path(
+				UriComponentsBuilder.fromPath(
 					"/o/c/evprequests/" +
 						objectEntryDTOEVPRequestJSONObject.getLong("id")
 				).build(
-				).toString());
+				).toUri());
 		}
 
 		return new ResponseEntity<>(json, HttpStatus.OK);
 	}
-
-	private final DefaultUriBuilderFactory _defaultUriBuilderFactory =
-		new DefaultUriBuilderFactory();
 
 }

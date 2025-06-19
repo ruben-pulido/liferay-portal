@@ -42,8 +42,8 @@ public class ObjectDefinitionLocalServiceUtil {
 			boolean enableComments, boolean enableFriendlyURLCustomization,
 			boolean enableIndexSearch, boolean enableLocalization,
 			boolean enableObjectEntryDraft, boolean enableObjectEntryVersioning,
-			Map<java.util.Locale, String> labelMap, String name,
-			String panelAppOrder, String panelCategoryKey,
+			String friendlyURLSeparator, Map<java.util.Locale, String> labelMap,
+			String name, String panelAppOrder, String panelCategoryKey,
 			Map<java.util.Locale, String> pluralLabelMap, boolean portlet,
 			String scope, String storageType,
 			List<com.liferay.object.model.ObjectDefinitionSetting>
@@ -55,9 +55,9 @@ public class ObjectDefinitionLocalServiceUtil {
 			userId, objectFolderId, className, enableComments,
 			enableFriendlyURLCustomization, enableIndexSearch,
 			enableLocalization, enableObjectEntryDraft,
-			enableObjectEntryVersioning, labelMap, name, panelAppOrder,
-			panelCategoryKey, pluralLabelMap, portlet, scope, storageType,
-			objectDefinitionSettings, objectFields);
+			enableObjectEntryVersioning, friendlyURLSeparator, labelMap, name,
+			panelAppOrder, panelCategoryKey, pluralLabelMap, portlet, scope,
+			storageType, objectDefinitionSettings, objectFields);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class ObjectDefinitionLocalServiceUtil {
 			String className, String dbTableName, boolean enableComments,
 			boolean enableFriendlyURLCustomization, boolean enableIndexSearch,
 			boolean enableLocalization, boolean enableObjectEntryDraft,
-			boolean enableObjectEntryVersioning,
+			boolean enableObjectEntryVersioning, String friendlyURLSeparator,
 			Map<java.util.Locale, String> labelMap, boolean modifiable,
 			String name, String panelAppOrder, String panelCategoryKey,
 			String pkObjectFieldDBColumnName, String pkObjectFieldName,
@@ -116,11 +116,11 @@ public class ObjectDefinitionLocalServiceUtil {
 			externalReferenceCode, userId, objectFolderId, className,
 			dbTableName, enableComments, enableFriendlyURLCustomization,
 			enableIndexSearch, enableLocalization, enableObjectEntryDraft,
-			enableObjectEntryVersioning, labelMap, modifiable, name,
-			panelAppOrder, panelCategoryKey, pkObjectFieldDBColumnName,
-			pkObjectFieldName, pluralLabelMap, portlet, scope,
-			titleObjectFieldName, version, status, objectDefinitionSettings,
-			objectFields);
+			enableObjectEntryVersioning, friendlyURLSeparator, labelMap,
+			modifiable, name, panelAppOrder, panelCategoryKey,
+			pkObjectFieldDBColumnName, pkObjectFieldName, pluralLabelMap,
+			portlet, scope, titleObjectFieldName, version, status,
+			objectDefinitionSettings, objectFields);
 	}
 
 	/**
@@ -362,13 +362,6 @@ public class ObjectDefinitionLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
-	public static List<ObjectDefinition> getBoundObjectDefinitions(
-		long companyId, long rootObjectDefinitionId) {
-
-		return getService().getBoundObjectDefinitions(
-			companyId, rootObjectDefinitionId);
-	}
-
 	public static List<ObjectDefinition> getCustomObjectDefinitions(
 		int status) {
 
@@ -567,7 +560,7 @@ public class ObjectDefinitionLocalServiceUtil {
 			boolean enableComments, boolean enableFriendlyURLCustomization,
 			boolean enableIndexSearch, boolean enableLocalization,
 			boolean enableObjectEntryDraft, boolean enableObjectEntryHistory,
-			boolean enableObjectEntryVersioning,
+			boolean enableObjectEntryVersioning, String friendlyURLSeparator,
 			Map<java.util.Locale, String> labelMap, String name,
 			String panelAppOrder, String panelCategoryKey, boolean portlet,
 			Map<java.util.Locale, String> pluralLabelMap, String scope,
@@ -583,9 +576,10 @@ public class ObjectDefinitionLocalServiceUtil {
 			className, enableCategorization, enableComments,
 			enableFriendlyURLCustomization, enableIndexSearch,
 			enableLocalization, enableObjectEntryDraft,
-			enableObjectEntryHistory, enableObjectEntryVersioning, labelMap,
-			name, panelAppOrder, panelCategoryKey, portlet, pluralLabelMap,
-			scope, status, objectDefinitionSettings);
+			enableObjectEntryHistory, enableObjectEntryVersioning,
+			friendlyURLSeparator, labelMap, name, panelAppOrder,
+			panelCategoryKey, portlet, pluralLabelMap, scope, status,
+			objectDefinitionSettings);
 	}
 
 	public static ObjectDefinition updateExternalReferenceCode(
@@ -631,14 +625,6 @@ public class ObjectDefinitionLocalServiceUtil {
 
 		return getService().updateRootDescendantNodeObjectDefinition(
 			objectDefinition, rootObjectDefinitionId);
-	}
-
-	public static ObjectDefinition updateRootObjectDefinitionId(
-			long objectDefinitionId, long rootObjectDefinitionId)
-		throws PortalException {
-
-		return getService().updateRootObjectDefinitionId(
-			objectDefinitionId, rootObjectDefinitionId);
 	}
 
 	public static ObjectDefinition updateSystemObjectDefinition(

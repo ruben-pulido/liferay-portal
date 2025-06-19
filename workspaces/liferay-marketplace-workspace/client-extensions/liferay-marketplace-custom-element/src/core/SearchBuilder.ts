@@ -53,7 +53,11 @@ export default class SearchBuilder {
 			return operator
 				.replace(
 					'{values}',
-					values.map((value) => `'${value}'`).join(',')
+					values
+						.map((value) =>
+							typeof value === 'number' ? value : `'${value}'`
+						)
+						.join(',')
 				)
 				.trim();
 		}

@@ -298,6 +298,7 @@
 					(TEMP_TABLE.version = JournalArticle.version)
 			LEFT JOIN
 				JournalArticleLocalization ON
+					(JournalArticle.companyId = JournalArticleLocalization.companyId) AND
 					(JournalArticle.id_ = JournalArticleLocalization.articlePK) AND
 					(JournalArticleLocalization.languageId = ?)
 		]]>

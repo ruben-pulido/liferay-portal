@@ -99,6 +99,8 @@ public interface ObjectEntryLocalService
 			Map<String, Serializable> values, ServiceContext serviceContext)
 		throws PortalException;
 
+	public void checkObjectEntries(long companyId) throws PortalException;
+
 	/**
 	 * Creates a new object entry with the primary key. Does not add the object entry to the database.
 	 *
@@ -237,8 +239,7 @@ public interface ObjectEntryLocalService
 		DynamicQuery dynamicQuery, Projection projection);
 
 	public ObjectEntry expireObjectEntry(
-			long userId, long objectEntryId, int version,
-			ServiceContext serviceContext)
+			long userId, long objectEntryId, ServiceContext serviceContext)
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -409,6 +410,10 @@ public interface ObjectEntryLocalService
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<ObjectEntry> getObjectEntryFolderObjectEntries(
+		long groupId, long objectEntryFolderId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getObjectEntryFolderObjectEntriesCount(
 		long groupId, long objectEntryFolderId);
 
@@ -422,6 +427,12 @@ public interface ObjectEntryLocalService
 	public int getOneToManyObjectEntriesCount(
 			long groupId, long objectRelationshipId, long primaryKey,
 			boolean related, String search)
+		throws PortalException;
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Transactional(propagation = Propagation.REQUIRED)
+	public ObjectEntry getOrAddIncompleteObjectEntry(
+			String externalReferenceCode, long userId, long objectDefinitionId)
 		throws PortalException;
 
 	/**

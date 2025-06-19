@@ -5,11 +5,14 @@
 
 package com.liferay.frontend.js.web.internal.servlet.taglib;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.content.security.policy.ContentSecurityPolicyNonceProviderUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.taglib.BaseDynamicInclude;
 import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.url.builder.AbsolutePortalURLBuilder;
 import com.liferay.portal.url.builder.AbsolutePortalURLBuilderFactory;
 import com.liferay.portal.url.builder.BundleScriptAbsolutePortalURLBuilder;
@@ -95,6 +98,18 @@ public class LiferayGlobalObjectPostAUIDynamicInclude
 		printWriter.print(
 			ContentSecurityPolicyNonceProviderUtil.getNonceAttribute(
 				httpServletRequest));
+
+		try {
+			if (Validator.isNotNull(
+					PortalUtil.getCDNHost(httpServletRequest))) {
+
+				printWriter.print(" crossorigin=\"\"");
+			}
+		}
+		catch (Exception exception) {
+			_log.error(exception);
+		}
+
 		printWriter.print(" data-senna-track=\"permanent\" src=\"");
 		printWriter.print(src);
 		printWriter.print("\" type=\"");

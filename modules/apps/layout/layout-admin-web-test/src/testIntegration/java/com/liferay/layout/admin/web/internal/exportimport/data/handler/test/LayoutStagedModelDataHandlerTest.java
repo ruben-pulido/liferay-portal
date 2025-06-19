@@ -60,6 +60,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServ
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
 import com.liferay.layout.page.template.test.util.DisplayPageTemplateTestUtil;
+import com.liferay.layout.page.template.test.util.LayoutPageTemplateTestUtil;
 import com.liferay.layout.provider.LayoutStructureProvider;
 import com.liferay.layout.seo.model.LayoutSEOEntry;
 import com.liferay.layout.seo.model.LayoutSEOEntryCustomMetaTag;
@@ -696,6 +697,43 @@ public class LayoutStagedModelDataHandlerTest
 
 		StagedModelDataHandlerUtil.exportStagedModel(
 			portletDataContext, layout);
+	}
+
+	@Test
+	@TestInfo("LPD-56607")
+	public void testImportLayoutWithMasterLayoutShouldNotChangePortletDataContext()
+		throws Exception {
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			LayoutPageTemplateTestUtil.addLayoutPageTemplateEntry(
+				stagingGroup.getGroupId(),
+				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT,
+				WorkflowConstants.STATUS_APPROVED);
+
+		Layout layout = LayoutTestUtil.addTypeContentLayout(
+			stagingGroup, false, false, layoutPageTemplateEntry.getPlid());
+
+		initExport();
+
+		StagedModelDataHandlerUtil.exportStagedModel(
+			portletDataContext, layout);
+
+		initImport();
+
+		Assert.assertFalse(portletDataContext.isPrivateLayout());
+
+		ExportImportLifecycleManagerUtil.fireExportImportLifecycleEvent(
+			ExportImportLifecycleConstants.EVENT_LAYOUT_IMPORT_STARTED,
+			ExportImportLifecycleConstants.
+				PROCESS_FLAG_LAYOUT_IMPORT_IN_PROCESS,
+			portletDataContext.getExportImportProcessId(),
+			PortletDataContextFactoryUtil.clonePortletDataContext(
+				portletDataContext));
+
+		StagedModelDataHandlerUtil.importStagedModel(
+			portletDataContext, readExportedStagedModel(layout));
+
+		Assert.assertFalse(portletDataContext.isPrivateLayout());
 	}
 
 	@Test

@@ -19,6 +19,7 @@ export class EditUserPage {
 	readonly doneButton: Locator;
 	readonly emailAddressError: Locator;
 	readonly emailAddressInput: Locator;
+	readonly emailAddressInvalidError: Locator;
 	readonly firstNameInput: Locator;
 	readonly generateWebDAVPasswordButton: Locator;
 	readonly informationLink: Locator;
@@ -49,6 +50,7 @@ export class EditUserPage {
 	readonly regularRoleCellButton: (name: string) => Locator;
 	readonly rolesLink: Locator;
 	readonly saveButton: Locator;
+	readonly screenNameError: Locator;
 	readonly screenNameInput: Locator;
 	readonly selectAccountsButton: Locator;
 	readonly selectOrganizationButton: Locator;
@@ -139,9 +141,17 @@ export class EditUserPage {
 				page.locator(
 					'#_com_liferay_account_admin_web_internal_portlet_AccountEntriesManagementPortlet_emailAddressHelper'
 				)
+			)
+			.or(
+				page.locator(
+					'#_com_liferay_users_admin_web_portlet_UsersAdminPortlet_emailAddressHelper'
+				)
 			);
 		this.emailAddressInput = page.getByLabel('Email Address');
-		this.firstNameInput = page.getByLabel('First Name');
+		this.emailAddressInvalidError = page.getByText(
+			'Please enter a valid email address.'
+		);
+		this.firstNameInput = page.locator('input[id*="Portlet_firstName"]');
 		this.generateWebDAVPasswordButton = page.getByTestId(
 			'generateWebDAVPasswordButton'
 		);
@@ -219,6 +229,9 @@ export class EditUserPage {
 			name: 'Roles',
 		});
 		this.saveButton = page.getByRole('button', {name: 'Save'});
+		this.screenNameError = page.locator(
+			'#_com_liferay_users_admin_web_portlet_UsersAdminPortlet_screenNameHelper'
+		);
 		this.screenNameInput = page.getByLabel('Screen Name');
 		this.selectAccountsButton = page.getByLabel('Select Accounts');
 		this.selectOrganizationButton = page.locator(

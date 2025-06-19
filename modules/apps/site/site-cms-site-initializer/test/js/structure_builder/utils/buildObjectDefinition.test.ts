@@ -59,6 +59,7 @@ describe('buildObjectDefinition', () => {
 			enableIndexSearch: true,
 			enableLocalization: true,
 			enableObjectEntryDraft: true,
+			enableObjectEntryVersioning: true,
 			externalReferenceCode: 'structureERC',
 			id: 1,
 			label: {en_US: 'Structure'},
@@ -78,6 +79,7 @@ describe('buildObjectDefinition', () => {
 					required: true,
 				},
 			],
+			objectRelationships: [],
 			pluralLabel: {en_US: 'Structure'},
 			scope: 'depot',
 		});
@@ -98,6 +100,7 @@ describe('buildObjectDefinition', () => {
 			enableIndexSearch: true,
 			enableLocalization: true,
 			enableObjectEntryDraft: true,
+			enableObjectEntryVersioning: true,
 			externalReferenceCode: 'structureERC',
 			id: 1,
 			label: {en_US: 'Structure'},
@@ -117,6 +120,7 @@ describe('buildObjectDefinition', () => {
 					required: false,
 				},
 			],
+			objectRelationships: [],
 			pluralLabel: {en_US: 'Structure'},
 			scope: 'depot',
 		});
@@ -137,6 +141,7 @@ describe('buildObjectDefinition', () => {
 			enableIndexSearch: true,
 			enableLocalization: true,
 			enableObjectEntryDraft: true,
+			enableObjectEntryVersioning: true,
 			externalReferenceCode: 'structureERC',
 			id: 1,
 			label: {en_US: 'Structure'},
@@ -162,6 +167,7 @@ describe('buildObjectDefinition', () => {
 					required: true,
 				},
 			],
+			objectRelationships: [],
 			pluralLabel: {en_US: 'Structure'},
 			scope: 'depot',
 		});

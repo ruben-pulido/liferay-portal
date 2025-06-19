@@ -266,7 +266,7 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 
 		serviceContext.setUuid(sitePage.getUuid());
 
-		return _layoutService.addLayout(
+		Layout layout = _layoutService.addLayout(
 			externalReferenceCode, groupId, false,
 			_getParentLayoutId(
 				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, groupId,
@@ -279,6 +279,15 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			LocalizedMapUtil.getLocalizedMap(
 				sitePage.getFriendlyUrlPath_i18n()),
 			0, serviceContext);
+
+		PageSettings pageSettings = sitePage.getPageSettings();
+
+		if ((pageSettings != null) && (pageSettings.getPriority() != null)) {
+			layout = _layoutService.updatePriority(
+				layout.getPlid(), pageSettings.getPriority());
+		}
+
+		return layout;
 	}
 
 	private long _getParentLayoutId(
@@ -388,6 +397,18 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			ServiceContextUtil.createServiceContext(
 				layout.getGroupId(), contextHttpServletRequest,
 				contextUser.getUserId()));
+
+		int priority = -1;
+
+		PageSettings pageSettings = sitePage.getPageSettings();
+
+		if ((pageSettings != null) && (pageSettings.getPriority() != null)) {
+			priority = pageSettings.getPriority();
+		}
+
+		if (layout.getPriority() != priority) {
+			layout = _layoutService.updatePriority(layout.getPlid(), priority);
+		}
 
 		String typeSettings = _getTypeSettings(sitePage);
 

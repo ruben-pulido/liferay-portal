@@ -1239,7 +1239,7 @@ public abstract class BaseBuild implements Build {
 		String consoleText = getConsoleText();
 
 		for (String line : consoleText.split("\\n")) {
-			Matcher matcher = _testrayAttachmentURLPattern.matcher(line);
+			Matcher matcher = _testrayS3ObjectURLPattern.matcher(line);
 
 			if (!matcher.find()) {
 				continue;
@@ -1264,34 +1264,6 @@ public abstract class BaseBuild implements Build {
 	}
 
 	@Override
-	public synchronized List<URL> getTestrayS3AttachmentURLs() {
-		if (_testrayS3AttachmentURLs != null) {
-			return _testrayS3AttachmentURLs;
-		}
-
-		_testrayS3AttachmentURLs = new ArrayList<>();
-
-		String consoleText = getConsoleText();
-
-		for (String line : consoleText.split("\\n")) {
-			Matcher matcher = _testrayS3ObjectURLPattern.matcher(line);
-
-			if (!matcher.find()) {
-				continue;
-			}
-
-			try {
-				_testrayS3AttachmentURLs.add(new URL(matcher.group("url")));
-			}
-			catch (MalformedURLException malformedURLException) {
-				throw new RuntimeException(malformedURLException);
-			}
-		}
-
-		return _testrayS3AttachmentURLs;
-	}
-
-	@Override
 	public JSONObject getTestReportJSONObject(boolean checkCache) {
 		String result = getResult();
 
@@ -1312,9 +1284,8 @@ public abstract class BaseBuild implements Build {
 				JenkinsResultsParserUtil.getLocalURL(getBuildURL() + urlSuffix),
 				checkCache, 5000);
 		}
-		catch (IOException ioException) {
-			throw new RuntimeException(
-				"Unable to get test report JSON object", ioException);
+		catch (Exception exception) {
+			return new JSONObject();
 		}
 	}
 
@@ -2859,7 +2830,7 @@ public abstract class BaseBuild implements Build {
 	protected int getTestCountByStatus(String status) {
 		JSONObject testReportJSONObject = getTestReportJSONObject(false);
 
-		if (testReportJSONObject == null) {
+		if ((testReportJSONObject == null) || testReportJSONObject.isEmpty()) {
 			return 0;
 		}
 
@@ -3520,8 +3491,6 @@ public abstract class BaseBuild implements Build {
 			"\\w+://(?<cohortName>test-\\d+)(-(?<masterId>\\d+))?",
 			"(\\.liferay\\.com)?/+job\\/+(?<jobName>[^\\/]+).*\\/",
 			"buildWithParameters\\?(?<queryString>.*)"));
-	private static final Pattern _testrayAttachmentURLPattern = Pattern.compile(
-		"\\[beanshell\\] Uploaded (?<url>https://testray.liferay.com/[^\\s]+)");
 	private static final Pattern _testrayS3ObjectURLPattern = Pattern.compile(
 		JenkinsResultsParserUtil.combine(
 			"\\[beanshell\\] Created S3 Object (?<url>",
@@ -3576,6 +3545,5 @@ public abstract class BaseBuild implements Build {
 	private StopWatchRecordsGroup _stopWatchRecordsGroup;
 	private Map<String, TestClassResult> _testClassResults;
 	private List<URL> _testrayAttachmentURLs;
-	private List<URL> _testrayS3AttachmentURLs;
 
 }

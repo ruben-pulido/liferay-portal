@@ -98,14 +98,19 @@ html#{$cadmin-selector} {
 			box-shadow: inset 0 0 0 1px $cadmin-primary-l2;
 		}
 
+		&__collection-item {
+			.page-editor__no-fragments-state {
+				background: fade_out($cadmin-purple-l4, 0.9);
+				border: $dashedBorderWidth dashed $cadmin-purple-l4;
+			}
+		}
+
 		&__col,
 		&__row,
 		&__collection-item {
 			position: relative;
 
 			.page-editor__no-fragments-state {
-				background: fade_out($cadmin-purple-l4, 0.9);
-				border: $dashedBorderWidth dashed $cadmin-purple-l4;
 				padding: 4vh 12% 6vh;
 			}
 
@@ -344,6 +349,25 @@ html#{$cadmin-selector} {
 
 	.page-editor__col--master > .page-editor__col__border {
 		border: none;
+	}
+
+	.page-editor__editable {
+		.lfr-ck {
+			outline: $cadmin-primary-d2 auto 1px;
+
+			.ck.ck-editor__editable_inline {
+				border: 0;
+				padding: 0;
+
+				& > *:last-child {
+					margin-bottom: 0;
+				}
+
+				& *:first-child {
+					margin-top: 0;
+				}
+			}
+		}
 	}
 
 	img.page-editor__editable {

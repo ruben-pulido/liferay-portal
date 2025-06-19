@@ -4,7 +4,7 @@ definition {
 	property custom.properties = "feature.flag.LPS-164563=true${line.separator}feature.flag.LPS-167253=true";
 	property portal.release = "true";
 	property portal.upstream = "true";
-	property testray.main.component.name = "Client Extension Framework";
+	property testray.main.component.name = "Frontend Client Extensions";
 
 	setUp {
 		TestCase.setUpPortalInstance();
@@ -379,27 +379,6 @@ definition {
 			AssertVisible(
 				key_tableEntryName = "Vanilla Counter",
 				locator1 = "ClientExtension#TABLE_ENTRY_NAME_REMOTE_TABLE");
-		}
-	}
-
-	@description = "LPS-141280. Verify that the client extension is not available on the workflow page"
-	@priority = 3
-	test CannotConfigureWorkflowSiteLevel {
-		task ("Given go to Workflow page") {
-			ProductMenu.gotoPortlet(
-				category = "Configuration",
-				portlet = "Workflow",
-				site = ${siteName});
-		}
-
-		task ("When View entry list table") {
-			AssertElementPresent(locator1 = "Pagination#ITEMS_PER_PAGE_SELECT");
-		}
-
-		task ("Then Client Extension* is not") {
-			Search.searchCP(searchTerm = "Client Extension");
-
-			AssertTextPresent(value1 = "No entries were found.");
 		}
 	}
 

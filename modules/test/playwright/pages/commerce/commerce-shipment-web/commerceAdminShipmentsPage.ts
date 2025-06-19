@@ -13,12 +13,15 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 	readonly addProductsToShipment: Locator;
 	readonly applicationsMenuPage: ApplicationsMenuPage;
 	readonly backLink: Locator;
+	readonly carrierDetailsEditLink: Locator;
+	readonly carrierDetailsSubmitButton: Locator;
 	readonly editProductCloseButton: Locator;
 	readonly editProductMenuItem: Locator;
 	readonly editProductSaveButton: Locator;
 	readonly keyShipmentStatus: (orderStatus: string) => Locator;
 	readonly page: Page;
 	readonly productEllipsis: Locator;
+	readonly productsSkuLink: (sku: string) => Locator;
 	readonly shipmentIdLink: (shipmentId: string) => Locator;
 	readonly shipmentsItemSubmitButton: Locator;
 	readonly shipmentItemsTable: Locator;
@@ -30,6 +33,7 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 	readonly shipmentItemsTableRows: () => Promise<Locator[]>;
 	readonly shipmentItemsTableRowAction: (sku: string) => Promise<Locator>;
 	readonly shipmentStatusLink: (shipmentStatus: string) => Locator;
+	readonly shippingMethodSelect: Locator;
 
 	constructor(page: Page) {
 		super(
@@ -44,6 +48,12 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 			'Add Products to This Shipment'
 		);
 		this.applicationsMenuPage = new ApplicationsMenuPage(page);
+		this.carrierDetailsEditLink = page
+			.getByText('Carrier Details Edit')
+			.getByRole('link');
+		this.carrierDetailsSubmitButton = page
+			.locator('.modal-item-last')
+			.getByRole('button', {exact: true, name: 'Submit'});
 		this.backLink = page.getByRole('link', {exact: true, name: 'Back'});
 		this.editProductCloseButton = page
 			.frameLocator('iframe')
@@ -63,6 +73,8 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 			exact: true,
 			name: 'Actions',
 		});
+		this.productsSkuLink = (sku: string) =>
+			page.getByRole('link', {exact: true, name: sku});
 		this.shipmentIdLink = (shipmentId: string) =>
 			page
 				.locator('table')
@@ -70,7 +82,6 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 		this.shipmentsItemSubmitButton = page
 			.frameLocator('iframe >> nth=1')
 			.getByRole('button', {exact: true, name: 'Submit'});
-
 		this.shipmentItemsTable = this.table;
 		this.shipmentItemsTableRow = this.tableRow;
 		this.shipmentItemsTableRows = this.tableRows;
@@ -89,6 +100,9 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 		};
 		this.shipmentStatusLink = (shipmentStatus: string) =>
 			page.getByRole('link', {exact: true, name: shipmentStatus});
+		this.shippingMethodSelect = page
+			.frameLocator('iframe >> nth=1')
+			.getByText('Shipping Method');
 	}
 
 	async goTo() {

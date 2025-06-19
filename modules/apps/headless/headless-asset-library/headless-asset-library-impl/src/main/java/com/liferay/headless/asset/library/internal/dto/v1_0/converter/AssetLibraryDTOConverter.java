@@ -75,7 +75,10 @@ public class AssetLibraryDTOConverter
 			{
 				setActions(dtoConverterContext::getActions);
 				setDateCreated(depotEntry::getCreateDate);
-				setDateModified(depotEntry::getModifiedDate);
+				setDateModified(
+					() -> GetterUtil.getObject(
+						depotEntry.getModifiedDate(),
+						depotEntry::getCreateDate));
 				setDescription(
 					() -> group.getDescription(
 						dtoConverterContext.getLocale()));
@@ -107,9 +110,7 @@ public class AssetLibraryDTOConverter
 						nestedField ->
 							_userGroupLocalService.getGroupUserGroupsCount(
 								group.getGroupId())));
-				setSettings(
-					() -> NestedFieldsSupplier.supply(
-						"settings", nestedField -> _toSettings(group)));
+				setSettings(() -> _toSettings(group));
 			}
 		};
 	}
@@ -152,7 +153,7 @@ public class AssetLibraryDTOConverter
 				setDefaultLanguageId(group::getDefaultLanguageId);
 				setLogoColor(
 					() -> GetterUtil.get(
-						unicodeProperties.get("logoColor"), "color-0"));
+						unicodeProperties.get("logoColor"), "outline-0"));
 				setMimeTypeLimits(() -> _toMimeTypeLimits(unicodeProperties));
 				setSharingEnabled(
 					() -> GetterUtil.getBoolean(

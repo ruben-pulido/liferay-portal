@@ -17,6 +17,7 @@ import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.Settings;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSpecification;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel;
@@ -244,6 +245,29 @@ public class PageSpecificationDTOConverter
 					() -> _getClientExtensions(
 						classNameId, layout.getPlid(),
 						ClientExtensionEntryConstants.TYPE_GLOBAL_JS));
+				setIconItemExternalReference(
+					() -> {
+						long iconImageId = layout.getIconImageId();
+
+						if (iconImageId == 0) {
+							return null;
+						}
+
+						FileEntry fileEntry = _dlAppService.getFileEntry(
+							iconImageId);
+
+						if (fileEntry == null) {
+							return null;
+						}
+
+						return new ItemExternalReference() {
+							{
+								setClassName(() -> FileEntry.class.getName());
+								setExternalReferenceCode(
+									fileEntry::getExternalReferenceCode);
+							}
+						};
+					});
 				setJavascript(
 					() -> unicodeProperties.getProperty("javascript", null));
 				setMasterPageItemExternalReference(
@@ -351,6 +375,18 @@ public class PageSpecificationDTOConverter
 				setPageExperiences(
 					() -> _getPageExperiences(dtoConverterContext, layout));
 				setSettings(() -> _setSettings(layout));
+				setSiteTemplatePageSpecificationExternalReferenceCode(
+					() -> {
+						Layout layoutSetPrototypeLayout =
+							layout.getLayoutSetPrototypeLayout();
+
+						if (layoutSetPrototypeLayout == null) {
+							return null;
+						}
+
+						return layoutSetPrototypeLayout.
+							getExternalReferenceCode();
+					});
 				setStatus(
 					() -> {
 						if (layout.isDraftLayout()) {
@@ -375,8 +411,37 @@ public class PageSpecificationDTOConverter
 	private PageSpecification _toWidgetPageSpecification(Layout layout) {
 		return new WidgetPageSpecification() {
 			{
-				setExternalReferenceCode(layout::getExternalReferenceCode);
+				setExternalReferenceCode(
+					() -> {
+						LayoutPageTemplateEntry layoutPageTemplateEntry =
+							_layoutPageTemplateEntryLocalService.
+								fetchLayoutPageTemplateEntryByPlid(
+									layout.getPlid());
+
+						if ((layoutPageTemplateEntry == null) ||
+							(layoutPageTemplateEntry.getType() !=
+								LayoutPageTemplateEntryTypeConstants.
+									WIDGET_PAGE)) {
+
+							return layout.getExternalReferenceCode();
+						}
+
+						return layoutPageTemplateEntry.
+							getExternalReferenceCode();
+					});
 				setSettings(() -> _setSettings(layout));
+				setSiteTemplatePageSpecificationExternalReferenceCode(
+					() -> {
+						Layout layoutSetPrototypeLayout =
+							layout.getLayoutSetPrototypeLayout();
+
+						if (layoutSetPrototypeLayout == null) {
+							return null;
+						}
+
+						return layoutSetPrototypeLayout.
+							getExternalReferenceCode();
+					});
 				setStatus(() -> Status.APPROVED);
 				setType(() -> Type.WIDGET_PAGE_SPECIFICATION);
 			}

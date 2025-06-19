@@ -5,6 +5,8 @@
 
 package com.liferay.jenkins.results.parser;
 
+import java.util.Objects;
+
 import org.json.JSONObject;
 
 /**
@@ -28,8 +30,18 @@ public class BaseTestReport implements TestReport {
 	}
 
 	@Override
+	public String getErrorStackTrace() {
+		return _jsonObject.optString("errorStackTrace");
+	}
+
+	@Override
 	public String getStatus() {
 		return _jsonObject.getString("status");
+	}
+
+	@Override
+	public String getTestClassName() {
+		return getTestName();
 	}
 
 	@Override
@@ -40,6 +52,36 @@ public class BaseTestReport implements TestReport {
 	@Override
 	public String getTestTaskName() {
 		return _jsonObject.optString("testTaskName");
+	}
+
+	@Override
+	public boolean isFailing() {
+		String status = getStatus();
+
+		DownstreamBuildReport downstreamBuildReport =
+			getDownstreamBuildReport();
+
+		if (status.equals("PASSED") && downstreamBuildReport.isFailing()) {
+			int failCount = downstreamBuildReport.getFailCount();
+			int passCount = downstreamBuildReport.getPassCount();
+
+			if ((failCount == 0) && (passCount == 1)) {
+				return true;
+			}
+		}
+
+		if (status.equals("FIXED") || status.equals("PASSED") ||
+			status.equals("SKIPPED")) {
+
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean isSkipped() {
+		return Objects.equals(getStatus(), "SKIPPED");
 	}
 
 	protected BaseTestReport(

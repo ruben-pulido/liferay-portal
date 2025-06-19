@@ -16,13 +16,11 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.model.LayoutFriendlyURL;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
-import com.liferay.portal.kernel.service.LayoutFriendlyURLLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.PermissionService;
 import com.liferay.portal.kernel.service.ResourceActionLocalService;
@@ -39,8 +37,6 @@ import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.custom.field.CustomFieldsUtil;
-import com.liferay.portal.vulcan.dto.converter.DTOConverter;
-import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.fields.NestedFieldsSupplier;
 import com.liferay.portal.vulcan.pagination.Page;
@@ -48,7 +44,6 @@ import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.permission.ModelPermissionsUtil;
 import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.portal.vulcan.permission.PermissionUtil;
-import com.liferay.portal.vulcan.util.JaxRsLinkUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.site.navigation.constants.SiteNavigationActionKeys;
@@ -65,7 +60,6 @@ import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -269,13 +263,14 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 			long siteId, long siteNavigationMenuId)
 		throws Exception {
 
-		String unicodeProperties = _getUnicodeProperties(
-			true, navigationMenuItem, siteId, null);
+		UnicodeProperties unicodeProperties = UnicodePropertiesBuilder.putAll(
+			navigationMenuItem.getTypeSettings()
+		).build();
 
 		SiteNavigationMenuItem siteNavigationMenuItem =
 			_siteNavigationMenuItemService.addSiteNavigationMenuItem(
 				null, siteId, siteNavigationMenuId, parentNavigationMenuId,
-				_getType(navigationMenuItem), unicodeProperties,
+				navigationMenuItem.getType(), unicodeProperties.toString(),
 				ServiceContextBuilder.create(
 					siteId, contextHttpServletRequest, null
 				).expandoBridgeAttributes(
@@ -318,18 +313,6 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 
 		return _layoutLocalService.fetchLayoutByUuidAndGroupId(
 			layoutUuid, siteNavigationMenuItem.getGroupId(), privateLayout);
-	}
-
-	private Layout _getLayout(String link, long siteId) throws Exception {
-		Layout layout = _layoutLocalService.fetchLayoutByFriendlyURL(
-			siteId, false, link);
-
-		if (layout == null) {
-			layout = _layoutLocalService.getLayoutByFriendlyURL(
-				siteId, true, link);
-		}
-
-		return layout;
 	}
 
 	private Locale _getLocaleFromProperty(Map.Entry<String, String> property) {
@@ -450,83 +433,6 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 		return siteNavigationMenuItemsMap;
 	}
 
-	private String _getType(NavigationMenuItem navigationMenuItem) {
-		if (navigationMenuItem.getLink() != null) {
-			return "layout";
-		}
-		else if (navigationMenuItem.getUrl() != null) {
-			return "url";
-		}
-
-		return "node";
-	}
-
-	private String _getUnicodeProperties(
-			boolean add, NavigationMenuItem navigationMenuItem, long siteId,
-			SiteNavigationMenuItem siteNavigationMenuItem)
-		throws Exception {
-
-		UnicodeProperties unicodeProperties = new UnicodeProperties(true);
-
-		if (navigationMenuItem.getLink() != null) {
-			unicodeProperties.setProperty(
-				"defaultLanguageId",
-				LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
-
-			Layout layout = _getLayout(navigationMenuItem.getLink(), siteId);
-
-			unicodeProperties.setProperty(
-				"groupId", String.valueOf(layout.getGroupId()));
-			unicodeProperties.setProperty("layoutUuid", layout.getUuid());
-
-			Map<Locale, String> nameMap = LocalizedMapUtil.getLocalizedMap(
-				contextAcceptLanguage.getPreferredLocale(),
-				navigationMenuItem.getName(), navigationMenuItem.getName_i18n(),
-				_getLocalizedNamesFromProperties(
-					_getUnicodeProperties(siteNavigationMenuItem)));
-
-			for (Map.Entry<Locale, String> entry : nameMap.entrySet()) {
-				unicodeProperties.setProperty(
-					"name_" + LocaleUtil.toLanguageId(entry.getKey()),
-					nameMap.get(entry.getKey()));
-			}
-
-			unicodeProperties.setProperty(
-				"privateLayout", String.valueOf(layout.isPrivateLayout()));
-			unicodeProperties.setProperty(
-				"useCustomName",
-				String.valueOf(navigationMenuItem.getUseCustomName()));
-		}
-		else {
-			Map<Locale, String> nameMap = LocalizedMapUtil.getLocalizedMap(
-				contextAcceptLanguage.getPreferredLocale(),
-				navigationMenuItem.getName(), navigationMenuItem.getName_i18n(),
-				_getLocalizedNamesFromProperties(
-					_getUnicodeProperties(siteNavigationMenuItem)));
-
-			LocalizedMapUtil.validateI18n(
-				add, LocaleUtil.getSiteDefault(), "Navigation Menu item",
-				nameMap, new HashSet<>());
-
-			unicodeProperties.setProperty(
-				"defaultLanguageId",
-				LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
-
-			for (Map.Entry<Locale, String> entry : nameMap.entrySet()) {
-				unicodeProperties.setProperty(
-					"name_" + LocaleUtil.toLanguageId(entry.getKey()),
-					nameMap.get(entry.getKey()));
-			}
-
-			if (navigationMenuItem.getUrl() != null) {
-				unicodeProperties.setProperty(
-					"url", navigationMenuItem.getUrl());
-			}
-		}
-
-		return unicodeProperties.toString();
-	}
-
 	private UnicodeProperties _getUnicodeProperties(
 		SiteNavigationMenuItem siteNavigationMenuItem) {
 
@@ -634,21 +540,6 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 						return LocaleUtil.toW3cLanguageIds(
 							locales.toArray(new Locale[localizedMap.size()]));
 					});
-				setContentURL(
-					() -> {
-						DTOConverter<?, ?> dtoConverter =
-							_dtoConverterRegistry.getDTOConverter(
-								navigationMenuItemType);
-
-						if (dtoConverter == null) {
-							return null;
-						}
-
-						return dtoConverter.getJaxRsLink(
-							GetterUtil.getLong(
-								unicodeProperties.getProperty("classPK")),
-							contextUriInfo);
-					});
 				setCreator(
 					() -> CreatorUtil.toCreator(
 						new DefaultDTOConverterContext(
@@ -666,40 +557,6 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 				setDateCreated(siteNavigationMenuItem::getCreateDate);
 				setDateModified(siteNavigationMenuItem::getModifiedDate);
 				setId(siteNavigationMenuItem::getSiteNavigationMenuItemId);
-				setLink(
-					() -> {
-						if (layout == null) {
-							return null;
-						}
-
-						return layout.getFriendlyURL(
-							contextAcceptLanguage.getPreferredLocale());
-					});
-				setLink_i18n(
-					() -> {
-						if ((layout == null) ||
-							!contextAcceptLanguage.isAcceptAllLanguages()) {
-
-							return null;
-						}
-
-						Map<String, String> i18nMap = new HashMap<>();
-
-						List<LayoutFriendlyURL> layoutFriendlyURLs =
-							_layoutFriendlyURLLocalService.
-								getLayoutFriendlyURLs(layout.getPlid());
-
-						for (LayoutFriendlyURL layoutFriendlyURL :
-								layoutFriendlyURLs) {
-
-							i18nMap.put(
-								LocaleUtil.toBCP47LanguageId(
-									layoutFriendlyURL.getLanguageId()),
-								layoutFriendlyURL.getFriendlyURL());
-						}
-
-						return i18nMap;
-					});
 				setName(
 					() -> _getName(
 						layout, navigationMenuItemType, unicodeProperties,
@@ -730,42 +587,8 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 						item -> _toNavigationMenuItem(
 							item, siteNavigationMenuItemsMap),
 						NavigationMenuItem.class));
-				setSitePageURL(
-					() -> {
-						if (layout == null) {
-							return null;
-						}
-
-						List<Object> arguments = new ArrayList<>();
-
-						arguments.add(layout.getGroupId());
-
-						String friendlyURL = layout.getFriendlyURL(
-							contextAcceptLanguage.getPreferredLocale());
-
-						arguments.add(friendlyURL.substring(1));
-
-						return JaxRsLinkUtil.getJaxRsLink(
-							"headless-delivery", BaseSitePageResourceImpl.class,
-							"getSiteSitePage", contextUriInfo,
-							arguments.toArray(new Object[0]));
-					});
-				setType(
-					() -> {
-						DTOConverter<?, ?> dtoConverter =
-							_dtoConverterRegistry.getDTOConverter(
-								navigationMenuItemType);
-
-						if (dtoConverter == null) {
-							return navigationMenuItemType;
-						}
-
-						String contentType = dtoConverter.getContentType();
-
-						return Character.toLowerCase(contentType.charAt(0)) +
-							contentType.substring(1);
-					});
-				setUrl(() -> unicodeProperties.getProperty("url"));
+				setType(siteNavigationMenuItem::getType);
+				setTypeSettings(() -> unicodeProperties);
 				setUseCustomName(
 					() -> Boolean.valueOf(
 						unicodeProperties.getProperty("useCustomName")));
@@ -880,9 +703,8 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 						_siteNavigationMenuItemService.
 							updateSiteNavigationMenuItem(
 								navigationMenuItemId,
-								_getUnicodeProperties(
-									false, navigationMenuItem, siteId,
-									siteNavigationMenuItem),
+								String.valueOf(
+									navigationMenuItem.getTypeSettings()),
 								ServiceContextBuilder.create(
 									siteId, contextHttpServletRequest, null
 								).expandoBridgeAttributes(
@@ -922,13 +744,7 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 		new NavigationMenuEntityModel();
 
 	@Reference
-	private DTOConverterRegistry _dtoConverterRegistry;
-
-	@Reference
 	private JSONFactory _jsonFactory;
-
-	@Reference
-	private LayoutFriendlyURLLocalService _layoutFriendlyURLLocalService;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

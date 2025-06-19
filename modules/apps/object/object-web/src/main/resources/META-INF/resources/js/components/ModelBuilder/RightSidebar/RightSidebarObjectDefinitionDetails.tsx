@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {API, stringUtils} from '@liferay/object-js-components-web';
-import {openToast} from 'frontend-js-components-web';
+import {API, openToast, stringUtils} from '@liferay/object-js-components-web';
 import {sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 import {useStore} from 'react-flow-renderer';
 
+import {Error, handleErrors} from '../../../utils/errors';
 import {AccountRestrictionContainer} from '../../ObjectDetails/AccountRestrictionContainer';
 import {ConfigurationContainer} from '../../ObjectDetails/ConfigurationContainer';
 import {Scope} from '../../ObjectDetails/EditObjectDetails';
@@ -62,6 +62,8 @@ export function RightSidebarObjectDefinitionDetails({
 
 	const [{selectedObjectDefinitionNode, selectedObjectFolder}, dispatch] =
 		useObjectFolderContext();
+
+	const [backEndErrors, setBackEndErrors] = useState<Error>({});
 
 	const store = useStore();
 
@@ -124,7 +126,7 @@ export function RightSidebarObjectDefinitionDetails({
 		);
 
 		if (!Object.keys(validationErrors).length) {
-			let objectDefinition = editedObjectDefinition ?? values;
+			let objectDefinition = editedObjectDefinition ?? {...values};
 
 			delete objectDefinition.objectRelationships;
 			delete objectDefinition.objectActions;
@@ -140,33 +142,74 @@ export function RightSidebarObjectDefinitionDetails({
 				const updatedObjectDefinitionResponse =
 					await API.patchObjectDefinitionById(objectDefinition);
 
-				const updatedObjectDefinition =
-					(await updatedObjectDefinitionResponse.json()) as ObjectDefinition;
+				if (!updatedObjectDefinitionResponse.ok) {
+					const errorDetails =
+						await updatedObjectDefinitionResponse.json();
 
-				const {edges, nodes} = store.getState();
+					throw errorDetails;
+				}
+				else {
+					const updatedObjectDefinition =
+						(await updatedObjectDefinitionResponse.json()) as ObjectDefinition;
 
-				dispatch({
-					payload: {
-						currentObjectFolderName: selectedObjectFolder.name,
-						objectDefinitionNodes: nodes,
-						objectDefinitionRelationshipEdges: edges,
-						updatedObjectDefinition,
-					},
-					type: TYPES.UPDATE_OBJECT_DEFINITION_NODE,
-				});
+					const {edges, nodes} = store.getState();
 
-				dispatch({
-					payload: {
-						updatedShowChangesSaved: true,
-					},
-					type: TYPES.SET_SHOW_CHANGES_SAVED,
-				});
+					dispatch({
+						payload: {
+							currentObjectFolderName: selectedObjectFolder.name,
+							objectDefinitionNodes: nodes,
+							objectDefinitionRelationshipEdges: edges,
+							updatedObjectDefinition,
+						},
+						type: TYPES.UPDATE_OBJECT_DEFINITION_NODE,
+					});
+
+					dispatch({
+						payload: {
+							updatedShowChangesSaved: true,
+						},
+						type: TYPES.SET_SHOW_CHANGES_SAVED,
+					});
+
+					openToast({
+						message: Liferay.Language.get(
+							'the-object-was-saved-successfully'
+						),
+						type: 'success',
+					});
+				}
 			}
-			catch (error: unknown) {
-				const {message} = error as Error;
+			catch (error) {
+				const {detail, title} = error as Error;
 
-				openToast({autoClose: 15000, message, type: 'danger'});
+				handleErrors({detail, title}, setBackEndErrors);
+
+				return;
 			}
+		}
+	};
+
+	const handleScheduleToggleChange = async (toggled: boolean) => {
+		if (toggled) {
+			setValues({
+				...values,
+				enableObjectEntrySchedule: true,
+			});
+		}
+		else {
+			Liferay.fire('openModalDisableScheduleConfiguration', {
+				handleDisable: async () => {
+					setValues({
+						...values,
+						enableObjectEntrySchedule: false,
+					});
+
+					await onSubmit({
+						...values,
+						enableObjectEntrySchedule: false,
+					});
+				},
+			});
 		}
 	};
 
@@ -179,6 +222,15 @@ export function RightSidebarObjectDefinitionDetails({
 			labels: values?.label,
 		})
 	);
+
+	const showSeoSection =
+		Liferay.FeatureFlags['LPD-21926'] &&
+		values.friendlyURLSeparator !== undefined &&
+		!(
+			(Liferay.FeatureFlags['LPS-135430'] &&
+				values.storageType !== 'default') ||
+			(!values.modifiable && values.system)
+		);
 
 	return (
 		<>
@@ -273,6 +325,7 @@ export function RightSidebarObjectDefinitionDetails({
 							?.linkedObjectDefinition ?? false
 					}
 					isRootDescendantNode={isRootDescendantNode}
+					onScheduleToggleChange={handleScheduleToggleChange}
 					onSubmit={onSubmit}
 					setValues={setValues}
 					values={values as ObjectDefinition}
@@ -285,10 +338,12 @@ export function RightSidebarObjectDefinitionDetails({
 					values={values}
 				/>
 			</div>
-			{Liferay.FeatureFlags['LPD-21926'] && (
+			{showSeoSection && (
 				<div className="lfr-objects__model-builder-right-sidebar-object-definition-node-content">
 					<SeoContainer
+						errors={backEndErrors}
 						onSubmit={onSubmit}
+						setErrors={setBackEndErrors}
 						setValues={setValues}
 						values={values}
 					/>

@@ -777,6 +777,15 @@ public abstract class BaseObjectEntryResourceImpl
 				objectEntry.getDefaultLanguageId());
 		}
 
+		if (objectEntry.getDisplayDate() != null) {
+			existingObjectEntry.setDisplayDate(objectEntry.getDisplayDate());
+		}
+
+		if (objectEntry.getExpirationDate() != null) {
+			existingObjectEntry.setExpirationDate(
+				objectEntry.getExpirationDate());
+		}
+
 		if (objectEntry.getExternalReferenceCode() != null) {
 			existingObjectEntry.setExternalReferenceCode(
 				objectEntry.getExternalReferenceCode());
@@ -817,6 +826,10 @@ public abstract class BaseObjectEntryResourceImpl
 			properties.putAll(objectEntry.getProperties());
 
 			existingObjectEntry.setProperties(properties);
+		}
+
+		if (objectEntry.getReviewDate() != null) {
+			existingObjectEntry.setReviewDate(objectEntry.getReviewDate());
 		}
 
 		if (objectEntry.getTaxonomyCategoryIds() != null) {
@@ -869,6 +882,15 @@ public abstract class BaseObjectEntryResourceImpl
 				objectEntry.getDefaultLanguageId());
 		}
 
+		if (objectEntry.getDisplayDate() != null) {
+			existingObjectEntry.setDisplayDate(objectEntry.getDisplayDate());
+		}
+
+		if (objectEntry.getExpirationDate() != null) {
+			existingObjectEntry.setExpirationDate(
+				objectEntry.getExpirationDate());
+		}
+
 		if (objectEntry.getExternalReferenceCode() != null) {
 			existingObjectEntry.setExternalReferenceCode(
 				objectEntry.getExternalReferenceCode());
@@ -909,6 +931,10 @@ public abstract class BaseObjectEntryResourceImpl
 			properties.putAll(objectEntry.getProperties());
 
 			existingObjectEntry.setProperties(properties);
+		}
+
+		if (objectEntry.getReviewDate() != null) {
+			existingObjectEntry.setReviewDate(objectEntry.getReviewDate());
 		}
 
 		if (objectEntry.getTaxonomyCategoryIds() != null) {
@@ -972,6 +998,15 @@ public abstract class BaseObjectEntryResourceImpl
 				objectEntry.getDefaultLanguageId());
 		}
 
+		if (objectEntry.getDisplayDate() != null) {
+			existingObjectEntry.setDisplayDate(objectEntry.getDisplayDate());
+		}
+
+		if (objectEntry.getExpirationDate() != null) {
+			existingObjectEntry.setExpirationDate(
+				objectEntry.getExpirationDate());
+		}
+
 		if (objectEntry.getExternalReferenceCode() != null) {
 			existingObjectEntry.setExternalReferenceCode(
 				objectEntry.getExternalReferenceCode());
@@ -1012,6 +1047,10 @@ public abstract class BaseObjectEntryResourceImpl
 			properties.putAll(objectEntry.getProperties());
 
 			existingObjectEntry.setProperties(properties);
+		}
+
+		if (objectEntry.getReviewDate() != null) {
+			existingObjectEntry.setReviewDate(objectEntry.getReviewDate());
 		}
 
 		if (objectEntry.getTaxonomyCategoryIds() != null) {
@@ -1284,6 +1323,31 @@ public abstract class BaseObjectEntryResourceImpl
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("version")
 			Integer version)
+		throws Exception {
+
+		return new ObjectEntry();
+	}
+
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "objectEntryId"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "ObjectEntry")}
+	)
+	@jakarta.ws.rs.Path("{objectEntryId}/expire")
+	@jakarta.ws.rs.POST
+	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public ObjectEntry postObjectEntryExpire(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("objectEntryId")
+			Long objectEntryId)
 		throws Exception {
 
 		return new ObjectEntry();
