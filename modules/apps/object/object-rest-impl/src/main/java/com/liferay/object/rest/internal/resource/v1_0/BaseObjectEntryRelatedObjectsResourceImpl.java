@@ -12,6 +12,7 @@ import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -40,6 +41,9 @@ import java.util.List;
 public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 
 	@DELETE
+	@Operation(
+		operationId = "deleteObjectEntryObjectRelationshipNameRelatedObjectEntry"
+	)
 	@Parameters(
 		{
 			@Parameter(in = ParameterIn.PATH, name = "currentObjectEntryId"),
@@ -65,6 +69,9 @@ public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 		throws Exception;
 
 	@GET
+	@Operation(
+		operationId = "getObjectEntryObjectRelationshipNameRelatedObjectEntryPage"
+	)
 	@Parameters(
 		{
 			@Parameter(in = ParameterIn.PATH, name = "currentObjectEntryId"),
@@ -90,6 +97,42 @@ public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 				@Context Pagination pagination)
 		throws Exception;
 
+	@Operation(
+		operationId = "putByExternalReferenceCodeObjectEntryObjectRelationshipNameRelatedObjectEntry"
+	)
+	@Parameters(
+		{
+			@Parameter(
+				in = ParameterIn.PATH, name = "currentExternalReferenceCode"
+			),
+			@Parameter(in = ParameterIn.PATH, name = "objectRelationshipName"),
+			@Parameter(
+				in = ParameterIn.PATH, name = "relatedExternalReferenceCode"
+			)
+		}
+	)
+	@Path(
+		"/by-external-reference-code/{currentExternalReferenceCode}/{objectRelationshipName}/{relatedExternalReferenceCode}"
+	)
+	@Produces({"application/json", "application/xml"})
+	@PUT
+	@Tags(@Tag(name = "ObjectEntry"))
+	public abstract Object
+			putByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode(
+				@NotNull @Parameter(hidden = true)
+				@PathParam("currentExternalReferenceCode")
+				String currentExternalReferenceCode,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("objectRelationshipName")
+				String objectRelationshipName,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("relatedExternalReferenceCode")
+				String relatedExternalReferenceCode)
+		throws Exception;
+
+	@Operation(
+		operationId = "putObjectEntryObjectRelationshipNameRelatedObjectEntry"
+	)
 	@Parameters(
 		{
 			@Parameter(in = ParameterIn.PATH, name = "currentObjectEntryId"),

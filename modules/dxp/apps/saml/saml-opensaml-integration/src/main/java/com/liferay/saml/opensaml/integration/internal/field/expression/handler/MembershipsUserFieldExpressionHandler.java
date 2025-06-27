@@ -5,18 +5,24 @@
 
 package com.liferay.saml.opensaml.integration.internal.field.expression.handler;
 
+import com.liferay.expando.kernel.model.ExpandoColumn;
+import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserGroup;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.saml.opensaml.integration.field.expression.handler.UserFieldExpressionHandler;
+import com.liferay.saml.opensaml.integration.internal.util.SamlProvisioningUtil;
 import com.liferay.saml.opensaml.integration.processor.context.UserProcessorContext;
 
 import java.util.ArrayList;
@@ -84,12 +90,29 @@ public class MembershipsUserFieldExpressionHandler
 									user.getCompanyId()),
 								user.getCompanyId(), value, StringPool.BLANK,
 								null);
+
+							ServiceContext serviceContext =
+								ServiceContextThreadLocal.getServiceContext();
+
+							String samlIdpEntityId = GetterUtil.getString(
+								serviceContext.getAttribute("SamlIdpEntityId"));
+
+							ExpandoColumn expandoColumn =
+								SamlProvisioningUtil.getOrAddExpandoColumn(
+									userGroup.getCompanyId(),
+									UserGroup.class.getName(), "idpId");
+
+							_expandoValueLocalService.addValue(
+								_classNameLocalService.getClassNameId(
+									UserGroup.class.getName()),
+								expandoColumn.getTableId(),
+								expandoColumn.getColumnId(),
+								userGroup.getUserGroupId(), samlIdpEntityId);
 						}
-						catch (PortalException portalException) {
+						catch (Exception exception) {
 							if (_log.isWarnEnabled()) {
 								_log.warn(
-									"Unable to create user group",
-									portalException);
+									"Unable to create user group", exception);
 							}
 						}
 					}
@@ -147,6 +170,12 @@ public class MembershipsUserFieldExpressionHandler
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		MembershipsUserFieldExpressionHandler.class);
+
+	@Reference
+	private ClassNameLocalService _classNameLocalService;
+
+	@Reference
+	private ExpandoValueLocalService _expandoValueLocalService;
 
 	private int _processingIndex;
 

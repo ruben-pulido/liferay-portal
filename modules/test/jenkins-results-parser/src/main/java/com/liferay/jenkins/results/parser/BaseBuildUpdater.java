@@ -126,6 +126,12 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 		}
 
 		_build.setStatus("completed");
+
+		if (_build instanceof DownstreamBuild) {
+			DownstreamBuild downstreamBuild = (DownstreamBuild)_build;
+
+			downstreamBuild.generateBuildReport();
+		}
 	}
 
 	protected void runRunning() {
@@ -162,11 +168,7 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 
 		_setCurrentReinvokeRule();
 
-		if (build.hasMaximumInvocationCount()) {
-			return true;
-		}
-
-		return false;
+		return build.hasMaximumInvocationCount();
 	}
 
 	private boolean _isApplyReinvokeRules() {

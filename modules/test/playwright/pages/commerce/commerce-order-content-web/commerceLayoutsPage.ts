@@ -19,6 +19,7 @@ export class CommerceLayoutsPage {
 	readonly backLink: Locator;
 	readonly cancelButton: Locator;
 	readonly changeCurrentThemeButton: Locator;
+	readonly closeFrameButton: Locator;
 	readonly closeProductMenuButton: Locator;
 	readonly configureMenuItem: Locator;
 	readonly createNewOrderButton: Locator;
@@ -34,6 +35,7 @@ export class CommerceLayoutsPage {
 	readonly displayPageTemplateCheckBox: (displayPageName: string) => Locator;
 	readonly displayPageTemplateLink: (name: string) => Locator;
 	readonly displayPageTemplatesLink: Locator;
+	readonly downloadCsvTemplateButton: Locator;
 	readonly editMenuItem: Locator;
 	readonly firstFragment: Locator;
 	readonly fragmentsAndWidgetsTab: Locator;
@@ -81,6 +83,11 @@ export class CommerceLayoutsPage {
 	readonly submitButton: Locator;
 	readonly widgetPageTemplateButton: Locator;
 
+	readonly orderTypeModal: Locator;
+	readonly orderTypeModalHeading: Locator;
+	readonly orderTypeModalInput: Locator;
+	readonly orderTypeModalButton: Locator;
+
 	constructor(page: Page) {
 		this.accountSelectorButton = (name) => {
 			return page.getByRole('button', {
@@ -120,6 +127,7 @@ export class CommerceLayoutsPage {
 			exact: true,
 			name: 'Change Current Theme',
 		});
+		this.closeFrameButton = page.getByLabel('close', {exact: true});
 		this.closeProductMenuButton = page.getByRole('tab', {
 			exact: true,
 			name: 'Close Product Menu',
@@ -191,6 +199,9 @@ export class CommerceLayoutsPage {
 			name: 'Cancel',
 		});
 		this.iconLock = page.locator('.lexicon-icon-lock');
+		this.downloadCsvTemplateButton = page
+			.frameLocator('iframe[title="Import from CSV"]')
+			.getByRole('button', {name: 'Download Template'});
 		this.infoBoxDeletePurchaseOrderDocumentButton = page.getByTestId(
 			'purchaseOrderDocument-infoBoxDeleteButton'
 		);
@@ -226,6 +237,17 @@ export class CommerceLayoutsPage {
 		this.orderItemCardButton = page
 			.frameLocator('iframe[title="Select"]')
 			.getByRole('button', {name: 'Select Order Items'});
+		this.orderTypeModal = page.locator('.modal-content');
+		this.orderTypeModalHeading = this.orderTypeModal.getByRole('heading', {
+			name: 'Select Order Type',
+		});
+		this.orderTypeModalInput = this.orderTypeModal.getByLabel(
+			'Order Type',
+			{exact: true}
+		);
+		this.orderTypeModalButton = this.orderTypeModal.getByRole('button', {
+			name: 'Add Order',
+		});
 		this.page = page;
 		this.pageEditorCollectionItem = page
 			.locator('.page-editor__collection-item')

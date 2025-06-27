@@ -797,7 +797,28 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro enableDeleteApplicationDataBeforeImport() {
+	macro enableCopyAsNewImport(baseURL = null) {
+		if (!(isSet(baseURL))) {
+			var baseURL = JSONCompany.getPortalURL();
+		}
+
+		Open.openInTheNewTab(value1 = ${baseURL});
+
+		PortalSettings.gotoConfiguration(
+			baseURL = ${baseURL},
+			configurationCategory = "Feature Flags",
+			configurationName = "Deprecation",
+			configurationScope = "Virtual Instance Scope");
+
+		FeatureFlag.enableFeatureFlag(
+			featureFlag = "LPD-44307",
+			scope = "Deprecation");
+
+		Close.closeWindow();
+	}
+
+	@summary = "Default summary"
+	macro enableDeleteApplicationDataBeforeImport(navigate = null) {
 		ApplicationsMenu.gotoPortlet(
 			category = "Configuration",
 			panel = "Control Panel",
@@ -815,7 +836,9 @@ definition {
 				toggle_state = "Disabled");
 		}
 
-		Navigator.openURL();
+		if (${navigate} != "false") {
+			Navigator.openURL();
+		}
 	}
 
 	@summary = "Default summary"

@@ -6,9 +6,10 @@
 import {isNullOrUndefined} from '@liferay/layout-js-components-web';
 import {useCallback} from 'react';
 
-import {State, useSelector, useStateDispatch} from '../contexts/StateContext';
+import {useSelector, useStateDispatch} from '../contexts/StateContext';
 import selectState from '../selectors/selectState';
 import selectStructureFields from '../selectors/selectStructureFields';
+import {Structure} from '../types/Structure';
 import {Field, MultiselectField, SingleSelectField} from './field';
 import focusInvalidElement from './focusInvalidElement';
 
@@ -63,7 +64,7 @@ export function validateStructure({
 	data,
 }: {
 	currentErrors?: Set<ValidationError>;
-	data: Partial<State>;
+	data: Partial<Structure>;
 }): Set<ValidationError> {
 	const {erc, label, name, spaces} = data;
 
@@ -95,6 +96,8 @@ export function useValidate() {
 	const fields = useSelector(selectStructureFields);
 	const state = useSelector(selectState);
 
+	const {structure} = state;
+
 	return useCallback(() => {
 
 		// Check at least one field is added
@@ -116,10 +119,10 @@ export function useValidate() {
 
 		const invalids = new Map(state.invalids);
 
-		errors = validateStructure({data: state});
+		errors = validateStructure({data: structure});
 
 		if (errors.size) {
-			invalids.set(state.uuid, errors);
+			invalids.set(structure.uuid, errors);
 		}
 
 		// Validate fields
@@ -148,5 +151,5 @@ export function useValidate() {
 		// It's valid
 
 		return true;
-	}, [dispatch, fields, state]);
+	}, [dispatch, fields, state, structure]);
 }

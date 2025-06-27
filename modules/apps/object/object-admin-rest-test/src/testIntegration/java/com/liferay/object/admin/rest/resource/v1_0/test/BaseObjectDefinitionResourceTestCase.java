@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import com.liferay.headless.batch.engine.client.dto.v1_0.ImportTask;
+import com.liferay.headless.batch.engine.client.http.HttpInvoker.HttpResponse;
 import com.liferay.headless.batch.engine.client.resource.v1_0.ImportTaskResource;
 import com.liferay.oauth2.provider.scope.ScopeChecker;
 import com.liferay.object.admin.rest.client.dto.v1_0.ObjectDefinition;
@@ -212,6 +213,7 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 		objectDefinition.setClassName(regex);
 		objectDefinition.setDefaultLanguageId(regex);
 		objectDefinition.setExternalReferenceCode(regex);
+		objectDefinition.setFriendlyURLSeparator(regex);
 		objectDefinition.setName(regex);
 		objectDefinition.setObjectFolderExternalReferenceCode(regex);
 		objectDefinition.setPanelAppOrder(regex);
@@ -233,6 +235,7 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 		Assert.assertEquals(regex, objectDefinition.getClassName());
 		Assert.assertEquals(regex, objectDefinition.getDefaultLanguageId());
 		Assert.assertEquals(regex, objectDefinition.getExternalReferenceCode());
+		Assert.assertEquals(regex, objectDefinition.getFriendlyURLSeparator());
 		Assert.assertEquals(regex, objectDefinition.getName());
 		Assert.assertEquals(
 			regex, objectDefinition.getObjectFolderExternalReferenceCode());
@@ -365,7 +368,7 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 			testDeleteObjectDefinitionBatch_addObjectDefinition();
 
 		testDeleteObjectDefinitionBatch_deleteObjectDefinition(
-			"COMPLETED", null, objectDefinition1.getId());
+			202, null, objectDefinition1.getId());
 
 		assertHttpResponseStatusCode(
 			404,
@@ -381,7 +384,7 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 	}
 
 	protected void testDeleteObjectDefinitionBatch_deleteObjectDefinition(
-			String expectedExecuteStatus, String externalReferenceCode, Long id)
+			int expectedStatusCode, String externalReferenceCode, Long id)
 		throws Exception {
 
 		HttpInvoker.HttpResponse httpResponse =
@@ -394,10 +397,10 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 						"id", () -> id
 					)));
 
-		Assert.assertEquals(202, httpResponse.getStatusCode());
+		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
 
 		waitForFinish(
-			expectedExecuteStatus,
+			"COMPLETED",
 			JSONFactoryUtil.createJSONObject(httpResponse.getContent()));
 	}
 
@@ -1460,18 +1463,74 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 	}
 
 	protected ObjectDefinition
+			testPutObjectDefinitionByExternalReferenceCode_addObjectDefinition()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected ObjectDefinition
 			testPutObjectDefinitionByExternalReferenceCode_createObjectDefinition()
 		throws Exception {
 
 		return randomObjectDefinition();
 	}
 
+	@Test
+	public void testBatchEngineDeleteImportTask() throws Exception {
+		ObjectDefinition objectDefinition1 =
+			testBatchEngineDeleteImportTask_addObjectDefinition();
+
+		testBatchEngineDeleteImportTask_deleteObjectDefinition(
+			200, null, objectDefinition1.getId());
+
+		assertHttpResponseStatusCode(
+			404,
+			objectDefinitionResource.getObjectDefinitionHttpResponse(
+				objectDefinition1.getId()));
+	}
+
 	protected ObjectDefinition
-			testPutObjectDefinitionByExternalReferenceCode_addObjectDefinition()
+			testBatchEngineDeleteImportTask_addObjectDefinition()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testDeleteObjectDefinition_addObjectDefinition();
+	}
+
+	protected void testBatchEngineDeleteImportTask_deleteObjectDefinition(
+			int expectedStatusCode, String externalReferenceCode, Long id,
+			String... parameters)
+		throws Exception {
+
+		ImportTaskResource importTaskResource = ImportTaskResource.builder(
+		).authentication(
+			_testCompanyAdminUser.getEmailAddress(),
+			PropsValues.DEFAULT_ADMIN_PASSWORD
+		).endpoint(
+			testCompany.getVirtualHostname(), 8080, "http"
+		).parameters(
+			parameters
+		).build();
+
+		HttpResponse httpResponse =
+			importTaskResource.deleteImportTaskHttpResponse(
+				"com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition", null,
+				null, null, null,
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"externalReferenceCode", () -> externalReferenceCode
+					).put(
+						"id", () -> id
+					)));
+
+		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
+
+		if (expectedStatusCode == 200) {
+			waitForFinish(
+				"COMPLETED",
+				JSONFactoryUtil.createJSONObject(httpResponse.getContent()));
+		}
 	}
 
 	@Rule
@@ -1729,6 +1788,16 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 					"externalReferenceCode", additionalAssertFieldName)) {
 
 				if (objectDefinition.getExternalReferenceCode() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"friendlyURLSeparator", additionalAssertFieldName)) {
+
+				if (objectDefinition.getFriendlyURLSeparator() == null) {
 					valid = false;
 				}
 
@@ -2279,6 +2348,19 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 				if (!Objects.deepEquals(
 						objectDefinition1.getExternalReferenceCode(),
 						objectDefinition2.getExternalReferenceCode())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"friendlyURLSeparator", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						objectDefinition1.getFriendlyURLSeparator(),
+						objectDefinition2.getFriendlyURLSeparator())) {
 
 					return false;
 				}
@@ -2980,6 +3062,52 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("friendlyURLSeparator")) {
+			Object object = objectDefinition.getFriendlyURLSeparator();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("id")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -3537,6 +3665,8 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 				enableObjectEntryHistory = RandomTestUtil.randomBoolean();
 				enableObjectEntryVersioning = RandomTestUtil.randomBoolean();
 				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				friendlyURLSeparator = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				id = RandomTestUtil.randomLong();
 				modifiable = RandomTestUtil.randomBoolean();

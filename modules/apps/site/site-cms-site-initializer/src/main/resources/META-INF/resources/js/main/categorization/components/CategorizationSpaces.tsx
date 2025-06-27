@@ -11,9 +11,10 @@ import {sub} from 'frontend-js-web';
 import React, {ChangeEvent, useEffect, useState} from 'react';
 
 import SpaceService from '../../../services/SpaceService';
-import SpaceSticker from '../../components/SpaceSticker';
+import SpaceSticker, {LogoColor} from '../../components/SpaceSticker';
 
 type Space = {
+	displayType?: string;
 	label: string;
 	value: any;
 };
@@ -52,6 +53,7 @@ export default function CategorizationSpaces({
 	useEffect(() => {
 		SpaceService.getSpaces().then((response) => {
 			const spaces = response.map((item) => ({
+				displayType: item.settings?.logoColor,
 				label: item.name,
 				value: item.id,
 			}));
@@ -195,7 +197,13 @@ export default function CategorizationSpaces({
 								</div>
 
 								<span className="align-items-center d-flex space-renderer-sticker">
-									<SpaceSticker name={item.label} size="sm" />
+									<SpaceSticker
+										displayType={
+											item.displayType as LogoColor
+										}
+										name={item.label}
+										size="sm"
+									/>
 								</span>
 							</div>
 						</ClayMultiSelect.Item>

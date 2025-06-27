@@ -55,14 +55,14 @@ public class ObjectEntryFolderLocalServiceUtil {
 	}
 
 	public static ObjectEntryFolder addObjectEntryFolder(
-			String externalReferenceCode, long userId, long groupId,
+			String externalReferenceCode, long groupId, long userId,
 			long parentObjectEntryFolderId, String description,
 			Map<java.util.Locale, String> labelMap, String name,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().addObjectEntryFolder(
-			externalReferenceCode, userId, groupId, parentObjectEntryFolderId,
+			externalReferenceCode, groupId, userId, parentObjectEntryFolderId,
 			description, labelMap, name, serviceContext);
 	}
 
@@ -386,6 +386,16 @@ public class ObjectEntryFolderLocalServiceUtil {
 
 		return getService().getObjectEntryFoldersCount(
 			groupId, companyId, parentObjectEntryFolderId);
+	}
+
+	public static ObjectEntryFolder getOrAddIncompleteObjectEntryFolder(
+			String externalReferenceCode, long groupId, long companyId,
+			long userId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws PortalException {
+
+		return getService().getOrAddIncompleteObjectEntryFolder(
+			externalReferenceCode, groupId, companyId, userId, serviceContext);
 	}
 
 	/**

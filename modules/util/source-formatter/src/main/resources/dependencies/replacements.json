@@ -112,6 +112,33 @@
 	},
 	{
 		"classNames": [
+			"InfoCollectionProvider"
+		],
+		"classStructurePattern": true,
+		"issueKey": "LPD-8016",
+		"methodsToFormat": [
+			{
+				"from": "regex:@Override\n\t(?<methodSignature>public List<Resource> getInfoList\\(\\n\\s+InfoListProviderContext infoListProviderContext\\))",
+				"to": "${methodSignature}"
+			},
+			{
+				"from": "regex:@Override\n\t(?<methodSignature>public List<Resource> getInfoList\\(\\n*\\s*InfoListProviderContext infoListProviderContext, Pagination pagination,\\n*\\s*Sort sort\\))",
+				"to": "${methodSignature}"
+			},
+			{
+				"from": "regex:@Override\n\t(?<methodSignature>public int getInfoListCount\\(\\n*\\s*InfoListProviderContext infoListProviderContext\\))",
+				"to": "${methodSignature}"
+			}
+		],
+		"newImports": [
+			"com.liferay.info.collection.provider.CollectionQuery"
+		],
+		"newMethods": [
+			"@Override\n\tpublic InfoPage<Resource> getCollectionInfoPage(\n\t\tCollectionQuery collectionQuery) {\n\n\t\tList<Resource> resources = getResources();\n\n\t\tif (resources.size() <= 0) {\n\t\t\treturn InfoPage.of(Collections.emptyList());\n\t\t}\n\n\t\treturn InfoPage.of(resources);\n\t}"
+		]
+	},
+	{
+		"classNames": [
 			"HttpServletRequest"
 		],
 		"from": "regex:\t*\\w+\\.setAttribute\\(InfoDisplayWebKeys\\.INFO_ITEM_FIELD_VALUES_PROVIDER,.*?\\);\n",
@@ -121,6 +148,7 @@
 	},
 	{
 		"from": "new InfoItemFormVariation(String paramName, InfoLocalizedValue<String> paramName)",
+		"hasMessage": true,
 		"issueKey": "LPD-8024"
 	},
 	{
@@ -156,6 +184,19 @@
 			"com.liferay.portal.kernel.util.HttpComponentsUtil"
 		],
 		"to": "HttpComponentsUtil.${methodName}"
+	},
+	{
+		"classNames": [
+			"BaseJSPProductNavigationControlMenuEntry"
+		],
+		"classStructurePattern": true,
+		"issueKey": "LPD-8041",
+		"methodsToFormat": [
+			{
+				"from": "regex:@Override\\s*@Reference\\s*\\(\\s*target\\s*=\\s*\"(?<target>[^\"]*)\",[\\s\\S]*?\\)\\s*public\\s+void\\s+setServletContext\\(ServletContext\\s+servletContext\\)\\s*\\{[\\s\\S]*?\\}",
+				"to": "@Reference(\n\t\ttarget = \"${target}\"\n\t)\n\tprivate ServletContext _servletContext;\n\n\t@Override\n\tpublic ServletContext getServletContext() {\n\t\treturn _servletContext;\n\t}"
+			}
+		]
 	},
 	{
 		"from": "new CalendarBookingStartTimeComparator()",
@@ -2874,6 +2915,19 @@
 	},
 	{
 		"classNames": [
+			"StrutsAction"
+		],
+		"classStructurePattern": true,
+		"issueKey": "LPD-28369",
+		"methodsToFormat": [
+			{
+				"from": "@Override\n\tpublic String execute(\n\t\tStrutsAction originalStrutsAction,\n\t\tHttpServletRequest httpServletRequest,\n\t\tHttpServletResponse httpServletResponse)",
+				"to": "public String execute(\n\t\t\tStrutsAction originalStrutsAction,\n\t\t\tHttpServletRequest httpServletRequest,\n\t\t\tHttpServletResponse httpServletResponse)"
+			}
+		]
+	},
+	{
+		"classNames": [
 			"CompanyLocalService",
 			"CompanyLocalServiceUtil"
 		],
@@ -3246,6 +3300,7 @@
 			"JournalArticle"
 		],
 		"from": "setDDMStructureKey(String paramName)",
+		"hasMessage": true,
 		"issueKey": "LPD-30559"
 	},
 	{
@@ -3300,6 +3355,16 @@
 			"com.liferay.mail.kernel.service.MailServiceUtil"
 		],
 		"to": "MailServiceUtil.sendEmail(new MailMessage(param#0#, param#1#, param#2#, param#3#, param#4#))"
+	},
+	{
+		"classNames": [
+			"MentionsUserFinder"
+		],
+		"classStructurePattern": true,
+		"issueKey": "LPD-34770",
+		"newMethods": [
+			"@Override\n\tpublic List<User> getUsers(\n\t\t\tlong companyId, long groupId, long userId, String query,\n\t\t\tSocialInteractionsConfiguration socialInteractionsConfiguration)\n\t\tthrows PortalException {\n\n\t\treturn getUsers(\n\t\t\tcompanyId, userId, query,\n\t\t\tsocialInteractionsConfiguration);\n\t}"
+		]
 	},
 	{
 		"classNames": [
@@ -4220,6 +4285,14 @@
 			"com.liferay.commerce.currency.service.CommerceCurrencyLocalServiceUtil"
 		],
 		"to": "updateCommercePriceList(param#0#, CommerceCurrencyLocalServiceUtil.fetchCommerceCurrency(param#1#).getCode(), true, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#, param#16#, param#17#, param#18#)"
+	},
+	{
+		"from": "Liferay.Notification",
+		"hasMessage": true,
+		"issueKey": "LPD-44043",
+		"validExtensions": [
+			"jsp"
+		]
 	},
 	{
 		"classNames": [
@@ -5162,6 +5235,7 @@
 			"AssetCategoryLocalServiceUtil"
 		],
 		"from": "fetchAssetCategoryByExternalReferenceCode(long paramName, String paramName)",
+		"hasMessage": true,
 		"issueKey": "LPS-196608"
 	},
 	{
@@ -5416,6 +5490,7 @@
 			"AssetVocabularyLocalServiceUtil"
 		],
 		"from": "fetchAssetVocabularyByExternalReferenceCode(long paramName, String paramName)",
+		"hasMessage": true,
 		"issueKey": "LPS-198292"
 	},
 	{
@@ -5436,6 +5511,7 @@
 	},
 	{
 		"from": "ConfigurationBeanDeclaration",
+		"hasMessage": true,
 		"issueKey": "LPS-198405"
 	},
 	{

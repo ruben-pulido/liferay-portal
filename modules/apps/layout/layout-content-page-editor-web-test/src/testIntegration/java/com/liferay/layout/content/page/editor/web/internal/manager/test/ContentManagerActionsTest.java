@@ -93,11 +93,11 @@ public class ContentManagerActionsTest {
 
 		_layoutClassedModelUsage =
 			_layoutClassedModelUsageLocalService.addLayoutClassedModelUsage(
-				_group.getGroupId(),
+				_group.getGroupId(), StringPool.BLANK,
 				_portal.getClassNameId(FileEntry.class.getName()),
-				fileEntry.getFileEntryId(), StringPool.BLANK,
-				RandomTestUtil.randomString(), RandomTestUtil.randomLong(),
-				_layout.getPlid(), new ServiceContext());
+				fileEntry.getFileEntryId(), RandomTestUtil.randomString(),
+				RandomTestUtil.randomLong(), _layout.getPlid(),
+				new ServiceContext());
 
 		LayoutDisplayPageProvider<?> layoutDisplayPageProvider =
 			_layoutDisplayPageProviderRegistry.
@@ -183,7 +183,7 @@ public class ContentManagerActionsTest {
 				new MockHttpServletRequest();
 
 			mockHttpServletRequest.setAttribute(
-				JavaConstants.JAVAX_PORTLET_RESPONSE,
+				JavaConstants.JAKARTA_PORTLET_RESPONSE,
 				new MockLiferayResourceResponse());
 
 			ThemeDisplay themeDisplay = ContentLayoutTestUtil.getThemeDisplay(

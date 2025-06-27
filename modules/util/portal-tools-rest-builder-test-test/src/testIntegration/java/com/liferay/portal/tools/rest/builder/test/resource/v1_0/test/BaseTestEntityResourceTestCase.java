@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import com.liferay.headless.batch.engine.client.dto.v1_0.ImportTask;
+import com.liferay.headless.batch.engine.client.http.HttpInvoker.HttpResponse;
 import com.liferay.headless.batch.engine.client.resource.v1_0.ImportTaskResource;
 import com.liferay.oauth2.provider.scope.ScopeChecker;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -40,6 +41,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.search.test.rule.SearchTestRule;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -251,7 +253,7 @@ public abstract class BaseTestEntityResourceTestCase {
 		TestEntity testEntity1 = testDeleteTestEntityBatch_addTestEntity();
 
 		testDeleteTestEntityBatch_deleteTestEntity(
-			"COMPLETED", null, testEntity1.getId());
+			202, null, testEntity1.getId());
 
 		assertHttpResponseStatusCode(
 			404,
@@ -265,7 +267,7 @@ public abstract class BaseTestEntityResourceTestCase {
 	}
 
 	protected void testDeleteTestEntityBatch_deleteTestEntity(
-			String expectedExecuteStatus, String externalReferenceCode, Long id)
+			int expectedStatusCode, String externalReferenceCode, Long id)
 		throws Exception {
 
 		HttpInvoker.HttpResponse httpResponse =
@@ -278,16 +280,16 @@ public abstract class BaseTestEntityResourceTestCase {
 						"id", () -> id
 					)));
 
-		Assert.assertEquals(202, httpResponse.getStatusCode());
+		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
 
 		waitForFinish(
-			expectedExecuteStatus,
+			"COMPLETED",
 			JSONFactoryUtil.createJSONObject(httpResponse.getContent()));
 	}
 
 	@Test
 	public void testGetTestEntitiesPage() throws Exception {
-		Page<TestEntity> page = testEntityResource.getTestEntitiesPage();
+		Page<TestEntity> page = testEntityResource.getTestEntitiesPage(null);
 
 		long totalCount = page.getTotalCount();
 
@@ -297,7 +299,7 @@ public abstract class BaseTestEntityResourceTestCase {
 		TestEntity testEntity2 = testGetTestEntitiesPage_addTestEntity(
 			randomTestEntity());
 
-		page = testEntityResource.getTestEntitiesPage();
+		page = testEntityResource.getTestEntitiesPage(null);
 
 		Assert.assertEquals(totalCount + 2, page.getTotalCount());
 
@@ -317,6 +319,87 @@ public abstract class BaseTestEntityResourceTestCase {
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
 
 		return expectedActions;
+	}
+
+	@Test
+	public void testGetTestEntitiesPageWithFilterDateTimeEquals()
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(
+			EntityField.Type.DATE_TIME);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		TestEntity testEntity1 = randomTestEntity();
+
+		testEntity1 = testGetTestEntitiesPage_addTestEntity(testEntity1);
+
+		for (EntityField entityField : entityFields) {
+			Page<TestEntity> page = testEntityResource.getTestEntitiesPage(
+				getFilterString(entityField, "between", testEntity1));
+
+			assertEquals(
+				Collections.singletonList(testEntity1),
+				(List<TestEntity>)page.getItems());
+		}
+	}
+
+	@Test
+	public void testGetTestEntitiesPageWithFilterDoubleEquals()
+		throws Exception {
+
+		testGetTestEntitiesPageWithFilter("eq", EntityField.Type.DOUBLE);
+	}
+
+	@Test
+	public void testGetTestEntitiesPageWithFilterStringContains()
+		throws Exception {
+
+		testGetTestEntitiesPageWithFilter("contains", EntityField.Type.STRING);
+	}
+
+	@Test
+	public void testGetTestEntitiesPageWithFilterStringEquals()
+		throws Exception {
+
+		testGetTestEntitiesPageWithFilter("eq", EntityField.Type.STRING);
+	}
+
+	@Test
+	public void testGetTestEntitiesPageWithFilterStringStartsWith()
+		throws Exception {
+
+		testGetTestEntitiesPageWithFilter(
+			"startswith", EntityField.Type.STRING);
+	}
+
+	protected void testGetTestEntitiesPageWithFilter(
+			String operator, EntityField.Type type)
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(type);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		TestEntity testEntity1 = testGetTestEntitiesPage_addTestEntity(
+			randomTestEntity());
+
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		TestEntity testEntity2 = testGetTestEntitiesPage_addTestEntity(
+			randomTestEntity());
+
+		for (EntityField entityField : entityFields) {
+			Page<TestEntity> page = testEntityResource.getTestEntitiesPage(
+				getFilterString(entityField, operator, testEntity1));
+
+			assertEquals(
+				Collections.singletonList(testEntity1),
+				(List<TestEntity>)page.getItems());
+		}
 	}
 
 	protected TestEntity testGetTestEntitiesPage_addTestEntity(
@@ -684,22 +767,72 @@ public abstract class BaseTestEntityResourceTestCase {
 		assertValid(getTestEntity);
 	}
 
-	protected Long testPutTestEntity_getOptionalParameter() throws Exception {
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
-	}
-
 	protected TestEntity testPutTestEntity_addTestEntity() throws Exception {
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected TestEntity testGraphQLTestEntity_addTestEntity()
-		throws Exception {
-
+	protected Long testPutTestEntity_getOptionalParameter() throws Exception {
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
+
+	@Test
+	public void testBatchEngineDeleteImportTask() throws Exception {
+		TestEntity testEntity1 =
+			testBatchEngineDeleteImportTask_addTestEntity();
+
+		testBatchEngineDeleteImportTask_deleteTestEntity(
+			200, null, testEntity1.getId());
+
+		assertHttpResponseStatusCode(
+			404,
+			testEntityResource.getTestEntityHttpResponse(testEntity1.getId()));
+	}
+
+	protected TestEntity testBatchEngineDeleteImportTask_addTestEntity()
+		throws Exception {
+
+		return testDeleteTestEntity_addTestEntity();
+	}
+
+	protected void testBatchEngineDeleteImportTask_deleteTestEntity(
+			int expectedStatusCode, String externalReferenceCode, Long id,
+			String... parameters)
+		throws Exception {
+
+		ImportTaskResource importTaskResource = ImportTaskResource.builder(
+		).authentication(
+			_testCompanyAdminUser.getEmailAddress(),
+			PropsValues.DEFAULT_ADMIN_PASSWORD
+		).endpoint(
+			testCompany.getVirtualHostname(), 8080, "http"
+		).parameters(
+			parameters
+		).build();
+
+		HttpResponse httpResponse =
+			importTaskResource.deleteImportTaskHttpResponse(
+				"com.liferay.portal.tools.rest.builder.test.dto.v1_0.TestEntity",
+				null, null, null, null,
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"externalReferenceCode", () -> externalReferenceCode
+					).put(
+						"id", () -> id
+					)));
+
+		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
+
+		if (expectedStatusCode == 200) {
+			waitForFinish(
+				"COMPLETED",
+				JSONFactoryUtil.createJSONObject(httpResponse.getContent()));
+		}
+	}
+
+	@Rule
+	public SearchTestRule searchTestRule = new SearchTestRule();
 
 	protected void assertContains(
 		TestEntity testEntity, List<TestEntity> testEntities) {

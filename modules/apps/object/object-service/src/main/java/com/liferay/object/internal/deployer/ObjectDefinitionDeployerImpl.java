@@ -47,6 +47,7 @@ import com.liferay.object.rest.context.path.RESTContextPathResolver;
 import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectEntryFolderLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectFieldLocalService;
@@ -129,6 +130,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		ListTypeLocalService listTypeLocalService,
 		ObjectActionLocalService objectActionLocalService,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
+		ObjectEntryFolderLocalService objectEntryFolderLocalService,
 		ObjectEntryLocalService objectEntryLocalService,
 		ObjectEntryService objectEntryService,
 		ObjectFieldLocalService objectFieldLocalService,
@@ -161,6 +163,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		_listTypeLocalService = listTypeLocalService;
 		_objectActionLocalService = objectActionLocalService;
 		_objectDefinitionLocalService = objectDefinitionLocalService;
+		_objectEntryFolderLocalService = objectEntryFolderLocalService;
 		_objectEntryLocalService = objectEntryLocalService;
 		_objectEntryService = objectEntryService;
 		_objectFieldLocalService = objectFieldLocalService;
@@ -215,8 +218,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					objectDefinition,
 					objectLayoutsMap.getOrDefault(
 						objectDefinitionId, Collections.emptyList()),
-					objectRelationshipsMap.getOrDefault(
-						objectDefinitionId, Collections.emptyList()),
+					objectRelationshipsMap,
 					objectActionsMap.getOrDefault(
 						objectDefinitionId, Collections.emptyList())));
 		}
@@ -247,7 +249,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 
 	private List<ServiceRegistration<?>> _deploy(
 		ObjectDefinition objectDefinition, List<ObjectLayout> objectLayouts,
-		List<ObjectRelationship> objectRelationships,
+		Map<Long, List<ObjectRelationship>> objectRelationshipsMap,
 		List<ObjectAction> standaloneObjectActions) {
 
 		if (objectDefinition.isUnmodifiableSystemObject()) {
@@ -257,6 +259,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		try {
 			ObjectDefinitionResourcePermissionUtil.populateResourceActions(
 				_objectActionLocalService, objectDefinition,
+				objectRelationshipsMap,
 				(ObjectDefinitionPersistence)
 					_objectDefinitionLocalService.getBasePersistence(),
 				_objectDefinitionTreeFactory, _portletLocalService,
@@ -297,8 +300,10 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					new ObjectEntryModelDocumentContributor(
 						_accountEntryOrganizationRelLocalService,
 						objectDefinition.getClassName(),
-						_objectDefinitionLocalService, _objectEntryLocalService,
-						_objectFieldLocalService, _objectFolderLocalService),
+						_objectDefinitionLocalService,
+						_objectEntryFolderLocalService,
+						_objectEntryLocalService, _objectFieldLocalService,
+						_objectFolderLocalService),
 					HashMapDictionaryBuilder.<String, Object>put(
 						"indexer.class.name", objectDefinition.getClassName()
 					).build()),
@@ -446,8 +451,6 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					HashMapDictionaryBuilder.<String, Object>put(
 						"com.liferay.object", "true"
 					).put(
-						"companyId", objectDefinition.getCompanyId()
-					).put(
 						"model.class.name", objectDefinition.getClassName()
 					).build()));
 
@@ -478,7 +481,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				_bundleContext.registerService(
 					WorkflowHandler.class,
 					new ObjectEntryWorkflowHandler(
-						objectDefinition, _objectEntryLocalService,
+						objectDefinition, _objectDefinitionLocalService,
+						_objectEntryLocalService,
 						_workflowDefinitionLinkLocalService),
 					HashMapDictionaryBuilder.<String, Object>put(
 						"model.class.name", objectDefinition.getClassName()
@@ -499,6 +503,14 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 			_objectLayoutTabLocalService.
 				registerObjectLayoutTabScreenNavigationCategories(
 					objectDefinition, objectLayout.getObjectLayoutTabs());
+		}
+
+		List<ObjectRelationship> objectRelationships = null;
+
+		if (objectRelationshipsMap != null) {
+			objectRelationships = objectRelationshipsMap.getOrDefault(
+				objectDefinition.getObjectDefinitionId(),
+				Collections.emptyList());
 		}
 
 		_objectRelationshipLocalService.
@@ -617,6 +629,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 	private final ObjectActionLocalService _objectActionLocalService;
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectDefinitionTreeFactory _objectDefinitionTreeFactory;
+	private final ObjectEntryFolderLocalService _objectEntryFolderLocalService;
 	private final ObjectEntryLocalService _objectEntryLocalService;
 	private final ObjectEntryService _objectEntryService;
 	private final ObjectFieldLocalService _objectFieldLocalService;

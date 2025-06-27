@@ -9,6 +9,7 @@ import com.liferay.headless.admin.site.dto.v1_0.ContentPageSettings;
 import com.liferay.headless.admin.site.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.PageSettings;
 import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
+import com.liferay.headless.admin.site.dto.v1_0.SEOSettings;
 import com.liferay.headless.admin.site.dto.v1_0.SitePage;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSettings;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.SitePageTypeUtil;
@@ -30,8 +31,10 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
@@ -44,6 +47,7 @@ import jakarta.ws.rs.NotSupportedException;
 
 import java.io.Serializable;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -260,25 +264,59 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			String externalReferenceCode, long groupId, SitePage sitePage)
 		throws Exception {
 
+		Map<Locale, String> nameMap = LocalizedMapUtil.getLocalizedMap(
+			sitePage.getName_i18n());
+
+		Map<Locale, String> titleMap = nameMap;
+
+		Map<Locale, String> descriptionMap = Collections.emptyMap();
+
+		PageSettings pageSettings = sitePage.getPageSettings();
+
+		if ((pageSettings != null) && (pageSettings.getSeoSettings() != null)) {
+			SEOSettings seoSettings = pageSettings.getSeoSettings();
+
+			titleMap = LocalizedMapUtil.getLocalizedMap(
+				seoSettings.getHtmlTitle_i18n());
+			descriptionMap = LocalizedMapUtil.getLocalizedMap(
+				seoSettings.getDescription_i18n());
+		}
+
 		ServiceContext serviceContext = ServiceContextBuilder.create(
 			groupId, contextHttpServletRequest, sitePage.getViewableByAsString()
 		).build();
 
+		serviceContext.setUserId(contextUser.getUserId());
 		serviceContext.setUuid(sitePage.getUuid());
 
-		return _layoutService.addLayout(
-			externalReferenceCode, groupId, false,
-			_getParentLayoutId(
-				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, groupId,
-				sitePage.getParentSitePageExternalReferenceCode()),
-			LocalizedMapUtil.getLocalizedMap(sitePage.getName_i18n()), null,
-			null, null, null,
+		UnicodeProperties typeSettingsUnicodeProperties =
+			_getTypeSettingsUnicodeProperties(sitePage);
+
+		if (sitePage.getType() == SitePage.Type.WIDGET_PAGE) {
+			return _layoutService.addLayout(
+				externalReferenceCode, groupId, false,
+				_getParentLayoutId(
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, groupId,
+					sitePage.getParentSitePageExternalReferenceCode()),
+				nameMap, null, null, null, null,
+				SitePageTypeUtil.toInternalType(sitePage.getType()),
+				typeSettingsUnicodeProperties.toString(),
+				_isHiddenFromNavigation(false, sitePage.getPageSettings()),
+				LocalizedMapUtil.getLocalizedMap(
+					sitePage.getFriendlyUrlPath_i18n()),
+				0, serviceContext);
+		}
+
+		return LayoutUtil.addContentLayout(
+			sitePage.getExternalReferenceCode(), groupId,
+			sitePage.getPageSpecifications(), false, nameMap, titleMap,
+			descriptionMap, null,
 			SitePageTypeUtil.toInternalType(sitePage.getType()),
-			_getTypeSettings(sitePage),
-			_isHiddenFromNavigation(false, sitePage.getPageSettings()),
+			typeSettingsUnicodeProperties,
+			_isHiddenFromNavigation(false, sitePage.getPageSettings()), false,
 			LocalizedMapUtil.getLocalizedMap(
 				sitePage.getFriendlyUrlPath_i18n()),
-			0, serviceContext);
+			WorkflowConstants.STATUS_APPROVED, serviceContext);
 	}
 
 	private long _getParentLayoutId(
@@ -304,7 +342,9 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 		return layout.getLayoutId();
 	}
 
-	private String _getTypeSettings(SitePage sitePage) {
+	private UnicodeProperties _getTypeSettingsUnicodeProperties(
+		SitePage sitePage) {
+
 		PageSettings pageSettings = sitePage.getPageSettings();
 
 		if (pageSettings == null) {
@@ -333,7 +373,7 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 		).setProperty(
 			LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID,
 			widgetPageSettings.getLayoutTemplateId()
-		).buildString();
+		).build();
 	}
 
 	private boolean _isHiddenFromNavigation(
@@ -389,15 +429,16 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 				layout.getGroupId(), contextHttpServletRequest,
 				contextUser.getUserId()));
 
-		String typeSettings = _getTypeSettings(sitePage);
+		UnicodeProperties typeSettingsUnicodeProperties =
+			_getTypeSettingsUnicodeProperties(sitePage);
 
-		if (typeSettings == null) {
+		if (typeSettingsUnicodeProperties == null) {
 			return layout;
 		}
 
 		return _layoutService.updateLayout(
 			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
-			typeSettings);
+			typeSettingsUnicodeProperties.toString());
 	}
 
 	private void _validateSitePageLayout(Layout layout) {

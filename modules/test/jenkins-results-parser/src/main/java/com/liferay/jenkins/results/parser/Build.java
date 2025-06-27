@@ -66,6 +66,8 @@ public interface Build {
 
 	public Job.BuildProfile getBuildProfile();
 
+	public JSONObject getBuildReportJSONObject();
+
 	public String getBuildURL();
 
 	public String getBuildURLRegex();
@@ -152,8 +154,6 @@ public interface Build {
 	public List<URL> getTestrayAttachmentURLs();
 
 	public String getTestrayBuildDateString();
-
-	public List<URL> getTestrayS3AttachmentURLs();
 
 	public JSONObject getTestReportJSONObject(boolean checkCache);
 

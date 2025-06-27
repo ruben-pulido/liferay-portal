@@ -9,6 +9,7 @@ import com.liferay.asset.categories.admin.web.constants.AssetCategoriesAdminPort
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.tags.constants.AssetTagsAdminPortletKeys;
+import com.liferay.depot.model.DepotEntry;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.db.partition.util.DBPartitionUtil;
 import com.liferay.portal.kernel.exception.NoSuchUserException;
@@ -79,6 +80,12 @@ public class CMSRoleUtil {
 					ActionKeys.UPDATE, ActionKeys.VIEW
 				}
 			).put(
+				DepotEntry.class.getName(),
+				new String[] {
+					ActionKeys.DELETE, ActionKeys.PERMISSIONS,
+					ActionKeys.UPDATE, ActionKeys.VIEW
+				}
+			).put(
 				PortletKeys.PORTAL, new String[] {ActionKeys.VIEW_CONTROL_PANEL}
 			).put(
 				"com.liferay.asset.categories",
@@ -92,6 +99,8 @@ public class CMSRoleUtil {
 					ActionKeys.MANAGE_TAG, ActionKeys.PERMISSIONS,
 					ActionKeys.SUBSCRIBE
 				}
+			).put(
+				"com.liferay.depot", new String[] {"ADD_DEPOT_ENTRY"}
 			).build(),
 			role);
 

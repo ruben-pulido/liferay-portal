@@ -29,6 +29,18 @@ export function getObjectEntryUIDateFormat(date: Date) {
 	}).format(date);
 }
 
+export function getObjectEntryUIDateTimeFormat(date: Date) {
+	return date
+		.toLocaleString('en-US', {
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+		})
+		.replace(',', '');
+}
+
 export function getPageEditorDateFormat(date: Date) {
 	const formatDate = new Intl.DateTimeFormat('en-US', {
 		day: '2-digit',
@@ -37,4 +49,21 @@ export function getPageEditorDateFormat(date: Date) {
 	}).format(date);
 
 	return `${formatDate} 12:00 AM`;
+}
+
+export function getUTCOffsetFormatted(date: Date) {
+	const offset = date.getTimezoneOffset() / 60;
+
+	if (offset === 0) {
+		return 'UTC';
+	}
+
+	const sign = offset > 0 ? '-' : '+';
+
+	const absoluteHours = String(Math.floor(Math.abs(offset))).padStart(2, '0');
+	const absoluteMinutes = String(
+		Math.round((Math.abs(offset) % 1) * 60)
+	).padStart(2, '0');
+
+	return `(UTC ${sign}${absoluteHours}:${absoluteMinutes})`;
 }

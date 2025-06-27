@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {State} from '../../../../src/main/resources/META-INF/resources/js/structure_builder/contexts/StateContext';
 import buildObjectDefinition from '../../../../src/main/resources/META-INF/resources/js/structure_builder/utils/buildObjectDefinition';
 import buildState from '../../../../src/main/resources/META-INF/resources/js/structure_builder/utils/buildState';
 import {Field} from '../../../../src/main/resources/META-INF/resources/js/structure_builder/utils/field';
@@ -41,124 +42,176 @@ const TEXT_FIELD: Field = {
 	uuid: TEXT_FIELD_UUID,
 };
 
+jest.mock(
+	'../../../../src/main/resources/META-INF/resources/js/structure_builder/config',
+	() => {
+		return {
+			config: {
+				objectFolderExternalReferenceCode: 'L_CMS_CONTENT_STRUCTURES',
+			},
+		};
+	}
+);
+
 describe('buildState', () => {
 	it('Builds state with two fields ', () => {
-		const initialState = {
+		const structure: State['structure'] = {
 			erc: 'structureERC',
-			error: null,
-			history: {deletedFields: false},
+			fields: new Map(),
 			id: 1,
-			invalids: new Map(),
 			label: {en_US: 'Structure'},
 			name: 'myStructure',
-			publishedFields: new Set(),
-			selection: [],
 			spaces: [],
 			status: 'draft',
+			type: 'L_CMS_CONTENT_STRUCTURES',
+			uuid: getUuid(),
+		};
+
+		const initialState: State = {
+			error: null,
+			history: {deletedFields: false},
+			invalids: new Map(),
+			publishedFields: new Set(),
+			selection: [],
+			structure,
 			unsavedChanges: false,
 		};
 
 		const objectDefinition = buildObjectDefinition({
-			erc: initialState.erc,
+			erc: structure.erc,
 			fields: Array.from([TEXT_FIELD, DATE_TIME_FIELD]),
-			id: initialState.id,
-			label: initialState.label,
-			name: initialState.name,
-			spaces: initialState.spaces,
+			id: structure.id,
+			label: structure.label,
+			name: structure.name,
+			spaces: structure.spaces,
 		});
 
 		const result = buildState(objectDefinition);
 
-		const {fields, uuid} = result!;
+		const {fields, uuid} = result!.structure;
 
-		expect(result).toEqual({...initialState, fields, uuid});
+		const nextState = {
+			...initialState,
+			structure: {
+				...structure,
+				fields,
+				uuid,
+			},
+		};
+
+		expect(result).toEqual(nextState);
 	});
 
 	it('Takes into account the status of the object definition', () => {
-		const initialState = {
+		const structure: State['structure'] = {
 			erc: 'structureERC',
-			error: null,
-			history: {deletedFields: false},
+			fields: new Map(),
 			id: 1,
-			invalids: new Map(),
 			label: {en_US: 'Structure'},
 			name: 'myStructure',
-			selection: [],
 			spaces: [],
 			status: 'published',
-			unsavedChanges: false,
+			type: 'L_CMS_CONTENT_STRUCTURES',
+			uuid: getUuid(),
 		};
 
-		const objectDefinition = buildObjectDefinition({
-			erc: initialState.erc,
-			fields: Array.from([TEXT_FIELD, DATE_TIME_FIELD]),
-			id: initialState.id,
-			label: initialState.label,
-			name: initialState.name,
-			spaces: initialState.spaces,
-		});
-
-		const result = buildState({
-			...objectDefinition,
-			status: {
-				label: 'approved',
-			},
-		});
-
-		const {fields, uuid} = result!;
-
-		const publishedFields = new Set(fields.keys());
-
-		expect(result).toEqual({
-			...initialState,
-			fields,
-			publishedFields,
-			uuid,
-		});
-	});
-
-	it('Takes into account saces', () => {
-		const initialState = {
-			erc: 'structureERC',
+		const initialState: State = {
 			error: null,
 			history: {deletedFields: false},
-			id: 1,
 			invalids: new Map(),
-			label: {en_US: 'Structure'},
-			name: 'myStructure',
+			publishedFields: new Set(),
 			selection: [],
-			spaces: ['space-1-erc', 'space-2-erc'],
-			status: 'published',
+			structure,
 			unsavedChanges: false,
 		};
 
 		const objectDefinition = buildObjectDefinition({
-			erc: initialState.erc,
+			erc: structure.erc,
 			fields: Array.from([TEXT_FIELD, DATE_TIME_FIELD]),
-			id: initialState.id,
-			label: initialState.label,
-			name: initialState.name,
-			spaces: initialState.spaces,
+			id: structure.id,
+			label: structure.label,
+			name: structure.name,
+			spaces: structure.spaces,
 		});
 
 		const result = buildState({
 			...objectDefinition,
-
 			status: {
-				label: 'approved',
+				code: 0,
 			},
 		});
 
-		const {fields, uuid} = result!;
+		const {fields, uuid} = result!.structure;
 
 		const publishedFields = new Set(fields.keys());
 
-		expect(result).toEqual({
+		const nextState = {
 			...initialState,
-			fields,
 			publishedFields,
-			uuid,
+			structure: {
+				...structure,
+				fields,
+				uuid,
+			},
+		};
+
+		expect(result).toEqual(nextState);
+	});
+
+	it('Takes into account spaces', () => {
+		const structure: State['structure'] = {
+			erc: 'structureERC',
+			fields: new Map(),
+			id: 1,
+			label: {en_US: 'Structure'},
+			name: 'myStructure',
+			spaces: ['space-1-erc', 'space-2-erc'],
+			status: 'published',
+			type: 'L_CMS_CONTENT_STRUCTURES',
+			uuid: getUuid(),
+		};
+
+		const initialState: State = {
+			error: null,
+			history: {deletedFields: false},
+			invalids: new Map(),
+			publishedFields: new Set(),
+			selection: [],
+			structure,
+			unsavedChanges: false,
+		};
+
+		const objectDefinition = buildObjectDefinition({
+			erc: structure.erc,
+			fields: Array.from([TEXT_FIELD, DATE_TIME_FIELD]),
+			id: structure.id,
+			label: structure.label,
+			name: structure.name,
+			spaces: structure.spaces,
 		});
+
+		const result = buildState({
+			...objectDefinition,
+			status: {
+				code: 0,
+			},
+		});
+
+		const {fields, uuid} = result!.structure;
+
+		const publishedFields = new Set(fields.keys());
+
+		const nextState = {
+			...initialState,
+			publishedFields,
+			structure: {
+				...structure,
+				fields,
+				uuid,
+			},
+		};
+
+		expect(result).toEqual(nextState);
 	});
 
 	it('It works with Double fields ', () => {
@@ -167,6 +220,7 @@ describe('buildState', () => {
 			enableIndexSearch: true,
 			enableLocalization: true,
 			enableObjectEntryDraft: true,
+			enableObjectEntryVersioning: true,
 			externalReferenceCode: 'ca7f96e2-3436-4aa4-9626-265d006bea87',
 			label: {
 				en_US: 'Untitled Structure',
@@ -196,7 +250,7 @@ describe('buildState', () => {
 			...objectDefinition,
 		});
 
-		const [, field] = [...state!.fields][0];
+		const [, field] = [...state!.structure.fields][0];
 
 		expect(field).toEqual(expect.objectContaining({type: 'decimal'}));
 	});

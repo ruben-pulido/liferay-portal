@@ -26,11 +26,22 @@ type RequestResult<T> =
 	| {
 			data: null;
 			error: string;
+			status?: string | null;
 	  }
 	| {
 			data: T;
 			error: null;
+			status?: string | null;
 	  };
+
+async function deleteRequest(url: string) {
+	return handleRequest<null>(() =>
+		fetch(url, {
+			headers: HEADERS,
+			method: 'DELETE',
+		})
+	);
+}
 
 async function handleRequest<T>(
 	fetcher: () => Promise<Response>
@@ -43,7 +54,7 @@ async function handleRequest<T>(
 		}
 
 		if (!response.ok) {
-			const {message, title} = await response.json();
+			const {message, status, title} = await response.json();
 
 			let error = title ?? message ?? UNEXPECTED_ERROR_MESSAGE;
 
@@ -54,6 +65,15 @@ async function handleRequest<T>(
 			return {
 				data: null,
 				error,
+				status,
+			};
+		}
+
+		if (response.status === 204) {
+			return {
+				data: {} as T,
+				error: null,
+				status: null,
 			};
 		}
 
@@ -62,12 +82,14 @@ async function handleRequest<T>(
 		return {
 			data,
 			error: null,
+			status: null,
 		};
 	}
 	catch (error) {
 		return {
 			data: null,
 			error: (error as Error).message || UNEXPECTED_ERROR_MESSAGE,
+			status: null,
 		};
 	}
 }
@@ -120,4 +142,4 @@ async function patch<T>(data: any, url: string) {
 	);
 }
 
-export default {get, patch, post, postFormData, put};
+export default {delete: deleteRequest, get, patch, post, postFormData, put};

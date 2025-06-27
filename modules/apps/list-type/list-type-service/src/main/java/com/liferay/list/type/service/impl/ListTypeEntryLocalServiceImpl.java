@@ -5,6 +5,7 @@
 
 package com.liferay.list.type.service.impl;
 
+import com.liferay.exportimport.kernel.incomplete.model.IncompleteModelManager;
 import com.liferay.list.type.exception.DuplicateListTypeEntryException;
 import com.liferay.list.type.exception.DuplicateListTypeEntryExternalReferenceCodeException;
 import com.liferay.list.type.exception.ListTypeEntryKeyException;
@@ -24,9 +25,11 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.List;
 import java.util.Locale;
@@ -88,19 +91,9 @@ public class ListTypeEntryLocalServiceImpl
 		_validateKey(listTypeDefinitionId, key);
 		_validateName(nameMap);
 
-		ListTypeEntry listTypeEntry = listTypeEntryPersistence.create(
-			counterLocalService.increment());
-
-		listTypeEntry.setExternalReferenceCode(externalReferenceCode);
-		listTypeEntry.setCompanyId(user.getCompanyId());
-		listTypeEntry.setUserId(user.getUserId());
-		listTypeEntry.setUserName(user.getFullName());
-		listTypeEntry.setListTypeDefinitionId(listTypeDefinitionId);
-		listTypeEntry.setKey(key);
-		listTypeEntry.setNameMap(nameMap);
-		listTypeEntry.setSystem(system);
-
-		return listTypeEntryPersistence.update(listTypeEntry);
+		return _addListTypeEntry(
+			externalReferenceCode, user, listTypeDefinitionId, key, nameMap,
+			WorkflowConstants.STATUS_APPROVED, system);
 	}
 
 	@Indexable(type = IndexableType.DELETE)
@@ -225,6 +218,28 @@ public class ListTypeEntryLocalServiceImpl
 
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
+	public ListTypeEntry getOrAddIncompleteListTypeEntry(
+			long userId, long listTypeDefinitionId, String key)
+		throws PortalException {
+
+		User user = _userLocalService.getUser(userId);
+
+		return _incompleteModelManager.getOrAddIncompleteModel(
+			ListTypeEntry.class, user.getCompanyId(), key,
+			(externalReferenceCode, companyId) -> fetchListTypeEntry(
+				listTypeDefinitionId, key),
+			(externalReferenceCode, companyId) -> getListTypeEntry(
+				listTypeDefinitionId, key),
+			() -> _addListTypeEntry(
+				null, user, listTypeDefinitionId, key,
+				HashMapBuilder.put(
+					LocaleUtil.getSiteDefault(), key
+				).build(),
+				WorkflowConstants.STATUS_INCOMPLETE, false));
+	}
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
 	public ListTypeEntry updateListTypeEntry(
 			String externalReferenceCode, long listTypeEntryId,
 			Map<Locale, String> nameMap)
@@ -236,6 +251,10 @@ public class ListTypeEntryLocalServiceImpl
 			listTypeEntryId);
 
 		listTypeEntry.setNameMap(nameMap);
+
+		if (listTypeEntry.getStatus() == WorkflowConstants.STATUS_INCOMPLETE) {
+			listTypeEntry.setStatus(WorkflowConstants.STATUS_APPROVED);
+		}
 
 		if (!FeatureFlagManagerUtil.isEnabled(
 				listTypeEntry.getCompanyId(), "LPD-24055")) {
@@ -276,6 +295,26 @@ public class ListTypeEntryLocalServiceImpl
 
 			listTypeEntryPersistence.update(listTypeEntry);
 		}
+	}
+
+	private ListTypeEntry _addListTypeEntry(
+		String externalReferenceCode, User user, long listTypeDefinitionId,
+		String key, Map<Locale, String> nameMap, int status, boolean system) {
+
+		ListTypeEntry listTypeEntry = listTypeEntryPersistence.create(
+			counterLocalService.increment());
+
+		listTypeEntry.setExternalReferenceCode(externalReferenceCode);
+		listTypeEntry.setCompanyId(user.getCompanyId());
+		listTypeEntry.setUserId(user.getUserId());
+		listTypeEntry.setUserName(user.getFullName());
+		listTypeEntry.setListTypeDefinitionId(listTypeDefinitionId);
+		listTypeEntry.setKey(key);
+		listTypeEntry.setNameMap(nameMap);
+		listTypeEntry.setSystem(system);
+		listTypeEntry.setStatus(status);
+
+		return listTypeEntryPersistence.update(listTypeEntry);
 	}
 
 	private void _validateExternalReferenceCode(
@@ -334,6 +373,9 @@ public class ListTypeEntryLocalServiceImpl
 				"Name is null for locale " + locale.getDisplayName());
 		}
 	}
+
+	@Reference
+	private IncompleteModelManager _incompleteModelManager;
 
 	@Reference
 	private ListTypeDefinitionPersistence _listTypeDefinitionPersistence;

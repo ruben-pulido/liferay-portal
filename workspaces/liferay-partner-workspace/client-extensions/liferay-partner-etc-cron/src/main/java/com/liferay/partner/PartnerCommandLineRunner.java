@@ -21,7 +21,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Jair Medeiros
@@ -37,8 +37,7 @@ public class PartnerCommandLineRunner
 		JSONObject responseJSONObject = new JSONObject(
 			get(
 				_getAuthorization(),
-				_defaultUriBuilderFactory.builder(
-				).path(
+				UriComponentsBuilder.fromPath(
 					"/o/c/activities"
 				).queryParam(
 					"filter",
@@ -49,7 +48,7 @@ public class PartnerCommandLineRunner
 				).queryParam(
 					"pageSize", "-1"
 				).build(
-				).toString()));
+				).toUri()));
 
 		if (responseJSONObject.getInt("totalCount") > 0) {
 			JSONArray itemsJSONArray = responseJSONObject.getJSONArray("items");
@@ -77,7 +76,10 @@ public class PartnerCommandLineRunner
 			try {
 				put(
 					_getAuthorization(), itemsJSONArray.toString(),
-					"/o/c/activities/batch");
+					UriComponentsBuilder.fromPath(
+						"/o/c/activities/batch"
+					).build(
+					).toUri());
 			}
 			catch (Exception exception) {
 				_log.error(exception);
@@ -87,8 +89,7 @@ public class PartnerCommandLineRunner
 		responseJSONObject = new JSONObject(
 			get(
 				_getAuthorization(),
-				_defaultUriBuilderFactory.builder(
-				).path(
+				UriComponentsBuilder.fromPath(
 					"/o/c/activities"
 				).queryParam(
 					"filter",
@@ -105,7 +106,7 @@ public class PartnerCommandLineRunner
 				).queryParam(
 					"pageSize", "-1"
 				).build(
-				).toString()));
+				).toUri()));
 
 		if (responseJSONObject.getInt("totalCount") > 0) {
 			JSONArray itemsJSONArray = responseJSONObject.getJSONArray("items");
@@ -148,11 +149,10 @@ public class PartnerCommandLineRunner
 							responseJSONObject = new JSONObject(
 								get(
 									_getAuthorization(),
-									_defaultUriBuilderFactory.builder(
-									).path(
+									UriComponentsBuilder.fromPath(
 										"/o/c/mdfclaims/" + mdfClaimId
 									).build(
-									).toString()));
+									).toUri()));
 
 							JSONObject mdfClaimStatusJSONObject =
 								responseJSONObject.getJSONObject(
@@ -222,7 +222,12 @@ public class PartnerCommandLineRunner
 
 			sb.append("TemplateAction");
 
-			put(_getAuthorization(), "", sb.toString());
+			put(
+				_getAuthorization(), "",
+				UriComponentsBuilder.fromPath(
+					sb.toString()
+				).build(
+				).toUri());
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
@@ -259,9 +264,6 @@ public class PartnerCommandLineRunner
 
 	private static final Log _log = LogFactory.getLog(
 		PartnerCommandLineRunner.class);
-
-	private final DefaultUriBuilderFactory _defaultUriBuilderFactory =
-		new DefaultUriBuilderFactory();
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;

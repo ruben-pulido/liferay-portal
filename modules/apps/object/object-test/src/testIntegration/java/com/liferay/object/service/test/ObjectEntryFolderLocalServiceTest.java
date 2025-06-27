@@ -6,11 +6,13 @@
 package com.liferay.object.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.depot.constants.DepotRolesConstants;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.entry.folder.util.ObjectEntryFolderThreadLocal;
 import com.liferay.object.exception.DuplicateObjectEntryFolderExternalReferenceCodeException;
+import com.liferay.object.exception.NoSuchObjectEntryFolderException;
 import com.liferay.object.exception.ObjectEntryFolderNameException;
 import com.liferay.object.exception.ObjectEntryFolderParentObjectEntryFolderIdException;
 import com.liferay.object.exception.ObjectEntryFolderScopeException;
@@ -24,9 +26,16 @@ import com.liferay.object.service.ObjectEntryFolderLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.AssertUtils;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -36,6 +45,8 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
@@ -69,6 +80,7 @@ public class ObjectEntryFolderLocalServiceTest {
 		_objectDefinition = _addObjectDefinition();
 	}
 
+	@FeatureFlag("LPD-17564")
 	@Test
 	public void testAddObjectEntryFolder() throws Exception {
 		String externalReferenceCode = StringUtil.randomString();
@@ -134,18 +146,42 @@ public class ObjectEntryFolderLocalServiceTest {
 
 		ObjectEntryFolder objectEntryFolder =
 			_objectEntryFolderLocalService.addObjectEntryFolder(
-				StringUtil.randomString(), TestPropsValues.getUserId(),
-				_group.getGroupId(),
+				StringUtil.randomString(), _group.getGroupId(),
+				TestPropsValues.getUserId(),
 				ObjectEntryFolderConstants.
 					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 				RandomTestUtil.randomString(), null, StringUtil.randomString(),
-				ServiceContextTestUtil.getServiceContext());
+				new ServiceContext());
 
 		AssertUtils.assertEquals(
 			HashMapBuilder.put(
 				LocaleUtil.getSiteDefault(), objectEntryFolder.getName()
 			).build(),
 			objectEntryFolder.getLabelMap());
+
+		Role role = _roleLocalService.fetchRole(
+			TestPropsValues.getCompanyId(),
+			DepotRolesConstants.ASSET_LIBRARY_ADMINISTRATOR);
+
+		Assert.assertTrue(
+			_resourcePermissionLocalService.hasResourcePermission(
+				TestPropsValues.getCompanyId(),
+				ObjectEntryFolder.class.getName(),
+				ResourceConstants.SCOPE_INDIVIDUAL,
+				String.valueOf(objectEntryFolder.getObjectEntryFolderId()),
+				role.getRoleId(), ActionKeys.ADD_ENTRY));
+
+		role = _roleLocalService.fetchRole(
+			TestPropsValues.getCompanyId(),
+			DepotRolesConstants.ASSET_LIBRARY_CONTENT_REVIEWER);
+
+		Assert.assertTrue(
+			_resourcePermissionLocalService.hasResourcePermission(
+				TestPropsValues.getCompanyId(),
+				ObjectEntryFolder.class.getName(),
+				ResourceConstants.SCOPE_INDIVIDUAL,
+				String.valueOf(objectEntryFolder.getObjectEntryFolderId()),
+				role.getRoleId(), ActionKeys.ADD_ENTRY));
 	}
 
 	@Test
@@ -228,6 +264,57 @@ public class ObjectEntryFolderLocalServiceTest {
 		Assert.assertNull(
 			_objectEntryFolderLocalService.fetchObjectEntryFolder(
 				systemObjectEntryFolder.getObjectEntryFolderId()));
+	}
+
+	@Test
+	@TestInfo("LPD-56833")
+	public void testGetOrAddIncompleteObjectEntryFolder() throws Exception {
+
+		// Lazy referencing disabled
+
+		String externalReferenceCode = RandomTestUtil.randomString();
+
+		AssertUtils.assertFailure(
+			NoSuchObjectEntryFolderException.class, null,
+			() ->
+				_objectEntryFolderLocalService.
+					getOrAddIncompleteObjectEntryFolder(
+						externalReferenceCode, TestPropsValues.getGroupId(),
+						TestPropsValues.getCompanyId(),
+						TestPropsValues.getUserId(),
+						ServiceContextTestUtil.getServiceContext()));
+
+		// Lazy referencing enabled
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			ObjectEntryFolder objectEntryFolder =
+				_objectEntryFolderLocalService.
+					getOrAddIncompleteObjectEntryFolder(
+						externalReferenceCode, TestPropsValues.getGroupId(),
+						TestPropsValues.getCompanyId(),
+						TestPropsValues.getUserId(),
+						ServiceContextTestUtil.getServiceContext());
+
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_INCOMPLETE,
+				objectEntryFolder.getStatus());
+
+			objectEntryFolder =
+				_objectEntryFolderLocalService.updateObjectEntryFolder(
+					objectEntryFolder.getUserId(),
+					objectEntryFolder.getObjectEntryFolderId(),
+					objectEntryFolder.getParentObjectEntryFolderId(),
+					objectEntryFolder.getDescription(),
+					RandomTestUtil.randomLocaleStringMap(),
+					RandomTestUtil.randomString(),
+					ServiceContextTestUtil.getServiceContext());
+
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_APPROVED,
+				objectEntryFolder.getStatus());
+		}
 	}
 
 	@Test
@@ -367,7 +454,7 @@ public class ObjectEntryFolderLocalServiceTest {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, false, false,
-				false, false, false,
+				false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(StringUtil.randomString()),
 				"A" + StringUtil.randomString(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -389,7 +476,7 @@ public class ObjectEntryFolderLocalServiceTest {
 		throws Exception {
 
 		return _objectEntryLocalService.addObjectEntry(
-			TestPropsValues.getUserId(), _group.getGroupId(),
+			_group.getGroupId(), TestPropsValues.getUserId(),
 			_objectDefinition.getObjectDefinitionId(), objectEntryFolderId,
 			null,
 			HashMapBuilder.<String, Serializable>put(
@@ -404,7 +491,7 @@ public class ObjectEntryFolderLocalServiceTest {
 		throws Exception {
 
 		return _objectEntryFolderLocalService.addObjectEntryFolder(
-			externalReferenceCode, TestPropsValues.getUserId(), groupId,
+			externalReferenceCode, groupId, TestPropsValues.getUserId(),
 			parentObjectEntryFolderId, RandomTestUtil.randomString(),
 			HashMapBuilder.put(
 				LocaleUtil.getDefault(), StringUtil.randomString()
@@ -426,5 +513,11 @@ public class ObjectEntryFolderLocalServiceTest {
 
 	@Inject
 	private ObjectEntryLocalService _objectEntryLocalService;
+
+	@Inject
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Inject
+	private RoleLocalService _roleLocalService;
 
 }

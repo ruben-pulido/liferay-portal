@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
-import com.liferay.portal.kernel.test.util.PropsTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionAttribute;
@@ -655,8 +654,6 @@ public class TransactionalPortalCacheTest {
 			TransactionalPortalCacheUtil.class, "_transactionalCacheEnabled",
 			null);
 
-		PropsTestUtil.setProps(Collections.emptyMap());
-
 		Assert.assertFalse(
 			"TransactionalPortalCacheUtil should be disabled",
 			TransactionalPortalCacheUtil.isEnabled());
@@ -765,8 +762,7 @@ public class TransactionalPortalCacheTest {
 	private int _getTransactionStackSize() {
 		ThreadLocal<List<?>> portalCacheMapsThreadLocal =
 			ReflectionTestUtil.getFieldValue(
-				TransactionalPortalCacheUtil.class,
-				"_portalCacheMapsThreadLocal");
+				TransactionalPortalCacheUtil.class, "_portalCacheMaps");
 
 		List<?> portalCacheMaps = portalCacheMapsThreadLocal.get();
 

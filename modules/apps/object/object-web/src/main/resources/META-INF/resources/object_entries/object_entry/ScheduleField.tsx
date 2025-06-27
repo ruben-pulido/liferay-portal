@@ -9,24 +9,24 @@ import React, {useCallback, useEffect, useState} from 'react';
 
 interface ScheduleFieldProps {
 	checkboxLabel: string;
+	customValidation?: (date: string) => string;
 	dateLabel: string;
 	error?: string;
 	id: string;
 	isChecked: boolean;
 	onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 	onDateChange: (value: string) => void;
-	portletNamespace: string;
 	value: string;
 }
 
 export default function ScheduleField({
 	checkboxLabel,
+	customValidation,
 	dateLabel,
 	id,
 	isChecked,
 	onCheckboxChange,
 	onDateChange,
-	portletNamespace,
 	value,
 }: ScheduleFieldProps) {
 	const [dateError, setDateError] = useState<string>('');
@@ -38,32 +38,27 @@ export default function ScheduleField({
 			if (!value && !checked) {
 				setDateError(Liferay.Language.get('this-field-is-required'));
 			}
+			else if (customValidation) {
+				setDateError(() => customValidation(value));
+			}
 			else {
 				setDateError('');
 			}
 		},
-		[checked]
+		[checked, customValidation]
 	);
 
 	useEffect(() => {
-		const saveButton = document.getElementById(
-			portletNamespace + 'saveObjectEntryButton'
-		);
-
-		if (!saveButton) {
-			return;
-		}
-
-		const handleClick = () => {
+		const handleSubmit = () => {
 			handleError(value);
 		};
 
-		saveButton.addEventListener('click', handleClick);
+		Liferay.on('submitObjectEntry', handleSubmit);
 
 		return () => {
-			saveButton.removeEventListener('click', handleClick);
+			Liferay.detach('submitObjectEntry', handleSubmit);
 		};
-	}, [handleError, portletNamespace, value]);
+	}, [handleError, value]);
 
 	return (
 		<div className="col-lg-6">

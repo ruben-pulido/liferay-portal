@@ -15,7 +15,6 @@ import com.liferay.headless.admin.site.internal.resource.v1_0.util.GroupUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.ServiceContextUtil;
 import com.liferay.headless.admin.site.resource.v1_0.PageTemplateResource;
-import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateCollectionTypeConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
@@ -33,6 +32,7 @@ import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutPrototypeService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
@@ -158,19 +158,29 @@ public class PageTemplateResourceImpl extends BasePageTemplateResourceImpl {
 			throw new UnsupportedOperationException();
 		}
 
+		long groupId = GroupUtil.getGroupId(
+			true, true, contextCompany.getCompanyId(),
+			siteExternalReferenceCode);
+
 		return Page.of(
 			transform(
 				_layoutPageTemplateEntryService.getLayoutPageTemplateEntries(
-					GroupUtil.getGroupId(
-						true, true, contextCompany.getCompanyId(),
-						siteExternalReferenceCode),
+					groupId,
 					new int[] {
 						LayoutPageTemplateEntryTypeConstants.BASIC,
 						LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE
 					},
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS, null),
+					pagination.getStartPosition(), pagination.getEndPosition(),
+					null),
 				layoutPageTemplateEntry -> _pageTemplateDTOConverter.toDTO(
-					layoutPageTemplateEntry)));
+					layoutPageTemplateEntry)),
+			pagination,
+			_layoutPageTemplateEntryService.getLayoutPageTemplateEntriesCount(
+				groupId,
+				new int[] {
+					LayoutPageTemplateEntryTypeConstants.BASIC,
+					LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE
+				}));
 	}
 
 	@Override
@@ -324,9 +334,18 @@ public class PageTemplateResourceImpl extends BasePageTemplateResourceImpl {
 	protected void preparePatch(
 		PageTemplate pageTemplate, PageTemplate existingPageTemplate) {
 
+		if (pageTemplate.getKeywords() != null) {
+			existingPageTemplate.setKeywords(pageTemplate::getKeywords);
+		}
+
 		if (pageTemplate.getPageTemplateSet() != null) {
 			existingPageTemplate.setPageTemplateSet(
 				pageTemplate::getPageTemplateSet);
+		}
+
+		if (pageTemplate.getTaxonomyCategoryItemExternalReferences() != null) {
+			existingPageTemplate.setTaxonomyCategoryItemExternalReferences(
+				pageTemplate::getTaxonomyCategoryItemExternalReferences);
 		}
 
 		if (Objects.equals(
@@ -475,23 +494,23 @@ public class PageTemplateResourceImpl extends BasePageTemplateResourceImpl {
 	}
 
 	private ServiceContext _getServiceContext(
-		long groupId, PageTemplate pageTemplate) {
+			long groupId, PageTemplate pageTemplate)
+		throws Exception {
 
-		ServiceContext serviceContext = ServiceContextBuilder.create(
-			groupId, contextHttpServletRequest, null
-		).build();
-
-		serviceContext.setCreateDate(pageTemplate.getDateCreated());
-		serviceContext.setModifiedDate(pageTemplate.getDateModified());
+		String uuid = null;
 
 		if (Objects.equals(
 				pageTemplate.getType(),
 				PageTemplate.Type.CONTENT_PAGE_TEMPLATE)) {
 
-			serviceContext.setUuid(pageTemplate.getUuid());
+			uuid = pageTemplate.getUuid();
 		}
 
-		return serviceContext;
+		return ServiceContextUtil.createServiceContext(
+			pageTemplate.getTaxonomyCategoryItemExternalReferences(),
+			pageTemplate.getDateCreated(), groupId, contextHttpServletRequest,
+			pageTemplate.getKeywords(), pageTemplate.getDateModified(),
+			contextUser.getUserId(), uuid);
 	}
 
 	private boolean _isTypeWidgetPageTemplate(PageTemplate pageTemplate) {
@@ -523,10 +542,19 @@ public class PageTemplateResourceImpl extends BasePageTemplateResourceImpl {
 			LayoutPageTemplateEntry layoutPageTemplateEntry)
 		throws Exception {
 
-		return _pageTemplateDTOConverter.toDTO(
-			_layoutPageTemplateEntryService.updateLayoutPageTemplateEntry(
-				layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
-				contentPageTemplate.getName()));
+		ServiceContextThreadLocal.pushServiceContext(
+			_getServiceContext(
+				layoutPageTemplateEntry.getGroupId(), contentPageTemplate));
+
+		try {
+			return _pageTemplateDTOConverter.toDTO(
+				_layoutPageTemplateEntryService.updateLayoutPageTemplateEntry(
+					layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
+					contentPageTemplate.getName()));
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
 	}
 
 	private PageTemplate _updatePageTemplate(

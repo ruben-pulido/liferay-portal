@@ -74,7 +74,7 @@ public interface ObjectEntryFolderLocalService
 
 	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntryFolder addObjectEntryFolder(
-			String externalReferenceCode, long userId, long groupId,
+			String externalReferenceCode, long groupId, long userId,
 			long parentObjectEntryFolderId, String description,
 			Map<Locale, String> labelMap, String name,
 			ServiceContext serviceContext)
@@ -323,6 +323,13 @@ public interface ObjectEntryFolderLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getObjectEntryFoldersCount(
 		long groupId, long companyId, long parentObjectEntryFolderId);
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ObjectEntryFolder getOrAddIncompleteObjectEntryFolder(
+			String externalReferenceCode, long groupId, long companyId,
+			long userId, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	 * Returns the OSGi service identifier.

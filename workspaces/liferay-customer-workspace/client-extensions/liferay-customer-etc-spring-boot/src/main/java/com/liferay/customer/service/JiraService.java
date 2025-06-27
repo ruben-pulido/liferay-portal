@@ -13,9 +13,6 @@ import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,6 +27,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Jenny Chen
@@ -104,9 +102,13 @@ public class JiraService extends BaseService {
 			JSONObject jsonObject = new JSONObject(
 				get(
 					_getCredentials(),
-					StringBundler.concat(
-						_URL_REST_API_2, "/issue/", issueKey,
-						"?expand=renderedFields")));
+					UriComponentsBuilder.fromUriString(
+						StringBundler.concat(
+							_jiraURL, _URL_REST_API_2, "/issue/", issueKey)
+					).queryParam(
+						"expand", "renderedFields"
+					).build(
+					).toUri()));
 
 			return _transformIssue(jsonObject);
 		}
@@ -120,11 +122,18 @@ public class JiraService extends BaseService {
 		return null;
 	}
 
-	@CacheEvict(
-		allEntries = true, value = {"affectedVersions", "issue", "issues"}
+	@CacheEvict(allEntries = true, value = "affectedVersions")
+	@Scheduled(
+		cron = "${liferay.customer.jira.service.affected.versions.cache.eviction.cron}"
 	)
-	@Scheduled(cron = "0 0 0 * * *")
-	public void scheduledCacheEviction() throws Exception {
+	public void scheduledAffectedVersionsCacheEviction() throws Exception {
+	}
+
+	@CacheEvict(allEntries = true, value = {"issue", "issues"})
+	@Scheduled(
+		cron = "${liferay.customer.jira.service.issues.cache.eviction.cron}"
+	)
+	public void scheduledIssuesCacheEviction() throws Exception {
 	}
 
 	@Cacheable("issues")
@@ -135,7 +144,7 @@ public class JiraService extends BaseService {
 			String sortOrder, boolean hasEarlyPublishAccess)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(51);
+		StringBundler sb = new StringBundler(49);
 
 		sb.append("project = '");
 		sb.append(_jiraSecurityVulnerabilityProject);
@@ -145,26 +154,19 @@ public class JiraService extends BaseService {
 				_jiraSecurityVulnerabilityFieldPublishingStatus));
 		sb.append(" = 'Ready for Publishing'");
 
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
-			"yyyy-MM-dd 00:00");
-
 		if (hasEarlyPublishAccess) {
 			sb.append(" AND ");
 			sb.append(
 				_getJQLCustomField(
 					_jiraSecurityVulnerabilityFieldPartnerPublishingDate));
-			sb.append(" <= '");
-			sb.append(dateTimeFormatter.format(LocalDateTime.now()));
-			sb.append("'");
+			sb.append(" <= now()");
 		}
 		else {
 			sb.append(" AND ");
 			sb.append(
 				_getJQLCustomField(
 					_jiraSecurityVulnerabilityFieldCustomerPublishingDate));
-			sb.append(" <= '");
-			sb.append(dateTimeFormatter.format(LocalDateTime.now()));
-			sb.append("'");
+			sb.append(" <= now()");
 		}
 
 		if (ArrayUtil.isNotEmpty(filterAffectedVersions)) {
@@ -272,11 +274,6 @@ public class JiraService extends BaseService {
 		return _transformSearchResults(jsonObject);
 	}
 
-	@Override
-	protected String getWebClientBaseURL() {
-		return _jiraURL;
-	}
-
 	private int _calculatePage(int startAt, int maxResults) {
 		return (startAt / maxResults) + 1;
 	}
@@ -340,11 +337,20 @@ public class JiraService extends BaseService {
 			return new JSONObject(
 				get(
 					_getCredentials(),
-					StringBundler.concat(
-						_URL_REST_API_2,
-						"/search?expand=renderedFields&fields=",
-						StringUtil.merge(returnFields), "&jql=", jql,
-						"&maxResults=", maxResults, "&startAt=", startAt)));
+					UriComponentsBuilder.fromUriString(
+						_jiraURL + _URL_REST_API_2 + "/search"
+					).queryParam(
+						"expand", "renderedFields"
+					).queryParam(
+						"fields", StringUtil.merge(returnFields)
+					).queryParam(
+						"jql", jql
+					).queryParam(
+						"maxResults", maxResults
+					).queryParam(
+						"startAt", startAt
+					).build(
+					).toUri()));
 		}
 		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {

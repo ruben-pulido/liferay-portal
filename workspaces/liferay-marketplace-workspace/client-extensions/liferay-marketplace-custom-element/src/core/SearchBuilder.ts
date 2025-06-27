@@ -4,13 +4,14 @@
  */
 
 type Key = string;
-type Value = string | number | boolean;
+type Value = string | number | boolean | null;
 
 export type Operators =
 	| 'contains'
 	| 'eq'
 	| 'ge'
 	| 'gt'
+	| 'lambda'
 	| 'le'
 	| 'lt'
 	| 'ne'
@@ -53,7 +54,11 @@ export default class SearchBuilder {
 			return operator
 				.replace(
 					'{values}',
-					values.map((value) => `'${value}'`).join(',')
+					values
+						.map((value) =>
+							typeof value === 'number' ? value : `'${value}'`
+						)
+						.join(',')
 				)
 				.trim();
 		}

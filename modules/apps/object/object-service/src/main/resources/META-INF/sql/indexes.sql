@@ -9,7 +9,6 @@ create index IX_2B2CA94C on ObjectDefinition (accountEntryRestricted);
 create index IX_2A008543 on ObjectDefinition (companyId, className[$COLUMN_LENGTH:255$]);
 create unique index IX_F861636D on ObjectDefinition (companyId, externalReferenceCode[$COLUMN_LENGTH:75$]);
 create index IX_3E56F38F on ObjectDefinition (companyId, name[$COLUMN_LENGTH:75$]);
-create index IX_66A8EEB3 on ObjectDefinition (companyId, rootObjectDefinitionId);
 create index IX_2055DB0 on ObjectDefinition (companyId, status, active_, objectFolderId, enableObjectEntryDraft, scope[$COLUMN_LENGTH:75$]);
 create index IX_B56984FF on ObjectDefinition (companyId, status, system_, active_);
 create index IX_12BECBE8 on ObjectDefinition (companyId, system_, modifiable);
@@ -38,6 +37,7 @@ create index IX_772D12BC on ObjectEntryFolder (groupId, companyId, treePath[$COL
 create unique index IX_8EC73DF1 on ObjectEntryFolder (groupId, uuid_[$COLUMN_LENGTH:75$]);
 create index IX_56A855AD on ObjectEntryFolder (uuid_[$COLUMN_LENGTH:75$]);
 
+create index IX_494F3EFB on ObjectEntryVersion (companyId, createDate);
 create index IX_9811B7EC on ObjectEntryVersion (objectDefinitionId);
 create unique index IX_50DA0035 on ObjectEntryVersion (objectEntryId, version);
 create index IX_5C2CDBC9 on ObjectEntryVersion (uuid_[$COLUMN_LENGTH:75$]);

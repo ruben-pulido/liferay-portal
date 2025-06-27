@@ -61,18 +61,29 @@ public class CloudBucketUtil {
 				"aws s3 cp --no-progress", replacedDestination,
 				replacedSource));
 
-		Matcher destinationS3ObjectPathMatcher = _s3ObjectPathPattern.matcher(
-			replacedDestination);
+		if (!destination.equals(replacedDestination)) {
+			System.out.println(
+				"Replaced destination " + destination + " with " +
+					replacedDestination);
 
-		if (destinationS3ObjectPathMatcher.find()) {
-			createS3ObjectRef(replacedDestination);
+			Matcher destinationS3ObjectPathMatcher =
+				_s3ObjectPathPattern.matcher(replacedDestination);
+
+			if (destinationS3ObjectPathMatcher.find()) {
+				createS3ObjectRef(replacedDestination);
+			}
 		}
 
-		Matcher sourceS3ObjectPathMatcher = _s3ObjectPathPattern.matcher(
-			replacedSource);
+		if (!source.equals(replacedSource)) {
+			System.out.println(
+				"Replaced source " + source + " with " + replacedSource);
 
-		if (sourceS3ObjectPathMatcher.find()) {
-			createS3ObjectRef(replacedSource);
+			Matcher sourceS3ObjectPathMatcher = _s3ObjectPathPattern.matcher(
+				replacedSource);
+
+			if (sourceS3ObjectPathMatcher.find()) {
+				createS3ObjectRef(replacedSource);
+			}
 		}
 
 		System.out.println("Copied " + source + " to " + destination);
@@ -247,19 +258,25 @@ public class CloudBucketUtil {
 
 		File s3ObjectRefFile = _getS3ObjectRefFile(s3ObjectPath);
 
-		if (s3ObjectRefFile.exists()) {
-			return true;
-		}
-
-		return false;
+		return s3ObjectRefFile.exists();
 	}
 
-	public static String listGCPFiles(String path)
+	public static String listGCPFiles(String path, String... args)
 		throws IOException, TimeoutException {
 
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("gcloud storage ls ");
+
+		for (String arg : args) {
+			sb.append(arg);
+			sb.append(" ");
+		}
+
+		sb.append(_escapeParentheses(path));
+
 		Process process = JenkinsResultsParserUtil.executeBashCommands(
-			true, _getGCPAuthenticationCommand(path, path),
-			"gcloud storage ls " + _escapeParentheses(path));
+			true, _getGCPAuthenticationCommand(path, path), sb.toString());
 
 		return JenkinsResultsParserUtil.readInputStream(
 			process.getInputStream());
@@ -457,13 +474,8 @@ public class CloudBucketUtil {
 
 		Instant instant = Instant.now();
 
-		if (lastModifiedInstant.isBefore(
-				instant.minus(ageSeconds, ChronoUnit.SECONDS))) {
-
-			return true;
-		}
-
-		return false;
+		return lastModifiedInstant.isBefore(
+			instant.minus(ageSeconds, ChronoUnit.SECONDS));
 	}
 
 	private static boolean _isOlderThan(File file, long ageSeconds) {
@@ -497,19 +509,34 @@ public class CloudBucketUtil {
 			File s3ObjectRefFile = _getS3ObjectRefFile(s3ObjectPath);
 
 			if (s3ObjectRefFile.exists()) {
-				try {
-					String s3ObjectRefFileContent =
-						JenkinsResultsParserUtil.read(s3ObjectRefFile);
+				Retryable<String> retryable = new Retryable<String>(
+					true, 5, 30, true) {
 
-					if (Objects.equals(s3ObjectRefFileContent, s3ObjectPath)) {
-						return s3ObjectRefFileContent;
+					@Override
+					public String execute() {
+						try {
+							String s3ObjectRefFileContent =
+								JenkinsResultsParserUtil.read(s3ObjectRefFile);
+
+							if (Objects.equals(
+									s3ObjectRefFileContent, s3ObjectPath)) {
+
+								return s3ObjectRefFileContent;
+							}
+
+							return _replaceS3ObjectPath(s3ObjectRefFileContent);
+						}
+						catch (IOException ioException) {
+							System.out.println(
+								"Unable to read " + s3ObjectRefFile);
+
+							throw new RuntimeException(ioException);
+						}
 					}
 
-					return _replaceS3ObjectPath(s3ObjectRefFileContent);
-				}
-				catch (IOException ioException) {
-					throw new RuntimeException(ioException);
-				}
+				};
+
+				return retryable.executeWithRetries();
 			}
 		}
 

@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import com.liferay.headless.batch.engine.client.dto.v1_0.ImportTask;
+import com.liferay.headless.batch.engine.client.http.HttpInvoker.HttpResponse;
 import com.liferay.headless.batch.engine.client.resource.v1_0.ImportTaskResource;
 import com.liferay.oauth2.provider.scope.ScopeChecker;
 import com.liferay.petra.function.UnsafeTriConsumer;
@@ -209,6 +210,8 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 
 		SXPBlueprint sxpBlueprint = randomSXPBlueprint();
 
+		sxpBlueprint.setCollectionProviderSubtypeName(regex);
+		sxpBlueprint.setCollectionProviderTypeName(regex);
 		sxpBlueprint.setDescription(regex);
 		sxpBlueprint.setExternalReferenceCode(regex);
 		sxpBlueprint.setSchemaVersion(regex);
@@ -222,6 +225,10 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 
 		sxpBlueprint = SXPBlueprintSerDes.toDTO(json);
 
+		Assert.assertEquals(
+			regex, sxpBlueprint.getCollectionProviderSubtypeName());
+		Assert.assertEquals(
+			regex, sxpBlueprint.getCollectionProviderTypeName());
 		Assert.assertEquals(regex, sxpBlueprint.getDescription());
 		Assert.assertEquals(regex, sxpBlueprint.getExternalReferenceCode());
 		Assert.assertEquals(regex, sxpBlueprint.getSchemaVersion());
@@ -340,7 +347,7 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 			testDeleteSXPBlueprintBatch_addSXPBlueprint();
 
 		testDeleteSXPBlueprintBatch_deleteSXPBlueprint(
-			"COMPLETED", null, sxpBlueprint1.getId());
+			202, null, sxpBlueprint1.getId());
 
 		assertHttpResponseStatusCode(
 			404,
@@ -355,7 +362,7 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 	}
 
 	protected void testDeleteSXPBlueprintBatch_deleteSXPBlueprint(
-			String expectedExecuteStatus, String externalReferenceCode, Long id)
+			int expectedStatusCode, String externalReferenceCode, Long id)
 		throws Exception {
 
 		HttpInvoker.HttpResponse httpResponse =
@@ -368,10 +375,10 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 						"id", () -> id
 					)));
 
-		Assert.assertEquals(202, httpResponse.getStatusCode());
+		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
 
 		waitForFinish(
-			expectedExecuteStatus,
+			"COMPLETED",
 			JSONFactoryUtil.createJSONObject(httpResponse.getContent()));
 	}
 
@@ -1326,18 +1333,73 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 	}
 
 	protected SXPBlueprint
+			testPutSXPBlueprintByExternalReferenceCode_addSXPBlueprint()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected SXPBlueprint
 			testPutSXPBlueprintByExternalReferenceCode_createSXPBlueprint()
 		throws Exception {
 
 		return randomSXPBlueprint();
 	}
 
-	protected SXPBlueprint
-			testPutSXPBlueprintByExternalReferenceCode_addSXPBlueprint()
+	@Test
+	public void testBatchEngineDeleteImportTask() throws Exception {
+		SXPBlueprint sxpBlueprint1 =
+			testBatchEngineDeleteImportTask_addSXPBlueprint();
+
+		testBatchEngineDeleteImportTask_deleteSXPBlueprint(
+			200, null, sxpBlueprint1.getId());
+
+		assertHttpResponseStatusCode(
+			404,
+			sxpBlueprintResource.getSXPBlueprintHttpResponse(
+				sxpBlueprint1.getId()));
+	}
+
+	protected SXPBlueprint testBatchEngineDeleteImportTask_addSXPBlueprint()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testDeleteSXPBlueprint_addSXPBlueprint();
+	}
+
+	protected void testBatchEngineDeleteImportTask_deleteSXPBlueprint(
+			int expectedStatusCode, String externalReferenceCode, Long id,
+			String... parameters)
+		throws Exception {
+
+		ImportTaskResource importTaskResource = ImportTaskResource.builder(
+		).authentication(
+			_testCompanyAdminUser.getEmailAddress(),
+			PropsValues.DEFAULT_ADMIN_PASSWORD
+		).endpoint(
+			testCompany.getVirtualHostname(), 8080, "http"
+		).parameters(
+			parameters
+		).build();
+
+		HttpResponse httpResponse =
+			importTaskResource.deleteImportTaskHttpResponse(
+				"com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint",
+				null, null, null, null,
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"externalReferenceCode", () -> externalReferenceCode
+					).put(
+						"id", () -> id
+					)));
+
+		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
+
+		if (expectedStatusCode == 200) {
+			waitForFinish(
+				"COMPLETED",
+				JSONFactoryUtil.createJSONObject(httpResponse.getContent()));
+		}
 	}
 
 	@Rule
@@ -1430,6 +1492,27 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 
 			if (Objects.equals("actions", additionalAssertFieldName)) {
 				if (sxpBlueprint.getActions() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"collectionProviderSubtypeName",
+					additionalAssertFieldName)) {
+
+				if (sxpBlueprint.getCollectionProviderSubtypeName() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"collectionProviderTypeName", additionalAssertFieldName)) {
+
+				if (sxpBlueprint.getCollectionProviderTypeName() == null) {
 					valid = false;
 				}
 
@@ -1657,6 +1740,33 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 				if (!equals(
 						(Map)sxpBlueprint1.getActions(),
 						(Map)sxpBlueprint2.getActions())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"collectionProviderSubtypeName",
+					additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						sxpBlueprint1.getCollectionProviderSubtypeName(),
+						sxpBlueprint2.getCollectionProviderSubtypeName())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"collectionProviderTypeName", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						sxpBlueprint1.getCollectionProviderTypeName(),
+						sxpBlueprint2.getCollectionProviderTypeName())) {
 
 					return false;
 				}
@@ -1917,6 +2027,98 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 		if (entityFieldName.equals("actions")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("collectionProviderSubtypeName")) {
+			Object object = sxpBlueprint.getCollectionProviderSubtypeName();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("collectionProviderTypeName")) {
+			Object object = sxpBlueprint.getCollectionProviderTypeName();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
 		}
 
 		if (entityFieldName.equals("configuration")) {
@@ -2323,6 +2525,10 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 	protected SXPBlueprint randomSXPBlueprint() throws Exception {
 		return new SXPBlueprint() {
 			{
+				collectionProviderSubtypeName = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				collectionProviderTypeName = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
 				createDate = RandomTestUtil.nextDate();
 				description = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());

@@ -6,9 +6,9 @@
 import {navigate} from 'frontend-js-web';
 
 import {IFrontendDataSetContext} from '../../FrontendDataSetContext';
-import {ICreationActionItem} from '../../management_bar/controls/CreationMenu';
 import {OPEN_MODAL, OPEN_SIDE_PANEL} from '../../utils/eventsDefinitions';
 import {resolveModalSize} from '../../utils/modals/resolveModalSize';
+import {ICreationActionItem} from '../types';
 import {ACTION_ITEM_TARGETS} from './constants';
 import formatActionURL from './formatActionURL';
 
@@ -56,7 +56,7 @@ export function triggerAction(
 			});
 			break;
 		case EVENT:
-			Liferay.fire(actionTargetURL);
+			actionTargetURL && Liferay.fire(actionTargetURL);
 			break;
 		default:
 			navigate(formatActionURL(actionTargetURL, item, actionTarget));

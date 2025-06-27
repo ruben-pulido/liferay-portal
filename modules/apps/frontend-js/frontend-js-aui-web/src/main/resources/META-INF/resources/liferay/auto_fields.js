@@ -346,19 +346,27 @@ AUI.add(
 					let clonedRow;
 
 					if (!!inputsLocalized._nodes.length && !paletteIsCloned) {
-						const palette = document.querySelector(
-							"[id$='PaletteBoundingBox']"
-						);
-
 						const trigger = clone.one('button');
+
+						const currentButton = currentRow.one('button');
+
+						const currentMenu = currentButton.getData('menu');
+
+						const currentMenuListContainer =
+							currentButton.getData('menuListContainer');
+
+						trigger.setData('menu', currentMenu);
+
+						trigger.setData(
+							'menuListContainer',
+							currentMenuListContainer
+						);
 
 						const list = A.Node.create(
 							'<ul class="dropdown-menu dropdown-menu-left-side"></ul>'
 						);
 
 						trigger.placeAfter(list);
-
-						list.append(palette.cloneNode(true));
 					}
 
 					if (instance.url) {
@@ -399,7 +407,13 @@ AUI.add(
 							const inputNodeName = item.attr('nodeName');
 							const inputType = item.attr('type');
 
-							let oldName = item.attr('name') || item.attr('id');
+							const oldId = item.attr('id');
+							let oldName = item.attr('name') || oldId;
+
+							const newId = oldId.replace(
+								/([0-9]+)([_A-Za-z]*)$/,
+								guid + '$2'
+							);
 
 							const newName = oldName.replace(
 								/([0-9]+)([_A-Za-z]*)$/,
@@ -411,20 +425,20 @@ AUI.add(
 
 								item.attr('checked', '');
 								item.attr('name', newName);
-								item.attr('id', newName);
+								item.attr('id', newId);
 							}
 							else if (
 								inputNodeName === 'button' ||
 								inputNodeName === 'div' ||
 								inputNodeName === 'span'
 							) {
-								if (oldName) {
-									item.attr('id', newName);
+								if (oldId) {
+									item.attr('id', newId);
 								}
 							}
 							else {
 								item.attr('name', newName);
-								item.attr('id', newName);
+								item.attr('id', newId);
 							}
 
 							if (fieldStrings && fieldStrings[oldName]) {
@@ -442,9 +456,9 @@ AUI.add(
 								);
 							}
 
-							node.all('label[for=' + oldName + ']').attr(
+							node.all('label[for=' + oldId + ']').attr(
 								'for',
-								newName
+								newId
 							);
 						}
 					);

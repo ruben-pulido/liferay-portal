@@ -6,8 +6,12 @@
 import {isNullOrUndefined} from '@liferay/layout-js-components-web';
 
 import {config} from '../config';
-import {State} from '../contexts/StateContext';
-import {ObjectDefinition, ObjectField} from '../types/ObjectDefinition';
+import {
+	ObjectDefinition,
+	ObjectField,
+	ObjectRelationship,
+} from '../types/ObjectDefinition';
+import {ReferencedStructure, Structure} from '../types/Structure';
 import {
 	FIELD_TYPE_TO_BUSINESS_TYPE,
 	FIELD_TYPE_TO_DB_TYPE,
@@ -22,24 +26,34 @@ export default function buildObjectDefinition({
 	label,
 	name,
 	spaces,
+	status = 'draft',
 }: {
-	erc: State['erc'];
-	fields?: Field[];
-	id?: State['id'];
-	label: State['label'];
-	name?: State['name'];
-	spaces: State['spaces'];
+	erc: Structure['erc'];
+	fields?: (Field | ReferencedStructure)[];
+	id?: Structure['id'];
+	label: Structure['label'];
+	name: Structure['name'];
+	spaces: Structure['spaces'];
+	status?: Structure['status'];
 }): ObjectDefinition {
 	const objectDefinition: ObjectDefinition = {
 		enableFriendlyURLCustomization: true,
 		enableIndexSearch: true,
 		enableLocalization: true,
 		enableObjectEntryDraft: true,
+		enableObjectEntryVersioning: true,
 		externalReferenceCode: erc,
 		label,
-		objectFields: buildFields(fields),
+		objectFields: buildFields(getFields(fields)),
+		objectRelationships: buildRelationships(
+			erc,
+			getReferencedStructures(fields)
+		),
 		pluralLabel: label,
 		scope: 'depot',
+		status: {
+			code: status === 'published' ? 0 : 2,
+		},
 	};
 
 	if (id) {
@@ -70,6 +84,20 @@ export default function buildObjectDefinition({
 	}
 
 	return objectDefinition;
+}
+
+function getFields(fields: (Field | ReferencedStructure)[]): Field[] {
+	return fields.filter(
+		(field) => field.type !== 'referenced-structure'
+	) as Field[];
+}
+
+function getReferencedStructures(
+	fields: (Field | ReferencedStructure)[]
+): ReferencedStructure[] {
+	return fields.filter(
+		(field) => field.type === 'referenced-structure'
+	) as ReferencedStructure[];
 }
 
 function buildFields(fields: Field[]) {
@@ -106,5 +134,29 @@ function buildFields(fields: Field[]) {
 		}
 
 		return objectField;
+	});
+}
+
+function buildRelationships(
+	erc: Structure['erc'],
+	referencedStructures: ReferencedStructure[]
+) {
+	return referencedStructures.map((referencedStructure) => {
+		const relationship: ObjectRelationship = {
+			deletionType: 'cascade',
+			label: {
+				en_US: referencedStructure.name,
+			},
+			name: referencedStructure.name,
+			objectDefinitionExternalReferenceCode1: erc,
+			objectDefinitionExternalReferenceCode2: referencedStructure.erc,
+			type: 'oneToMany',
+		};
+
+		if (referencedStructure.name) {
+			relationship.name = referencedStructure.name;
+		}
+
+		return relationship;
 	});
 }
