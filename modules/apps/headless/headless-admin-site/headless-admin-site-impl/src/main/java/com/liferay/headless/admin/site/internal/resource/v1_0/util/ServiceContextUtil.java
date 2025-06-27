@@ -6,7 +6,9 @@
 package com.liferay.headless.admin.site.internal.resource.v1_0.util;
 
 import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetCategoryServiceUtil;
+import com.liferay.asset.kernel.service.AssetTagServiceUtil;
 import com.liferay.headless.admin.site.dto.v1_0.ItemExternalReference;
 import com.liferay.headless.admin.site.dto.v1_0.Scope;
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
@@ -28,9 +30,10 @@ public class ServiceContextUtil {
 
 	public static ServiceContext createServiceContext(
 			ItemExternalReference[] assetCategoriesItemExternalReferences,
+			ItemExternalReference[] assetTagsItemExternalReferences,
 			Date createDate, long groupId,
-			HttpServletRequest httpServletRequest, String[] keywords,
-			Date modifiedDate, long userId, String uuid)
+			HttpServletRequest httpServletRequest, Date modifiedDate,
+			long userId, String uuid)
 		throws Exception {
 
 		ServiceContext serviceContext = ServiceContextBuilder.create(
@@ -40,7 +43,8 @@ public class ServiceContextUtil {
 		serviceContext.setAssetCategoryIds(
 			_getAssetCategoryIds(
 				groupId, assetCategoriesItemExternalReferences));
-		serviceContext.setAssetTagNames(keywords);
+		serviceContext.setAssetTagNames(
+			_getAssetTagNames(groupId, assetTagsItemExternalReferences));
 		serviceContext.setCreateDate(createDate);
 		serviceContext.setModifiedDate(modifiedDate);
 		serviceContext.setUserId(userId);
@@ -96,6 +100,30 @@ public class ServiceContextUtil {
 
 				return assetCategory.getCategoryId();
 			});
+	}
+
+	private static String[] _getAssetTagNames(
+		long groupId, ItemExternalReference[] itemExternalReferences) {
+
+		if (ArrayUtil.isEmpty(itemExternalReferences)) {
+			return new String[0];
+		}
+
+		return TransformUtil.transform(
+			itemExternalReferences,
+			itemExternalReference -> {
+				AssetTag assetTag =
+					AssetTagServiceUtil.fetchAssetTagByExternalReferenceCode(
+						itemExternalReference.getExternalReferenceCode(),
+						groupId);
+
+				if (assetTag == null) {
+					throw new UnsupportedOperationException();
+				}
+
+				return assetTag.getName();
+			},
+			String.class);
 	}
 
 }

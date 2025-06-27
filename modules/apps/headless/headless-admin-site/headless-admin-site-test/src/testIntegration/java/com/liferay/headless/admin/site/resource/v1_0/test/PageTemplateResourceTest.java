@@ -11,6 +11,7 @@ import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.exportimport.kernel.service.StagingLocalService;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageTemplate;
+import com.liferay.headless.admin.site.client.dto.v1_0.ItemExternalReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageTemplate;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageTemplateSet;
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPageTemplate;
@@ -505,9 +506,9 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {
-			"active", "description_i18n", "externalReferenceCode", "keywords",
-			"name", "name_i18n", "pageTemplateSet",
-			"taxonomyCategoryItemExternalReferences"
+			"active", "description_i18n", "externalReferenceCode",
+			"keywordItemExternalReferences", "name", "name_i18n",
+			"pageTemplateSet", "taxonomyCategoryItemExternalReferences"
 		};
 	}
 
@@ -671,7 +672,9 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 				externalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
-				keywords = AssetTestUtil.randomKeywords(serviceContext);
+				keywordItemExternalReferences =
+					AssetTestUtil.randomKeywordItemExternalReferences(
+						serviceContext);
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				pageTemplateSet = _getPageTemplateSet(group);
 				taxonomyCategoryItemExternalReferences =
@@ -814,9 +817,6 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 	private WidgetPageTemplate _getWidgetPageTemplate(Group group)
 		throws Exception {
 
-		String randomName = StringUtil.toLowerCase(
-			RandomTestUtil.randomString());
-
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(group.getGroupId());
 
@@ -836,12 +836,14 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 					RandomTestUtil.randomString());
 				hiddenFromNavigation = RandomTestUtil.randomBoolean();
 				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
-				keywords = AssetTestUtil.randomKeywords(serviceContext);
-				name = randomName;
+				keywordItemExternalReferences = new ItemExternalReference[0];
+
+				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
+
 				name_i18n = HashMapBuilder.put(
-					LocaleUtil.toBCP47LanguageId(LocaleUtil.getDefault()),
-					randomName
+					LocaleUtil.toBCP47LanguageId(LocaleUtil.getDefault()), name
 				).build();
+
 				pageTemplateSet = _getPageTemplateSet(group);
 				taxonomyCategoryItemExternalReferences =
 					AssetTestUtil.randomTaxonomyCategoryItemExternalReferences(

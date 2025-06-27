@@ -1450,6 +1450,17 @@ public abstract class BasePageTemplateResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"keywordItemExternalReferences",
+					additionalAssertFieldName)) {
+
+				if (pageTemplate.getKeywordItemExternalReferences() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("keywords", additionalAssertFieldName)) {
 				if (pageTemplate.getKeywords() == null) {
 					valid = false;
@@ -1488,6 +1499,16 @@ public abstract class BasePageTemplateResourceTestCase {
 					"pageTemplateSettings", additionalAssertFieldName)) {
 
 				if (pageTemplate.getPageTemplateSettings() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"taxonomyCategories", additionalAssertFieldName)) {
+
+				if (pageTemplate.getTaxonomyCategories() == null) {
 					valid = false;
 				}
 
@@ -1835,6 +1856,20 @@ public abstract class BasePageTemplateResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"keywordItemExternalReferences",
+					additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						pageTemplate1.getKeywordItemExternalReferences(),
+						pageTemplate2.getKeywordItemExternalReferences())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("keywords", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						pageTemplate1.getKeywords(),
@@ -1886,6 +1921,19 @@ public abstract class BasePageTemplateResourceTestCase {
 				if (!Objects.deepEquals(
 						pageTemplate1.getPageTemplateSettings(),
 						pageTemplate2.getPageTemplateSettings())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"taxonomyCategories", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						pageTemplate1.getTaxonomyCategories(),
+						pageTemplate2.getTaxonomyCategories())) {
 
 					return false;
 				}
@@ -2407,6 +2455,11 @@ public abstract class BasePageTemplateResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("keywordItemExternalReferences")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("keywords")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -2469,6 +2522,11 @@ public abstract class BasePageTemplateResourceTestCase {
 		}
 
 		if (entityFieldName.equals("pageTemplateSettings")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("taxonomyCategories")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}

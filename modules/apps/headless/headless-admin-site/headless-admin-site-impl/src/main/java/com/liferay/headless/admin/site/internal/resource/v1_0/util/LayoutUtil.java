@@ -5,6 +5,8 @@
 
 package com.liferay.headless.admin.site.internal.resource.v1_0.util;
 
+import jakarta.validation.ValidationException;
+
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLFileEntryServiceUtil;
 import com.liferay.headless.admin.site.dto.v1_0.ContentPageSpecification;
@@ -18,14 +20,20 @@ import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeCon
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryServiceUtil;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.model.ColorScheme;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutServiceUtil;
 import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ThemeLocalServiceUtil;
+import com.liferay.portal.kernel.util.ColorSchemeFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -36,6 +44,8 @@ import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsExperienceServiceUtil;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryServiceUtil;
+
+//import jakarta.ws.rs.BadRequestException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -49,13 +59,13 @@ import java.util.Objects;
 public class LayoutUtil {
 
 	public static Layout addContentLayout(
-			long groupId, PageSpecification[] pageSpecifications,
-			boolean privateLayout, Map<Locale, String> nameMap,
-			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-			Map<Locale, String> robotsMap, String type,
-			UnicodeProperties typeSettingsUnicodeProperties, boolean hidden,
-			boolean system, Map<Locale, String> friendlyURLMap, int status,
-			ServiceContext serviceContext)
+			String externalReferenceCode, long groupId,
+			PageSpecification[] pageSpecifications, boolean privateLayout,
+			Map<Locale, String> nameMap, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, Map<Locale, String> robotsMap,
+			String type, UnicodeProperties typeSettingsUnicodeProperties,
+			boolean hidden, boolean system, Map<Locale, String> friendlyURLMap,
+			int status, ServiceContext serviceContext)
 		throws Exception {
 
 		if (typeSettingsUnicodeProperties == null) {
@@ -64,10 +74,10 @@ public class LayoutUtil {
 
 		if (pageSpecifications == null) {
 			Layout layout = LayoutLocalServiceUtil.addLayout(
-				null, serviceContext.getUserId(), groupId, privateLayout, 0, 0,
-				0, nameMap, titleMap, descriptionMap, null, robotsMap, type,
-				typeSettingsUnicodeProperties.toString(), hidden, system,
-				friendlyURLMap, 0L, serviceContext);
+				externalReferenceCode, serviceContext.getUserId(), groupId,
+				privateLayout, 0, 0, 0, nameMap, titleMap, descriptionMap, null,
+				robotsMap, type, typeSettingsUnicodeProperties.toString(),
+				hidden, system, friendlyURLMap, 0L, serviceContext);
 
 			return LayoutLocalServiceUtil.updateStatus(
 				serviceContext.getUserId(), layout.getPlid(), status,
@@ -104,6 +114,25 @@ public class LayoutUtil {
 					getDraftContentPageSpecificationExternalReferenceCode())) {
 
 			throw new UnsupportedOperationException();
+		}
+
+		if ((publishedContentPageSpecification.getExternalReferenceCode() !=
+				null) &&
+			(externalReferenceCode != null) &&
+			Objects.equals(
+				externalReferenceCode,
+				publishedContentPageSpecification.getExternalReferenceCode()) &&
+			type.equals(LayoutConstants.TYPE_CONTENT)) {
+
+			// TODO
+//			throw new BadRequestException(
+			throw new ValidationException(
+				StringBundler.concat(
+					"Site page external reference code ", externalReferenceCode,
+					" does not match published page specification external ",
+					"reference code ",
+					publishedContentPageSpecification.
+						getExternalReferenceCode()));
 		}
 
 		Settings settings = publishedContentPageSpecification.getSettings();
@@ -190,6 +219,8 @@ public class LayoutUtil {
 			}
 		}
 
+		// TODO Move this block before call to updateLayout so it is only applied to draft, instead of both published and draft
+
 		if (Objects.equals(
 				publishedContentPageSpecification.getStatus(),
 				PageSpecification.Status.APPROVED)) {
@@ -202,6 +233,14 @@ public class LayoutUtil {
 		}
 		else {
 			serviceContext.setAttribute("published", Boolean.FALSE.toString());
+		}
+
+		if ((externalReferenceCode != null) &&
+			(publishedContentPageSpecification.getExternalReferenceCode() ==
+				null)) {
+
+			publishedContentPageSpecification.setExternalReferenceCode(
+				externalReferenceCode);
 		}
 
 		Layout layout = LayoutLocalServiceUtil.addLayout(
@@ -654,13 +693,72 @@ public class LayoutUtil {
 			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
 			unicodeProperties.toString());
 
+		Theme theme = null;
 		String themeId = null;
+
+		if ((settings != null) &&
+			Validator.isNotNull(settings.getThemeName())) {
+
+			for (Theme curTheme :
+					ThemeLocalServiceUtil.getThemes(layout.getCompanyId())) {
+
+				if (!Objects.equals(
+						curTheme.getName(), settings.getThemeName())) {
+
+					continue;
+				}
+
+				theme = curTheme;
+				themeId = curTheme.getThemeId();
+
+				break;
+			}
+
+			if (themeId == null) {
+				throw new UnsupportedOperationException();
+			}
+		}
+
 		String colorSchemeId = null;
+
+		if ((settings != null) &&
+			Validator.isNotNull(settings.getColorSchemeName())) {
+
+			if (theme == null) {
+				throw new UnsupportedOperationException();
+			}
+
+			for (ColorScheme colorScheme : theme.getColorSchemes()) {
+				if (!Objects.equals(
+						colorScheme.getName(), settings.getColorSchemeName())) {
+
+					continue;
+				}
+
+				colorSchemeId = colorScheme.getColorSchemeId();
+
+				break;
+			}
+
+			if (colorSchemeId == null) {
+				ColorScheme colorScheme =
+					ColorSchemeFactoryUtil.getDefaultRegularColorScheme();
+
+				if (Objects.equals(
+						colorScheme.getName(), settings.getColorSchemeName())) {
+
+					colorSchemeId = colorScheme.getColorSchemeId();
+				}
+			}
+
+			if (colorSchemeId == null) {
+				throw new UnsupportedOperationException();
+			}
+		}
+
 		String css = null;
 
 		if (settings != null) {
-			themeId = settings.getThemeName();
-			colorSchemeId = settings.getColorSchemeName();
 			css = settings.getCss();
 		}
 

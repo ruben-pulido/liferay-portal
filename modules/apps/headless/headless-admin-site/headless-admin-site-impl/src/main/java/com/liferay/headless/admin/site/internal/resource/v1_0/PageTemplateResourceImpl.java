@@ -334,8 +334,9 @@ public class PageTemplateResourceImpl extends BasePageTemplateResourceImpl {
 	protected void preparePatch(
 		PageTemplate pageTemplate, PageTemplate existingPageTemplate) {
 
-		if (pageTemplate.getKeywords() != null) {
-			existingPageTemplate.setKeywords(pageTemplate::getKeywords);
+		if (pageTemplate.getKeywordItemExternalReferences() != null) {
+			existingPageTemplate.setKeywordItemExternalReferences(
+				pageTemplate::getKeywordItemExternalReferences);
 		}
 
 		if (pageTemplate.getPageTemplateSet() != null) {
@@ -508,9 +509,9 @@ public class PageTemplateResourceImpl extends BasePageTemplateResourceImpl {
 
 		return ServiceContextUtil.createServiceContext(
 			pageTemplate.getTaxonomyCategoryItemExternalReferences(),
+			pageTemplate.getKeywordItemExternalReferences(),
 			pageTemplate.getDateCreated(), groupId, contextHttpServletRequest,
-			pageTemplate.getKeywords(), pageTemplate.getDateModified(),
-			contextUser.getUserId(), uuid);
+			pageTemplate.getDateModified(), contextUser.getUserId(), uuid);
 	}
 
 	private boolean _isTypeWidgetPageTemplate(PageTemplate pageTemplate) {

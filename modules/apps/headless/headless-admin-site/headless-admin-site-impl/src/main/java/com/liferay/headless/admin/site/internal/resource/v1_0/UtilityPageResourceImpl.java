@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -102,16 +103,29 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 		long groupId = GroupUtil.getGroupId(
 			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
 
+		if (Validator.isNull(search)) {
+			return Page.of(
+				transform(
+					_layoutUtilityPageEntryService.getLayoutUtilityPageEntries(
+						groupId, pagination.getStartPosition(),
+						pagination.getEndPosition(), null),
+					layoutUtilityPageEntry -> _utilityPageDTOConverter.toDTO(
+						layoutUtilityPageEntry)),
+				pagination,
+				_layoutUtilityPageEntryService.getLayoutUtilityPageEntriesCount(
+					groupId));
+		}
+
 		return Page.of(
 			transform(
 				_layoutUtilityPageEntryService.getLayoutUtilityPageEntries(
-					groupId, pagination.getStartPosition(),
+					groupId, search, null, pagination.getStartPosition(),
 					pagination.getEndPosition(), null),
 				layoutUtilityPageEntry -> _utilityPageDTOConverter.toDTO(
 					layoutUtilityPageEntry)),
 			pagination,
 			_layoutUtilityPageEntryService.getLayoutUtilityPageEntriesCount(
-				groupId));
+				groupId, search, null));
 	}
 
 	@Override
@@ -312,7 +326,7 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 			"layout.instanceable.allowed", Boolean.TRUE);
 
 		Layout layout = LayoutUtil.addContentLayout(
-			groupId, utilityPage.getPageSpecifications(), false, nameMap,
+			null, groupId, utilityPage.getPageSpecifications(), false, nameMap,
 			titleMap, descriptionMap, null, LayoutConstants.TYPE_UTILITY, null,
 			true, true,
 			LocalizedMapUtil.getLocalizedMap(
