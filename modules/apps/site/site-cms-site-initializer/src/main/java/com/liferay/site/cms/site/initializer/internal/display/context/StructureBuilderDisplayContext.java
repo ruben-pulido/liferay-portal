@@ -11,12 +11,13 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServ
 import com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition;
 import com.liferay.object.admin.rest.dto.v1_0.util.ObjectDefinitionUtil;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
+import com.liferay.object.constants.ObjectFolderConstants;
+import com.liferay.object.service.ObjectRelationshipLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
@@ -25,13 +26,18 @@ import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.vulcan.pagination.Page;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,7 +57,7 @@ public class StructureBuilderDisplayContext {
 			WebKeys.THEME_DISPLAY);
 	}
 
-	public Map<String, Object> getProps() {
+	public Map<String, Object> getProps() throws Exception {
 		return HashMapBuilder.<String, Object>put(
 			"config",
 			JSONUtil.put(
@@ -101,6 +107,22 @@ public class StructureBuilderDisplayContext {
 					_themeDisplay.getPortalURL(), _themeDisplay.getPathMain(),
 					"/cms/edit_structure_display_page")
 			).put(
+				"isReferenced",
+				() -> {
+					ObjectDefinition objectDefinition = _getObjectDefinition();
+
+					if ((objectDefinition == null) ||
+						!GetterUtil.getBoolean(_objectDefinition.getActive())) {
+
+						return false;
+					}
+
+					return ListUtil.isNotEmpty(
+						ObjectRelationshipLocalServiceUtil.
+							getObjectRelationshipsByObjectDefinitionId2(
+								objectDefinition.getId()));
+				}
+			).put(
 				"objectFolderExternalReferenceCode",
 				_getObjectFolderExternalReferenceCode()
 			).put(
@@ -118,11 +140,16 @@ public class StructureBuilderDisplayContext {
 			)
 		).put(
 			"state",
-			JSONUtil.put("objectDefinition", _getObjectDefinitionJSONObject())
+			JSONUtil.put(
+				"mainObjectDefinition",
+				_getObjectDefinitionJSONObject(_getObjectDefinition())
+			).put(
+				"objectDefinitions", _getObjectDefinitionsJSONArray()
+			)
 		).build();
 	}
 
-	private ObjectDefinition _getObjectDefinition() {
+	private ObjectDefinition _getObjectDefinition() throws Exception {
 		if (_objectDefinition != null) {
 			return _objectDefinition;
 		}
@@ -141,21 +168,15 @@ public class StructureBuilderDisplayContext {
 			_themeDisplay.getUser()
 		).build();
 
-		try {
-			_objectDefinition = objectDefinitionResource.getObjectDefinition(
-				objectDefinitionId);
-		}
-		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(exception);
-			}
-		}
+		_objectDefinition = objectDefinitionResource.getObjectDefinition(
+			objectDefinitionId);
 
 		return _objectDefinition;
 	}
 
-	private JSONObject _getObjectDefinitionJSONObject() {
-		ObjectDefinition objectDefinition = _getObjectDefinition();
+	private JSONObject _getObjectDefinitionJSONObject(
+			ObjectDefinition objectDefinition)
+		throws Exception {
 
 		if (objectDefinition == null) {
 			return null;
@@ -164,19 +185,63 @@ public class StructureBuilderDisplayContext {
 		ObjectDefinitionUtil.prepareObjectDefinitionForExport(
 			_jsonFactory, objectDefinition);
 
-		try {
-			return _jsonFactory.createJSONObject(objectDefinition.toString());
-		}
-		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(exception);
-			}
-
-			return null;
-		}
+		return _jsonFactory.createJSONObject(objectDefinition.toString());
 	}
 
-	private String _getObjectFolderExternalReferenceCode() {
+	private List<ObjectDefinition> _getObjectDefinitions() throws Exception {
+		if (_objectDefinitions != null) {
+			return _objectDefinitions;
+		}
+
+		ObjectDefinitionResource.Builder builder =
+			_objectDefinitionResourceFactory.create();
+
+		ObjectDefinitionResource objectDefinitionResource = builder.user(
+			_themeDisplay.getUser()
+		).build();
+
+		Page<ObjectDefinition> page =
+			objectDefinitionResource.getObjectDefinitionsPage(
+				null, null,
+				objectDefinitionResource.toFilter(
+					StringBundler.concat(
+						"(objectFolderExternalReferenceCode eq '",
+						ObjectFolderConstants.
+							EXTERNAL_REFERENCE_CODE_CONTENT_STRUCTURES,
+						"') or (objectFolderExternalReferenceCode eq '",
+						ObjectFolderConstants.
+							EXTERNAL_REFERENCE_CODE_FILE_TYPES,
+						"')"),
+					Collections.emptyMap()),
+				null, null);
+
+		_objectDefinitions = new ArrayList<>(page.getItems());
+
+		return _objectDefinitions;
+	}
+
+	private JSONArray _getObjectDefinitionsJSONArray() throws Exception {
+		List<ObjectDefinition> objectDefinitions = _getObjectDefinitions();
+
+		if (objectDefinitions == null) {
+			return null;
+		}
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
+
+		for (ObjectDefinition objectDefinition : objectDefinitions) {
+			JSONObject objectDefinitionJSONObject =
+				_getObjectDefinitionJSONObject(objectDefinition);
+
+			if (objectDefinitionJSONObject != null) {
+				jsonArray.put(objectDefinitionJSONObject);
+			}
+		}
+
+		return jsonArray;
+	}
+
+	private String _getObjectFolderExternalReferenceCode() throws Exception {
 		if (_objectFolderExternalReferenceCode != null) {
 			return _objectFolderExternalReferenceCode;
 		}
@@ -198,14 +263,12 @@ public class StructureBuilderDisplayContext {
 		return _objectFolderExternalReferenceCode;
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		StructureBuilderDisplayContext.class);
-
 	private final HttpServletRequest _httpServletRequest;
 	private final JSONFactory _jsonFactory;
 	private ObjectDefinition _objectDefinition;
 	private final ObjectDefinitionResource.Factory
 		_objectDefinitionResourceFactory;
+	private List<ObjectDefinition> _objectDefinitions;
 	private String _objectFolderExternalReferenceCode;
 	private final ThemeDisplay _themeDisplay;
 

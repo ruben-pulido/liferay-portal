@@ -174,22 +174,38 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 		}
 
 		if (totalDuration == 0L) {
-			return getAxisCount();
+			long targetAxisClassSize = 20;
+
+			JobProperty targetAxisClassSizeJobProperty = getJobProperty(
+				"test.batch.target.axis.class.size");
+
+			String targetAxisClassSizeValue =
+				targetAxisClassSizeJobProperty.getValue();
+
+			if (targetAxisClassSizeValue != null) {
+				targetAxisClassSize = Long.parseLong(targetAxisClassSizeValue);
+			}
+
+			long axisCount = 1;
+
+			axisCount += Math.floorDiv(testClasses.size(), targetAxisClassSize);
+
+			return Math.toIntExact(axisCount);
 		}
 
 		JobProperty targetAxisDurationJobProperty = getJobProperty(
 			"test.batch.target.axis.duration");
 
-		String targetAxisDurationString =
+		String targetAxisDurationValue =
 			targetAxisDurationJobProperty.getValue();
 
-		if (!JenkinsResultsParserUtil.isInteger(targetAxisDurationString)) {
+		if (!JenkinsResultsParserUtil.isInteger(targetAxisDurationValue)) {
 			return getAxisCount();
 		}
 
 		recordJobProperty(targetAxisDurationJobProperty);
 
-		long targetAxisDuration = Long.parseLong(targetAxisDurationString);
+		long targetAxisDuration = Long.parseLong(targetAxisDurationValue);
 
 		JobProperty performanceModifierJobProperty = getJobProperty(
 			"test.batch.performance.modifier");
@@ -673,16 +689,7 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 				_playwrightJSONObject = new JSONObject(result.trim());
 			}
 			catch (Exception exception) {
-				StringBuilder sb = new StringBuilder();
-
-				sb.append("Unable to parse Playwright JSON object ");
-				sb.append("<@U04GTH03Q>, <@U01EV0V1Y6N>\n");
-
-				sb.append(System.getenv("TOP_LEVEL_BUILD_URL"));
-
-				NotificationUtil.sendSlackNotification(
-					sb.toString(), "#ci-notifications", ":playwright:",
-					"Playwright batch creation failure", "Liferay Playwright");
+				_sendNotification("Unable to parse Playwright JSON object");
 
 				exception.printStackTrace();
 			}
@@ -693,7 +700,11 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 			if ((errorsJSONArray != null) && (errorsJSONArray.length() > 0)) {
 				StringBuilder sb = new StringBuilder();
 
-				sb.append("Errors found in Playwright tests.\n");
+				String message = "Errors found in Playwright tests";
+
+				sb.append(message);
+
+				sb.append("\n");
 
 				for (int i = 0; i < errorsJSONArray.length(); i++) {
 					JSONObject errorJSONObject = errorsJSONArray.getJSONObject(
@@ -739,15 +750,30 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 					sb.append("\n");
 				}
 
-				System.out.println(sb.toString());
+				System.err.println(sb.toString());
 
-				throw new RuntimeException(sb.toString());
+				_sendNotification(message);
+
+				return;
 			}
 
 			_specJSONObjects.addAll(_getSpecJSONObjects(_playwrightJSONObject));
 
 			_playwrightJSONObjectsLoaded.set(true);
 		}
+	}
+
+	private void _sendNotification(String message) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(message);
+		sb.append(" <@U04GTH03Q>, <@U01EV0V1Y6N>\n");
+
+		sb.append(System.getenv("TOP_LEVEL_BUILD_URL"));
+
+		NotificationUtil.sendSlackNotification(
+			sb.toString(), "#ci-notifications", ":playwright:",
+			"Playwright batch creation failure", "Liferay Playwright");
 	}
 
 	private static final Set<String> _loadedProjectNames =

@@ -6,7 +6,6 @@
 package com.liferay.ups;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -31,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Alessio Antonio Rendina
@@ -45,11 +45,6 @@ public class OptionsRestController extends BaseRestController {
 		throws Exception {
 
 		return post(jwt, json, _log);
-	}
-
-	@Override
-	protected String getWebClientBaseURL() {
-		return "";
 	}
 
 	protected ResponseEntity<String> post(Jwt jwt, String json, Log log)
@@ -78,10 +73,8 @@ public class OptionsRestController extends BaseRestController {
 
 			JSONObject skuJSONObject = _get(
 				"Bearer " + jwt.getTokenValue(),
-				StringBundler.concat(
-					lxcDXPServerProtocol, "://", lxcDXPMainDomain,
-					"/o/headless-commerce-admin-catalog/v1.0/skus/",
-					orderItemJSONObject.getString("skuId")));
+				"/o/headless-commerce-admin-catalog/v1.0/skus/" +
+					orderItemJSONObject.getString("skuId"));
 
 			depth += skuJSONObject.getDouble("depth");
 			height += skuJSONObject.getDouble("height");
@@ -117,7 +110,13 @@ public class OptionsRestController extends BaseRestController {
 	}
 
 	private JSONObject _get(String authorization, String path) {
-		return new JSONObject(get(authorization, path));
+		return new JSONObject(
+			get(
+				authorization,
+				UriComponentsBuilder.fromPath(
+					path
+				).build(
+				).toUri()));
 	}
 
 	private String _getAccessToken(
@@ -141,7 +140,10 @@ public class OptionsRestController extends BaseRestController {
 						HttpHeaders.CONTENT_TYPE,
 						MediaType.APPLICATION_FORM_URLENCODED_VALUE
 					).build(),
-					"https://wwwcie.ups.com/security/v1/oauth/token"));
+					UriComponentsBuilder.fromUriString(
+						"https://wwwcie.ups.com/security/v1/oauth/token"
+					).build(
+					).toUri()));
 
 			return jsonObject.getString("access_token");
 		}
@@ -293,7 +295,11 @@ public class OptionsRestController extends BaseRestController {
 			return new JSONObject(
 				post(
 					"Bearer " + _getAccessToken(clientId, clientSecret, log),
-					body, "https://wwwcie.ups.com/api/rating/v2403/Rate"));
+					body,
+					UriComponentsBuilder.fromUriString(
+						"https://wwwcie.ups.com/api/rating/v2403/Rate"
+					).build(
+					).toUri()));
 		}
 		catch (Exception exception) {
 			if (log.isDebugEnabled()) {

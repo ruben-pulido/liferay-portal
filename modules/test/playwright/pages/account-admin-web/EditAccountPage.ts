@@ -8,8 +8,14 @@ import {FrameLocator, Locator, Page, expect} from '@playwright/test';
 import {DataApiHelpers} from '../../helpers/ApiHelpers';
 import getRandomString from '../../utils/getRandomString';
 import {waitForAlert} from '../../utils/waitForAlert';
+import {DataTablePage} from './DataTablePage';
 
 export class EditAccountPage {
+	readonly accountCreationSuccessMessage: Locator;
+	readonly accountEntryAddressesTable: DataTablePage;
+	readonly accountEntryAddressesTableRowRadioButton: (
+		accountName: string
+	) => Promise<Locator>;
 	readonly accountGroupsLink: Locator;
 	readonly accountIdInput: Locator;
 	readonly accountNameInput: Locator;
@@ -35,6 +41,8 @@ export class EditAccountPage {
 	readonly frameSaveButton: Locator;
 	readonly imageInput: Locator;
 	readonly organizationsLink: Locator;
+	readonly setDefaultAddressFrame: FrameLocator;
+	readonly setDefaultAddressFrameSaveButton: Locator;
 	readonly page: Page;
 	readonly personAccountUserContainer: Locator;
 	readonly personAccountUserName: (name: string) => Locator;
@@ -58,9 +66,42 @@ export class EditAccountPage {
 	readonly vocabularyLabel: (name: string) => Locator;
 
 	constructor(page: Page) {
+		this.accountCreationSuccessMessage = page.getByText(
+			'Thank you for creating an account.'
+		);
+		this.setDefaultAddressFrame = page.frameLocator('iframe');
+		this.accountEntryAddressesTable = new DataTablePage(
+			this.setDefaultAddressFrame,
+			this.setDefaultAddressFrame.locator(
+				'#_com_liferay_account_admin_web_internal_portlet_AccountEntriesAdminPortlet_accountEntryAddresses'
+			)
+		);
 		this.accountGroupsLink = page.getByRole('link', {
 			name: 'Account Groups',
 		});
+		this.accountEntryAddressesTableRowRadioButton = async (
+			addressName: string
+		) => {
+			const accountEntriesTableRow =
+				await this.accountEntryAddressesTable.row(0, addressName, true);
+
+			if (accountEntriesTableRow && accountEntriesTableRow.row) {
+				const accountEntryAddressRadioButton =
+					accountEntriesTableRow.row.getByRole('radio');
+
+				if (accountEntryAddressRadioButton) {
+					return accountEntryAddressRadioButton;
+				}
+				else {
+					throw new Error(
+						`Cannot locate radio button in row of ${addressName}`
+					);
+				}
+			}
+			throw new Error(
+				`Cannot locate address row with name ${addressName}`
+			);
+		};
 		this.accountIdInput = page.getByLabel('Account ID');
 		this.accountNameInput = page.getByLabel('Account Name');
 		this.addDomainLink = page.locator(
@@ -153,6 +194,9 @@ export class EditAccountPage {
 			.getByRole('link', {name: 'Set Default Address'})
 			.or(page.getByRole('link', {name: 'Change'}))
 			.locator('[data-type="shipping"]:scope');
+		this.setDefaultAddressFrameSaveButton = page
+			.locator('[class$=btn-group-spaced]')
+			.getByText('Save');
 		this.tagInput = (name) => page.getByRole('row', {name});
 		this.taxIDInput = page.getByLabel('Tax ID');
 		this.typeInput = page.getByLabel('Type');
@@ -211,9 +255,11 @@ export class EditAccountPage {
 		}
 
 		if (domains && domains.length) {
-			await this.addDomainLink.click();
+			await expect(async () => {
+				await this.addDomainLink.click();
 
-			await expect(this.frameDomainInput).toBeEnabled();
+				await expect(this.frameDomainInput).toBeEnabled({timeout: 500});
+			}).toPass();
 
 			await this.frameDomainInput.fill(domains.join());
 			await this.frameSaveButton.click();

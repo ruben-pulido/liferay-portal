@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.settings.LocalizedValuesMap;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderRequest;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderResponse;
@@ -47,6 +48,8 @@ import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -217,6 +220,65 @@ public class AssetPublisherDisplayContextTest {
 	}
 
 	@Test
+	public void testGetEmailAssetEntryAddedBody() throws Exception {
+		PortletPreferences portletPreferences = new PortletPreferencesImpl();
+
+		LocalizedValuesMap localizedValuesMap = ReflectionTestUtil.invoke(
+			_getAssetPublisherDisplayContext(
+				LayoutTestUtil.addTypePortletLayout(_group),
+				portletPreferences),
+			"getEmailAssetEntryAddedBody", new Class<?>[0]);
+
+		Assert.assertNotNull(
+			localizedValuesMap.get(LocaleUtil.getSiteDefault()));
+
+		portletPreferences.setValue(
+			_localization.getLocalizedName(
+				"emailAssetEntryAddedBody",
+				LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault())),
+			"Test Body");
+
+		localizedValuesMap = ReflectionTestUtil.invoke(
+			_getAssetPublisherDisplayContext(
+				LayoutTestUtil.addTypePortletLayout(_group),
+				portletPreferences),
+			"getEmailAssetEntryAddedBody", new Class<?>[0]);
+
+		Assert.assertEquals(
+			"Test Body", localizedValuesMap.get(LocaleUtil.getSiteDefault()));
+	}
+
+	@Test
+	public void testGetEmailAssetEntryAddedSubject() throws Exception {
+		PortletPreferences portletPreferences = new PortletPreferencesImpl();
+
+		LocalizedValuesMap localizedValuesMap = ReflectionTestUtil.invoke(
+			_getAssetPublisherDisplayContext(
+				LayoutTestUtil.addTypePortletLayout(_group),
+				portletPreferences),
+			"getEmailAssetEntryAddedSubject", new Class<?>[0]);
+
+		Assert.assertNotNull(
+			localizedValuesMap.get(LocaleUtil.getSiteDefault()));
+
+		portletPreferences.setValue(
+			_localization.getLocalizedName(
+				"emailAssetEntryAddedSubject",
+				LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault())),
+			"Test Subject");
+
+		localizedValuesMap = ReflectionTestUtil.invoke(
+			_getAssetPublisherDisplayContext(
+				LayoutTestUtil.addTypePortletLayout(_group),
+				portletPreferences),
+			"getEmailAssetEntryAddedSubject", new Class<?>[0]);
+
+		Assert.assertEquals(
+			"Test Subject",
+			localizedValuesMap.get(LocaleUtil.getSiteDefault()));
+	}
+
+	@Test
 	public void testIsEnableSetAsDefaultAssetPublisher() throws Exception {
 		Assert.assertFalse(
 			ReflectionTestUtil.invoke(
@@ -318,7 +380,7 @@ public class AssetPublisherDisplayContextTest {
 				portlet, null);
 
 		mockLiferayPortletRenderRequest.setAttribute(
-			JavaConstants.JAVAX_PORTLET_CONFIG, liferayPortletConfig);
+			JavaConstants.JAKARTA_PORTLET_CONFIG, liferayPortletConfig);
 
 		String path = "/view.jsp";
 
@@ -443,6 +505,9 @@ public class AssetPublisherDisplayContextTest {
 
 	@Inject
 	private LayoutLocalService _layoutLocalService;
+
+	@Inject
+	private Localization _localization;
 
 	@Inject(
 		filter = "component.name=com.liferay.asset.publisher.web.internal.portlet.AssetPublisherPortlet"

@@ -19,6 +19,7 @@ const test = mergeTests(
 	apiHelpersTest,
 	fdsSamplePageTest,
 	featureFlagsTest({
+		'LPD-41774': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	isolatedSiteTest,
@@ -592,7 +593,7 @@ test('Check behavior of item actions', async ({fdsSamplePage, page}) => {
 
 		await expect(
 			page.locator(`#${dropdownId}`).getByRole('menuitem')
-		).toHaveCount(13);
+		).toHaveCount(14);
 
 		await page.keyboard.press('Escape');
 	});
@@ -728,160 +729,80 @@ test('Check behavior of item actions', async ({fdsSamplePage, page}) => {
 	});
 });
 
-test('Check behavior of selection', async ({fdsSamplePage, page}) => {
-	await test.step('Check bulk actions', async () => {
-		const firstItemCheckbox = fdsSamplePage.table.container
-			.locator('tbody .cell-select-item')
+test('Pagination and items per page', async ({page}) => {
+	const itemsSelectorCheckbox = page.locator('input[name="items-selector"]');
+
+	await test.step('Change delta to 60 items', async () => {
+		await page.getByLabel('Items Per Page').click();
+
+		await page.getByRole('option', {name: '60 Items'}).click();
+
+		await page
+			.getByText('This is a description for sample')
 			.first()
-			.getByRole('checkbox');
+			.waitFor();
 
-		await test.step('Select the first item in the table', async () => {
-			await firstItemCheckbox.check();
-		});
-
-		await test.step('Check the highlighted bulk action "Label" is visible', async () => {
-			await expect(
-				fdsSamplePage.bulkActions.container.getByRole('button', {
-					name: 'Label',
-				})
-			).toHaveText('Label');
-		});
-
-		await test.step('Check in medium-width windows the text is hidden', async () => {
-			await page.setViewportSize({height: 1024, width: 800});
-
-			const visibleLabelButton = fdsSamplePage.bulkActions.container
-				.locator('button')
-				.filter({
-					hasText: 'Label',
-				});
-
-			await expect(visibleLabelButton).toBeVisible();
-
-			await expect(
-				fdsSamplePage.bulkActions.container.getByLabel('Label')
-			).not.toBeVisible();
-		});
-
-		await test.step('Check in small-width windows the text and icon are hidden', async () => {
-			await page.setViewportSize({height: 720, width: 360});
-
-			await expect(
-				fdsSamplePage.bulkActions.container.getByRole('button', {
-					name: 'Label',
-				})
-			).toBeHidden();
-		});
-
-		await test.step('Reset the window size', async () => {
-			await page.setViewportSize({height: 720, width: 1280});
-		});
-
-		await test.step('Open ellipsis actions menu', async () => {
-			await fdsSamplePage.bulkActions.actionsDropdownButton.click();
-		});
-
-		await test.step('Check the bulk actions are listed', async () => {
-			await expect(
-				page.locator('.dropdown-menu.show').getByRole('menuitem')
-			).toHaveCount(3);
-			await expect(
-				page.locator('.dropdown-menu.show').getByRole('menuitem')
-			).toHaveText(['Label', 'Delete', 'Test']);
-		});
-
-		await test.step('Close ellipsis actions menu', async () => {
-			await fdsSamplePage.bulkActions.actionsDropdownButton.click();
-
-			await expect(page.locator('.dropdown-menu.show')).toBeHidden();
-		});
-
-		await test.step('Deselect the item to reset to original state', async () => {
-			await firstItemCheckbox.uncheck();
-		});
+		await expect(
+			page.getByText('Showing 1 to 60 of 75 entries.')
+		).toBeVisible();
 	});
 
-	await test.step('Check items count display', async () => {
-		const itemsSelectorCheckbox = page.locator(
-			'input[name="items-selector"]'
-		);
+	await test.step('Select all items in current page using the bulk actions checkbox', async () => {
+		await itemsSelectorCheckbox.setChecked(true);
 
-		await test.step('Change delta to 60 items', async () => {
-			await page.getByLabel('Items Per Page').click();
+		await expect(page.getByText('60 of 75 Items Selected')).toBeVisible();
+	});
 
-			await page.getByRole('option', {name: '60 Items'}).click();
+	await test.step('Select all items', async () => {
+		await page.getByLabel('Go to page, 2').click();
 
+		await page
+			.getByText('This is a description for sample')
+			.first()
+			.waitFor();
+
+		for (let i = 1; i <= 15; i++) {
 			await page
-				.getByText('This is a description for sample')
-				.first()
-				.waitFor();
+				.locator(
+					`tbody tr:nth-child(${i}) > .cell-select-item input[type="checkbox"]`
+				)
+				.setChecked(true);
+		}
 
-			await expect(
-				page.getByText('Showing 1 to 60 of 75 entries.')
-			).toBeVisible();
-		});
+		await expect(
+			page.getByText('All Selected (75 of 75 Items)')
+		).toBeVisible();
+	});
 
-		await test.step('Select all items in current page using the bulk actions checkbox', async () => {
-			await itemsSelectorCheckbox.setChecked(true);
+	await test.step('Check that selection are preserved through page navigation', async () => {
+		await page.getByLabel('Go to page, 1').click();
 
-			await expect(
-				page.getByText('60 of 75 Items Selected')
-			).toBeVisible();
-		});
+		await page
+			.getByText('This is a description for sample')
+			.first()
+			.waitFor();
 
-		await test.step('Select all items', async () => {
-			await page.getByLabel('Go to page, 2').click();
+		await expect(
+			page.getByText('All Selected (75 of 75 Items)')
+		).toBeVisible();
+	});
 
-			await page
-				.getByText('This is a description for sample')
-				.first()
-				.waitFor();
+	await test.step('Unselect all items in current page using the bulk actions checkbox', async () => {
+		await itemsSelectorCheckbox.setChecked(false);
 
-			for (let i = 1; i <= 15; i++) {
-				await page
-					.locator(
-						`tbody tr:nth-child(${i}) > .cell-select-item input[type="checkbox"]`
-					)
-					.setChecked(true);
-			}
+		await expect(itemsSelectorCheckbox).not.toBeChecked();
 
-			await expect(
-				page.getByText('All Selected (75 of 75 Items)')
-			).toBeVisible();
-		});
+		await expect(page.getByText('15 of 75 Items Selected')).toBeVisible();
+	});
 
-		await test.step('Check that selection are preserved through page navigation', async () => {
-			await page.getByLabel('Go to page, 1').click();
+	await test.step('Unselect all items using clear button', async () => {
+		await page.getByText('Clear').click();
 
-			await page
-				.getByText('This is a description for sample')
-				.first()
-				.waitFor();
+		await expect(itemsSelectorCheckbox).not.toBeChecked();
 
-			await expect(
-				page.getByText('All Selected (75 of 75 Items)')
-			).toBeVisible();
-		});
-
-		await test.step('Unselect all items in current page using the bulk actions checkbox', async () => {
-			await itemsSelectorCheckbox.setChecked(false);
-
-			await expect(itemsSelectorCheckbox).not.toBeChecked();
-
-			await expect(
-				page.getByText('15 of 75 Items Selected')
-			).toBeVisible();
-		});
-
-		await test.step('Unselect all items using clear button', async () => {
-			await page.getByText('Clear').click();
-
-			await expect(itemsSelectorCheckbox).not.toBeChecked();
-
-			await expect(
-				page.getByText('15 of 75 Items Selected')
-			).not.toBeVisible();
-		});
+		await expect(
+			page.getByText('15 of 75 Items Selected')
+		).not.toBeVisible();
 	});
 });
 
@@ -1122,12 +1043,82 @@ test('Use client extensions', async ({fdsSamplePage, page}) => {
 });
 
 test(
-	'Check Select All behavior',
-	{tag: '@LPD-52063'},
+	'Item selection and bulk actions',
+	{tag: ['@LPD-52063', '@LPD-41774']},
 	async ({fdsSamplePage, page}) => {
-		const bulkActionsButton = page
-			.locator('.bulk-actions')
-			.getByLabel('Actions');
+		const firstItemRow = fdsSamplePage.table.bodyRows.first();
+
+		const firstItemCheckbox = firstItemRow
+			.locator('.cell-select-item')
+			.getByRole('checkbox');
+
+		await test.step('Select the first item in the table', async () => {
+			await firstItemCheckbox.check();
+
+			await expect(firstItemRow).toHaveClass('table-active');
+		});
+
+		await test.step('Check the highlighted bulk action "Label" is visible', async () => {
+			await expect(
+				fdsSamplePage.bulkActions.container.getByRole('button', {
+					name: 'Label',
+				})
+			).toHaveText('Label');
+		});
+
+		await test.step('Open ellipsis actions menu', async () => {
+			await fdsSamplePage.bulkActions.actionsDropdownButton.click();
+		});
+
+		await test.step('Check the bulk actions are listed', async () => {
+			await expect(
+				page.locator('.dropdown-menu.show').getByRole('menuitem')
+			).toHaveCount(3);
+			await expect(
+				page.locator('.dropdown-menu.show').getByRole('menuitem')
+			).toHaveText(['Label', 'Delete', 'Test']);
+		});
+
+		await test.step('Close ellipsis actions menu', async () => {
+			await fdsSamplePage.bulkActions.actionsDropdownButton.click();
+
+			await expect(page.locator('.dropdown-menu.show')).toBeHidden();
+		});
+
+		await test.step('Check in medium-width windows the bulk actions text is hidden', async () => {
+			await page.setViewportSize({height: 1024, width: 800});
+
+			const visibleLabelButton = fdsSamplePage.bulkActions.container
+				.locator('button')
+				.filter({
+					hasText: 'Label',
+				});
+
+			await expect(visibleLabelButton).toBeVisible();
+
+			await expect(
+				fdsSamplePage.bulkActions.container.getByLabel('Label')
+			).not.toBeVisible();
+		});
+
+		await test.step('Check in small-width windows the text and icon are hidden', async () => {
+			await page.setViewportSize({height: 720, width: 360});
+
+			await expect(
+				fdsSamplePage.bulkActions.container.getByRole('button', {
+					name: 'Label',
+				})
+			).toBeHidden();
+		});
+
+		await test.step('Reset the window size', async () => {
+			await page.setViewportSize({height: 720, width: 1280});
+		});
+
+		await test.step('Deselect the item to reset to original state', async () => {
+			await firstItemCheckbox.uncheck();
+		});
+
 		const itemsSelectorCheckbox = page.locator(
 			'input[name="items-selector"]'
 		);
@@ -1154,7 +1145,7 @@ test(
 				page.getByText('20 of 75 Items Selected')
 			).toBeVisible();
 
-			await page.getByText('Select All').click();
+			await fdsSamplePage.selectAllCheckbox.click();
 
 			await expect(
 				page.getByText('All Selected (75 of 75 Items)')
@@ -1172,11 +1163,11 @@ test(
 				page.getByText('19 of 75 Items Selected')
 			).toBeVisible();
 
-			await expect(page.getByText('Select All')).not.toBeVisible();
+			await expect(fdsSamplePage.selectAllCheckbox).not.toBeVisible();
 		});
 
 		await test.step('Without Select All flag active, requests sent actual item selection to bulk actions', async () => {
-			await bulkActionsButton.click();
+			await fdsSamplePage.bulkActions.actionsDropdownButton.click();
 
 			await page
 				.locator('.dropdown-menu.show')
@@ -1187,17 +1178,19 @@ test(
 			expect(sentKeyValues).toHaveLength(19);
 			expect(sentSelectAll).toBe(false);
 
-			expect(await bulkActionsButton.getAttribute('aria-expanded')).toBe(
-				'false'
-			);
+			expect(
+				await fdsSamplePage.bulkActions.actionsDropdownButton.getAttribute(
+					'aria-expanded'
+				)
+			).toBe('false');
 		});
 
 		await test.step('With Select All flag active, requests sent the flag instead of selected items', async () => {
 			await itemsSelectorCheckbox.click();
 
-			await page.getByText('Select All').click();
+			await fdsSamplePage.selectAllCheckbox.click();
 
-			await bulkActionsButton.click();
+			await fdsSamplePage.bulkActions.actionsDropdownButton.click();
 
 			await page
 				.locator('.dropdown-menu.show')
@@ -1208,9 +1201,27 @@ test(
 			expect(sentKeyValues).toEqual([]);
 			expect(sentSelectAll).toBe(true);
 
-			expect(await bulkActionsButton.getAttribute('aria-expanded')).toBe(
-				'false'
-			);
+			expect(
+				await fdsSamplePage.bulkActions.actionsDropdownButton.getAttribute(
+					'aria-expanded'
+				)
+			).toBe('false');
+
+			await fdsSamplePage.selectionToolbar.clearButton.click();
+		});
+
+		const firstListItem = fdsSamplePage.list.items.first();
+
+		const firstListItemCheckbox = firstListItem.getByRole('checkbox');
+
+		await test.step('Open list visualization mode', async () => {
+			await fdsSamplePage.changeVisualizationMode('List');
+		});
+
+		await test.step('Select the first item in the list', async () => {
+			await firstListItemCheckbox.check();
+
+			await expect(firstListItem).toHaveClass(/active/);
 		});
 	}
 );
@@ -1319,15 +1330,15 @@ test(
 			await firstRowItemActionButton.hover();
 
 			await expect(
+				fdsSamplePage.table.bodyRows.first().getByLabel('View Details')
+			).toBeVisible();
+
+			await expect(
 				fdsSamplePage.table.bodyRows.first().getByLabel('Sample View')
 			).toBeVisible();
 
 			await expect(
 				fdsSamplePage.table.bodyRows.first().getByLabel('Sample Edit')
-			).toBeVisible();
-
-			await expect(
-				fdsSamplePage.table.bodyRows.first().getByLabel('Sample Delete')
 			).toBeVisible();
 
 			await expect(
@@ -1347,6 +1358,74 @@ test(
 		});
 	}
 );
+
+test('InfoPanel behavior', async ({fdsSamplePage, page}) => {
+	const firstItemCheckbox = fdsSamplePage.table.container
+		.locator('tbody .cell-select-item')
+		.first()
+		.getByRole('checkbox');
+
+	const secondItemCheckbox = fdsSamplePage.table.container
+		.locator('tbody .cell-select-item')
+		.nth(1)
+		.getByRole('checkbox');
+
+	await test.step('Can open Info Panel when no item is selected', async () => {
+		expect(fdsSamplePage.toggleInfoPanelButton).toBeVisible();
+
+		await fdsSamplePage.toggleInfoPanelButton.click();
+
+		expect(fdsSamplePage.infoPanel).toBeInViewport();
+
+		expect(
+			page.getByText('Content from propsTransformer: No items selected')
+		).toBeVisible();
+
+		await fdsSamplePage.toggleInfoPanelButton.click();
+
+		expect(fdsSamplePage.infoPanel).not.toBeInViewport();
+	});
+
+	await test.step('Can open Info Panel when there is one item selected', async () => {
+		await firstItemCheckbox.check();
+
+		expect(fdsSamplePage.toggleInfoPanelButton).toBeVisible();
+
+		await fdsSamplePage.toggleInfoPanelButton.click();
+
+		expect(fdsSamplePage.infoPanel).toBeInViewport();
+
+		expect(
+			fdsSamplePage.infoPanel.getByText(
+				'This is a description for sample 1.'
+			)
+		).toBeVisible();
+
+		await fdsSamplePage.toggleInfoPanelButton.click();
+
+		expect(fdsSamplePage.infoPanel).not.toBeInViewport();
+	});
+
+	await test.step('Can open Info Panel when there are more than one items selected', async () => {
+		await firstItemCheckbox.check();
+
+		await secondItemCheckbox.check();
+
+		await fdsSamplePage.toggleInfoPanelButton.click();
+
+		expect(fdsSamplePage.infoPanel).toBeInViewport();
+
+		expect(
+			fdsSamplePage.infoPanel.getByText(
+				'Content from propsTransformer. Items selected: 2'
+			)
+		).toBeVisible();
+
+		await fdsSamplePage.toggleInfoPanelButton.click();
+
+		expect(fdsSamplePage.infoPanel).not.toBeInViewport();
+	});
+});
 
 const accountSettingsTest = mergeTests(test, accountSettingsPagesTest);
 

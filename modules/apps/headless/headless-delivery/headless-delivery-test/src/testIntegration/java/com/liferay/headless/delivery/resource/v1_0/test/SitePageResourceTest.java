@@ -57,12 +57,15 @@ import com.liferay.headless.delivery.client.dto.v1_0.TaxonomyCategoryReference;
 import com.liferay.headless.delivery.client.pagination.Page;
 import com.liferay.headless.delivery.client.problem.Problem;
 import com.liferay.headless.delivery.client.resource.v1_0.SitePageResource;
+import com.liferay.headless.delivery.client.serdes.v1_0.SitePageSerDes;
 import com.liferay.layout.admin.kernel.model.LayoutTypePortletConstants;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
 import com.liferay.layout.test.util.ContentLayoutTestUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
+import com.liferay.oauth2.provider.scope.ScopeChecker;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -88,9 +91,11 @@ import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.TestInfo;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -107,14 +112,27 @@ import com.liferay.portal.test.log.LogEntry;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
+import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
+import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegateBuilderRegistry;
 import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.model.SegmentsExperience;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 import com.liferay.segments.test.util.SegmentsTestUtil;
+
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.PathSegment;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 
 import java.io.Serializable;
 
+import java.net.URI;
 import java.net.URLEncoder;
 
 import java.util.Arrays;
@@ -122,6 +140,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -129,9 +148,14 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * @author Javier Gamarra
@@ -139,6 +163,13 @@ import org.junit.runner.RunWith;
 @FeatureFlag("LPS-178052")
 @RunWith(Arquillian.class)
 public class SitePageResourceTest extends BaseSitePageResourceTestCase {
+
+	@ClassRule
+	@Rule
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@Before
 	@Override
@@ -191,6 +222,8 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		catch (Problem.ProblemException problemException) {
 			Assert.assertNotNull(problemException);
 		}
+
+		_testVulcanCRUDItemDelegateGetItem();
 	}
 
 	@Override
@@ -234,14 +267,35 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 	@Override
 	@Test
+	@TestInfo("LPD-56213")
 	public void testGetSiteSitePageRenderedPage() throws Exception {
 		Layout layout = LayoutTestUtil.addTypeContentLayout(testGroup);
 
+		Layout draftLayout = layout.fetchDraftLayout();
+
+		ContentLayoutTestUtil.addFragmentEntryLinkToLayout(
+			"{}", layout.fetchDraftLayout(),
+			_segmentsExperienceLocalService.fetchDefaultSegmentsExperienceId(
+				draftLayout.getPlid()));
+
+		ContentLayoutTestUtil.publishLayout(draftLayout, layout);
+
 		String friendlyURL = layout.getFriendlyURL();
 
-		Assert.assertNotNull(
-			sitePageResource.getSiteSitePageRenderedPage(
-				testGroup.getGroupId(), friendlyURL.substring(1)));
+		String pageHTML = sitePageResource.getSiteSitePageRenderedPage(
+			testGroup.getGroupId(), friendlyURL.substring(1));
+
+		Assert.assertNotNull(pageHTML, pageHTML);
+		Assert.assertTrue(pageHTML, pageHTML.contains("<html"));
+		Assert.assertTrue(pageHTML, pageHTML.contains("<head>"));
+		Assert.assertTrue(pageHTML, pageHTML.contains("<title>"));
+		Assert.assertTrue(pageHTML, pageHTML.contains("</title>"));
+		Assert.assertTrue(
+			pageHTML, pageHTML.contains("<script type=\"importmap\">"));
+		Assert.assertTrue(pageHTML, pageHTML.contains("</head>"));
+		Assert.assertTrue(pageHTML, pageHTML.contains("<body"));
+		Assert.assertTrue(pageHTML, pageHTML.contains("</body>"));
+		Assert.assertTrue(pageHTML, pageHTML.contains("</html>"));
 	}
 
 	@Ignore
@@ -462,6 +516,171 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 					" does not contain " + taxonomyCategoryBrief1,
 				contains);
 		}
+	}
+
+	private VulcanCRUDItemDelegate _getVulcanCRUDItemDelegate(Locale locale)
+		throws Exception {
+
+		return _vulcanCRUDItemDelegateBuilderRegistry.builder(
+			testCompany, "com.liferay.headless.delivery.dto.v1_0.SitePage"
+		).acceptLanguage(
+			new AcceptLanguage() {
+
+				@Override
+				public List<Locale> getLocales() {
+					return Arrays.asList(locale);
+				}
+
+				@Override
+				public String getPreferredLanguageId() {
+					return LocaleUtil.toLanguageId(locale);
+				}
+
+				@Override
+				public Locale getPreferredLocale() {
+					return locale;
+				}
+
+			}
+		).groupLocalService(
+			_groupLocalService
+		).httpServletRequest(
+			new MockHttpServletRequest() {
+
+				@Override
+				public StringBuffer getRequestURL() {
+					return new StringBuffer(
+						StringBundler.concat(
+							"http://localhost:8080/o/v1.0/",
+							RandomTestUtil.randomString(), "/",
+							RandomTestUtil.randomString()));
+				}
+
+			}
+		).httpServletResponse(
+			new MockHttpServletResponse()
+		).resourceActionLocalService(
+			_resourceActionLocalService
+		).resourcePermissionLocalService(
+			_resourcePermissionLocalService
+		).roleLocalService(
+			_roleLocalService
+		).scopeChecker(
+			_scopeChecker
+		).uriInfo(
+			new UriInfo() {
+
+				@Override
+				public URI getAbsolutePath() {
+					return getRequestUri();
+				}
+
+				@Override
+				public UriBuilder getAbsolutePathBuilder() {
+					return getRequestUriBuilder();
+				}
+
+				@Override
+				public URI getBaseUri() {
+					return URI.create(
+						"http://localhost:8080/o/" + _applicationPath);
+				}
+
+				@Override
+				public UriBuilder getBaseUriBuilder() {
+					return UriBuilder.fromUri(getBaseUri());
+				}
+
+				@Override
+				public List<Object> getMatchedResources() {
+					return Collections.emptyList();
+				}
+
+				@Override
+				public List<String> getMatchedURIs() {
+					return Collections.emptyList();
+				}
+
+				@Override
+				public List<String> getMatchedURIs(boolean decode) {
+					return getMatchedURIs();
+				}
+
+				@Override
+				public String getPath() {
+					return _resourcePath;
+				}
+
+				@Override
+				public String getPath(boolean decode) {
+					return getPath();
+				}
+
+				@Override
+				public MultivaluedMap<String, String> getPathParameters() {
+					return new MultivaluedHashMap<>();
+				}
+
+				@Override
+				public MultivaluedMap<String, String> getPathParameters(
+					boolean decode) {
+
+					return getPathParameters();
+				}
+
+				@Override
+				public List<PathSegment> getPathSegments() {
+					return Collections.emptyList();
+				}
+
+				@Override
+				public List<PathSegment> getPathSegments(boolean decode) {
+					return getPathSegments();
+				}
+
+				@Override
+				public MultivaluedMap<String, String> getQueryParameters() {
+					return new MultivaluedHashMap<>();
+				}
+
+				@Override
+				public MultivaluedMap<String, String> getQueryParameters(
+					boolean decode) {
+
+					return getQueryParameters();
+				}
+
+				@Override
+				public URI getRequestUri() {
+					return URI.create(
+						"http://localhost:8080/o/" + _applicationPath +
+							_resourcePath);
+				}
+
+				@Override
+				public UriBuilder getRequestUriBuilder() {
+					return UriBuilder.fromUri(getRequestUri());
+				}
+
+				@Override
+				public URI relativize(URI uri) {
+					return getBaseUri().relativize(uri);
+				}
+
+				@Override
+				public URI resolve(URI requestURI) {
+					return getBaseUri().resolve(requestURI);
+				}
+
+				private final String _applicationPath =
+					RandomTestUtil.randomString() + "/";
+				private final String _resourcePath =
+					RandomTestUtil.randomString();
+
+			}
+		).user(
+			UserTestUtil.getAdminUser(testCompany.getCompanyId())
+		).build();
 	}
 
 	private void _testPostSiteSitePageFailureDuplicateFriendlyURL()
@@ -1815,6 +2034,57 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			expectedTaxonomyCategoryBriefs, inputTaxonomyCategoryBriefs);
 	}
 
+	private void _testVulcanCRUDItemDelegateGetItem() throws Exception {
+
+		// Default locale
+
+		SitePage postSitePage = testPostSiteSitePage_addSitePage(
+			randomSitePage());
+
+		VulcanCRUDItemDelegate vulcanCRUDItemDelegate =
+			_getVulcanCRUDItemDelegate(LocaleUtil.getDefault());
+
+		assertEquals(
+			sitePageResource.getSiteSitePage(
+				testGroup.getGroupId(), postSitePage.getFriendlyUrlPath()),
+			SitePageSerDes.toDTO(
+				String.valueOf(
+					vulcanCRUDItemDelegate.getItem(postSitePage.getId()))));
+
+		// Different locale
+
+		SitePage randomSitePage = randomSitePage();
+
+		randomSitePage.setFriendlyUrlPath_i18n(
+			HashMapBuilder.put(
+				"en-US", randomSitePage.getFriendlyUrlPath()
+			).put(
+				"es-ES",
+				StringPool.FORWARD_SLASH +
+					StringUtil.toLowerCase(RandomTestUtil.randomString())
+			).build());
+
+		postSitePage = testPostSiteSitePage_addSitePage(randomSitePage);
+
+		SitePageResource spainSitePageResource = SitePageResource.builder(
+		).authentication(
+			"test@liferay.com", PropsValues.DEFAULT_ADMIN_PASSWORD
+		).endpoint(
+			testCompany.getVirtualHostname(), 8080, "http"
+		).locale(
+			LocaleUtil.SPAIN
+		).build();
+
+		vulcanCRUDItemDelegate = _getVulcanCRUDItemDelegate(LocaleUtil.SPAIN);
+
+		assertEquals(
+			spainSitePageResource.getSiteSitePage(
+				testGroup.getGroupId(), postSitePage.getFriendlyUrlPath()),
+			SitePageSerDes.toDTO(
+				String.valueOf(
+					vulcanCRUDItemDelegate.getItem(postSitePage.getId()))));
+	}
+
 	private static final String _CLASS_NAME_EXCEPTION_MAPPER =
 		"com.liferay.headless.delivery.internal.resource.v1_0." +
 			"SitePageResourceImpl";
@@ -1905,5 +2175,15 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 	@Inject
 	private RoleLocalService _roleLocalService;
+
+	@Inject
+	private ScopeChecker _scopeChecker;
+
+	@Inject
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
+
+	@Inject
+	private VulcanCRUDItemDelegateBuilderRegistry
+		_vulcanCRUDItemDelegateBuilderRegistry;
 
 }

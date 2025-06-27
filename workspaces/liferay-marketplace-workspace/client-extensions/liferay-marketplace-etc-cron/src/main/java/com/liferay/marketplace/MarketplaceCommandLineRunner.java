@@ -7,22 +7,35 @@ package com.liferay.marketplace;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
+import com.liferay.headless.admin.user.client.custom.field.CustomField;
+import com.liferay.headless.admin.user.client.custom.field.CustomValue;
+import com.liferay.headless.admin.user.client.dto.v1_0.UserAccount;
+import com.liferay.headless.admin.user.client.dto.v1_0.UserGroup;
+import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
+import com.liferay.headless.admin.user.client.resource.v1_0.UserGroupResource;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
 import com.liferay.headless.commerce.admin.order.client.pagination.Page;
 import com.liferay.headless.commerce.admin.order.client.pagination.Pagination;
 import com.liferay.headless.commerce.admin.order.client.resource.v1_0.OrderResource;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.net.URL;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +43,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Keven Leone
@@ -43,36 +57,97 @@ public class MarketplaceCommandLineRunner
 		_processInProgressTrials();
 
 		_processOnHoldTrials();
+
+		_processPendingOrders();
+
+		_processMarketplaceProjects();
 	}
 
-	@Override
-	protected String getWebClientBaseURL() {
-		return _liferayMarketplaceEtcSpringBootURL.toString();
-	}
-
-	private JSONObject _getAvailabilityJSONObject() throws Exception {
+	private JSONObject _getAvailabilityJSONObject() {
 		return new JSONObject(
 			get(
 				_liferayOAuth2AccessTokenManager.getAuthorization(
 					_liferayOAuthApplicationExternalReferenceCodes),
-				"/trial/availability"));
+				UriComponentsBuilder.fromUriString(
+					_liferayMarketplaceEtcSpringBootURL + "/trial/availability"
+				).build(
+				).toUri()));
 	}
 
-	private Page<Order> _getOrdersPage(int orderStatus) throws Exception {
-		OrderResource orderResource = OrderResource.builder(
+	private Collection<UserAccount> _getCustomerUserAccounts()
+		throws Exception {
+
+		UserGroupResource userGroupResource = _getUserGroupResource();
+
+		UserGroup userGroup = userGroupResource.getUserGroupsPage(
+			"", "name eq 'Customers'",
+			com.liferay.headless.admin.user.client.pagination.Pagination.of(
+				-1, -1),
+			""
+		).fetchFirstItem();
+
+		if (userGroup == null) {
+			return Collections.emptyList();
+		}
+
+		UserAccountResource userAccountResource = _getUserAccountResource();
+
+		com.liferay.headless.admin.user.client.pagination.Page<UserAccount>
+			userAccountPage = userAccountResource.getUserGroupUsersPage(
+				userGroup.getId(), "",
+				"not contains(emailAddress, '@liferay.com')",
+				com.liferay.headless.admin.user.client.pagination.Pagination.of(
+					-1, -1),
+				"");
+
+		return userAccountPage.getItems();
+	}
+
+	private OrderResource _getOrderResource() throws Exception {
+		return OrderResource.builder(
 		).endpoint(
 			new URL(_lxcDXPServerProtocol + "://" + _lxcDXPMainDomain)
 		).header(
 			HttpHeaders.AUTHORIZATION,
 			_liferayOAuth2AccessTokenManager.getAuthorization(
 				_liferayOAuthApplicationExternalReferenceCodes)
+		).parameters(
+			"nestedFields", "account,orderItems"
 		).build();
+	}
+
+	private Page<Order> _getOrdersPage(
+			String filterString, int page, int pageSize)
+		throws Exception {
+
+		OrderResource orderResource = _getOrderResource();
 
 		return orderResource.getOrdersPage(
-			"",
-			"orderStatus/any(x:(x eq " + orderStatus +
-				")) and orderTypeExternalReferenceCode eq 'SOLUTIONS7'",
-			Pagination.of(-1, -1), "");
+			"", filterString, Pagination.of(page, pageSize), "");
+	}
+
+	private UserAccountResource _getUserAccountResource() throws Exception {
+		return UserAccountResource.builder(
+		).header(
+			HttpHeaders.AUTHORIZATION,
+			_liferayOAuth2AccessTokenManager.getAuthorization(
+				"liferay-marketplace-etc-cron-oauth-application-headless-" +
+					"server")
+		).endpoint(
+			new URL(lxcDXPServerProtocol + "://" + lxcDXPMainDomain)
+		).build();
+	}
+
+	private UserGroupResource _getUserGroupResource() throws Exception {
+		return UserGroupResource.builder(
+		).header(
+			HttpHeaders.AUTHORIZATION,
+			_liferayOAuth2AccessTokenManager.getAuthorization(
+				"liferay-marketplace-etc-cron-oauth-application-headless-" +
+					"server")
+		).endpoint(
+			new URL(lxcDXPServerProtocol + "://" + lxcDXPMainDomain)
+		).build();
 	}
 
 	private void _postTrialExpire(long orderId) throws Exception {
@@ -82,7 +157,10 @@ public class MarketplaceCommandLineRunner
 				HttpHeaders.AUTHORIZATION,
 				_liferayOAuth2AccessTokenManager.getAuthorization(
 					_liferayOAuthApplicationExternalReferenceCodes)),
-			"/trial/expire/" + orderId);
+			UriComponentsBuilder.fromUriString(
+				_liferayMarketplaceEtcSpringBootURL + "/trial/expire/" + orderId
+			).build(
+			).toUri());
 	}
 
 	private void _postTrialNotifyEnd(long orderId) throws Exception {
@@ -92,7 +170,11 @@ public class MarketplaceCommandLineRunner
 				HttpHeaders.AUTHORIZATION,
 				_liferayOAuth2AccessTokenManager.getAuthorization(
 					_liferayOAuthApplicationExternalReferenceCodes)),
-			"/trial/notify-end/" + orderId);
+			UriComponentsBuilder.fromUriString(
+				_liferayMarketplaceEtcSpringBootURL + "/trial/notify-end/" +
+					orderId
+			).build(
+			).toUri());
 	}
 
 	private void _postTrialProvisioning(Order order) throws Exception {
@@ -111,11 +193,25 @@ public class MarketplaceCommandLineRunner
 				HttpHeaders.AUTHORIZATION,
 				_liferayOAuth2AccessTokenManager.getAuthorization(
 					_liferayOAuthApplicationExternalReferenceCodes)),
-			"/trial/provisioning");
+			UriComponentsBuilder.fromUriString(
+				_liferayMarketplaceEtcSpringBootURL + "/trial/provisioning"
+			).build(
+			).toUri());
 	}
 
 	private void _processInProgressTrials() throws Exception {
-		Page<Order> page = _getOrdersPage(_ORDER_STATUS_IN_PROGRESS);
+		Page<Order> page = _getOrdersPage(
+			"orderStatus/any(x:(x eq " + _ORDER_STATUS_IN_PROGRESS +
+				")) and orderTypeExternalReferenceCode eq 'SOLUTIONS7'",
+			-1, -1);
+
+		if (page.getTotalCount() == 0) {
+			if (_log.isInfoEnabled()) {
+				_log.info("There are no in progress trials");
+			}
+
+			return;
+		}
 
 		for (Order order : page.getItems()) {
 			try {
@@ -161,12 +257,123 @@ public class MarketplaceCommandLineRunner
 		}
 	}
 
+	private void _processMarketplaceProjects() throws Exception {
+		Map<String, UserAccount> customerUserAccounts = new HashMap<>();
+		String filterString = StringBundler.concat(
+			"createDate gt ",
+			LocalDate.of(
+				2025, 1, 1
+			).atStartOfDay(
+				ZoneOffset.UTC
+			),
+			"and (not contains(creatorEmailAddress, '@liferay.com')) and ",
+			"orderTypeExternalReferenceCode ne 'SOLUTIONS7'");
+		Collection<UserAccount> userAccounts = _getCustomerUserAccounts();
+
+		for (int i = 1;; i++) {
+			Page<Order> page = _getOrdersPage(filterString, i, 200);
+
+			for (Order order : page.getItems()) {
+				String creatorEmailAddress = order.getCreatorEmailAddress();
+
+				if (customerUserAccounts.containsKey(creatorEmailAddress)) {
+					continue;
+				}
+
+				for (UserAccount userAccount : userAccounts) {
+					if (Objects.equals(
+							creatorEmailAddress,
+							userAccount.getEmailAddress())) {
+
+						customerUserAccounts.put(
+							creatorEmailAddress, userAccount);
+
+						break;
+					}
+				}
+			}
+
+			if (i > page.getLastPage()) {
+				break;
+			}
+		}
+
+		JSONArray jsonArray = new JSONArray();
+
+		for (UserAccount userAccount : customerUserAccounts.values()) {
+			for (CustomField customField : userAccount.getCustomFields()) {
+				if (!Objects.equals(
+						customField.getName(), "customer-project")) {
+
+					continue;
+				}
+
+				CustomValue customValue = customField.getCustomValue();
+
+				if (Validator.isNull(customValue.getData())) {
+					JSONObject jsonObject = new JSONObject(
+						get(
+							_liferayOAuth2AccessTokenManager.getAuthorization(
+								_liferayOAuthApplicationExternalReferenceCodes),
+							UriComponentsBuilder.fromUriString(
+								_liferayMarketplaceEtcSpringBootURL +
+									"/koroneiki/contact/by-email-address/" +
+										userAccount.getEmailAddress()
+							).build(
+							).toUri()));
+
+					customValue.setData(
+						String.valueOf(
+							jsonObject.getJSONArray(
+								"teams"
+							).get(
+								0
+							)));
+
+					UserAccountResource userAccountResource =
+						_getUserAccountResource();
+
+					userAccountResource.patchUserAccount(
+						userAccount.getId(), userAccount);
+				}
+
+				jsonArray.put(
+					new JSONObject(
+					).put(
+						"customer-project",
+						new JSONObject(String.valueOf(customValue.getData()))
+					).put(
+						"emailAddress", userAccount.getEmailAddress()
+					));
+			}
+		}
+
+		post(
+			_liferayOAuth2AccessTokenManager.getAuthorization(
+				_liferayOAuthApplicationExternalReferenceCodes),
+			jsonArray.toString(),
+			UriComponentsBuilder.fromUriString(
+				_liferayMarketplaceEtcSpringBootURL +
+					"/marketplace/projects/kpi"
+			).build(
+			).toUri());
+
+		if (_log.isInfoEnabled()) {
+			_log.info(
+				"There are " + customerUserAccounts.size() +
+					" projects with Marketplace apps");
+		}
+	}
+
 	private void _processOnHoldTrials() throws Exception {
-		Page<Order> page = _getOrdersPage(_ORDER_STATUS_ON_HOLD);
+		Page<Order> page = _getOrdersPage(
+			"orderStatus/any(x:(x eq " + _ORDER_STATUS_ON_HOLD +
+				")) and orderTypeExternalReferenceCode eq 'SOLUTIONS7'",
+			-1, -1);
 
 		if (page.getTotalCount() == 0) {
 			if (_log.isInfoEnabled()) {
-				_log.info("There are no on hold orders");
+				_log.info("There are no on hold trials");
 			}
 
 			return;
@@ -212,9 +419,60 @@ public class MarketplaceCommandLineRunner
 		}
 	}
 
+	private void _processPendingOrders() throws Exception {
+		Page<Order> page = _getOrdersPage(
+			"orderStatus/any(x:(x eq " + _ORDER_STATUS_PENDING +
+				")) and orderTypeExternalReferenceCode ne 'SOLUTIONS7'",
+			-1, -1);
+
+		if (page.getTotalCount() == 0) {
+			if (_log.isInfoEnabled()) {
+				_log.info("There are no pending orders");
+			}
+
+			return;
+		}
+
+		for (Order order : page.getItems()) {
+			if (order.getTotalAmount() > 0) {
+				if (_log.isInfoEnabled()) {
+					_log.info(
+						"Paid order " + order.getId() +
+							" needs to be manually reviewed");
+				}
+
+				continue;
+			}
+
+			if (_log.isInfoEnabled()) {
+				_log.info("Completing free order " + order.getId());
+			}
+
+			_updateOrder(order.getId(), _ORDER_STATUS_PROCESSING);
+
+			_updateOrder(order.getId(), _ORDER_STATUS_COMPLETED);
+		}
+	}
+
+	private void _updateOrder(long orderId, int orderStatus) throws Exception {
+		OrderResource orderResource = _getOrderResource();
+
+		Order order = new Order();
+
+		order.setOrderStatus(() -> orderStatus);
+
+		orderResource.patchOrder(orderId, order);
+	}
+
+	private static final int _ORDER_STATUS_COMPLETED = 0;
+
 	private static final int _ORDER_STATUS_IN_PROGRESS = 6;
 
 	private static final int _ORDER_STATUS_ON_HOLD = 20;
+
+	private static final int _ORDER_STATUS_PENDING = 1;
+
+	private static final int _ORDER_STATUS_PROCESSING = 10;
 
 	private static final Log _log = LogFactory.getLog(
 		MarketplaceCommandLineRunner.class);

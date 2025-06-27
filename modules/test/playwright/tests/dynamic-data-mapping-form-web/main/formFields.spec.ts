@@ -38,15 +38,7 @@ test.describe('Manage fields through Form Preview page', () => {
 			'predefined value for text field.'
 		);
 
-		const newTabPagePromise = new Promise<Page>((resolve) =>
-			formBuilderPage.page.once('popup', resolve)
-		);
-
-		await formBuilderPage.previewButton.click();
-
-		const newTabPage = await newTabPagePromise;
-
-		await newTabPage.waitForLoadState('domcontentloaded');
+		const newTabPage = await formBuilderPage.openPreviewForm();
 
 		await newTabPage.getByLabel('Text').click();
 
@@ -62,6 +54,46 @@ test.describe('Manage fields through Form Preview page', () => {
 		await expect(newTabPage.getByLabel('Text')).toHaveValue('');
 
 		await newTabPage.close();
+	});
+
+	test('duplicating field with evaluation rules has correct behavior', async ({
+		formBuilderPage,
+		formBuilderSidePanelPage,
+		page,
+	}) => {
+		await formBuilderPage.goToNew();
+
+		await formBuilderPage.fillFormTitle('Form' + getRandomInt());
+
+		await formBuilderSidePanelPage.addFieldByDoubleClick('Text');
+
+		await formBuilderSidePanelPage.label.fill('Text Field');
+
+		await formBuilderSidePanelPage.requiredFieldToggleSwitch.click();
+
+		await formBuilderSidePanelPage.clickAdvancedTab();
+
+		await formBuilderSidePanelPage.repeatableFieldToggleSwitch.click();
+
+		await page.getByLabel('Add Duplicate Field').waitFor();
+
+		const newTabPage = await formBuilderPage.openPreviewForm();
+
+		await newTabPage.getByLabel('Text Field', {exact: true}).click();
+
+		await newTabPage
+			.getByRole('button', {
+				name: 'Add Duplicate Field Text Field',
+			})
+			.click();
+
+		await expect(
+			newTabPage.getByText('This field is required.')
+		).toBeVisible();
+
+		await expect(
+			newTabPage.getByLabel('Text Field', {exact: true})
+		).toHaveCount(2);
 	});
 
 	test('LPD-12824 HTML autocomplete attribute is rendered and has the configured value limited to 20 non-special characters in Date, Numeric and Text field types', async ({
@@ -114,15 +146,7 @@ test.describe('Manage fields through Form Preview page', () => {
 			await formBuilderSidePanelPage.clickBackButton();
 		}
 
-		const newTabPagePromise = new Promise<Page>((resolve) =>
-			formBuilderPage.page.once('popup', resolve)
-		);
-
-		await formBuilderPage.previewButton.click();
-
-		const newTabPage = await newTabPagePromise;
-
-		await newTabPage.waitForLoadState('domcontentloaded');
+		const newTabPage = await formBuilderPage.openPreviewForm();
 
 		for (const data of testData) {
 			if (data.fieldTitle === 'Date') {
@@ -157,15 +181,7 @@ test.describe('Manage fields through Form Preview page', () => {
 
 		await formBuilderPage.formSettingsDoneButton.click();
 
-		const newTabPagePromise = new Promise<Page>((resolve) =>
-			formBuilderPage.page.once('popup', resolve)
-		);
-
-		await formBuilderPage.previewButton.click();
-
-		const newTabPage = await newTabPagePromise;
-
-		await newTabPage.waitForLoadState('domcontentloaded');
+		const newTabPage = await formBuilderPage.openPreviewForm();
 
 		const captchaContainer = newTabPage.locator(
 			"[data-field-reference='_CAPTCHA_']"
@@ -209,15 +225,7 @@ test.describe('Manage fields through Form Preview page', () => {
 
 		await formBuilderSidePanelPage.backButton.click();
 
-		const newTabPagePromise = new Promise<Page>((resolve) =>
-			formBuilderPage.page.once('popup', resolve)
-		);
-
-		await formBuilderPage.previewButton.click();
-
-		const newTabPage = await newTabPagePromise;
-
-		await newTabPage.waitForLoadState('domcontentloaded');
+		const newTabPage = await formBuilderPage.openPreviewForm();
 
 		const elementWithoutHelpText = newTabPage
 			.locator('.form-group')
@@ -396,15 +404,7 @@ test.describe('Manage fields through Form Builder page', () => {
 
 		await formBuilderSidePanelPage.addFieldByDoubleClick('Date');
 
-		const newTabPagePromise = new Promise<Page>((resolve) =>
-			formBuilderPage.page.once('popup', resolve)
-		);
-
-		await formBuilderPage.previewButton.click();
-
-		const newTabPage = await newTabPagePromise;
-
-		await newTabPage.waitForLoadState('domcontentloaded');
+		const newTabPage = await formBuilderPage.openPreviewForm();
 
 		await expect(
 			newTabPage.getByLabel('Date', {exact: true})
@@ -439,15 +439,7 @@ test.describe('Manage fields through Form Builder page', () => {
 
 		await formBuilderSidePanelPage.addFieldToFieldGroup('Numeric', 0);
 
-		const newTabPagePromise = new Promise<Page>((resolve) =>
-			formBuilderPage.page.once('popup', resolve)
-		);
-
-		await formBuilderPage.previewButton.click();
-
-		const newTabPage = await newTabPagePromise;
-
-		await newTabPage.waitForLoadState('domcontentloaded');
+		const newTabPage = await formBuilderPage.openPreviewForm();
 
 		await expect(
 			newTabPage.getByLabel('Fields Group', {exact: true})
@@ -460,5 +452,160 @@ test.describe('Manage fields through Form Builder page', () => {
 		await expect(
 			newTabPage.getByLabel('Numeric', {exact: true})
 		).toBeVisible();
+	});
+
+	test('fields group can be translated and collapsed', async ({
+		formBuilderPage,
+		formBuilderSidePanelPage,
+		page,
+	}) => {
+		let newTabPage: Page;
+		const fieldsGroupLabels = {
+			en_US: 'Contact Info',
+			pt_BR: 'Informações de contato',
+		};
+
+		const numericFieldLabels = {
+			en_US: 'Phone Number',
+			pt_BR: 'Número de telefone',
+		};
+
+		const textFieldLabels = {
+			en_US: 'Address',
+			pt_BR: 'Endereço',
+		};
+
+		await test.step('Create a fields group with a numeric and a text field, changing their labels', async () => {
+			await formBuilderPage.goToNew();
+
+			await formBuilderSidePanelPage.addFieldByDoubleClick('Text');
+
+			await formBuilderSidePanelPage.label.fill(textFieldLabels['en_US']);
+
+			await formBuilderSidePanelPage.backButton.click();
+
+			await formBuilderSidePanelPage.addFieldToFieldGroup('Numeric', 0);
+
+			await formBuilderSidePanelPage.label.fill(
+				numericFieldLabels['en_US']
+			);
+
+			await page
+				.locator('label')
+				.filter({hasText: 'Fields Group'})
+				.click();
+
+			await formBuilderSidePanelPage.label.fill(
+				fieldsGroupLabels['en_US']
+			);
+		});
+
+		await test.step('Add pt-BR labels to the fields and make the fields group collapsible', async () => {
+			await formBuilderPage.changeFormBuilderLanguage(
+				'Portuguese (Brazil)'
+			);
+
+			await formBuilderSidePanelPage.label.fill(
+				fieldsGroupLabels['pt_BR']
+			);
+
+			await formBuilderSidePanelPage.collapsibleToggleSwitch.check();
+
+			await page.getByText(`Text${textFieldLabels['en_US']}`).click();
+
+			await formBuilderSidePanelPage.label.fill(textFieldLabels['pt_BR']);
+
+			await page
+				.getByText(`Numeric${numericFieldLabels['en_US']}`)
+				.click();
+
+			await formBuilderSidePanelPage.label.fill(
+				numericFieldLabels['pt_BR']
+			);
+		});
+
+		await test.step('Go to the preview form tab', async () => {
+			newTabPage = await formBuilderPage.openPreviewForm();
+		});
+
+		await test.step('Assert that the values for the default language labels are visible', async () => {
+			await expect(
+				newTabPage.getByLabel(fieldsGroupLabels['en_US'], {exact: true})
+			).toBeVisible();
+
+			await expect(
+				newTabPage.getByLabel(textFieldLabels['en_US'], {exact: true})
+			).toBeVisible();
+
+			await expect(
+				newTabPage.getByLabel(numericFieldLabels['en_US'], {
+					exact: true,
+				})
+			).toBeVisible();
+		});
+
+		await test.step('Assert that the values for the default language labels are not visible after the fields group is collapsed', async () => {
+			await newTabPage
+				.getByRole('button', {name: fieldsGroupLabels['en_US']})
+				.click();
+
+			await expect(
+				newTabPage.getByLabel(fieldsGroupLabels['en_US'], {exact: true})
+			).toBeVisible();
+
+			await expect(
+				newTabPage.getByLabel(textFieldLabels['en_US'], {exact: true})
+			).not.toBeVisible();
+
+			await expect(
+				newTabPage.getByLabel(numericFieldLabels['en_US'], {
+					exact: true,
+				})
+			).not.toBeVisible();
+		});
+
+		await test.step('Assert that the values for the pt_BR labels are visible after changing the language', async () => {
+			await newTabPage
+				.getByRole('button', {name: 'Select a language, current'})
+				.click();
+
+			await newTabPage
+				.getByRole('link', {name: 'português-Brasil'})
+				.click();
+
+			await expect(
+				newTabPage.getByLabel(fieldsGroupLabels['pt_BR'], {exact: true})
+			).toBeVisible();
+
+			await expect(
+				newTabPage.getByLabel(textFieldLabels['pt_BR'], {exact: true})
+			).toBeVisible();
+
+			await expect(
+				newTabPage.getByLabel(numericFieldLabels['pt_BR'], {
+					exact: true,
+				})
+			).toBeVisible();
+		});
+
+		await test.step('Assert that the values for the pt_BR labels are not visible after the fields group is collapsed', async () => {
+			await newTabPage
+				.getByRole('button', {name: fieldsGroupLabels['pt_BR']})
+				.click();
+
+			await expect(
+				newTabPage.getByLabel(fieldsGroupLabels['pt_BR'], {exact: true})
+			).toBeVisible();
+
+			await expect(
+				newTabPage.getByLabel(textFieldLabels['pt_BR'], {exact: true})
+			).not.toBeVisible();
+
+			await expect(
+				newTabPage.getByLabel(numericFieldLabels['pt_BR'], {
+					exact: true,
+				})
+			).not.toBeVisible();
+		});
 	});
 });

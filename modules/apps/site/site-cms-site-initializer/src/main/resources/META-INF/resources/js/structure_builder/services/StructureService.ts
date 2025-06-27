@@ -4,8 +4,10 @@
  */
 
 import ApiHelper from '../../services/ApiHelper';
-import {State} from '../contexts/StateContext';
+import {ObjectDefinition} from '../types/ObjectDefinition';
+import {ReferencedStructure, Structure, Structures} from '../types/Structure';
 import buildObjectDefinition from '../utils/buildObjectDefinition';
+import buildStructures from '../utils/buildStructures';
 import {Field} from '../utils/field';
 import getRandomId from '../utils/getRandomId';
 
@@ -15,12 +17,14 @@ async function createStructure({
 	label,
 	name,
 	spaces,
+	status,
 }: {
-	erc?: State['erc'];
-	fields: Field[];
-	label: State['label'];
-	name?: State['name'];
-	spaces: State['spaces'];
+	erc?: Structure['erc'];
+	fields: (Field | ReferencedStructure)[];
+	label: Structure['label'];
+	name: Structure['name'];
+	spaces: Structure['spaces'];
+	status: Structure['status'];
 }) {
 	const objectDefinition = buildObjectDefinition({
 		erc,
@@ -28,6 +32,7 @@ async function createStructure({
 		label,
 		name,
 		spaces,
+		status,
 	});
 
 	return await ApiHelper.post<{id: number}>(
@@ -36,14 +41,19 @@ async function createStructure({
 	);
 }
 
-async function publishStructure({id}: {id: State['id']}) {
-	if (!id) {
-		return;
+async function getStructures(): Promise<Structures> {
+	const filter =
+		"(objectFolderExternalReferenceCode eq 'L_CMS_CONTENT_STRUCTURES') or (objectFolderExternalReferenceCode eq 'L_CMS_FILE_TYPES')";
+
+	const {data, error} = await ApiHelper.get<{items: ObjectDefinition[]}>(
+		`/o/object-admin/v1.0/object-definitions?filter=${filter}`
+	);
+
+	if (data) {
+		return buildStructures(data.items);
 	}
 
-	return await ApiHelper.post(
-		`/o/object-admin/v1.0/object-definitions/${id}/publish`
-	);
+	throw new Error(error);
 }
 
 async function updateStructure({
@@ -53,13 +63,15 @@ async function updateStructure({
 	label,
 	name,
 	spaces,
+	status,
 }: {
-	erc: State['erc'];
-	fields: Field[];
-	id: State['id'];
-	label: State['label'];
-	name: State['name'];
-	spaces: State['spaces'];
+	erc: Structure['erc'];
+	fields: (Field | ReferencedStructure)[];
+	id: Structure['id'];
+	label: Structure['label'];
+	name: Structure['name'];
+	spaces: Structure['spaces'];
+	status: Structure['status'];
 }) {
 	const objectDefinition = buildObjectDefinition({
 		erc,
@@ -68,6 +80,7 @@ async function updateStructure({
 		label,
 		name,
 		spaces,
+		status,
 	});
 
 	return await ApiHelper.put(
@@ -78,6 +91,6 @@ async function updateStructure({
 
 export default {
 	createStructure,
-	publishStructure,
+	getStructures,
 	updateStructure,
 };

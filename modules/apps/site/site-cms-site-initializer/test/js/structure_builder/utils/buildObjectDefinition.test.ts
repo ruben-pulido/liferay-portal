@@ -52,6 +52,7 @@ describe('buildObjectDefinition', () => {
 			label: {en_US: 'Structure'},
 			name: 'myStructure',
 			spaces: [],
+			status: 'draft',
 		});
 
 		expect(result).toEqual({
@@ -59,6 +60,7 @@ describe('buildObjectDefinition', () => {
 			enableIndexSearch: true,
 			enableLocalization: true,
 			enableObjectEntryDraft: true,
+			enableObjectEntryVersioning: true,
 			externalReferenceCode: 'structureERC',
 			id: 1,
 			label: {en_US: 'Structure'},
@@ -78,8 +80,12 @@ describe('buildObjectDefinition', () => {
 					required: true,
 				},
 			],
+			objectRelationships: [],
 			pluralLabel: {en_US: 'Structure'},
 			scope: 'depot',
+			status: {
+				code: 2,
+			},
 		});
 	});
 
@@ -91,6 +97,7 @@ describe('buildObjectDefinition', () => {
 			label: {en_US: 'Structure'},
 			name: 'myStructure',
 			spaces: [],
+			status: 'published',
 		});
 
 		expect(result).toEqual({
@@ -98,6 +105,7 @@ describe('buildObjectDefinition', () => {
 			enableIndexSearch: true,
 			enableLocalization: true,
 			enableObjectEntryDraft: true,
+			enableObjectEntryVersioning: true,
 			externalReferenceCode: 'structureERC',
 			id: 1,
 			label: {en_US: 'Structure'},
@@ -117,8 +125,12 @@ describe('buildObjectDefinition', () => {
 					required: false,
 				},
 			],
+			objectRelationships: [],
 			pluralLabel: {en_US: 'Structure'},
 			scope: 'depot',
+			status: {
+				code: 0,
+			},
 		});
 	});
 
@@ -130,6 +142,7 @@ describe('buildObjectDefinition', () => {
 			label: {en_US: 'Structure'},
 			name: 'myStructure',
 			spaces: ['space-1-erc', 'space-2-erc'],
+			status: 'published',
 		});
 
 		expect(result).toEqual({
@@ -137,6 +150,7 @@ describe('buildObjectDefinition', () => {
 			enableIndexSearch: true,
 			enableLocalization: true,
 			enableObjectEntryDraft: true,
+			enableObjectEntryVersioning: true,
 			externalReferenceCode: 'structureERC',
 			id: 1,
 			label: {en_US: 'Structure'},
@@ -162,8 +176,12 @@ describe('buildObjectDefinition', () => {
 					required: true,
 				},
 			],
+			objectRelationships: [],
 			pluralLabel: {en_US: 'Structure'},
 			scope: 'depot',
+			status: {
+				code: 0,
+			},
 		});
 	});
 });

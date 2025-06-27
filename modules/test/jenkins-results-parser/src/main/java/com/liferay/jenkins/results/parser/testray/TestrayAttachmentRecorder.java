@@ -8,7 +8,7 @@ package com.liferay.jenkins.results.parser.testray;
 import com.liferay.jenkins.results.parser.AxisBuild;
 import com.liferay.jenkins.results.parser.Build;
 import com.liferay.jenkins.results.parser.BuildDatabase;
-import com.liferay.jenkins.results.parser.BuildReportFactory;
+import com.liferay.jenkins.results.parser.BuildDatabaseUtil;
 import com.liferay.jenkins.results.parser.Dom4JUtil;
 import com.liferay.jenkins.results.parser.DownstreamBuild;
 import com.liferay.jenkins.results.parser.GitRepositoryFactory;
@@ -18,7 +18,6 @@ import com.liferay.jenkins.results.parser.QAWebsitesWorkspaceGitRepository;
 import com.liferay.jenkins.results.parser.TestClassResult;
 import com.liferay.jenkins.results.parser.TestResult;
 import com.liferay.jenkins.results.parser.TopLevelBuild;
-import com.liferay.jenkins.results.parser.TopLevelBuildReport;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +37,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
-import org.json.JSONObject;
-
 /**
  * @author Michael Hashimoto
  */
@@ -56,7 +53,7 @@ public class TestrayAttachmentRecorder {
 			_recordJenkinsConsole();
 
 			if (_build instanceof TopLevelBuild) {
-				_recordBuildReport();
+				_recordBuildDatabase();
 				_recordJobSummary();
 				_recordJenkinsReport();
 			}
@@ -132,9 +129,10 @@ public class TestrayAttachmentRecorder {
 		sb.append(_startProperties.getProperty("TOP_LEVEL_JOB_NAME"));
 		sb.append("/");
 		sb.append(_startProperties.getProperty("TOP_LEVEL_BUILD_NUMBER"));
-		sb.append("/");
 
 		if (!(_build instanceof TopLevelBuild)) {
+			sb.append("/");
+
 			sb.append(_build.getJobVariant());
 
 			if (_build instanceof AxisBuild) {
@@ -375,25 +373,26 @@ public class TestrayAttachmentRecorder {
 		return new File(getRecordedFilesBaseDir(), getRelativeBuildDirPath());
 	}
 
-	private void _recordBuildReport() {
+	private void _recordBuildDatabase() {
 		if (!(_build instanceof TopLevelBuild)) {
 			return;
 		}
 
 		TopLevelBuild topLevelBuild = (TopLevelBuild)_build;
 
-		TopLevelBuildReport topLevelBuildReport =
-			BuildReportFactory.newTopLevelBuildReport(topLevelBuild);
+		BuildDatabase buildDatabase = BuildDatabaseUtil.getBuildDatabase(
+			topLevelBuild);
 
-		JSONObject buildReportJSONObject =
-			topLevelBuildReport.getBuildReportJSONObject();
+		File buildDatabaseFile = buildDatabase.getBuildDatabaseFile();
 
-		File buildReportJSONObjectFile = new File(
-			_getRecordedFilesBuildDir(), "build-report.json");
+		if (!buildDatabaseFile.exists()) {
+			return;
+		}
 
 		try {
-			JenkinsResultsParserUtil.write(
-				buildReportJSONObjectFile, buildReportJSONObject.toString());
+			JenkinsResultsParserUtil.copy(
+				buildDatabaseFile,
+				new File(_getRecordedFilesBuildDir(), "build-database.json"));
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
@@ -799,6 +798,14 @@ public class TestrayAttachmentRecorder {
 			if (playwrightReportFile.exists()) {
 				_copyToRecordedFilesBuildDir(
 					playwrightReportFile.getParentFile());
+
+				File playwrightTestResultsDir = new File(
+					portalWorkspaceGitRepository.getDirectory(),
+					"modules/test/playwright/test-results");
+
+				if (playwrightTestResultsDir.exists()) {
+					_copyToRecordedFilesBuildDir(playwrightTestResultsDir);
+				}
 
 				return;
 			}

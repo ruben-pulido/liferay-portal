@@ -12,25 +12,34 @@ import com.liferay.headless.object.client.dto.v1_0.ObjectEntryFolder;
 import com.liferay.headless.object.client.pagination.Page;
 import com.liferay.headless.object.client.pagination.Pagination;
 import com.liferay.headless.object.client.problem.Problem;
+import com.liferay.headless.object.resource.v1_0.ObjectEntryFolderResource;
 import com.liferay.object.constants.ObjectEntryFolderConstants;
+import com.liferay.object.service.ObjectEntryFolderLocalService;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.StringEntityField;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
+import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -48,6 +57,27 @@ public class ObjectEntryFolderResourceTest
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
+
+		_objectEntryFolderResource.setContextAcceptLanguage(
+			new AcceptLanguage() {
+
+				@Override
+				public List<Locale> getLocales() {
+					return Arrays.asList(LocaleUtil.getDefault());
+				}
+
+				@Override
+				public String getPreferredLanguageId() {
+					return LocaleUtil.toLanguageId(LocaleUtil.getDefault());
+				}
+
+				@Override
+				public Locale getPreferredLocale() {
+					return LocaleUtil.getDefault();
+				}
+
+			});
+		_objectEntryFolderResource.setContextUser(TestPropsValues.getUser());
 
 		_testDepotEntry = _depotEntryLocalService.addDepotEntry(
 			Collections.singletonMap(
@@ -195,6 +225,7 @@ public class ObjectEntryFolderResourceTest
 		_testPostScopeScopeKeyObjectEntryFolderWithExistingParentObjectEntryFolderByExternalReferenceCode();
 		_testPostScopeScopeKeyObjectEntryFolderWithExistingParentObjectEntryFolderByObjectEntryFolderId();
 		_testPostScopeScopeKeyObjectEntryFolderWithExistingParentObjectEntryFolderDataMismatch();
+		_testPostScopeScopeKeyObjectEntryFolderWithMissingParentObjectEntryFolderReference();
 		_testPostScopeScopeKeyObjectEntryFolderWithNonexistentParentObjectEntryFolderByExternalReferenceCode();
 		_testPostScopeScopeKeyObjectEntryFolderWithNonexistentParentObjectEntryFolderByObjectEntryFolderId();
 	}
@@ -209,6 +240,7 @@ public class ObjectEntryFolderResourceTest
 		_testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCodeWithExistingParentObjectEntryFolderByExternalReferenceCode();
 		_testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCodeWithExistingParentObjectEntryFolderByObjectEntryFolderId();
 		_testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCodeWithExistingParentObjectEntryFolderDataMismatch();
+		_testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCodeWithMissingParentObjectEntryFolderReference();
 		_testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCodeWithNonexistentParentObjectEntryFolderByExternalReferenceCode();
 		_testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCodeWithNonexistentParentObjectEntryFolderByObjectEntryFolderId();
 	}
@@ -257,6 +289,15 @@ public class ObjectEntryFolderResourceTest
 	}
 
 	@Override
+	protected String
+			testDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
+				ObjectEntryFolder objectEntryFolder)
+		throws Exception {
+
+		return objectEntryFolder.getScopeKey();
+	}
+
+	@Override
 	protected ObjectEntryFolder testGetObjectEntryFolder_addObjectEntryFolder()
 		throws Exception {
 
@@ -276,6 +317,15 @@ public class ObjectEntryFolderResourceTest
 	}
 
 	@Override
+	protected String
+			testGetScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
+				ObjectEntryFolder objectEntryFolder)
+		throws Exception {
+
+		return objectEntryFolder.getScopeKey();
+	}
+
+	@Override
 	protected ObjectEntryFolder
 			testGetScopeScopeKeyObjectEntryFoldersPage_addObjectEntryFolder(
 				String scopeKey, ObjectEntryFolder objectEntryFolder)
@@ -288,6 +338,15 @@ public class ObjectEntryFolderResourceTest
 	@Override
 	protected String testGetScopeScopeKeyObjectEntryFoldersPage_getScopeKey() {
 		return String.valueOf(_testDepotEntry.getGroupId());
+	}
+
+	@Override
+	protected String
+			testGraphQLGetScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
+				ObjectEntryFolder objectEntryFolder)
+		throws Exception {
+
+		return objectEntryFolder.getScopeKey();
 	}
 
 	@Override
@@ -351,6 +410,15 @@ public class ObjectEntryFolderResourceTest
 			String.valueOf(_testDepotEntry.getGroupId()));
 
 		return objectEntryFolder;
+	}
+
+	@Override
+	protected String
+			testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
+				ObjectEntryFolder objectEntryFolder)
+		throws Exception {
+
+		return objectEntryFolder.getScopeKey();
 	}
 
 	private void _testPatchScopeScopeKeyObjectEntryFolderByExternalReferenceCodeWithGroupKey()
@@ -470,6 +538,65 @@ public class ObjectEntryFolderResourceTest
 		}
 	}
 
+	@TestInfo("LPD-56833")
+	private void _testPostScopeScopeKeyObjectEntryFolderWithMissingParentObjectEntryFolderReference()
+		throws Exception {
+
+		com.liferay.headless.object.dto.v1_0.ObjectEntryFolder
+			objectEntryFolder =
+				new com.liferay.headless.object.dto.v1_0.ObjectEntryFolder() {
+					{
+						dateCreated = RandomTestUtil.nextDate();
+						dateModified = RandomTestUtil.nextDate();
+						description = RandomTestUtil.randomString();
+						externalReferenceCode = StringUtil.toLowerCase(
+							RandomTestUtil.randomString());
+						id = RandomTestUtil.randomLong();
+						label = StringUtil.toLowerCase(
+							RandomTestUtil.randomString());
+						numberOfObjectEntries = RandomTestUtil.randomInt();
+						numberOfObjectEntryFolders = RandomTestUtil.randomInt();
+						parentObjectEntryFolderExternalReferenceCode =
+							RandomTestUtil.randomString();
+						title = StringUtil.toLowerCase(
+							RandomTestUtil.randomString());
+					}
+				};
+
+		Assert.assertNull(
+			_objectEntryFolderLocalService.
+				fetchObjectEntryFolderByExternalReferenceCode(
+					objectEntryFolder.
+						getParentObjectEntryFolderExternalReferenceCode(),
+					_testDepotEntry.getGroupId(),
+					_testDepotEntry.getCompanyId()));
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			objectEntryFolder =
+				_objectEntryFolderResource.postScopeScopeKeyObjectEntryFolder(
+					String.valueOf(_testDepotEntry.getGroupId()),
+					objectEntryFolder);
+		}
+
+		com.liferay.object.model.ObjectEntryFolder
+			serviceBuilderParentObjectEntryFolder =
+				_objectEntryFolderLocalService.
+					getObjectEntryFolderByExternalReferenceCode(
+						objectEntryFolder.
+							getParentObjectEntryFolderExternalReferenceCode(),
+						_testDepotEntry.getGroupId(),
+						_testDepotEntry.getCompanyId());
+
+		Assert.assertEquals(
+			WorkflowConstants.STATUS_INCOMPLETE,
+			serviceBuilderParentObjectEntryFolder.getStatus());
+
+		_objectEntryFolderLocalService.deleteObjectEntryFolder(
+			serviceBuilderParentObjectEntryFolder);
+	}
+
 	private void _testPostScopeScopeKeyObjectEntryFolderWithNonexistentParentObjectEntryFolderByExternalReferenceCode()
 		throws Exception {
 
@@ -532,8 +659,7 @@ public class ObjectEntryFolderResourceTest
 		ObjectEntryFolder putObjectEntryFolder =
 			objectEntryFolderResource.
 				putScopeScopeKeyObjectEntryFolderByExternalReferenceCode(
-					testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
-						postObjectEntryFolder),
+					postObjectEntryFolder.getScopeKey(),
 					postObjectEntryFolder.getExternalReferenceCode(),
 					randomObjectEntryFolder);
 
@@ -563,8 +689,7 @@ public class ObjectEntryFolderResourceTest
 		ObjectEntryFolder putObjectEntryFolder =
 			objectEntryFolderResource.
 				putScopeScopeKeyObjectEntryFolderByExternalReferenceCode(
-					testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
-						postObjectEntryFolder),
+					postObjectEntryFolder.getScopeKey(),
 					postObjectEntryFolder.getExternalReferenceCode(),
 					randomObjectEntryFolder);
 
@@ -597,8 +722,7 @@ public class ObjectEntryFolderResourceTest
 		try {
 			objectEntryFolderResource.
 				putScopeScopeKeyObjectEntryFolderByExternalReferenceCode(
-					testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
-						postObjectEntryFolder),
+					postObjectEntryFolder.getScopeKey(),
 					postObjectEntryFolder.getExternalReferenceCode(),
 					randomObjectEntryFolder);
 
@@ -609,6 +733,91 @@ public class ObjectEntryFolderResourceTest
 
 			Assert.assertEquals("NOT_FOUND", problem.getStatus());
 			Assert.assertNull(problem.getTitle());
+		}
+	}
+
+	@TestInfo("LPD-56833")
+	private void _testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCodeWithMissingParentObjectEntryFolderReference()
+		throws Exception {
+
+		com.liferay.headless.object.dto.v1_0.ObjectEntryFolder
+			objectEntryFolder =
+				new com.liferay.headless.object.dto.v1_0.ObjectEntryFolder() {
+					{
+						dateCreated = RandomTestUtil.nextDate();
+						dateModified = RandomTestUtil.nextDate();
+						description = RandomTestUtil.randomString();
+						externalReferenceCode = StringUtil.toLowerCase(
+							RandomTestUtil.randomString());
+						id = RandomTestUtil.randomLong();
+						label = StringUtil.toLowerCase(
+							RandomTestUtil.randomString());
+						numberOfObjectEntries = RandomTestUtil.randomInt();
+						numberOfObjectEntryFolders = RandomTestUtil.randomInt();
+						parentObjectEntryFolderExternalReferenceCode =
+							RandomTestUtil.randomString();
+						title = StringUtil.toLowerCase(
+							RandomTestUtil.randomString());
+					}
+				};
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			_objectEntryFolderResource.postScopeScopeKeyObjectEntryFolder(
+				String.valueOf(_testDepotEntry.getGroupId()),
+				objectEntryFolder);
+
+			com.liferay.object.model.ObjectEntryFolder
+				serviceBuilderParentObjectEntryFolder =
+					_objectEntryFolderLocalService.
+						getObjectEntryFolderByExternalReferenceCode(
+							objectEntryFolder.
+								getParentObjectEntryFolderExternalReferenceCode(),
+							_testDepotEntry.getGroupId(),
+							_testDepotEntry.getCompanyId());
+
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_INCOMPLETE,
+				serviceBuilderParentObjectEntryFolder.getStatus());
+
+			_objectEntryFolderResource.
+				putScopeScopeKeyObjectEntryFolderByExternalReferenceCode(
+					String.valueOf(_testDepotEntry.getGroupId()),
+					objectEntryFolder.
+						getParentObjectEntryFolderExternalReferenceCode(),
+					new com.liferay.headless.object.dto.v1_0.
+						ObjectEntryFolder() {
+
+						{
+							dateCreated = RandomTestUtil.nextDate();
+							dateModified = RandomTestUtil.nextDate();
+							description = RandomTestUtil.randomString();
+							externalReferenceCode =
+								objectEntryFolder.
+									getParentObjectEntryFolderExternalReferenceCode();
+							id = RandomTestUtil.randomLong();
+							label = StringUtil.toLowerCase(
+								RandomTestUtil.randomString());
+							numberOfObjectEntries = RandomTestUtil.randomInt();
+							numberOfObjectEntryFolders =
+								RandomTestUtil.randomInt();
+							title = StringUtil.toLowerCase(
+								RandomTestUtil.randomString());
+						}
+					});
+
+			serviceBuilderParentObjectEntryFolder =
+				_objectEntryFolderLocalService.
+					getObjectEntryFolderByExternalReferenceCode(
+						objectEntryFolder.
+							getParentObjectEntryFolderExternalReferenceCode(),
+						_testDepotEntry.getGroupId(),
+						_testDepotEntry.getCompanyId());
+
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_APPROVED,
+				serviceBuilderParentObjectEntryFolder.getStatus());
 		}
 	}
 
@@ -629,8 +838,7 @@ public class ObjectEntryFolderResourceTest
 		ObjectEntryFolder putObjectEntryFolder =
 			objectEntryFolderResource.
 				putScopeScopeKeyObjectEntryFolderByExternalReferenceCode(
-					testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
-						postObjectEntryFolder),
+					postObjectEntryFolder.getScopeKey(),
 					postObjectEntryFolder.getExternalReferenceCode(),
 					randomObjectEntryFolder);
 
@@ -644,8 +852,7 @@ public class ObjectEntryFolderResourceTest
 		ObjectEntryFolder parentObjectEntryFolder =
 			objectEntryFolderResource.
 				getScopeScopeKeyObjectEntryFolderByExternalReferenceCode(
-					testGetScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
-						putObjectEntryFolder),
+					putObjectEntryFolder.getScopeKey(),
 					parentObjectEntryFolderExternalReferenceCode);
 
 		Assert.assertEquals(
@@ -668,8 +875,7 @@ public class ObjectEntryFolderResourceTest
 		try {
 			objectEntryFolderResource.
 				putScopeScopeKeyObjectEntryFolderByExternalReferenceCode(
-					testPutScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
-						postObjectEntryFolder),
+					postObjectEntryFolder.getScopeKey(),
 					postObjectEntryFolder.getExternalReferenceCode(),
 					randomObjectEntryFolder);
 
@@ -688,6 +894,12 @@ public class ObjectEntryFolderResourceTest
 
 	@Inject
 	private GroupLocalService _groupLocalService;
+
+	@Inject
+	private ObjectEntryFolderLocalService _objectEntryFolderLocalService;
+
+	@Inject
+	private ObjectEntryFolderResource _objectEntryFolderResource;
 
 	@DeleteAfterTestRun
 	private DepotEntry _testDepotEntry;

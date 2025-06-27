@@ -1,4 +1,6 @@
 {
+	"accountEntryRestricted": true,
+	"accountEntryRestrictedObjectFieldName": "r_accountEntryToTicketAttachment_accountEntryId",
 	"enableObjectEntryDraft": true,
 	"label": {
 		"en_US": "Ticket Attachment"
@@ -14,6 +16,16 @@
 			},
 			"name": "accountKey",
 			"required": true
+		},
+		{
+			"DBType": "Clob",
+			"businessType": "LongText",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Draft Comment Body"
+			},
+			"name": "draftCommentBody"
 		},
 		{
 			"DBType": "String",
@@ -54,6 +66,15 @@
 			},
 			"name": "md5Checksum",
 			"required": false
+		},
+		{
+			"DBType": "Long",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "State"
+			},
+			"name": "state"
 		},
 		{
 			"DBType": "String",

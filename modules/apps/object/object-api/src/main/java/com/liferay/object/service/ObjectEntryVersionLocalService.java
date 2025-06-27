@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -71,6 +72,8 @@ public interface ObjectEntryVersionLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntryVersion addObjectEntryVersion(
 		ObjectEntryVersion objectEntryVersion);
+
+	public void checkObjectEntryVersions(long companyId) throws PortalException;
 
 	/**
 	 * Creates a new object entry version with the primary key. Does not add the object entry version to the database.
@@ -207,7 +210,12 @@ public interface ObjectEntryVersionLocalService
 		DynamicQuery dynamicQuery, Projection projection);
 
 	public ObjectEntryVersion expireObjectEntryVersion(
-			long userId, long objectEntryId, int version)
+			long userId, ObjectEntry objectEntry, int version,
+			ServiceContext serviceContext)
+		throws PortalException;
+
+	public ObjectEntryVersion expireObjectEntryVersion(
+			long userId, ObjectEntryVersion objectEntryVersion)
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)

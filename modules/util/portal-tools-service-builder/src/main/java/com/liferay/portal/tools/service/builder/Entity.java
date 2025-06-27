@@ -93,7 +93,7 @@ public class Entity implements Comparable<Entity> {
 			null, null, false, false, null, false, true, true, null, null, null,
 			null, null, true, false, false, false, false, false, null, false,
 			null, null, false, null, null, null, null, null, null, null, null,
-			null, null, false);
+			null, null, null, false);
 	}
 
 	public Entity(
@@ -114,7 +114,9 @@ public class Entity implements Comparable<Entity> {
 		List<EntityColumn> blobEntityColumns,
 		List<EntityColumn> collectionEntityColumns,
 		List<EntityColumn> entityColumns, EntityOrder entityOrder,
-		List<EntityFinder> entityFinders, List<Entity> referenceEntities,
+		List<EntityFinder> entityFinders,
+		List<EntityFinder> indexOnlyEntityFinders,
+		List<Entity> referenceEntities,
 		List<String> unresolvedReferenceEntityNames,
 		List<String> txRequiredMethodNames, boolean resourceActionModel) {
 
@@ -169,6 +171,7 @@ public class Entity implements Comparable<Entity> {
 		_entityColumns = entityColumns;
 		_entityOrder = entityOrder;
 		_entityFinders = entityFinders;
+		_indexOnlyEntityFinders = indexOnlyEntityFinders;
 		_referenceEntities = referenceEntities;
 		_unresolvedReferenceEntityNames = unresolvedReferenceEntityNames;
 		_txRequiredMethodNames = txRequiredMethodNames;
@@ -252,11 +255,7 @@ public class Entity implements Comparable<Entity> {
 
 		Entity entity = (Entity)object;
 
-		if (_name.equals(entity.getName())) {
-			return true;
-		}
-
-		return false;
+		return _name.equals(entity.getName());
 	}
 
 	public String getAlias() {
@@ -372,6 +371,10 @@ public class Entity implements Comparable<Entity> {
 
 	public String getHumanName() {
 		return _humanName;
+	}
+
+	public List<EntityFinder> getIndexOnlyEntityFinders() {
+		return _indexOnlyEntityFinders;
 	}
 
 	public Entity getLocalizedEntity() {
@@ -872,11 +875,7 @@ public class Entity implements Comparable<Entity> {
 	}
 
 	public boolean hasEntityColumns() {
-		if (ListUtil.isEmpty(_entityColumns)) {
-			return false;
-		}
-
-		return true;
+		return ListUtil.isNotEmpty(_entityColumns);
 	}
 
 	public boolean hasExternalReferenceCode() {
@@ -884,11 +883,7 @@ public class Entity implements Comparable<Entity> {
 	}
 
 	public boolean hasFinderClassName() {
-		if (Validator.isNull(_finderClassName)) {
-			return false;
-		}
-
-		return true;
+		return Validator.isNotNull(_finderClassName);
 	}
 
 	@Override
@@ -929,11 +924,7 @@ public class Entity implements Comparable<Entity> {
 
 		EntityColumn entityColumn = _getPKEntityColumn();
 
-		if (entityColumn.isPrimitiveType(includeWrappers)) {
-			return true;
-		}
-
-		return false;
+		return entityColumn.isPrimitiveType(includeWrappers);
 	}
 
 	public boolean hasRemoteService() {
@@ -991,27 +982,15 @@ public class Entity implements Comparable<Entity> {
 	}
 
 	public boolean isDefaultDataSource() {
-		if (_dataSource.equals(_DATA_SOURCE_DEFAULT)) {
-			return true;
-		}
-
-		return false;
+		return _dataSource.equals(_DATA_SOURCE_DEFAULT);
 	}
 
 	public boolean isDefaultSessionFactory() {
-		if (_sessionFactory.equals(_SESSION_FACTORY_DEFAULT)) {
-			return true;
-		}
-
-		return false;
+		return _sessionFactory.equals(_SESSION_FACTORY_DEFAULT);
 	}
 
 	public boolean isDefaultTXManager() {
-		if (_txManager.equals(_TX_MANAGER_DEFAULT)) {
-			return true;
-		}
-
-		return false;
+		return _txManager.equals(_TX_MANAGER_DEFAULT);
 	}
 
 	public boolean isDeprecated() {
@@ -1220,11 +1199,7 @@ public class Entity implements Comparable<Entity> {
 	}
 
 	public boolean isTreeModel() {
-		if (hasEntityColumn("treePath")) {
-			return true;
-		}
-
-		return false;
+		return hasEntityColumn("treePath");
 	}
 
 	public boolean isTypedModel() {
@@ -1340,6 +1315,7 @@ public class Entity implements Comparable<Entity> {
 	private final String _finderClassName;
 	private final List<EntityColumn> _finderEntityColumns;
 	private final String _humanName;
+	private final List<EntityFinder> _indexOnlyEntityFinders;
 	private final boolean _jsonEnabled;
 	private Entity _localizedEntity;
 	private List<EntityColumn> _localizedEntityColumns;

@@ -8,6 +8,7 @@ import {FrameLocator, Locator, Page, expect} from '@playwright/test';
 import {ApiHelpers} from '../../../../helpers/ApiHelpers';
 import {liferayConfig} from '../../../../liferay.config';
 import getRandomString from '../../../../utils/getRandomString';
+import {VisualizationMode} from '../../../frontend-data-set-admin-web/main/utils/types';
 import getPageDefinition from '../../../layout-content-page-editor-web/main/utils/getPageDefinition';
 import getWidgetDefinition from '../../../layout-content-page-editor-web/main/utils/getWidgetDefinition';
 
@@ -17,15 +18,31 @@ export class FDSSamplePage {
 		actionsDropdownButton: Locator;
 		container: Locator;
 	};
+	readonly cards: {
+		container: Locator;
+		items: Locator;
+	};
 	readonly customViewsActionsButton: Locator;
 	readonly customViewsDeleteAlert: Locator;
 	readonly customViewsSaveModal: Locator;
 	readonly customViewsSelectorButton: Locator;
+	readonly fdsWrapper: Locator;
+	readonly fileDropModal: Locator;
+	readonly infoPanel: Locator;
 	readonly itemActionButton: Locator;
+	readonly list: {
+		container: Locator;
+		items: Locator;
+	};
 	readonly managementToolbar: Locator;
 	readonly page: Page;
 	readonly sidePanel: Locator;
 	readonly sidePanelFrame: FrameLocator;
+	readonly selectAllCheckbox: Locator;
+	readonly selectionToolbar: {
+		clearButton: Locator;
+		container: Locator;
+	};
 	readonly tablist: Locator;
 	readonly table: {
 		bodyRows: Locator;
@@ -35,6 +52,8 @@ export class FDSSamplePage {
 		itemActionsCells: Locator;
 		manageColumnsVisibilityButton: Locator;
 	};
+	readonly toggleInfoPanelButton: Locator;
+	readonly visualizationModeSelector: Locator;
 
 	constructor(page: Page) {
 		this.apiHelpers = new ApiHelpers(page);
@@ -43,6 +62,12 @@ export class FDSSamplePage {
 				.locator('.bulk-actions')
 				.getByLabel('Actions'),
 			container: page.locator('.bulk-actions'),
+		};
+		const cardsContainer = page.locator('.cards-container');
+
+		this.cards = {
+			container: cardsContainer,
+			items: cardsContainer.locator('.card'),
 		};
 		this.customViewsActionsButton = page.getByLabel('Show View Actions', {
 			exact: true,
@@ -56,13 +81,36 @@ export class FDSSamplePage {
 		this.customViewsSelectorButton = page.getByLabel('Views', {
 			exact: true,
 		});
-		this.managementToolbar = page.getByTestId('management-toolbar');
+		this.fdsWrapper = page.locator('div.data-set-wrapper').first();
+		this.fileDropModal = page.getByRole('dialog', {
+			name: 'Files',
+		});
+		this.infoPanel = page.locator('.fds-info-panel');
+
+		const listContainer = page.locator('.fds .list-sheet');
+
+		this.list = {
+			container: listContainer,
+			items: listContainer.locator('.list-group-item'),
+		};
+
+		this.managementToolbar = page.getByTestId('managementToolbar');
 		this.page = page;
+		this.selectAllCheckbox = page.getByText('Select All');
+
+		const selectionToolbarContainer = page.getByTestId('selectionToolbar');
+
+		this.selectionToolbar = {
+			clearButton: selectionToolbarContainer.getByText('Clear'),
+			container: selectionToolbarContainer,
+		};
+
 		this.sidePanel = page.locator('.fds-side-panel');
 		this.sidePanelFrame = this.sidePanel.frameLocator('iframe');
 		this.tablist = page.getByRole('tablist');
 
 		const tableContainer = page.locator('.fds table');
+
 		const headerCells = tableContainer.locator('th');
 
 		this.table = {
@@ -76,19 +124,36 @@ export class FDSSamplePage {
 			),
 		};
 
-		const itemActionsCell = this.table.itemActionsCells.first();
+		this.toggleInfoPanelButton = page.getByLabel('Toggle Info Panel');
 
-		this.itemActionButton = itemActionsCell.getByRole('button', {
-			exact: true,
-			name: 'Actions',
+		this.visualizationModeSelector = page.getByLabel('Show View Options');
+	}
+
+	async changeVisualizationMode(visualizationMode: VisualizationMode) {
+		await this.visualizationModeSelector.waitFor({
+			state: 'visible',
 		});
+
+		await this.visualizationModeSelector.click();
+
+		await this.page
+			.getByRole('listbox')
+			.getByRole('option', {name: visualizationMode})
+			.click();
 	}
 
 	async clickItemAction(itemAction: string) {
-		const dropdownId =
-			await this.itemActionButton.getAttribute('aria-controls');
+		const firstItemActionsCell = this.table.itemActionsCells.first();
 
-		await this.itemActionButton.click();
+		const firstItemActionButton = firstItemActionsCell.getByRole('button', {
+			exact: true,
+			name: 'Actions',
+		});
+
+		const dropdownId =
+			await firstItemActionButton.getAttribute('aria-controls');
+
+		await firstItemActionButton.click();
 
 		await this.page
 			.locator(`#${dropdownId}`)

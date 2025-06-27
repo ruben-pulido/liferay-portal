@@ -1074,18 +1074,14 @@ public class ResourceOpenAPIParser {
 					operationIdSegments.size() - 1);
 
 				if (pathName.endsWith("ExternalReferenceCode")) {
-					String externalReferenceCodeSubjectName =
-						StringUtil.upperCaseFirstLetter(
-							CamelCaseUtil.toCamelCase(
-								pathSegment.replaceAll(
-									"\\{|-?ExternalReferenceCode}", "")));
-
-					if (!(previousMethodNameSegment.endsWith(
-							externalReferenceCodeSubjectName) ||
+					if (!(Objects.equals(
+							previousMethodNameSegment, "AssetLibrary") ||
+						  Objects.equals(previousMethodNameSegment, "Site") ||
 						  previousMethodNameSegment.endsWith(pathName) ||
-						  Objects.equals(
-							  previousMethodNameSegment, "AssetLibrary") ||
-						  Objects.equals(previousMethodNameSegment, "Site"))) {
+						  StringUtil.equalsIgnoreCase(
+							  previousMethodNameSegment,
+							  pathName.replaceFirst(
+								  "ExternalReferenceCode$", "")))) {
 
 						operationIdSegments.add(pathName);
 					}
@@ -1494,11 +1490,7 @@ public class ResourceOpenAPIParser {
 		String schemaName, List<String> tags) {
 
 		if (!tags.isEmpty()) {
-			if (tags.contains(schemaName)) {
-				return true;
-			}
-
-			return false;
+			return tags.contains(schemaName);
 		}
 
 		if (returnType.equals(javaDataTypeMap.get(schemaName))) {

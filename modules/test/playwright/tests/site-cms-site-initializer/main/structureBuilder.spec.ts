@@ -14,7 +14,7 @@ import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {cmsPagesTest} from './fixtures/cmsPagesTest';
-import {FIELD_TYPES} from './pages/StructureBuilderPage';
+import {FIELD_TYPES, StructureBuilderPage} from './pages/StructureBuilderPage';
 
 const test = mergeTests(
 	cmsPagesTest,
@@ -26,6 +26,52 @@ const test = mergeTests(
 	pageEditorPagesTest
 );
 
+let structureIds = [];
+
+const createStructure = async ({
+	erc = getRandomString(),
+	label,
+	name = `StructureName${getRandomInt()}`,
+	page,
+	publish = true,
+}: {
+	erc?: string;
+	label: string;
+	name?: string;
+	page: StructureBuilderPage;
+	publish?: boolean;
+}) => {
+	await page.createStructure();
+
+	await page.enableForAllSpaces();
+
+	await page.changeStructureSettings({
+		erc,
+		label,
+		name,
+	});
+
+	const {id} = await page.saveStructure();
+
+	if (publish) {
+		await page.publishStructure();
+	}
+
+	structureIds.push(id);
+
+	return id;
+};
+
+test.beforeEach(() => {
+	structureIds = [];
+});
+
+test.afterEach(async ({structureBuilderPage}) => {
+	for (const id of structureIds) {
+		await structureBuilderPage.deleteStructure(Number(id));
+	}
+});
+
 test(
 	'Structures can be saved and published',
 	{tag: '@LPD-36752'},
@@ -33,7 +79,7 @@ test(
 
 		// Go to the Structure Builder
 
-		await structureBuilderPage.goto();
+		await structureBuilderPage.createStructure();
 
 		await structureBuilderPage.enableForAllSpaces();
 
@@ -54,21 +100,33 @@ test(
 			page.locator('.breadcrumb-link', {hasText: 'Text'})
 		).toBeVisible();
 
-		await structureBuilderPage.addField('Long Text');
+		await structureBuilderPage.addField('Decimal');
 
 		await expect(
-			page.locator('.breadcrumb-link', {hasText: 'Long Text'})
+			page.locator('.breadcrumb-link', {hasText: 'Decimal'})
 		).toBeVisible();
+
+		// Select fields and check its values are shown
+
+		await structureBuilderPage.selectFields([{label: 'Text'}]);
+
+		await expect(page.getByLabel('Label')).toHaveValue('Text');
+
+		await structureBuilderPage.selectFields([{label: 'Decimal'}]);
+
+		await expect(page.getByLabel('Label')).toHaveValue('Decimal');
 
 		// Save the structure
 
 		const {id} = await structureBuilderPage.saveStructure();
 
+		structureIds.push(id);
+
 		await expect(page.locator('.alert-danger')).not.toBeVisible();
 
 		// Remove a field
 
-		await structureBuilderPage.deleteFields([{label: 'Long Text'}]);
+		await structureBuilderPage.deleteFields([{label: 'Decimal'}]);
 
 		// Publish it
 
@@ -85,10 +143,6 @@ test(
 		await structureBuilderPage.addField('Text');
 		await structureBuilderPage.selectFields([{label: 'Text', nth: 1}]);
 		await structureBuilderPage.changeFieldSettings({name: 'text'});
-
-		// Delete structure
-
-		await structureBuilderPage.deleteStructure(id);
 	}
 );
 
@@ -101,19 +155,14 @@ test(
 
 		const picklist = await picklistBuilderPage.createPicklist();
 
-		// Go to the Structure Builder
-
-		await structureBuilderPage.goto();
-
-		await structureBuilderPage.enableForAllSpaces();
-
-		// Change label and name
+		// Create structure
 
 		const label = `Structure${getRandomInt()}`;
 
-		await structureBuilderPage.changeStructureSettings({
+		await createStructure({
 			label,
 			name: label,
+			page: structureBuilderPage,
 		});
 
 		// Add a field of each type
@@ -128,19 +177,13 @@ test(
 			}
 		}
 
-		// Save and publish the structure
-
-		const {id} = await structureBuilderPage.saveStructure();
+		// Publish the structure
 
 		await structureBuilderPage.publishStructure();
 
 		// Delete picklist
 
 		await picklistBuilderPage.deletePicklist(picklist.id);
-
-		// Delete structure
-
-		await structureBuilderPage.deleteStructure(id);
 	}
 );
 
@@ -149,19 +192,14 @@ test(
 	{tag: '@LPD-36767'},
 	async ({structureBuilderPage}) => {
 
-		// Go to the Structure Builder
-
-		await structureBuilderPage.goto();
-
-		await structureBuilderPage.enableForAllSpaces();
-
-		// Change label and name
+		// Create structure
 
 		const label = `Structure${getRandomInt()}`;
 
-		await structureBuilderPage.changeStructureSettings({
+		await createStructure({
 			label,
 			name: label,
+			page: structureBuilderPage,
 		});
 
 		// Add four fields
@@ -172,9 +210,8 @@ test(
 			await structureBuilderPage.addField(type);
 		}
 
-		// Save and publish the structure
+		// Publish the structure
 
-		const {id} = await structureBuilderPage.saveStructure();
 		await structureBuilderPage.publishStructure();
 
 		// Select and delete three fields
@@ -184,10 +221,6 @@ test(
 			{label: 'Long Text'},
 			{label: 'Upload'},
 		]);
-
-		// Delete structure
-
-		await structureBuilderPage.deleteStructure(id);
 	}
 );
 
@@ -196,21 +229,16 @@ test(
 	{tag: '@LPD-49168'},
 	async ({page, structureBuilderPage}) => {
 
-		// Go to the Structure Builder
-
-		await structureBuilderPage.goto();
-
-		await structureBuilderPage.enableForAllSpaces();
-
-		// Change label,name and erc
+		// Create structure
 
 		const label = `Structure${getRandomInt()}`;
 		const erc = getRandomString();
 
-		await structureBuilderPage.changeStructureSettings({
+		await createStructure({
 			erc,
 			label,
 			name: label,
+			page: structureBuilderPage,
 		});
 
 		// Add a text field
@@ -239,11 +267,7 @@ test(
 
 		await maximumNumberOfCharactersInput.blur();
 
-		// Save and publish the structure
-
-		const {id} = await structureBuilderPage.saveStructure();
-
-		await expect(page.locator('.alert-danger')).not.toBeVisible();
+		// Publish the structure
 
 		const {objectFields} = await structureBuilderPage.publishStructure();
 
@@ -270,10 +294,6 @@ test(
 			name: 'showCounter',
 			value: true,
 		});
-
-		// Delete structure
-
-		await structureBuilderPage.deleteStructure(id);
 	}
 );
 
@@ -289,7 +309,7 @@ test.describe('Frontend validations', () => {
 
 			// Go to the Structure Builder
 
-			await structureBuilderPage.goto();
+			await structureBuilderPage.createStructure();
 
 			// Add a Text field
 
@@ -372,6 +392,8 @@ test.describe('Frontend validations', () => {
 
 			const {id} = await structureBuilderPage.saveStructure();
 
+			structureIds.push(id);
+
 			// Publish structure
 
 			await structureBuilderPage.publishStructure();
@@ -402,10 +424,6 @@ test.describe('Frontend validations', () => {
 
 			await structureBuilderPage.publishStructure();
 
-			// Delete structure
-
-			await structureBuilderPage.deleteStructure(id);
-
 			// Delete picklist
 
 			await picklistBuilderPage.deletePicklist(picklist.id);
@@ -423,7 +441,7 @@ test.describe('Frontend validations', () => {
 
 			// Go to the Structure Builder
 
-			await structureBuilderPage.goto();
+			await structureBuilderPage.createStructure();
 
 			// Add a Single Select field and check for blur error
 
@@ -475,7 +493,7 @@ test(
 
 		// Go to the Structure Builder
 
-		await structureBuilderPage.goto();
+		await structureBuilderPage.createStructure();
 
 		// Add a Single Select field and select it
 
@@ -526,14 +544,6 @@ test(
 );
 
 test.describe('Customize experience', () => {
-	let structureId = null;
-
-	test.afterEach(async ({structureBuilderPage}) => {
-		if (structureId) {
-			await structureBuilderPage.deleteStructure(Number(structureId));
-		}
-	});
-
 	test(
 		'Alerts are displayed when trying to customize the experience without publishing the structure',
 		{
@@ -541,14 +551,11 @@ test.describe('Customize experience', () => {
 		},
 		async ({page, structureBuilderPage}) => {
 
-			// Go to the Structure Builder
+			// Create structure
 
-			await structureBuilderPage.goto();
-
-			await structureBuilderPage.enableForAllSpaces();
-
-			await structureBuilderPage.changeStructureSettings({
-				name: `StructureName${getRandomInt()}`,
+			await createStructure({
+				label: `StructureName${getRandomInt()}`,
+				page: structureBuilderPage,
 			});
 
 			// Add two Text fields
@@ -596,16 +603,14 @@ test.describe('Customize experience', () => {
 
 			// Check the customized experience
 
-			const url = new URL(page.url());
-
-			structureId = url.searchParams.get('objectDefinitionId');
-
 			await page
 				.getByRole('alert')
 				.getByRole('button', {name: 'Customize Experience'})
 				.click();
 
-			await expect(page.getByLabel('Field 1')).toBeVisible();
+			await structureBuilderPage.waitForExperienceCustomizerModal();
+
+			await expect(page.getByLabel('Field 1 (Read Only)')).toBeVisible();
 
 			// Go back to the structure builder
 
@@ -642,10 +647,14 @@ test.describe('Customize experience', () => {
 				.getByRole('button', {name: 'Customize Experience'})
 				.click();
 
+			await structureBuilderPage.waitForExperienceCustomizerModal();
+
 			// Check the experience is regenerated removing the deleted field
 
-			await expect(page.getByLabel('Field 1')).not.toBeVisible();
-			await expect(page.getByLabel('Field 2')).toBeVisible();
+			await expect(
+				page.getByLabel('Field 1 (Read Only)')
+			).not.toBeVisible();
+			await expect(page.getByLabel('Field 2 (Read Only)')).toBeVisible();
 		}
 	);
 
@@ -656,14 +665,13 @@ test.describe('Customize experience', () => {
 		},
 		async ({page, pageEditorPage, structureBuilderPage}) => {
 
-			// Go to the Structure Builder
+			// Create structure
 
-			await structureBuilderPage.goto();
+			const label = `StructureName${getRandomInt()}`;
 
-			await structureBuilderPage.enableForAllSpaces();
-
-			await structureBuilderPage.changeStructureSettings({
-				name: `StructureName${getRandomInt()}`,
+			await createStructure({
+				label,
+				page: structureBuilderPage,
 			});
 
 			// Add two Text fields
@@ -687,23 +695,14 @@ test.describe('Customize experience', () => {
 
 				await waitForAlert(
 					page,
-					'Success:Untitled Structure was published successfully.',
-					{exact: true}
+					`Success:${label} was published successfully.`,
+					{exact: true, timeout: 2000}
 				);
 			}).toPass();
 
-			const url = new URL(page.url());
-
-			structureId = url.searchParams.get('objectDefinitionId');
-
 			// Customize the experience
 
-			await clickAndExpectToBeVisible({
-				target: page.getByText('Select a Page Element', {exact: true}),
-				trigger: page.getByRole('button', {
-					name: 'Customize Experience',
-				}),
-			});
+			await structureBuilderPage.customizeExperience();
 
 			const fragmentId = await pageEditorPage.getFragmentId('Text', 0);
 
@@ -730,6 +729,42 @@ test.describe('Customize experience', () => {
 			}).toPass();
 		}
 	);
+
+	test(
+		'Can autogenerate default experience after customizing it',
+		{
+			tag: '@LPD-50376',
+		},
+		async ({page, pageEditorPage, structureBuilderPage}) => {
+
+			// Create structure
+
+			await createStructure({
+				label: `StructureName${getRandomInt()}`,
+				page: structureBuilderPage,
+			});
+
+			// Customize the experience and add a fragment
+
+			await structureBuilderPage.customizeExperience();
+
+			await pageEditorPage.addFragment('Basic Components', 'Heading');
+
+			// Regenerate Display Page and check the Heading is not present
+
+			await pageEditorPage.regenerateDisplayPage();
+
+			await page
+				.getByText('Select a Page Element', {exact: true})
+				.waitFor();
+
+			await expect(
+				page.locator(
+					'.lfr-layout-structure-item-basic-component-heading'
+				)
+			).not.toBeVisible();
+		}
+	);
 });
 
 test(
@@ -739,9 +774,14 @@ test(
 	},
 	async ({page, structureBuilderPage}) => {
 
-		// Go to the Structure Builder with type content and check initial fields
+		// Create structure
 
-		await structureBuilderPage.goto({type: 'content'});
+		await createStructure({
+			label: `StructureName${getRandomInt()}`,
+			page: structureBuilderPage,
+		});
+
+		// Type content and check initial fields
 
 		await structureBuilderPage.changeStructureSettings({
 			label: getRandomString(),
@@ -757,7 +797,7 @@ test(
 
 		// Check with type file
 
-		await structureBuilderPage.goto({type: 'file'});
+		await structureBuilderPage.createStructure('file');
 
 		await structureBuilderPage.changeStructureSettings({
 			label: getRandomString(),
@@ -772,3 +812,250 @@ test(
 		).toBeVisible();
 	}
 );
+
+test.describe('Referenced structures', () => {
+	test(
+		'Can reference several structures and they are persisted',
+		{
+			tag: '@LPD-49645',
+		},
+		async ({page, structureBuilderPage}) => {
+			const label1 = getRandomString();
+			const label2 = getRandomString();
+			const label3 = getRandomString();
+			const label4 = getRandomString();
+
+			const name1 = `StructureName${getRandomInt()}`;
+			const name2 = `StructureName${getRandomInt()}`;
+
+			// Create three structures, one of them in draft
+
+			await createStructure({
+				label: label1,
+				name: name1,
+				page: structureBuilderPage,
+			});
+
+			await createStructure({
+				label: label2,
+				name: name2,
+				page: structureBuilderPage,
+			});
+
+			await createStructure({
+				label: label3,
+				page: structureBuilderPage,
+				publish: false,
+			});
+
+			// Create another one and reference the first two
+
+			const id4 = await createStructure({
+				label: label4,
+				page: structureBuilderPage,
+			});
+
+			await structureBuilderPage.addReferencedStructures([
+				label1,
+				label2,
+			]);
+
+			// Check the one in draft can't be referenced
+
+			await expect(async () => {
+				await clickAndExpectToBeVisible({
+					target: page.getByRole('menuitem', {
+						exact: true,
+						name: 'Referenced Structure',
+					}),
+					trigger: page.getByLabel('Add Field'),
+				});
+
+				await clickAndExpectToBeVisible({
+					target: page.locator('.modal-title', {
+						hasText: 'Referenced Structure',
+					}),
+					timeout: 2000,
+					trigger: page.getByRole('menuitem', {
+						exact: true,
+						name: 'Referenced Structure',
+					}),
+				});
+
+				await page.getByLabel('Structures').click({timeout: 1000});
+
+				await expect(
+					page.getByRole('option', {name: label1})
+				).toBeVisible();
+
+				await expect(
+					page.getByRole('option', {name: label3})
+				).not.toBeVisible();
+
+				// Check we can't click Add without structures
+
+				await page
+					.locator('.modal-title', {
+						hasText: 'Referenced Structure',
+					})
+					.click({timeout: 500});
+
+				await clickAndExpectToBeVisible({
+					target: page
+						.locator('.modal-body')
+						.getByText('This field is required'),
+					trigger: page.locator('.modal-footer').getByText('Add'),
+				});
+
+				// Close modal
+
+				await clickAndExpectToBeHidden({
+					target: page.locator('.modal-title', {
+						hasText: 'Referenced Structure',
+					}),
+					timeout: 2000,
+					trigger: page.locator('.modal-header .close'),
+				});
+			}).toPass();
+
+			// Publish the structure
+
+			await structureBuilderPage.publishStructure();
+
+			// Check everything is persisted
+
+			await structureBuilderPage.editStructure(id4);
+
+			await expect(
+				page.locator('.treeview-link', {hasText: label1})
+			).toBeVisible();
+
+			await expect(
+				page.locator('.treeview-link', {hasText: label2})
+			).toBeVisible();
+
+			// Select referenced structures and check correct values are shown
+
+			await structureBuilderPage.selectFields([{label: label1}]);
+
+			await expect(page.getByLabel('Structure Name')).toHaveValue(name1);
+
+			await structureBuilderPage.selectFields([{label: label2}]);
+
+			await expect(page.getByLabel('Structure Name')).toHaveValue(name2);
+		}
+	);
+
+	test(
+		'Can edit referenced structure in another tab',
+		{
+			tag: '@LPD-49645',
+		},
+		async ({context, page, structureBuilderPage}) => {
+			const label1 = getRandomString();
+			const label2 = getRandomString();
+
+			// Create one structure
+
+			await createStructure({
+				label: label1,
+				page: structureBuilderPage,
+			});
+
+			// Create another one and reference the first one
+
+			await createStructure({
+				label: label2,
+				page: structureBuilderPage,
+			});
+
+			await structureBuilderPage.addReferencedStructures([label1]);
+
+			// Check we can't edit referenced structure
+
+			await structureBuilderPage.selectFields([{label: label1}]);
+
+			await expect(page.getByLabel('Structure Name')).toBeDisabled();
+			await expect(page.getByLabel('ERC')).toBeDisabled();
+			await expect(structureBuilderPage.spaceSelector).toBeDisabled();
+
+			// Publish the structure
+
+			await structureBuilderPage.publishStructure();
+
+			// Edit referenced structure in another tab
+
+			const pagePromise = context.waitForEvent('page');
+
+			const treeItem = page
+				.locator('.treeview-item')
+				.getByLabel(label1, {exact: true});
+
+			await structureBuilderPage.selectFields([{label: label1}]);
+
+			await clickAndExpectToBeVisible({
+				autoClick: true,
+				target: page.getByRole('menuitem', {name: 'Edit'}),
+				trigger: treeItem.getByLabel('Field Options'),
+			});
+
+			const newPage = await pagePromise;
+
+			const newStructureBuilderPage = new StructureBuilderPage(newPage);
+
+			await newPage
+				.locator('.management-bar')
+				.getByText(label1)
+				.waitFor();
+
+			// Add new fields and publish
+
+			await newStructureBuilderPage.addField('Date');
+			await newStructureBuilderPage.addField('Long Text');
+
+			await expect(async () => {
+				await newStructureBuilderPage.publishButton.click({
+					timeout: 500,
+				});
+
+				await expect(
+					newPage.locator('.modal-title', {hasText: 'Publish'})
+				).toBeVisible({timeout: 3000});
+
+				await newPage
+					.getByText('Publish and Propagate')
+					.click({timeout: 500});
+
+				await waitForAlert(newPage, 'published', {timeout: 2000});
+			}).toPass();
+
+			// Check in first structure that the tree is updated with the new field
+
+			await structureBuilderPage.expandField({label: label1});
+
+			const dateTreeItem = page.locator('.treeview-link', {
+				hasText: 'Date',
+			});
+
+			await expect(dateTreeItem).toBeVisible();
+
+			// Check we can't delete referenced structure fields
+
+			await structureBuilderPage.selectFields([{label: 'Date'}]);
+
+			await expect(
+				dateTreeItem.getByLabel('Field Options')
+			).not.toBeVisible();
+
+			// Change field and check correct values are shown
+
+			await structureBuilderPage.selectFields([{label: 'Long Text'}]);
+
+			await expect(page.getByLabel('Label')).toHaveValue('Long Text');
+
+			await structureBuilderPage.selectFields([{label: 'Date'}]);
+
+			await expect(page.getByLabel('Label')).toHaveValue('Date');
+		}
+	);
+});

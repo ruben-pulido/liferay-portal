@@ -6,6 +6,7 @@
 import {Locator, Page} from '@playwright/test';
 
 import {ApplicationsMenuPage} from '../../product-navigation-applications-menu/ApplicationsMenuPage';
+import {searchTableRowByValue} from '../commerceDNDTablePage';
 import {CommerceIframeDNDTablePage} from '../commerceIframeDNDTablePage';
 
 export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
@@ -13,12 +14,31 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 	readonly addProductsToShipment: Locator;
 	readonly applicationsMenuPage: ApplicationsMenuPage;
 	readonly backLink: Locator;
+	readonly carrierDetailsEditLink: Locator;
+	readonly carrierDetailsSubmitButton: Locator;
 	readonly editProductCloseButton: Locator;
 	readonly editProductMenuItem: Locator;
 	readonly editProductSaveButton: Locator;
+	readonly editProductTable: Locator;
+	readonly editProductTableRow: (
+		colPosition: number,
+		value: number | string,
+		strictEqual?: boolean
+	) => Promise<{column: Locator; row: Locator}>;
+	readonly editProductTableRowQuantitySelector: ({
+		colIndex,
+		rowValue,
+	}) => Promise<Locator>;
+	readonly editProductWarehouseAvailabilityTable: Locator;
+	readonly editProductWarehouseAvailabilityTableRow: (
+		colPosition: number,
+		value: number | string,
+		strictEqual?: boolean
+	) => Promise<{column: Locator; row: Locator}>;
 	readonly keyShipmentStatus: (orderStatus: string) => Locator;
 	readonly page: Page;
 	readonly productEllipsis: Locator;
+	readonly productsSkuLink: (sku: string) => Locator;
 	readonly shipmentIdLink: (shipmentId: string) => Locator;
 	readonly shipmentsItemSubmitButton: Locator;
 	readonly shipmentItemsTable: Locator;
@@ -28,8 +48,12 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 		strictEqual?: boolean
 	) => Promise<{column: Locator; row: Locator}>;
 	readonly shipmentItemsTableRows: () => Promise<Locator[]>;
-	readonly shipmentItemsTableRowAction: (sku: string) => Promise<Locator>;
+	readonly shipmentItemsTableRowAction: (
+		colposition: number,
+		value: string
+	) => Promise<Locator>;
 	readonly shipmentStatusLink: (shipmentStatus: string) => Locator;
+	readonly shippingMethodSelect: Locator;
 
 	constructor(page: Page) {
 		super(
@@ -44,6 +68,12 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 			'Add Products to This Shipment'
 		);
 		this.applicationsMenuPage = new ApplicationsMenuPage(page);
+		this.carrierDetailsEditLink = page
+			.getByText('Carrier Details Edit')
+			.getByRole('link');
+		this.carrierDetailsSubmitButton = page
+			.locator('.modal-item-last')
+			.getByRole('button', {exact: true, name: 'Submit'});
 		this.backLink = page.getByRole('link', {exact: true, name: 'Back'});
 		this.editProductCloseButton = page
 			.frameLocator('iframe')
@@ -56,6 +86,58 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 		this.editProductSaveButton = page
 			.frameLocator('iframe')
 			.getByRole('button', {exact: true, name: 'Save'});
+		this.editProductTable = page.locator(
+			'#_com_liferay_commerce_shipment_web_internal_portlet_CommerceShipmentPortlet_editShipmentContainer .fds table'
+		);
+		this.editProductTableRow = async (
+			colPosition: number,
+			value: number | string,
+			strictEqual: boolean = false
+		) => {
+			return await searchTableRowByValue(
+				this.editProductTable,
+				colPosition,
+				String(value),
+				strictEqual
+			);
+		};
+		this.editProductTableRowQuantitySelector = async ({
+			colIndex = 0,
+			rowValue,
+		}: {
+			colIndex: number;
+			rowValue: number | string;
+		}) => {
+			const tableRow =
+				await this.editProductWarehouseAvailabilityTableRow(
+					colIndex,
+					rowValue,
+					true
+				);
+
+			if (tableRow && tableRow.column) {
+				return tableRow.row.getByRole('spinbutton');
+			}
+
+			throw new Error(`Cannot locate row with rowValue: ${rowValue}`);
+		};
+		this.editProductWarehouseAvailabilityTable = page
+			.frameLocator('iframe')
+			.locator(
+				'#_com_liferay_commerce_shipment_web_internal_portlet_CommerceShipmentPortlet_fm .fds table'
+			);
+		this.editProductWarehouseAvailabilityTableRow = async (
+			colPosition: number,
+			value: number | string,
+			strictEqual: boolean = false
+		) => {
+			return await searchTableRowByValue(
+				this.editProductWarehouseAvailabilityTable,
+				colPosition,
+				String(value),
+				strictEqual
+			);
+		};
 		this.keyShipmentStatus = (orderStatus: string) =>
 			page.getByText(orderStatus);
 		this.page = page;
@@ -63,6 +145,8 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 			exact: true,
 			name: 'Actions',
 		});
+		this.productsSkuLink = (sku: string) =>
+			page.getByRole('link', {exact: true, name: sku});
 		this.shipmentIdLink = (shipmentId: string) =>
 			page
 				.locator('table')
@@ -70,14 +154,16 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 		this.shipmentsItemSubmitButton = page
 			.frameLocator('iframe >> nth=1')
 			.getByRole('button', {exact: true, name: 'Submit'});
-
 		this.shipmentItemsTable = this.table;
 		this.shipmentItemsTableRow = this.tableRow;
 		this.shipmentItemsTableRows = this.tableRows;
-		this.shipmentItemsTableRowAction = async (sku: string) => {
+		this.shipmentItemsTableRowAction = async (
+			colposition: number,
+			value: string
+		) => {
 			const shipmentTableRow = await this.shipmentItemsTableRow(
-				1,
-				sku,
+				colposition,
+				value,
 				true
 			);
 
@@ -85,10 +171,13 @@ export class CommerceAdminShipmentsPage extends CommerceIframeDNDTablePage {
 				return shipmentTableRow.row.getByLabel('', {exact: true});
 			}
 
-			throw new Error(`Cannot locate shipment row with value ${sku}`);
+			throw new Error(`Cannot locate shipment row with value ${value}`);
 		};
 		this.shipmentStatusLink = (shipmentStatus: string) =>
 			page.getByRole('link', {exact: true, name: shipmentStatus});
+		this.shippingMethodSelect = page
+			.frameLocator('iframe >> nth=1')
+			.getByText('Shipping Method');
 	}
 
 	async goTo() {

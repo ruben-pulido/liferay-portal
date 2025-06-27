@@ -43,3 +43,6 @@ export function ExportImportManagementToolbarPropsTransformer({
 		},
 	};
 }
+
+export {default as ImportButton} from './components/button/ImportButton';
+export {setupExportImportMocks} from './setupExportImportMocks';

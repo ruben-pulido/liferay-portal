@@ -261,20 +261,6 @@ public interface ObjectDefinitionModel
 	public void setObjectFolderId(long objectFolderId);
 
 	/**
-	 * Returns the root object definition ID of this object definition.
-	 *
-	 * @return the root object definition ID of this object definition
-	 */
-	public long getRootObjectDefinitionId();
-
-	/**
-	 * Sets the root object definition ID of this object definition.
-	 *
-	 * @param rootObjectDefinitionId the root object definition ID of this object definition
-	 */
-	public void setRootObjectDefinitionId(long rootObjectDefinitionId);
-
-	/**
 	 * Returns the title object field ID of this object definition.
 	 *
 	 * @return the title object field ID of this object definition
@@ -529,6 +515,21 @@ public interface ObjectDefinitionModel
 	 */
 	public void setEnableObjectEntryVersioning(
 		boolean enableObjectEntryVersioning);
+
+	/**
+	 * Returns the friendly url separator of this object definition.
+	 *
+	 * @return the friendly url separator of this object definition
+	 */
+	@AutoEscape
+	public String getFriendlyURLSeparator();
+
+	/**
+	 * Sets the friendly url separator of this object definition.
+	 *
+	 * @param friendlyURLSeparator the friendly url separator of this object definition
+	 */
+	public void setFriendlyURLSeparator(String friendlyURLSeparator);
 
 	/**
 	 * Returns the label of this object definition.

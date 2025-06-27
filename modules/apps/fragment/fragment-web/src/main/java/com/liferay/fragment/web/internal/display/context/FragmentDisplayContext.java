@@ -32,7 +32,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -48,12 +47,10 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.SessionClicks;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -583,14 +580,6 @@ public class FragmentDisplayContext {
 			LanguageUtil.get(
 				_httpServletRequest, "marketplace-is-now-in-fragments")
 		).put(
-			"isMarketplaceButtonVisited",
-			GetterUtil.getBoolean(
-				SessionClicks.get(
-					_httpServletRequest,
-					_renderResponse.getNamespace() +
-						"isMarketplaceButtonVisited",
-					"false"))
-		).put(
 			"permissions",
 			HashMapBuilder.<String, Object>put(
 				"installFreeApps",
@@ -598,6 +587,12 @@ public class FragmentDisplayContext {
 					_themeDisplay.getPermissionChecker(),
 					MarketplacePortletKeys.FRAGMENTS,
 					MarketplaceActionKeys.INSTALL_FREE_BUNDLED_APPS)
+			).put(
+				"manageFragmentsEntries",
+				() -> FragmentPermission.contains(
+					_themeDisplay.getPermissionChecker(),
+					_themeDisplay.getScopeGroupId(),
+					FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES)
 			).put(
 				"purchaseAndInstallPaidApps",
 				PortletPermissionUtil.contains(
@@ -811,17 +806,21 @@ public class FragmentDisplayContext {
 	}
 
 	public boolean isShowMarketplace() throws PortalException {
-		if (FeatureFlagManagerUtil.isEnabled(
-				_themeDisplay.getCompanyId(), "LPD-34938") &&
+		if (PortletPermissionUtil.contains(
+				_themeDisplay.getPermissionChecker(),
+				MarketplacePortletKeys.FRAGMENTS,
+				MarketplaceActionKeys.INSTALL_FREE_BUNDLED_APPS) ||
 			PortletPermissionUtil.contains(
 				_themeDisplay.getPermissionChecker(),
 				MarketplacePortletKeys.FRAGMENTS,
-				MarketplaceActionKeys.VIEW_APPS)) {
+				MarketplaceActionKeys.PURCHASE_AND_INSTALL_PAID_APPS)) {
 
 			return true;
 		}
 
-		return false;
+		return PortletPermissionUtil.contains(
+			_themeDisplay.getPermissionChecker(),
+			MarketplacePortletKeys.FRAGMENTS, MarketplaceActionKeys.VIEW_APPS);
 	}
 
 	public boolean isViewResources() {

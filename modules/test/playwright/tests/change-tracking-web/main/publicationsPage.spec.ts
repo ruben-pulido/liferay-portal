@@ -606,9 +606,18 @@ test('Create page with existing page template', async ({
 
 	await pageTemplatesPage.deletePageTemplate(widgetPageTemplateName);
 
-	await pageTemplatesPage.deletePageTemplateCollection(
+	await expect(
+		page.getByRole('link', {exact: true, name: widgetPageTemplateName})
+	).not.toBeVisible();
+
+	await pageTemplatesPage.clickPageTemplateCollectionAction(
+		'Delete',
 		pageTemplateCollectionName
 	);
+
+	await page.getByRole('button', {name: 'Delete'}).click();
+
+	await expect(page.getByText('No Page Template Sets yet.')).toBeVisible();
 });
 
 test(

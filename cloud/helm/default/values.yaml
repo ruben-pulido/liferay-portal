@@ -23,6 +23,7 @@ customLabels:
     origin: liferay-cloud
 customPorts: {}
 customPullSecrets: {}
+customServicePorts: {}
 customVolumeClaimTemplates: {}
 customVolumeMounts: {}
 customVolumes: {}
@@ -31,17 +32,29 @@ env:
     -   name: DNS_MEMBERSHIP_SERVICE_NAME
         value: liferay-default-headless
     -   name: LIFERAY_CLUSTER_PERIOD_LINK_PERIOD_BIND_PERIOD_ADDR_OPENBRACKET__QUOTE_CLUSTER_MINUS_LINK_MINUS_CONTROL_QUOTE__CLOSEBRACKET_
-        value: ${env.POD_ID}
+        value: ${env.POD_IP}
     -   name: LIFERAY_CLUSTER_PERIOD_LINK_PERIOD_BIND_PERIOD_ADDR_OPENBRACKET__QUOTE_CLUSTER_MINUS_LINK_MINUS_UDP_QUOTE__CLOSEBRACKET_
-        value: ${env.POD_ID}
+        value: ${env.POD_IP}
     -   name: LIFERAY_PORTAL_PERIOD_INSTANCE_PERIOD_INET_PERIOD_SOCKET_PERIOD_ADDRESS
-        value: ${env.POD_ID}:8080
+        value: ${env.POD_IP}:8080
     -   name: LIFERAY_TOMCAT_SESSION_REPLICATION_ENABLED
         value: "true"
-    -   name: POD_ID
+    -   name: POD_APP
+        valueFrom:
+            fieldRef:
+                fieldPath: metadata.labels['app.kubernetes.io/name']
+    -   name: POD_IP
         valueFrom:
             fieldRef:
                 fieldPath: status.podIP
+    -   name: POD_NAME
+        valueFrom:
+            fieldRef:
+                fieldPath: metadata.name
+    -   name: POD_NAMESPACE
+        valueFrom:
+            fieldRef:
+                fieldPath: metadata.namespace
 envFrom:
     -   secretRef:
             name: liferay-default
@@ -63,6 +76,12 @@ initContainers:
                     -   bash
                     -   -c
                     -   |
+                            rm -fr /temp/liferay/liferay.pid 2>/dev/null
+
+                            mkdir -p /temp/liferay
+
+                            touch /temp/liferay/liferay.pid
+
                             if [ ! -d /temp/liferay/data ] || [ -z "$(ls -A /temp/liferay/data)" ]
                             then
                                 mkdir -p /temp/liferay/data
@@ -70,14 +89,11 @@ initContainers:
                                 cp -frv /opt/liferay/data/* /temp/liferay/data
                             fi
 
-                            if [ -d /opt/liferay/deploy ] && [ -z "$(ls -A /temp/liferay/deploy/*license* 2>/dev/null)" ]
+                            if [ ! -d /temp/liferay/glowroot ] || [ -z "$(ls -A /temp/liferay/glowroot)" ]
                             then
-                                if [ ! -d /temp/liferay/data/license ] || [ -z "$(ls -A /temp/liferay/data/license/*.li)" ]
-                                then
-                                    mkdir -p /temp/liferay/deploy
+                                mkdir -p /temp/liferay/glowroot
 
-                                    cp -fv /opt/liferay/deploy/* /temp/liferay/deploy
-                                fi
+                                cp -frv /opt/liferay/glowroot/* /temp/liferay/glowroot
                             fi
 
                             if [ ! -f /temp/tomcat/conf/server.xml ]
@@ -109,6 +125,16 @@ initContainers:
                             EOF
 
                                 sed -i '/<Engine/r'<(echo "${SERVER_XML_CLUSTER}") /temp/tomcat/conf/server.xml
+                            fi
+
+                            if [ -d /opt/liferay/deploy ] && [ -z "$(ls -A /temp/liferay/deploy/*license* 2>/dev/null)" ]
+                            then
+                                if [ ! -d /temp/liferay/data/license ] || [ -z "$(ls -A /temp/liferay/data/license/*.li)" ]
+                                then
+                                    mkdir -p /temp/liferay/deploy
+
+                                    cp -fv /opt/liferay/deploy/* /temp/liferay/deploy
+                                fi
                             fi
                 image: {{ printf "%s:%s" .image.repository (.image.tag | toString) }}
                 imagePullPolicy: {{ .image.pullPolicy }}
@@ -156,6 +182,9 @@ portalBundleDenyList: []
 portalComponentDenyList: []
 portalProperties:
 ports:
+    -   containerPort: 4000
+        name: glowroot
+        protocol: TCP
     -   containerPort: 7800
         name: cluster
         protocol: TCP
@@ -233,12 +262,18 @@ volumeMounts:
     -   mountPath: /opt/liferay/deploy
         name: liferay-persistent-volume
         subPath: liferay/deploy
+    -   mountPath: /opt/liferay/glowroot
+        name: liferay-persistent-volume
+        subPath: liferay/glowroot
     -   mountPath: /opt/liferay/liferay.pid
         name: liferay-persistent-volume
         subPath: liferay/liferay.pid
     -   mountPath: /opt/liferay/logs
         name: liferay-persistent-volume
         subPath: liferay/logs
+    -   mountPath: /opt/liferay/metrics
+        name: liferay-persistent-volume
+        subPath: liferay/metrics
     -   mountPath: /opt/liferay/osgi/configs
         name: liferay-persistent-volume
         subPath: osgi/configs
@@ -284,9 +319,15 @@ volumeMounts:
     -   mountPath: /opt/liferay/work
         name: liferay-persistent-volume
         subPath: liferay/work
+    -   mountPath: /tmp
+        name: liferay-persistent-volume
+        subPath: system/tmp
     -   mountPath: /usr/local/liferay/scripts/pre-configure/000_jdk_java_options.sh
         name: liferay-configmap
         subPath: 000_jdk_java_options.sh
+    -   mountPath: /usr/local/liferay/scripts/pre-configure/010_install_prometheus_jmx_agent.sh
+        name: liferay-configmap
+        subPath: 010_install_prometheus_jmx_agent.sh
 volumes:
     -   configMap:
             name: liferay-default

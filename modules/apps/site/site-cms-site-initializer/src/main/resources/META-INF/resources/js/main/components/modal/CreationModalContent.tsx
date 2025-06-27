@@ -9,28 +9,23 @@ import {FormikHelpers, useFormik} from 'formik';
 import {navigate, sub} from 'frontend-js-web';
 import React from 'react';
 
+import {AssetLibrary} from '../../../types/AssetLibrary';
 import {AssetData} from '../../FDSPropsTransformer/actions/createAssetAction';
 import {FolderData} from '../../FDSPropsTransformer/actions/createFolderAction';
-import {SpaceData} from '../../FDSPropsTransformer/actions/createSpaceAction';
 import {FieldPicker, FieldText} from '../forms';
 import {required, validate} from '../forms/validations';
 
-export type AssetLibrary = {
-	groupId: string;
-	name: string;
-};
-
 type Props = {
-	action: AssetData['action'] | FolderData['action'] | SpaceData['action'];
+	action: AssetData['action'] | FolderData['action'];
 	assetLibraries: AssetLibrary[];
 	closeModal: () => void;
 	onSubmit?: (
 		values: {
-			groupId: string;
+			groupId: number;
 			name: string;
 		},
 		formikHelpers: FormikHelpers<{
-			groupId: string;
+			groupId: number;
 			name: string;
 		}>
 	) => Promise<any> | void;
@@ -57,7 +52,7 @@ export default function CreationModalContent({
 	} = useFormik({
 		initialValues: {
 			groupId:
-				assetLibraries.length === 1 ? assetLibraries[0].groupId : '',
+				assetLibraries.length === 1 ? assetLibraries[0].groupId : 0,
 			name: '',
 		},
 		onSubmit: async (values, formikHelpers) => {
@@ -67,7 +62,7 @@ export default function CreationModalContent({
 				const url = new URL(redirect);
 
 				url.searchParams.set('name', name);
-				url.searchParams.set('groupId', groupId);
+				url.searchParams.set('groupId', String(groupId));
 
 				navigate(url.pathname + url.search);
 

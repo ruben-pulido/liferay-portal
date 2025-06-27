@@ -71,7 +71,7 @@ export default function EditAssociatedAssetTypes({
 				setAllAssetTypesSelected(false);
 
 				setSelectedItems(
-					vocabulary.assetTypes.map((assetType) => ({
+					vocabulary.assetTypes.map((assetType: AssetType) => ({
 						label: assetType.type,
 						required: assetType.required,
 						value: assetType.typeId,

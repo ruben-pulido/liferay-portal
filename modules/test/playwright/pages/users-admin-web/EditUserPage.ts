@@ -5,6 +5,7 @@
 
 import {FrameLocator, Locator, Page} from '@playwright/test';
 
+import {DataTablePage} from '../account-admin-web/DataTablePage';
 import {searchTableRowByValue} from './UsersAndOrganizationsPage';
 
 export class EditUserPage {
@@ -19,6 +20,7 @@ export class EditUserPage {
 	readonly doneButton: Locator;
 	readonly emailAddressError: Locator;
 	readonly emailAddressInput: Locator;
+	readonly emailAddressInvalidError: Locator;
 	readonly firstNameInput: Locator;
 	readonly generateWebDAVPasswordButton: Locator;
 	readonly informationLink: Locator;
@@ -33,6 +35,7 @@ export class EditUserPage {
 	readonly membershipsAccountsTable: Locator;
 	readonly membershipsLink: Locator;
 	readonly membershipsNoAccountsMessage: Locator;
+	readonly membershipsNoUserGroupsMessage: Locator;
 	readonly membershipsUserGroupsTableRow: (
 		colPosition: number,
 		value: string,
@@ -43,12 +46,15 @@ export class EditUserPage {
 	readonly organizationsTable: Locator;
 	readonly page: Page;
 	readonly passwordConfirmationFrame: FrameLocator;
+	readonly passwordInput: Locator;
+	readonly passwordReenterInput: Locator;
 	readonly passwordLink: Locator;
 	readonly profileAndDashboardLink: Locator;
 	readonly regularRoleCell: (name: string) => Locator;
 	readonly regularRoleCellButton: (name: string) => Locator;
 	readonly rolesLink: Locator;
 	readonly saveButton: Locator;
+	readonly screenNameError: Locator;
 	readonly screenNameInput: Locator;
 	readonly selectAccountsButton: Locator;
 	readonly selectOrganizationButton: Locator;
@@ -91,6 +97,9 @@ export class EditUserPage {
 	) => Promise<{column: Locator; row: Locator}>;
 	readonly selectSitesTableRowButton: (siteName: string) => Promise<Locator>;
 	readonly selectTagsButton: Locator;
+	readonly selectUserGroupIFrame: FrameLocator;
+	readonly selectUserGroupTable: DataTablePage;
+	readonly selectUserGroupsButton: Locator;
 	readonly selectUserLanguage: Locator;
 	readonly tagCheckbox: (tagName: string) => Locator;
 	readonly tagInput: (name: string) => Locator;
@@ -139,9 +148,17 @@ export class EditUserPage {
 				page.locator(
 					'#_com_liferay_account_admin_web_internal_portlet_AccountEntriesManagementPortlet_emailAddressHelper'
 				)
+			)
+			.or(
+				page.locator(
+					'#_com_liferay_users_admin_web_portlet_UsersAdminPortlet_emailAddressHelper'
+				)
 			);
 		this.emailAddressInput = page.getByLabel('Email Address');
-		this.firstNameInput = page.getByLabel('First Name');
+		this.emailAddressInvalidError = page.getByText(
+			'Please enter a valid email address.'
+		);
+		this.firstNameInput = page.locator('input[id*="Portlet_firstName"]');
 		this.generateWebDAVPasswordButton = page.getByTestId(
 			'generateWebDAVPasswordButton'
 		);
@@ -173,6 +190,9 @@ export class EditUserPage {
 		this.membershipsNoAccountsMessage = page.getByText(
 			'This user does not belong to any accounts.'
 		);
+		this.membershipsNoUserGroupsMessage = page.getByText(
+			'This user does not belong to a user group.'
+		);
 		this.membershipsUserGroupsTableRow = async (
 			colPosition: number,
 			value: string,
@@ -203,6 +223,10 @@ export class EditUserPage {
 		this.passwordConfirmationFrame = page.frameLocator(
 			'iframe[title="Confirm Password"]'
 		);
+		this.passwordInput = page.locator('input[id*="Portlet_password1"]');
+		this.passwordReenterInput = page.locator(
+			'input[id*="Portlet_password2"]'
+		);
 		this.passwordLink = page.getByRole('link', {
 			exact: true,
 			name: 'Password',
@@ -219,6 +243,9 @@ export class EditUserPage {
 			name: 'Roles',
 		});
 		this.saveButton = page.getByRole('button', {name: 'Save'});
+		this.screenNameError = page.locator(
+			'#_com_liferay_users_admin_web_portlet_UsersAdminPortlet_screenNameHelper'
+		);
 		this.screenNameInput = page.getByLabel('Screen Name');
 		this.selectAccountsButton = page.getByLabel('Select Accounts');
 		this.selectOrganizationButton = page.locator(
@@ -347,6 +374,16 @@ export class EditUserPage {
 		this.selectTagsButton = page
 			.getByLabel('Select Tags')
 			.and(page.getByRole('button'));
+		this.selectUserGroupIFrame = page.frameLocator(
+			'iframe[title="Select User Group"]'
+		);
+		this.selectUserGroupTable = new DataTablePage(
+			this.selectUserGroupIFrame,
+			this.selectUserGroupIFrame.locator(
+				'#_com_liferay_item_selector_web_portlet_ItemSelectorPortlet_entriesSearchContainer'
+			)
+		);
+		this.selectUserGroupsButton = page.getByLabel('Select User Groups');
 		this.selectUserLanguage = page.getByLabel('Language');
 		this.tagCheckbox = (tagName) => this.tagsFrame.getByLabel(tagName);
 		this.tagInput = (name) => page.getByRole('row', {name});

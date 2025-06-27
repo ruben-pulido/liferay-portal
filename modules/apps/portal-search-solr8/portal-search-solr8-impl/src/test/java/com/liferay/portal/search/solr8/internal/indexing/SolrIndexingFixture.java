@@ -40,25 +40,12 @@ import com.liferay.portal.search.solr8.internal.filter.GeoDistanceRangeFilterTra
 import com.liferay.portal.search.solr8.internal.filter.GeoPolygonFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.MissingFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.PrefixFilterTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.filter.QueryFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.RangeTermFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.SolrFilterTranslator;
 import com.liferay.portal.search.solr8.internal.filter.TermFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.TermsFilterTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.BooleanQueryTranslator;
-import com.liferay.portal.search.solr8.internal.query.BooleanQueryTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.DisMaxQueryTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.FuzzyQueryTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.MatchAllQueryTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.MatchQueryTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.MoreLikeThisQueryTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.MultiMatchQueryTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.NestedQueryTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.query.BaseQueryVisitor;
 import com.liferay.portal.search.solr8.internal.query.SolrQueryTranslator;
-import com.liferay.portal.search.solr8.internal.query.StringQueryTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.TermQueryTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.TermRangeQueryTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.query.WildcardQueryTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.search.engine.adapter.SolrSearchEngineAdapterFixture;
 import com.liferay.portal.search.solr8.internal.suggest.NGramHolderBuilderImpl;
 import com.liferay.portal.search.solr8.internal.suggest.NGramQueryBuilderImpl;
@@ -156,46 +143,20 @@ public class SolrIndexingFixture implements IndexingFixture {
 	}
 
 	protected static SolrQueryTranslator createSolrQueryTranslator() {
-		SolrQueryTranslator solrQueryTranslator = new SolrQueryTranslator();
+		SolrFilterTranslator solrFilterTranslator =
+			_createSolrFilterTranslator();
 
 		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "booleanQueryTranslator",
-			_createBooleanQueryTranslator());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "disMaxQueryTranslator",
-			new DisMaxQueryTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "fuzzyQueryTranslator",
-			new FuzzyQueryTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "matchAllQueryTranslator",
-			new MatchAllQueryTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "matchQueryTranslator",
-			new MatchQueryTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "moreLikeThisQueryTranslator",
-			new MoreLikeThisQueryTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "multiMatchQueryTranslator",
-			new MultiMatchQueryTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "nestedQueryTranslator",
-			new NestedQueryTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "stringQueryTranslator",
-			new StringQueryTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "termQueryTranslator",
-			new TermQueryTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "termRangeQueryTranslator",
-			new TermRangeQueryTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrQueryTranslator, "wildcardQueryTranslator",
-			new WildcardQueryTranslatorImpl());
+			BaseQueryVisitor.class, "_filterTranslatorSnapshot",
+			new Snapshot<FilterTranslator<Query>>(null, null) {
 
-		return solrQueryTranslator;
+				public FilterTranslator<Query> get() {
+					return solrFilterTranslator;
+				}
+
+			});
+
+		return new SolrQueryTranslator();
 	}
 
 	protected static SolrSearchEngineAdapterFixture
@@ -357,26 +318,6 @@ public class SolrIndexingFixture implements IndexingFixture {
 		return solrSpellCheckIndexWriter;
 	}
 
-	private static BooleanQueryTranslator _createBooleanQueryTranslator() {
-		BooleanQueryTranslatorImpl booleanQueryTranslatorImpl =
-			new BooleanQueryTranslatorImpl();
-
-		SolrFilterTranslator solrFilterTranslator =
-			_createSolrFilterTranslator();
-
-		ReflectionTestUtil.setFieldValue(
-			booleanQueryTranslatorImpl, "_filterTranslatorSnapshot",
-			new Snapshot<FilterTranslator<Query>>(null, null) {
-
-				public FilterTranslator<Query> get() {
-					return solrFilterTranslator;
-				}
-
-			});
-
-		return booleanQueryTranslatorImpl;
-	}
-
 	private static SolrFilterTranslator _createSolrFilterTranslator() {
 		SolrFilterTranslator solrFilterTranslator = new SolrFilterTranslator();
 
@@ -410,9 +351,6 @@ public class SolrIndexingFixture implements IndexingFixture {
 		ReflectionTestUtil.setFieldValue(
 			solrFilterTranslator, "_prefixFilterTranslator",
 			new PrefixFilterTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
-			solrFilterTranslator, "_queryFilterTranslator",
-			new QueryFilterTranslatorImpl());
 		ReflectionTestUtil.setFieldValue(
 			solrFilterTranslator, "_rangeTermFilterTranslator",
 			new RangeTermFilterTranslatorImpl());

@@ -5,6 +5,8 @@
 
 package com.liferay.headless.admin.site.internal.resource.v1_0.util;
 
+import jakarta.validation.ValidationException;
+
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLFileEntryServiceUtil;
 import com.liferay.headless.admin.site.dto.v1_0.ContentPageSpecification;
@@ -18,11 +20,17 @@ import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeCon
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryServiceUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.ColorScheme;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ThemeLocalServiceUtil;
 import com.liferay.portal.kernel.util.ColorSchemeFactoryUtil;
@@ -37,6 +45,8 @@ import com.liferay.segments.service.SegmentsExperienceServiceUtil;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryServiceUtil;
 
+//import jakarta.ws.rs.BadRequestException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -49,20 +59,25 @@ import java.util.Objects;
 public class LayoutUtil {
 
 	public static Layout addContentLayout(
-			long groupId, PageSpecification[] pageSpecifications,
-			boolean privateLayout, Map<Locale, String> nameMap,
-			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-			Map<Locale, String> robotsMap, String type,
-			UnicodeProperties typeSettingsUnicodeProperties, boolean hidden,
-			boolean system, Map<Locale, String> friendlyURLMap, int status,
-			ServiceContext serviceContext)
+			String externalReferenceCode, long groupId,
+			PageSpecification[] pageSpecifications, boolean privateLayout,
+			Map<Locale, String> nameMap, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, Map<Locale, String> robotsMap,
+			String type, UnicodeProperties typeSettingsUnicodeProperties,
+			boolean hidden, boolean system, Map<Locale, String> friendlyURLMap,
+			int status, ServiceContext serviceContext)
 		throws Exception {
+
+		if (typeSettingsUnicodeProperties == null) {
+			typeSettingsUnicodeProperties = new UnicodeProperties();
+		}
 
 		if (pageSpecifications == null) {
 			Layout layout = LayoutLocalServiceUtil.addLayout(
-				null, serviceContext.getUserId(), groupId, privateLayout, 0, 0,
-				0, nameMap, titleMap, descriptionMap, null, robotsMap, type,
-				null, hidden, system, friendlyURLMap, 0L, serviceContext);
+				externalReferenceCode, serviceContext.getUserId(), groupId,
+				privateLayout, 0, 0, 0, nameMap, titleMap, descriptionMap, null,
+				robotsMap, type, typeSettingsUnicodeProperties.toString(),
+				hidden, system, friendlyURLMap, 0L, serviceContext);
 
 			return LayoutLocalServiceUtil.updateStatus(
 				serviceContext.getUserId(), layout.getPlid(), status,
@@ -101,8 +116,23 @@ public class LayoutUtil {
 			throw new UnsupportedOperationException();
 		}
 
-		if (typeSettingsUnicodeProperties == null) {
-			typeSettingsUnicodeProperties = new UnicodeProperties();
+		if ((publishedContentPageSpecification.getExternalReferenceCode() !=
+				null) &&
+			(externalReferenceCode != null) &&
+			Objects.equals(
+				externalReferenceCode,
+				publishedContentPageSpecification.getExternalReferenceCode()) &&
+			type.equals(LayoutConstants.TYPE_CONTENT)) {
+
+			// TODO
+//			throw new BadRequestException(
+			throw new ValidationException(
+				StringBundler.concat(
+					"Site page external reference code ", externalReferenceCode,
+					" does not match published page specification external ",
+					"reference code ",
+					publishedContentPageSpecification.
+						getExternalReferenceCode()));
 		}
 
 		Settings settings = publishedContentPageSpecification.getSettings();
@@ -172,6 +202,25 @@ public class LayoutUtil {
 			"draftLayoutExternalReferenceCode",
 			draftContentPageSpecification.getExternalReferenceCode());
 
+		Layout prototypeLayout = _getLayoutPrototypeLayout(
+			groupId, publishedContentPageSpecification, serviceContext);
+
+		if (prototypeLayout != null) {
+			serviceContext.setAttribute(
+				"sourcePrototypeLayoutUuid", prototypeLayout.getUuid());
+
+			Layout draftPrototypeLayout = _getLayoutPrototypeLayout(
+				groupId, draftContentPageSpecification, serviceContext);
+
+			if (draftPrototypeLayout != null) {
+				serviceContext.setAttribute(
+					"draftLayoutSourcePrototypeLayoutUuid",
+					draftPrototypeLayout.getUuid());
+			}
+		}
+
+		// TODO Move this block before call to updateLayout so it is only applied to draft, instead of both published and draft
+
 		if (Objects.equals(
 				publishedContentPageSpecification.getStatus(),
 				PageSpecification.Status.APPROVED)) {
@@ -184,6 +233,14 @@ public class LayoutUtil {
 		}
 		else {
 			serviceContext.setAttribute("published", Boolean.FALSE.toString());
+		}
+
+		if ((externalReferenceCode != null) &&
+			(publishedContentPageSpecification.getExternalReferenceCode() ==
+				null)) {
+
+			publishedContentPageSpecification.setExternalReferenceCode(
+				externalReferenceCode);
 		}
 
 		Layout layout = LayoutLocalServiceUtil.addLayout(
@@ -348,6 +405,24 @@ public class LayoutUtil {
 			descriptionMap, robotsMap, friendlyURLMap, status, serviceContext);
 	}
 
+	public static Layout updateContentLayout(
+			Layout layout, UnicodeProperties typeSettingsUnicodeProperties,
+			Map<Locale, String> nameMap, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, Map<Locale, String> robotsMap,
+			Map<Locale, String> friendlyURLMap,
+			PageSpecification[] pageSpecifications,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		layout = LayoutServiceUtil.updateLayout(
+			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
+			typeSettingsUnicodeProperties.toString());
+
+		return updateContentLayout(
+			layout, nameMap, titleMap, descriptionMap, robotsMap,
+			friendlyURLMap, pageSpecifications, serviceContext);
+	}
+
 	public static Layout updateLayout(
 			ContentPageSpecification contentPageSpecification, Layout layout,
 			Map<Locale, String> nameMap, Map<Locale, String> titleMap,
@@ -381,13 +456,15 @@ public class LayoutUtil {
 
 		return _updateLayout(
 			layout, nameMap, titleMap, descriptionMap, robotsMap,
-			_getStyleBookEntryId(layout, settings),
-			_getFaviconFileEntryId(layout, settings),
-			_getMasterLayoutPlid(layout, settings), friendlyURLMap,
-			serviceContext);
+			_getStyleBookEntryId(serviceContext.getScopeGroupId(), settings),
+			_getFaviconFileEntryId(settings, serviceContext),
+			_getMasterLayoutPlid(
+				serviceContext.getScopeGroupId(), layout, settings),
+			friendlyURLMap, serviceContext);
 	}
 
-	private static long _getFaviconFileEntryId(Layout layout, Settings settings)
+	private static long _getFaviconFileEntryId(
+			Settings settings, ServiceContext serviceContext)
 		throws Exception {
 
 		if ((settings == null) || (settings.getFavIcon() == null) ||
@@ -405,13 +482,13 @@ public class LayoutUtil {
 			return 0;
 		}
 
-		long groupId = layout.getGroupId();
+		long groupId = serviceContext.getScopeGroupId();
 
 		Scope scope = itemExternalReference.getScope();
 
 		if (scope != null) {
 			groupId = GroupUtil.getGroupId(
-				true, true, layout.getCompanyId(),
+				true, true, serviceContext.getCompanyId(),
 				scope.getExternalReferenceCode());
 		}
 
@@ -426,7 +503,71 @@ public class LayoutUtil {
 		return dlFileEntry.getFileEntryId();
 	}
 
-	private static long _getMasterLayoutPlid(Layout layout, Settings settings)
+	private static Layout _getLayoutPrototypeLayout(
+			long groupId, PageSpecification pageSpecification,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		if (Validator.isNull(
+				pageSpecification.
+					getSiteTemplatePageSpecificationExternalReferenceCode())) {
+
+			return null;
+		}
+
+		boolean privateLayout = Boolean.FALSE;
+
+		int layoutPageTemplateEntryType = GetterUtil.getInteger(
+			serviceContext.getAttribute("layout.page.template.entry.type"), -1);
+
+		if (Objects.equals(
+				LayoutPageTemplateEntryTypeConstants.BASIC,
+				layoutPageTemplateEntryType) ||
+			Objects.equals(
+				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT,
+				layoutPageTemplateEntryType) ||
+			Objects.equals(
+				LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE,
+				layoutPageTemplateEntryType)) {
+
+			privateLayout = Boolean.TRUE;
+		}
+		else if (Objects.equals(
+					PageSpecification.Type.CONTENT_PAGE_SPECIFICATION,
+					pageSpecification.getType())) {
+
+			ContentPageSpecification contentPageSpecification =
+				(ContentPageSpecification)pageSpecification;
+
+			if (Validator.isNull(
+					contentPageSpecification.
+						getDraftContentPageSpecificationExternalReferenceCode())) {
+
+				privateLayout = Boolean.TRUE;
+			}
+		}
+
+		LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
+			groupId, privateLayout);
+
+		if (!layoutSet.isLayoutSetPrototypeLinkActive()) {
+			return null;
+		}
+
+		LayoutSetPrototype layoutSetPrototype =
+			LayoutSetPrototypeLocalServiceUtil.
+				getLayoutSetPrototypeByUuidAndCompanyId(
+					layoutSet.getLayoutSetPrototypeUuid(),
+					layoutSet.getCompanyId());
+
+		return LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(
+			pageSpecification.
+				getSiteTemplatePageSpecificationExternalReferenceCode(),
+			layoutSetPrototype.getGroupId(), privateLayout);
+	}
+
+	private static long _getMasterLayoutPlid(
+			long groupId, Layout layout, Settings settings)
 		throws Exception {
 
 		if (settings == null) {
@@ -462,8 +603,7 @@ public class LayoutUtil {
 		layoutPageTemplateEntry =
 			LayoutPageTemplateEntryServiceUtil.
 				fetchLayoutPageTemplateEntryByExternalReferenceCode(
-					itemExternalReference.getExternalReferenceCode(),
-					layout.getGroupId());
+					itemExternalReference.getExternalReferenceCode(), groupId);
 
 		if ((layoutPageTemplateEntry == null) ||
 			!Objects.equals(
@@ -476,7 +616,7 @@ public class LayoutUtil {
 		return layoutPageTemplateEntry.getPlid();
 	}
 
-	private static long _getStyleBookEntryId(Layout layout, Settings settings)
+	private static long _getStyleBookEntryId(long groupId, Settings settings)
 		throws Exception {
 
 		if (settings == null) {
@@ -495,8 +635,7 @@ public class LayoutUtil {
 
 		StyleBookEntry styleBookEntry =
 			StyleBookEntryServiceUtil.getStyleBookEntryByExternalReferenceCode(
-				itemExternalReference.getExternalReferenceCode(),
-				layout.getGroupId());
+				itemExternalReference.getExternalReferenceCode(), groupId);
 
 		return styleBookEntry.getStyleBookEntryId();
 	}

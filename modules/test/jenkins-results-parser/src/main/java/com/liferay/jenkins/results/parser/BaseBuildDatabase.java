@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import java.net.URL;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -76,8 +77,128 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 	}
 
 	@Override
+	public List<Job> getJobs() {
+		List<Job> jobs = new ArrayList<>();
+
+		JSONObject jobsJSONObject = _jsonObject.getJSONObject("jobs");
+
+		for (String key : jobsJSONObject.keySet()) {
+			JSONObject jobJSONObject = jobsJSONObject.getJSONObject(key);
+
+			if ((jobJSONObject != null) && !jobJSONObject.isEmpty()) {
+				jobs.add(JobFactory.newJob(jobJSONObject));
+			}
+		}
+
+		return jobs;
+	}
+
+	@Override
 	public JSONObject getJSONObject() {
 		return new JSONObject(_jsonObject.toString());
+	}
+
+	@Override
+	public PortalFixpackRelease getPortalFixpackRelease(String key) {
+		if (!hasPortalFixpackRelease(key)) {
+			return null;
+		}
+
+		JSONObject portalFixpackReleasesJSONObject = _jsonObject.getJSONObject(
+			"portal_fixpack_releases");
+
+		return new PortalFixpackRelease(
+			portalFixpackReleasesJSONObject.getJSONObject(key));
+	}
+
+	@Override
+	public List<PortalFixpackRelease> getPortalFixpackReleases() {
+		List<PortalFixpackRelease> portalFixpackReleases = new ArrayList<>();
+
+		JSONObject portalFixpackReleasesJSONObject = _jsonObject.getJSONObject(
+			"portal_fixpack_releases");
+
+		for (String key : portalFixpackReleasesJSONObject.keySet()) {
+			JSONObject portalFixpackReleaseJSONObject =
+				portalFixpackReleasesJSONObject.getJSONObject(key);
+
+			if ((portalFixpackReleaseJSONObject != null) &&
+				!portalFixpackReleaseJSONObject.isEmpty()) {
+
+				portalFixpackReleases.add(
+					new PortalFixpackRelease(portalFixpackReleaseJSONObject));
+			}
+		}
+
+		return portalFixpackReleases;
+	}
+
+	@Override
+	public PortalHotfixRelease getPortalHotfixRelease(String key) {
+		if (!hasPortalHotfixRelease(key)) {
+			return null;
+		}
+
+		JSONObject portalHotfixReleasesJSONObject = _jsonObject.getJSONObject(
+			"portal_hotfix_releases");
+
+		return new PortalHotfixRelease(
+			portalHotfixReleasesJSONObject.getJSONObject(key));
+	}
+
+	@Override
+	public List<PortalHotfixRelease> getPortalHotfixReleases() {
+		List<PortalHotfixRelease> portalHotfixReleases = new ArrayList<>();
+
+		JSONObject portalHotfixReleasesJSONObject = _jsonObject.getJSONObject(
+			"portal_hotfix_releases");
+
+		for (String key : portalHotfixReleasesJSONObject.keySet()) {
+			JSONObject portalHotfixReleaseJSONObject =
+				portalHotfixReleasesJSONObject.getJSONObject(key);
+
+			if ((portalHotfixReleaseJSONObject != null) &&
+				!portalHotfixReleaseJSONObject.isEmpty()) {
+
+				portalHotfixReleases.add(
+					new PortalHotfixRelease(portalHotfixReleaseJSONObject));
+			}
+		}
+
+		return portalHotfixReleases;
+	}
+
+	@Override
+	public PortalRelease getPortalRelease(String key) {
+		if (!hasPortalRelease(key)) {
+			return null;
+		}
+
+		JSONObject portalReleasesJSONObject = _jsonObject.getJSONObject(
+			"portal_releases");
+
+		return new PortalRelease(portalReleasesJSONObject.getJSONObject(key));
+	}
+
+	@Override
+	public List<PortalRelease> getPortalReleases() {
+		List<PortalRelease> portalReleases = new ArrayList<>();
+
+		JSONObject portalReleasesJSONObject = _jsonObject.getJSONObject(
+			"portal_releases");
+
+		for (String key : portalReleasesJSONObject.keySet()) {
+			JSONObject portalReleaseJSONObject =
+				portalReleasesJSONObject.getJSONObject(key);
+
+			if ((portalReleaseJSONObject != null) &&
+				!portalReleaseJSONObject.isEmpty()) {
+
+				portalReleases.add(new PortalRelease(portalReleaseJSONObject));
+			}
+		}
+
+		return portalReleases;
 	}
 
 	@Override
@@ -137,6 +258,28 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 	}
 
 	@Override
+	public List<PullRequest> getPullRequests() {
+		List<PullRequest> pullRequests = new ArrayList<>();
+
+		JSONObject pullRequestsJSONObject = _jsonObject.getJSONObject(
+			"pull_requests");
+
+		for (String key : pullRequestsJSONObject.keySet()) {
+			JSONObject pullRequestJSONObject =
+				pullRequestsJSONObject.getJSONObject(key);
+
+			if ((pullRequestJSONObject != null) &&
+				!pullRequestJSONObject.isEmpty()) {
+
+				pullRequests.add(
+					PullRequestFactory.newPullRequest(pullRequestJSONObject));
+			}
+		}
+
+		return pullRequests;
+	}
+
+	@Override
 	public Workspace getWorkspace(String key) {
 		if (!hasWorkspace(key)) {
 			throw new RuntimeException("Unable to find workspace");
@@ -167,6 +310,28 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 	}
 
 	@Override
+	public List<Workspace> getWorkspaces() {
+		List<Workspace> workspaces = new ArrayList<>();
+
+		JSONObject workspacesJSONObject = _jsonObject.getJSONObject(
+			"workspaces");
+
+		for (String key : workspacesJSONObject.keySet()) {
+			JSONObject workspaceJSONObject = workspacesJSONObject.getJSONObject(
+				key);
+
+			if ((workspaceJSONObject != null) &&
+				!workspaceJSONObject.isEmpty()) {
+
+				workspaces.add(
+					WorkspaceFactory.newWorkspace(workspaceJSONObject));
+			}
+		}
+
+		return workspaces;
+	}
+
+	@Override
 	public boolean hasBuildData(String key) {
 		JSONObject buildsJSONObject = _jsonObject.getJSONObject("builds");
 
@@ -186,6 +351,30 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean hasPortalFixpackRelease(String key) {
+		JSONObject portalFixpackReleasesJSONObject = _jsonObject.getJSONObject(
+			"portal_fixpack_releases");
+
+		return portalFixpackReleasesJSONObject.has(key);
+	}
+
+	@Override
+	public boolean hasPortalHotfixRelease(String key) {
+		JSONObject portalHotfixReleasesJSONObject = _jsonObject.getJSONObject(
+			"portal_hotfix_releases");
+
+		return portalHotfixReleasesJSONObject.has(key);
+	}
+
+	@Override
+	public boolean hasPortalRelease(String key) {
+		JSONObject portalReleasesJSONObject = _jsonObject.getJSONObject(
+			"portal_releases");
+
+		return portalReleasesJSONObject.has(key);
 	}
 
 	@Override
@@ -238,6 +427,60 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 			JSONObject jobsJSONObject = _jsonObject.getJSONObject("jobs");
 
 			jobsJSONObject.put(key, jobJSONObject);
+
+			_writeJSONObjectFile();
+		}
+	}
+
+	@Override
+	public void putPortalFixpackRelease(
+		String key, PortalFixpackRelease portalFixpackRelease) {
+
+		if (!JenkinsResultsParserUtil.isCINode()) {
+			return;
+		}
+
+		synchronized (_buildDatabaseFile) {
+			JSONObject portalFixpackReleasesJSONObject =
+				_jsonObject.getJSONObject("portal_fixpack_releases");
+
+			portalFixpackReleasesJSONObject.put(
+				key, portalFixpackRelease.getJSONObject());
+
+			_writeJSONObjectFile();
+		}
+	}
+
+	@Override
+	public void putPortalHotfixRelease(
+		String key, PortalHotfixRelease portalHotfixRelease) {
+
+		if (!JenkinsResultsParserUtil.isCINode()) {
+			return;
+		}
+
+		synchronized (_buildDatabaseFile) {
+			JSONObject portalHotfixReleasesJSONObject =
+				_jsonObject.getJSONObject("portal_hotfix_releases");
+
+			portalHotfixReleasesJSONObject.put(
+				key, portalHotfixRelease.getJSONObject());
+
+			_writeJSONObjectFile();
+		}
+	}
+
+	@Override
+	public void putPortalRelease(String key, PortalRelease portalRelease) {
+		if (!JenkinsResultsParserUtil.isCINode()) {
+			return;
+		}
+
+		synchronized (_buildDatabaseFile) {
+			JSONObject portalReleasesJSONObject = _jsonObject.getJSONObject(
+				"portal_releases");
+
+			portalReleasesJSONObject.put(key, portalRelease.getJSONObject());
 
 			_writeJSONObjectFile();
 		}
@@ -622,6 +865,18 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 
 			if (!_jsonObject.has("jobs")) {
 				_jsonObject.put("jobs", new JSONObject());
+			}
+
+			if (!_jsonObject.has("portal_fixpack_releases")) {
+				_jsonObject.put("portal_fixpack_releases", new JSONObject());
+			}
+
+			if (!_jsonObject.has("portal_hotfix_releases")) {
+				_jsonObject.put("portal_hotfix_releases", new JSONObject());
+			}
+
+			if (!_jsonObject.has("portal_releases")) {
+				_jsonObject.put("portal_releases", new JSONObject());
 			}
 
 			if (!_jsonObject.has("properties")) {

@@ -49,7 +49,6 @@ public class ObjectDefinitionWrapper
 		attributes.put(
 			"descriptionObjectFieldId", getDescriptionObjectFieldId());
 		attributes.put("objectFolderId", getObjectFolderId());
-		attributes.put("rootObjectDefinitionId", getRootObjectDefinitionId());
 		attributes.put("titleObjectFieldId", getTitleObjectFieldId());
 		attributes.put("accountEntryRestricted", isAccountEntryRestricted());
 		attributes.put("active", isActive());
@@ -67,6 +66,7 @@ public class ObjectDefinitionWrapper
 			"enableObjectEntryHistory", isEnableObjectEntryHistory());
 		attributes.put(
 			"enableObjectEntryVersioning", isEnableObjectEntryVersioning());
+		attributes.put("friendlyURLSeparator", getFriendlyURLSeparator());
 		attributes.put("label", getLabel());
 		attributes.put("modifiable", isModifiable());
 		attributes.put("name", getName());
@@ -164,13 +164,6 @@ public class ObjectDefinitionWrapper
 			setObjectFolderId(objectFolderId);
 		}
 
-		Long rootObjectDefinitionId = (Long)attributes.get(
-			"rootObjectDefinitionId");
-
-		if (rootObjectDefinitionId != null) {
-			setRootObjectDefinitionId(rootObjectDefinitionId);
-		}
-
 		Long titleObjectFieldId = (Long)attributes.get("titleObjectFieldId");
 
 		if (titleObjectFieldId != null) {
@@ -255,6 +248,13 @@ public class ObjectDefinitionWrapper
 
 		if (enableObjectEntryVersioning != null) {
 			setEnableObjectEntryVersioning(enableObjectEntryVersioning);
+		}
+
+		String friendlyURLSeparator = (String)attributes.get(
+			"friendlyURLSeparator");
+
+		if (friendlyURLSeparator != null) {
+			setFriendlyURLSeparator(friendlyURLSeparator);
 		}
 
 		String label = (String)attributes.get("label");
@@ -541,6 +541,16 @@ public class ObjectDefinitionWrapper
 	@Override
 	public String getExternalReferenceCode() {
 		return model.getExternalReferenceCode();
+	}
+
+	/**
+	 * Returns the friendly url separator of this object definition.
+	 *
+	 * @return the friendly url separator of this object definition
+	 */
+	@Override
+	public String getFriendlyURLSeparator() {
+		return model.getFriendlyURLSeparator();
 	}
 
 	/**
@@ -867,11 +877,6 @@ public class ObjectDefinitionWrapper
 		return model.getRootObjectDefinitionExternalReferenceCode();
 	}
 
-	/**
-	 * Returns the root object definition ID of this object definition.
-	 *
-	 * @return the root object definition ID of this object definition
-	 */
 	@Override
 	public long getRootObjectDefinitionId() {
 		return model.getRootObjectDefinitionId();
@@ -1350,6 +1355,16 @@ public class ObjectDefinitionWrapper
 	}
 
 	/**
+	 * Sets the friendly url separator of this object definition.
+	 *
+	 * @param friendlyURLSeparator the friendly url separator of this object definition
+	 */
+	@Override
+	public void setFriendlyURLSeparator(String friendlyURLSeparator) {
+		model.setFriendlyURLSeparator(friendlyURLSeparator);
+	}
+
+	/**
 	 * Sets the label of this object definition.
 	 *
 	 * @param label the label of this object definition
@@ -1612,11 +1627,6 @@ public class ObjectDefinitionWrapper
 		model.setPrimaryKey(primaryKey);
 	}
 
-	/**
-	 * Sets the root object definition ID of this object definition.
-	 *
-	 * @param rootObjectDefinitionId the root object definition ID of this object definition
-	 */
 	@Override
 	public void setRootObjectDefinitionId(long rootObjectDefinitionId) {
 		model.setRootObjectDefinitionId(rootObjectDefinitionId);

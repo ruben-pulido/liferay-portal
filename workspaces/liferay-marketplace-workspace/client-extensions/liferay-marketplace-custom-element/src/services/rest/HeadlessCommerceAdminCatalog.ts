@@ -8,6 +8,8 @@ import {MarketplaceProduct} from '../../entity/MarketplaceProduct';
 import {axios} from '../../utils/axios';
 import fetcher from '../fetcher';
 
+type Metrics = {[key: string]: {totalCount: number}};
+
 export default class HeadlessCommerceAdminCatalog {
 	static async addOrUpdateProductImageByExternalReferenceCode(
 		externalReferenceCode: string,
@@ -183,6 +185,51 @@ export default class HeadlessCommerceAdminCatalog {
 				__marketplaceProduct: new MarketplaceProduct(item),
 			})),
 		};
+	}
+
+	static async getProductsDashboardKPI(filters: Record<string, string>) {
+		const productQueries = Object.entries(filters)
+			.map(
+				([
+					alias,
+					filter,
+				]) => `${alias}: products(filter: "${filter}", pageSize: 1) {
+					totalCount
+			  	}
+			`
+			)
+			.join('\n');
+
+		const query = `
+		  {
+			metrics: headlessCommerceAdminCatalog_v1_0 {
+			  ${productQueries}
+			}
+		  }
+		`;
+
+		try {
+			const response = await fetcher.post<{
+				data: {
+					metrics: Metrics;
+				};
+			}>(`/o/graphql`, {query});
+
+			return response;
+		}
+		catch {
+			const metrics: Metrics = {};
+
+			for (const filterKey in filters) {
+				metrics[filterKey] = {totalCount: 0};
+			}
+
+			return {
+				data: {
+					metrics,
+				},
+			};
+		}
 	}
 
 	static async getProductOptions(productId: number) {

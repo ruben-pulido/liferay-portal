@@ -8,7 +8,7 @@ import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import {useMemo, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import useSWR, {KeyedMutator} from 'swr';
 
 import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
@@ -23,6 +23,7 @@ import {
 	showAppImage,
 } from '../../../../utils/util';
 import {ReviewAndSubmitAppPage} from './AppCreationFlow/ReviewAndSubmitAppPage/ReviewAndSubmitAppPage';
+import AppDetail from './AppDetail';
 
 import './App.scss';
 
@@ -120,8 +121,12 @@ const AdministratorButtons: React.FC<AdministratorButtons> = ({
 
 const App: React.FC<AppProps> = ({isAdministratorDashboard}) => {
 	const {productId} = useParams();
-	const {myUserAccount} = useMarketplaceContext();
+	const {myUserAccount, properties} = useMarketplaceContext();
 	const navigate = useNavigate();
+
+	const isNewAppEnabled = properties.featureFlags.includes('LPD-24546');
+
+	const isSolutionsPage = useLocation().pathname.includes('/solutions');
 
 	const {
 		data: selectedApp,
@@ -164,7 +169,9 @@ const App: React.FC<AppProps> = ({isAdministratorDashboard}) => {
 			>
 				<ClayIcon className="mr-2" symbol="order-arrow-left" />
 				<span className="h5 mt-1">
-					{i18n.translate('back-to-apps')}
+					{isSolutionsPage
+						? i18n.translate('back-to-solutions')
+						: i18n.translate('back-to-apps')}
 				</span>
 			</ClayButton>
 
@@ -175,10 +182,9 @@ const App: React.FC<AppProps> = ({isAdministratorDashboard}) => {
 				>
 					<span className="app-details-page-alert-text">
 						This submission is currently under review by Liferay.
-						Once the process is complete, you will be able to
-						publish it to the marketplace. Meanwhile, any
-						information or data from this app submission cannot be
-						updated.
+						Once the process is complete, we will publish it into
+						Marketplace. Meanwhile, any information or data from
+						this app submission cannot be updated.
 					</span>
 				</ClayAlert>
 			)}
@@ -248,13 +254,17 @@ const App: React.FC<AppProps> = ({isAdministratorDashboard}) => {
 					)}
 			</div>
 			<div>
-				<ReviewAndSubmitAppPage
-					onClickBack={() => {}}
-					onClickContinue={() => {}}
-					productERC={selectedApp.externalReferenceCode}
-					productId={selectedApp.productId}
-					readonly
-				/>
+				{isNewAppEnabled && !isAdministratorDashboard ? (
+					<AppDetail />
+				) : (
+					<ReviewAndSubmitAppPage
+						onClickBack={() => {}}
+						onClickContinue={() => {}}
+						productERC={selectedApp.externalReferenceCode}
+						productId={selectedApp.productId}
+						readonly
+					/>
+				)}
 			</div>
 		</div>
 	);

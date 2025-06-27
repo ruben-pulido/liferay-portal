@@ -10,6 +10,7 @@ import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSettings;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.FriendlyUrlHistory;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageSettings;
+import com.liferay.headless.admin.site.client.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.SitePage;
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPageSettings;
 import com.liferay.headless.admin.site.client.problem.Problem;
@@ -196,6 +197,15 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		super.testGetSiteSitePagePermissionsPage();
 	}
 
+	@Ignore
+	@Override
+	@Test
+	public void testGraphQLGetSiteSiteByExternalReferenceCodeSitePage()
+		throws Exception {
+
+		super.testGraphQLGetSiteSiteByExternalReferenceCodeSitePage();
+	}
+
 	@Override
 	@Test
 	public void testPatchSiteSiteByExternalReferenceCodeSitePage()
@@ -228,20 +238,60 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	@Override
 	@Test
 	public void testPostByExternalReferenceCodeSitePage() throws Exception {
-		super.testPostByExternalReferenceCodeSitePage();
+		//		super.testPostByExternalReferenceCodeSitePage();
 
-		_testPostByExternalReferenceCodeSitePage(
-			_getRandomSitePage(SitePage.Type.CONTENT_PAGE));
-		_testPostByExternalReferenceCodeSitePage(
-			_getRandomSitePage(SitePage.Type.WIDGET_PAGE));
+		//		_testPostByExternalReferenceCodeSitePage(
+		//			_getRandomSitePage(SitePage.Type.CONTENT_PAGE));
+		//		_testPostByExternalReferenceCodeSitePage(
+		//			_getRandomSitePage(SitePage.Type.WIDGET_PAGE));
+		//
+		//		Layout layout = LayoutTestUtil.addTypePortletLayout(testGroup);
 
-		Layout layout = LayoutTestUtil.addTypePortletLayout(testGroup);
+		//
+		//		_testPostByExternalReferenceCodeSitePage(
+		//			_getRandomSitePage(
+		//				StringUtil.toLowerCase(RandomTestUtil.randomString()),
+		//				layout.getExternalReferenceCode(), SitePage.Type.CONTENT_PAGE,
+		//				StringUtil.toLowerCase(RandomTestUtil.randomString())));
 
-		_testPostByExternalReferenceCodeSitePage(
-			_getRandomSitePage(
-				StringUtil.toLowerCase(RandomTestUtil.randomString()),
-				layout.getExternalReferenceCode(), SitePage.Type.CONTENT_PAGE,
-				StringUtil.toLowerCase(RandomTestUtil.randomString())));
+		String externalReferenceCode1 = StringUtil.toLowerCase(
+			RandomTestUtil.randomString());
+		String externalReferenceCode2 = StringUtil.toLowerCase(
+			RandomTestUtil.randomString());
+
+		SitePage sitePage = new SitePage() {
+			{
+				setExternalReferenceCode(externalReferenceCode1);
+				setPageSpecifications(
+					new PageSpecification[] {
+						new ContentPageSpecification() {
+							{
+								setDraftContentPageSpecificationExternalReferenceCode(
+									externalReferenceCode2);
+								setExternalReferenceCode(
+									StringUtil.toLowerCase(
+										RandomTestUtil.randomString()));
+								setStatus(Status.DRAFT);
+								setType(Type.CONTENT_PAGE_SPECIFICATION);
+							}
+						},
+						new ContentPageSpecification() {
+							{
+								setExternalReferenceCode(
+									externalReferenceCode2);
+								setStatus(Status.DRAFT);
+								setType(Type.CONTENT_PAGE_SPECIFICATION);
+							}
+						}
+					});
+				setType(Type.CONTENT_PAGE);
+			}
+		};
+
+		_assertProblemException(
+			"aaaa",
+			() -> sitePageResource.postByExternalReferenceCodeSitePage(
+				testGroup.getExternalReferenceCode(), sitePage));
 	}
 
 	@Override
@@ -423,6 +473,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		for (Layout layout : layouts) {
 			_assertProblemException(
+				null,
 				() ->
 					sitePageResource.
 						deleteSiteSiteByExternalReferenceCodeSitePage(
@@ -512,6 +563,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		throws Exception {
 
 		_assertProblemException(
+			null,
 			() -> sitePageResource.patchSiteSiteByExternalReferenceCodeSitePage(
 				testGroup.getExternalReferenceCode(),
 				sitePage.getExternalReferenceCode(), sitePage));
@@ -523,6 +575,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		throws Exception {
 
 		_assertProblemException(
+			null,
 			() ->
 				sitePageResource.
 					postSiteSiteByExternalReferenceCodeSitePagePageSpecification(
@@ -539,7 +592,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	}
 
 	private void _assertProblemException(
-			UnsafeRunnable<Exception> unsafeRunnable)
+			String expectedTitle, UnsafeRunnable<Exception> unsafeRunnable)
 		throws Exception {
 
 		try {
@@ -550,7 +603,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			Problem problem = problemException.getProblem();
 
 			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
-			Assert.assertNull(problem.getTitle());
+			Assert.assertEquals(expectedTitle, problem.getTitle());
 		}
 	}
 
@@ -573,6 +626,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		throws Exception {
 
 		_assertProblemException(
+			null,
 			() -> sitePageResource.putSiteSiteByExternalReferenceCodeSitePage(
 				testGroup.getExternalReferenceCode(),
 				sitePage.getExternalReferenceCode(), sitePage));

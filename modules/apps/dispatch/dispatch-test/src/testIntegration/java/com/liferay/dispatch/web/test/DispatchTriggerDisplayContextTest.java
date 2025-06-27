@@ -8,8 +8,8 @@ package com.liferay.dispatch.web.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.dispatch.executor.DispatchTaskClusterMode;
 import com.liferay.dispatch.executor.DispatchTaskExecutorRegistry;
-import com.liferay.dispatch.internal.messaging.HiddenInUIDispatchTaskExecutor;
-import com.liferay.dispatch.internal.messaging.SingleNodeClusterModeDispatchTaskExecutor;
+import com.liferay.dispatch.executor.internal.messaging.HiddenInUIDispatchTaskExecutor;
+import com.liferay.dispatch.executor.internal.messaging.SingleNodeClusterModeDispatchTaskExecutor;
 import com.liferay.dispatch.model.DispatchTrigger;
 import com.liferay.dispatch.service.DispatchTriggerLocalService;
 import com.liferay.layout.test.util.LayoutTestUtil;
@@ -224,7 +224,7 @@ public class DispatchTriggerDisplayContextTest {
 			new MockLiferayPortletRenderResponse();
 
 		mockLiferayPortletRenderRequest.setAttribute(
-			JavaConstants.JAVAX_PORTLET_RESPONSE,
+			JavaConstants.JAKARTA_PORTLET_RESPONSE,
 			mockLiferayPortletRenderResponse);
 
 		_mvcRenderCommand.render(
