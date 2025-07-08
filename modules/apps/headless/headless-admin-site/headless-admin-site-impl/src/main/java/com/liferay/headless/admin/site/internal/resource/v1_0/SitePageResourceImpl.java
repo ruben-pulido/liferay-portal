@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
+import com.liferay.portal.vulcan.custom.field.CustomFieldsUtil;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
@@ -262,6 +263,10 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 
 		ServiceContext serviceContext = ServiceContextBuilder.create(
 			groupId, contextHttpServletRequest, sitePage.getViewableByAsString()
+		).expandoBridgeAttributes(
+			CustomFieldsUtil.toMap(
+				Layout.class.getName(), contextCompany.getCompanyId(),
+				sitePage.getCustomFields(), null)
 		).build();
 
 		serviceContext.setUuid(sitePage.getUuid());
