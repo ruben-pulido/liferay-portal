@@ -387,6 +387,15 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 				sitePage.getFriendlyUrlPath_i18n());
 		}
 
+		ServiceContext serviceContext = ServiceContextBuilder.create(
+			layout.getGroupId(), contextHttpServletRequest,
+			sitePage.getViewableByAsString()
+		).expandoBridgeAttributes(
+			CustomFieldsUtil.toMap(
+				Layout.class.getName(), contextCompany.getCompanyId(),
+				sitePage.getCustomFields(), null)
+		).build();
+
 		layout = _layoutService.updateLayout(
 			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
 			_getParentLayoutId(
@@ -398,10 +407,7 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 				layout.isHidden(), sitePage.getPageSettings()),
 			friendlyURLMap, layout.isIconImage(), null,
 			layout.getStyleBookEntryId(), layout.getFaviconFileEntryId(),
-			layout.getMasterLayoutPlid(),
-			ServiceContextUtil.createServiceContext(
-				layout.getGroupId(), contextHttpServletRequest,
-				contextUser.getUserId()));
+			layout.getMasterLayoutPlid(), serviceContext);
 
 		int priority = Integer.MAX_VALUE;
 
