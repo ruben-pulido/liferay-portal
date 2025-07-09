@@ -1043,6 +1043,12 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				expandoTable.getTableId(), randomExpandoAttributeName2,
 				ExpandoColumnConstants.STRING, randomDefaultData);
 
+			String randomExpandoAttributeName3 = RandomTestUtil.randomString();
+
+			_expandoColumnLocalService.addColumn(
+				expandoTable.getTableId(), randomExpandoAttributeName3,
+				ExpandoColumnConstants.STRING_LOCALIZED, null);
+
 			try {
 				String randomCustomValue = RandomTestUtil.randomString();
 
@@ -1057,8 +1063,26 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 					}
 				};
 
+				String randomCustomValueEnUS = RandomTestUtil.randomString();
+				String randomCustomValueEsES = RandomTestUtil.randomString();
+
+				CustomField customField3 = new CustomField() {
+					{
+						customValue = new CustomValue() {
+							{
+								data_i18n = HashMapBuilder.put(
+									"en-US", randomCustomValueEnUS
+								).put(
+									"es-ES", randomCustomValueEsES
+								).build();
+							}
+						};
+						name = randomExpandoAttributeName3;
+					}
+				};
+
 				randomSitePage.setCustomFields(
-					new CustomField[] {customField1});
+					new CustomField[] {customField1, customField3});
 
 				SitePage postSitePage =
 					testPostByExternalReferenceCodeSitePage_addSitePage(
@@ -1078,14 +1102,18 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 					}
 				};
 
+				customField3.setDataType("Text");
+
 				CustomField[] customFields = postSitePage.getCustomFields();
 
 				Assert.assertEquals(
-					Arrays.toString(customFields), 2, customFields.length);
+					Arrays.toString(customFields), 3, customFields.length);
 				Assert.assertTrue(
 					ArrayUtil.contains(customFields, customField1));
 				Assert.assertTrue(
 					ArrayUtil.contains(customFields, customField2));
+				Assert.assertTrue(
+					ArrayUtil.contains(customFields, customField3));
 
 				Layout layout =
 					_layoutLocalService.fetchLayoutByExternalReferenceCode(
@@ -1107,6 +1135,13 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				Assert.assertEquals(
 					attributes.get(randomExpandoAttributeName2),
 					randomDefaultData);
+				Assert.assertEquals(
+					attributes.get(randomExpandoAttributeName3),
+					HashMapBuilder.put(
+						LocaleUtil.SPAIN, randomCustomValueEsES
+					).put(
+						LocaleUtil.US, randomCustomValueEnUS
+					).build());
 			}
 			finally {
 				ExpandoTableLocalServiceUtil.deleteTable(expandoTable);
