@@ -1030,41 +1030,62 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				_expandoTableLocalService.addDefaultTable(
 					PortalUtil.getDefaultCompanyId(), Layout.class.getName());
 
-			String randomExpandoAttributeName = RandomTestUtil.randomString();
+			String randomExpandoAttributeName1 = RandomTestUtil.randomString();
 
 			_expandoColumnLocalService.addColumn(
-				expandoTable.getTableId(), randomExpandoAttributeName,
-				ExpandoColumnConstants.STRING, StringPool.BLANK);
+				expandoTable.getTableId(), randomExpandoAttributeName1,
+				ExpandoColumnConstants.STRING, null);
+
+			String randomExpandoAttributeName2 = RandomTestUtil.randomString();
+			String randomDefaultData = RandomTestUtil.randomString();
+
+			_expandoColumnLocalService.addColumn(
+				expandoTable.getTableId(), randomExpandoAttributeName2,
+				ExpandoColumnConstants.STRING, randomDefaultData);
 
 			try {
 				String randomCustomValue = RandomTestUtil.randomString();
 
-				CustomField customField = new CustomField() {
+				CustomField customField1 = new CustomField() {
 					{
 						customValue = new CustomValue() {
 							{
 								data = randomCustomValue;
 							}
 						};
-						name = randomExpandoAttributeName;
+						name = randomExpandoAttributeName1;
 					}
 				};
 
 				randomSitePage.setCustomFields(
-					new CustomField[] {customField});
+					new CustomField[] {customField1});
 
 				SitePage postSitePage =
 					testPostByExternalReferenceCodeSitePage_addSitePage(
 						randomSitePage);
 
-				customField.setDataType("Text");
+				customField1.setDataType("Text");
+
+				CustomField customField2 = new CustomField() {
+					{
+						customValue = new CustomValue() {
+							{
+								data = randomDefaultData;
+								dataType = "Text";
+							}
+						};
+						name = randomExpandoAttributeName2;
+					}
+				};
 
 				CustomField[] customFields = postSitePage.getCustomFields();
 
 				Assert.assertEquals(
-					Arrays.toString(customFields), 1, customFields.length);
+					Arrays.toString(customFields), 2, customFields.length);
 				Assert.assertTrue(
-					ArrayUtil.contains(customFields, customField));
+					ArrayUtil.contains(customFields, customField1));
+				Assert.assertTrue(
+					ArrayUtil.contains(customFields, customField2));
 
 				Layout layout =
 					_layoutLocalService.fetchLayoutByExternalReferenceCode(
@@ -1081,8 +1102,11 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 					expandoBridge.getAttributes();
 
 				Assert.assertEquals(
-					attributes.get(randomExpandoAttributeName),
+					attributes.get(randomExpandoAttributeName1),
 					randomCustomValue);
+				Assert.assertEquals(
+					attributes.get(randomExpandoAttributeName2),
+					randomDefaultData);
 			}
 			finally {
 				ExpandoTableLocalServiceUtil.deleteTable(expandoTable);
