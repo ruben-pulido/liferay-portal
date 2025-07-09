@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -1038,23 +1039,32 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			try {
 				String randomCustomValue = RandomTestUtil.randomString();
 
-				randomSitePage.setCustomFields(
-					new CustomField[] {
-						new CustomField() {
+				CustomField customField = new CustomField() {
+					{
+						customValue = new CustomValue() {
 							{
-								customValue = new CustomValue() {
-									{
-										data = randomCustomValue;
-									}
-								};
-								name = randomExpandoAttributeName;
+								data = randomCustomValue;
 							}
-						}
-					});
+						};
+						name = randomExpandoAttributeName;
+					}
+				};
+
+				randomSitePage.setCustomFields(
+					new CustomField[] {customField});
 
 				SitePage postSitePage =
 					testPostByExternalReferenceCodeSitePage_addSitePage(
 						randomSitePage);
+
+				customField.setDataType("Text");
+
+				CustomField[] customFields = postSitePage.getCustomFields();
+
+				Assert.assertEquals(
+					Arrays.toString(customFields), 1, customFields.length);
+				Assert.assertTrue(
+					ArrayUtil.contains(customFields, customField));
 
 				Layout layout =
 					_layoutLocalService.fetchLayoutByExternalReferenceCode(
