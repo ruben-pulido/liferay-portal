@@ -75,6 +75,8 @@ public interface ObjectDefinition
 
 	public String getRootObjectDefinitionExternalReferenceCode();
 
+	public long getRootObjectDefinitionId();
+
 	public String getShortName();
 
 	public boolean isApproved();
@@ -84,8 +86,6 @@ public interface ObjectDefinition
 	public boolean isLinkedToObjectFolder(long objectFolderId);
 
 	public boolean isModifiableAndSystem();
-
-	public boolean isNodeCandidate();
 
 	public boolean isRootDescendantNode();
 
@@ -97,5 +97,7 @@ public interface ObjectDefinition
 		java.util.List<ObjectDefinitionSetting> objectDefinitionSettings);
 
 	public void setPreviousRESTContextPath(String previousRESTContextPath);
+
+	public void setRootObjectDefinitionId(long rootObjectDefinitionId);
 
 }

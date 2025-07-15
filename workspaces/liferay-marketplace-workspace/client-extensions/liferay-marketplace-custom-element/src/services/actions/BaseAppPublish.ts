@@ -4,9 +4,12 @@
  */
 
 import {UploadedFile} from '../../components/FileList/FileList';
+import {LiferayPackage} from '../../context/NewAppContext';
 import {ProductSpecificationKey} from '../../enums/Product';
 import {base64ToText, fileToBase64} from '../../utils/file';
 import HeadlessCommerceAdminCatalogImpl from '../rest/HeadlessCommerceAdminCatalog';
+import HeadlessDelivery from '../rest/HeadlessDelivery';
+import HeadlessPublisherAsset from '../rest/HeadlessPublisherAsset';
 
 export default class BaseAppPublish {
 	public static addOrUpdateImages = async (
@@ -61,6 +64,22 @@ export default class BaseAppPublish {
 		}
 	};
 
+	public static async deleteLiferayPackages(
+		liferayPackages: LiferayPackage[]
+	) {
+		try {
+			for (const liferayPackage of liferayPackages) {
+				await HeadlessDelivery.deleteDocument(liferayPackage.file.id);
+				await HeadlessPublisherAsset.deletePublisherAsset(
+					liferayPackage.id
+				);
+			}
+		}
+		catch (error) {
+			console.error(error);
+		}
+	}
+
 	public static async deleteReferences(externalReferenceCodes: string[]) {
 		try {
 			for (const externalReferenceCode of externalReferenceCodes) {
@@ -77,13 +96,17 @@ export default class BaseAppPublish {
 	public static updateSpecification = async (
 		product: Product,
 		specificationKey: ProductSpecificationKey,
-		value: string
+		value: string,
+		options: {exactMatch?: boolean} = {exactMatch: false}
 	) => {
 		const {productId, productSpecifications = []} = product;
 
 		const specification = productSpecifications.find(
 			(productSpecification) =>
-				productSpecification.specificationKey === specificationKey
+				productSpecification.specificationKey === specificationKey &&
+				(options?.exactMatch
+					? productSpecification.value.en_US === value
+					: true)
 		);
 
 		if (
@@ -120,14 +143,16 @@ export default class BaseAppPublish {
 
 	public static updateSpecifications = (
 		product: Product,
-		specifications: {key: ProductSpecificationKey; value: string}[]
+		specifications: {key: ProductSpecificationKey; value: string}[],
+		options: {exactMatch?: boolean} = {exactMatch: false}
 	) =>
 		Promise.allSettled(
 			specifications.map((specification) =>
 				this.updateSpecification(
 					product,
 					specification.key,
-					specification.value
+					specification.value,
+					options
 				)
 			)
 		);

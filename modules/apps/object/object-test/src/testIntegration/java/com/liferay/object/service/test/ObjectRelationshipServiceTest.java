@@ -82,8 +82,9 @@ public class ObjectRelationshipServiceTest {
 		_objectDefinition1 =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, false, true, false,
-				false, false, LocalizedMapUtil.getLocalizedMap("Able"), "Able",
-				null, null, LocalizedMapUtil.getLocalizedMap("Ables"), true,
+				false, false, false, null,
+				LocalizedMapUtil.getLocalizedMap("Able"), "Able", null, null,
+				LocalizedMapUtil.getLocalizedMap("Ables"), true,
 				ObjectDefinitionConstants.SCOPE_COMPANY,
 				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 				Collections.emptyList(),
@@ -101,9 +102,10 @@ public class ObjectRelationshipServiceTest {
 		_objectDefinition2 =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, false, true, false,
-				false, false, LocalizedMapUtil.getLocalizedMap("Baker"),
-				"Baker", null, null, LocalizedMapUtil.getLocalizedMap("Bakers"),
-				true, ObjectDefinitionConstants.SCOPE_COMPANY,
+				false, false, false, null,
+				LocalizedMapUtil.getLocalizedMap("Baker"), "Baker", null, null,
+				LocalizedMapUtil.getLocalizedMap("Bakers"), true,
+				ObjectDefinitionConstants.SCOPE_COMPANY,
 				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 				Collections.emptyList(),
 				Arrays.asList(
@@ -292,13 +294,13 @@ public class ObjectRelationshipServiceTest {
 				StringUtil.randomId(), false, type, null);
 
 		ObjectEntry objectEntry1 = _objectEntryLocalService.addObjectEntry(
-			TestPropsValues.getUserId(), 0,
+			0, TestPropsValues.getUserId(),
 			objectDefinition1.getObjectDefinitionId(),
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			null, Collections.emptyMap(),
 			ServiceContextTestUtil.getServiceContext());
 		ObjectEntry objectEntry2 = _objectEntryLocalService.addObjectEntry(
-			TestPropsValues.getUserId(), 0,
+			0, TestPropsValues.getUserId(),
 			objectDefinition2.getObjectDefinitionId(),
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			null, Collections.emptyMap(),

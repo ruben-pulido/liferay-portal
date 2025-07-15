@@ -6,7 +6,7 @@
 package com.liferay.asset.taglib.internal.display.context;
 
 import com.liferay.asset.display.page.constants.AssetDisplayPageConstants;
-import com.liferay.asset.display.page.item.selector.AssetDisplayPageSelectorCriterion;
+import com.liferay.asset.display.page.item.selector.AssetDisplayPageItemSelectorCriterion;
 import com.liferay.asset.display.page.model.AssetDisplayPageEntry;
 import com.liferay.asset.display.page.service.AssetDisplayPageEntryLocalServiceUtil;
 import com.liferay.asset.display.page.util.AssetDisplayPageUtil;
@@ -23,7 +23,7 @@ import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
 import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.display.page.LayoutDisplayPageProvider;
 import com.liferay.layout.display.page.LayoutDisplayPageProviderRegistry;
-import com.liferay.layout.item.selector.criterion.LayoutItemSelectorCriterion;
+import com.liferay.layout.item.selector.LayoutItemSelectorCriterion;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryServiceUtil;
@@ -117,15 +117,16 @@ public class SelectAssetDisplayPageDisplayContext {
 
 		List<ItemSelectorCriterion> itemSelectorCriteria = new ArrayList<>();
 
-		AssetDisplayPageSelectorCriterion assetDisplayPageSelectorCriterion =
-			new AssetDisplayPageSelectorCriterion();
+		AssetDisplayPageItemSelectorCriterion
+			assetDisplayPageItemSelectorCriterion =
+				new AssetDisplayPageItemSelectorCriterion();
 
-		assetDisplayPageSelectorCriterion.setClassNameId(_classNameId);
-		assetDisplayPageSelectorCriterion.setClassTypeId(_classTypeId);
-		assetDisplayPageSelectorCriterion.setDesiredItemSelectorReturnTypes(
+		assetDisplayPageItemSelectorCriterion.setClassNameId(_classNameId);
+		assetDisplayPageItemSelectorCriterion.setClassTypeId(_classTypeId);
+		assetDisplayPageItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
 			new UUIDItemSelectorReturnType());
 
-		itemSelectorCriteria.add(assetDisplayPageSelectorCriterion);
+		itemSelectorCriteria.add(assetDisplayPageItemSelectorCriterion);
 
 		if (_showPortletLayouts) {
 			LayoutItemSelectorCriterion layoutItemSelectorCriterion =

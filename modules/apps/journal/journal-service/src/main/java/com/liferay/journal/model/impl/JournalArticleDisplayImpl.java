@@ -6,10 +6,7 @@
 package com.liferay.journal.model.impl;
 
 import com.liferay.journal.model.JournalArticleDisplay;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.webserver.WebServerServletTokenUtil;
 
 /**
  * @author Brian Wing Shun Chan
@@ -23,8 +20,8 @@ public class JournalArticleDisplayImpl implements JournalArticleDisplay {
 		String urlTitle, String description, String[] availableLocales,
 		String content, long ddmStructureId, String ddmTemplateKey,
 		boolean smallImage, long smallImageId, String smallImageURL,
-		int numberOfPages, int currentPage, boolean paginate,
-		boolean cacheable) {
+		String articleDisplayImageURL, int numberOfPages, int currentPage,
+		boolean paginate, boolean cacheable) {
 
 		_companyId = companyId;
 		_id = id;
@@ -43,6 +40,7 @@ public class JournalArticleDisplayImpl implements JournalArticleDisplay {
 		_smallImage = smallImage;
 		_smallImageId = smallImageId;
 		_smallImageURL = smallImageURL;
+		_articleDisplayImageURL = articleDisplayImageURL;
 		_numberOfPages = numberOfPages;
 		_currentPage = currentPage;
 		_paginate = paginate;
@@ -51,18 +49,7 @@ public class JournalArticleDisplayImpl implements JournalArticleDisplay {
 
 	@Override
 	public String getArticleDisplayImageURL(ThemeDisplay themeDisplay) {
-		if (!isSmallImage()) {
-			return null;
-		}
-
-		if (Validator.isNotNull(getSmallImageURL())) {
-			return getSmallImageURL();
-		}
-
-		return StringBundler.concat(
-			themeDisplay.getPathImage(), "/journal/article?img_id=",
-			getSmallImageId(), "&t=",
-			WebServerServletTokenUtil.getToken(getSmallImageId()));
+		return _articleDisplayImageURL;
 	}
 
 	@Override
@@ -220,6 +207,7 @@ public class JournalArticleDisplayImpl implements JournalArticleDisplay {
 		_smallImageURL = smallImageURL;
 	}
 
+	private final String _articleDisplayImageURL;
 	private final String _articleId;
 	private final String[] _availableLocales;
 	private boolean _cacheable;

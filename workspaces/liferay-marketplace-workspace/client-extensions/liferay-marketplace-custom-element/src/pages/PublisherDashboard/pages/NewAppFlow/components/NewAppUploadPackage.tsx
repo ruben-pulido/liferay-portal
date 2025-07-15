@@ -6,23 +6,31 @@
 import {filesize} from 'filesize';
 
 import {DropzoneUpload} from '../../../../../components/DropzoneUpload/DropzoneUpload';
-import {FileList} from '../../../../../components/FileList/FileList';
+import {
+	FileList,
+	UploadedFile,
+} from '../../../../../components/FileList/FileList';
 import {
 	NewAppTypes,
 	useNewAppContext,
 } from '../../../../../context/NewAppContext';
 import {
 	ALLOWED_MIME_TYPES,
-	PUBLISH_APP_UPLOAD_MAX_FILES,
 	PUBLISH_APP_UPLOAD_MAX_SIZE,
 } from '../../../../../enums/File';
 import {ProductType} from '../../../../../enums/Product';
 import i18n from '../../../../../i18n';
+import {Liferay} from '../../../../../liferay/liferay';
 import {getRandomID} from '../../../../../utils/string';
 
 type NewAppUploadAppPackagesComponentProps = {
 	isProcessing: boolean;
-	versionName: string;
+	liferayPackage: {
+		file: UploadedFile | null;
+		id: string;
+		uploaded: boolean;
+		versions: string[];
+	};
 };
 
 export const acceptFileTypes = {
@@ -39,7 +47,7 @@ export const acceptFileTypes = {
 
 export function NewAppUploadAppPackagesComponent({
 	isProcessing,
-	versionName,
+	liferayPackage,
 }: NewAppUploadAppPackagesComponentProps) {
 	const [
 		{
@@ -48,33 +56,28 @@ export function NewAppUploadAppPackagesComponent({
 		dispatch,
 	] = useNewAppContext();
 
-	const enableUploadFiles =
-		!isProcessing &&
-		(!liferayPackages?.length ||
-			liferayPackages?.length < PUBLISH_APP_UPLOAD_MAX_FILES);
+	const enableUploadFiles = !isProcessing && !liferayPackage.file?.id;
 
-	const handleRemoveAppPackages = (fileId: string) => {
-		const _liferayPackages = liferayPackages.map((liferayPackage) => {
-			if (liferayPackage.version === versionName) {
-				return {
-					...liferayPackage,
-					files: liferayPackage.files.filter(({id}) => id !== fileId),
-				};
-			}
+	const handleRemoveAppPackages = (liferayPackageId: string) => {
+		const _liferayPackage = liferayPackages.find(
+			(liferayPackage) => liferayPackage.file.id === liferayPackageId
+		);
 
-			return liferayPackage;
-		});
+		if (_liferayPackage) {
+			_liferayPackage.file = null;
+		}
 
 		dispatch({
 			payload: {
-				liferayPackages: _liferayPackages,
+				liferayPackages,
 			},
 			type: NewAppTypes.SET_BUILD,
 		});
 	};
 
 	const handleUploadAppPackages = (files: File[]) => {
-		const newUploadedPackages = files.map((file) => ({
+		const newUploadedPackage = files.map((file) => ({
+			changed: true,
 			error: false,
 			file,
 			fileName: file.name,
@@ -83,20 +86,34 @@ export function NewAppUploadAppPackagesComponent({
 			progress: 0,
 			readableSize: filesize(file.size),
 			uploaded: false,
-			versionName,
 		}));
 
-		const _liferayPackages = liferayPackages.map((liferayPackage) => {
-			if (liferayPackage.version === versionName) {
+		if (
+			liferayPackages.some(
+				(liferayPackage) =>
+					liferayPackage.file?.fileName ===
+					newUploadedPackage[0].fileName
+			)
+		) {
+			Liferay.Util.openToast({
+				message: i18n.translate(
+					'could-not-upload-the-file-package-with-this-filename-already-exists'
+				),
+				type: 'danger',
+			});
+
+			return;
+		}
+
+		const _liferayPackages = liferayPackages.map((_liferayPackage) => {
+			if (liferayPackage.id === _liferayPackage.id) {
 				return {
-					...liferayPackage,
-					files: liferayPackage.files.length
-						? [...liferayPackage.files, ...newUploadedPackages]
-						: newUploadedPackages,
+					..._liferayPackage,
+					file: newUploadedPackage[0],
 				};
 			}
 
-			return liferayPackage;
+			return _liferayPackage;
 		});
 
 		dispatch({
@@ -112,14 +129,9 @@ export function NewAppUploadAppPackagesComponent({
 			<FileList
 				isProcessing={isProcessing}
 				onDelete={handleRemoveAppPackages}
+				removable={!liferayPackage.uploaded}
 				type="document"
-				uploadedFiles={
-					liferayPackages.find(
-						(liferayPackage) =>
-							liferayPackage.version === versionName
-					)?.files ?? []
-				}
-				versionName={versionName}
+				uploadedFiles={liferayPackage.file ? [liferayPackage.file] : []}
 			/>
 
 			{enableUploadFiles && (
@@ -129,20 +141,19 @@ export function NewAppUploadAppPackagesComponent({
 					}
 					buttonText={i18n.translate('select-a-file')}
 					description={
-						appType === ProductType.CLOUD
+						appType === ProductType.DXP
 							? i18n.translate(
-									'only-zip-files-are-allowed-max-file-size-is-500-mb'
-								)
-							: i18n.translate(
 									'only-jar-war-files-are-allowed-max-file-size-is-500mb'
 								)
+							: i18n.translate(
+									'only-zip-files-are-allowed-max-file-size-is-500-mb'
+								)
 					}
-					maxFiles={PUBLISH_APP_UPLOAD_MAX_FILES}
+					maxFiles={1}
 					maxSize={PUBLISH_APP_UPLOAD_MAX_SIZE}
-					multiple={true}
+					multiple={false}
 					onHandleUpload={handleUploadAppPackages}
 					title={i18n.translate('drag-and-drop-to-upload-or')}
-					versionName={versionName}
 				/>
 			)}
 		</>

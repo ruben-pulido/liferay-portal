@@ -49,7 +49,7 @@ public class ObjectEntryFolderServiceImpl
 			parentObjectEntryFolderId, ActionKeys.ADD_FOLDER);
 
 		return objectEntryFolderLocalService.addObjectEntryFolder(
-			externalReferenceCode, getUserId(), groupId,
+			externalReferenceCode, groupId, getUserId(),
 			parentObjectEntryFolderId, description, labelMap, name,
 			serviceContext);
 	}
@@ -81,6 +81,22 @@ public class ObjectEntryFolderServiceImpl
 
 		return objectEntryFolderLocalService.deleteObjectEntryFolder(
 			objectEntryFolder);
+	}
+
+	@Override
+	public ObjectEntryFolder fetchObjectEntryFolder(long objectEntryFolderId)
+		throws PortalException {
+
+		ObjectEntryFolder objectEntryFolder =
+			objectEntryFolderLocalService.fetchObjectEntryFolder(
+				objectEntryFolderId);
+
+		if (objectEntryFolder != null) {
+			_modelResourcePermission.check(
+				getPermissionChecker(), objectEntryFolder, ActionKeys.VIEW);
+		}
+
+		return objectEntryFolder;
 	}
 
 	@Override

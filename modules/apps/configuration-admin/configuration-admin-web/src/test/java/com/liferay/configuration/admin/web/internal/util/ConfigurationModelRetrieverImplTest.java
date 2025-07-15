@@ -1,0 +1,264 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.configuration.admin.web.internal.util;
+
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.test.rule.LiferayUnitTestRule;
+
+import java.util.Map;
+
+import junit.framework.AssertionFailedError;
+
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+
+import org.osgi.framework.Constants;
+import org.osgi.framework.Filter;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.cm.ConfigurationAdmin;
+
+/**
+ * @author Raymond Augé
+ */
+public class ConfigurationModelRetrieverImplTest {
+
+	@ClassRule
+	@Rule
+	public static final LiferayUnitTestRule liferayUnitTestRule =
+		LiferayUnitTestRule.INSTANCE;
+
+	@Test
+	public void testGetPidFilterStringScopeCompany() throws Exception {
+		String key = ConfigurationAdmin.SERVICE_FACTORYPID;
+
+		String pid = "foo";
+
+		String pidFilterString =
+			_configurationModelRetrieverImpl.getPidFilterString(
+				pid, ExtendedObjectClassDefinition.Scope.COMPANY);
+
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).build());
+		_test(
+			true, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"companyId", "any"
+			).build());
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"groupId", "any"
+			).build());
+		_test(
+			true, pidFilterString,
+			HashMapBuilder.put(
+				key, pid + ".scoped"
+			).put(
+				"companyId", "any"
+			).build());
+	}
+
+	@Test
+	public void testGetPidFilterStringScopeGroup() throws Exception {
+		String key = ConfigurationAdmin.SERVICE_FACTORYPID;
+
+		String pid = "foo";
+
+		String pidFilterString =
+			_configurationModelRetrieverImpl.getPidFilterString(
+				pid, ExtendedObjectClassDefinition.Scope.GROUP);
+
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).build());
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"companyId", "any"
+			).build());
+		_test(
+			true, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"groupId", "any"
+			).build());
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"portletInstanceId", "any"
+			).build());
+		_test(
+			true, pidFilterString,
+			HashMapBuilder.put(
+				key, pid + ".scoped"
+			).put(
+				"groupId", "any"
+			).build());
+	}
+
+	@Test
+	public void testGetPidFilterStringScopePortletInstance() throws Exception {
+		String key = ConfigurationAdmin.SERVICE_FACTORYPID;
+
+		String pid = "foo";
+
+		String pidFilterString =
+			_configurationModelRetrieverImpl.getPidFilterString(
+				pid, ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE);
+
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).build());
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"companyId", "any"
+			).build());
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"groupId", "any"
+			).build());
+
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"portletInstanceId", "any"
+			).build());
+		_test(
+			true, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"groupId", "any"
+			).put(
+				"portletInstanceId", "any"
+			).build());
+		_test(
+			true, pidFilterString,
+			HashMapBuilder.put(
+				key, pid + ".scoped"
+			).put(
+				"groupId", "any"
+			).put(
+				"portletInstanceId", "any"
+			).build());
+	}
+
+	@Test
+	public void testGetPidFilterStringScopeSystem() throws Exception {
+		String key = Constants.SERVICE_PID;
+
+		String pid = "foo";
+
+		String pidFilterString =
+			_configurationModelRetrieverImpl.getPidFilterString(
+				pid, ExtendedObjectClassDefinition.Scope.SYSTEM);
+
+		_test(
+			true, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).build());
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"companyId", "any"
+			).build());
+
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"groupId", "any"
+			).build());
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid + ".scoped"
+			).build());
+
+		key = ConfigurationAdmin.SERVICE_FACTORYPID;
+
+		pid = "foo~1234";
+
+		pidFilterString = _configurationModelRetrieverImpl.getPidFilterString(
+			pid, ExtendedObjectClassDefinition.Scope.SYSTEM);
+
+		_test(
+			true, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).build());
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"companyId", "any"
+			).build());
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid
+			).put(
+				"groupId", "any"
+			).build());
+		_test(
+			false, pidFilterString,
+			HashMapBuilder.put(
+				key, pid + ".scoped"
+			).build());
+	}
+
+	private void _test(
+			boolean matches, String pidFilterString,
+			Map<String, String> payload)
+		throws Exception {
+
+		Filter filter = FrameworkUtil.createFilter(pidFilterString);
+
+		if (matches && !filter.matches(payload)) {
+			throw new AssertionFailedError(
+				filter + " does not match " + payload);
+		}
+		else if (!matches && filter.matches(payload)) {
+			throw new AssertionFailedError(filter + " matches " + payload);
+		}
+	}
+
+	private final ConfigurationModelRetrieverImpl
+		_configurationModelRetrieverImpl =
+			new ConfigurationModelRetrieverImpl();
+
+}

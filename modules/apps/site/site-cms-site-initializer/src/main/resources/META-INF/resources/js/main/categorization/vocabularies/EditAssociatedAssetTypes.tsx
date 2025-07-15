@@ -10,7 +10,7 @@ import ClayTable from '@clayui/table';
 import {sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
-import {IVocabulary} from '../../../types/IVocabulary';
+import {IVocabulary} from '../../../common/types/IVocabulary';
 
 type Structure = {
 	label?: string;
@@ -71,7 +71,7 @@ export default function EditAssociatedAssetTypes({
 				setAllAssetTypesSelected(false);
 
 				setSelectedItems(
-					vocabulary.assetTypes.map((assetType) => ({
+					vocabulary.assetTypes.map((assetType: AssetType) => ({
 						label: assetType.type,
 						required: assetType.required,
 						value: assetType.typeId,

@@ -91,7 +91,7 @@ export type TProduct = {
 	productConfiguration?: TProductConfiguration;
 	productId?: number;
 	productOptions?: any[];
-	productSpecifications?: any[];
+	productSpecifications?: TProductSpecifications[];
 	productStatus?: number;
 	productType?: string;
 	productVirtualSettings?: TProductVirtualSettings;
@@ -144,6 +144,15 @@ export type TProductConfigurationList = {
 	parentProductConfigurationListId?: number;
 	priority?: number;
 	productConfigurations?: TProductConfiguration[];
+};
+
+type TProductSpecifications = {
+	id?: number;
+	key?: string;
+	label?: Record<string, string>;
+	specificationKey?: string;
+	value?: Record<string, string>;
+	visible?: boolean;
 };
 
 export type TProductTaxConfiguration = {
@@ -353,6 +362,10 @@ export class HeadlessCommerceAdminCatalogApiHelper {
 	}
 
 	async getProducts(searchParams = new URLSearchParams()) {
+		if (!searchParams.has('nestedFields')) {
+			searchParams.append('nestedFields', 'skus');
+		}
+
 		return this.apiHelpers.get(
 			`${this.apiHelpers.baseUrl}${
 				this.basePath
@@ -425,6 +438,16 @@ export class HeadlessCommerceAdminCatalogApiHelper {
 				},
 				...(product || {}),
 			}
+		);
+	}
+
+	async patchProductSpecification(
+		id: number,
+		productSpecifications: TProductSpecifications
+	) {
+		return this.apiHelpers.patch(
+			`${this.apiHelpers.baseUrl}${this.basePath}/productSpecifications/${id}`,
+			productSpecifications
 		);
 	}
 
@@ -628,6 +651,15 @@ export class HeadlessCommerceAdminCatalogApiHelper {
 		}
 
 		return product;
+	}
+
+	async postProductBatch(products: TProduct[]): Promise<TProduct[]> {
+		products = await this.apiHelpers.post(
+			`${this.apiHelpers.baseUrl}${this.basePath}/products/batch`,
+			{data: products}
+		);
+
+		return products;
 	}
 
 	async postProductConfiguration(

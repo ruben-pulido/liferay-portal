@@ -36,4 +36,9 @@ public interface CommerceOrderConfiguration {
 	)
 	public int guestCartItemMaxAllowed();
 
+	@Meta.AD(
+		deflt = "false", name = "order-selection-disabled", required = false
+	)
+	public boolean orderSelectionDisabled();
+
 }

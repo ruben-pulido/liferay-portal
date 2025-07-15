@@ -626,20 +626,16 @@ public abstract class BaseListTypeDefinitionResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				listTypeDefinitionUnsafeFunction = listTypeDefinition -> {
+					ListTypeDefinition getListTypeDefinition = null;
 					ListTypeDefinition persistedListTypeDefinition = null;
 
 					try {
-						ListTypeDefinition getListTypeDefinition =
+						getListTypeDefinition =
 							getListTypeDefinitionByExternalReferenceCode(
 								listTypeDefinition.getExternalReferenceCode());
 
 						persistedListTypeDefinition = patchListTypeDefinition(
-							getListTypeDefinition.getId() != null ?
-								getListTypeDefinition.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"listTypeDefinitionId")),
-							listTypeDefinition);
+							getListTypeDefinition.getId(), listTypeDefinition);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedListTypeDefinition = postListTypeDefinition(
@@ -651,10 +647,16 @@ public abstract class BaseListTypeDefinitionResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				listTypeDefinitionUnsafeFunction = listTypeDefinition ->
-					putListTypeDefinitionByExternalReferenceCode(
-						listTypeDefinition.getExternalReferenceCode(),
-						listTypeDefinition);
+				listTypeDefinitionUnsafeFunction = listTypeDefinition -> {
+					ListTypeDefinition persistedListTypeDefinition = null;
+
+					persistedListTypeDefinition =
+						putListTypeDefinitionByExternalReferenceCode(
+							listTypeDefinition.getExternalReferenceCode(),
+							listTypeDefinition);
+
+					return persistedListTypeDefinition;
+				};
 			}
 		}
 
@@ -787,21 +789,13 @@ public abstract class BaseListTypeDefinitionResourceImpl
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			listTypeDefinitionUnsafeFunction =
 				listTypeDefinition -> patchListTypeDefinition(
-					listTypeDefinition.getId() != null ?
-						listTypeDefinition.getId() :
-							_parseLong(
-								(String)parameters.get("listTypeDefinitionId")),
-					listTypeDefinition);
+					listTypeDefinition.getId(), listTypeDefinition);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			listTypeDefinitionUnsafeFunction =
 				listTypeDefinition -> putListTypeDefinition(
-					listTypeDefinition.getId() != null ?
-						listTypeDefinition.getId() :
-							_parseLong(
-								(String)parameters.get("listTypeDefinitionId")),
-					listTypeDefinition);
+					listTypeDefinition.getId(), listTypeDefinition);
 		}
 
 		if (listTypeDefinitionUnsafeFunction == null) {
@@ -823,14 +817,6 @@ public abstract class BaseListTypeDefinitionResourceImpl
 				listTypeDefinitionUnsafeFunction.apply(listTypeDefinition);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

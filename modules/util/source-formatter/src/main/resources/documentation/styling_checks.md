@@ -18,6 +18,7 @@ CSSCommentsCheck | .css or .scss | Validates comments in `.css` files. |
 CSSImportsCheck | .css or .scss | Sorts and groups imports in `.css` files. |
 CSSPropertiesOrderCheck | .css or .scss | Sorts properties in `.css` files. |
 ChainingCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks that method chaining can be used when possible. |
+CodeownersOrderCheck | CODEOWNERS | Sorts code owners in `CODEOWNERS` files. |
 CodeownersWhitespaceCheck | CODEOWNERS | Finds missing and unnecessary whitespace in `CODEOWNERS` files. |
 ConfigDefinitionKeysCheck | .cfg or .config | Sorts definition keys in `.config` files. |
 ConfigWhitespaceCheck | .cfg or .config | Finds missing and unnecessary whitespace. |
@@ -55,6 +56,7 @@ HTMLWhitespaceCheck | .html or .path | Finds missing and unnecessary whitespace 
 [InstanceInitializerCheck](check/instance_initializer_check.md#instanceinitializercheck) | .java | Performs several checks on class instance initializer. |
 InstanceofOrderCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Check the order of `instanceof` calls. |
 JSONBatchEngineDataFileCheck | .ipynb, .json, or .npmbridgerc | Remove elements in `*.batch-engine-data.json` files. |
+JSONCatalogFileCheck | .ipynb, .json, or .npmbridgerc | Sorts `*.options.json`, `*.products.json`, and `*.products.specifications.json` files. |
 JSONPageFileCheck | .ipynb, .json, or .npmbridgerc | Sorts by `roleName` in `page.json` files. |
 JSONPortletResponseUtilCheck | .java | Checks if `JSONPortletResponseUtil.writeJSON ` should come before method calling `hideDefaultSuccessMessage`. |
 JSONReplacementsFileCheck | .ipynb, .json, or .npmbridgerc | Sorts by `issueKey`, `from` and `to` in `replacements.json` file. |
@@ -170,6 +172,7 @@ SoyEmptyLinesCheck | .soy | Finds missing and unnecessary empty lines. |
 TFBlockOrderCheck | .tf | Checks the order of blocks in `.tf` file. |
 TLDElementOrderCheck | .tld | Checks the order of attributes in `.tld` file. |
 TLDStylingCheck | .tld | Applies rules to enforce consistency in code style. |
+TSSpecFileStylingCheck | .ts or .tsx | Applies rules to enforce consistency in code style. |
 TXTEmptyLinesCheck | .txt | Finds missing and unnecessary empty lines. |
 TXTStylingCheck | .txt | Applies rules to enforce consistency in code style. |
 TernaryOperatorCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Finds use of ternary operator in `java` files (use if statement instead). |

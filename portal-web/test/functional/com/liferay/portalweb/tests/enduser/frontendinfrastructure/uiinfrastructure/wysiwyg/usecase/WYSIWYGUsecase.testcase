@@ -5,7 +5,7 @@ definition {
 	property osgi.modules.includes = "wiki";
 	property portal.release = "false";
 	property portal.upstream = "true";
-	property testray.main.component.name = "User Interface";
+	property testray.main.component.name = "Frontend Editor";
 
 	var pageName = "CKEditor Page";
 
@@ -142,6 +142,8 @@ definition {
 
 		PortletEntry.publish();
 
+		Click(locator1 = "//button[contains(@class, 'dropdown-item') and contains(., 'Publish')]");
+
 		WebContentNavigator.gotoPreviewEntryCP(webContentTitle = "Web Content Title");
 
 		SelectFrame(locator1 = "IFrame#MODAL_BODY");
@@ -233,7 +235,7 @@ definition {
 	test CanDisplayFormattedHTMLFromCopyPaste {
 		property app.server.types = "tomcat";
 		property database.types = "mysql";
-		property environment.acceptance = "true";
+		property environment.acceptance = "false";
 		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,rockylinux,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "true";
 
@@ -320,6 +322,8 @@ definition {
 		SelectFrame(value1 = "relative=top");
 
 		PortletEntry.publish();
+
+		Click(locator1 = "//button[contains(@class, 'dropdown-item') and contains(., 'Publish')]");
 
 		WebContentNavigator.gotoPreviewEntryCP(webContentTitle = "Web Content Title");
 
@@ -436,7 +440,7 @@ definition {
 	test CanViewSourceCodeFormattedInTextView {
 		property app.server.types = "tomcat";
 		property database.types = "mysql";
-		property environment.acceptance = "true";
+		property environment.acceptance = "false";
 		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,rockylinux,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "true";
 

@@ -13,31 +13,50 @@ import StateContextProvider, {useSelector} from '../contexts/StateContext';
 import selectStructureId from '../selectors/selectStructureId';
 import {ObjectDefinition} from '../types/ObjectDefinition';
 import buildState from '../utils/buildState';
-import StructureBuilderManagementBar from './StructureBuilderManagementBar';
-import StructureFields from './StructureFields';
-import StructureSettings from './StructureSettings';
+import Sidebar from './Sidebar';
+import StructureBuilderToolbar from './StructureBuilderToolbar';
+import Settings from './settings/Settings';
 
 export default function StructureBuilder({
 	config,
 	state,
 }: {
 	config: Config;
-	state: {objectDefinition: ObjectDefinition};
+	state: {
+		mainObjectDefinition: ObjectDefinition;
+		objectDefinitions: ObjectDefinition[];
+	};
 }) {
 	initializeConfig(config);
 
+	const objectDefinitions = new Map(
+		state.objectDefinitions.map((objectDefinition) => [
+			objectDefinition.externalReferenceCode,
+			objectDefinition,
+		])
+	);
+
 	return (
-		<StateContextProvider initialState={buildState(state.objectDefinition)}>
-			<CacheContextProvider>
+		<StateContextProvider
+			initialState={buildState({
+				mainObjectDefinition: state.mainObjectDefinition,
+				objectDefinitions,
+			})}
+		>
+			<CacheContextProvider
+				initialData={{
+					'object-definitions': objectDefinitions,
+				}}
+			>
 				<div className="d-flex flex-column structure-builder__wrapper">
 					<HistoryManager />
 
-					<StructureBuilderManagementBar />
+					<StructureBuilderToolbar />
 
 					<div className="d-flex flex-grow-1 p-4">
-						<StructureFields />
+						<Sidebar />
 
-						<StructureSettings />
+						<Settings />
 					</div>
 				</div>
 			</CacheContextProvider>

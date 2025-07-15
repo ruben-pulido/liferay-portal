@@ -603,19 +603,15 @@ public abstract class BaseOrderRuleResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				orderRuleUnsafeFunction = orderRule -> {
+					OrderRule getOrderRule = null;
 					OrderRule persistedOrderRule = null;
 
 					try {
-						OrderRule getOrderRule =
-							getOrderRuleByExternalReferenceCode(
-								orderRule.getExternalReferenceCode());
+						getOrderRule = getOrderRuleByExternalReferenceCode(
+							orderRule.getExternalReferenceCode());
 
 						persistedOrderRule = patchOrderRule(
-							getOrderRule.getId() != null ?
-								getOrderRule.getId() :
-									_parseLong(
-										(String)parameters.get("orderRuleId")),
-							orderRule);
+							getOrderRule.getId(), orderRule);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedOrderRule = postOrderRule(orderRule);
@@ -626,9 +622,14 @@ public abstract class BaseOrderRuleResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				orderRuleUnsafeFunction =
-					orderRule -> putOrderRuleByExternalReferenceCode(
+				orderRuleUnsafeFunction = orderRule -> {
+					OrderRule persistedOrderRule = null;
+
+					persistedOrderRule = putOrderRuleByExternalReferenceCode(
 						orderRule.getExternalReferenceCode(), orderRule);
+
+					return persistedOrderRule;
+				};
 			}
 		}
 
@@ -780,9 +781,7 @@ public abstract class BaseOrderRuleResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			orderRuleUnsafeFunction = orderRule -> patchOrderRule(
-				orderRule.getId() != null ? orderRule.getId() :
-					_parseLong((String)parameters.get("orderRuleId")),
-				orderRule);
+				orderRule.getId(), orderRule);
 		}
 
 		if (orderRuleUnsafeFunction == null) {
@@ -804,14 +803,6 @@ public abstract class BaseOrderRuleResourceImpl
 				orderRuleUnsafeFunction.apply(orderRule);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

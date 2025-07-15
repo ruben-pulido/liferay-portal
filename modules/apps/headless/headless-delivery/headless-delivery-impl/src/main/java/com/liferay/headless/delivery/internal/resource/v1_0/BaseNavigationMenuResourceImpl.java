@@ -1038,14 +1038,23 @@ public abstract class BaseNavigationMenuResourceImpl
 				"updateStrategy", "UPDATE");
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				navigationMenuUnsafeFunction =
-					navigationMenu ->
-						putSiteNavigationMenuByExternalReferenceCode(
-							navigationMenu.getSiteId() != null ?
-								navigationMenu.getSiteId() :
-									(Long)parameters.get("siteId"),
-							navigationMenu.getExternalReferenceCode(),
-							navigationMenu);
+				navigationMenuUnsafeFunction = navigationMenu -> {
+					NavigationMenu persistedNavigationMenu = null;
+
+					if (parameters.containsKey("siteId")) {
+						persistedNavigationMenu =
+							putSiteNavigationMenuByExternalReferenceCode(
+								(Long)parameters.get("siteId"),
+								navigationMenu.getExternalReferenceCode(),
+								navigationMenu);
+					}
+					else {
+						throw new NotSupportedException(
+							"One of the following parameters must be specified: [siteId]");
+					}
+
+					return persistedNavigationMenu;
+				};
 			}
 		}
 
@@ -1184,9 +1193,7 @@ public abstract class BaseNavigationMenuResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			navigationMenuUnsafeFunction = navigationMenu -> putNavigationMenu(
-				navigationMenu.getId() != null ? navigationMenu.getId() :
-					_parseLong((String)parameters.get("navigationMenuId")),
-				navigationMenu);
+				navigationMenu.getId(), navigationMenu);
 		}
 
 		if (navigationMenuUnsafeFunction == null) {
@@ -1208,14 +1215,6 @@ public abstract class BaseNavigationMenuResourceImpl
 				navigationMenuUnsafeFunction.apply(navigationMenu);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import {accountsPagesTest} from '../../../fixtures/accountsPagesTest';
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {applicationsMenuPageTest} from '../../../fixtures/applicationsMenuPageTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
+import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {serverAdministrationPageTest} from '../../../fixtures/serverAdministrationPageTest';
 import {usersAndOrganizationsPagesTest} from '../../../fixtures/usersAndOrganizationsPagesTest';
@@ -28,6 +29,9 @@ export const test = mergeTests(
 	apiHelpersTest,
 	applicationsMenuPageTest,
 	dataApiHelpersTest,
+	featureFlagsTest({
+		'LPD-47858': {enabled: true},
+	}),
 	loginTest(),
 	serverAdministrationPageTest,
 	usersAndOrganizationsPagesTest,
@@ -356,33 +360,25 @@ test(
 
 		await setItemsPerPage(accountUserSelectorPage.frame, 20);
 
-		for (const [index, user] of users.entries()) {
-			if (index < 20) {
-				await expect(
-					accountUserSelectorPage.usersTable.cell(user.name)
-				).toBeVisible();
-			}
-			else {
-				await expect(
-					accountUserSelectorPage.usersTable.cell(user.name)
-				).toHaveCount(0);
-			}
-		}
+		await expect(
+			accountUserSelectorPage.usersTable.cell(users[0].name)
+		).toBeVisible();
+		await expect(
+			accountUserSelectorPage.usersTable.cell(
+				users[users.length - 1].name
+			)
+		).toHaveCount(0);
 
 		await nextPage(accountUserSelectorPage.frame);
 
-		for (const [index, user] of users.entries()) {
-			if (index < 20) {
-				await expect(
-					accountUserSelectorPage.usersTable.cell(user.name)
-				).toHaveCount(0);
-			}
-			else {
-				await expect(
-					accountUserSelectorPage.usersTable.cell(user.name)
-				).toBeVisible();
-			}
-		}
+		await expect(
+			accountUserSelectorPage.usersTable.cell(users[0].name)
+		).toHaveCount(0);
+		await expect(
+			accountUserSelectorPage.usersTable.cell(
+				users[users.length - 1].name
+			)
+		).toBeVisible();
 	}
 );
 
@@ -600,12 +596,12 @@ test(
 		const account2 = await apiHelpers.headlessAdminUser.postAccount();
 
 		const user1 = await apiHelpers.headlessAdminUser.postUserAccount({
-			emailAddress: `A${getRandomString()}@liferay.com`,
+			emailAddress: `A${getRandomString()}@test.com`,
 			familyName: `Z${getRandomString()}`,
 			givenName: `A${getRandomString()}`,
 		});
 		const user2 = await apiHelpers.headlessAdminUser.postUserAccount({
-			emailAddress: `Z${getRandomString()}@liferay.com`,
+			emailAddress: `Z${getRandomString()}@test.com`,
 			familyName: `A${getRandomString()}`,
 			givenName: `Z${getRandomString()}`,
 		});
@@ -661,10 +657,18 @@ test(
 			accountUserSelectorPage.usersTable.cell(user2.name)
 		).toBeVisible();
 
-		await accountUserSelectorPage.usersTable.orderButton.click();
-		await accountUserSelectorPage.usersTable
-			.orderMenuItem('First Name')
-			.click();
+		await accountUserSelectorPage.usersTable.search('test.com');
+
+		await expect(
+			accountUserSelectorPage.usersTable.clearButton
+		).toBeVisible();
+
+		await expect(async () => {
+			await accountUserSelectorPage.usersTable.orderButton.click();
+			await accountUserSelectorPage.usersTable
+				.orderMenuItem('First Name')
+				.click({timeout: 1000});
+		}).toPass();
 
 		await expect(
 			accountUserSelectorPage.usersTable.searchInput
@@ -676,10 +680,12 @@ test(
 			await accountUserSelectorPage.usersTable.lastRow()
 		).toContainText(user2.name);
 
-		await accountUserSelectorPage.usersTable.orderButton.click();
-		await accountUserSelectorPage.usersTable
-			.orderMenuItem('Last Name')
-			.click();
+		await expect(async () => {
+			await accountUserSelectorPage.usersTable.orderButton.click();
+			await accountUserSelectorPage.usersTable
+				.orderMenuItem('Last Name')
+				.click({timeout: 1000});
+		}).toPass();
 
 		await expect(
 			accountUserSelectorPage.usersTable.searchInput
@@ -691,10 +697,12 @@ test(
 			await accountUserSelectorPage.usersTable.lastRow()
 		).toContainText(user1.name);
 
-		await accountUserSelectorPage.usersTable.orderButton.click();
-		await accountUserSelectorPage.usersTable
-			.orderMenuItem('Email Address')
-			.click();
+		await expect(async () => {
+			await accountUserSelectorPage.usersTable.orderButton.click();
+			await accountUserSelectorPage.usersTable
+				.orderMenuItem('Email Address')
+				.click({timeout: 1000});
+		}).toPass();
 
 		await expect(
 			accountUserSelectorPage.usersTable.searchInput
@@ -706,19 +714,23 @@ test(
 			await accountUserSelectorPage.usersTable.lastRow()
 		).toContainText(user2.name);
 
-		await accountUserSelectorPage.usersTable.orderButton.click();
-		await accountUserSelectorPage.usersTable
-			.orderMenuItem('Last Name')
-			.click();
+		await expect(async () => {
+			await accountUserSelectorPage.usersTable.orderButton.click();
+			await accountUserSelectorPage.usersTable
+				.orderMenuItem('Last Name')
+				.click({timeout: 1000});
+		}).toPass();
 
 		await expect(
 			accountUserSelectorPage.usersTable.searchInput
 		).toBeEditable();
 
-		await accountUserSelectorPage.usersTable.filterButton.click();
-		await accountUserSelectorPage.usersTable
-			.filterMenuItem('Account Users')
-			.click();
+		await expect(async () => {
+			await accountUserSelectorPage.usersTable.filterButton.click();
+			await accountUserSelectorPage.usersTable
+				.filterMenuItem('Account Users')
+				.click({timeout: 1000});
+		}).toPass();
 
 		await expect(
 			accountUserSelectorPage.usersTable.searchInput
@@ -730,10 +742,12 @@ test(
 			accountUserSelectorPage.usersTable.cell(user2.name)
 		).toBeVisible();
 
-		await accountUserSelectorPage.usersTable.filterButton.click();
-		await accountUserSelectorPage.usersTable
-			.filterMenuItem('No Assigned Account')
-			.click();
+		await expect(async () => {
+			await accountUserSelectorPage.usersTable.filterButton.click();
+			await accountUserSelectorPage.usersTable
+				.filterMenuItem('No Assigned Account')
+				.click({timeout: 1000});
+		}).toPass();
 
 		await expect(
 			accountUserSelectorPage.usersTable.searchInput
@@ -939,13 +953,18 @@ test(
 			await editAccountPage.usersLink.click();
 			await accountUsersPage.usersTable.newButton.click();
 			await accountUsersPage.assignUserMenuItem.click();
-			await accountUserSelectorPage.usersTable.newButton.click();
 
 			const randomString = getRandomString();
 
-			await editUserPage.emailAddressInput.fill(
-				`${randomString}@liferay.com`
-			);
+			await expect(async () => {
+				await accountUserSelectorPage.usersTable.newButton.click();
+
+				await editUserPage.emailAddressInput.fill(
+					`${randomString}@liferay.com`,
+					{timeout: 500}
+				);
+			}).toPass();
+
 			await editUserPage.firstNameInput.fill(randomString);
 			await editUserPage.lastNameInput.fill(randomString);
 			await editUserPage.screenNameInput.fill(randomString);
@@ -2506,7 +2525,7 @@ test(
 
 test(
 	'Can add an account to an account user',
-	{tag: ['@LPD-48750']},
+	{tag: ['@LPD-48750', '@LPD-58550']},
 	async ({
 		accountUsersAccountSelectorPage,
 		accountUsersPage,
@@ -2548,6 +2567,10 @@ test(
 			accountUsersAccountSelectorPage.accountsTable.searchInput
 		).toBeEditable();
 
+		await expect(
+			accountUsersAccountSelectorPage.accountsTable.cell('Active')
+		).toBeVisible();
+
 		await accountUsersAccountSelectorPage
 			.chooseButton(account2.name)
 			.click();
@@ -2564,6 +2587,7 @@ test(
 		await expect(
 			(await accountUsersPage.usersTable.row(1, user.name)).row
 		).toContainText(account2.name);
+		await expect(accountUsersPage.usersTable.cell('Active')).toBeVisible();
 	}
 );
 

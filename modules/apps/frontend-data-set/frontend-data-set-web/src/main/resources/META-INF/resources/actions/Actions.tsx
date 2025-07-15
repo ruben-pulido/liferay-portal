@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {IItemsActions} from '..';
 import React, {useContext, useState} from 'react';
 
 import FrontendDataSetContext, {
@@ -11,6 +10,7 @@ import FrontendDataSetContext, {
 } from '../FrontendDataSetContext';
 import filterItemActions from '../utils/actionItems/filterItemActions';
 import handleActionClick from '../utils/actionItems/handleActionClick';
+import {IItemsActions} from '../utils/types';
 import ViewsContext from '../views/ViewsContext';
 import ActionsDropdown from './ActionsDropdown';
 import QuickActions from './QuickActions';
@@ -21,20 +21,25 @@ function Actions({
 	actions,
 	itemData,
 	itemId,
+	onItemSelectionChange,
 }: {
 	actions: Array<IItemsActions>;
 	itemData: any;
 	itemId: string | number;
+	onItemSelectionChange?: Function;
 }) {
 	const {
 		allItemsSelectedActive,
 		executeAsyncItemAction,
 		highlightItems,
+		infoPanelOpen,
 		inlineEditingSettings,
 		loadData,
 		onActionDropdownItemClick,
+		onInfoPanelToggleButtonClick,
 		openModal,
 		openSidePanel,
+		selectedItemsKey,
 		selectedItemsValue,
 		toggleItemInlineEdit,
 	}: IFrontendDataSetContext = useContext(FrontendDataSetContext);
@@ -60,10 +65,17 @@ function Actions({
 	const inlineEditingAlwaysOn =
 		inlineEditingAvailable && inlineEditingSettings.alwaysOn;
 
-	const formattedActions = filterItemActions(actions, itemData);
+	const formattedActions = filterItemActions({
+		actions,
+		infoPanelOpen,
+		itemData,
+		selectedItemsKey,
+		selectedItemsValue,
+	});
 
 	if (inlineEditingAvailable && !inlineEditingAlwaysOn) {
 		formattedActions.unshift({
+			disabled: false,
 			icon: 'fieldset',
 			label: Liferay.Language.get('inline-edit'),
 			target: 'inlineEdit',
@@ -85,10 +97,13 @@ function Actions({
 			event,
 			executeAsyncItemAction,
 			highlightItems,
+			infoPanelOpen,
 			itemData,
 			itemId,
 			loadData,
 			onActionDropdownItemClick,
+			onInfoPanelToggleButtonClick,
+			onItemSelectionChange,
 			openModal,
 			openSidePanel,
 			setLoading,

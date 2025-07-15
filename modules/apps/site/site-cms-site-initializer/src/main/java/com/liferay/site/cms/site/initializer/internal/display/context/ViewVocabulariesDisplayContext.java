@@ -94,11 +94,25 @@ public class ViewVocabulariesDisplayContext {
 					PortalUtil.getLayoutFullURL(
 						LayoutLocalServiceUtil.getLayoutByFriendlyURL(
 							_themeDisplay.getScopeGroupId(), false,
-							"/categorization/new_vocabulary"),
+							"/categorization/new-vocabulary"),
 						_themeDisplay));
 				dropdownItem.setLabel(
 					LanguageUtil.get(_httpServletRequest, "new-vocabulary"));
 			}
+		).build();
+	}
+
+	public Map<String, Object> getEmptyState() {
+		return HashMapBuilder.<String, Object>put(
+			"description",
+			LanguageUtil.get(
+				_httpServletRequest,
+				"vocabularies-are-needed-to-create-categories")
+		).put(
+			"image", "/states/cms_empty_state_categorization.svg"
+		).put(
+			"title",
+			LanguageUtil.get(_httpServletRequest, "no-vocabularies-yet")
 		).build();
 	}
 
@@ -108,7 +122,7 @@ public class ViewVocabulariesDisplayContext {
 		String fullLayoutURL = PortalUtil.getLayoutFullURL(
 			LayoutLocalServiceUtil.getLayoutByFriendlyURL(
 				_themeDisplay.getScopeGroupId(), false,
-				"/categorization/edit_vocabulary"),
+				"/categorization/edit-vocabulary"),
 			_themeDisplay);
 
 		return ListUtil.fromArray(
@@ -125,14 +139,14 @@ public class ViewVocabulariesDisplayContext {
 					PortalUtil.getLayoutFullURL(
 						LayoutLocalServiceUtil.getLayoutByFriendlyURL(
 							_themeDisplay.getScopeGroupId(), false,
-							"/categorization/view_categories"),
+							"/categorization/view-categories"),
 						_themeDisplay),
 					"vocabularyId", "{id}"),
 				null, "view-categories",
 				LanguageUtil.get(_httpServletRequest, "view-categories"), "get",
 				null, null),
 			new FDSActionDropdownItem(
-				null, "times-circle", "delete",
+				null, "trash", "delete",
 				LanguageUtil.get(_httpServletRequest, "delete"), null, "delete",
 				null));
 	}
@@ -151,14 +165,14 @@ public class ViewVocabulariesDisplayContext {
 			PortalUtil.getLayoutFullURL(
 				LayoutLocalServiceUtil.getLayoutByFriendlyURL(
 					_themeDisplay.getScopeGroupId(), false,
-					"/categorization/view_tags"),
+					"/categorization/view-tags"),
 				_themeDisplay)
 		).put(
 			"vocabulariesURL",
 			PortalUtil.getLayoutFullURL(
 				LayoutLocalServiceUtil.getLayoutByFriendlyURL(
 					_themeDisplay.getScopeGroupId(), false,
-					"/categorization/view_vocabularies"),
+					"/categorization/view-vocabularies"),
 				_themeDisplay)
 		).build();
 	}

@@ -27,8 +27,7 @@ public class ExceptionPrintStackTraceCheck extends BaseCheck {
 		if (absolutePath.contains("/modules/sdk/") ||
 			absolutePath.contains("/modules/util/") ||
 			absolutePath.contains("/test/") ||
-			absolutePath.contains("/testIntegration/") ||
-			absolutePath.endsWith("Jdk14LogFactoryImpl.java")) {
+			absolutePath.contains("/testIntegration/")) {
 
 			return;
 		}

@@ -49,7 +49,6 @@ public class ObjectDefinitionWrapper
 		attributes.put(
 			"descriptionObjectFieldId", getDescriptionObjectFieldId());
 		attributes.put("objectFolderId", getObjectFolderId());
-		attributes.put("rootObjectDefinitionId", getRootObjectDefinitionId());
 		attributes.put("titleObjectFieldId", getTitleObjectFieldId());
 		attributes.put("accountEntryRestricted", isAccountEntryRestricted());
 		attributes.put("active", isActive());
@@ -66,7 +65,10 @@ public class ObjectDefinitionWrapper
 		attributes.put(
 			"enableObjectEntryHistory", isEnableObjectEntryHistory());
 		attributes.put(
+			"enableObjectEntrySchedule", isEnableObjectEntrySchedule());
+		attributes.put(
 			"enableObjectEntryVersioning", isEnableObjectEntryVersioning());
+		attributes.put("friendlyURLSeparator", getFriendlyURLSeparator());
 		attributes.put("label", getLabel());
 		attributes.put("modifiable", isModifiable());
 		attributes.put("name", getName());
@@ -164,13 +166,6 @@ public class ObjectDefinitionWrapper
 			setObjectFolderId(objectFolderId);
 		}
 
-		Long rootObjectDefinitionId = (Long)attributes.get(
-			"rootObjectDefinitionId");
-
-		if (rootObjectDefinitionId != null) {
-			setRootObjectDefinitionId(rootObjectDefinitionId);
-		}
-
 		Long titleObjectFieldId = (Long)attributes.get("titleObjectFieldId");
 
 		if (titleObjectFieldId != null) {
@@ -250,11 +245,25 @@ public class ObjectDefinitionWrapper
 			setEnableObjectEntryHistory(enableObjectEntryHistory);
 		}
 
+		Boolean enableObjectEntrySchedule = (Boolean)attributes.get(
+			"enableObjectEntrySchedule");
+
+		if (enableObjectEntrySchedule != null) {
+			setEnableObjectEntrySchedule(enableObjectEntrySchedule);
+		}
+
 		Boolean enableObjectEntryVersioning = (Boolean)attributes.get(
 			"enableObjectEntryVersioning");
 
 		if (enableObjectEntryVersioning != null) {
 			setEnableObjectEntryVersioning(enableObjectEntryVersioning);
+		}
+
+		String friendlyURLSeparator = (String)attributes.get(
+			"friendlyURLSeparator");
+
+		if (friendlyURLSeparator != null) {
+			setFriendlyURLSeparator(friendlyURLSeparator);
 		}
 
 		String label = (String)attributes.get("label");
@@ -519,6 +528,16 @@ public class ObjectDefinitionWrapper
 	}
 
 	/**
+	 * Returns the enable object entry schedule of this object definition.
+	 *
+	 * @return the enable object entry schedule of this object definition
+	 */
+	@Override
+	public boolean getEnableObjectEntrySchedule() {
+		return model.getEnableObjectEntrySchedule();
+	}
+
+	/**
 	 * Returns the enable object entry versioning of this object definition.
 	 *
 	 * @return the enable object entry versioning of this object definition
@@ -541,6 +560,16 @@ public class ObjectDefinitionWrapper
 	@Override
 	public String getExternalReferenceCode() {
 		return model.getExternalReferenceCode();
+	}
+
+	/**
+	 * Returns the friendly url separator of this object definition.
+	 *
+	 * @return the friendly url separator of this object definition
+	 */
+	@Override
+	public String getFriendlyURLSeparator() {
+		return model.getFriendlyURLSeparator();
 	}
 
 	/**
@@ -867,11 +896,6 @@ public class ObjectDefinitionWrapper
 		return model.getRootObjectDefinitionExternalReferenceCode();
 	}
 
-	/**
-	 * Returns the root object definition ID of this object definition.
-	 *
-	 * @return the root object definition ID of this object definition
-	 */
 	@Override
 	public long getRootObjectDefinitionId() {
 		return model.getRootObjectDefinitionId();
@@ -1083,6 +1107,16 @@ public class ObjectDefinitionWrapper
 	}
 
 	/**
+	 * Returns <code>true</code> if this object definition is enable object entry schedule.
+	 *
+	 * @return <code>true</code> if this object definition is enable object entry schedule; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isEnableObjectEntrySchedule() {
+		return model.isEnableObjectEntrySchedule();
+	}
+
+	/**
 	 * Returns <code>true</code> if this object definition is enable object entry versioning.
 	 *
 	 * @return <code>true</code> if this object definition is enable object entry versioning; <code>false</code> otherwise
@@ -1110,11 +1144,6 @@ public class ObjectDefinitionWrapper
 	@Override
 	public boolean isModifiableAndSystem() {
 		return model.isModifiableAndSystem();
-	}
-
-	@Override
-	public boolean isNodeCandidate() {
-		return model.isNodeCandidate();
 	}
 
 	/**
@@ -1328,6 +1357,18 @@ public class ObjectDefinitionWrapper
 	}
 
 	/**
+	 * Sets whether this object definition is enable object entry schedule.
+	 *
+	 * @param enableObjectEntrySchedule the enable object entry schedule of this object definition
+	 */
+	@Override
+	public void setEnableObjectEntrySchedule(
+		boolean enableObjectEntrySchedule) {
+
+		model.setEnableObjectEntrySchedule(enableObjectEntrySchedule);
+	}
+
+	/**
 	 * Sets whether this object definition is enable object entry versioning.
 	 *
 	 * @param enableObjectEntryVersioning the enable object entry versioning of this object definition
@@ -1347,6 +1388,16 @@ public class ObjectDefinitionWrapper
 	@Override
 	public void setExternalReferenceCode(String externalReferenceCode) {
 		model.setExternalReferenceCode(externalReferenceCode);
+	}
+
+	/**
+	 * Sets the friendly url separator of this object definition.
+	 *
+	 * @param friendlyURLSeparator the friendly url separator of this object definition
+	 */
+	@Override
+	public void setFriendlyURLSeparator(String friendlyURLSeparator) {
+		model.setFriendlyURLSeparator(friendlyURLSeparator);
 	}
 
 	/**
@@ -1612,11 +1663,6 @@ public class ObjectDefinitionWrapper
 		model.setPrimaryKey(primaryKey);
 	}
 
-	/**
-	 * Sets the root object definition ID of this object definition.
-	 *
-	 * @param rootObjectDefinitionId the root object definition ID of this object definition
-	 */
 	@Override
 	public void setRootObjectDefinitionId(long rootObjectDefinitionId) {
 		model.setRootObjectDefinitionId(rootObjectDefinitionId);

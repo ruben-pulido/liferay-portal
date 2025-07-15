@@ -986,9 +986,14 @@ public abstract class BaseAttachmentResourceImpl
 				"updateStrategy", "UPDATE");
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				attachmentUnsafeFunction =
-					attachment -> putAttachmentByExternalReferenceCode(
+				attachmentUnsafeFunction = attachment -> {
+					Attachment persistedAttachment = null;
+
+					persistedAttachment = putAttachmentByExternalReferenceCode(
 						attachment.getExternalReferenceCode(), attachment);
+
+					return persistedAttachment;
+				};
 			}
 		}
 

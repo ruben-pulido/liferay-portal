@@ -291,7 +291,7 @@ public abstract class BaseSXPBlueprintResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PATCH' 'http://localhost:8080/o/search-experiences-rest/v1.0/sxp-blueprints/{sxpBlueprintId}' -d $'{"configuration": ___, "createDate": ___, "description": ___, "description_i18n": ___, "elementInstances": ___, "externalReferenceCode": ___, "id": ___, "modifiedDate": ___, "schemaVersion": ___, "title": ___, "title_i18n": ___, "userName": ___, "version": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PATCH' 'http://localhost:8080/o/search-experiences-rest/v1.0/sxp-blueprints/{sxpBlueprintId}' -d $'{"collectionProviderSubtypeName": ___, "collectionProviderTypeName": ___, "configuration": ___, "createDate": ___, "description": ___, "description_i18n": ___, "elementInstances": ___, "externalReferenceCode": ___, "id": ___, "modifiedDate": ___, "schemaVersion": ___, "title": ___, "title_i18n": ___, "userName": ___, "version": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -318,6 +318,16 @@ public abstract class BaseSXPBlueprintResourceImpl
 		throws Exception {
 
 		SXPBlueprint existingSXPBlueprint = getSXPBlueprint(sxpBlueprintId);
+
+		if (sxpBlueprint.getCollectionProviderSubtypeName() != null) {
+			existingSXPBlueprint.setCollectionProviderSubtypeName(
+				sxpBlueprint.getCollectionProviderSubtypeName());
+		}
+
+		if (sxpBlueprint.getCollectionProviderTypeName() != null) {
+			existingSXPBlueprint.setCollectionProviderTypeName(
+				sxpBlueprint.getCollectionProviderTypeName());
+		}
 
 		if (sxpBlueprint.getCreateDate() != null) {
 			existingSXPBlueprint.setCreateDate(sxpBlueprint.getCreateDate());
@@ -371,7 +381,7 @@ public abstract class BaseSXPBlueprintResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/search-experiences-rest/v1.0/sxp-blueprints' -d $'{"configuration": ___, "createDate": ___, "description": ___, "description_i18n": ___, "elementInstances": ___, "externalReferenceCode": ___, "id": ___, "modifiedDate": ___, "schemaVersion": ___, "title": ___, "title_i18n": ___, "userName": ___, "version": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/search-experiences-rest/v1.0/sxp-blueprints' -d $'{"collectionProviderSubtypeName": ___, "collectionProviderTypeName": ___, "configuration": ___, "createDate": ___, "description": ___, "description_i18n": ___, "elementInstances": ___, "externalReferenceCode": ___, "id": ___, "modifiedDate": ___, "schemaVersion": ___, "title": ___, "title_i18n": ___, "userName": ___, "version": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.tags.Tags(
 		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "SXPBlueprint")}
@@ -563,7 +573,7 @@ public abstract class BaseSXPBlueprintResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/search-experiences-rest/v1.0/sxp-blueprints/{sxpBlueprintId}' -d $'{"configuration": ___, "createDate": ___, "description": ___, "description_i18n": ___, "elementInstances": ___, "externalReferenceCode": ___, "id": ___, "modifiedDate": ___, "schemaVersion": ___, "title": ___, "title_i18n": ___, "userName": ___, "version": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/search-experiences-rest/v1.0/sxp-blueprints/{sxpBlueprintId}' -d $'{"collectionProviderSubtypeName": ___, "collectionProviderTypeName": ___, "configuration": ___, "createDate": ___, "description": ___, "description_i18n": ___, "elementInstances": ___, "externalReferenceCode": ___, "id": ___, "modifiedDate": ___, "schemaVersion": ___, "title": ___, "title_i18n": ___, "userName": ___, "version": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -639,7 +649,7 @@ public abstract class BaseSXPBlueprintResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/search-experiences-rest/v1.0/sxp-blueprints/by-external-reference-code/{externalReferenceCode}' -d $'{"configuration": ___, "createDate": ___, "description": ___, "description_i18n": ___, "elementInstances": ___, "externalReferenceCode": ___, "id": ___, "modifiedDate": ___, "schemaVersion": ___, "title": ___, "title_i18n": ___, "userName": ___, "version": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/search-experiences-rest/v1.0/sxp-blueprints/by-external-reference-code/{externalReferenceCode}' -d $'{"collectionProviderSubtypeName": ___, "collectionProviderTypeName": ___, "configuration": ___, "createDate": ___, "description": ___, "description_i18n": ___, "elementInstances": ___, "externalReferenceCode": ___, "id": ___, "modifiedDate": ___, "schemaVersion": ___, "title": ___, "title_i18n": ___, "userName": ___, "version": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -694,20 +704,16 @@ public abstract class BaseSXPBlueprintResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				sxpBlueprintUnsafeFunction = sxpBlueprint -> {
+					SXPBlueprint getSXPBlueprint = null;
 					SXPBlueprint persistedSXPBlueprint = null;
 
 					try {
-						SXPBlueprint getSXPBlueprint =
+						getSXPBlueprint =
 							getSXPBlueprintByExternalReferenceCode(
 								sxpBlueprint.getExternalReferenceCode());
 
 						persistedSXPBlueprint = patchSXPBlueprint(
-							getSXPBlueprint.getId() != null ?
-								getSXPBlueprint.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"sxpBlueprintId")),
-							sxpBlueprint);
+							getSXPBlueprint.getId(), sxpBlueprint);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedSXPBlueprint = postSXPBlueprint(sxpBlueprint);
@@ -718,9 +724,16 @@ public abstract class BaseSXPBlueprintResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				sxpBlueprintUnsafeFunction =
-					sxpBlueprint -> putSXPBlueprintByExternalReferenceCode(
-						sxpBlueprint.getExternalReferenceCode(), sxpBlueprint);
+				sxpBlueprintUnsafeFunction = sxpBlueprint -> {
+					SXPBlueprint persistedSXPBlueprint = null;
+
+					persistedSXPBlueprint =
+						putSXPBlueprintByExternalReferenceCode(
+							sxpBlueprint.getExternalReferenceCode(),
+							sxpBlueprint);
+
+					return persistedSXPBlueprint;
+				};
 			}
 		}
 
@@ -851,16 +864,12 @@ public abstract class BaseSXPBlueprintResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			sxpBlueprintUnsafeFunction = sxpBlueprint -> patchSXPBlueprint(
-				sxpBlueprint.getId() != null ? sxpBlueprint.getId() :
-					_parseLong((String)parameters.get("sxpBlueprintId")),
-				sxpBlueprint);
+				sxpBlueprint.getId(), sxpBlueprint);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			sxpBlueprintUnsafeFunction = sxpBlueprint -> putSXPBlueprint(
-				sxpBlueprint.getId() != null ? sxpBlueprint.getId() :
-					_parseLong((String)parameters.get("sxpBlueprintId")),
-				sxpBlueprint);
+				sxpBlueprint.getId(), sxpBlueprint);
 		}
 
 		if (sxpBlueprintUnsafeFunction == null) {
@@ -882,14 +891,6 @@ public abstract class BaseSXPBlueprintResourceImpl
 				sxpBlueprintUnsafeFunction.apply(sxpBlueprint);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

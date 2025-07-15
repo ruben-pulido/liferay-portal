@@ -201,6 +201,10 @@ public class AxisTestClassGroup extends BaseTestClassGroup {
 		return null;
 	}
 
+	public boolean isResultsCached() {
+		return false;
+	}
+
 	protected AxisTestClassGroup(BatchTestClassGroup batchTestClassGroup) {
 		setBatchTestClassGroup(batchTestClassGroup);
 	}
@@ -230,10 +234,17 @@ public class AxisTestClassGroup extends BaseTestClassGroup {
 				continue;
 			}
 
-			testClasses.add(
+			addTestClass(
 				TestClassFactory.newTestClass(
 					batchTestClassGroup, testClassJSONObject));
 		}
+	}
+
+	@Override
+	protected void addTestClass(TestClass testClass) {
+		super.addTestClass(testClass);
+
+		testClass.setAxisTestClassGroup(this);
 	}
 
 	protected void setBatchTestClassGroup(

@@ -1940,24 +1940,25 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				knowledgeBaseArticleUnsafeFunction = knowledgeBaseArticle -> {
+					KnowledgeBaseArticle getKnowledgeBaseArticle = null;
 					KnowledgeBaseArticle persistedKnowledgeBaseArticle = null;
 
 					try {
-						KnowledgeBaseArticle getKnowledgeBaseArticle =
-							getSiteKnowledgeBaseArticleByExternalReferenceCode(
-								knowledgeBaseArticle.getSiteId() != null ?
-									knowledgeBaseArticle.getSiteId() :
-										(Long)parameters.get("siteId"),
-								knowledgeBaseArticle.
-									getExternalReferenceCode());
+						if (parameters.containsKey("siteId")) {
+							getKnowledgeBaseArticle =
+								getSiteKnowledgeBaseArticleByExternalReferenceCode(
+									(Long)parameters.get("siteId"),
+									knowledgeBaseArticle.
+										getExternalReferenceCode());
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [siteId]");
+						}
 
 						persistedKnowledgeBaseArticle =
 							patchKnowledgeBaseArticle(
-								getKnowledgeBaseArticle.getId() != null ?
-									getKnowledgeBaseArticle.getId() :
-										_parseLong(
-											(String)parameters.get(
-												"knowledgeBaseArticleId")),
+								getKnowledgeBaseArticle.getId(),
 								knowledgeBaseArticle);
 					}
 					catch (NoSuchModelException noSuchModelException) {
@@ -1977,7 +1978,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 						}
 						else {
 							throw new NotSupportedException(
-								"One of the following parameters must be specified: [knowledgeBaseFolderId]");
+								"One of the following parameters must be specified: [knowledgeBaseFolderId, siteId]");
 						}
 					}
 
@@ -1986,13 +1987,23 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				knowledgeBaseArticleUnsafeFunction = knowledgeBaseArticle ->
-					putSiteKnowledgeBaseArticleByExternalReferenceCode(
-						knowledgeBaseArticle.getSiteId() != null ?
-							knowledgeBaseArticle.getSiteId() :
+				knowledgeBaseArticleUnsafeFunction = knowledgeBaseArticle -> {
+					KnowledgeBaseArticle persistedKnowledgeBaseArticle = null;
+
+					if (parameters.containsKey("siteId")) {
+						persistedKnowledgeBaseArticle =
+							putSiteKnowledgeBaseArticleByExternalReferenceCode(
 								(Long)parameters.get("siteId"),
-						knowledgeBaseArticle.getExternalReferenceCode(),
-						knowledgeBaseArticle);
+								knowledgeBaseArticle.getExternalReferenceCode(),
+								knowledgeBaseArticle);
+					}
+					else {
+						throw new NotSupportedException(
+							"One of the following parameters must be specified: [siteId]");
+					}
+
+					return persistedKnowledgeBaseArticle;
+				};
 			}
 		}
 
@@ -2145,23 +2156,13 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			knowledgeBaseArticleUnsafeFunction =
 				knowledgeBaseArticle -> patchKnowledgeBaseArticle(
-					knowledgeBaseArticle.getId() != null ?
-						knowledgeBaseArticle.getId() :
-							_parseLong(
-								(String)parameters.get(
-									"knowledgeBaseArticleId")),
-					knowledgeBaseArticle);
+					knowledgeBaseArticle.getId(), knowledgeBaseArticle);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			knowledgeBaseArticleUnsafeFunction =
 				knowledgeBaseArticle -> putKnowledgeBaseArticle(
-					knowledgeBaseArticle.getId() != null ?
-						knowledgeBaseArticle.getId() :
-							_parseLong(
-								(String)parameters.get(
-									"knowledgeBaseArticleId")),
-					knowledgeBaseArticle);
+					knowledgeBaseArticle.getId(), knowledgeBaseArticle);
 		}
 
 		if (knowledgeBaseArticleUnsafeFunction == null) {

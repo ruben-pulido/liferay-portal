@@ -153,9 +153,7 @@ export function ConfigurationContainer({
 
 			<ClayForm.Group>
 				<Toggle
-					disabled={
-						isReadOnly || !hasUpdateObjectDefinitionPermission
-					}
+					disabled={disabled}
 					label={Liferay.Language.get(
 						'allow-users-to-save-entries-as-draft'
 					)}
@@ -176,6 +174,32 @@ export function ConfigurationContainer({
 					toggled={values.enableObjectEntryDraft}
 				/>
 			</ClayForm.Group>
+
+			{Liferay.FeatureFlags['LPD-17564'] && (
+				<ClayForm.Group>
+					<Toggle
+						disabled={disabled || values.active}
+						label={Liferay.Language.get(
+							'allow-users-to-schedule-a-display-expiration-and-review-date-for-entries'
+						)}
+						name="enableObjectEntrySchedule"
+						onBlur={(event) => {
+							event.stopPropagation();
+
+							if (onSubmit) {
+								onSubmit();
+							}
+						}}
+						onToggle={() => {
+							setValues({
+								enableObjectEntrySchedule:
+									!values.enableObjectEntrySchedule,
+							});
+						}}
+						toggled={values.enableObjectEntrySchedule}
+					/>
+				</ClayForm.Group>
+			)}
 		</div>
 	);
 }

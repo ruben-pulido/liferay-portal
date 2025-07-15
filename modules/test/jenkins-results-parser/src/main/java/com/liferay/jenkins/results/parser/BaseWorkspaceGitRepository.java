@@ -94,6 +94,22 @@ public abstract class BaseWorkspaceGitRepository
 	}
 
 	@Override
+	public String getBaseBranchSHAShort() {
+		String baseBranchSHA = getBaseBranchSHA();
+
+		if (baseBranchSHA == null) {
+			return null;
+		}
+
+		if (baseBranchSHA.length() > _MAX_BASE_BRANCH_SHA_LENGTH) {
+			baseBranchSHA = baseBranchSHA.substring(
+				0, _MAX_BASE_BRANCH_SHA_LENGTH);
+		}
+
+		return baseBranchSHA;
+	}
+
+	@Override
 	public String getBranchName() {
 		if (_branchName != null) {
 			return _branchName;
@@ -195,11 +211,26 @@ public abstract class BaseWorkspaceGitRepository
 	}
 
 	@Override
+	public String getSenderBranchSHAShort() {
+		String senderBranchSHA = getSenderBranchSHA();
+
+		if (senderBranchSHA == null) {
+			return null;
+		}
+
+		if (senderBranchSHA.length() >= 7) {
+			senderBranchSHA = senderBranchSHA.substring(0, 7);
+		}
+
+		return senderBranchSHA;
+	}
+
+	@Override
 	public String getSenderBranchUsername() {
 		return getString("sender_branch_username");
 	}
 
-	public boolean getSnapshot() {
+	public boolean isSnapshot() {
 		return getBoolean("snapshot");
 	}
 
@@ -492,7 +523,7 @@ public abstract class BaseWorkspaceGitRepository
 		validateKeys(_REQUIRED_KEYS);
 
 		if (JenkinsResultsParserUtil.isCloudCINode()) {
-			_snapshot = getSnapshot();
+			_snapshot = isSnapshot();
 		}
 	}
 
@@ -742,8 +773,8 @@ public abstract class BaseWorkspaceGitRepository
 
 			File archiveFile = new File(baseGitRepositoryDir, fileName);
 
-			CloudBucketUtil.copyS3File(
-				archiveFile.getCanonicalPath(),
+			CloudBucketUtil.downloadS3File(
+				archiveFile,
 				JenkinsResultsParserUtil.combine(
 					CloudBucketUtil.S3_BUCKET_PATH_FILE_PROPAGATOR,
 					"/git-shallow-clone-archives/", fileName));
@@ -847,9 +878,8 @@ public abstract class BaseWorkspaceGitRepository
 			File gitArchiveFile = new File(
 				baseRepositoryDir, _getGitArchiveName());
 
-			CloudBucketUtil.copyS3File(
-				gitArchiveFile.getCanonicalPath(),
-				_getGitArchiveS3BucketPath());
+			CloudBucketUtil.downloadS3File(
+				gitArchiveFile, _getGitArchiveS3BucketPath());
 
 			File directory = getDirectory();
 
@@ -859,6 +889,30 @@ public abstract class BaseWorkspaceGitRepository
 
 			JenkinsResultsParserUtil.unzip(gitArchiveFile, directory);
 
+			String jobVariant = System.getenv("JOB_VARIANT");
+
+			String directoryPath = directory.getPath();
+
+			if ((jobVariant.contains("rest-builder") ||
+				 jobVariant.contains("service-builder")) &&
+				directoryPath.contains("liferay-portal")) {
+
+				String commitCommand =
+					"git init; git add .; git commit -m \"LRCI-XXXX Temp\"";
+
+				GitUtil.ExecutionResult executionResult =
+					GitUtil.executeBashCommands(
+						GitUtil.RETRIES_SIZE_MAX, GitUtil.MILLIS_RETRY_DELAY,
+						GitUtil.MILLIS_TIMEOUT, directory, commitCommand);
+
+				if (executionResult.getExitValue() != 0) {
+					throw new RuntimeException(
+						JenkinsResultsParserUtil.combine(
+							"Unable to commit temp file",
+							executionResult.getStandardError()));
+				}
+			}
+
 			return;
 		}
 
@@ -866,8 +920,7 @@ public abstract class BaseWorkspaceGitRepository
 
 		File archiveFile = gitWorkingDirectory.archive(_getGitArchiveName());
 
-		CloudBucketUtil.copyS3File(
-			_getGitArchiveS3BucketPath(), archiveFile.getCanonicalPath());
+		CloudBucketUtil.uploadS3File(_getGitArchiveS3BucketPath(), archiveFile);
 
 		_setSnapshot(true);
 
@@ -966,6 +1019,8 @@ public abstract class BaseWorkspaceGitRepository
 	private void _setSnapshot(boolean snapshot) {
 		put("snapshot", snapshot);
 	}
+
+	private static final int _MAX_BASE_BRANCH_SHA_LENGTH = 7;
 
 	private static final String[] _REQUIRED_KEYS = {
 		"base_branch_head_sha", "base_branch_sha", "base_branch_username",

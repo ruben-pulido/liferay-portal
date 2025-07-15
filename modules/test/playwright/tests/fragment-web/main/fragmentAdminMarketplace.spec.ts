@@ -6,7 +6,6 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {fragmentsPagesTest} from '../../../fixtures/fragmentPagesTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
@@ -21,10 +20,6 @@ import performLogin, {
 const test = mergeTests(
 	apiHelpersTest,
 	isolatedSiteTest,
-	featureFlagsTest({
-		'LPD-34938': {enabled: true},
-		'LPD-35941': {enabled: true},
-	}),
 	loginTest(),
 	fragmentsPagesTest,
 	pageEditorPagesTest,
@@ -66,7 +61,9 @@ test(
 
 		await fragmentsPage.goto(site.friendlyUrlPath);
 
-		await expect(page.locator('.notification')).toBeVisible();
+		await expect(
+			page.locator('.marketplace-button--notification')
+		).toBeVisible();
 
 		// Click the marketplace button and wait for the modal
 
@@ -82,7 +79,9 @@ test(
 
 		await page.getByRole('button', {name: 'Cancel'}).click();
 
-		await expect(page.locator('.notification')).not.toBeVisible();
+		await expect(
+			page.locator('.marketplace-button--notification')
+		).not.toBeVisible();
 	}
 );
 
@@ -136,7 +135,7 @@ test(
 test(
 	'Check available actions of marketplace fragment',
 	{
-		tag: '@LPD-34938',
+		tag: '@LPD-43455',
 	},
 	async ({apiHelpers, fragmentsPage, page, site}) => {
 

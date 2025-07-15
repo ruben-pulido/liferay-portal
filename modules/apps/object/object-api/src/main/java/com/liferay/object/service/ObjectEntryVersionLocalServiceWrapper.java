@@ -56,6 +56,13 @@ public class ObjectEntryVersionLocalServiceWrapper
 			objectEntryVersion);
 	}
 
+	@Override
+	public void checkObjectEntryVersions(long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_objectEntryVersionLocalService.checkObjectEntryVersions(companyId);
+	}
+
 	/**
 	 * Creates a new object entry version with the primary key. Does not add the object entry version to the database.
 	 *
@@ -260,11 +267,23 @@ public class ObjectEntryVersionLocalServiceWrapper
 
 	@Override
 	public com.liferay.object.model.ObjectEntryVersion expireObjectEntryVersion(
-			long userId, long objectEntryId, int version)
+			long userId, com.liferay.object.model.ObjectEntry objectEntry,
+			int version,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _objectEntryVersionLocalService.expireObjectEntryVersion(
-			userId, objectEntryId, version);
+			userId, objectEntry, version, serviceContext);
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectEntryVersion expireObjectEntryVersion(
+			long userId,
+			com.liferay.object.model.ObjectEntryVersion objectEntryVersion)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectEntryVersionLocalService.expireObjectEntryVersion(
+			userId, objectEntryVersion);
 	}
 
 	@Override

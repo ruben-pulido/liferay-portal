@@ -445,10 +445,19 @@ public abstract class BaseWorkflowDefinitionLinkResourceImpl
 				"updateStrategy", "UPDATE");
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				workflowDefinitionLinkUnsafeFunction = workflowDefinitionLink ->
-					putWorkflowDefinitionLinkByExternalReferenceCode(
-						workflowDefinitionLink.getExternalReferenceCode(),
-						workflowDefinitionLink);
+				workflowDefinitionLinkUnsafeFunction =
+					workflowDefinitionLink -> {
+						WorkflowDefinitionLink persistedWorkflowDefinitionLink =
+							null;
+
+						persistedWorkflowDefinitionLink =
+							putWorkflowDefinitionLinkByExternalReferenceCode(
+								workflowDefinitionLink.
+									getExternalReferenceCode(),
+								workflowDefinitionLink);
+
+						return persistedWorkflowDefinitionLink;
+					};
 			}
 		}
 

@@ -35,6 +35,7 @@ import com.liferay.asset.publisher.web.internal.constants.AssetPublisherSelectio
 import com.liferay.asset.publisher.web.internal.helper.AssetPublisherWebHelper;
 import com.liferay.asset.publisher.web.internal.util.AssetPublisherCustomizer;
 import com.liferay.asset.publisher.web.internal.util.AssetPublisherUtil;
+import com.liferay.asset.publisher.web.internal.util.FF_LPD_39304_CompanyTemporarySwapper;
 import com.liferay.asset.tags.item.selector.AssetTagsItemSelectorCriterion;
 import com.liferay.asset.tags.item.selector.AssetTagsItemSelectorReturnType;
 import com.liferay.asset.util.AssetHelper;
@@ -42,6 +43,7 @@ import com.liferay.asset.util.AssetPublisherAddItemHolder;
 import com.liferay.asset.util.LinkedAssetEntryIdsUtil;
 import com.liferay.asset.util.comparator.AssetRendererFactoryTypeNameComparator;
 import com.liferay.asset.util.comparator.ClassTypeNameComparator;
+import com.liferay.data.engine.field.type.util.LocalizedValueUtil;
 import com.liferay.document.library.kernel.document.conversion.DocumentConversionUtil;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
@@ -68,6 +70,7 @@ import com.liferay.osgi.service.tracker.collections.map.PropertyServiceReference
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProviderUtil;
@@ -106,6 +109,8 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
@@ -694,8 +699,14 @@ public class AssetPublisherDisplayContext {
 			_classNameIds = assetEntryQuery.getClassNameIds();
 		}
 		else {
-			_classNameIds = _assetPublisherHelper.getClassNameIds(
-				_portletPreferences, getAvailableClassNameIds());
+			try (SafeCloseable safeCloseable =
+					FF_LPD_39304_CompanyTemporarySwapper.
+						setCompanyIdWithSafeCloseable(
+							_themeDisplay.getCompanyId())) {
+
+				_classNameIds = _assetPublisherHelper.getClassNameIds(
+					_portletPreferences, getAvailableClassNameIds());
+			}
 		}
 
 		return _classNameIds;
@@ -900,11 +911,37 @@ public class AssetPublisherDisplayContext {
 	}
 
 	public LocalizedValuesMap getEmailAssetEntryAddedBody() {
+		Map<Locale, String> emailAssetEntryAddedBodyMap =
+			LocalizationUtil.getLocalizationMap(
+				_portletPreferences, "emailAssetEntryAddedBody",
+				StringPool.BLANK, StringPool.BLANK,
+				AssetPublisherWebHelper.class.getClassLoader());
+
+		Locale locale = LocaleUtil.getSiteDefault();
+
+		if (Validator.isNotNull(emailAssetEntryAddedBodyMap.get(locale))) {
+			return LocalizedValueUtil.toLocalizedValuesMap(
+				emailAssetEntryAddedBodyMap);
+		}
+
 		return _assetPublisherPortletInstanceConfiguration.
 			emailAssetEntryAddedBody();
 	}
 
 	public LocalizedValuesMap getEmailAssetEntryAddedSubject() {
+		Map<Locale, String> emailAssetEntryAddedSubjectMap =
+			LocalizationUtil.getLocalizationMap(
+				_portletPreferences, "emailAssetEntryAddedSubject",
+				StringPool.BLANK, StringPool.BLANK,
+				AssetPublisherWebHelper.class.getClassLoader());
+
+		Locale locale = LocaleUtil.getSiteDefault();
+
+		if (Validator.isNotNull(emailAssetEntryAddedSubjectMap.get(locale))) {
+			return LocalizedValueUtil.toLocalizedValuesMap(
+				emailAssetEntryAddedSubjectMap);
+		}
+
 		return _assetPublisherPortletInstanceConfiguration.
 			emailAssetEntryAddedSubject();
 	}
@@ -1052,7 +1089,7 @@ public class AssetPublisherDisplayContext {
 	public String getPortletName() {
 		PortletConfig portletConfig =
 			(PortletConfig)_httpServletRequest.getAttribute(
-				JavaConstants.JAVAX_PORTLET_CONFIG);
+				JavaConstants.JAKARTA_PORTLET_CONFIG);
 
 		if (portletConfig == null) {
 			return StringPool.BLANK;
@@ -1382,10 +1419,16 @@ public class AssetPublisherDisplayContext {
 			return _selectionStyle;
 		}
 
-		_selectionStyle = GetterUtil.getString(
-			_portletPreferences.getValue("selectionStyle", null),
-			AssetPublisherSelectionStyleConfigurationUtil.
-				defaultSelectionStyle());
+		try (SafeCloseable safeCloseable =
+				FF_LPD_39304_CompanyTemporarySwapper.
+					setCompanyIdWithSafeCloseable(
+						_themeDisplay.getCompanyId())) {
+
+			_selectionStyle = GetterUtil.getString(
+				_portletPreferences.getValue("selectionStyle", null),
+				AssetPublisherSelectionStyleConfigurationUtil.
+					defaultSelectionStyle());
+		}
 
 		return _selectionStyle;
 	}

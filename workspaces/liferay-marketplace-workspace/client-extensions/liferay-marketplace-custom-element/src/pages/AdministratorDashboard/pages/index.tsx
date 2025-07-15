@@ -9,58 +9,26 @@ import {Link} from 'react-router-dom';
 
 import ErrorBoundary from '../../../components/ErrorBoundary';
 import Page from '../../../components/Page';
+import {useMarketplaceContext} from '../../../context/MarketplaceContext';
 import i18n from '../../../i18n';
+import {formatCurrency} from '../../../utils/currencies';
 import InfoCard from '../components/InfoCard';
 import DonutKPIChart from '../components/charts/DonutKPIChart';
 import useAccountsMetrics from '../hooks/useAccountsMetrics';
 import useAnalyticsViewsMetrics from '../hooks/useAnalyticsViewsMetrics';
 import useKPI from '../hooks/useKPI';
 import useOrderMetrics from '../hooks/useOrderMetrics';
-import {AdministratorAppsListView} from './Apps';
+import AdministratorAppsListView from './Apps/AdministratorAppsListView';
 import {AdministratorOrdersListView} from './Orders';
 
-const getTotalAmountCurrency = (amount = 0) =>
-	new Intl.NumberFormat('en-US', {
-		currency: 'USD',
-		style: 'currency',
-	}).format(amount);
-
-const Container = ({
-	children,
-	path,
-	title,
-}: {
-	children: React.ReactNode;
-	path: string;
-	title: string;
-}) => (
-	<>
-		<div className="d-flex justify-content-between">
-			<h3>{title}</h3>
-
-			<Link to={path}>
-				<span className="font-weight-bold">
-					{i18n.translate('view-all')}
-				</span>
-
-				<ClayIcon
-					className="ml-2"
-					symbol="order-arrow-right
-"
-				/>
-			</Link>
-		</div>
-
-		{children}
-	</>
-);
-
 export default function AdministratorSummary() {
+	const {data: {kpis = [], projectsKPI} = {}} = useKPI();
 	const {data: accounts} = useAccountsMetrics('week');
-	const {visitorsMetric} = useAnalyticsViewsMetrics();
 	const {data: orderMetrics} = useOrderMetrics('week');
+	const {marketplaceUserAccount} = useMarketplaceContext();
+	const {visitorsMetric} = useAnalyticsViewsMetrics();
 
-	const infoCard = useMemo(
+	const infoCards = useMemo(
 		() => [
 			{
 				growth: accounts?.growth ?? 0,
@@ -77,7 +45,7 @@ export default function AdministratorSummary() {
 						&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
 					</span>
 				),
-				value: getTotalAmountCurrency(orderMetrics?.paidAmount),
+				value: formatCurrency(projectsKPI?.totalAmount?.USD || 0),
 			},
 			{
 				growth: orderMetrics?.growth ?? 0,
@@ -98,70 +66,82 @@ export default function AdministratorSummary() {
 			accounts?.totalCount,
 			orderMetrics?.growth,
 			orderMetrics?.lastPeriod,
-			orderMetrics?.paidAmount,
 			orderMetrics?.totalCount,
+			projectsKPI?.totalAmount?.USD,
 			visitorsMetric,
 		]
 	);
 
-	const {data, isLoading} = useKPI();
-
 	return (
 		<Page
-			description="A sleek and intuitive admin dashboard for monitoring key metrics"
-			title="Admin Dashboard"
+			description={i18n.translate(
+				'a-sleek-and-intuitive-admin-dashboard-for-monitoring-key-metrics'
+			)}
+			title={i18n.translate('admin-dashboard')}
 		>
 			<div className="d-flex flex-column">
 				<div className="d-flex flex-wrap mb-4" style={{gap: '20px'}}>
 					<ErrorBoundary className="ml-5">
-						{data?.map((chart, index) => (
-							<DonutKPIChart
-								chartData={chart}
-								isLoading={isLoading}
-								key={index}
-							/>
+						{kpis.map((chart, index) => (
+							<DonutKPIChart {...chart} key={index} />
 						))}
 					</ErrorBoundary>
 				</div>
 
-				<div className="d-flex flex-wrap info-container mb-5">
-					{infoCard.map((infoItem, index) => (
-						<InfoCard
-							growth={infoItem.growth}
-							growthContext={infoItem.growthContext}
-							key={index}
-							symbol={infoItem.symbol}
-							title={infoItem.title as string}
-							value={infoItem.value as string}
-						/>
+				<div className="d-flex flex-wrap info-container mb-8">
+					{infoCards.map((infoCard, index) => (
+						<InfoCard {...infoCard} key={index} />
 					))}
 				</div>
 
-				<Container
-					path="/orders"
+				<Page
+					pageRendererProps={{
+						className: 'border py-2 rounded-lg mb-8',
+					}}
+					rightButton={
+						marketplaceUserAccount.isAdmin && (
+							<Link className="font-weight-bold" to="/orders">
+								{i18n.translate('view-all')}
+								<ClayIcon symbol="order-arrow-right" />
+							</Link>
+						)
+					}
 					title={i18n.translate('recent-orders')}
 				>
 					<AdministratorOrdersListView
 						listViewProps={{
 							id: 'summary-orders',
 							initialContext: {pageSize: 5},
-							paginationOptions: {displayType: 'never'},
+							paginationOptions: {displayType: false},
+						}}
+						managementToolbarProps={{
+							visible: false,
 						}}
 					/>
-				</Container>
+				</Page>
 
-				<Container
-					path="/apps"
+				<Page
+					pageRendererProps={{className: 'border py-2 rounded-lg'}}
+					rightButton={
+						<Link className="font-weight-bold" to="/apps">
+							{i18n.translate('view-all')}
+							<ClayIcon symbol="order-arrow-right" />
+						</Link>
+					}
 					title={i18n.translate('published-apps')}
 				>
 					<AdministratorAppsListView
+						isSortable
 						listViewProps={{
 							id: 'summary-apps',
 							initialContext: {pageSize: 5},
-							paginationOptions: {displayType: 'never'},
+							paginationOptions: {displayType: false},
+						}}
+						managementToolbarProps={{
+							visible: false,
 						}}
 					/>
-				</Container>
+				</Page>
 			</div>
 		</Page>
 	);

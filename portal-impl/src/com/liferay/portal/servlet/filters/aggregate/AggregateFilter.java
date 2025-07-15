@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -42,7 +43,6 @@ import com.liferay.portal.servlet.filters.dynamiccss.DynamicCSSUtil;
 import com.liferay.portal.servlet.filters.util.CacheFileNameGenerator;
 import com.liferay.portal.util.AggregateUtil;
 import com.liferay.portal.util.JavaScriptBundleUtil;
-import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 
 import jakarta.servlet.FilterChain;
@@ -260,7 +260,7 @@ public class AggregateFilter extends IgnoreModuleRequestFilter {
 		_servletContext = filterConfig.getServletContext();
 
 		File tempDir = (File)_servletContext.getAttribute(
-			JavaConstants.JAVAX_SERVLET_CONTEXT_TEMPDIR);
+			JavaConstants.JAKARTA_SERVLET_CONTEXT_TEMPDIR);
 
 		_tempDir = new File(tempDir, _TEMP_DIR);
 

@@ -727,19 +727,15 @@ public abstract class BaseSXPElementResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				sxpElementUnsafeFunction = sxpElement -> {
+					SXPElement getSXPElement = null;
 					SXPElement persistedSXPElement = null;
 
 					try {
-						SXPElement getSXPElement =
-							getSXPElementByExternalReferenceCode(
-								sxpElement.getExternalReferenceCode());
+						getSXPElement = getSXPElementByExternalReferenceCode(
+							sxpElement.getExternalReferenceCode());
 
 						persistedSXPElement = patchSXPElement(
-							getSXPElement.getId() != null ?
-								getSXPElement.getId() :
-									_parseLong(
-										(String)parameters.get("sxpElementId")),
-							sxpElement);
+							getSXPElement.getId(), sxpElement);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedSXPElement = postSXPElement(sxpElement);
@@ -750,9 +746,14 @@ public abstract class BaseSXPElementResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				sxpElementUnsafeFunction =
-					sxpElement -> putSXPElementByExternalReferenceCode(
+				sxpElementUnsafeFunction = sxpElement -> {
+					SXPElement persistedSXPElement = null;
+
+					persistedSXPElement = putSXPElementByExternalReferenceCode(
 						sxpElement.getExternalReferenceCode(), sxpElement);
+
+					return persistedSXPElement;
+				};
 			}
 		}
 
@@ -883,16 +884,12 @@ public abstract class BaseSXPElementResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			sxpElementUnsafeFunction = sxpElement -> patchSXPElement(
-				sxpElement.getId() != null ? sxpElement.getId() :
-					_parseLong((String)parameters.get("sxpElementId")),
-				sxpElement);
+				sxpElement.getId(), sxpElement);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			sxpElementUnsafeFunction = sxpElement -> putSXPElement(
-				sxpElement.getId() != null ? sxpElement.getId() :
-					_parseLong((String)parameters.get("sxpElementId")),
-				sxpElement);
+				sxpElement.getId(), sxpElement);
 		}
 
 		if (sxpElementUnsafeFunction == null) {
@@ -914,14 +911,6 @@ public abstract class BaseSXPElementResourceImpl
 				sxpElementUnsafeFunction.apply(sxpElement);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

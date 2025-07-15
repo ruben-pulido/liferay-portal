@@ -6,15 +6,18 @@
 package com.liferay.site.cms.site.initializer.internal.model.listener;
 
 import com.liferay.object.model.ObjectEntryFolder;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
+import com.liferay.portal.kernel.model.ResourceAction;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.model.role.RoleConstants;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
-import com.liferay.site.cms.site.initializer.internal.util.CMSRoleUtil;
+import com.liferay.portal.kernel.service.RoleLocalService;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,8 +40,9 @@ public class ObjectEntryFolderModelListener
 		}
 
 		try {
-			Role role = CMSRoleUtil.getOrAddCMSAdministratorRoleAndPermissions(
-				objectEntryFolder.getCompanyId());
+			Role role = _getOrAddCMSAdministratorRoleAndPermissions(
+				objectEntryFolder.getCompanyId(),
+				objectEntryFolder.getUserId());
 
 			_resourcePermissionLocalService.setResourcePermissions(
 				objectEntryFolder.getCompanyId(),
@@ -46,14 +50,40 @@ public class ObjectEntryFolderModelListener
 				ResourceConstants.SCOPE_INDIVIDUAL,
 				String.valueOf(objectEntryFolder.getObjectEntryFolderId()),
 				role.getRoleId(),
-				new String[] {ActionKeys.ADD_FOLDER, ActionKeys.VIEW});
+				TransformUtil.transformToArray(
+					_resourceActionLocalService.getResourceActions(
+						ObjectEntryFolder.class.getName()),
+					ResourceAction::getActionId, String.class));
 		}
 		catch (Exception exception) {
 			throw new ModelListenerException(exception);
 		}
 	}
 
+	private Role _getOrAddCMSAdministratorRoleAndPermissions(
+			long companyId, long userId)
+		throws Exception {
+
+		String name = RoleConstants.CMS_ADMINISTRATOR;
+
+		Role role = _roleLocalService.fetchRole(companyId, name);
+
+		if (role != null) {
+			return role;
+		}
+
+		return _roleLocalService.addRole(
+			null, userId, null, 0, name, null, null, RoleConstants.TYPE_REGULAR,
+			null, null);
+	}
+
+	@Reference
+	private ResourceActionLocalService _resourceActionLocalService;
+
 	@Reference
 	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Reference
+	private RoleLocalService _roleLocalService;
 
 }

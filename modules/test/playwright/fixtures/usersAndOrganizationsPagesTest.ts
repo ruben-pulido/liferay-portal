@@ -13,15 +13,18 @@ import {PersonalDataErasurePage} from '../pages/user-associated-data-web/Persona
 import {UserAssociatedDataAnnouncementPage} from '../pages/user-associated-data-web/announcement-web/UserAssociatedAnnouncementPage';
 import {UserAssociatedDataBlogPage} from '../pages/user-associated-data-web/blog-web/UserAssociatedDataBlogPage';
 import {UserAssociatedDataDocumentLibraryPage} from '../pages/user-associated-data-web/document-library-web/UserAssociatedDataDocumentLibraryPage';
+import {UserAssociatedDataEditDocumentPage} from '../pages/user-associated-data-web/document-library-web/UserAssociatedDataEditDocumentPage';
 import {UserAssociatedDataFormPage} from '../pages/user-associated-data-web/form-web/UserAssociatedDataFormPage';
 import {UserAssociatedDataJournalPage} from '../pages/user-associated-data-web/journal-article-web/UserAssociatedDataJournalPage';
 import {UserAssociatedDataEditMessageBoardThreadPage} from '../pages/user-associated-data-web/message-board-web/UserAssociatedDataEditMessageBoardThreadPage';
 import {UserAssociatedDataMessageBoardPage} from '../pages/user-associated-data-web/message-board-web/UserAssociatedDataMessageBoardPage';
+import {UserAssociatedDataMessageBoardWidgetPage} from '../pages/user-associated-data-web/message-board-web/UserAssociatedDataMessageBoardWidgetPage';
 import {UserAssociatedDataSiteStagingPage} from '../pages/user-associated-data-web/site-staging-web/UserAssociatedDataSiteStagingPage';
 import {AssignUsersPage} from '../pages/users-admin-web/AssignUsersPage';
 import {EditOrganizationPage} from '../pages/users-admin-web/EditOrganizationPage';
 import {EditUserPage} from '../pages/users-admin-web/EditUserPage';
 import {OrganizationUsersPage} from '../pages/users-admin-web/OrganizationUsersPage';
+import {SMTPMockServerPage} from '../pages/users-admin-web/SMTPMockServerPage';
 import {ServiceAccountsPage} from '../pages/users-admin-web/ServiceAccountsPage';
 import {TeamsPage} from '../pages/users-admin-web/TeamsPage';
 import {UserPersonalSitePage} from '../pages/users-admin-web/UserPersonalSitePage';
@@ -43,15 +46,18 @@ const usersAndOrganizationsPagesTest = test.extend<{
 	siteConfigurationDetailsPage: SiteConfigurationDetailsPage;
 	siteMembershipsPage: SiteMembershipsPage;
 	siteSettingsPage: SiteSettingsPage;
+	smtpMockServerPage: SMTPMockServerPage;
 	tagsEditPage: TagsEditPage;
 	teamsPage: TeamsPage;
 	userAssociatedDataAnnouncementPage: UserAssociatedDataAnnouncementPage;
 	userAssociatedDataBlogPage: UserAssociatedDataBlogPage;
 	userAssociatedDataDocumentLibraryPage: UserAssociatedDataDocumentLibraryPage;
+	userAssociatedDataEditDocumentPage: UserAssociatedDataEditDocumentPage;
 	userAssociatedDataEditMessageBoardThreadPage: UserAssociatedDataEditMessageBoardThreadPage;
 	userAssociatedDataFormPage: UserAssociatedDataFormPage;
 	userAssociatedDataJournalPage: UserAssociatedDataJournalPage;
 	userAssociatedDataMessageBoardPage: UserAssociatedDataMessageBoardPage;
+	userAssociatedDataMessageBoardWidgetPage: UserAssociatedDataMessageBoardWidgetPage;
 	userAssociatedDataSiteStagingPage: UserAssociatedDataSiteStagingPage;
 	userDocumentLibraryPage: DocumentLibraryPage;
 	userLocaleOptionsPage: UserLocaleOptionsPage;
@@ -91,6 +97,9 @@ const usersAndOrganizationsPagesTest = test.extend<{
 	siteSettingsPage: async ({page}, use) => {
 		await use(new SiteSettingsPage(page));
 	},
+	smtpMockServerPage: async ({page}, use) => {
+		await use(new SMTPMockServerPage(page));
+	},
 	tagsEditPage: async ({page}, use) => {
 		await use(new TagsEditPage(page));
 	},
@@ -106,6 +115,9 @@ const usersAndOrganizationsPagesTest = test.extend<{
 	userAssociatedDataDocumentLibraryPage: async ({page}, use) => {
 		await use(new UserAssociatedDataDocumentLibraryPage(page));
 	},
+	userAssociatedDataEditDocumentPage: async ({page}, use) => {
+		await use(new UserAssociatedDataEditDocumentPage(page));
+	},
 	userAssociatedDataEditMessageBoardThreadPage: async ({page}, use) => {
 		await use(new UserAssociatedDataEditMessageBoardThreadPage(page));
 	},
@@ -117,6 +129,9 @@ const usersAndOrganizationsPagesTest = test.extend<{
 	},
 	userAssociatedDataMessageBoardPage: async ({page}, use) => {
 		await use(new UserAssociatedDataMessageBoardPage(page));
+	},
+	userAssociatedDataMessageBoardWidgetPage: async ({page}, use) => {
+		await use(new UserAssociatedDataMessageBoardWidgetPage(page));
 	},
 	userAssociatedDataSiteStagingPage: async ({page}, use) => {
 		await use(new UserAssociatedDataSiteStagingPage(page));

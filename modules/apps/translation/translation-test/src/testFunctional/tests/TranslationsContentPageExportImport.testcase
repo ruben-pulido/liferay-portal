@@ -1,10 +1,10 @@
-@component-name = "portal-content-management"
+@component-name = "portal-page-management"
 definition {
 
 	property portal.acceptance = "true";
 	property portal.release = "true";
 	property portal.upstream = "true";
-	property testray.main.component.name = "Translations Management";
+	property testray.main.component.name = "Content Pages";
 
 	// This testcase validates the import/export functionality of the Content Page translations feature for both default and custom experiences.
 
@@ -1250,6 +1250,8 @@ definition {
 	@description = "This is a test for LPS-144152. This ensures that the updated draft translation can be published."
 	@priority = 3
 	test CanPublishUpdatedDraftTranslation {
+		property portal.acceptance = "false";
+
 		JSONLayout.addPublicLayout(
 			groupName = "Guest",
 			layoutName = "TranslationContentPage",

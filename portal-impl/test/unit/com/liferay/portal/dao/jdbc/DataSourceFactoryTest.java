@@ -10,20 +10,18 @@ import com.liferay.portal.kernel.dao.jdbc.DataSourceFactory;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 import com.liferay.portal.util.FastDateFormatFactoryImpl;
 import com.liferay.portal.util.FileImpl;
-import com.liferay.portal.util.PropsUtil;
 
 import java.io.File;
 
 import java.sql.Connection;
 
 import java.util.Properties;
-import java.util.logging.Level;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -122,11 +120,9 @@ public class DataSourceFactoryTest {
 
 	@Test
 	public void testJNDIDataSourceFailure() throws Exception {
-		PropsUtil.addProperties(
-			UnicodePropertiesBuilder.setProperty(
-				PropsKeys.JNDI_ENVIRONMENT + Context.INITIAL_CONTEXT_FACTORY,
-				"org.apache.naming.java.javaURLContextFactory"
-			).build());
+		PropsUtil.set(
+			PropsKeys.JNDI_ENVIRONMENT + Context.INITIAL_CONTEXT_FACTORY,
+			"org.apache.naming.java.javaURLContextFactory");
 
 		Properties properties = new Properties();
 
@@ -134,8 +130,8 @@ public class DataSourceFactoryTest {
 
 		properties.setProperty("jndi.name", jndiName);
 
-		try (LogCapture logCapture = LoggerTestUtil.configureJDKLogger(
-				DataSourceFactoryImpl.class.getName(), Level.SEVERE)) {
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				DataSourceFactoryImpl.class.getName(), LoggerTestUtil.ERROR)) {
 
 			_dataSourceFactory.initDataSource(properties);
 

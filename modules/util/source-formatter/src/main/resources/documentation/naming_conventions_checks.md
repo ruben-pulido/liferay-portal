@@ -13,6 +13,7 @@ JSONNamingCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks if vari
 [JSPTaglibVariableCheck](check/jsp_taglib_variable_check.md#jsptaglibvariablecheck) | .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks if variable names follow naming conventions. |
 JavaClassNameCheck | .java | Checks if class names follow naming conventions. |
 [JavaComponentActivateCheck](check/java_component_activate_check.md#javacomponentactivatecheck) | .java | Checks if methods with annotation `@Activate` or `@Deactivate` follow naming conventions. |
+JavaConstantsFileCheck | .java | Checks if constants names follow naming conventions. |
 JavaExceptionCheck | .java | Checks that variable names of exceptions in `catch` statements follow naming conventions. |
 [JavaHelperUtilCheck](check/java_helper_util_check.md#javahelperutilcheck) | .java | Finds incorrect use of `*Helper` or `*Util` classes. |
 [JavaTestMethodAnnotationsCheck](check/java_test_method_annotations_check.md#javatestmethodannotationscheck) | .java | Checks if methods with test annotations follow the naming conventions. |
@@ -28,6 +29,7 @@ SessionKeysCheck | .java | Checks that messages send to `SessionsErrors` or `Ses
 [StaticVariableNameCheck](https://checkstyle.sourceforge.io/checks/naming/staticvariablename.html) | .java, .java, .jsp, .jsp, .jspf, .jspf, .jspx, .jspx, .tag, .tag, .tpl, .tpl, .vm, or .vm | Checks that static, non-final variable names conform to a specified pattern. |
 StringBundlerNamingCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks for consistent naming on variables of type 'StringBundler'. |
 TestClassCheck | .java | Checks that names of test classes follow naming conventions. |
+ThreadLocalVariableNameCheck | .java | Checks for consistent naming on variables of type '*ThreadLocal'. |
 ThreadNameCheck | .java | Checks that names of threads follow naming conventions. |
 [TypeNameCheck](https://checkstyle.sourceforge.io/checks/naming/typename.html) | .java | Checks that type names conform to a specified pattern. |
 VariableNameCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks that variable names follow naming conventions. |

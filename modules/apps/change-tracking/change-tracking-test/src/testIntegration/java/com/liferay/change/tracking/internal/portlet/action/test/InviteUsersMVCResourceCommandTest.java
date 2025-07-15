@@ -97,8 +97,8 @@ public class InviteUsersMVCResourceCommandTest {
 				StringBundler.concat(
 					"You have been invited to work on a publication. For ",
 					"further information, please visit:<br /><br />\n<a href=",
-					"\"", url, "\">", _ctCollection.getName(), "</a><br />",
-					"<br />")));
+					"\"", url, "\">", _ctCollection.getName(), "</a><br /><br ",
+					"/>")));
 	}
 
 	@FeatureFlag("LPD-11212")
@@ -175,7 +175,7 @@ public class InviteUsersMVCResourceCommandTest {
 			new MockLiferayResourceRequest();
 
 		mockLiferayResourceRequest.setAttribute(
-			JavaConstants.JAVAX_PORTLET_CONFIG, null);
+			JavaConstants.JAKARTA_PORTLET_CONFIG, null);
 		mockLiferayResourceRequest.setAttribute(
 			WebKeys.THEME_DISPLAY, _getThemeDisplay());
 		mockLiferayResourceRequest.setParameter(

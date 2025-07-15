@@ -1958,22 +1958,24 @@ public abstract class BaseMessageBoardMessageResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				messageBoardMessageUnsafeFunction = messageBoardMessage -> {
+					MessageBoardMessage getMessageBoardMessage = null;
 					MessageBoardMessage persistedMessageBoardMessage = null;
 
 					try {
-						MessageBoardMessage getMessageBoardMessage =
-							getSiteMessageBoardMessageByExternalReferenceCode(
-								messageBoardMessage.getSiteId() != null ?
-									messageBoardMessage.getSiteId() :
-										(Long)parameters.get("siteId"),
-								messageBoardMessage.getExternalReferenceCode());
+						if (parameters.containsKey("siteId")) {
+							getMessageBoardMessage =
+								getSiteMessageBoardMessageByExternalReferenceCode(
+									(Long)parameters.get("siteId"),
+									messageBoardMessage.
+										getExternalReferenceCode());
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [siteId]");
+						}
 
 						persistedMessageBoardMessage = patchMessageBoardMessage(
-							getMessageBoardMessage.getId() != null ?
-								getMessageBoardMessage.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"messageBoardMessageId")),
+							getMessageBoardMessage.getId(),
 							messageBoardMessage);
 					}
 					catch (NoSuchModelException noSuchModelException) {
@@ -1996,13 +1998,23 @@ public abstract class BaseMessageBoardMessageResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				messageBoardMessageUnsafeFunction = messageBoardMessage ->
-					putSiteMessageBoardMessageByExternalReferenceCode(
-						messageBoardMessage.getSiteId() != null ?
-							messageBoardMessage.getSiteId() :
+				messageBoardMessageUnsafeFunction = messageBoardMessage -> {
+					MessageBoardMessage persistedMessageBoardMessage = null;
+
+					if (parameters.containsKey("siteId")) {
+						persistedMessageBoardMessage =
+							putSiteMessageBoardMessageByExternalReferenceCode(
 								(Long)parameters.get("siteId"),
-						messageBoardMessage.getExternalReferenceCode(),
-						messageBoardMessage);
+								messageBoardMessage.getExternalReferenceCode(),
+								messageBoardMessage);
+					}
+					else {
+						throw new NotSupportedException(
+							"One of the following parameters must be specified: [siteId]");
+					}
+
+					return persistedMessageBoardMessage;
+				};
 			}
 		}
 
@@ -2152,23 +2164,13 @@ public abstract class BaseMessageBoardMessageResourceImpl
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			messageBoardMessageUnsafeFunction =
 				messageBoardMessage -> patchMessageBoardMessage(
-					messageBoardMessage.getId() != null ?
-						messageBoardMessage.getId() :
-							_parseLong(
-								(String)parameters.get(
-									"messageBoardMessageId")),
-					messageBoardMessage);
+					messageBoardMessage.getId(), messageBoardMessage);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			messageBoardMessageUnsafeFunction =
 				messageBoardMessage -> putMessageBoardMessage(
-					messageBoardMessage.getId() != null ?
-						messageBoardMessage.getId() :
-							_parseLong(
-								(String)parameters.get(
-									"messageBoardMessageId")),
-					messageBoardMessage);
+					messageBoardMessage.getId(), messageBoardMessage);
 		}
 
 		if (messageBoardMessageUnsafeFunction == null) {

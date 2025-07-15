@@ -9,6 +9,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.db.index.IndexUpdaterUtil;
 import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
@@ -17,6 +18,8 @@ import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.upgrade.ReleaseManager;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -28,7 +31,9 @@ import com.liferay.portal.upgrade.PortalUpgradeProcess;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 import com.liferay.portal.upgrade.test.component.UpgradeRecorderTestComponent;
 import com.liferay.portal.upgrade.test.reference.UpgradeRecorderTestReference;
-import com.liferay.portal.verify.VerifyProcessSuite;
+import com.liferay.portal.verify.PreupgradeVerifyProcessSuite;
+import com.liferay.portal.verify.VerifyException;
+import com.liferay.portal.verify.VerifyProcess;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +53,6 @@ import java.util.zip.ZipEntry;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.message.SimpleMessage;
 
@@ -66,6 +70,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * @author Luis Ortiz
@@ -97,6 +102,10 @@ public class UpgradeRecorderTest {
 		ReflectionTestUtil.setFieldValue(
 			_upgradeRecorder, "_verifyProcessError",
 			_originalVerifyProcessError);
+
+		ReflectionTestUtil.invoke(
+			IndexUpdaterUtil.class, "_clearProcessedServletContextNames", null,
+			null);
 	}
 
 	@Before
@@ -140,15 +149,129 @@ public class UpgradeRecorderTest {
 	}
 
 	@Test
+	public void testFailureResultByPreupgradeVerifyExceptionWithoutReleaseManager() {
+		StartupHelperUtil.setUpgrading(true);
+
+		ServiceTracker<ReleaseManager, ReleaseManager> originalServiceTracker =
+			ReflectionTestUtil.getFieldValue(
+				_upgradeRecorder, "_serviceTracker");
+
+		VerifyExceptionProcess verifyExceptionProcess =
+			new VerifyExceptionProcess();
+
+		try {
+			ServiceTracker<ReleaseManager, ReleaseManager> serviceTracker =
+				new ServiceTracker<>(
+					_bundle.getBundleContext(), ReleaseManager.class, null) {
+
+					public ReleaseManager getService() {
+						return null;
+					}
+
+				};
+
+			ReflectionTestUtil.setFieldValue(
+				_upgradeRecorder, "_serviceTracker", serviceTracker);
+
+			_appender.start();
+
+			verifyExceptionProcess.verify();
+
+			Assert.fail();
+		}
+		catch (VerifyException verifyException) {
+			_appender.append(
+				Log4jLogEvent.newBuilder(
+				).setLoggerName(
+					PreupgradeVerifyProcessSuite.class.getName()
+				).setLevel(
+					Level.ERROR
+				).setMessage(
+					new SimpleMessage(RandomTestUtil.randomString())
+				).setThrown(
+					verifyException
+				).build());
+		}
+		finally {
+			_appender.stop();
+
+			StartupHelperUtil.setUpgrading(false);
+
+			ReflectionTestUtil.setFieldValue(
+				_upgradeRecorder, "_serviceTracker", originalServiceTracker);
+		}
+
+		Assert.assertEquals("preupgrade verification failure", _getResult());
+	}
+
+	@Test
+	public void testFailureResultByPreupgradeVerifyExceptionWithReleaseManager() {
+		StartupHelperUtil.setUpgrading(true);
+
+		VerifyExceptionProcess verifyExceptionProcess =
+			new VerifyExceptionProcess();
+
+		try {
+			_appender.start();
+
+			verifyExceptionProcess.verify();
+
+			Assert.fail();
+		}
+		catch (VerifyException verifyException) {
+			_appender.append(
+				Log4jLogEvent.newBuilder(
+				).setLoggerName(
+					PreupgradeVerifyProcessSuite.class.getName()
+				).setLevel(
+					Level.ERROR
+				).setMessage(
+					new SimpleMessage(RandomTestUtil.randomString())
+				).setThrown(
+					verifyException
+				).build());
+		}
+		finally {
+			_appender.stop();
+
+			StartupHelperUtil.setUpgrading(false);
+		}
+
+		Assert.assertEquals("failure", _getResult());
+	}
+
+	@Test
 	public void testFailureResultByVerifyException() {
 		StartupHelperUtil.setUpgrading(true);
 
 		VerifyExceptionProcess verifyExceptionProcess =
 			new VerifyExceptionProcess();
 
-		verifyExceptionProcess.doVerify();
+		try {
+			_appender.start();
 
-		StartupHelperUtil.setUpgrading(false);
+			verifyExceptionProcess.verify();
+
+			Assert.fail();
+		}
+		catch (VerifyException verifyException) {
+			_appender.append(
+				Log4jLogEvent.newBuilder(
+				).setLoggerName(
+					UpgradeRecorderTest.class.getName()
+				).setLevel(
+					Level.ERROR
+				).setMessage(
+					new SimpleMessage(RandomTestUtil.randomString())
+				).setThrown(
+					verifyException
+				).build());
+		}
+		finally {
+			_appender.stop();
+
+			StartupHelperUtil.setUpgrading(false);
+		}
 
 		Assert.assertEquals("failure", _getResult());
 	}
@@ -481,24 +604,11 @@ public class UpgradeRecorderTest {
 
 	}
 
-	private class VerifyExceptionProcess extends VerifyProcessSuite {
+	private class VerifyExceptionProcess extends VerifyProcess {
 
 		@Override
-		protected void doVerify() {
-			_appender.start();
-
-			LogEvent logEvent = Log4jLogEvent.newBuilder(
-			).setLoggerName(
-				"Verify Exception Error"
-			).setLevel(
-				Level.ERROR
-			).setMessage(
-				new SimpleMessage("com.liferay.portal.verify.VerifyException")
-			).build();
-
-			_appender.append(logEvent);
-
-			_appender.stop();
+		protected void doVerify() throws Exception {
+			throw new Exception(RandomTestUtil.randomString());
 		}
 
 	}

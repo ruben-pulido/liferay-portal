@@ -142,6 +142,7 @@ JavaReleaseInfoCheck | .java | Validates information in `ReleaseInfo.java`. |
 [JavaSeeAnnotationCheck](check/java_see_annotation_check.md#javaseeannotationcheck) | .java | Checks for nested annotations inside `@see`. |
 JavaServiceImplCheck | .java | Ensures that `afterPropertiesSet` and `destroy` methods in `*ServiceImpl` always call the method with the same name in the superclass. |
 [JavaServiceUtilCheck](check/java_service_util_check.md#javaserviceutilcheck) | .java | Checks that there are no calls to `*ServiceImpl` from a `*ServiceUtil` class. |
+JavaSnapshotClassNameCheck | .java | Checks the name of the class that is passed to `Snapshot` constructor. |
 JavaStagedModelDataHandlerCheck | .java | Finds missing method `setMvccVersion` in class extending `BaseStagedModelDataHandler` in module that has `mvcc-enabled=true` in `service.xml`. |
 JavaStaticBlockCheck | .java | Performs several checks on `static` blocks. |
 JavaStaticMethodCheck | .java | Finds cases where methods are unnecessarily declared static. |
@@ -172,6 +173,7 @@ LogParametersCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Validates t
 [MissingDeprecatedCheck](https://checkstyle.sourceforge.io/checks/annotation/missingdeprecated.html) | .java | Verifies that the annotation @Deprecated and the Javadoc tag @deprecated are both present when either of them is present. |
 MissingDiamondOperatorCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks for missing diamond operator for types that require diamond operator. |
 MissingModifierCheck | .java | Verifies that a method or global variable has a modifier specified. |
+[ModelSetCallWithCompanyIdCheck](check/model_set_call_with_company_id_check.md#modelsetcallwithcompanyidcheck) | .java | Checks for inserting the companyId as part of a varchar field in the database. |
 ModifiedMethodCheck | .java | Checks for incorrect `modified` method with `@Modified` annotation. |
 NestedFieldAnnotationCheck | .java | Checks for `nested.field.support` in the `property` attribute of the `Component` annotation. |
 [NullAssertionInIfStatementCheck](check/null_assertion_in_if_statement_check.md#nullassertioninifstatementcheck) | .java | Verifies that null check should always be first in if-statement. |
@@ -238,3 +240,4 @@ XMLSourcechecksFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .pr
 XMLSuppressionsFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `source-formatter-suppressions.xml` file. |
 XMLTagAttributesCheck | .action, .function, .html, .jelly, .jrxml, .macro, .path, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on tag attributes. |
 XMLWebFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `web.xml` file. |
+YMLRESTConfigFileBreakingChangeCommitMessageCheck | .tpl, .yaml, or .yml | Checks that commit message should contain the schematized breaking changes. |

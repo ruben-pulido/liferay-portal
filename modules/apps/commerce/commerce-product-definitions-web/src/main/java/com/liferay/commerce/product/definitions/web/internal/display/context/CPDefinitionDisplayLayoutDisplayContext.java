@@ -5,7 +5,7 @@
 
 package com.liferay.commerce.product.definitions.web.internal.display.context;
 
-import com.liferay.asset.display.page.item.selector.AssetDisplayPageSelectorCriterion;
+import com.liferay.asset.display.page.item.selector.AssetDisplayPageItemSelectorCriterion;
 import com.liferay.commerce.product.configuration.CPDisplayLayoutConfiguration;
 import com.liferay.commerce.product.constants.CPConstants;
 import com.liferay.commerce.product.constants.CPField;
@@ -22,7 +22,7 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.ItemSelectorReturnType;
 import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
-import com.liferay.layout.item.selector.criterion.LayoutItemSelectorCriterion;
+import com.liferay.layout.item.selector.LayoutItemSelectorCriterion;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.petra.string.StringPool;
@@ -214,12 +214,13 @@ public class CPDefinitionDisplayLayoutDisplayContext
 
 		CommerceChannel commerceChannel = getCommerceChannel();
 
-		AssetDisplayPageSelectorCriterion assetDisplayPageSelectorCriterion =
-			new AssetDisplayPageSelectorCriterion();
+		AssetDisplayPageItemSelectorCriterion
+			assetDisplayPageItemSelectorCriterion =
+				new AssetDisplayPageItemSelectorCriterion();
 
-		assetDisplayPageSelectorCriterion.setDesiredItemSelectorReturnTypes(
+		assetDisplayPageItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
 			Collections.singletonList(new UUIDItemSelectorReturnType()));
-		assetDisplayPageSelectorCriterion.setClassNameId(
+		assetDisplayPageItemSelectorCriterion.setClassNameId(
 			PortalUtil.getClassNameId(CPDefinition.class));
 
 		return String.valueOf(
@@ -229,7 +230,7 @@ public class CPDefinitionDisplayLayoutDisplayContext
 				_groupLocalService.getGroup(commerceChannel.getSiteGroupId()),
 				commerceChannel.getSiteGroupId(),
 				"selectLayoutPageTemplateEntry",
-				assetDisplayPageSelectorCriterion));
+				assetDisplayPageItemSelectorCriterion));
 	}
 
 	public String getLayoutPageTemplateEntryName(

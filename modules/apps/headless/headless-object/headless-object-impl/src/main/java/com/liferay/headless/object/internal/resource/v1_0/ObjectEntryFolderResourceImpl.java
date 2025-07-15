@@ -14,8 +14,10 @@ import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
 import com.liferay.headless.object.dto.v1_0.ObjectEntryFolder;
 import com.liferay.headless.object.internal.odata.entity.v1_0.ObjectEntryFolderEntityModel;
 import com.liferay.headless.object.resource.v1_0.ObjectEntryFolderResource;
+import com.liferay.object.constants.ObjectConstants;
 import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.exception.NoSuchObjectEntryFolderException;
+import com.liferay.object.service.ObjectEntryFolderLocalService;
 import com.liferay.object.service.ObjectEntryFolderService;
 import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
@@ -99,19 +101,6 @@ public class ObjectEntryFolderResourceImpl
 	}
 
 	@Override
-	public ObjectEntryFolder getObjectEntryFolder(Long objectEntryFolderId)
-		throws Exception {
-
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
-			throw new UnsupportedOperationException();
-		}
-
-		return _toObjectEntryFolder(
-			_objectEntryFolderService.getObjectEntryFolder(
-				objectEntryFolderId));
-	}
-
-	@Override
 	public ObjectEntryFolder
 			getScopeScopeKeyObjectEntryFolderByExternalReferenceCode(
 				String scopeKey, String externalReferenceCode)
@@ -191,21 +180,6 @@ public class ObjectEntryFolderResourceImpl
 	}
 
 	@Override
-	public ObjectEntryFolder patchObjectEntryFolder(
-			Long objectEntryFolderId, ObjectEntryFolder objectEntryFolder)
-		throws Exception {
-
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
-			throw new UnsupportedOperationException();
-		}
-
-		return _patchObjectEntryFolder(
-			objectEntryFolder,
-			_objectEntryFolderService.getObjectEntryFolder(
-				objectEntryFolderId));
-	}
-
-	@Override
 	public ObjectEntryFolder
 			patchScopeScopeKeyObjectEntryFolderByExternalReferenceCode(
 				String scopeKey, String externalReferenceCode,
@@ -216,7 +190,7 @@ public class ObjectEntryFolderResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
-		return _patchObjectEntryFolder(
+		return _updateObjectEntryFolder(
 			objectEntryFolder,
 			_objectEntryFolderService.
 				getObjectEntryFolderByExternalReferenceCode(
@@ -256,12 +230,14 @@ public class ObjectEntryFolderResourceImpl
 
 		long groupId = _getGroupId(scopeKey);
 
-		com.liferay.object.model.ObjectEntryFolder persistedObjectEntryFolder =
-			_objectEntryFolderService.
-				fetchObjectEntryFolderByExternalReferenceCode(
-					externalReferenceCode, groupId, contextUser.getCompanyId());
+		com.liferay.object.model.ObjectEntryFolder
+			serviceBuilderObjectEntryFolder =
+				_objectEntryFolderService.
+					fetchObjectEntryFolderByExternalReferenceCode(
+						externalReferenceCode, groupId,
+						contextUser.getCompanyId());
 
-		if (persistedObjectEntryFolder == null) {
+		if (serviceBuilderObjectEntryFolder == null) {
 			return _addObjectEntryFolder(
 				groupId,
 				GetterUtil.getLong(
@@ -272,7 +248,7 @@ public class ObjectEntryFolderResourceImpl
 
 		return _toObjectEntryFolder(
 			_objectEntryFolderService.updateObjectEntryFolder(
-				persistedObjectEntryFolder.getObjectEntryFolderId(),
+				serviceBuilderObjectEntryFolder.getObjectEntryFolderId(),
 				GetterUtil.getLong(
 					_getParentObjectEntryFolderId(
 						true, groupId, objectEntryFolder)),
@@ -285,6 +261,69 @@ public class ObjectEntryFolderResourceImpl
 				ServiceContextBuilder.create(
 					groupId, contextHttpServletRequest, null
 				).build()));
+	}
+
+	@Override
+	protected ObjectEntryFolder doGetObjectEntryFolder(Long objectEntryFolderId)
+		throws Exception {
+
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
+			throw new UnsupportedOperationException();
+		}
+
+		return _toObjectEntryFolder(
+			_objectEntryFolderService.getObjectEntryFolder(
+				objectEntryFolderId));
+	}
+
+	@Override
+	protected ObjectEntryFolder doPutObjectEntryFolder(
+			Long objectEntryFolderId, ObjectEntryFolder objectEntryFolder)
+		throws Exception {
+
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
+			throw new UnsupportedOperationException();
+		}
+
+		com.liferay.object.model.ObjectEntryFolder
+			serviceBuilderObjectEntryFolder =
+				_objectEntryFolderService.fetchObjectEntryFolder(
+					objectEntryFolderId);
+
+		if (serviceBuilderObjectEntryFolder == null) {
+			long groupId = _getGroupId(objectEntryFolder.getScopeKey());
+
+			return _addObjectEntryFolder(
+				groupId,
+				GetterUtil.getLong(
+					_getParentObjectEntryFolderId(
+						true, groupId, objectEntryFolder)),
+				objectEntryFolder);
+		}
+
+		return _updateObjectEntryFolder(
+			objectEntryFolder,
+			_objectEntryFolderService.getObjectEntryFolder(
+				objectEntryFolderId));
+	}
+
+	@Override
+	protected Long getPermissionCheckerGroupId(Object id) throws Exception {
+		com.liferay.object.model.ObjectEntryFolder objectEntryFolder =
+			_objectEntryFolderService.getObjectEntryFolder(
+				GetterUtil.getLong(id));
+
+		return objectEntryFolder.getGroupId();
+	}
+
+	@Override
+	protected String getPermissionCheckerPortletName(Object id) {
+		return ObjectConstants.RESOURCE_NAME;
+	}
+
+	@Override
+	protected String getPermissionCheckerResourceName(Object id) {
+		return com.liferay.object.model.ObjectEntryFolder.class.getName();
 	}
 
 	private ObjectEntryFolder _addObjectEntryFolder(
@@ -349,88 +388,53 @@ public class ObjectEntryFolderResourceImpl
 			return parentObjectEntryFolderId;
 		}
 
-		com.liferay.object.model.ObjectEntryFolder persistedObjectEntryFolder =
-			_objectEntryFolderService.
-				fetchObjectEntryFolderByExternalReferenceCode(
-					parentObjectEntryFolderExternalReferenceCode, groupId,
-					contextUser.getCompanyId());
+		com.liferay.object.model.ObjectEntryFolder
+			serviceBuilderObjectEntryFolder =
+				_objectEntryFolderService.
+					fetchObjectEntryFolderByExternalReferenceCode(
+						parentObjectEntryFolderExternalReferenceCode, groupId,
+						contextUser.getCompanyId());
 
 		if ((parentObjectEntryFolderId != null) &&
-			((persistedObjectEntryFolder == null) ||
-			 (persistedObjectEntryFolder.getObjectEntryFolderId() !=
-				 parentObjectEntryFolderId))) {
+			(serviceBuilderObjectEntryFolder != null) &&
+			(serviceBuilderObjectEntryFolder.getObjectEntryFolderId() !=
+				parentObjectEntryFolderId)) {
 
 			throw new NoSuchObjectEntryFolderException();
 		}
 
-		if (persistedObjectEntryFolder == null) {
+		if (serviceBuilderObjectEntryFolder == null) {
 			if (!addObjectEntryFolder) {
-				throw new NoSuchObjectEntryFolderException();
+				serviceBuilderObjectEntryFolder =
+					_objectEntryFolderLocalService.
+						getOrAddIncompleteObjectEntryFolder(
+							parentObjectEntryFolderExternalReferenceCode,
+							groupId, contextUser.getCompanyId(),
+							contextUser.getUserId(),
+							ServiceContextBuilder.create(
+								groupId, contextHttpServletRequest, null
+							).build());
 			}
-
-			persistedObjectEntryFolder =
-				_objectEntryFolderService.addObjectEntryFolder(
-					parentObjectEntryFolderExternalReferenceCode, groupId,
-					ObjectEntryFolderConstants.
-						PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
-					null, null, parentObjectEntryFolderExternalReferenceCode,
-					ServiceContextBuilder.create(
-						groupId, contextHttpServletRequest, null
-					).build());
+			else {
+				serviceBuilderObjectEntryFolder =
+					_objectEntryFolderService.addObjectEntryFolder(
+						parentObjectEntryFolderExternalReferenceCode, groupId,
+						ObjectEntryFolderConstants.
+							PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+						null, null,
+						parentObjectEntryFolderExternalReferenceCode,
+						ServiceContextBuilder.create(
+							groupId, contextHttpServletRequest, null
+						).build());
+			}
 		}
 
-		return persistedObjectEntryFolder.getObjectEntryFolderId();
-	}
-
-	private ObjectEntryFolder _patchObjectEntryFolder(
-			ObjectEntryFolder objectEntryFolder,
-			com.liferay.object.model.ObjectEntryFolder
-				persistedObjectEntryFolder)
-		throws Exception {
-
-		String description = objectEntryFolder.getDescription();
-
-		if (description == null) {
-			description = persistedObjectEntryFolder.getDescription();
-		}
-
-		Map<String, String> labelMap = objectEntryFolder.getLabel_i18n();
-
-		if (labelMap == null) {
-			labelMap = LocalizedMapUtil.getI18nMap(
-				persistedObjectEntryFolder.getLabelMap());
-		}
-
-		Long parentObjectEntryFolderId = _getParentObjectEntryFolderId(
-			false, persistedObjectEntryFolder.getGroupId(), objectEntryFolder);
-
-		if (parentObjectEntryFolderId == null) {
-			parentObjectEntryFolderId =
-				persistedObjectEntryFolder.getParentObjectEntryFolderId();
-		}
-
-		return _toObjectEntryFolder(
-			_objectEntryFolderService.updateObjectEntryFolder(
-				persistedObjectEntryFolder.getObjectEntryFolderId(),
-				parentObjectEntryFolderId, description,
-				LocalizedMapUtil.getLocalizedMap(
-					contextAcceptLanguage.getPreferredLocale(),
-					GetterUtil.getString(
-						objectEntryFolder.getLabel(),
-						persistedObjectEntryFolder.getLabel()),
-					labelMap),
-				GetterUtil.getString(
-					objectEntryFolder.getTitle(),
-					persistedObjectEntryFolder.getName()),
-				ServiceContextBuilder.create(
-					persistedObjectEntryFolder.getGroupId(),
-					contextHttpServletRequest, null
-				).build()));
+		return serviceBuilderObjectEntryFolder.getObjectEntryFolderId();
 	}
 
 	private ObjectEntryFolder _toObjectEntryFolder(
 			com.liferay.object.model.ObjectEntryFolder
-				persistedObjectEntryFolder)
+				serviceBuilderObjectEntryFolder)
 		throws Exception {
 
 		return _objectEntryFolderDTOConverter.toDTO(
@@ -439,23 +443,70 @@ public class ObjectEntryFolderResourceImpl
 				HashMapBuilder.put(
 					"delete",
 					addAction(
-						ActionKeys.DELETE, persistedObjectEntryFolder,
+						ActionKeys.DELETE, serviceBuilderObjectEntryFolder,
 						"deleteObjectEntryFolder")
 				).put(
 					"get",
 					addAction(
-						ActionKeys.VIEW, persistedObjectEntryFolder,
+						ActionKeys.VIEW, serviceBuilderObjectEntryFolder,
 						"getObjectEntryFolder")
 				).put(
 					"update",
 					addAction(
-						ActionKeys.UPDATE, persistedObjectEntryFolder,
+						ActionKeys.UPDATE, serviceBuilderObjectEntryFolder,
 						"patchObjectEntryFolder")
 				).build(),
 				_dtoConverterRegistry,
-				persistedObjectEntryFolder.getObjectEntryFolderId(),
+				serviceBuilderObjectEntryFolder.getObjectEntryFolderId(),
 				contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
 				contextUser));
+	}
+
+	private ObjectEntryFolder _updateObjectEntryFolder(
+			ObjectEntryFolder objectEntryFolder,
+			com.liferay.object.model.ObjectEntryFolder
+				serviceBuilderObjectEntryFolder)
+		throws Exception {
+
+		String description = objectEntryFolder.getDescription();
+
+		if (description == null) {
+			description = serviceBuilderObjectEntryFolder.getDescription();
+		}
+
+		Map<String, String> labelMap = objectEntryFolder.getLabel_i18n();
+
+		if (labelMap == null) {
+			labelMap = LocalizedMapUtil.getI18nMap(
+				serviceBuilderObjectEntryFolder.getLabelMap());
+		}
+
+		Long parentObjectEntryFolderId = _getParentObjectEntryFolderId(
+			false, serviceBuilderObjectEntryFolder.getGroupId(),
+			objectEntryFolder);
+
+		if (parentObjectEntryFolderId == null) {
+			parentObjectEntryFolderId =
+				serviceBuilderObjectEntryFolder.getParentObjectEntryFolderId();
+		}
+
+		return _toObjectEntryFolder(
+			_objectEntryFolderService.updateObjectEntryFolder(
+				serviceBuilderObjectEntryFolder.getObjectEntryFolderId(),
+				parentObjectEntryFolderId, description,
+				LocalizedMapUtil.getLocalizedMap(
+					contextAcceptLanguage.getPreferredLocale(),
+					GetterUtil.getString(
+						objectEntryFolder.getLabel(),
+						serviceBuilderObjectEntryFolder.getLabel()),
+					labelMap),
+				GetterUtil.getString(
+					objectEntryFolder.getTitle(),
+					serviceBuilderObjectEntryFolder.getName()),
+				ServiceContextBuilder.create(
+					serviceBuilderObjectEntryFolder.getGroupId(),
+					contextHttpServletRequest, null
+				).build()));
 	}
 
 	@Reference
@@ -482,6 +533,9 @@ public class ObjectEntryFolderResourceImpl
 	private DTOConverter
 		<com.liferay.object.model.ObjectEntryFolder, ObjectEntryFolder>
 			_objectEntryFolderDTOConverter;
+
+	@Reference
+	private ObjectEntryFolderLocalService _objectEntryFolderLocalService;
 
 	@Reference
 	private ObjectEntryFolderService _objectEntryFolderService;

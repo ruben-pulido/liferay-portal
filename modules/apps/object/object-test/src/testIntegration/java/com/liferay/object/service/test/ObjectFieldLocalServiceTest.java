@@ -63,8 +63,6 @@ import com.liferay.object.service.ObjectFilterLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.test.util.ObjectFieldTestUtil;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
-import com.liferay.object.test.util.ObjectRelationshipTestUtil;
-import com.liferay.object.test.util.TreeTestUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.db.DBInspector;
@@ -255,7 +253,7 @@ public class ObjectFieldLocalServiceTest {
 				"attachment business types",
 			() -> _objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, false, true, true,
-				false, false,
+				false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -298,7 +296,7 @@ public class ObjectFieldLocalServiceTest {
 				"attachment business types",
 			() -> _objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, false, true, true,
-				false, false,
+				false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -1059,28 +1057,6 @@ public class ObjectFieldLocalServiceTest {
 		_objectDefinitionLocalService.deleteObjectDefinition(
 			relatedObjectDefinition);
 
-		objectRelationship = ObjectRelationshipTestUtil.addObjectRelationship(
-			_objectRelationshipLocalService,
-			ObjectDefinitionTestUtil.addCustomObjectDefinition("A"),
-			ObjectDefinitionTestUtil.addCustomObjectDefinition("AA"));
-
-		TreeTestUtil.bind(
-			_objectRelationshipLocalService,
-			Collections.singletonList(objectRelationship));
-
-		ObjectField objectField2 = _objectFieldLocalService.getObjectField(
-			objectRelationship.getObjectFieldId2());
-
-		objectField2.setRequired(false);
-
-		AssertUtils.assertFailure(
-			ObjectFieldRequiredException.class, null,
-			() -> _addOrUpdateCustomObjectField(objectField2));
-
-		TreeTestUtil.deleteObjectDefinitionHierarchy(
-			_objectDefinitionLocalService, new String[] {"C_A", "C_AA"},
-			_objectEntryLocalService, _objectRelationshipLocalService);
-
 		// Object field required
 
 		objectDefinition = ObjectDefinitionTestUtil.addCustomObjectDefinition();
@@ -1496,7 +1472,7 @@ public class ObjectFieldLocalServiceTest {
 			).build());
 
 		ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
-			TestPropsValues.getUserId(), 0,
+			0, TestPropsValues.getUserId(),
 			customObjectDefinition.getObjectDefinitionId(),
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			null,
@@ -2161,7 +2137,7 @@ public class ObjectFieldLocalServiceTest {
 			algorithm, enabled, key,
 			() -> _objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, false, true, true,
-				false, false,
+				false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -2485,7 +2461,7 @@ public class ObjectFieldLocalServiceTest {
 		throws Exception {
 
 		ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
-			TestPropsValues.getUserId(), 0, objectField.getObjectDefinitionId(),
+			0, TestPropsValues.getUserId(), objectField.getObjectDefinitionId(),
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			null, values, ServiceContextTestUtil.getServiceContext());
 
@@ -2807,7 +2783,7 @@ public class ObjectFieldLocalServiceTest {
 		objectDefinition1 =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, false, true, true,
-				false, false,
+				false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				"Test", null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),

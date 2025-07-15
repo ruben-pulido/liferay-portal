@@ -837,16 +837,14 @@ public abstract class BaseSkuResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				skuUnsafeFunction = sku -> {
+					Sku getSku = null;
 					Sku persistedSku = null;
 
 					try {
-						Sku getSku = getSkuByExternalReferenceCode(
+						getSku = getSkuByExternalReferenceCode(
 							sku.getExternalReferenceCode());
 
-						persistedSku = patchSku(
-							getSku.getId() != null ? getSku.getId() :
-								_parseLong((String)parameters.get("skuId")),
-							sku);
+						persistedSku = patchSku(getSku.getId(), sku);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						if (parameters.containsKey("externalReferenceCode")) {
@@ -867,8 +865,14 @@ public abstract class BaseSkuResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				skuUnsafeFunction = sku -> putSkuByExternalReferenceCode(
-					sku.getExternalReferenceCode(), sku);
+				skuUnsafeFunction = sku -> {
+					Sku persistedSku = null;
+
+					persistedSku = putSkuByExternalReferenceCode(
+						sku.getExternalReferenceCode(), sku);
+
+					return persistedSku;
+				};
 			}
 		}
 
@@ -1011,10 +1015,7 @@ public abstract class BaseSkuResourceImpl
 			"updateStrategy", "UPDATE");
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
-			skuUnsafeFunction = sku -> patchSku(
-				sku.getId() != null ? sku.getId() :
-					_parseLong((String)parameters.get("skuId")),
-				sku);
+			skuUnsafeFunction = sku -> patchSku(sku.getId(), sku);
 		}
 
 		if (skuUnsafeFunction == null) {
@@ -1034,14 +1035,6 @@ public abstract class BaseSkuResourceImpl
 				skuUnsafeFunction.apply(sku);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

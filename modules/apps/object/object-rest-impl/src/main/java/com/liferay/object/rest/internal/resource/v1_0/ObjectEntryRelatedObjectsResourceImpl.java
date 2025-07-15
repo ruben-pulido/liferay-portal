@@ -15,6 +15,7 @@ import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManagerProvider;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -35,11 +36,13 @@ public class ObjectEntryRelatedObjectsResourceImpl
 
 	public ObjectEntryRelatedObjectsResourceImpl(
 		ObjectDefinitionLocalService objectDefinitionLocalService,
+		ObjectEntryLocalService objectEntryLocalService,
 		ObjectEntryManagerRegistry objectEntryManagerRegistry,
 		ObjectRelatedModelsProviderRegistry objectRelatedModelsProviderRegistry,
 		ObjectRelationshipLocalService objectRelationshipLocalService) {
 
 		_objectDefinitionLocalService = objectDefinitionLocalService;
+		_objectEntryLocalService = objectEntryLocalService;
 		_objectEntryManagerRegistry = objectEntryManagerRegistry;
 		_objectRelatedModelsProviderRegistry =
 			objectRelatedModelsProviderRegistry;
@@ -130,6 +133,38 @@ public class ObjectEntryRelatedObjectsResourceImpl
 				objectEntry -> _getRelatedObjectEntry(
 					relatedObjectDefinition, objectEntry)),
 			pagination, page.getTotalCount());
+	}
+
+	@Override
+	public Object
+			putByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode(
+				String currentExternalReferenceCode,
+				String objectRelationshipName,
+				String relatedExternalReferenceCode)
+		throws Exception {
+
+		com.liferay.object.model.ObjectEntry currentObjectEntry =
+			_objectEntryLocalService.getObjectEntry(
+				currentExternalReferenceCode,
+				_objectDefinition.getObjectDefinitionId());
+
+		ObjectRelationship objectRelationship =
+			_objectRelationshipLocalService.getObjectRelationship(
+				_objectDefinition.getObjectDefinitionId(),
+				objectRelationshipName);
+
+		ObjectDefinition relatedObjectDefinition =
+			ObjectRelationshipUtil.getRelatedObjectDefinition(
+				_objectDefinition, objectRelationship);
+
+		com.liferay.object.model.ObjectEntry relatedObjectEntry =
+			_objectEntryLocalService.getObjectEntry(
+				relatedExternalReferenceCode,
+				relatedObjectDefinition.getObjectDefinitionId());
+
+		return putCurrentObjectEntry(
+			currentObjectEntry.getObjectEntryId(), objectRelationshipName,
+			relatedObjectEntry.getObjectEntryId());
 	}
 
 	@Override
@@ -249,6 +284,7 @@ public class ObjectEntryRelatedObjectsResourceImpl
 	private ObjectDefinition _objectDefinition;
 
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
+	private final ObjectEntryLocalService _objectEntryLocalService;
 	private final ObjectEntryManagerRegistry _objectEntryManagerRegistry;
 	private final ObjectRelatedModelsProviderRegistry
 		_objectRelatedModelsProviderRegistry;

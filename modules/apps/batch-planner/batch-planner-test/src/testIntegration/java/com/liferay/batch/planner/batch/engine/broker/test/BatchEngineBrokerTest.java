@@ -571,9 +571,8 @@ public class BatchEngineBrokerTest {
 		throws Exception {
 
 		return _objectEntryLocalService.addOrUpdateObjectEntry(
-			externalReferenceCode, userId,
-			_getGroupId(groupId, objectDefinition),
-			objectDefinition.getObjectDefinitionId(),
+			externalReferenceCode, _getGroupId(groupId, objectDefinition),
+			userId, objectDefinition.getObjectDefinitionId(),
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			HashMapBuilder.<String, Serializable>put(
 				"testAttachmentField", dlFileEntry.getFileEntryId()
@@ -611,10 +610,8 @@ public class BatchEngineBrokerTest {
 				new BigDecimal(0.1234567891234567, MathContext.DECIMAL64)
 			).put(
 				"testRichTextField",
-				StringBundler.concat(
-					"<p>Test text</p>\n<p>\n",
-					"  <img alt=\"\" height=\"202\" src=\"",
-					"http://localhost:8080/image/company_logo\">\n</p>")
+				"<p>Test text</p>\n<p>\n  <img alt=\"\" height=\"202\" " +
+					"src=\"http://localhost:8080/image/company_logo\">\n</p>"
 			).put(
 				"testTextField", "Lorem Ipsum"
 			).build(),
@@ -1175,7 +1172,7 @@ public class BatchEngineBrokerTest {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				user.getUserId(), 0, null, false, false, true, false, false,
-				false,
+				false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				name, null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),

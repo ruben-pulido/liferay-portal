@@ -1149,20 +1149,16 @@ public abstract class BasePostalAddressResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				postalAddressUnsafeFunction = postalAddress -> {
+					PostalAddress getPostalAddress = null;
 					PostalAddress persistedPostalAddress = null;
 
 					try {
-						PostalAddress getPostalAddress =
+						getPostalAddress =
 							getPostalAddressByExternalReferenceCode(
 								postalAddress.getExternalReferenceCode());
 
 						persistedPostalAddress = patchPostalAddress(
-							getPostalAddress.getId() != null ?
-								getPostalAddress.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"postalAddressId")),
-							postalAddress);
+							getPostalAddress.getId(), postalAddress);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						if (parameters.containsKey("accountId")) {
@@ -1181,10 +1177,16 @@ public abstract class BasePostalAddressResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				postalAddressUnsafeFunction =
-					postalAddress -> putPostalAddressByExternalReferenceCode(
-						postalAddress.getExternalReferenceCode(),
-						postalAddress);
+				postalAddressUnsafeFunction = postalAddress -> {
+					PostalAddress persistedPostalAddress = null;
+
+					persistedPostalAddress =
+						putPostalAddressByExternalReferenceCode(
+							postalAddress.getExternalReferenceCode(),
+							postalAddress);
+
+					return persistedPostalAddress;
+				};
 			}
 		}
 
@@ -1351,16 +1353,12 @@ public abstract class BasePostalAddressResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			postalAddressUnsafeFunction = postalAddress -> patchPostalAddress(
-				postalAddress.getId() != null ? postalAddress.getId() :
-					_parseLong((String)parameters.get("postalAddressId")),
-				postalAddress);
+				postalAddress.getId(), postalAddress);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			postalAddressUnsafeFunction = postalAddress -> putPostalAddress(
-				postalAddress.getId() != null ? postalAddress.getId() :
-					_parseLong((String)parameters.get("postalAddressId")),
-				postalAddress);
+				postalAddress.getId(), postalAddress);
 		}
 
 		if (postalAddressUnsafeFunction == null) {

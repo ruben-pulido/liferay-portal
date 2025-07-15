@@ -92,6 +92,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService;
+import com.liferay.portal.kernel.servlet.InitialRequestSyncUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -689,22 +690,49 @@ public class ObjectRelationshipLocalServiceImpl
 	public List<ObjectRelationship> getAllObjectRelationships(
 		long objectDefinitionId) {
 
-		return dslQuery(
-			DSLQueryFactoryUtil.select(
-			).from(
-				ObjectRelationshipTable.INSTANCE
-			).where(
-				Predicate.withParentheses(
-					ObjectRelationshipTable.INSTANCE.objectDefinitionId1.eq(
-						objectDefinitionId
-					).or(
-						ObjectRelationshipTable.INSTANCE.objectDefinitionId2.eq(
-							objectDefinitionId)
+		if (InitialRequestSyncUtil.isSynced()) {
+			return dslQuery(
+				DSLQueryFactoryUtil.select(
+				).from(
+					ObjectRelationshipTable.INSTANCE
+				).where(
+					Predicate.withParentheses(
+						ObjectRelationshipTable.INSTANCE.objectDefinitionId1.eq(
+							objectDefinitionId
+						).or(
+							ObjectRelationshipTable.INSTANCE.
+								objectDefinitionId2.eq(objectDefinitionId)
+						)
+					).and(
+						ObjectRelationshipTable.INSTANCE.reverse.eq(false)
 					)
-				).and(
-					ObjectRelationshipTable.INSTANCE.reverse.eq(false)
-				)
-			));
+				));
+		}
+
+		List<ObjectRelationship> objectRelationships = new ArrayList<>();
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.fetchByPrimaryKey(objectDefinitionId);
+
+		if (objectDefinition == null) {
+			return objectRelationships;
+		}
+
+		for (ObjectRelationship objectRelationship :
+				objectRelationshipPersistence.findByCompanyId(
+					objectDefinition.getCompanyId())) {
+
+			if (((objectRelationship.getObjectDefinitionId1() ==
+					objectDefinitionId) ||
+				 (objectRelationship.getObjectDefinitionId2() ==
+					 objectDefinitionId)) &&
+				!objectRelationship.isReverse()) {
+
+				objectRelationships.add(objectRelationship);
+			}
+		}
+
+		return objectRelationships;
 	}
 
 	@Override
@@ -1353,9 +1381,6 @@ public class ObjectRelationshipLocalServiceImpl
 			objectRelationshipLocalService.updateObjectRelationship(
 				objectRelationship);
 
-		_objectFieldLocalService.updateRequired(
-			objectRelationship.getObjectFieldId2(), true);
-
 		ObjectDefinition objectDefinition1 =
 			_objectDefinitionPersistence.findByPrimaryKey(
 				objectRelationship.getObjectDefinitionId1());
@@ -1370,9 +1395,6 @@ public class ObjectRelationshipLocalServiceImpl
 
 		ObjectDefinitionLocalService objectDefinitionLocalService =
 			_objectDefinitionLocalServiceSnapshot.get();
-
-		objectDefinition1 = objectDefinitionLocalService.updateObjectDefinition(
-			objectDefinition1);
 
 		ObjectDefinition objectDefinition2 =
 			_objectDefinitionPersistence.findByPrimaryKey(
@@ -1415,11 +1437,8 @@ public class ObjectRelationshipLocalServiceImpl
 				String nodeObjectDefinitionPreviousRESTContextPath =
 					nodeObjectDefinition.getRESTContextPath();
 
-				nodeObjectDefinition =
-					objectDefinitionLocalService.
-						updateRootDescendantNodeObjectDefinition(
-							nodeObjectDefinition,
-							objectDefinition1.getRootObjectDefinitionId());
+				nodeObjectDefinition.setRootObjectDefinitionId(
+					objectDefinition1.getRootObjectDefinitionId());
 
 				if (nodeObjectDefinition.isApproved() &&
 					objectDefinition1.isApproved()) {
@@ -1439,10 +1458,6 @@ public class ObjectRelationshipLocalServiceImpl
 
 			objectDefinition2.setRootObjectDefinitionId(
 				objectDefinition2.getObjectDefinitionId());
-
-			objectDefinition2 =
-				objectDefinitionLocalService.updateObjectDefinition(
-					objectDefinition2);
 
 			if (objectDefinition2.isApproved()) {
 				objectDefinitionLocalService.deployObjectDefinition(
@@ -1982,9 +1997,6 @@ public class ObjectRelationshipLocalServiceImpl
 
 		objectDefinition.setRootObjectDefinitionId(newRootObjectDefinitionId);
 
-		objectDefinition = _objectDefinitionPersistence.update(
-			objectDefinition);
-
 		objectDefinition.setPreviousRESTContextPath(previousRESTContextPath);
 
 		_deployObjectDefinition(objectDefinition);
@@ -2183,20 +2195,6 @@ public class ObjectRelationshipLocalServiceImpl
 						"enable-inheritance-x-(x-object-entries)-and-x-(x-" +
 							"object-entries)");
 			}
-		}
-
-		long objectDefinition2RootObjectDefinitionId =
-			objectDefinition2.getRootObjectDefinitionId();
-
-		if ((objectDefinition2RootObjectDefinitionId != 0) &&
-			(objectDefinition2RootObjectDefinitionId !=
-				objectDefinition2.getObjectDefinitionId())) {
-
-			throw new ObjectRelationshipEdgeException(
-				"Unable to bind the object definitions when the child object " +
-					"definition is bound to another object definition",
-				"unable-to-bind-the-object-definitions-when-the-child-object-" +
-					"definition-is-bound-to-another-object-definition");
 		}
 
 		if (!StringUtil.equals(

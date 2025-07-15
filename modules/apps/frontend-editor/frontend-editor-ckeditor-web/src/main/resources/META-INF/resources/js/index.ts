@@ -27,4 +27,7 @@ export {default as CKEditor5ClassicEditor} from './ckeditor5/ClassicEditor';
 export {
 	EEditorConfigPreset,
 	LiferayEditorConfig,
+	TEditor,
 } from './ckeditor5/utils/types';
+
+export {default as InputLocalized} from './input_localized/InputLocalized';

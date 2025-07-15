@@ -9,11 +9,11 @@ import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {sub} from 'frontend-js-web';
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 
-import ApiHelper from '../../../services/ApiHelper';
+import ApiHelper from '../../../common/services/ApiHelper';
 import {ViewDashboardContext} from '../ViewDashboardContext';
 import {buildQueryString} from '../utils/buildQueryString';
 import {toThousands} from '../utils/number';
-import {RangeSelectors} from './RangeSelectorsDropdown';
+import {RangeSelector, getSafeRangeSelector} from './RangeSelectorsDropdown';
 
 export enum TrendClassification {
 	Negative = 'NEGATIVE',
@@ -34,7 +34,7 @@ export interface IMetricsProps {
 
 export interface IContentAndFilesCard {
 	endpointURL: string;
-	rangeSelector: RangeSelectors;
+	rangeSelector: RangeSelector;
 	title: (totalCount: number) => string;
 }
 
@@ -76,8 +76,8 @@ const ContentAndFilesCard: React.FC<IContentAndFilesCard> = ({
 
 	const queryParams = buildQueryString({
 		languageId: language.value,
-		rangeKey: rangeSelector,
 		spaceId: space.value,
+		...getSafeRangeSelector(rangeSelector),
 	});
 
 	useEffect(() => {

@@ -5,9 +5,6 @@
 
 package com.liferay.object.web.internal.object.entries.display.context;
 
-import com.liferay.dynamic.data.mapping.expression.CreateExpressionRequest;
-import com.liferay.dynamic.data.mapping.expression.DDMExpression;
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
@@ -41,13 +38,13 @@ import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.constants.ObjectWebKeys;
 import com.liferay.object.display.context.ObjectEntryDisplayContext;
-import com.liferay.object.dynamic.data.mapping.expression.ObjectEntryDDMExpressionFieldAccessor;
 import com.liferay.object.exception.NoSuchObjectLayoutException;
 import com.liferay.object.exception.NoSuchObjectRelationshipException;
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.field.business.type.ObjectFieldBusinessTypeRegistry;
 import com.liferay.object.field.render.ObjectFieldRenderingContext;
 import com.liferay.object.field.setting.util.ObjectFieldSettingUtil;
+import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectLayout;
@@ -79,6 +76,7 @@ import com.liferay.object.web.internal.display.context.helper.ObjectRequestHelpe
 import com.liferay.object.web.internal.security.permission.resource.util.ObjectDefinitionResourcePermissionUtil;
 import com.liferay.object.web.internal.util.ObjectEntryUtil;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -124,6 +122,8 @@ import jakarta.portlet.WindowState;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.jsp.PageContext;
+
+import java.net.URLEncoder;
 
 import java.sql.Timestamp;
 
@@ -174,17 +174,21 @@ public class ObjectEntryDisplayContextImpl
 		_objectRequestHelper = new ObjectRequestHelper(httpServletRequest);
 		_readOnly = (Boolean)httpServletRequest.getAttribute(
 			ObjectWebKeys.OBJECT_ENTRY_READ_ONLY);
+		_template = GetterUtil.getString(
+			httpServletRequest.getAttribute(WebKeys.TEMPLATE));
 		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 	}
 
 	@Override
 	public String getBackURL() throws PortalException {
-		String redirect = ParamUtil.getString(
-			_objectRequestHelper.getRequest(), "redirect");
+		HttpServletRequest httpServletRequest =
+			_objectRequestHelper.getRequest();
+
+		String redirect = ParamUtil.getString(httpServletRequest, "redirect");
 
 		String backURL = ParamUtil.getString(
-			_objectRequestHelper.getRequest(), "backURL", redirect);
+			httpServletRequest, "backURL", redirect);
 
 		if (Validator.isNull(backURL)) {
 			LiferayPortletResponse liferayPortletResponse =
@@ -196,7 +200,11 @@ public class ObjectEntryDisplayContextImpl
 		ObjectDefinition objectDefinition = getObjectDefinition1();
 
 		if (!objectDefinition.isDefaultStorageType() ||
-			!objectDefinition.isRootDescendantNode()) {
+			!objectDefinition.isRootDescendantNode() ||
+			!StringUtil.equals(
+				String.valueOf(
+					httpServletRequest.getAttribute(WebKeys.PORTLET_ID)),
+				objectDefinition.getPortletId())) {
 
 			return backURL;
 		}
@@ -570,12 +578,37 @@ public class ObjectEntryDisplayContextImpl
 			}
 		).put(
 			"readOnly", String.valueOf(_readOnly || isGuestUser())
+		).put(
+			"redirect",
+			URLEncoder.encode(
+				ParamUtil.getString(
+					_objectRequestHelper.getRequest(), "redirect"))
+		).put(
+			"template", _template
+		).put(
+			"workflowTaskId",
+			ParamUtil.getString(
+				_objectRequestHelper.getRequest(), "workflowTaskId")
+		).build();
+	}
+
+	@Override
+	public Map<String, Object> getScheduleProperties() throws PortalException {
+		ObjectEntry objectEntry = _getObjectEntry();
+
+		return HashMapBuilder.<String, Object>put(
+			"expirationDate",
+			() -> _createSchedulePropertyJSONObject(
+				"expirationDate", objectEntry)
+		).put(
+			"reviewDate",
+			() -> _createSchedulePropertyJSONObject("reviewDate", objectEntry)
 		).build();
 	}
 
 	@Override
 	public String getURLSeparator() {
-		StringBundler sb = new StringBundler(6);
+		StringBundler sb = new StringBundler(4);
 
 		sb.append(_themeDisplay.getPortalURL());
 
@@ -586,23 +619,22 @@ public class ObjectEntryDisplayContextImpl
 			sb.append(group.getFriendlyURL());
 		}
 
+		ObjectDefinition objectDefinition = getObjectDefinition1();
+
+		String friendlyURLSeparator = StringUtil.quote(
+			objectDefinition.getFriendlyURLSeparator(), CharPool.SLASH);
+
 		FriendlyURLResolver friendlyURLResolver =
 			FriendlyURLResolverRegistryUtil.
 				getFriendlyURLResolverByDefaultURLSeparator(
-					FriendlyURLResolverConstants.URL_SEPARATOR_OBJECT_ENTRY);
+					friendlyURLSeparator);
 
 		if (friendlyURLResolver == null) {
 			sb.append(FriendlyURLResolverConstants.URL_SEPARATOR_OBJECT_ENTRY);
 		}
 		else {
-			sb.append(friendlyURLResolver.getURLSeparator());
+			sb.append(friendlyURLSeparator);
 		}
-
-		ObjectDefinition objectDefinition = getObjectDefinition1();
-
-		sb.append(objectDefinition.getName());
-
-		sb.append(StringPool.SLASH);
 
 		return sb.toString();
 	}
@@ -838,6 +870,33 @@ public class ObjectEntryDisplayContextImpl
 		return objectFieldRenderingContext;
 	}
 
+	private JSONObject _createSchedulePropertyJSONObject(
+			String fieldName, ObjectEntry objectEntry)
+		throws PortalException {
+
+		if ((objectEntry == null) ||
+			(objectEntry.getPropertyValue(fieldName) == null)) {
+
+			return JSONUtil.put("checked", true);
+		}
+
+		return JSONUtil.put(
+			"checked", false
+		).put(
+			"value",
+			() -> {
+				ObjectDefinition objectDefinition = getObjectDefinition1();
+
+				return _getDisplayContextValue(
+					_objectFieldLocalService.getObjectField(
+						objectDefinition.getObjectDefinitionId(), fieldName),
+					HashMapBuilder.put(
+						fieldName, objectEntry.getPropertyValue(fieldName)
+					).build());
+			}
+		);
+	}
+
 	private DropdownItem _getCreateNewRelatedModelDropdownItem(
 			ObjectDefinition objectDefinition,
 			ObjectRelationship objectRelationship)
@@ -1030,7 +1089,13 @@ public class ObjectEntryDisplayContextImpl
 			objectFieldBusinessType.getDDMFormFieldTypeName(
 				objectField.isLocalized()));
 
-		readOnly = _isReadOnly(objectEntry, objectField, readOnly);
+		if (!readOnly) {
+			readOnly = ObjectFieldUtil.isReadOnly(
+				_ddmExpressionFactory,
+				(objectEntry != null) ? objectEntry.getExternalReferenceCode() :
+					null,
+				objectField, _themeDisplay.getUserId());
+		}
 
 		objectField.setReadOnly(String.valueOf(readOnly));
 
@@ -1090,6 +1155,10 @@ public class ObjectEntryDisplayContextImpl
 
 				ddmFormField.setProperty(
 					"parameterObjectFieldName", parameterObjectField.getName());
+			}
+
+			if (objectRelationship.isEdge()) {
+				ddmFormField.setProperty("visible", false);
 			}
 		}
 		else if (StringUtil.equals(
@@ -1208,6 +1277,18 @@ public class ObjectEntryDisplayContextImpl
 		return ddmFormValues;
 	}
 
+	private Object _getDisplayContextValue(
+			ObjectField objectField, Map<String, Object> values)
+		throws PortalException {
+
+		ObjectFieldBusinessType objectFieldBusinessType =
+			_objectFieldBusinessTypeRegistry.getObjectFieldBusinessType(
+				objectField.getBusinessType());
+
+		return objectFieldBusinessType.getDisplayContextValue(
+			objectField, _objectRequestHelper.getUserId(), values);
+	}
+
 	private DTOConverterContext _getDTOConverterContext() {
 		return new DefaultDTOConverterContext(
 			false, null, null, _objectRequestHelper.getRequest(), null,
@@ -1293,15 +1374,11 @@ public class ObjectEntryDisplayContextImpl
 		DDMFormField ddmFormField, Map<String, Object> values) {
 
 		try {
-			ObjectField objectField = _objectFieldLocalService.getObjectField(
-				GetterUtil.getLong(ddmFormField.getProperty("objectFieldId")));
-
-			ObjectFieldBusinessType objectFieldBusinessType =
-				_objectFieldBusinessTypeRegistry.getObjectFieldBusinessType(
-					objectField.getBusinessType());
-
-			return objectFieldBusinessType.getDisplayContextValue(
-				objectField, _objectRequestHelper.getUserId(), values);
+			return _getDisplayContextValue(
+				_objectFieldLocalService.getObjectField(
+					GetterUtil.getLong(
+						ddmFormField.getProperty("objectFieldId"))),
+				values);
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
@@ -1367,88 +1444,11 @@ public class ObjectEntryDisplayContextImpl
 				fetchObjectRelationshipByObjectFieldId2(
 					objectField.getObjectFieldId());
 
-		if (objectRelationship.isEdge()) {
-			return false;
-		}
-
 		ObjectDefinition relatedObjectDefinition =
 			_objectDefinitionLocalService.getObjectDefinition(
 				objectRelationship.getObjectDefinitionId1());
 
 		return relatedObjectDefinition.isActive();
-	}
-
-	private boolean _isReadOnly(
-			ObjectEntry objectEntry, ObjectField objectField, boolean readOnly)
-		throws PortalException {
-
-		if (readOnly) {
-			return true;
-		}
-
-		if (Objects.equals(
-				objectField.getReadOnly(),
-				ObjectFieldConstants.READ_ONLY_FALSE)) {
-
-			return false;
-		}
-
-		if (Objects.equals(
-				objectField.getReadOnly(),
-				ObjectFieldConstants.READ_ONLY_TRUE)) {
-
-			return true;
-		}
-
-		Map<String, Object> existingValues = new HashMap<>();
-
-		if (objectEntry == null) {
-			for (ObjectField objectField1 :
-					_objectFieldLocalService.getObjectFields(
-						objectField.getObjectDefinitionId())) {
-
-				existingValues.put(
-					objectField1.getName(),
-					ObjectFieldSettingUtil.getDefaultValue(
-						null, objectField, null));
-			}
-		}
-		else {
-			com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry =
-				_objectEntryLocalService.getObjectEntry(
-					objectEntry.getExternalReferenceCode(),
-					objectField.getObjectDefinitionId());
-
-			existingValues.putAll(
-				_objectEntryLocalService.getSystemValues(
-					serviceBuilderObjectEntry));
-			existingValues.putAll(
-				_objectEntryLocalService.getValues(serviceBuilderObjectEntry));
-
-			existingValues.put("currentUserId", _themeDisplay.getUserId());
-		}
-
-		try {
-			DDMExpression<Boolean> ddmExpression =
-				_ddmExpressionFactory.createExpression(
-					CreateExpressionRequest.Builder.newBuilder(
-						objectField.getReadOnlyConditionExpression()
-					).withDDMExpressionFieldAccessor(
-						new ObjectEntryDDMExpressionFieldAccessor(
-							existingValues)
-					).build());
-
-			ddmExpression.setVariables(existingValues);
-
-			if (ddmExpression.evaluate()) {
-				return true;
-			}
-		}
-		catch (DDMExpressionException ddmExpressionException) {
-			_log.error(ddmExpressionException);
-		}
-
-		return false;
 	}
 
 	private void _setDDMFormFieldValueValue(
@@ -1545,6 +1545,7 @@ public class ObjectEntryDisplayContextImpl
 	private final ObjectRequestHelper _objectRequestHelper;
 	private final ObjectScopeProviderRegistry _objectScopeProviderRegistry;
 	private final boolean _readOnly;
+	private final String _template;
 	private final ThemeDisplay _themeDisplay;
 
 }

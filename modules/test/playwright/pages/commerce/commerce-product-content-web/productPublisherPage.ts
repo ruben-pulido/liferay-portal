@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {FrameLocator, Locator, Page} from '@playwright/test';
+import {FrameLocator, Locator, Page, expect} from '@playwright/test';
 
 import {CommerceLayoutsPage} from '../commerce-order-content-web/commerceLayoutsPage';
 
@@ -17,6 +17,12 @@ export class ProductPublisherPage {
 	readonly layoutsPage: CommerceLayoutsPage;
 	readonly optionsButton: Locator;
 	readonly page: Page;
+	readonly productCard: (productName: string) => Locator;
+	readonly productCardAddToCartButton: (productName: string) => Locator;
+	readonly productCardPrice: (
+		productName: string,
+		productPrice: string
+	) => Locator;
 	readonly productLink: (productName: string) => Promise<Locator>;
 	readonly productSku: (productSku: string) => Promise<Locator>;
 	readonly removeTagNameButton: (tagName: string) => Promise<Locator>;
@@ -49,6 +55,17 @@ export class ProductPublisherPage {
 			.locator('//section[contains(@id, "CPPublisherPortlet")]')
 			.getByLabel('Options');
 		this.page = page;
+		this.productCard = (productName: string) =>
+			this.page.locator('.product-card').filter({hasText: productName});
+		this.productCardAddToCartButton = (productName: string) =>
+			this.productCard(productName).getByRole('button', {
+				exact: true,
+				name: 'Add to Cart',
+			});
+		this.productCardPrice = (productName, productPrice) =>
+			this.productCard(productName).getByText(productPrice, {
+				exact: true,
+			});
 		this.productLink = async (productName: string) => {
 			return page.getByRole('link', {exact: true, name: productName});
 		};
@@ -64,8 +81,10 @@ export class ProductPublisherPage {
 	}
 
 	async addProductPublisherTagFilter(tagName: string) {
-		await this.optionsButton.click();
-		await this.configurationMenuItem.click();
+		await expect(async () => {
+			await this.optionsButton.click();
+			await this.configurationMenuItem.click({timeout: 1000});
+		}).toPass();
 
 		const expanded =
 			await this.configurationFilterButton.getAttribute('aria-expanded');
@@ -77,6 +96,7 @@ export class ProductPublisherPage {
 		await this.configurationFrame.getByLabel('add-rule').click();
 		await this.tagsInput.fill(tagName);
 		await this.tagsInput.press('Enter');
+		await this.tagsInput.press('Tab');
 		await this.closeButton.focus();
 		await this.configurationSaveButton.click();
 		await this.closeButton.click();
@@ -87,9 +107,12 @@ export class ProductPublisherPage {
 	}
 
 	async removeProductPublisherTagFilter(tagName: string) {
-		await this.optionsButton.click();
-		await this.configurationMenuItem.click();
+		await expect(async () => {
+			await this.optionsButton.click();
+			await this.configurationMenuItem.click({timeout: 1000});
+		}).toPass();
 		await (await this.removeTagNameButton(tagName)).click();
+		await this.tagsInput.press('Tab');
 		await this.closeButton.focus();
 		await this.configurationSaveButton.click();
 		await this.closeButton.click();

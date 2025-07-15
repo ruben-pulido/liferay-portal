@@ -6,11 +6,12 @@
 import {isNullOrUndefined} from '@liferay/layout-js-components-web';
 import {useCallback} from 'react';
 
+import focusInvalidElement from '../../common/utils/focusInvalidElement';
 import {State, useSelector, useStateDispatch} from '../contexts/StateContext';
 import selectState from '../selectors/selectState';
-import selectStructureFields from '../selectors/selectStructureFields';
+import selectStructureChildren from '../selectors/selectStructureChildren';
+import {RepeatableGroup, Structure, StructureChild} from '../types/Structure';
 import {Field, MultiselectField, SingleSelectField} from './field';
-import focusInvalidElement from './focusInvalidElement';
 
 export type ValidationError =
 	| 'no-erc'
@@ -58,12 +59,32 @@ export function validateField({
 	return errors;
 }
 
+export function validateRepeatableGroup({
+	currentErrors,
+	data,
+}: {
+	currentErrors?: Set<ValidationError>;
+	data: Partial<RepeatableGroup>;
+}): Set<ValidationError> {
+	const {label} = data;
+
+	const errors = new Set(currentErrors);
+
+	if (!isNullOrUndefined(label)) {
+		Object.values(label ?? {}).every(Boolean)
+			? errors.delete('no-label')
+			: errors.add('no-label');
+	}
+
+	return errors;
+}
+
 export function validateStructure({
 	currentErrors,
 	data,
 }: {
 	currentErrors?: Set<ValidationError>;
-	data: Partial<State>;
+	data: Partial<Structure>;
 }): Set<ValidationError> {
 	const {erc, label, name, spaces} = data;
 
@@ -92,14 +113,46 @@ export function validateStructure({
 
 export function useValidate() {
 	const dispatch = useStateDispatch();
-	const fields = useSelector(selectStructureFields);
+	const children = useSelector(selectStructureChildren);
 	const state = useSelector(selectState);
+
+	const {structure} = state;
+
+	const validateChild = useCallback(
+		(child: StructureChild, invalids: State['invalids']) => {
+			let errors: Set<ValidationError> = new Set();
+
+			if (child.type === 'repeatable-group') {
+				errors = validateRepeatableGroup({data: child});
+
+				if (errors.size) {
+					invalids.set(child.uuid, errors);
+				}
+
+				for (const grandChild of child.children.values()) {
+					if (grandChild.type === 'referenced-structure') {
+						continue;
+					}
+
+					validateChild(grandChild, invalids);
+				}
+			}
+			else {
+				errors = validateField({data: child as Field});
+
+				if (errors.size) {
+					invalids.set(child.uuid, errors);
+				}
+			}
+		},
+		[]
+	);
 
 	return useCallback(() => {
 
-		// Check at least one field is added
+		// Check at least one child is added
 
-		if (!fields.length) {
+		if (!children.size) {
 			dispatch({
 				error: Liferay.Language.get(
 					'at-least-one-field-must-be-added-to-save-or-publish-the-structure'
@@ -116,20 +169,16 @@ export function useValidate() {
 
 		const invalids = new Map(state.invalids);
 
-		errors = validateStructure({data: state});
+		errors = validateStructure({data: structure});
 
 		if (errors.size) {
-			invalids.set(state.uuid, errors);
+			invalids.set(structure.uuid, errors);
 		}
 
-		// Validate fields
+		// Validate children
 
-		for (const field of fields) {
-			errors = validateField({data: field});
-
-			if (errors.size) {
-				invalids.set(field.uuid, errors);
-			}
+		for (const child of children.values()) {
+			validateChild(child, invalids);
 		}
 
 		// If there's some invalid, dispatch validate action
@@ -148,5 +197,5 @@ export function useValidate() {
 		// It's valid
 
 		return true;
-	}, [dispatch, fields, state]);
+	}, [children, dispatch, state.invalids, structure, validateChild]);
 }

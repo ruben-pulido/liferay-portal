@@ -1,0 +1,1608 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+import {ObjectSerializer} from '../utils/SerDes';
+
+		import {PageScopedTestEntity} from '../models/PageScopedTestEntity';
+		import {ScopedTestEntity} from '../models/ScopedTestEntity';
+
+/**
+ * @author Alejandro Tardín
+ * @generated
+ */
+
+export class ScopedTestEntityAPI {
+	protected _basePath: string;
+	protected _defaultHeaders: any = {};
+
+	constructor(basePath?: string) {
+		if (basePath) {
+			this._basePath = basePath;
+		}
+	}
+
+	set defaultHeaders(defaultHeaders: any) {
+		this._defaultHeaders = defaultHeaders;
+	}
+
+		/**
+		 * 
+				 * @param assetLibraryId
+				 * @param externalReferenceCode
+		 * @param headers Optional custom request headers
+		 */
+		public async deleteAssetLibraryScopedTestEntityByExternalReferenceCode(
+						assetLibraryId: number,
+						externalReferenceCode: string,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body?: any;
+			response: Response;
+		}> {
+
+			const path = this._basePath + "/test/v1.0/asset-libraries/{assetLibraryId}/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{assetLibraryId}",encodeURIComponent(assetLibraryId))
+										.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (assetLibraryId === null || assetLibraryId === undefined) {
+							throw new Error("Required parameter assetLibraryId was null or undefined when calling deleteAssetLibraryScopedTestEntityByExternalReferenceCode.");
+						}
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling deleteAssetLibraryScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+					,headers || {}
+					),
+				method: "DELETE",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: await response.json(), response};
+					}
+					else {
+						return {body: await response.text(), response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+		/**
+		 * 
+				 * @param externalReferenceCode
+		 * @param headers Optional custom request headers
+		 */
+		public async deleteScopedTestEntityByExternalReferenceCode(
+						externalReferenceCode: string,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body?: any;
+			response: Response;
+		}> {
+
+			const path = this._basePath + "/test/v1.0/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling deleteScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+					,headers || {}
+					),
+				method: "DELETE",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: await response.json(), response};
+					}
+					else {
+						return {body: await response.text(), response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+		/**
+		 * 
+				 * @param siteId
+				 * @param externalReferenceCode
+		 * @param headers Optional custom request headers
+		 */
+		public async deleteSiteScopedTestEntityByExternalReferenceCode(
+						siteId: number,
+						externalReferenceCode: string,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body?: any;
+			response: Response;
+		}> {
+
+			const path = this._basePath + "/test/v1.0/sites/{siteId}/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{siteId}",encodeURIComponent(siteId))
+										.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (siteId === null || siteId === undefined) {
+							throw new Error("Required parameter siteId was null or undefined when calling deleteSiteScopedTestEntityByExternalReferenceCode.");
+						}
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling deleteSiteScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+					,headers || {}
+					),
+				method: "DELETE",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: await response.json(), response};
+					}
+					else {
+						return {body: await response.text(), response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+		/**
+		 * 
+				 * @param assetLibraryId
+		 * @param headers Optional custom request headers
+		 */
+		public async getAssetLibraryScopedTestEntitiesPage(
+						assetLibraryId: number,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: PageScopedTestEntity;
+			response: Response;
+		}> {
+
+			const path = this._basePath + "/test/v1.0/asset-libraries/{assetLibraryId}/scoped-test-entities"
+						.replace("{assetLibraryId}",encodeURIComponent(assetLibraryId))
+				;
+
+			const queryParameters: any = {};
+
+						if (assetLibraryId === null || assetLibraryId === undefined) {
+							throw new Error("Required parameter assetLibraryId was null or undefined when calling getAssetLibraryScopedTestEntitiesPage.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+					,headers || {}
+					),
+				method: "GET",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "PageScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+		/**
+		 * 
+				 * @param assetLibraryId
+				 * @param externalReferenceCode
+		 * @param headers Optional custom request headers
+		 */
+		public async getAssetLibraryScopedTestEntityByExternalReferenceCode(
+						assetLibraryId: number,
+						externalReferenceCode: string,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+
+			const path = this._basePath + "/test/v1.0/asset-libraries/{assetLibraryId}/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{assetLibraryId}",encodeURIComponent(assetLibraryId))
+										.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (assetLibraryId === null || assetLibraryId === undefined) {
+							throw new Error("Required parameter assetLibraryId was null or undefined when calling getAssetLibraryScopedTestEntityByExternalReferenceCode.");
+						}
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling getAssetLibraryScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+					,headers || {}
+					),
+				method: "GET",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+		/**
+		 * 
+		 * @param headers Optional custom request headers
+		 */
+		public async getScopedTestEntitiesPage(
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: PageScopedTestEntity;
+			response: Response;
+		}> {
+
+			const path = this._basePath + "/test/v1.0/scoped-test-entities"
+;
+
+			const queryParameters: any = {};
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+					,headers || {}
+					),
+				method: "GET",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "PageScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+		/**
+		 * 
+				 * @param externalReferenceCode
+		 * @param headers Optional custom request headers
+		 */
+		public async getScopedTestEntityByExternalReferenceCode(
+						externalReferenceCode: string,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+
+			const path = this._basePath + "/test/v1.0/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling getScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+					,headers || {}
+					),
+				method: "GET",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+		/**
+		 * 
+				 * @param siteId
+		 * @param headers Optional custom request headers
+		 */
+		public async getSiteScopedTestEntitiesPage(
+						siteId: number,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: PageScopedTestEntity;
+			response: Response;
+		}> {
+
+			const path = this._basePath + "/test/v1.0/sites/{siteId}/scoped-test-entities"
+						.replace("{siteId}",encodeURIComponent(siteId))
+				;
+
+			const queryParameters: any = {};
+
+						if (siteId === null || siteId === undefined) {
+							throw new Error("Required parameter siteId was null or undefined when calling getSiteScopedTestEntitiesPage.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+					,headers || {}
+					),
+				method: "GET",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "PageScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+		/**
+		 * 
+				 * @param siteId
+				 * @param externalReferenceCode
+		 * @param headers Optional custom request headers
+		 */
+		public async getSiteScopedTestEntityByExternalReferenceCode(
+						siteId: number,
+						externalReferenceCode: string,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+
+			const path = this._basePath + "/test/v1.0/sites/{siteId}/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{siteId}",encodeURIComponent(siteId))
+										.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (siteId === null || siteId === undefined) {
+							throw new Error("Required parameter siteId was null or undefined when calling getSiteScopedTestEntityByExternalReferenceCode.");
+						}
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling getSiteScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+					,headers || {}
+					),
+				method: "GET",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+		/**
+		 * 
+				 * @param assetLibraryId
+				 * @param externalReferenceCode
+		 		* @param requestBody Request body that can be one of multiple content types
+		 * @param headers Optional custom request headers
+		 */
+		public async patchAssetLibraryScopedTestEntityByExternalReferenceCodeWithContentType(
+						assetLibraryId: number,
+						externalReferenceCode: string,
+					requestBody:
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/json"
+							}
+								|
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/xml"
+							}
+								,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+				let body;
+						if (requestBody.type === "application/json") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+						if (requestBody.type === "application/xml") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+
+			const path = this._basePath + "/test/v1.0/asset-libraries/{assetLibraryId}/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{assetLibraryId}",encodeURIComponent(assetLibraryId))
+										.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (assetLibraryId === null || assetLibraryId === undefined) {
+							throw new Error("Required parameter assetLibraryId was null or undefined when calling patchAssetLibraryScopedTestEntityByExternalReferenceCode.");
+						}
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling patchAssetLibraryScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+					body: body,
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+								,{"Content-Type": requestBody.type}
+					,headers || {}
+					),
+				method: "PATCH",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+					/**
+					 *  - Default method for JSON body
+							 * @param assetLibraryId
+							 * @param externalReferenceCode
+						 * @param scopedTestEntity
+					 */
+					public async patchAssetLibraryScopedTestEntityByExternalReferenceCode(
+									assetLibraryId: number,
+									externalReferenceCode: string,
+							scopedTestEntity?: ScopedTestEntity,
+						headers?: {[name: string]: string}
+					): Promise<{
+							body: ScopedTestEntity;
+						response: Response;
+					}> {
+						return this.patchAssetLibraryScopedTestEntityByExternalReferenceCodeWithContentType(
+										assetLibraryId,
+										externalReferenceCode,
+							{
+								parameters: {
+										scopedTestEntity: scopedTestEntity
+								},
+								type: "application/json"
+							},
+							headers
+						);
+					}
+		/**
+		 * 
+				 * @param scopedTestEntityId
+		 		* @param requestBody Request body that can be one of multiple content types
+		 * @param headers Optional custom request headers
+		 */
+		public async patchScopedTestEntityWithContentType(
+						scopedTestEntityId: number,
+					requestBody:
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/json"
+							}
+								|
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/xml"
+							}
+								,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+				let body;
+						if (requestBody.type === "application/json") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+						if (requestBody.type === "application/xml") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+
+			const path = this._basePath + "/test/v1.0/scoped-test-entities/{scopedTestEntityId}"
+						.replace("{scopedTestEntityId}",encodeURIComponent(scopedTestEntityId))
+				;
+
+			const queryParameters: any = {};
+
+						if (scopedTestEntityId === null || scopedTestEntityId === undefined) {
+							throw new Error("Required parameter scopedTestEntityId was null or undefined when calling patchScopedTestEntity.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+					body: body,
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+								,{"Content-Type": requestBody.type}
+					,headers || {}
+					),
+				method: "PATCH",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+					/**
+					 *  - Default method for JSON body
+							 * @param scopedTestEntityId
+						 * @param scopedTestEntity
+					 */
+					public async patchScopedTestEntity(
+									scopedTestEntityId: number,
+							scopedTestEntity?: ScopedTestEntity,
+						headers?: {[name: string]: string}
+					): Promise<{
+							body: ScopedTestEntity;
+						response: Response;
+					}> {
+						return this.patchScopedTestEntityWithContentType(
+										scopedTestEntityId,
+							{
+								parameters: {
+										scopedTestEntity: scopedTestEntity
+								},
+								type: "application/json"
+							},
+							headers
+						);
+					}
+		/**
+		 * 
+				 * @param externalReferenceCode
+		 		* @param requestBody Request body that can be one of multiple content types
+		 * @param headers Optional custom request headers
+		 */
+		public async patchScopedTestEntityByExternalReferenceCodeWithContentType(
+						externalReferenceCode: string,
+					requestBody:
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/json"
+							}
+								|
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/xml"
+							}
+								,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+				let body;
+						if (requestBody.type === "application/json") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+						if (requestBody.type === "application/xml") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+
+			const path = this._basePath + "/test/v1.0/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling patchScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+					body: body,
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+								,{"Content-Type": requestBody.type}
+					,headers || {}
+					),
+				method: "PATCH",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+					/**
+					 *  - Default method for JSON body
+							 * @param externalReferenceCode
+						 * @param scopedTestEntity
+					 */
+					public async patchScopedTestEntityByExternalReferenceCode(
+									externalReferenceCode: string,
+							scopedTestEntity?: ScopedTestEntity,
+						headers?: {[name: string]: string}
+					): Promise<{
+							body: ScopedTestEntity;
+						response: Response;
+					}> {
+						return this.patchScopedTestEntityByExternalReferenceCodeWithContentType(
+										externalReferenceCode,
+							{
+								parameters: {
+										scopedTestEntity: scopedTestEntity
+								},
+								type: "application/json"
+							},
+							headers
+						);
+					}
+		/**
+		 * 
+				 * @param siteId
+				 * @param externalReferenceCode
+		 		* @param requestBody Request body that can be one of multiple content types
+		 * @param headers Optional custom request headers
+		 */
+		public async patchSiteScopedTestEntityByExternalReferenceCodeWithContentType(
+						siteId: number,
+						externalReferenceCode: string,
+					requestBody:
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/json"
+							}
+								|
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/xml"
+							}
+								,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+				let body;
+						if (requestBody.type === "application/json") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+						if (requestBody.type === "application/xml") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+
+			const path = this._basePath + "/test/v1.0/sites/{siteId}/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{siteId}",encodeURIComponent(siteId))
+										.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (siteId === null || siteId === undefined) {
+							throw new Error("Required parameter siteId was null or undefined when calling patchSiteScopedTestEntityByExternalReferenceCode.");
+						}
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling patchSiteScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+					body: body,
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+								,{"Content-Type": requestBody.type}
+					,headers || {}
+					),
+				method: "PATCH",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+					/**
+					 *  - Default method for JSON body
+							 * @param siteId
+							 * @param externalReferenceCode
+						 * @param scopedTestEntity
+					 */
+					public async patchSiteScopedTestEntityByExternalReferenceCode(
+									siteId: number,
+									externalReferenceCode: string,
+							scopedTestEntity?: ScopedTestEntity,
+						headers?: {[name: string]: string}
+					): Promise<{
+							body: ScopedTestEntity;
+						response: Response;
+					}> {
+						return this.patchSiteScopedTestEntityByExternalReferenceCodeWithContentType(
+										siteId,
+										externalReferenceCode,
+							{
+								parameters: {
+										scopedTestEntity: scopedTestEntity
+								},
+								type: "application/json"
+							},
+							headers
+						);
+					}
+		/**
+		 * 
+				 * @param assetLibraryId
+				 * @param externalReferenceCode
+		 		* @param requestBody Request body that can be one of multiple content types
+		 * @param headers Optional custom request headers
+		 */
+		public async postAssetLibraryScopedTestEntityByExternalReferenceCodeWithContentType(
+						assetLibraryId: number,
+						externalReferenceCode: string,
+					requestBody:
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/json"
+							}
+								|
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/xml"
+							}
+								,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+				let body;
+						if (requestBody.type === "application/json") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+						if (requestBody.type === "application/xml") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+
+			const path = this._basePath + "/test/v1.0/asset-libraries/{assetLibraryId}/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{assetLibraryId}",encodeURIComponent(assetLibraryId))
+										.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (assetLibraryId === null || assetLibraryId === undefined) {
+							throw new Error("Required parameter assetLibraryId was null or undefined when calling postAssetLibraryScopedTestEntityByExternalReferenceCode.");
+						}
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling postAssetLibraryScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+					body: body,
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+								,{"Content-Type": requestBody.type}
+					,headers || {}
+					),
+				method: "POST",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+					/**
+					 *  - Default method for JSON body
+							 * @param assetLibraryId
+							 * @param externalReferenceCode
+						 * @param scopedTestEntity
+					 */
+					public async postAssetLibraryScopedTestEntityByExternalReferenceCode(
+									assetLibraryId: number,
+									externalReferenceCode: string,
+							scopedTestEntity?: ScopedTestEntity,
+						headers?: {[name: string]: string}
+					): Promise<{
+							body: ScopedTestEntity;
+						response: Response;
+					}> {
+						return this.postAssetLibraryScopedTestEntityByExternalReferenceCodeWithContentType(
+										assetLibraryId,
+										externalReferenceCode,
+							{
+								parameters: {
+										scopedTestEntity: scopedTestEntity
+								},
+								type: "application/json"
+							},
+							headers
+						);
+					}
+		/**
+		 * 
+				 * @param externalReferenceCode
+		 		* @param requestBody Request body that can be one of multiple content types
+		 * @param headers Optional custom request headers
+		 */
+		public async postScopedTestEntityByExternalReferenceCodeWithContentType(
+						externalReferenceCode: string,
+					requestBody:
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/json"
+							}
+								|
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/xml"
+							}
+								,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+				let body;
+						if (requestBody.type === "application/json") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+						if (requestBody.type === "application/xml") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+
+			const path = this._basePath + "/test/v1.0/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling postScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+					body: body,
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+								,{"Content-Type": requestBody.type}
+					,headers || {}
+					),
+				method: "POST",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+					/**
+					 *  - Default method for JSON body
+							 * @param externalReferenceCode
+						 * @param scopedTestEntity
+					 */
+					public async postScopedTestEntityByExternalReferenceCode(
+									externalReferenceCode: string,
+							scopedTestEntity?: ScopedTestEntity,
+						headers?: {[name: string]: string}
+					): Promise<{
+							body: ScopedTestEntity;
+						response: Response;
+					}> {
+						return this.postScopedTestEntityByExternalReferenceCodeWithContentType(
+										externalReferenceCode,
+							{
+								parameters: {
+										scopedTestEntity: scopedTestEntity
+								},
+								type: "application/json"
+							},
+							headers
+						);
+					}
+		/**
+		 * 
+				 * @param siteId
+				 * @param externalReferenceCode
+		 		* @param requestBody Request body that can be one of multiple content types
+		 * @param headers Optional custom request headers
+		 */
+		public async postSiteScopedTestEntityByExternalReferenceCodeWithContentType(
+						siteId: number,
+						externalReferenceCode: string,
+					requestBody:
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/json"
+							}
+								|
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/xml"
+							}
+								,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+				let body;
+						if (requestBody.type === "application/json") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+						if (requestBody.type === "application/xml") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+
+			const path = this._basePath + "/test/v1.0/sites/{siteId}/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{siteId}",encodeURIComponent(siteId))
+										.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (siteId === null || siteId === undefined) {
+							throw new Error("Required parameter siteId was null or undefined when calling postSiteScopedTestEntityByExternalReferenceCode.");
+						}
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling postSiteScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+					body: body,
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+								,{"Content-Type": requestBody.type}
+					,headers || {}
+					),
+				method: "POST",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+					/**
+					 *  - Default method for JSON body
+							 * @param siteId
+							 * @param externalReferenceCode
+						 * @param scopedTestEntity
+					 */
+					public async postSiteScopedTestEntityByExternalReferenceCode(
+									siteId: number,
+									externalReferenceCode: string,
+							scopedTestEntity?: ScopedTestEntity,
+						headers?: {[name: string]: string}
+					): Promise<{
+							body: ScopedTestEntity;
+						response: Response;
+					}> {
+						return this.postSiteScopedTestEntityByExternalReferenceCodeWithContentType(
+										siteId,
+										externalReferenceCode,
+							{
+								parameters: {
+										scopedTestEntity: scopedTestEntity
+								},
+								type: "application/json"
+							},
+							headers
+						);
+					}
+		/**
+		 * 
+				 * @param assetLibraryId
+				 * @param externalReferenceCode
+		 		* @param requestBody Request body that can be one of multiple content types
+		 * @param headers Optional custom request headers
+		 */
+		public async putAssetLibraryScopedTestEntityByExternalReferenceCodeWithContentType(
+						assetLibraryId: number,
+						externalReferenceCode: string,
+					requestBody:
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/json"
+							}
+								|
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/xml"
+							}
+								,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+				let body;
+						if (requestBody.type === "application/json") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+						if (requestBody.type === "application/xml") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+
+			const path = this._basePath + "/test/v1.0/asset-libraries/{assetLibraryId}/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{assetLibraryId}",encodeURIComponent(assetLibraryId))
+										.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (assetLibraryId === null || assetLibraryId === undefined) {
+							throw new Error("Required parameter assetLibraryId was null or undefined when calling putAssetLibraryScopedTestEntityByExternalReferenceCode.");
+						}
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling putAssetLibraryScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+					body: body,
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+								,{"Content-Type": requestBody.type}
+					,headers || {}
+					),
+				method: "PUT",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+					/**
+					 *  - Default method for JSON body
+							 * @param assetLibraryId
+							 * @param externalReferenceCode
+						 * @param scopedTestEntity
+					 */
+					public async putAssetLibraryScopedTestEntityByExternalReferenceCode(
+									assetLibraryId: number,
+									externalReferenceCode: string,
+							scopedTestEntity?: ScopedTestEntity,
+						headers?: {[name: string]: string}
+					): Promise<{
+							body: ScopedTestEntity;
+						response: Response;
+					}> {
+						return this.putAssetLibraryScopedTestEntityByExternalReferenceCodeWithContentType(
+										assetLibraryId,
+										externalReferenceCode,
+							{
+								parameters: {
+										scopedTestEntity: scopedTestEntity
+								},
+								type: "application/json"
+							},
+							headers
+						);
+					}
+		/**
+		 * 
+				 * @param externalReferenceCode
+		 		* @param requestBody Request body that can be one of multiple content types
+		 * @param headers Optional custom request headers
+		 */
+		public async putScopedTestEntityByExternalReferenceCodeWithContentType(
+						externalReferenceCode: string,
+					requestBody:
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/json"
+							}
+								|
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/xml"
+							}
+								,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+				let body;
+						if (requestBody.type === "application/json") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+						if (requestBody.type === "application/xml") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+
+			const path = this._basePath + "/test/v1.0/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling putScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+					body: body,
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+								,{"Content-Type": requestBody.type}
+					,headers || {}
+					),
+				method: "PUT",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+					/**
+					 *  - Default method for JSON body
+							 * @param externalReferenceCode
+						 * @param scopedTestEntity
+					 */
+					public async putScopedTestEntityByExternalReferenceCode(
+									externalReferenceCode: string,
+							scopedTestEntity?: ScopedTestEntity,
+						headers?: {[name: string]: string}
+					): Promise<{
+							body: ScopedTestEntity;
+						response: Response;
+					}> {
+						return this.putScopedTestEntityByExternalReferenceCodeWithContentType(
+										externalReferenceCode,
+							{
+								parameters: {
+										scopedTestEntity: scopedTestEntity
+								},
+								type: "application/json"
+							},
+							headers
+						);
+					}
+		/**
+		 * 
+				 * @param siteId
+				 * @param externalReferenceCode
+		 		* @param requestBody Request body that can be one of multiple content types
+		 * @param headers Optional custom request headers
+		 */
+		public async putSiteScopedTestEntityByExternalReferenceCodeWithContentType(
+						siteId: number,
+						externalReferenceCode: string,
+					requestBody:
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/json"
+							}
+								|
+							{
+								parameters: {
+										scopedTestEntity?: ScopedTestEntity
+								},
+								type: "application/xml"
+							}
+								,
+			headers?: {[name: string]: string},
+		): Promise<{
+				body: ScopedTestEntity;
+			response: Response;
+		}> {
+				let body;
+						if (requestBody.type === "application/json") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+						if (requestBody.type === "application/xml") {
+								body = JSON.stringify(ObjectSerializer.serialize(requestBody.parameters.scopedTestEntity, "ScopedTestEntity"));
+						}
+
+			const path = this._basePath + "/test/v1.0/sites/{siteId}/scoped-test-entities/by-external-reference-code/{externalReferenceCode}"
+						.replace("{siteId}",encodeURIComponent(siteId))
+										.replace("{externalReferenceCode}",encodeURIComponent(externalReferenceCode))
+				;
+
+			const queryParameters: any = {};
+
+						if (siteId === null || siteId === undefined) {
+							throw new Error("Required parameter siteId was null or undefined when calling putSiteScopedTestEntityByExternalReferenceCode.");
+						}
+
+						if (externalReferenceCode === null || externalReferenceCode === undefined) {
+							throw new Error("Required parameter externalReferenceCode was null or undefined when calling putSiteScopedTestEntityByExternalReferenceCode.");
+						}
+
+			const queryString = Object.keys(queryParameters).length ?
+				"?" + new URLSearchParams(queryParameters).toString() :
+					"";
+
+			const response = await fetch(path + queryString, {
+					body: body,
+				headers:
+					Object.assign({}, this._defaultHeaders
+						,{
+								Accept: "application/json"
+						}
+								,{"Content-Type": requestBody.type}
+					,headers || {}
+					),
+				method: "PUT",
+			});
+
+			if (response.ok) {
+				const contentType = response.headers.get("content-type") || "";
+
+					if (contentType.includes("application/json")) {
+						return {body: ObjectSerializer.deserialize(await response.json(), "ScopedTestEntity"), response};
+					}
+					else {
+						return {body: await response.text() as any, response};
+					}
+			}
+			else {
+				throw new Error("HTTP Error " + response.status + ": " + response.statusText + ". " + await response.text());
+			}
+		}
+
+					/**
+					 *  - Default method for JSON body
+							 * @param siteId
+							 * @param externalReferenceCode
+						 * @param scopedTestEntity
+					 */
+					public async putSiteScopedTestEntityByExternalReferenceCode(
+									siteId: number,
+									externalReferenceCode: string,
+							scopedTestEntity?: ScopedTestEntity,
+						headers?: {[name: string]: string}
+					): Promise<{
+							body: ScopedTestEntity;
+						response: Response;
+					}> {
+						return this.putSiteScopedTestEntityByExternalReferenceCodeWithContentType(
+										siteId,
+										externalReferenceCode,
+							{
+								parameters: {
+										scopedTestEntity: scopedTestEntity
+								},
+								type: "application/json"
+							},
+							headers
+						);
+					}
+}

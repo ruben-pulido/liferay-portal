@@ -48,7 +48,8 @@ public class ActionUtil {
 		throws PortalException {
 
 		long backgroundTaskId = ParamUtil.getLong(
-			actionRequest, BackgroundTaskConstants.BACKGROUND_TASK_ID);
+			actionRequest,
+			BackgroundTaskConstants.MESSAGE_KEY_BACKGROUND_TASK_ID);
 
 		BackgroundTaskManagerUtil.deleteBackgroundTask(backgroundTaskId);
 	}
@@ -177,7 +178,7 @@ public class ActionUtil {
 			renderRequest, portletPreferences);
 
 		httpServletRequest.setAttribute(
-			JavaConstants.JAVAX_PORTLET_REQUEST, renderRequest);
+			JavaConstants.JAKARTA_PORTLET_REQUEST, renderRequest);
 
 		return renderRequest;
 	}

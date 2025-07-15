@@ -364,13 +364,17 @@ public class BatchEngineUnitProcessorImpl implements BatchEngineUnitProcessor {
 			CompletableFuture<Void> completableFuture)
 		throws Exception {
 
+		if (_isProcessed(batchEngineUnit)) {
+			return null;
+		}
+
 		BatchEngineUnitConfiguration batchEngineUnitConfiguration = null;
 		byte[] content = null;
 		String contentType = null;
 
 		if (batchEngineUnit.isValid()) {
-			batchEngineUnitConfiguration = _updateBatchEngineUnitConfiguration(
-				batchEngineUnit.getBatchEngineUnitConfiguration());
+			batchEngineUnitConfiguration =
+				batchEngineUnit.getBatchEngineUnitConfiguration();
 
 			UnsyncByteArrayOutputStream compressedUnsyncByteArrayOutputStream =
 				new UnsyncByteArrayOutputStream();
@@ -399,13 +403,10 @@ public class BatchEngineUnitProcessorImpl implements BatchEngineUnitProcessor {
 					" ", batchEngineUnit.getDataFileName()));
 		}
 
-		if (_isProcessed(batchEngineUnit)) {
-			return null;
-		}
-
 		return _execute(
-			batchEngineUnit, batchEngineUnitConfiguration, content, contentType,
-			completableFuture);
+			batchEngineUnit,
+			_updateBatchEngineUnitConfiguration(batchEngineUnitConfiguration),
+			content, contentType, completableFuture);
 	}
 
 	private BatchEngineUnitConfiguration _updateBatchEngineUnitConfiguration(

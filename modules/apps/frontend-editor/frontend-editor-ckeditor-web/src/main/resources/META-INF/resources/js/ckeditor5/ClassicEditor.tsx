@@ -6,26 +6,32 @@
 import {ClassicEditor as BaseClassicEditor, EventInfo} from 'ckeditor5';
 import React from 'react';
 
-import BaseEditor, {TEditor} from './BaseEditor';
+import BaseEditor from './BaseEditor';
 import getDefaultEditorConfig from './utils/getDefaultEditorConfig';
 import {
 	EEditorConfigPreset,
 	EEditorVariant,
 	LiferayEditorConfig,
+	TEditor,
 } from './utils/types';
 
 const ClassicEditor = ({
 	className,
 	config,
 	data,
+	disabled,
+	onBlur,
 	onChange,
+	onFocus,
 	onReady,
 }: {
 	className?: string;
 	config?: LiferayEditorConfig;
 	data?: string;
-	id?: string;
+	disabled?: boolean;
+	onBlur?: (event: EventInfo, editor: TEditor) => void;
 	onChange?: (event: EventInfo, editor: TEditor) => void;
+	onFocus?: (event: EventInfo, editor: TEditor) => void;
 	onReady?: (editor: TEditor) => void;
 }) => {
 	return (
@@ -39,9 +45,14 @@ const ClassicEditor = ({
 				...config,
 			}}
 			data={data}
+			disabled={disabled}
 			editor={BaseClassicEditor}
+			onBlur={onBlur}
 			onChange={onChange}
+			onFocus={onFocus}
 			onReady={(editor) => {
+				Liferay.fire('ckeditor:ready', {editor});
+
 				if ('toolbar' in editor.ui.view) {
 					editor.ui.view.toolbar.items.map((item: any) => {
 						if (item.buttonView) {

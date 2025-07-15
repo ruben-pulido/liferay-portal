@@ -73,6 +73,46 @@ public abstract class BaseERCSiteTestEntityResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -X 'DELETE' 'http://localhost:8080/o/test/v1.0/sites/{siteExternalReferenceCode}/erc-site-test-entities/{ercSiteTestEntityExternalReferenceCode}'  -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "siteExternalReferenceCode"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "ercSiteTestEntityExternalReferenceCode"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "ERCSiteTestEntity")
+		}
+	)
+	@jakarta.ws.rs.DELETE
+	@jakarta.ws.rs.Path(
+		"/sites/{siteExternalReferenceCode}/erc-site-test-entities/{ercSiteTestEntityExternalReferenceCode}"
+	)
+	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public void deleteSiteERCSiteTestEntity(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("siteExternalReferenceCode")
+			String siteExternalReferenceCode,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("ercSiteTestEntityExternalReferenceCode")
+			String ercSiteTestEntityExternalReferenceCode)
+		throws Exception {
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -X 'GET' 'http://localhost:8080/o/test/v1.0/sites/{siteExternalReferenceCode}/erc-site-test-entities'  -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
@@ -113,11 +153,11 @@ public abstract class BaseERCSiteTestEntityResourceImpl
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "ercSiteTestEntityExternalReferenceCode"
+				name = "siteExternalReferenceCode"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "siteExternalReferenceCode"
+				name = "ercSiteTestEntityExternalReferenceCode"
 			)
 		}
 	)
@@ -132,18 +172,15 @@ public abstract class BaseERCSiteTestEntityResourceImpl
 	)
 	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
 	@Override
-	public ERCSiteTestEntity
-			getSiteERCSiteTestEntityErcSiteTestEntityExternalReferenceCode(
-				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-				@jakarta.validation.constraints.NotNull
-				@jakarta.ws.rs.PathParam(
-					"ercSiteTestEntityExternalReferenceCode"
-				)
-				String ercSiteTestEntityExternalReferenceCode,
-				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-				@jakarta.validation.constraints.NotNull
-				@jakarta.ws.rs.PathParam("siteExternalReferenceCode")
-				String siteExternalReferenceCode)
+	public ERCSiteTestEntity getSiteERCSiteTestEntity(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("siteExternalReferenceCode")
+			String siteExternalReferenceCode,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("ercSiteTestEntityExternalReferenceCode")
+			String ercSiteTestEntityExternalReferenceCode)
 		throws Exception {
 
 		return new ERCSiteTestEntity();
@@ -323,11 +360,11 @@ public abstract class BaseERCSiteTestEntityResourceImpl
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "ercSiteTestEntityExternalReferenceCode"
+				name = "siteExternalReferenceCode"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "siteExternalReferenceCode"
+				name = "ercSiteTestEntityExternalReferenceCode"
 			)
 		}
 	)
@@ -343,19 +380,16 @@ public abstract class BaseERCSiteTestEntityResourceImpl
 	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
 	@jakarta.ws.rs.PUT
 	@Override
-	public ERCSiteTestEntity
-			putSiteERCSiteTestEntityErcSiteTestEntityExternalReferenceCode(
-				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-				@jakarta.validation.constraints.NotNull
-				@jakarta.ws.rs.PathParam(
-					"ercSiteTestEntityExternalReferenceCode"
-				)
-				String ercSiteTestEntityExternalReferenceCode,
-				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-				@jakarta.validation.constraints.NotNull
-				@jakarta.ws.rs.PathParam("siteExternalReferenceCode")
-				String siteExternalReferenceCode,
-				ERCSiteTestEntity ercSiteTestEntity)
+	public ERCSiteTestEntity putSiteERCSiteTestEntity(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("siteExternalReferenceCode")
+			String siteExternalReferenceCode,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("ercSiteTestEntityExternalReferenceCode")
+			String ercSiteTestEntityExternalReferenceCode,
+			ERCSiteTestEntity ercSiteTestEntity)
 		throws Exception {
 
 		return new ERCSiteTestEntity();
@@ -375,7 +409,7 @@ public abstract class BaseERCSiteTestEntityResourceImpl
 			"createStrategy", "INSERT");
 
 		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
-			if (parameters.containsKey("siteId")) {
+			if (parameters.containsKey("siteExternalReferenceCode")) {
 				ercSiteTestEntityUnsafeFunction =
 					ercSiteTestEntity -> postSiteERCSiteTestEntity(
 						(String)parameters.get("siteExternalReferenceCode"),
@@ -383,7 +417,7 @@ public abstract class BaseERCSiteTestEntityResourceImpl
 			}
 			else {
 				throw new NotSupportedException(
-					"One of the following parameters must be specified: [siteId]");
+					"One of the following parameters must be specified: [siteExternalReferenceCode]");
 			}
 		}
 
@@ -414,8 +448,33 @@ public abstract class BaseERCSiteTestEntityResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		UnsafeFunction<ERCSiteTestEntity, ERCSiteTestEntity, Exception>
+			ercSiteTestEntityUnsafeFunction = ercSiteTestEntity -> {
+				if (parameters.containsKey("siteExternalReferenceCode")) {
+					deleteSiteERCSiteTestEntity(
+						(String)parameters.get("siteExternalReferenceCode"),
+						ercSiteTestEntity.getExternalReferenceCode());
+
+					return ercSiteTestEntity;
+				}
+
+				throw new UnsupportedOperationException(
+					"Unable to delete by external reference code or ID");
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				ercSiteTestEntities, ercSiteTestEntityUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				ercSiteTestEntities, ercSiteTestEntityUnsafeFunction::apply);
+		}
+		else {
+			for (ERCSiteTestEntity ercSiteTestEntity : ercSiteTestEntities) {
+				ercSiteTestEntityUnsafeFunction.apply(ercSiteTestEntity);
+			}
+		}
 	}
 
 	public Set<String> getAvailableCreateStrategies() {

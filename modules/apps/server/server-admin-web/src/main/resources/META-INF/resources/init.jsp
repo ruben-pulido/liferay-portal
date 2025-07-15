@@ -39,6 +39,7 @@ page import="com.liferay.portal.kernel.captcha.CaptchaException" %><%@
 page import="com.liferay.portal.kernel.captcha.CaptchaTextException" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.log4j.Log4JUtil" %><%@
 page import="com.liferay.portal.kernel.model.*" %><%@
 page import="com.liferay.portal.kernel.model.impl.*" %><%@
 page import="com.liferay.portal.kernel.patcher.PatcherValues" %><%@
@@ -65,7 +66,6 @@ page import="com.liferay.portal.kernel.util.Time" %><%@
 page import="com.liferay.portal.kernel.util.UnicodeProperties" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
-page import="com.liferay.portal.log4j.Log4JUtil" %><%@
 page import="com.liferay.portal.model.impl.*" %><%@
 page import="com.liferay.portal.util.ShutdownUtil" %><%@
 page import="com.liferay.server.admin.web.internal.constants.ImageMagickResourceLimitConstants" %><%@
@@ -114,7 +114,7 @@ VideoConverter videoConverter = (VideoConverter)request.getAttribute(VideoConver
 <%@ include file="/init-ext.jsp" %>
 
 <%
-PortletRequest portletRequest = (PortletRequest)request.getAttribute(JavaConstants.JAVAX_PORTLET_REQUEST);
+PortletRequest portletRequest = (PortletRequest)request.getAttribute(JavaConstants.JAKARTA_PORTLET_REQUEST);
 
 if (portletRequest != null) {
 	CaptchaUtil.enforceCaptcha(portletRequest);

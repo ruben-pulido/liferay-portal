@@ -37,7 +37,7 @@
 									"fragmentFields": [
 									],
 									"fragmentStyle": {
-										"marginBottom": "3"
+										"marginBottom": "5"
 									},
 									"indexed": true
 								},
@@ -49,25 +49,6 @@
 									"formConfig": {
 										"formReference": {
 											"contextSource": "DisplayPageItem"
-										},
-										"formSuccessSubmissionResult": {
-											"itemReference": {
-												"className": "com.liferay.portal.kernel.model.Layout",
-												"fields": [
-													{
-														"fieldName": "friendlyURL",
-														"fieldValue": "/contents"
-													},
-													{
-														"fieldName": "privatePage",
-														"fieldValue": "false"
-													},
-													{
-														"fieldName": "siteKey",
-														"fieldValue": "CMS"
-													}
-												]
-											}
 										},
 										"formType": "simple",
 										"numberOfSteps": 0
@@ -81,12 +62,32 @@
 									{
 										"definition": {
 											"fragment": {
-												"key": "INPUTS-text-input"
+												"key": "INPUTS-inline-text-input"
 											},
 											"fragmentConfig": {
 												"inputFieldId": "ObjectField_title",
-												"placeholder": "",
+												"placeholder": {
+													"en_US": "New Basic Web Content"
+												},
 												"showCharactersCount": false
+											},
+											"fragmentFields": [
+											],
+											"fragmentStyle": {
+												"marginBottom": "5",
+												"marginLeft": "-16px"
+											},
+											"indexed": true
+										},
+										"id": "7dce4380-1f97-a944-afc3-5b239c328bf6",
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "com.liferay.site.cms.site.initializer.internal.fragment.renderer.SpaceListComponentSectionFragmentRenderer"
+											},
+											"fragmentConfig": {
 											},
 											"fragmentFields": [
 											],
@@ -95,7 +96,7 @@
 											},
 											"indexed": true
 										},
-										"id": "7dce4380-1f97-a944-afc3-5b239c328bf6",
+										"id": "a1c3f2b7-4d29-65db-89a1-9e3f8c02e4dd",
 										"type": "Fragment"
 									},
 									{
@@ -109,7 +110,7 @@
 											"fragmentFields": [
 											],
 											"fragmentStyle": {
-												"marginBottom": "3"
+												"marginBottom": "5"
 											},
 											"indexed": true
 										},

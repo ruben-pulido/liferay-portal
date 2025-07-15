@@ -113,7 +113,7 @@ public class CustomValue {
 	protected Map<String, String> data_i18n;
 	protected Geo geo;
 
-	private static class CustomValueJSONParser
+	public static class CustomValueJSONParser
 		extends BaseJSONParser<CustomValue> {
 
 		public static String toJSON(CustomValue customValue) {

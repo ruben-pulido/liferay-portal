@@ -211,6 +211,23 @@ public abstract class BaseTopLevelBuild
 	}
 
 	@Override
+	public JSONObject getBuildReportJSONObject() {
+		JSONObject buildReportJSONObject = super.getBuildReportJSONObject();
+
+		buildReportJSONObject.put("buildParameters", getParameters());
+
+		if (!(this instanceof ControllerTopLevelBuild)) {
+			buildReportJSONObject.put(
+				"testSuiteName", getTestSuiteName()
+			).put(
+				"totalDuration", getTotalDuration()
+			);
+		}
+
+		return buildReportJSONObject;
+	}
+
+	@Override
 	public Build getControllerBuild() {
 		if (_controllerBuild != null) {
 			return _controllerBuild;
@@ -581,6 +598,17 @@ public abstract class BaseTopLevelBuild
 
 	public TimelineData getTimelineData() {
 		return new TimelineData(500, this);
+	}
+
+	@Override
+	public TopLevelBuildReport getTopLevelBuildReport() {
+		if (_topLevelBuildReport != null) {
+			return _topLevelBuildReport;
+		}
+
+		_topLevelBuildReport = BuildReportFactory.newTopLevelBuildReport(this);
+
+		return _topLevelBuildReport;
 	}
 
 	public URL getUserContentURL() {
@@ -2457,5 +2485,6 @@ public abstract class BaseTopLevelBuild
 	private String _metricsHostName;
 	private int _metricsHostPort;
 	private final boolean _sendBuildMetrics;
+	private TopLevelBuildReport _topLevelBuildReport;
 
 }

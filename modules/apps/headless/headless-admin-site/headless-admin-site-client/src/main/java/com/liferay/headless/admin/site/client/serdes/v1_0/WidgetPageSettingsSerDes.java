@@ -152,15 +152,15 @@ public class WidgetPageSettingsSerDes {
 			sb.append(widgetPageSettings.getHiddenFromNavigation());
 		}
 
-		if (widgetPageSettings.getNavigationMenuSettings() != null) {
+		if (widgetPageSettings.getNavigationSettings() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"navigationMenuSettings\": ");
+			sb.append("\"navigationSettings\": ");
 
 			sb.append(
-				String.valueOf(widgetPageSettings.getNavigationMenuSettings()));
+				String.valueOf(widgetPageSettings.getNavigationSettings()));
 		}
 
 		if (widgetPageSettings.getOpenGraphSettings() != null) {
@@ -172,6 +172,16 @@ public class WidgetPageSettingsSerDes {
 
 			sb.append(
 				String.valueOf(widgetPageSettings.getOpenGraphSettings()));
+		}
+
+		if (widgetPageSettings.getPriority() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"priority\": ");
+
+			sb.append(widgetPageSettings.getPriority());
 		}
 
 		if (widgetPageSettings.getSeoSettings() != null) {
@@ -283,13 +293,13 @@ public class WidgetPageSettingsSerDes {
 				String.valueOf(widgetPageSettings.getHiddenFromNavigation()));
 		}
 
-		if (widgetPageSettings.getNavigationMenuSettings() == null) {
-			map.put("navigationMenuSettings", null);
+		if (widgetPageSettings.getNavigationSettings() == null) {
+			map.put("navigationSettings", null);
 		}
 		else {
 			map.put(
-				"navigationMenuSettings",
-				String.valueOf(widgetPageSettings.getNavigationMenuSettings()));
+				"navigationSettings",
+				String.valueOf(widgetPageSettings.getNavigationSettings()));
 		}
 
 		if (widgetPageSettings.getOpenGraphSettings() == null) {
@@ -299,6 +309,14 @@ public class WidgetPageSettingsSerDes {
 			map.put(
 				"openGraphSettings",
 				String.valueOf(widgetPageSettings.getOpenGraphSettings()));
+		}
+
+		if (widgetPageSettings.getPriority() == null) {
+			map.put("priority", null);
+		}
+		else {
+			map.put(
+				"priority", String.valueOf(widgetPageSettings.getPriority()));
 		}
 
 		if (widgetPageSettings.getSeoSettings() == null) {
@@ -363,11 +381,14 @@ public class WidgetPageSettingsSerDes {
 				return false;
 			}
 			else if (Objects.equals(
-						jsonParserFieldName, "navigationMenuSettings")) {
+						jsonParserFieldName, "navigationSettings")) {
 
 				return false;
 			}
 			else if (Objects.equals(jsonParserFieldName, "openGraphSettings")) {
+				return false;
+			}
+			else if (Objects.equals(jsonParserFieldName, "priority")) {
 				return false;
 			}
 			else if (Objects.equals(jsonParserFieldName, "seoSettings")) {
@@ -445,11 +466,11 @@ public class WidgetPageSettingsSerDes {
 				}
 			}
 			else if (Objects.equals(
-						jsonParserFieldName, "navigationMenuSettings")) {
+						jsonParserFieldName, "navigationSettings")) {
 
 				if (jsonParserFieldValue != null) {
-					widgetPageSettings.setNavigationMenuSettings(
-						NavigationMenuSettingsSerDes.toDTO(
+					widgetPageSettings.setNavigationSettings(
+						NavigationSettingsSerDes.toDTO(
 							(String)jsonParserFieldValue));
 				}
 			}
@@ -458,6 +479,12 @@ public class WidgetPageSettingsSerDes {
 					widgetPageSettings.setOpenGraphSettings(
 						OpenGraphSettingsSerDes.toDTO(
 							(String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "priority")) {
+				if (jsonParserFieldValue != null) {
+					widgetPageSettings.setPriority(
+						Integer.valueOf((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "seoSettings")) {
