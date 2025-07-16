@@ -256,6 +256,8 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				StringUtil.toLowerCase(RandomTestUtil.randomString()),
 				layout.getExternalReferenceCode(), SitePage.Type.CONTENT_PAGE,
 				StringUtil.toLowerCase(RandomTestUtil.randomString())));
+
+		_testPostByExternalReferenceCodeSitePageWithCustomFields();
 	}
 
 	@Override
@@ -1266,6 +1268,13 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			_layoutLocalService.getLayoutByExternalReferenceCode(
 				sitePage.getExternalReferenceCode(), testGroup.getGroupId()),
 			postSitePage);
+	}
+
+	private void _testPostByExternalReferenceCodeSitePageWithCustomFields()
+		throws Exception {
+
+		_testAddOrUpdateSiteSiteByExternalReferenceCodeSitePageWithCustomFields(
+			null, null);
 	}
 
 	private void _testPutSiteSiteByExternalReferenceCodeSitePage(
