@@ -419,12 +419,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		ExpandoTable expandoTable = _expandoTableLocalService.addDefaultTable(
 			PortalUtil.getDefaultCompanyId(), Layout.class.getName());
 
-		for (String attributeName : _EXPANDO_ATTRIBUTE_LOCALIZED_NAMES) {
-			_expandoColumnLocalService.addColumn(
-				expandoTable.getTableId(), attributeName,
-				ExpandoColumnConstants.STRING_LOCALIZED, null);
-		}
-
 		for (int i = 0; i < _EXPANDO_ATTRIBUTE_NONLOCALIZED_NAMES.length; i++) {
 			_expandoColumnLocalService.addColumn(
 				expandoTable.getTableId(),
@@ -466,21 +460,18 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	}
 
 	private void _assertCustomFields(
-		CustomField[] expectedLocalizedCustomFields,
 		CustomField[] expectedNonlocalizedCustomFields, SitePage sitePage) {
 
 		CustomField[] customFields = sitePage.getCustomFields();
 
-		CustomField[] expectedCustomFields = ArrayUtil.append(
-			expectedLocalizedCustomFields, expectedNonlocalizedCustomFields);
-
 		Assert.assertEquals(
-			Arrays.toString(customFields), expectedCustomFields.length,
-			customFields.length);
+			Arrays.toString(customFields),
+			expectedNonlocalizedCustomFields.length, customFields.length);
 
 		Assert.assertTrue(
 			Arrays.toString(customFields),
-			ArrayUtil.containsAll(customFields, expectedCustomFields));
+			ArrayUtil.containsAll(
+				customFields, expectedNonlocalizedCustomFields));
 
 		Layout layout = _layoutLocalService.fetchLayoutByExternalReferenceCode(
 			sitePage.getExternalReferenceCode(), testGroup.getGroupId());
@@ -499,10 +490,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		for (CustomField customField : expectedNonlocalizedCustomFields) {
 			_assertCustomField(attributes, customField);
 		}
-
-		for (CustomField customField : expectedLocalizedCustomFields) {
-			_assertLocalizedCustomField(attributes, customField);
-		}
 	}
 
 	private void
@@ -518,14 +505,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 							testGroup.getExternalReferenceCode(),
 							layout.getExternalReferenceCode()));
 		}
-	}
-
-	private void _assertLocalizedCustomField(
-		Map<String, Serializable> attributes, CustomField customField) {
-
-		Assert.assertEquals(
-			attributes.get(customField.getName()),
-			_toLocaleMap(customField.getCustomValue()));
 	}
 
 	private void _assertMapEquals(
@@ -760,15 +739,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 					updateSitePageUnsafeTriFunction)
 		throws Exception {
 
-		CustomField localizedCustomField1 = _getLocalizedCustomField(
-			_EXPANDO_ATTRIBUTE_LOCALIZED_NAMES[0], _randomLocalizedMap());
-		CustomField localizedCustomField3 = _getLocalizedCustomField(
-			_EXPANDO_ATTRIBUTE_LOCALIZED_NAMES[2], _randomLocalizedMap());
-		CustomField localizedCustomField4 = _getLocalizedCustomField(
-			_EXPANDO_ATTRIBUTE_LOCALIZED_NAMES[3], _randomLocalizedMap());
-		CustomField localizedCustomField5 = _getLocalizedCustomField(
-			_EXPANDO_ATTRIBUTE_LOCALIZED_NAMES[4], _randomLocalizedMap());
-
 		CustomField nonlocalizedCustomField1 = _getCustomField(
 			_EXPANDO_ATTRIBUTE_NONLOCALIZED_NAMES[0],
 			RandomTestUtil.randomString());
@@ -780,8 +750,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		randomSitePage.setCustomFields(
 			new CustomField[] {
-				localizedCustomField1, localizedCustomField3,
-				localizedCustomField4, localizedCustomField5,
 				nonlocalizedCustomField1, nonlocalizedCustomField3
 			});
 
@@ -789,37 +757,21 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			sitePageResource.postByExternalReferenceCodeSitePage(
 				testGroup.getExternalReferenceCode(), randomSitePage);
 
-		CustomField localizedCustomField2 = _getLocalizedCustomField(
-			_EXPANDO_ATTRIBUTE_LOCALIZED_NAMES[1], new HashMap<>());
 		CustomField nonlocalizedCustomField2 = _getCustomField(
 			_EXPANDO_ATTRIBUTE_NONLOCALIZED_NAMES[1],
 			_EXPANDO_ATTRIBUTE_NONLOCALIZED_DEFAULT_VALUES[1]);
 
-		CustomField[] expectedLocalizedCustomFields = {
-			localizedCustomField1, localizedCustomField2, localizedCustomField3,
-			localizedCustomField4, localizedCustomField5
-		};
 		CustomField[] expectedNonlocalizedCustomFields = {
 			nonlocalizedCustomField1, nonlocalizedCustomField2,
 			nonlocalizedCustomField3
 		};
 
-		_assertCustomFields(
-			expectedLocalizedCustomFields, expectedNonlocalizedCustomFields,
-			postSitePage);
+		_assertCustomFields(expectedNonlocalizedCustomFields, postSitePage);
 
 		if (getUpdateBodySitePageFunction == null) {
 			return;
 		}
 
-		CustomField updatedLocalizedCustomField1 = _getLocalizedCustomField(
-			_EXPANDO_ATTRIBUTE_LOCALIZED_NAMES[0], _randomLocalizedMap());
-		CustomField updatedLocalizedCustomField5 = _getLocalizedCustomField(
-			_EXPANDO_ATTRIBUTE_LOCALIZED_NAMES[1], _randomLocalizedMap());
-		CustomField updatedLocalizedCustomField6 = _getLocalizedCustomField(
-			_EXPANDO_ATTRIBUTE_LOCALIZED_NAMES[2], null);
-		CustomField updatedLocalizedCustomField7 = _getLocalizedCustomField(
-			_EXPANDO_ATTRIBUTE_LOCALIZED_NAMES[3], new HashMap<>());
 		CustomField updatedNonlocalizedCustomField1 = _getCustomField(
 			_EXPANDO_ATTRIBUTE_NONLOCALIZED_NAMES[0], null);
 		CustomField updatedNonlocalizedCustomField2 = _getCustomField(
@@ -831,10 +783,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		updateBodySitePage.setCustomFields(
 			new CustomField[] {
-				updatedNonlocalizedCustomField1,
-				updatedNonlocalizedCustomField2, updatedLocalizedCustomField1,
-				updatedLocalizedCustomField5, updatedLocalizedCustomField6,
-				updatedLocalizedCustomField7
+				updatedNonlocalizedCustomField1, updatedNonlocalizedCustomField2
 			});
 
 		try {
@@ -847,11 +796,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		}
 
 		_assertCustomFields(
-			new CustomField[] {
-				updatedLocalizedCustomField1, updatedLocalizedCustomField5,
-				localizedCustomField3, updatedLocalizedCustomField7,
-				localizedCustomField5
-			},
 			new CustomField[] {
 				nonlocalizedCustomField1, updatedNonlocalizedCustomField2,
 				nonlocalizedCustomField3
@@ -918,22 +862,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		}
 
 		return Math.min(priority, maxPriority);
-	}
-
-	private CustomField _getLocalizedCustomField(
-		String curName, Map<String, String> curData_i18n) {
-
-		return new CustomField() {
-			{
-				customValue = new CustomValue() {
-					{
-						data_i18n = curData_i18n;
-						dataType = "Text";
-					}
-				};
-				name = curName;
-			}
-		};
 	}
 
 	private PageSettings _getPageSettings(SitePage.Type type) throws Exception {
@@ -1029,14 +957,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			LocaleUtil.getDefault()
 		).parameters(
 			"nestedFields", "friendlyUrlHistory,pageSpecifications"
-		).build();
-	}
-
-	private Map<String, String> _randomLocalizedMap() {
-		return HashMapBuilder.put(
-			"en-US", RandomTestUtil.randomString()
-		).put(
-			"es-ES", RandomTestUtil.randomString()
 		).build();
 	}
 
@@ -1484,32 +1404,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		_assertParentAndPriority(
 			sitePage1.getExternalReferenceCode(), 2, sitePage4);
 	}
-
-	private Map<Locale, String> _toLocaleMap(CustomValue customValue) {
-		if (MapUtil.isEmpty(customValue.getData_i18n())) {
-			return new HashMap<>();
-		}
-
-		return HashMapBuilder.put(
-			LocaleUtil.SPAIN,
-			customValue.getData_i18n(
-			).get(
-				"es-ES"
-			)
-		).put(
-			LocaleUtil.US,
-			customValue.getData_i18n(
-			).get(
-				"en-US"
-			)
-		).build();
-	}
-
-	private static final String[] _EXPANDO_ATTRIBUTE_LOCALIZED_NAMES = {
-		RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-		RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-		RandomTestUtil.randomString()
-	};
 
 	private static final String[]
 		_EXPANDO_ATTRIBUTE_NONLOCALIZED_DEFAULT_VALUES = {
