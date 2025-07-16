@@ -145,6 +145,27 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 
 					var searchContainer = Liferay.SearchContainer.get(searchContainerName);
 
+					let searchContainerData = searchContainer.getData(true);
+
+					<%
+					String[] roleIds = new String[0];
+
+					if (selUser != null) {
+						roleIds = ArrayUtil.toStringArray(selUser.getRoleIds());
+					}
+
+					JSONArray roleIdsJSONArray = JSONFactoryUtil.createJSONArray(roleIds);
+					%>
+
+					if (searchContainerData.length < <%= roleIds.length %>) {
+						searchContainerData = [
+							...new Set([
+								...<%= roleIdsJSONArray.toString() %>,
+								...searchContainerData,
+							]),
+						];
+					}
+
 					Liferay.Util.openSelectionModal({
 						onSelect: function (event) {
 							<portlet:namespace />selectRole(
@@ -162,7 +183,7 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 						%>
 
 						selectEventName: '<%= regularRoleEventName %>',
-						selectedData: searchContainer.getData(true),
+						selectedData: searchContainerData,
 						title: '<liferay-ui:message arguments="regular-role" key="select-x" />',
 
 						<%

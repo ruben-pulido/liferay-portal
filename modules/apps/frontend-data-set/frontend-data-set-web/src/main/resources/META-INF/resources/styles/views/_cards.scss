@@ -1,0 +1,33 @@
+.card.drop-target {
+	& * {
+		@include common-drop-target;
+	}
+
+	box-shadow: 0 0 0 2px $info;
+	@include common-drop-target;
+}
+
+.visualization-mode-cards {
+	.form-check-card {
+		&:hover,
+		&.active {
+			& .card {
+				box-shadow: $card-box-shadow;
+			}
+		}
+
+		&:hover .card {
+			background-color: $light;
+		}
+
+		&.active {
+			&:hover .card {
+				background-color: #d6e4ff;
+			}
+
+			.card {
+				background-color: $primary-l3;
+			}
+		}
+	}
+}

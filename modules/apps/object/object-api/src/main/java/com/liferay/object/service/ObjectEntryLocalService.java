@@ -65,7 +65,7 @@ public interface ObjectEntryLocalService
 	 * Never modify this interface directly. Add custom service methods to <code>com.liferay.object.service.impl.ObjectEntryLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the object entry local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link ObjectEntryLocalServiceUtil} if injection and service tracking are not available.
 	 */
 	public ObjectEntry addObjectEntry(
-			long userId, long groupId, long objectDefinitionId,
+			long groupId, long userId, long objectDefinitionId,
 			long objectEntryFolderId, String defaultLanguageId,
 			Map<String, Serializable> values, ServiceContext serviceContext)
 		throws PortalException;
@@ -84,7 +84,7 @@ public interface ObjectEntryLocalService
 	public ObjectEntry addObjectEntry(ObjectEntry objectEntry);
 
 	public ObjectEntry addObjectEntry(
-			String externalReferenceCode, long userId,
+			String externalReferenceCode, long groupId, long userId,
 			ObjectDefinition objectDefinition, long objectEntryFolderId)
 		throws PortalException;
 
@@ -94,10 +94,12 @@ public interface ObjectEntryLocalService
 		throws PortalException;
 
 	public ObjectEntry addOrUpdateObjectEntry(
-			String externalReferenceCode, long userId, long groupId,
+			String externalReferenceCode, long groupId, long userId,
 			long objectDefinitionId, long objectEntryFolderId,
 			Map<String, Serializable> values, ServiceContext serviceContext)
 		throws PortalException;
+
+	public void checkObjectEntries(long companyId) throws PortalException;
 
 	/**
 	 * Creates a new object entry with the primary key. Does not add the object entry to the database.
@@ -237,8 +239,7 @@ public interface ObjectEntryLocalService
 		DynamicQuery dynamicQuery, Projection projection);
 
 	public ObjectEntry expireObjectEntry(
-			long userId, long objectEntryId, int version,
-			ServiceContext serviceContext)
+			long userId, long objectEntryId, ServiceContext serviceContext)
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -409,6 +410,10 @@ public interface ObjectEntryLocalService
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<ObjectEntry> getObjectEntryFolderObjectEntries(
+		long groupId, long objectEntryFolderId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getObjectEntryFolderObjectEntriesCount(
 		long groupId, long objectEntryFolderId);
 
@@ -422,6 +427,13 @@ public interface ObjectEntryLocalService
 	public int getOneToManyObjectEntriesCount(
 			long groupId, long objectRelationshipId, long primaryKey,
 			boolean related, String search)
+		throws PortalException;
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Transactional(propagation = Propagation.REQUIRED)
+	public ObjectEntry getOrAddIncompleteObjectEntry(
+			String externalReferenceCode, long groupId, long userId,
+			long objectDefinitionId)
 		throws PortalException;
 
 	/**
@@ -441,9 +453,9 @@ public interface ObjectEntryLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Long> getPrimaryKeys(
-			long groupId, long companyId, long userId, long objectDefinitionId,
-			Predicate predicate, String search, int start, int end,
-			Sort[] sorts)
+			Long[] groupIds, long companyId, long userId,
+			long objectDefinitionId, Predicate predicate, String search,
+			int start, int end, Sort[] sorts)
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -476,8 +488,8 @@ public interface ObjectEntryLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getValuesListCount(
-			long groupId, long companyId, long userId, long objectDefinitionId,
-			Predicate predicate, String search)
+			Long[] groupIds, long companyId, long userId,
+			long objectDefinitionId, Predicate predicate, String search)
 		throws PortalException;
 
 	public void insertIntoOrUpdateExtensionTable(

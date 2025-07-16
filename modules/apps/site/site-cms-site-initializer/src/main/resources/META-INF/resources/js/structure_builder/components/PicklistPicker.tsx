@@ -15,12 +15,18 @@ import React, {useState} from 'react';
 
 import {useCache} from '../contexts/CacheContext';
 import {useSelector, useStateDispatch} from '../contexts/StateContext';
-import selectPublishedFields from '../selectors/selectPublishedFields';
+import selectPublishedChildren from '../selectors/selectPublishedChildren';
 import selectValidationErrors from '../selectors/selectValidationErrors';
 import {Field, MultiselectField, SingleSelectField} from '../utils/field';
 import AsyncPicker from './AsyncPicker';
 
-export default function PicklistPicker({field}: {field: Field}) {
+export default function PicklistPicker({
+	disabled,
+	field,
+}: {
+	disabled?: boolean;
+	field: Field;
+}) {
 	const selectField = field as SingleSelectField | MultiselectField;
 
 	const [selectedKey, setSelectedKey] = useState<React.Key>(
@@ -28,7 +34,7 @@ export default function PicklistPicker({field}: {field: Field}) {
 	);
 
 	const dispatch = useStateDispatch();
-	const publishedFields = useSelector(selectPublishedFields);
+	const publishedChildren = useSelector(selectPublishedChildren);
 	const validationErrors = useSelector(selectValidationErrors(field.uuid));
 
 	const {data: picklists, load: loadPicklist, status} = useCache('picklists');
@@ -37,7 +43,7 @@ export default function PicklistPicker({field}: {field: Field}) {
 	const pickerId = useId();
 
 	const hasError = validationErrors.has('no-picklist');
-	const isPublished = publishedFields.has(field.uuid);
+	const isPublished = publishedChildren.has(field.uuid);
 
 	return (
 		<ClayForm.Group className={classNames('mb-2', {'has-error': hasError})}>
@@ -54,7 +60,7 @@ export default function PicklistPicker({field}: {field: Field}) {
 
 					<AsyncPicker
 						aria-describedby={feedbackId}
-						disabled={isPublished || !picklists.length}
+						disabled={isPublished || !picklists.length || disabled}
 						id={pickerId}
 						items={picklists}
 						loader={loadPicklist}

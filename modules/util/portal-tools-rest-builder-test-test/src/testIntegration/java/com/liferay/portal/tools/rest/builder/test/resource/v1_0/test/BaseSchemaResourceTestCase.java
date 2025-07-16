@@ -211,6 +211,16 @@ public abstract class BaseSchemaResourceTestCase {
 			"This method needs to be implemented");
 	}
 
+	@Test
+	public void testGraphQLGetSchemasPage() throws Exception {
+		Assert.assertTrue(false);
+	}
+
+	@Test
+	public void testBatchEngineDeleteImportTask() throws Exception {
+		Assert.assertTrue(true);
+	}
+
 	protected void assertContains(Schema schema, List<Schema> schemas) {
 		boolean contains = false;
 

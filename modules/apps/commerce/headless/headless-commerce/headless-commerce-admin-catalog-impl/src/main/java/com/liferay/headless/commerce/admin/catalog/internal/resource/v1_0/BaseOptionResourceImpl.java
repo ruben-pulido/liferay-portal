@@ -558,16 +558,14 @@ public abstract class BaseOptionResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				optionUnsafeFunction = option -> {
+					Option getOption = null;
 					Option persistedOption = null;
 
 					try {
-						Option getOption = getOptionByExternalReferenceCode(
+						getOption = getOptionByExternalReferenceCode(
 							option.getExternalReferenceCode());
 
-						patchOption(
-							getOption.getId() != null ? getOption.getId() :
-								_parseLong((String)parameters.get("optionId")),
-							option);
+						patchOption(getOption.getId(), option);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedOption = postOption(option);
@@ -578,9 +576,14 @@ public abstract class BaseOptionResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				optionUnsafeFunction =
-					option -> putOptionByExternalReferenceCode(
+				optionUnsafeFunction = option -> {
+					Option persistedOption = null;
+
+					persistedOption = putOptionByExternalReferenceCode(
 						option.getExternalReferenceCode(), option);
+
+					return persistedOption;
+				};
 			}
 		}
 
@@ -727,10 +730,7 @@ public abstract class BaseOptionResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			optionUnsafeFunction = option -> {
-				patchOption(
-					option.getId() != null ? option.getId() :
-						_parseLong((String)parameters.get("optionId")),
-					option);
+				patchOption(option.getId(), option);
 
 				return null;
 			};
@@ -754,14 +754,6 @@ public abstract class BaseOptionResourceImpl
 				optionUnsafeFunction.apply(option);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

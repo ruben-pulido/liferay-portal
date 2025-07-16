@@ -49,11 +49,15 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface SiteTestEntityResource {
 
+	public void deleteSiteSiteTestEntityByExternalReferenceCode(
+			Long siteId, String externalReferenceCode)
+		throws Exception;
+
 	public Page<SiteTestEntity> getSiteSiteTestEntitiesPage(Long siteId)
 		throws Exception;
 
 	public SiteTestEntity getSiteSiteTestEntityByExternalReferenceCode(
-			String externalReferenceCode, Long siteId)
+			Long siteId, String externalReferenceCode)
 		throws Exception;
 
 	public SiteTestEntity getSiteTestEntity(Long siteTestEntityId)
@@ -82,7 +86,7 @@ public interface SiteTestEntityResource {
 		throws Exception;
 
 	public SiteTestEntity putSiteSiteTestEntityByExternalReferenceCode(
-			String externalReferenceCode, Long siteId,
+			Long siteId, String externalReferenceCode,
 			SiteTestEntity siteTestEntity)
 		throws Exception;
 

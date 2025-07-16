@@ -246,6 +246,12 @@ export class HeadlessAdminUserApiHelper {
 		);
 	}
 
+	async deletePostalAddress(postalAddressId: number) {
+		return this.apiHelpers.delete(
+			`${this.apiHelpers.baseUrl}${this.basePath}/postal-addresses/${postalAddressId}`
+		);
+	}
+
 	async deleteRole(roleId: number) {
 		return this.apiHelpers.delete(
 			`${this.apiHelpers.baseUrl}${this.basePath}/roles/${roleId}`
@@ -297,6 +303,16 @@ export class HeadlessAdminUserApiHelper {
 			{
 				data: userIds,
 			}
+		);
+	}
+
+	async deleteUserRole(
+		roleExternalReferenceCode: string,
+		userId: number | string
+	) {
+		return this.apiHelpers.delete(
+			`${this.apiHelpers.baseUrl}${this.basePath}roles/by-external-reference-code/${roleExternalReferenceCode}/association/user-account/${userId}`,
+			{data: {}, failOnStatusCode: true}
 		);
 	}
 
@@ -394,6 +410,26 @@ export class HeadlessAdminUserApiHelper {
 	): Promise<TTicket> {
 		return this.apiHelpers.get(
 			`${this.apiHelpers.baseUrl}${this.basePath}/user-accounts/${userAccountId}/password-reset-ticket`
+		);
+	}
+
+	async getUserGroupByName(name: string) {
+		const response = await this.getUserGroups(name);
+
+		const userGroups = response.items || [];
+
+		for (const userGroup of userGroups as TRole[]) {
+			if (userGroup.name.toLowerCase() === name.toLowerCase()) {
+				return userGroup;
+			}
+		}
+
+		return null;
+	}
+
+	async getUserGroups(search: string) {
+		return this.apiHelpers.get(
+			`${this.apiHelpers.baseUrl}${this.basePath}/user-groups?search=${search}`
 		);
 	}
 

@@ -12,7 +12,7 @@ import {openToast} from 'frontend-js-components-web';
 import {navigate, sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
-import FolderService, {TFolder} from '../../../services/FolderService';
+import FolderService, {TFolder} from '../../../common/services/FolderService';
 import {FieldPicker, FieldText} from '../forms';
 import {required, validate} from '../forms/validations';
 
@@ -184,24 +184,23 @@ const EditFolder: React.FC<EditFolderProps> = ({backURL, folderId}) => {
 						name="folderName"
 						onChange={handleChange}
 						required
-						type="input"
 						value={values.folderName}
 					/>
 
 					<FieldPicker
+						disabled
 						items={spaceItems}
 						label={Liferay.Language.get('space')}
 						name="folderSpace"
-						readOnly
 						required
 						selectedKey={values.folderSpace}
 					/>
 
 					<FieldText
+						component="textarea"
 						label={Liferay.Language.get('description')}
 						name="folderDescription"
 						onChange={handleChange}
-						type="textarea"
 						value={values.folderDescription}
 					/>
 				</ClayForm>

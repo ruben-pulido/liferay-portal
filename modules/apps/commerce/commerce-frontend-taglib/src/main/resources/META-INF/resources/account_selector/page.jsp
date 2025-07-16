@@ -39,7 +39,7 @@
 				).put(
 					"hasManageAccountsPermission", hasManageAccountsPermission
 				).put(
-					"orderTypes", orderTypesJSONArray
+					"orderSelectionDisabled", orderSelectionDisabled
 				).put(
 					"refreshPageOnAccountSelected", true
 				).put(

@@ -1230,22 +1230,24 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				knowledgeBaseFolderUnsafeFunction = knowledgeBaseFolder -> {
+					KnowledgeBaseFolder getKnowledgeBaseFolder = null;
 					KnowledgeBaseFolder persistedKnowledgeBaseFolder = null;
 
 					try {
-						KnowledgeBaseFolder getKnowledgeBaseFolder =
-							getSiteKnowledgeBaseFolderByExternalReferenceCode(
-								knowledgeBaseFolder.getSiteId() != null ?
-									knowledgeBaseFolder.getSiteId() :
-										(Long)parameters.get("siteId"),
-								knowledgeBaseFolder.getExternalReferenceCode());
+						if (parameters.containsKey("siteId")) {
+							getKnowledgeBaseFolder =
+								getSiteKnowledgeBaseFolderByExternalReferenceCode(
+									(Long)parameters.get("siteId"),
+									knowledgeBaseFolder.
+										getExternalReferenceCode());
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [siteId]");
+						}
 
 						persistedKnowledgeBaseFolder = patchKnowledgeBaseFolder(
-							getKnowledgeBaseFolder.getId() != null ?
-								getKnowledgeBaseFolder.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"knowledgeBaseFolderId")),
+							getKnowledgeBaseFolder.getId(),
 							knowledgeBaseFolder);
 					}
 					catch (NoSuchModelException noSuchModelException) {
@@ -1255,6 +1257,10 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 									(Long)parameters.get("siteId"),
 									knowledgeBaseFolder);
 						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [siteId]");
+						}
 					}
 
 					return persistedKnowledgeBaseFolder;
@@ -1262,13 +1268,23 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				knowledgeBaseFolderUnsafeFunction = knowledgeBaseFolder ->
-					putSiteKnowledgeBaseFolderByExternalReferenceCode(
-						knowledgeBaseFolder.getSiteId() != null ?
-							knowledgeBaseFolder.getSiteId() :
+				knowledgeBaseFolderUnsafeFunction = knowledgeBaseFolder -> {
+					KnowledgeBaseFolder persistedKnowledgeBaseFolder = null;
+
+					if (parameters.containsKey("siteId")) {
+						persistedKnowledgeBaseFolder =
+							putSiteKnowledgeBaseFolderByExternalReferenceCode(
 								(Long)parameters.get("siteId"),
-						knowledgeBaseFolder.getExternalReferenceCode(),
-						knowledgeBaseFolder);
+								knowledgeBaseFolder.getExternalReferenceCode(),
+								knowledgeBaseFolder);
+					}
+					else {
+						throw new NotSupportedException(
+							"One of the following parameters must be specified: [siteId]");
+					}
+
+					return persistedKnowledgeBaseFolder;
+				};
 			}
 		}
 
@@ -1411,23 +1427,13 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			knowledgeBaseFolderUnsafeFunction =
 				knowledgeBaseFolder -> patchKnowledgeBaseFolder(
-					knowledgeBaseFolder.getId() != null ?
-						knowledgeBaseFolder.getId() :
-							_parseLong(
-								(String)parameters.get(
-									"knowledgeBaseFolderId")),
-					knowledgeBaseFolder);
+					knowledgeBaseFolder.getId(), knowledgeBaseFolder);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			knowledgeBaseFolderUnsafeFunction =
 				knowledgeBaseFolder -> putKnowledgeBaseFolder(
-					knowledgeBaseFolder.getId() != null ?
-						knowledgeBaseFolder.getId() :
-							_parseLong(
-								(String)parameters.get(
-									"knowledgeBaseFolderId")),
-					knowledgeBaseFolder);
+					knowledgeBaseFolder.getId(), knowledgeBaseFolder);
 		}
 
 		if (knowledgeBaseFolderUnsafeFunction == null) {
@@ -1451,14 +1457,6 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 				knowledgeBaseFolderUnsafeFunction.apply(knowledgeBaseFolder);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

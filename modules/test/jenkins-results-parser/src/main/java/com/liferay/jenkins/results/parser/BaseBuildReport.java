@@ -5,21 +5,38 @@
 
 package com.liferay.jenkins.results.parser;
 
-import java.io.IOException;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
  * @author Michael Hashimoto
  */
 public abstract class BaseBuildReport implements BuildReport {
+
+	@Override
+	public boolean equals(Object object) {
+		if (object == this) {
+			return true;
+		}
+
+		if (!(object instanceof BuildReport)) {
+			return false;
+		}
+
+		BuildReport buildReport = (BuildReport)object;
+
+		return Objects.equals(buildReport.getBuildURL(), getBuildURL());
+	}
 
 	@Override
 	public int getBuildNumber() {
@@ -34,30 +51,6 @@ public abstract class BaseBuildReport implements BuildReport {
 	}
 
 	@Override
-	public JSONObject getBuildReportJSONObject() {
-		if ((buildReportJSONObject != null) &&
-			!JenkinsResultsParserUtil.isNullOrEmpty(
-				buildReportJSONObject.optString("result"))) {
-
-			return buildReportJSONObject;
-		}
-
-		JSONObject buildJSONObject = getBuildJSONObject();
-
-		buildReportJSONObject = new JSONObject();
-
-		buildReportJSONObject.put(
-			"duration", buildJSONObject.get("duration")
-		).put(
-			"result", buildJSONObject.get("result")
-		).put(
-			"startTime", buildJSONObject.get("timestamp")
-		);
-
-		return buildReportJSONObject;
-	}
-
-	@Override
 	public URL getBuildURL() {
 		return _buildURL;
 	}
@@ -66,7 +59,41 @@ public abstract class BaseBuildReport implements BuildReport {
 	public long getDuration() {
 		JSONObject buildReportJSONObject = getBuildReportJSONObject();
 
+		if (buildReportJSONObject == null) {
+			return 0L;
+		}
+
 		return buildReportJSONObject.getLong("duration");
+	}
+
+	@Override
+	public String getFailureMessage() {
+		JSONObject buildReportJSONObject = getBuildReportJSONObject();
+
+		if (buildReportJSONObject == null) {
+			return null;
+		}
+
+		return buildReportJSONObject.optString("failureMessage");
+	}
+
+	@Override
+	public JenkinsMaster getJenkinsMaster() {
+		if (_jenkinsMaster != null) {
+			return _jenkinsMaster;
+		}
+
+		Matcher matcher = _buildURLPattern.matcher(
+			String.valueOf(getBuildURL()));
+
+		if (!matcher.find()) {
+			throw new RuntimeException("Invalid Build URL: " + getBuildURL());
+		}
+
+		_jenkinsMaster = JenkinsMaster.getInstance(
+			matcher.group("masterHostname"));
+
+		return _jenkinsMaster;
 	}
 
 	@Override
@@ -82,99 +109,86 @@ public abstract class BaseBuildReport implements BuildReport {
 	}
 
 	@Override
-	public JobReport getJobReport() {
-		if (_jobReport != null) {
-			return _jobReport;
-		}
-
-		Matcher matcher = _buildURLPattern.matcher(
-			String.valueOf(getBuildURL()));
-
-		if (!matcher.find()) {
-			throw new RuntimeException("Invalid Build URL: " + getBuildURL());
-		}
-
-		try {
-			_jobReport = JobReport.getInstance(
-				new URL(matcher.group("jobURL")));
-		}
-		catch (MalformedURLException malformedURLException) {
-			throw new RuntimeException(malformedURLException);
-		}
-
-		return _jobReport;
-	}
-
-	@Override
 	public String getResult() {
 		JSONObject buildReportJSONObject = getBuildReportJSONObject();
+
+		if (buildReportJSONObject == null) {
+			return null;
+		}
 
 		return buildReportJSONObject.getString("result");
 	}
 
 	@Override
 	public Date getStartDate() {
-		if (_startDate != null) {
-			return _startDate;
+		JSONObject buildReportJSONObject = getBuildReportJSONObject();
+
+		if (buildReportJSONObject == null) {
+			return null;
 		}
 
-		JSONObject buildJSONObject = getBuildJSONObject();
-
-		_startDate = new Date(buildJSONObject.getLong("timestamp"));
-
-		return _startDate;
+		return new Date(buildReportJSONObject.getLong("startTime"));
 	}
 
 	@Override
 	public StopWatchRecordsGroup getStopWatchRecordsGroup() {
-		return new StopWatchRecordsGroup(getBuildReportJSONObject());
+		JSONObject buildReportJSONObject = getBuildReportJSONObject();
+
+		if (buildReportJSONObject == null) {
+			return null;
+		}
+
+		return new StopWatchRecordsGroup(buildReportJSONObject);
 	}
 
-	protected BaseBuildReport(JSONObject buildReportJSONObject) {
-		this.buildReportJSONObject = buildReportJSONObject;
+	@Override
+	public List<URL> getTestrayAttachmentURLs() {
+		List<URL> testrayAttachmentURLs = new ArrayList<>();
 
-		String buildURLString = buildReportJSONObject.getString("buildURL");
+		JSONObject buildReportJSONObject = getBuildReportJSONObject();
 
-		Matcher matcher = _buildURLPattern.matcher(buildURLString);
-
-		if (!matcher.find()) {
-			throw new RuntimeException("Invalid Build URL: " + buildURLString);
+		if (buildReportJSONObject == null) {
+			return testrayAttachmentURLs;
 		}
 
-		try {
-			_buildURL = new URL(
-				JenkinsResultsParserUtil.combine(
-					"https://", matcher.group("masterHostname"),
-					".liferay.com/job/", matcher.group("jobName"), "/",
-					matcher.group("buildNumber")));
+		JSONArray testrayAttachmentURLsJSONArray =
+			buildReportJSONObject.optJSONArray("testrayAttachmentURLs");
+
+		if (testrayAttachmentURLsJSONArray == null) {
+			return testrayAttachmentURLs;
 		}
-		catch (MalformedURLException malformedURLException) {
-			throw new RuntimeException(malformedURLException);
+
+		for (int i = 0; i < testrayAttachmentURLsJSONArray.length(); i++) {
+			try {
+				testrayAttachmentURLs.add(
+					new URL(testrayAttachmentURLsJSONArray.getString(i)));
+			}
+			catch (MalformedURLException malformedURLException) {
+				throw new RuntimeException(malformedURLException);
+			}
 		}
+
+		return testrayAttachmentURLs;
 	}
 
-	protected BaseBuildReport(JSONObject buildJSONObject, JobReport jobReport) {
-		_buildJSONObject = buildJSONObject;
-		_jobReport = jobReport;
+	@Override
+	public int hashCode() {
+		String buildURL = String.valueOf(getBuildURL());
 
-		String buildURLString = buildJSONObject.getString("url");
+		return buildURL.hashCode();
+	}
 
-		Matcher matcher = _buildURLPattern.matcher(buildURLString);
+	@Override
+	public boolean isFailing() {
+		String result = getResult();
 
-		if (!matcher.find()) {
-			throw new RuntimeException("Invalid Build URL: " + buildURLString);
+		if (result.equals("FAILURE") || result.equals("REGRESSION") ||
+			result.equals("UNSTABLE")) {
+
+			return true;
 		}
 
-		try {
-			_buildURL = new URL(
-				JenkinsResultsParserUtil.combine(
-					"https://", matcher.group("masterHostname"),
-					".liferay.com/job/", matcher.group("jobName"), "/",
-					matcher.group("buildNumber")));
-		}
-		catch (MalformedURLException malformedURLException) {
-			throw new RuntimeException(malformedURLException);
-		}
+		return false;
 	}
 
 	protected BaseBuildReport(String buildURLString) {
@@ -196,40 +210,12 @@ public abstract class BaseBuildReport implements BuildReport {
 		}
 	}
 
-	protected BaseBuildReport(URL buildURL) {
-		this(String.valueOf(buildURL));
-	}
-
-	protected JSONObject getBuildJSONObject() {
-		if (_buildJSONObject != null) {
-			return _buildJSONObject;
-		}
-
-		try {
-			_buildJSONObject = JenkinsResultsParserUtil.toJSONObject(
-				getBuildURL() + "/api/json");
-		}
-		catch (IOException ioException) {
-			throw new RuntimeException(ioException);
-		}
-
-		return _buildJSONObject;
-	}
-
-	protected void setStartDate(Date startDate) {
-		_startDate = startDate;
-	}
-
-	protected JSONObject buildReportJSONObject;
-
 	private static final Pattern _buildURLPattern = Pattern.compile(
 		"(?<jobURL>https?://(?<masterHostname>test-\\d+-\\d+)" +
 			"(\\.liferay\\.com)?/job/(?<jobName>[^/]+))" +
 				"(/AXIS_VARIABLE=(?<axisVariable>\\d+))?/(?<buildNumber>\\d+)");
 
-	private JSONObject _buildJSONObject;
 	private final URL _buildURL;
-	private JobReport _jobReport;
-	private Date _startDate;
+	private JenkinsMaster _jenkinsMaster;
 
 }

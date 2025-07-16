@@ -19,8 +19,8 @@ export default async function checkAccessibility({
 	bestPractices = false,
 	context,
 }: {
-	bestPractices: boolean;
-	context: ContextObject;
+	bestPractices?: boolean;
+	context: ContextObject | axe.Selector;
 }) {
 	if (bestPractices) {
 		config.runOnly = [...config.runOnly, 'best-practice'];

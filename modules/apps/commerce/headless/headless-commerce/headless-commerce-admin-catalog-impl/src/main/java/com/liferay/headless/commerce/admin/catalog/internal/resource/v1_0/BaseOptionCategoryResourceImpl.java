@@ -596,20 +596,16 @@ public abstract class BaseOptionCategoryResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				optionCategoryUnsafeFunction = optionCategory -> {
+					OptionCategory getOptionCategory = null;
 					OptionCategory persistedOptionCategory = null;
 
 					try {
-						OptionCategory getOptionCategory =
+						getOptionCategory =
 							getOptionCategoryByExternalReferenceCode(
 								optionCategory.getExternalReferenceCode());
 
 						patchOptionCategory(
-							getOptionCategory.getId() != null ?
-								getOptionCategory.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"optionCategoryId")),
-							optionCategory);
+							getOptionCategory.getId(), optionCategory);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedOptionCategory = postOptionCategory(
@@ -621,10 +617,16 @@ public abstract class BaseOptionCategoryResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				optionCategoryUnsafeFunction =
-					optionCategory -> putOptionCategoryByExternalReferenceCode(
-						optionCategory.getExternalReferenceCode(),
-						optionCategory);
+				optionCategoryUnsafeFunction = optionCategory -> {
+					OptionCategory persistedOptionCategory = null;
+
+					persistedOptionCategory =
+						putOptionCategoryByExternalReferenceCode(
+							optionCategory.getExternalReferenceCode(),
+							optionCategory);
+
+					return persistedOptionCategory;
+				};
 			}
 		}
 
@@ -776,10 +778,7 @@ public abstract class BaseOptionCategoryResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			optionCategoryUnsafeFunction = optionCategory -> {
-				patchOptionCategory(
-					optionCategory.getId() != null ? optionCategory.getId() :
-						_parseLong((String)parameters.get("optionCategoryId")),
-					optionCategory);
+				patchOptionCategory(optionCategory.getId(), optionCategory);
 
 				return null;
 			};
@@ -804,14 +803,6 @@ public abstract class BaseOptionCategoryResourceImpl
 				optionCategoryUnsafeFunction.apply(optionCategory);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

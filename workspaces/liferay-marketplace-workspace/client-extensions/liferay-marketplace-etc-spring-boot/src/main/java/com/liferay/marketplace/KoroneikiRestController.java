@@ -6,7 +6,6 @@
 package com.liferay.marketplace;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
-import com.liferay.headless.admin.user.client.pagination.Page;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Sku;
 import com.liferay.headless.commerce.admin.catalog.client.pagination.Pagination;
@@ -16,10 +15,16 @@ import com.liferay.headless.commerce.admin.order.client.dto.v1_0.OrderItem;
 import com.liferay.headless.commerce.admin.order.client.resource.v1_0.OrderItemResource;
 import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
+import com.liferay.marketplace.util.MarketplacePermissionUtil;
+import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account;
+import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Contact;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ExternalLink;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductConsumption;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchaseView;
+import com.liferay.osb.koroneiki.phloem.rest.client.pagination.Page;
+import com.liferay.osb.koroneiki.phloem.rest.client.resource.v1_0.AccountResource;
+import com.liferay.osb.koroneiki.phloem.rest.client.resource.v1_0.ContactResource;
 import com.liferay.osb.koroneiki.phloem.rest.client.resource.v1_0.ProductPurchaseViewResource;
 import com.liferay.osb.koroneiki.phloem.rest.client.resource.v1_0.ProductResource;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -52,6 +57,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/koroneiki")
 @RestController
 public class KoroneikiRestController extends BaseRestController {
+
+	@GetMapping("account/{accountId}")
+	public Account getAccount(
+			@AuthenticationPrincipal Jwt jwt,
+			@PathVariable("accountId") String accountId)
+		throws Exception {
+
+		MarketplacePermissionUtil.checkDefaultServiceAccountPermission(jwt);
+
+		AccountResource accountResource =
+			_koroneikiService.getAccountResource();
+
+		return accountResource.getAccount(accountId);
+	}
+
+	@GetMapping("contact/by-email-address/{emailAddress}")
+	public Contact getContactByEmailAddress(
+			@AuthenticationPrincipal Jwt jwt,
+			@PathVariable("emailAddress") String emailAddress)
+		throws Exception {
+
+		MarketplacePermissionUtil.checkDefaultServiceAccountPermission(jwt);
+
+		ContactResource contactResource =
+			_koroneikiService.getContactResource();
+
+		return contactResource.getContactByEmailAddresEmailAddress(
+			emailAddress);
+	}
 
 	@GetMapping("subscriptions/{orderId}")
 	public String getSubscriptions(@PathVariable("orderId") long orderId)
@@ -218,13 +252,12 @@ public class KoroneikiRestController extends BaseRestController {
 
 			String name = productName + " - " + dxpLicenseUsageType;
 
-			com.liferay.osb.koroneiki.phloem.rest.client.pagination.Page
-				<com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product>
-					page = productResource.getProductsPage(
-						"", "name eq '" + name + "'",
-						com.liferay.osb.koroneiki.phloem.rest.client.pagination.
-							Pagination.of(1, 1),
-						"");
+			Page<com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product>
+				page = productResource.getProductsPage(
+					"", "name eq '" + name + "'",
+					com.liferay.osb.koroneiki.phloem.rest.client.pagination.
+						Pagination.of(1, 1),
+					"");
 
 			com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product
 				koroneikiProduct = page.fetchFirstItem();

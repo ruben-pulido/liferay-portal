@@ -361,7 +361,7 @@ public class PortletExportControllerImpl implements PortletExportController {
 
 					layout.setGroupId(liveGroup.getGroupId());
 				}
-				else {
+				else if (!portletDataHandler.isBatch()) {
 					Group liveGroup = _groupLocalService.getGroup(
 						portletDataContext.getGroupId());
 
@@ -379,7 +379,7 @@ public class PortletExportControllerImpl implements PortletExportController {
 						PortletPreferencesFactoryUtil.getStrictPortletSetup(
 							layout, portlet.getPortletId());
 				}
-				else {
+				else if (!portletDataHandler.isBatch()) {
 					jxPortletPreferences =
 						PortletPreferencesFactoryUtil.getStrictPortletSetup(
 							portletDataContext.getCompanyId(),
@@ -1014,6 +1014,17 @@ public class PortletExportControllerImpl implements PortletExportController {
 
 			try {
 				portletDataContext.clearScopedPrimaryKeys();
+
+				Set<String> scopedLayoutPrimaryKeys = new HashSet<>();
+
+				for (String oldScopedPrimaryKey : oldScopedPrimaryKeys) {
+					if (oldScopedPrimaryKey.contains(Layout.class.getName())) {
+						scopedLayoutPrimaryKeys.add(oldScopedPrimaryKey);
+					}
+				}
+
+				portletDataContext.addScopedPrimaryKeys(
+					scopedLayoutPrimaryKeys);
 
 				Element preferenceDataElement =
 					portletPreferencesElement.addElement("preference-data");

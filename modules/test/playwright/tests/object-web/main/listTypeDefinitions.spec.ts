@@ -7,7 +7,7 @@ import {
 	ObjectDefinition,
 	ObjectDefinitionAPI,
 } from '@liferay/object-admin-rest-client-js';
-import {Page, expect, mergeTests} from '@playwright/test';
+import {expect, mergeTests} from '@playwright/test';
 
 import {accountSettingsPagesTest} from '../../../fixtures/accountSettingsPagesTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
@@ -49,7 +49,7 @@ test.afterEach(async ({accountSettingsPage, page}) => {
 
 		await page.getByRole('menuitem', {name: 'Account Settings'}).click();
 
-		await accountSettingsPage.selectAccountLanguage('en_US');
+		await accountSettingsPage.selectAccountLanguage({languageId: 'en_US'});
 
 		userLanguage = 'en_US';
 	}
@@ -298,7 +298,7 @@ test.describe('ensure picklist translation', () => {
 			translatedListTypeDefinitionItems[0]
 		);
 
-		await expect(page.getByTitle('Limpar Todos')).toBeVisible();
+		await expect(page.getByTitle('Remover Tudo')).toBeVisible();
 	});
 
 	test('verify if translated picklist will be displayed on object admin', async ({
@@ -349,7 +349,7 @@ test.describe('ensure picklist translation', () => {
 
 		await page.getByRole('menuitem', {name: 'Account Settings'}).click();
 
-		await accountSettingsPage.selectAccountLanguage('pt_BR');
+		await accountSettingsPage.selectAccountLanguage({languageId: 'pt_BR'});
 
 		userLanguage = 'pt_BR';
 
@@ -389,7 +389,6 @@ test.describe('ensure picklist translation', () => {
 		formBuilderSidePanelPage,
 		formSettingsModalPage,
 		listTypeDefinitionPage,
-		modelBuilderDiagramPage,
 		objectFieldsPage,
 		page,
 		viewObjectDefinitionsPage,
@@ -448,8 +447,6 @@ test.describe('ensure picklist translation', () => {
 
 		await objectFieldsPage.addObjectField({
 			listTypeDefinitionName: listTypeDefinition.name,
-			objectDefinitionNodes:
-				modelBuilderDiagramPage.objectDefinitionNodes,
 			objectFieldBusinessType: 'Picklist',
 			objectFieldLabel: fieldLabel,
 		});
@@ -490,15 +487,7 @@ test.describe('ensure picklist translation', () => {
 
 		await apiHelpers.dynamicDataMapping.waitForDDMEvaluate(page);
 
-		const newTabPagePromise = new Promise<Page>((resolve) =>
-			formBuilderPage.page.once('popup', resolve)
-		);
-
-		await formBuilderPage.previewButton.click();
-
-		const newTabPage = await newTabPagePromise;
-
-		await newTabPage.waitForLoadState('domcontentloaded');
+		const newTabPage = await formBuilderPage.openPreviewForm();
 
 		await page.goto('pt');
 

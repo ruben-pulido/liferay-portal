@@ -4,8 +4,8 @@
  */
 
 import React, {
+	MutableRefObject,
 	ReactNode,
-	RefObject,
 	createContext,
 	useCallback,
 	useContext,
@@ -14,53 +14,82 @@ import React, {
 	useState,
 } from 'react';
 
-import PicklistService from '../../services/PicklistService';
-import SpaceService from '../../services/SpaceService';
-import {Picklist} from '../../types/Picklist';
-import {Space} from '../../types/Space';
+import PicklistService from '../../common/services/PicklistService';
+import SpaceService from '../../common/services/SpaceService';
+import {Picklist} from '../../common/types/Picklist';
+import {Space} from '../../common/types/Space';
+import ObjectDefinitionService from '../services/ObjectDefinitionService';
+import {ObjectDefinitions} from '../types/ObjectDefinition';
 
-type CacheKey = 'picklists' | 'spaces';
+export type CacheKey = 'object-definitions' | 'picklists' | 'spaces';
 export type CacheStatus = 'idle' | 'saving' | 'saved' | 'stale';
 
 export type Cache = {
-	picklists: {
+	'object-definitions': {
+		data: ObjectDefinitions;
+		fetcher: () => Promise<ObjectDefinitions>;
+		status: CacheStatus;
+	};
+	'picklists': {
 		data: Picklist[];
 		fetcher: () => Promise<Picklist[]>;
 		status: CacheStatus;
 	};
-	spaces: {
+	'spaces': {
 		data: Space[];
 		fetcher: () => Promise<Space[]>;
 		status: CacheStatus;
 	};
 };
 
-const INITIAL_CACHE: Cache = {
-	picklists: {
-		data: [],
-		fetcher: PicklistService.getPicklists,
-		status: 'idle',
-	},
-	spaces: {
-		data: [],
-		fetcher: SpaceService.getSpaces,
-		status: 'idle',
-	},
+type Promises = {
+	[K in CacheKey]: Promise<Cache[K]['data']>;
 };
 
+type InitialData = Partial<{
+	[K in CacheKey]: Cache[K]['data'];
+}>;
+
+function getInitialCache(initialData: InitialData = {}): Cache {
+	return {
+		'object-definitions': {
+			data: initialData['object-definitions'] ?? new Map(),
+			fetcher: ObjectDefinitionService.getObjectDefinitions,
+			status: initialData['object-definitions'] ? 'saved' : 'idle',
+		},
+		'picklists': {
+			data: initialData['picklists'] ?? [],
+			fetcher: PicklistService.getPicklists,
+			status: initialData['picklists'] ? 'saved' : 'idle',
+		},
+		'spaces': {
+			data: initialData['spaces'] ?? [],
+			fetcher: SpaceService.getSpaces,
+			status: initialData['spaces'] ? 'saved' : 'idle',
+		},
+	};
+}
+
 const CacheContext = createContext<{
-	broadcastRef: RefObject<BroadcastChannel>;
 	cache: Cache;
+	promisesRef: MutableRefObject<Partial<Promises>>;
 	update: <T extends CacheKey>(key: T, partial: Partial<Cache[T]>) => void;
 }>({
-	broadcastRef: {current: null},
-	cache: INITIAL_CACHE,
+	cache: getInitialCache(),
+	promisesRef: {current: {}},
 	update: () => {},
 });
 
-function CacheContextProvider({children}: {children: ReactNode}) {
-	const broadcastRef = useRef(new BroadcastChannel('update-cache'));
-	const [cache, setCache] = useState(INITIAL_CACHE);
+function CacheContextProvider({
+	children,
+	initialData,
+}: {
+	children: ReactNode;
+	initialData: InitialData;
+}) {
+	const promisesRef = useRef<Partial<Promises>>({});
+
+	const [cache, setCache] = useState(getInitialCache(initialData));
 
 	const update = <T extends CacheKey>(key: T, partial: Partial<Cache[T]>) => {
 		setCache((current) => ({
@@ -72,8 +101,16 @@ function CacheContextProvider({children}: {children: ReactNode}) {
 		}));
 	};
 
+	useEffect(() => {
+		const broadcast = new BroadcastChannel('update-cache');
+
+		return () => {
+			broadcast.close();
+		};
+	}, []);
+
 	return (
-		<CacheContext.Provider value={{broadcastRef, cache, update}}>
+		<CacheContext.Provider value={{cache, promisesRef, update}}>
 			{children}
 		</CacheContext.Provider>
 	);
@@ -81,23 +118,50 @@ function CacheContextProvider({children}: {children: ReactNode}) {
 
 function useCache<T extends CacheKey>(
 	key: T
-): Cache[T] & {load: () => Promise<void>} {
-	const {broadcastRef, cache, update} = useContext(CacheContext);
+): Cache[T] & {load: () => Promise<Cache[T]['data']>} {
+	const {cache, promisesRef, update} = useContext(CacheContext);
 
 	const item = cache[key];
 
+	const promises = promisesRef.current;
+
 	const load = useCallback(async () => {
-		update(key, {status: 'saving'} as Partial<Cache[T]>);
+		const existingPromise = promises[key] as Promise<Cache[T]['data']>;
 
-		try {
-			const response = await item.fetcher();
+		if (existingPromise) {
+			await existingPromise;
 
-			update(key, {data: response, status: 'saved'} as Partial<Cache[T]>);
+			return cache[key].data;
 		}
-		catch {
-			update(key, {status: 'stale'} as Partial<Cache[T]>);
-		}
-	}, [item, key, update]);
+
+		const fetchData = async (): Promise<Cache[T]['data']> => {
+			update(key, {status: 'saving'} as Partial<Cache[T]>);
+
+			try {
+				const response = await item.fetcher();
+
+				update(key, {data: response, status: 'saved'} as Partial<
+					Cache[T]
+				>);
+
+				return response;
+			}
+			catch (error) {
+				update(key, {status: 'stale'} as Partial<Cache[T]>);
+
+				return Promise.reject(error);
+			}
+			finally {
+				delete promises[key];
+			}
+		};
+
+		const promise = fetchData();
+
+		promises[key] = promise as Promises[T];
+
+		return promise;
+	}, [item, key, promises, update, cache]);
 
 	useEffect(() => {
 		if (item.status !== 'idle') {
@@ -108,7 +172,7 @@ function useCache<T extends CacheKey>(
 	}, [item, load]);
 
 	useEffect(() => {
-		const broadcast = broadcastRef.current;
+		const broadcast = new BroadcastChannel('update-cache');
 
 		const staleCache = ({data}: MessageEvent) => {
 			if (data.type !== 'staleCache' || data.key !== key) {
@@ -123,18 +187,19 @@ function useCache<T extends CacheKey>(
 		return () => {
 			broadcast?.removeEventListener('message', staleCache);
 		};
-	}, [broadcastRef, item, update, key]);
+	}, [item, update, key]);
 
 	return {...item, load};
 }
 
 function useStaleCache() {
-	const {broadcastRef} = useContext(CacheContext);
+	const broadcast = new BroadcastChannel('update-cache');
 
 	return (key: CacheKey) => {
-		broadcastRef.current?.postMessage({key, type: 'staleCache'});
+		broadcast.postMessage({key, type: 'staleCache'});
 	};
 }
+
 export default CacheContextProvider;
 
 export {CacheContext, useCache, useStaleCache};

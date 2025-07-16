@@ -11,6 +11,9 @@ import com.liferay.headless.admin.site.client.dto.v1_0.PageExperience;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.client.problem.Problem;
 import com.liferay.layout.constants.LayoutTypeSettingsConstants;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
 import com.liferay.layout.test.util.ContentLayoutTestUtil;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.UnsafeRunnable;
@@ -81,14 +84,26 @@ public class PageSpecificationsTestUtil {
 		ContentPageSpecification publishedContentPageSpecification =
 			(ContentPageSpecification)pageSpecifications[0];
 
-		Assert.assertEquals(
-			expectedDraftContentPageSpecification.getExternalReferenceCode(),
-			publishedContentPageSpecification.
-				getDraftContentPageSpecificationExternalReferenceCode());
-		Assert.assertEquals(
+		String expectedPublishedContentPageSpecificationExternalReferenceCode =
 			expectedPublishedContentPageSpecification.
-				getExternalReferenceCode(),
-			publishedContentPageSpecification.getExternalReferenceCode());
+				getExternalReferenceCode();
+
+		if (expectedPublishedContentPageSpecificationExternalReferenceCode ==
+				null) {
+
+			Assert.assertNotNull(layout.getExternalReferenceCode());
+			Assert.assertNotNull(
+				publishedContentPageSpecification.getExternalReferenceCode());
+		}
+		else {
+			Assert.assertEquals(
+				expectedPublishedContentPageSpecificationExternalReferenceCode,
+				layout.getExternalReferenceCode());
+			Assert.assertEquals(
+				expectedPublishedContentPageSpecificationExternalReferenceCode,
+				publishedContentPageSpecification.getExternalReferenceCode());
+		}
+
 		Assert.assertEquals(
 			expectedPublishedContentPageSpecification.getStatus(),
 			publishedContentPageSpecification.getStatus());
@@ -100,8 +115,23 @@ public class PageSpecificationsTestUtil {
 			draftContentPageSpecification.
 				getDraftContentPageSpecificationExternalReferenceCode());
 		Assert.assertEquals(
-			expectedDraftContentPageSpecification.getExternalReferenceCode(),
-			draftContentPageSpecification.getExternalReferenceCode());
+			draftContentPageSpecification.getExternalReferenceCode(),
+			publishedContentPageSpecification.
+				getDraftContentPageSpecificationExternalReferenceCode());
+
+		if (expectedDraftContentPageSpecification.getExternalReferenceCode() ==
+				null) {
+
+			Assert.assertNotNull(
+				draftContentPageSpecification.getExternalReferenceCode());
+		}
+		else {
+			Assert.assertEquals(
+				expectedDraftContentPageSpecification.
+					getExternalReferenceCode(),
+				draftContentPageSpecification.getExternalReferenceCode());
+		}
+
 		Assert.assertEquals(
 			expectedDraftContentPageSpecification.getStatus(),
 			draftContentPageSpecification.getStatus());
@@ -109,31 +139,38 @@ public class PageSpecificationsTestUtil {
 		Assert.assertEquals(
 			status, publishedContentPageSpecification.getStatus());
 
-		Assert.assertEquals(
-			expectedPublishedContentPageSpecification.
-				getExternalReferenceCode(),
-			layout.getExternalReferenceCode());
-
 		PageExperiencesTestUtil.assertPageExperiences(
 			expectedPublishedContentPageSpecification.getPageExperiences(),
 			layout, publishedContentPageSpecification.getPageExperiences());
 
-		if (Objects.equals(PageSpecification.Status.APPROVED, status)) {
-			Assert.assertTrue(layout.isPublished());
-		}
-		else {
-			Assert.assertFalse(layout.isPublished());
-		}
+		Assert.assertEquals(
+			expectedPublishedContentPageSpecification.
+				getSiteTemplatePageSpecificationExternalReferenceCode(),
+			publishedContentPageSpecification.
+				getSiteTemplatePageSpecificationExternalReferenceCode());
 
 		Layout draftLayout = layout.fetchDraftLayout();
 
+		if (Objects.equals(PageSpecification.Status.APPROVED, status)) {
+			Assert.assertTrue(_isPublished(draftLayout));
+		}
+		else {
+			Assert.assertFalse(_isPublished(draftLayout));
+		}
+
 		Assert.assertEquals(
-			expectedDraftContentPageSpecification.getExternalReferenceCode(),
+			draftContentPageSpecification.getExternalReferenceCode(),
 			draftLayout.getExternalReferenceCode());
 
 		PageExperiencesTestUtil.assertPageExperiences(
 			expectedDraftContentPageSpecification.getPageExperiences(),
 			draftLayout, draftContentPageSpecification.getPageExperiences());
+
+		Assert.assertEquals(
+			expectedDraftContentPageSpecification.
+				getSiteTemplatePageSpecificationExternalReferenceCode(),
+			draftContentPageSpecification.
+				getSiteTemplatePageSpecificationExternalReferenceCode());
 
 		if (Objects.equals(
 				PageSpecification.Status.APPROVED,
@@ -161,9 +198,24 @@ public class PageSpecificationsTestUtil {
 
 			PageSpecification pageSpecification = pageSpecifications[0];
 
+			String externalReferenceCode = layout.getExternalReferenceCode();
+
+			LayoutPageTemplateEntry layoutPageTemplateEntry =
+				LayoutPageTemplateEntryLocalServiceUtil.
+					fetchLayoutPageTemplateEntryByPlid(layout.getPlid());
+
+			if ((layoutPageTemplateEntry != null) &&
+				(layoutPageTemplateEntry.getType() ==
+					LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE)) {
+
+				externalReferenceCode =
+					layoutPageTemplateEntry.getExternalReferenceCode();
+			}
+
 			Assert.assertEquals(
-				layout.getExternalReferenceCode(),
+				externalReferenceCode,
 				pageSpecification.getExternalReferenceCode());
+
 			Assert.assertEquals(
 				PageSpecification.Status.APPROVED,
 				pageSpecification.getStatus());

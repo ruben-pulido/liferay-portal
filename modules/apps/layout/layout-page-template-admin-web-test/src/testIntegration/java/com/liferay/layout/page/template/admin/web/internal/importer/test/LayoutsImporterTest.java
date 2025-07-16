@@ -68,6 +68,7 @@ import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.exception.PortletIdException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -135,6 +136,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -501,7 +504,7 @@ public class LayoutsImporterTest {
 	}
 
 	@Test
-	@TestInfo("LPD-53905")
+	@TestInfo({"LPD-53905", "LPD-57833"})
 	public void testImportLayoutPageTemplateEntryWithItemSelectorTypeFragmentConfigurationField()
 		throws Exception {
 
@@ -1561,6 +1564,48 @@ public class LayoutsImporterTest {
 			styleBookEntryKey, StringPool.BLANK, serviceContext);
 	}
 
+	private void _assertExportedFileItemSelector(
+			File file, FragmentEntryLink fragmentEntryLink,
+			LayoutPageTemplateEntry layoutPageTemplateEntry)
+		throws Exception {
+
+		JSONObject editablesValuesJSONObject = JSONFactoryUtil.createJSONObject(
+			fragmentEntryLink.getEditableValues());
+
+		JSONObject freeMarkerFragmentEntryProcessorJSONObject =
+			editablesValuesJSONObject.getJSONObject(
+				FragmentEntryProcessorConstants.
+					KEY_FREEMARKER_FRAGMENT_ENTRY_PROCESSOR);
+
+		JSONObject itemSelectorFragmentEntryJSONObject =
+			freeMarkerFragmentEntryProcessorJSONObject.getJSONObject(
+				"itemSelector");
+
+		JSONObject pageDefinitionJSONObject = _getPageDefinitionJSONObject(
+			layoutPageTemplateEntry.getLayoutPageTemplateEntryKey(), file);
+
+		JSONObject pageElementJSONObject =
+			pageDefinitionJSONObject.getJSONObject("pageElement");
+
+		JSONArray pageElementsJSONArray = pageElementJSONObject.getJSONArray(
+			"pageElements");
+
+		JSONObject jsonObject = pageElementsJSONArray.getJSONObject(0);
+
+		JSONObject definitionJSONObject = jsonObject.getJSONObject(
+			"definition");
+
+		JSONObject fragmentConfigJSONObject =
+			definitionJSONObject.getJSONObject("fragmentConfig");
+
+		JSONObject itemSelectorJSONObject =
+			fragmentConfigJSONObject.getJSONObject("itemSelector");
+
+		Assert.assertEquals(
+			itemSelectorFragmentEntryJSONObject.toString(),
+			itemSelectorJSONObject.toString());
+	}
+
 	private void _assertFragmentEntryLink(
 			FragmentEntry fragmentEntry,
 			LayoutPageTemplateEntry layoutPageTemplateEntry)
@@ -1924,6 +1969,34 @@ public class LayoutsImporterTest {
 		return layoutStructure.getLayoutStructureItem(childItemId);
 	}
 
+	private JSONObject _getPageDefinitionJSONObject(
+			String layoutPageTemplateEntryKey, File file)
+		throws Exception {
+
+		String fileName =
+			StringPool.SLASH + layoutPageTemplateEntryKey +
+				"/page-definition.json";
+
+		try (ZipFile zipFile = new ZipFile(file)) {
+			Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
+
+			while (enumeration.hasMoreElements()) {
+				ZipEntry zipEntry = enumeration.nextElement();
+
+				if (zipEntry.isDirectory() ||
+					!StringUtil.endsWith(zipEntry.getName(), fileName)) {
+
+					continue;
+				}
+
+				return _jsonFactory.createJSONObject(
+					StringUtil.read(zipFile.getInputStream(zipEntry)));
+			}
+		}
+
+		return null;
+	}
+
 	private String _read(String fileName) throws Exception {
 		return new String(
 			FileUtil.getBytes(getClass(), "dependencies/" + fileName));
@@ -1992,6 +2065,9 @@ public class LayoutsImporterTest {
 		File file = _layoutsExporter.exportLayoutPageTemplateEntries(
 			new long[] {layoutPageTemplateEntry.getLayoutPageTemplateEntryId()},
 			LayoutPageTemplateEntryTypeConstants.BASIC);
+
+		_assertExportedFileItemSelector(
+			file, fragmentEntryLink, layoutPageTemplateEntry);
 
 		FragmentEntry curFragmentEntry = _addFragmentEntry(
 			fragmentEntry, _serviceContext2);

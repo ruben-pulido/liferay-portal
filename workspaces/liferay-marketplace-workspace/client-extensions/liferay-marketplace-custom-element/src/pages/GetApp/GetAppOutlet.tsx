@@ -8,9 +8,10 @@ import {Outlet, useLocation, useNavigate} from 'react-router-dom';
 
 import {useMarketplaceContext} from '../../context/MarketplaceContext';
 import {Analytics} from '../../core/Analytics';
+import {SkuOptions} from '../../enums/Product';
+import useAccountAddresses from '../../hooks/useAccountAddresses';
 import useCart from '../../hooks/useCart';
 import useCommerceRegions from '../../hooks/useCommerceRegions';
-import useGetAddresses from '../../hooks/useGetAddresses';
 import i18n from '../../i18n';
 import {Liferay} from '../../liferay/liferay';
 import CommerceSelectAccount from '../../services/rest/CommerceSelectAccount';
@@ -21,19 +22,18 @@ import {
 	postCheckoutCart,
 	postEmailAppInformation,
 } from '../../utils/api';
+import {getProductPriceModel} from '../../utils/productUtils';
 import {useGetAppContext} from './GetAppContextProvider';
 import ProductHeader from './containers/ProductHeader';
 import ProductStepWizard from './containers/ProductStepWizard';
 import {PaymentMethod} from './enums/paymentMethod';
 import buildNewCart from './utils/buildNewCart';
 import {getProductOrderTypes} from './utils/getProductOrderTypes';
-import getProductPriceModel from './utils/getProductPriceModel';
 import {getProductSpecificationValues} from './utils/getProductSpecificationValues';
 import getReplaceCurrentURL from './utils/getReplaceCurrentURL';
 import {postCartByPaymentMethod} from './utils/postCartByPaymentMethod';
 
 import './styles/index.scss';
-import {SkuOptions} from '../../enums/Product';
 
 const getProductBasePriceAndTrial = (
 	product: DeliveryProduct,
@@ -130,7 +130,9 @@ const GetAppOutlet = () => {
 	] = useGetAppContext();
 
 	const [loading, setLoading] = useState(false);
-	const {addresses} = useGetAddresses(account?.id);
+	const {data: addressResponse = {items: []}} = useAccountAddresses(
+		account?.id
+	);
 	const {channel} = useMarketplaceContext();
 	const location = useLocation();
 
@@ -312,7 +314,7 @@ const GetAppOutlet = () => {
 						<Outlet
 							context={{
 								account,
-								addresses,
+								addresses: addressResponse.items,
 								cartUtil,
 								handleGetApp,
 								isFreeApp,

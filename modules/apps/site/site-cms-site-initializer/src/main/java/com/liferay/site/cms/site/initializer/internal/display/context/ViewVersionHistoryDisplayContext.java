@@ -1,0 +1,72 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.site.cms.site.initializer.internal.display.context;
+
+import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectEntry;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.WebKeys;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author Mikel Lorza
+ */
+public class ViewVersionHistoryDisplayContext {
+
+	public ViewVersionHistoryDisplayContext(
+		HttpServletRequest httpServletRequest,
+		ObjectDefinition objectDefinition, ObjectEntry objectEntry) {
+
+		_httpServletRequest = httpServletRequest;
+		_objectDefinition = objectDefinition;
+		_objectEntry = objectEntry;
+
+		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+	}
+
+	public String getAPIURL() throws PortalException {
+		StringBundler sb = new StringBundler(5);
+
+		sb.append("/o");
+		sb.append(_objectDefinition.getRESTContextPath());
+		sb.append(StringPool.SLASH);
+		sb.append(_objectEntry.getObjectEntryId());
+		sb.append("/versions");
+
+		return sb.toString();
+	}
+
+	public Map<String, Object> getBackButtonReactData() throws PortalException {
+		return HashMapBuilder.<String, Object>put(
+			"backURL", ParamUtil.getString(_httpServletRequest, "backURL")
+		).put(
+			"headerTitle",
+			_objectEntry.getTitleValue(_themeDisplay.getLanguageId())
+		).build();
+	}
+
+	public List<FDSActionDropdownItem> getFDSActionDropdownItems() {
+		return Collections.emptyList();
+	}
+
+	private final HttpServletRequest _httpServletRequest;
+	private final ObjectDefinition _objectDefinition;
+	private final ObjectEntry _objectEntry;
+	private final ThemeDisplay _themeDisplay;
+
+}

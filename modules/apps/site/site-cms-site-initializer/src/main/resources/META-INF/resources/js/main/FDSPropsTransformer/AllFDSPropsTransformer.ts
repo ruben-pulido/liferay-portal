@@ -5,7 +5,10 @@
 
 import {IInternalRenderer} from '@liferay/frontend-data-set-web';
 
+import AssetTypeInfoPanel from '../components/info_panel/AssetTypeInfoPanelContent';
+import {EVENTS} from '../components/info_panel/util/constants';
 import createAssetAction from './actions/createAssetAction';
+import multipleFilesUploadAction from './actions/multipleFilesUploadAction';
 import AuthorRenderer from './cell_renderers/AuthorRenderer';
 import NameRenderer from './cell_renderers/NameRenderer';
 import SpaceRenderer from './cell_renderers/SpaceRenderer';
@@ -14,6 +17,7 @@ import addOnClickToCreationMenuItems from './utils/addOnClickToCreationMenuItems
 
 const ACTIONS = {
 	createAsset: createAssetAction,
+	uploadMultipleFiles: multipleFilesUploadAction,
 };
 
 export default function AllFDSPropsTransformer({
@@ -58,6 +62,7 @@ export default function AllFDSPropsTransformer({
 				} as IInternalRenderer,
 			],
 		},
+		infoPanelComponent: AssetTypeInfoPanel,
 		itemsActions: itemsActions.map((action) => {
 			if (action?.data?.id === 'download') {
 				return {
@@ -69,5 +74,19 @@ export default function AllFDSPropsTransformer({
 
 			return action;
 		}),
+		onActionDropdownItemClick: ({
+			action,
+			itemData,
+		}: {
+			action: any;
+			itemData: [];
+		}) => {
+			if (action?.data?.id === 'show-details') {
+				Liferay.fire(EVENTS.ASSET_DATA, {items: [{...itemData}]});
+			}
+		},
+		onSelectedItemsChange: (selectedItems: any[]) => {
+			Liferay.fire(EVENTS.ASSET_DATA, {items: selectedItems});
+		},
 	};
 }

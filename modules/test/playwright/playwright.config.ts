@@ -10,6 +10,7 @@ import 'dotenv/config';
 import {config as accessibilityMenuWeb} from './tests/accessibility-menu-web/main/config';
 import {config as accountAdminWebConfig} from './tests/account-admin-web/main/config';
 import {config as addressWebConfig} from './tests/address-web/main/config';
+import {config as analyticsClientJs} from './tests/analytics-client-js/main/config';
 import {config as analyticsReportsJsComponentsWeb} from './tests/analytics-reports-js-components-web/main/config';
 import {config as analyticsSettingsWebConfig} from './tests/analytics-settings-web/main/config';
 import {config as analyticsWebConfig} from './tests/analytics-web/main/config';
@@ -32,6 +33,7 @@ import {config as commerceChannelWebConfig} from './tests/commerce/commerce-chan
 import {config as commerceCheckoutWebConfig} from './tests/commerce/commerce-checkout-web/main/config';
 import {config as commerceCurrencyWebConfig} from './tests/commerce/commerce-currency-web/main/config';
 import {config as commerceDiscountContentWebConfig} from './tests/commerce/commerce-discount-content-web/main/config';
+import {config as commerceInitializerUtilConfig} from './tests/commerce/commerce-initializer-util/main/config';
 import {config as commerceOrderContentWebConfig} from './tests/commerce/commerce-order-content-web/main/config';
 import {config as commerceOrderWebConfig} from './tests/commerce/commerce-order-web/main/config';
 import {config as commercePaymentsWebConfig} from './tests/commerce/commerce-payment-web/main/config';
@@ -69,6 +71,7 @@ import {config as frontendTaglibSpaOffConfig} from './tests/frontend-taglib/spa-
 import {config as frontendTheme} from './tests/frontend-theme/main/config';
 import {config as headlessBuilderImplConfig} from './tests/headless-builder-impl/main/config';
 import {config as headlessBuilderWebConfig} from './tests/headless-builder-web/main/config';
+import {config as headlessDiscoveryWebConfig} from './tests/headless-discovery-web/main/config';
 import {config as iframeWebConfig} from './tests/iframe-web/main/config';
 import {config as itemSelectorTaglibConfig} from './tests/item-selector-taglib/main/config';
 import {config as journalWebConfig} from './tests/journal-web/main/config';
@@ -83,6 +86,7 @@ import {config as loginWebConfig} from './tests/login-web/main/config';
 import {config as loginWebSetupAdminConfig} from './tests/login-web/setup-admin/config';
 import {config as messageBoardsWebConfig} from './tests/message-boards-web/main/config';
 import {config as multifactorAuthenticationConfig} from './tests/multi-factor-authentication-timebased-otp-web/main/config';
+import {config as multifactorAuthenticationWebConfig} from './tests/multi-factor-authentication-web/main/config';
 import {config as nestedPortletsWebConfig} from './tests/nested-portlets-web/main/config';
 import {config as notificationWebConfig} from './tests/notification-web/main/config';
 import {config as notificationsWebConfig} from './tests/notifications-web/main/config';
@@ -106,8 +110,10 @@ import {config as portalUserLocaleOptionsConfig} from './tests/portal-user-local
 import {config as portalWebConfig} from './tests/portal-web/main/config';
 import {config as portalWorkflowKaleoDesignerWebConfig} from './tests/portal-workflow-kaleo-designer-web/main/config';
 import {config as portalWorkflowKaleoFormsWebConfig} from './tests/portal-workflow-kaleo-forms-web/main/config';
+import {config as portalWorkflowMetricsWebConfig} from './tests/portal-workflow-metrics-web/main/config';
 import {config as portalWorkflowTaskWebConfig} from './tests/portal-workflow-task-web/main/config';
 import {config as portletConfigurationCssWebConfig} from './tests/portlet-configuration-css-web/main/config';
+import {config as productNavigationControlMenuWeb} from './tests/product-navigation-control-menu-web/main/config';
 import {config as productNavigationProductMenuWeb} from './tests/product-navigation-product-menu-web/main/config';
 import {config as productNavigationUserPersonalBarWebConfig} from './tests/product-navigation-user-personal-bar-web/main/config';
 import {config as questionsWebConfig} from './tests/questions-web/main/config';
@@ -134,6 +140,7 @@ import {config as smokeConfig} from './tests/smoke/main/config';
 import {config as stagingConfig} from './tests/staging-configuration-web/main/config';
 import {config as stylebookWebConfig} from './tests/style-book-web/main/config';
 import {config as templateWebConfig} from './tests/template-web/main/config';
+import {config as usersAdminWebEmailConfig} from './tests/users-admin-web/email/config';
 import {config as usersAdminWebConfig} from './tests/users-admin-web/main/config';
 import {config as usersAdminWebPermissionsConfig} from './tests/users-admin-web/permissions/config';
 import {config as wikiWebConfig} from './tests/wiki-web/main/config';
@@ -159,6 +166,7 @@ export default defineConfig({
 		accessibilityMenuWeb,
 		accountAdminWebConfig,
 		addressWebConfig,
+		analyticsClientJs,
 		analyticsReportsJsComponentsWeb,
 		analyticsSettingsWebConfig,
 		analyticsWebConfig,
@@ -181,6 +189,7 @@ export default defineConfig({
 		commerceCheckoutWebConfig,
 		commerceCurrencyWebConfig,
 		commerceDiscountContentWebConfig,
+		commerceInitializerUtilConfig,
 		commerceOrderWebConfig,
 		commerceOrderContentWebConfig,
 		commercePaymentsWebConfig,
@@ -220,6 +229,7 @@ export default defineConfig({
 		frontendTheme,
 		headlessBuilderImplConfig,
 		headlessBuilderWebConfig,
+		headlessDiscoveryWebConfig,
 		iframeWebConfig,
 		itemSelectorTaglibConfig,
 		jethr0Config,
@@ -236,6 +246,7 @@ export default defineConfig({
 		marketplaceConfig,
 		messageBoardsWebConfig,
 		multifactorAuthenticationConfig,
+		multifactorAuthenticationWebConfig,
 		nestedPortletsWebConfig,
 		notificationWebConfig,
 		notificationsWebConfig,
@@ -259,8 +270,10 @@ export default defineConfig({
 		portalWebConfig,
 		portalWorkflowKaleoDesignerWebConfig,
 		portalWorkflowKaleoFormsWebConfig,
+		portalWorkflowMetricsWebConfig,
 		portalWorkflowTaskWebConfig,
 		portletConfigurationCssWebConfig,
+		productNavigationControlMenuWeb,
 		productNavigationProductMenuWeb,
 		productNavigationUserPersonalBarWebConfig,
 		questionsWebConfig,
@@ -286,6 +299,7 @@ export default defineConfig({
 		stylebookWebConfig,
 		templateWebConfig,
 		usersAdminWebConfig,
+		usersAdminWebEmailConfig,
 		usersAdminWebPermissionsConfig,
 		wikiWebConfig,
 		...setupProjects,

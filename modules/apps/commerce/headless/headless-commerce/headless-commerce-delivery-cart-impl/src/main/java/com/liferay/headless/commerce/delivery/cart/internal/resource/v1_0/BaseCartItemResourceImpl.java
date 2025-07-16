@@ -762,9 +762,14 @@ public abstract class BaseCartItemResourceImpl
 				"updateStrategy", "UPDATE");
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				cartItemUnsafeFunction =
-					cartItem -> putCartItemByExternalReferenceCode(
+				cartItemUnsafeFunction = cartItem -> {
+					CartItem persistedCartItem = null;
+
+					persistedCartItem = putCartItemByExternalReferenceCode(
 						cartItem.getExternalReferenceCode(), cartItem);
+
+					return persistedCartItem;
+				};
 			}
 		}
 
@@ -917,16 +922,12 @@ public abstract class BaseCartItemResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			cartItemUnsafeFunction = cartItem -> patchCartItem(
-				cartItem.getId() != null ? cartItem.getId() :
-					_parseLong((String)parameters.get("cartItemId")),
-				cartItem);
+				cartItem.getId(), cartItem);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			cartItemUnsafeFunction = cartItem -> putCartItem(
-				cartItem.getId() != null ? cartItem.getId() :
-					_parseLong((String)parameters.get("cartItemId")),
-				cartItem);
+				cartItem.getId(), cartItem);
 		}
 
 		if (cartItemUnsafeFunction == null) {
@@ -948,14 +949,6 @@ public abstract class BaseCartItemResourceImpl
 				cartItemUnsafeFunction.apply(cartItem);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

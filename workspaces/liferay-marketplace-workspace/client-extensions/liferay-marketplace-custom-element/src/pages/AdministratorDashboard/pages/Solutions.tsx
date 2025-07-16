@@ -15,7 +15,6 @@ import {
 	ProductWorkflowDisplayType,
 } from '../../../enums/Product';
 import i18n from '../../../i18n';
-import HeadlessCommerceAdminCatalog from '../../../services/rest/HeadlessCommerceAdminCatalog';
 import {formatDate} from '../../../utils/date';
 
 export default function Solutions() {
@@ -24,52 +23,31 @@ export default function Solutions() {
 	return (
 		<Page pageRendererProps={{className: 'border py-2'}} title="Solutions">
 			<ListView<Product>
-				id="administrator-apps"
-				managementToolbarProps={{visible: true}}
-				resource={function getProducts({
-					filters,
-					keywords,
-					page,
-					pageSize,
-					sort,
-				}) {
-					const searchBuilder = new SearchBuilder().lambda(
+				defaultFilters={{
+					filter: `${SearchBuilder.lambda(
 						'categoryNames',
 						ProductTypeVocabulary.SOLUTION
-					);
-
-					if (filters.filter) {
-						for (const [key, value] of Object.entries(
-							filters.filter
-						)) {
-							searchBuilder.and().eq(key, String(value));
-						}
-					}
-
-					if (keywords) {
-						searchBuilder.and().contains('name', keywords);
-					}
-
-					return HeadlessCommerceAdminCatalog.getProducts(
-						new URLSearchParams({
-							'filter': searchBuilder.build(),
-							'nestedFields': 'catalog,productSpecifications',
-							'page': page.toString(),
-							'pageSize': pageSize.toString(),
-							'productSpecifications.pageSize': '-1',
-							'sort': sort.key
-								? `${sort.key}:${sort.direction}`
-								: 'createDate:desc',
-						})
-					);
+					)}`,
 				}}
+				id="administrator-solutions"
+				managementToolbarProps={{
+					filterSchema: 'administratorSolutions',
+					searchVisible: true,
+					visible: true,
+				}}
+				resource={`/o/headless-commerce-admin-catalog/v1.0/products?${new URLSearchParams(
+					{
+						'nestedFields': 'catalog,productSpecifications',
+						'productSpecifications.pageSize': '-1',
+						'sort': 'createDate:desc',
+					}
+				)}`}
 				tableProps={{
 					actions: [
 						{
 							name: i18n.translate('view-details'),
-							onClick: (row) => {
-								navigate(`/solutions/${row.productId}`);
-							},
+							onClick: (row) =>
+								navigate(`/solutions/${row.productId}`),
 						},
 					],
 					columns: [

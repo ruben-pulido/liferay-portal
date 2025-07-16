@@ -791,18 +791,15 @@ public abstract class BaseShipmentResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				shipmentUnsafeFunction = shipment -> {
+					Shipment getShipment = null;
 					Shipment persistedShipment = null;
 
 					try {
-						Shipment getShipment =
-							getShipmentByExternalReferenceCode(
-								shipment.getExternalReferenceCode());
+						getShipment = getShipmentByExternalReferenceCode(
+							shipment.getExternalReferenceCode());
 
 						persistedShipment = patchShipment(
-							getShipment.getId() != null ? getShipment.getId() :
-								_parseLong(
-									(String)parameters.get("shipmentId")),
-							shipment);
+							getShipment.getId(), shipment);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedShipment = postShipment(shipment);
@@ -813,9 +810,14 @@ public abstract class BaseShipmentResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				shipmentUnsafeFunction =
-					shipment -> putShipmentByExternalReferenceCode(
+				shipmentUnsafeFunction = shipment -> {
+					Shipment persistedShipment = null;
+
+					persistedShipment = putShipmentByExternalReferenceCode(
 						shipment.getExternalReferenceCode(), shipment);
+
+					return persistedShipment;
+				};
 			}
 		}
 
@@ -967,9 +969,7 @@ public abstract class BaseShipmentResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			shipmentUnsafeFunction = shipment -> patchShipment(
-				shipment.getId() != null ? shipment.getId() :
-					_parseLong((String)parameters.get("shipmentId")),
-				shipment);
+				shipment.getId(), shipment);
 		}
 
 		if (shipmentUnsafeFunction == null) {
@@ -991,14 +991,6 @@ public abstract class BaseShipmentResourceImpl
 				shipmentUnsafeFunction.apply(shipment);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

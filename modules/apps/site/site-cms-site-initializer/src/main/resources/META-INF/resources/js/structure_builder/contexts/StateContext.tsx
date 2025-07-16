@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {openConfirmModal} from '@liferay/layout-js-components-web';
 import React, {
 	Dispatch,
 	ReactNode,
@@ -11,6 +12,13 @@ import React, {
 	useReducer,
 } from 'react';
 
+import {ObjectDefinitions} from '../types/ObjectDefinition';
+import {
+	ReferencedStructure,
+	RepeatableGroup,
+	Structure,
+} from '../types/Structure';
+import {Uuid} from '../types/Uuid';
 import actionGeneratesChanges from '../utils/actionGeneratesChanges';
 import {
 	Field,
@@ -19,67 +27,71 @@ import {
 	getDefaultField,
 } from '../utils/field';
 import findAvailableFieldName from '../utils/findAvailableFieldName';
+import findChild from '../utils/findChild';
+import {getChildrenUuids} from '../utils/getChildrenUuids';
 import getRandomId from '../utils/getRandomId';
 import getUuid from '../utils/getUuid';
+import insertGroup from '../utils/insertGroup';
 import normalizeName from '../utils/normalizeName';
 import openDeletionModal from '../utils/openDeletionModal';
+import refreshReferencedStructures from '../utils/refreshReferencedStructures';
 import {
 	ValidationError,
 	validateField,
+	validateRepeatableGroup,
 	validateStructure,
 } from '../utils/validation';
 
 const DEFAULT_STRUCTURE_LABEL = Liferay.Language.get('untitled-structure');
 
 type History = {
-	deletedFields: boolean;
+	deletedChildren: boolean;
 };
 
-type Status = 'new' | 'draft' | 'published';
-
-type Spaces = 'all' | string[];
-
-export type Uuid = string & {__brand: 'Uuid'};
-
 export type State = {
-	erc: string;
 	error: string | null;
-	fields: Map<Uuid, Field>;
 	history: History;
-	id: number | null;
 	invalids: Map<Uuid, Set<ValidationError>>;
-	label: Liferay.Language.LocalizedValue<string>;
-	name: string;
-	publishedFields: Set<Uuid>;
+	publishedChildren: Set<Uuid>;
 	selection: Uuid[];
-	spaces: Spaces;
-	status: Status;
+	structure: Structure;
 	unsavedChanges: boolean;
-	uuid: Uuid;
 };
 
 const INITIAL_STATE: State = {
-	erc: '',
 	error: null,
-	fields: new Map(),
 	history: {
-		deletedFields: false,
+		deletedChildren: false,
 	},
-	id: null,
 	invalids: new Map(),
-	label: {
-		[Liferay.ThemeDisplay.getDefaultLanguageId()]: DEFAULT_STRUCTURE_LABEL,
-	},
-	name: normalizeName(DEFAULT_STRUCTURE_LABEL),
-	publishedFields: new Set(),
+	publishedChildren: new Set(),
 	selection: [],
-	spaces: [],
-	status: 'new',
+	structure: {
+		children: new Map(),
+		erc: '',
+		id: null,
+		label: {
+			[Liferay.ThemeDisplay.getDefaultLanguageId()]:
+				DEFAULT_STRUCTURE_LABEL,
+		},
+		name: normalizeName(DEFAULT_STRUCTURE_LABEL),
+		spaces: [],
+		status: 'new',
+		uuid: getUuid(),
+	},
 	unsavedChanges: false,
-	uuid: getUuid(),
 };
 
 type AddFieldAction = {field: Field; type: 'add-field'};
+
+type AddReferencedStructuresAction = {
+	referencedStructures: ReferencedStructure[];
+	type: 'add-referenced-structures';
+};
+
+type AddRepeatableGroup = {
+	type: 'add-repeatable-group';
+};
 
 type AddValidationError = {
 	error: ValidationError;
@@ -96,11 +108,16 @@ type CreateStructureAction = {
 	type: 'create-structure';
 };
 
-type DeleteFieldAction = {type: 'delete-field'; uuid: Uuid};
+type DeleteChildAction = {type: 'delete-child'; uuid: Uuid};
 
 type DeleteSelectionAction = {type: 'delete-selection'};
 
 type PublishStructureAction = {id?: number; type: 'publish-structure'};
+
+type RefreshReferencedStructuresAction = {
+	objectDefinitions: ObjectDefinitions;
+	type: 'refresh-referenced-structures';
+};
 
 type SetErrorAction = {error: string | null; type: 'set-error'};
 
@@ -123,11 +140,17 @@ type UpdateFieldAction = {
 	uuid: Uuid;
 };
 
+type UpdateRepeatableGroupAction = {
+	label: Liferay.Language.LocalizedValue<string>;
+	type: 'update-repeatable-group';
+	uuid: Uuid;
+};
+
 type UpdateStructureAction = {
 	erc?: string;
 	label?: Liferay.Language.LocalizedValue<string>;
 	name?: string;
-	spaces?: Spaces;
+	spaces?: Structure['spaces'];
 	type: 'update-structure';
 };
 
@@ -138,15 +161,19 @@ type ValidateAction = {
 
 export type Action =
 	| AddFieldAction
+	| AddReferencedStructuresAction
+	| AddRepeatableGroup
 	| AddValidationError
 	| ClearErrorAction
 	| CreateStructureAction
-	| DeleteFieldAction
+	| DeleteChildAction
 	| DeleteSelectionAction
 	| PublishStructureAction
+	| RefreshReferencedStructuresAction
 	| SetErrorAction
 	| SetSelection
 	| UpdateFieldAction
+	| UpdateRepeatableGroupAction
 	| UpdateStructureAction
 	| ValidateAction;
 
@@ -159,13 +186,84 @@ function reducer(state: State, action: Action): State {
 		case 'add-field': {
 			const {field} = action;
 
-			const name = findAvailableFieldName(state.fields, field.name);
+			const {structure} = state;
 
-			const nextFields = new Map(state.fields);
+			const name = findAvailableFieldName(structure.children, field.name);
 
-			nextFields.set(field.uuid, {...field, name});
+			const nextChildren = new Map(structure.children);
 
-			return {...state, fields: nextFields, selection: [field.uuid]};
+			nextChildren.set(field.uuid, {...field, name});
+
+			return {
+				...state,
+				selection: [field.uuid],
+				structure: {...structure, children: nextChildren},
+			};
+		}
+		case 'add-referenced-structures': {
+			const {referencedStructures} = action;
+
+			const {structure} = state;
+
+			const nextChildren = new Map(structure.children);
+
+			let selection: State['selection'] = [];
+
+			for (const [
+				i,
+				referencedStructure,
+			] of referencedStructures.entries()) {
+				nextChildren.set(referencedStructure.uuid, referencedStructure);
+
+				if (i === 0) {
+					selection = [referencedStructure.uuid];
+				}
+			}
+
+			return {
+				...state,
+				selection,
+				structure: {...structure, children: nextChildren},
+			};
+		}
+		case 'add-repeatable-group': {
+			const {publishedChildren, selection, structure} = state;
+
+			if (selection.some((uuid) => publishedChildren.has(uuid))) {
+				openConfirmModal({
+					buttonLabel: Liferay.Language.get('done'),
+					center: true,
+					hideCancel: true,
+					status: 'warning',
+					text: Liferay.Language.get(
+						'the-repeatable-group-cannot-be-created-because-one-or-more-fields-of-the-selection-are-already-published'
+					),
+					title: Liferay.Language.get(
+						'repeatable-group-creation-not-allowed'
+					),
+				});
+
+				return state;
+			}
+
+			const children = selection.map(
+				(uuid) => findChild(structure, uuid)!
+			);
+
+			const uuid = getUuid();
+
+			const nextChildren = insertGroup({
+				groupChildren: children,
+				groupParent: children[0].parent,
+				groupUuid: uuid,
+				root: structure,
+			});
+
+			return {
+				...state,
+				selection: [uuid],
+				structure: {...structure, children: nextChildren},
+			};
 		}
 		case 'add-validation-error': {
 			const {error, uuid} = action;
@@ -190,15 +288,22 @@ function reducer(state: State, action: Action): State {
 			};
 		}
 		case 'create-structure': {
+			const {structure} = state;
+
 			return {
 				...state,
 				error: INITIAL_STATE.error,
-				id: action.id,
-				status: 'draft' as Status,
+				structure: {
+					...structure,
+					id: action.id,
+					status: 'draft' as Structure['status'],
+				},
 			};
 		}
-		case 'delete-field': {
-			if (state.fields.size === 1) {
+		case 'delete-child': {
+			const {structure} = state;
+
+			if (structure.children.size === 1) {
 				openDeletionModal();
 
 				return state;
@@ -206,15 +311,19 @@ function reducer(state: State, action: Action): State {
 
 			const {uuid} = action;
 
-			const nextFields = new Map(state.fields);
+			const nextChildren = new Map(structure.children);
 
-			nextFields.delete(uuid);
+			nextChildren.delete(uuid);
 
 			const invalids = new Map(state.invalids);
 
 			invalids.delete(uuid);
 
-			let nextState = {...state, fields: nextFields, invalids};
+			let nextState: State = {
+				...state,
+				invalids,
+				structure: {...state.structure, children: nextChildren},
+			};
 
 			if (state.selection.includes(uuid)) {
 				nextState = {
@@ -223,23 +332,25 @@ function reducer(state: State, action: Action): State {
 				};
 			}
 
-			if (state.publishedFields.has(uuid)) {
+			if (state.publishedChildren.has(uuid)) {
 				nextState = {
 					...nextState,
-					history: {...nextState.history, deletedFields: true},
+					history: {...nextState.history, deletedChildren: true},
 				};
 			}
 
 			return nextState;
 		}
 		case 'delete-selection': {
-			const nextFields = new Map(state.fields);
+			const {structure} = state;
 
-			for (const fieldName of state.selection) {
-				nextFields.delete(fieldName);
+			const nextChildren = new Map(structure.children);
+
+			for (const uuid of state.selection) {
+				nextChildren.delete(uuid);
 			}
 
-			if (nextFields.size === 0) {
+			if (nextChildren.size === 0) {
 				openDeletionModal();
 
 				return state;
@@ -247,33 +358,56 @@ function reducer(state: State, action: Action): State {
 
 			return {
 				...state,
-				fields: nextFields,
 				selection: INITIAL_STATE.selection,
+				structure: {
+					...structure,
+					children: nextChildren,
+				},
 			};
 		}
 		case 'publish-structure': {
-			const nextState = {
-				...state,
-				error: INITIAL_STATE.error,
-				history: INITIAL_STATE.history,
-				publishedFields: new Set(
-					Array.from(state.fields.values()).map((field) => field.uuid)
-				),
-				status: 'published' as Status,
-				unsavedChanges: false,
+			const {structure} = state;
+
+			let nextStructure = {
+				...structure,
+				status: 'published' as Structure['status'],
 			};
 
 			if (action.id) {
-				return {...nextState, id: action.id};
+				nextStructure = {...nextStructure, id: action.id};
 			}
 
-			return nextState;
+			return {
+				...state,
+				error: INITIAL_STATE.error,
+				history: INITIAL_STATE.history,
+				publishedChildren: getChildrenUuids(structure),
+				structure: nextStructure,
+				unsavedChanges: false,
+			};
+		}
+		case 'refresh-referenced-structures': {
+			const {structure} = state;
+
+			const {objectDefinitions} = action;
+
+			const nextChildren = refreshReferencedStructures({
+				objectDefinitions,
+				root: structure,
+			});
+
+			const nextStructure = {
+				...structure,
+				children: nextChildren,
+			};
+
+			return {...state, structure: nextStructure};
 		}
 		case 'set-error':
 			return {
 				...state,
 				error: action.error,
-				selection: [state.uuid],
+				selection: [state.structure.uuid],
 			};
 		case 'set-selection': {
 			const {selection} = action;
@@ -293,9 +427,13 @@ function reducer(state: State, action: Action): State {
 				uuid,
 			} = action;
 
-			const nextFields: State['fields'] = new Map(state.fields);
+			const {structure} = state;
 
-			const field = nextFields.get(uuid);
+			const nextChildren: Structure['children'] = new Map(
+				structure.children
+			);
+
+			const field = nextChildren.get(uuid) as Field;
 
 			if (!field) {
 				return state;
@@ -319,7 +457,7 @@ function reducer(state: State, action: Action): State {
 					picklistId;
 			}
 
-			nextFields.set(nextField.uuid, nextField);
+			nextChildren.set(nextField.uuid, nextField);
 
 			// Validate the data sent in the action
 
@@ -343,21 +481,82 @@ function reducer(state: State, action: Action): State {
 
 			return {
 				...state,
-				fields: nextFields,
 				invalids,
 				selection: [nextField.uuid],
+				structure: {
+					...structure,
+					children: nextChildren,
+				},
+			};
+		}
+		case 'update-repeatable-group': {
+			const {label, uuid} = action;
+
+			const {structure} = state;
+
+			const child = findChild(structure, uuid);
+
+			if (!child || child.type !== 'repeatable-group') {
+				return state;
+			}
+
+			const group: RepeatableGroup = {
+				...child,
+				label,
+			};
+
+			const nextChildren = new Map(structure.children);
+
+			nextChildren.set(uuid, group);
+
+			const nextState: State = {
+				...state,
+				structure: {
+					...structure,
+					children: nextChildren,
+				},
+			};
+
+			// Validate the data sent in the action
+
+			const invalids = new Map(state.invalids);
+
+			const errors = validateRepeatableGroup({
+				currentErrors: invalids.get(structure.uuid),
+				data: {label},
+			});
+
+			if (errors.size) {
+				invalids.set(structure.uuid, errors);
+			}
+			else {
+				invalids.delete(structure.uuid);
+			}
+
+			// Return new state
+
+			return {
+				...nextState,
+				invalids,
 			};
 		}
 		case 'update-structure': {
 
 			// Prepare updated state
 
-			const nextState = {
+			const {erc, label, name, spaces} = action;
+
+			const {structure} = state;
+
+			const nextState: State = {
 				...state,
-				erc: action.erc ?? state.erc,
-				label: action.label ?? state.label,
-				name: action.name ?? state.name,
-				spaces: action.spaces ?? state.spaces,
+				structure: {
+					...state.structure,
+					erc: erc ?? structure.erc,
+					label: label ?? structure.label,
+					name: name ?? structure.name,
+					spaces: spaces ?? structure.spaces,
+				},
 			};
 
 			// Validate the data sent in the action
@@ -365,15 +564,15 @@ function reducer(state: State, action: Action): State {
 			const invalids = new Map(state.invalids);
 
 			const errors = validateStructure({
-				currentErrors: invalids.get(state.uuid),
-				data: action,
+				currentErrors: invalids.get(structure.uuid),
+				data: {erc, label, name, spaces},
 			});
 
 			if (errors.size) {
-				invalids.set(state.uuid, errors);
+				invalids.set(structure.uuid, errors);
 			}
 			else {
-				invalids.delete(state.uuid);
+				invalids.delete(structure.uuid);
 			}
 
 			// Return new state
@@ -400,15 +599,27 @@ function reducer(state: State, action: Action): State {
 	}
 }
 
-function initState(state: State) {
-	if (state.erc) {
+function initState(state: State): State {
+	const {structure} = state;
+
+	if (structure.erc) {
 		return state;
 	}
 
-	return {...state, erc: getRandomId(), fields: getDefaultFields()};
+	return {
+		...state,
+		structure: {
+			...structure,
+			children: getDefaultChildren(structure.uuid),
+			erc: getRandomId(),
+		},
+	};
 }
 
-const StateContext = createContext<{dispatch: Dispatch<Action>; state: State}>({
+const StateContext = createContext<{
+	dispatch: Dispatch<Action>;
+	state: State;
+}>({
 	dispatch: () => {},
 	state: INITIAL_STATE,
 });
@@ -443,32 +654,34 @@ function useStateDispatch() {
 	return useContext(StateContext).dispatch;
 }
 
-function getDefaultFields() {
+function getDefaultChildren(structureUuid: Uuid) {
 	const url = new URL(window.location.href);
 
 	const type = url.searchParams.get('objectFolderExternalReferenceCode');
 
-	const fields = new Map();
+	const children = new Map();
 
 	const title = getDefaultField({
 		label: Liferay.Language.get('title'),
 		name: 'title',
+		parent: structureUuid,
 		type: 'text',
 	});
 
-	fields.set(title.uuid, title);
+	children.set(title.uuid, title);
 
 	if (type === 'L_CMS_FILE_TYPES') {
 		const file = getDefaultField({
 			label: Liferay.Language.get('file'),
 			name: 'file',
+			parent: structureUuid,
 			type: 'upload',
 		});
 
-		fields.set(file.uuid, file);
+		children.set(file.uuid, file);
 	}
 
-	return fields;
+	return children;
 }
 
 export {StateContext, StateContextProvider, useSelector, useStateDispatch};

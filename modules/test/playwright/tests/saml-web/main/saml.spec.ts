@@ -27,19 +27,23 @@ import {liferayConfig} from '../../../liferay.config';
 import {InstanceSettingsPage} from '../../../pages/configuration-admin-web/InstanceSettingsPage';
 import {GeneralPage} from '../../../pages/instance-configuration-web/GeneralPage';
 import {PagesAdminPage} from '../../../pages/layout-admin-web/PagesAdminPage';
+import {ApplicationsMenuPage} from '../../../pages/product-navigation-applications-menu/ApplicationsMenuPage';
 import {
 	AttributeMapping,
 	IdentityProviderConnectionsPage,
 } from '../../../pages/saml-web/IdentityProviderConnectionsPage';
 import {SamlAdminPage} from '../../../pages/saml-web/SamlAdminPage';
 import {ServiceProviderConnectionsPage} from '../../../pages/saml-web/ServiceProviderConnectionsPage';
+import {ServerAdministrationPage} from '../../../pages/server-admin-web/ServerAdministrationPage';
 import {SiteSettingsPage} from '../../../pages/site-admin-web/SiteSettingsPage';
 import {EditUserPage} from '../../../pages/users-admin-web/EditUserPage';
+import {UserGroupsPage} from '../../../pages/users-admin-web/UserGroupsPage';
 import {UsersAndOrganizationsPage} from '../../../pages/users-admin-web/UsersAndOrganizationsPage';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
 import performLogin, {performLogout} from '../../../utils/performLogin';
+import {reloadUntilVisible} from '../../../utils/reloadUntilVisible';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {waitForLoading} from '../../osb-faro-web/main/utils/loading';
 import {
@@ -1685,6 +1689,513 @@ test('LPD-32214 AC1 TC1: Verify SP initiated SLO logs user out of IdP and SP, th
 	await newPage.goto(DEFAULT_IDP_URL);
 
 	expect(await newPage.getByRole('button', {name: 'Sign In'})).toBeVisible();
+});
+
+test('LPD-57886: Verify SP initiated SSO redirects to the IdP from a staged site', async ({
+	browser,
+}) => {
+	const idpAdminPage = await configureVirtualInstanceForSaml(
+		browser,
+		DEFAULT_IDP_NAME,
+		'Identity Provider'
+	);
+
+	const spAdminPage = await configureVirtualInstanceForSaml(
+		browser,
+		DEFAULT_SP_NAME,
+		'Service Provider'
+	);
+
+	await connectSpAndIdp(
+		idpAdminPage,
+		DEFAULT_IDP_NAME,
+		spAdminPage,
+		DEFAULT_SP_NAME
+	);
+
+	// Create new site in SP instance
+
+	const defaultBaseUrl = liferayConfig.environment.baseUrl;
+
+	liferayConfig.environment.baseUrl = DEFAULT_SP_URL;
+
+	const apiHelpers = new ApiHelpers(spAdminPage);
+
+	liferayConfig.environment.baseUrl = defaultBaseUrl;
+
+	const site = await apiHelpers.headlessSite.createSite({
+		name: getRandomString(),
+		templateKey: 'com.liferay.site.initializer.welcome',
+		templateType: 'site-initializer',
+	});
+
+	// Enable local live staging from the SP instance
+
+	liferayConfig.environment.baseUrl = DEFAULT_SP_URL;
+
+	await apiHelpers.jsonWebServicesStaging.enableLocalStaging({
+		groupId: site.id,
+	});
+
+	liferayConfig.environment.baseUrl = defaultBaseUrl;
+
+	// Verify the staging site page is valid by visiting it as an admin
+
+	const stagingSitePageUrl =
+		DEFAULT_SP_URL + '/web' + site.friendlyUrlPath + '-staging';
+
+	await spAdminPage.goto(stagingSitePageUrl);
+
+	// Enabling local staging takes time, so reload the page until finished
+
+	await reloadUntilVisible({
+		maxAttempts: 10,
+		myLocator: spAdminPage.getByText('You are viewing the staged version'),
+		page: spAdminPage,
+	});
+
+	await expect(
+		await spAdminPage.getByText('You are viewing the staged version')
+	).toBeVisible();
+
+	// Go to staging site and expect auto
+
+	const spStagingSitePage = await browser.newPage();
+
+	await spStagingSitePage.goto(stagingSitePageUrl);
+
+	await spStagingSitePage.waitForTimeout(1000);
+
+	// Perform SP initiated SSO
+
+	await clickSignInButton(spStagingSitePage);
+
+	await spStagingSitePage.waitForTimeout(2000);
+
+	await expect(await spStagingSitePage.url()).toContain(DEFAULT_IDP_URL);
+});
+
+test('LPD-56043 and LPD-56046: Verify User and User Group Provisioning source is stored as an Expando Value after IdP import', async ({
+	browser,
+}) => {
+	const idpAdminPage = await configureVirtualInstanceForSaml(
+		browser,
+		DEFAULT_IDP_NAME,
+		'Identity Provider'
+	);
+
+	const spAdminPage = await configureVirtualInstanceForSaml(
+		browser,
+		DEFAULT_SP_NAME,
+		'Service Provider'
+	);
+
+	await connectSpAndIdp(
+		idpAdminPage,
+		DEFAULT_IDP_NAME,
+		spAdminPage,
+		DEFAULT_SP_NAME
+	);
+
+	// Update SP Connection to include userGroups in attribute list
+
+	const spConnection: TSpConnection = {
+		entityId: DEFAULT_SP_NAME,
+		idpName: DEFAULT_IDP_NAME,
+		spDomain: `http://${DEFAULT_SP_NAME}:8080`,
+		spName: DEFAULT_SP_NAME,
+		...DEFAULT_SP_CONNECTION_VALUES,
+	};
+
+	spConnection.attributes = spConnection.attributes + '\nuserGroups';
+
+	await editServiceProviderConnection(idpAdminPage, spConnection);
+
+	// Create a user on the IdP instance
+
+	const userAccount = await createUser(idpAdminPage, DEFAULT_IDP_NAME);
+
+	// Create a new User Group and assign the user to it
+
+	const idpApiHelpers = new ApiHelpers(idpAdminPage, DEFAULT_IDP_URL);
+
+	const userGroup = await idpApiHelpers.headlessAdminUser.postUserGroup();
+
+	const userGroupsPage = await new UserGroupsPage(idpAdminPage);
+
+	await userGroupsPage.goto(false);
+
+	await (
+		await userGroupsPage.userGroupsTableRowActions(userGroup.name)
+	).click();
+	await userGroupsPage.assignMembersMenuItem.click();
+
+	await userGroupsPage.newUserButton.click();
+
+	await (
+		await userGroupsPage.addUsersTable.rowCheckbox(userAccount.name)
+	).check();
+
+	await userGroupsPage.addUsersIFrameAddButton.click();
+
+	await waitForAlert(userGroupsPage.page);
+
+	// Perform SP initiated SSO
+
+	const spInstancePage = await performSpInitiatedSSO(
+		browser,
+		userAccount.emailAddress,
+		DEFAULT_SP_URL
+	);
+
+	expect(await spInstancePage.url()).toContain(DEFAULT_SP_URL);
+
+	// Run Groovy script to verify Expando Value was added for provisioned User
+
+	const localhostAdminPage = await browser.newPage();
+
+	await performLogin(localhostAdminPage, 'test');
+
+	const applicationsMenuPage = new ApplicationsMenuPage(localhostAdminPage);
+
+	await applicationsMenuPage.goToServerAdministration();
+
+	const spApiHelpers = new ApiHelpers(spAdminPage, DEFAULT_SP_URL);
+
+	const spCompany =
+		await spApiHelpers.jsonWebServicesCompany.getCompanyByWebId(
+			DEFAULT_SP_NAME
+		);
+
+	const spUserAccount =
+		await spApiHelpers.headlessAdminUser.getUserAccountByEmailAddress(
+			userAccount.emailAddress
+		);
+
+	let script = `
+		import com.liferay.expando.kernel.service.ExpandoValueLocalServiceUtil;
+		import com.liferay.portal.kernel.model.User;
+		
+		out.println(
+			ExpandoValueLocalServiceUtil.getValue(
+				${spCompany.companyId}, User.class.getName(), "CUSTOM_FIELDS",
+						"samlIdpEntityId", ${spUserAccount.id}));
+		`;
+
+	const serverAdministrationPage = new ServerAdministrationPage(
+		localhostAdminPage
+	);
+
+	await serverAdministrationPage.executeScript(script);
+
+	await expect(
+		await localhostAdminPage.getByText(DEFAULT_IDP_NAME)
+	).toBeVisible();
+
+	// Do the same for the User Group
+
+	const spUserGroup = await spApiHelpers.headlessAdminUser.getUserGroupByName(
+		userGroup.name
+	);
+
+	script = `
+		import com.liferay.expando.kernel.service.ExpandoValueLocalServiceUtil;
+		import com.liferay.portal.kernel.model.UserGroup;
+		
+		out.println(
+			ExpandoValueLocalServiceUtil.getValue(
+				${spCompany.companyId}, UserGroup.class.getName(),
+				"CUSTOM_FIELDS", "samlIdpEntityId", ${spUserGroup.id}));
+		`;
+
+	await serverAdministrationPage.executeScript(script);
+
+	await expect(
+		await localhostAdminPage.getByText(DEFAULT_IDP_NAME)
+	).toBeVisible();
+});
+
+test('LPD-56047: Verify User Group membership deletions from the IdP only apply to the SP if the provisioning IdP is the same', async ({
+	browser,
+}) => {
+	const idpAdminPage = await configureVirtualInstanceForSaml(
+		browser,
+		DEFAULT_IDP_NAME,
+		'Identity Provider'
+	);
+
+	const spAdminPage = await configureVirtualInstanceForSaml(
+		browser,
+		DEFAULT_SP_NAME,
+		'Service Provider'
+	);
+
+	await connectSpAndIdp(
+		idpAdminPage,
+		DEFAULT_IDP_NAME,
+		spAdminPage,
+		DEFAULT_SP_NAME
+	);
+
+	// Create an additional IdP virtual instance and connect it to the SP
+
+	const localhostAdminPage = await browser.newPage();
+
+	await performLogin(localhostAdminPage, 'test');
+
+	const secondaryIdpAdminPage = await createIdentityProviderVirtualInstance(
+		browser,
+		localhostAdminPage,
+		SECONDARY_IDP_NAME
+	);
+
+	await connectSpAndIdp(
+		secondaryIdpAdminPage,
+		SECONDARY_IDP_NAME,
+		spAdminPage,
+		DEFAULT_SP_NAME
+	);
+
+	// Update SP Connection to include userGroups in attribute list
+
+	const spConnection: TSpConnection = {
+		entityId: DEFAULT_SP_NAME,
+		idpName: DEFAULT_IDP_NAME,
+		spDomain: `http://${DEFAULT_SP_NAME}:8080`,
+		spName: DEFAULT_SP_NAME,
+		...DEFAULT_SP_CONNECTION_VALUES,
+	};
+
+	spConnection.attributes = spConnection.attributes + '\nuserGroups';
+
+	await editServiceProviderConnection(idpAdminPage, spConnection);
+
+	spConnection.idpName = SECONDARY_IDP_NAME;
+
+	await editServiceProviderConnection(secondaryIdpAdminPage, spConnection);
+
+	// Create a user on both IdPs, with identical information
+
+	const userId = getRandomInt();
+
+	const secondaryUserAccount = await createUser(
+		secondaryIdpAdminPage,
+		SECONDARY_IDP_NAME,
+		userId
+	);
+	const userAccount = await createUser(
+		idpAdminPage,
+		DEFAULT_IDP_NAME,
+		userId
+	);
+
+	// Create a new User Group on the IdP and assign the user to it
+
+	const idpApiHelpers = new ApiHelpers(idpAdminPage, DEFAULT_IDP_URL);
+
+	const userGroup = await idpApiHelpers.headlessAdminUser.postUserGroup();
+
+	const userGroupsPage = await new UserGroupsPage(idpAdminPage);
+
+	await userGroupsPage.goto(false);
+
+	await (
+		await userGroupsPage.userGroupsTableRowActions(userGroup.name)
+	).click();
+	await userGroupsPage.assignMembersMenuItem.click();
+
+	await userGroupsPage.newUserButton.click();
+
+	await (
+		await userGroupsPage.addUsersTable.rowCheckbox(userAccount.name)
+	).check();
+
+	await userGroupsPage.addUsersIFrameAddButton.click();
+
+	await waitForAlert(userGroupsPage.page);
+
+	// Do the same for the secondary IdP
+
+	const secondaryIdpApiHelpers = new ApiHelpers(
+		secondaryIdpAdminPage,
+		SECONDARY_IDP_URL
+	);
+
+	const secondaryUserGroup =
+		await secondaryIdpApiHelpers.headlessAdminUser.postUserGroup();
+
+	const secondaryUserGroupsPage = await new UserGroupsPage(
+		secondaryIdpAdminPage
+	);
+
+	await secondaryUserGroupsPage.goto(false);
+
+	await (
+		await secondaryUserGroupsPage.userGroupsTableRowActions(
+			secondaryUserGroup.name
+		)
+	).click();
+	await secondaryUserGroupsPage.assignMembersMenuItem.click();
+
+	await secondaryUserGroupsPage.newUserButton.click();
+
+	await (
+		await secondaryUserGroupsPage.addUsersTable.rowCheckbox(
+			secondaryUserAccount.name
+		)
+	).check();
+
+	await secondaryUserGroupsPage.addUsersIFrameAddButton.click();
+
+	await waitForAlert(secondaryUserGroupsPage.page);
+
+	// Perform SP initiated SSO from the default IdP
+
+	let spInstancePage = await performSpInitiatedSSO(
+		browser,
+		userAccount.emailAddress,
+		DEFAULT_SP_URL,
+		true,
+		DEFAULT_IDP_NAME
+	);
+
+	expect(await spInstancePage.url()).toContain(DEFAULT_SP_URL);
+
+	await performLogout(spInstancePage);
+
+	// Do the same from the secondary IdP
+
+	spInstancePage = await performSpInitiatedSSO(
+		browser,
+		secondaryUserAccount.emailAddress,
+		DEFAULT_SP_URL,
+		true,
+		SECONDARY_IDP_NAME
+	);
+
+	expect(await spInstancePage.url()).toContain(DEFAULT_SP_URL);
+
+	await performLogout(spInstancePage);
+
+	const applicationsMenuPage = new ApplicationsMenuPage(localhostAdminPage);
+
+	await applicationsMenuPage.goToServerAdministration();
+
+	const spApiHelpers = new ApiHelpers(spAdminPage, DEFAULT_SP_URL);
+
+	const spCompany =
+		await spApiHelpers.jsonWebServicesCompany.getCompanyByWebId(
+			DEFAULT_SP_NAME
+		);
+
+	const secondarySpUserGroup =
+		await spApiHelpers.headlessAdminUser.getUserGroupByName(
+			secondaryUserGroup.name
+		);
+
+	let script = `
+			import com.liferay.expando.kernel.service.ExpandoValueLocalServiceUtil;
+			import com.liferay.portal.kernel.model.UserGroup;
+			
+			out.println(
+				ExpandoValueLocalServiceUtil.getValue(
+					${spCompany.companyId}, UserGroup.class.getName(),
+					"CUSTOM_FIELDS", "samlIdpEntityId", ${secondarySpUserGroup.id}));
+			`;
+
+	const serverAdministrationPage = new ServerAdministrationPage(
+		localhostAdminPage
+	);
+
+	await test.step('Verify Expando Values were added for both User Groups', async () => {
+		await serverAdministrationPage.executeScript(script);
+
+		await expect(
+			await localhostAdminPage.getByText(SECONDARY_IDP_NAME)
+		).toBeVisible();
+
+		const spUserGroup =
+			await spApiHelpers.headlessAdminUser.getUserGroupByName(
+				userGroup.name
+			);
+
+		script = `
+			import com.liferay.expando.kernel.service.ExpandoValueLocalServiceUtil;
+			import com.liferay.portal.kernel.model.UserGroup;
+			
+			out.println(
+				ExpandoValueLocalServiceUtil.getValue(
+					${spCompany.companyId}, UserGroup.class.getName(),
+					"CUSTOM_FIELDS", "samlIdpEntityId", ${spUserGroup.id}));
+			`;
+
+		await serverAdministrationPage.executeScript(script);
+
+		await expect(
+			await localhostAdminPage.getByText(DEFAULT_IDP_NAME)
+		).toBeVisible();
+	});
+
+	await test.step('Remove the Default IdP User Group Membership', async () => {
+		await expect(
+			userGroupsPage.userGroupUsersTable.cell(userAccount.name)
+		).toBeVisible();
+
+		await (
+			await userGroupsPage.userGroupUsersTable.rowActions(
+				userAccount.name
+			)
+		).click();
+		await userGroupsPage.removeUserMenuItem.click();
+
+		await waitForAlert(userGroupsPage.page);
+
+		await expect(userGroupsPage.noUsersMessage).toBeVisible();
+	});
+
+	await test.step('Perform SP initiated SSO using the Secondary IdP', async () => {
+		spInstancePage = await performSpInitiatedSSO(
+			browser,
+			secondaryUserAccount.emailAddress,
+			DEFAULT_SP_URL,
+			true,
+			SECONDARY_IDP_NAME
+		);
+
+		expect(await spInstancePage.url()).toContain(DEFAULT_SP_URL);
+
+		await performLogout(spInstancePage);
+	});
+
+	await test.step('LPD-56047 AC1 TC2: Verify the User Group membership from the Default IdP was not removed', async () => {
+		await serverAdministrationPage.executeScript(script);
+
+		await expect(
+			await localhostAdminPage.getByText(DEFAULT_IDP_NAME)
+		).toBeVisible();
+	});
+
+	await test.step('Perform SP initiated SSO using the Default IdP', async () => {
+		spInstancePage = await performSpInitiatedSSO(
+			browser,
+			secondaryUserAccount.emailAddress,
+			DEFAULT_SP_URL,
+			true,
+			DEFAULT_IDP_NAME
+		);
+
+		expect(await spInstancePage.url()).toContain(DEFAULT_SP_URL);
+
+		await performLogout(spInstancePage);
+	});
+
+	await test.step('LPD-56047 AC1 TC1: Verify the User Group membership was removed', async () => {
+		await serverAdministrationPage.executeScript(script);
+
+		await expect(
+			await localhostAdminPage.getByText(DEFAULT_IDP_NAME)
+		).toBeHidden();
+	});
 });
 
 test('SAML connection cannot be saved if a custom field value is used more than once', async ({

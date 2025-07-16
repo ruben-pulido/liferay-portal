@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutTypePortletConstants;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.vulcan.custom.field.CustomFieldsUtil;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
@@ -24,10 +25,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Rubén Pulido
  */
-@Component(
-	property = "dto.class.name=com.liferay.portal.kernel.model.Layout",
-	service = DTOConverter.class
-)
+@Component(service = DTOConverter.class)
 public class SitePageDTOConverter implements DTOConverter<Layout, SitePage> {
 
 	@Override
@@ -45,6 +43,10 @@ public class SitePageDTOConverter implements DTOConverter<Layout, SitePage> {
 				setAvailableLanguages(
 					() -> LocaleUtil.toW3cLanguageIds(
 						layout.getAvailableLanguageIds()));
+				setCustomFields(
+					() -> CustomFieldsUtil.toCustomFields(
+						true, Layout.class.getName(), layout.getPlid(),
+						layout.getCompanyId(), null));
 				setDateCreated(layout::getCreateDate);
 				setDateModified(layout::getModifiedDate);
 				setDatePublished(layout::getPublishDate);
@@ -89,6 +91,7 @@ public class SitePageDTOConverter implements DTOConverter<Layout, SitePage> {
 		PageSettings pageSettings = _getPageSettings(layout);
 
 		pageSettings.setHiddenFromNavigation(layout::isHidden);
+		pageSettings.setPriority(layout::getPriority);
 
 		return pageSettings;
 	}

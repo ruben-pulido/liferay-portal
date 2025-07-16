@@ -21,8 +21,8 @@ const test = mergeTests(
 );
 
 test(
-	'Assert can delete vocabulary from dropdown actions ',
-	{tag: '@LPD-32750LPD-32750LPD-32750LPD-32750LPD-32750LPD-32750'},
+	'Assert can delete vocabulary from dropdown actions',
+	{tag: '@LPD-32750'},
 	async ({editVocabularyPage, page, vocabulariesPage}) => {
 		editVocabularyPage.goto();
 
@@ -61,7 +61,7 @@ test(
 );
 
 test(
-	'Assert can edit vocabulary from dropdown actions ',
+	'Assert can edit vocabulary from dropdown actions',
 	{tag: '@LPD-32750'},
 	async ({editVocabularyPage, page, vocabulariesPage}) => {
 		await editVocabularyPage.goto();
@@ -90,7 +90,7 @@ test(
 );
 
 test(
-	'Assert can edit vocabulary permissions from dropdown actions ',
+	'Assert can edit vocabulary permissions from dropdown actions',
 	{tag: '@LPD-32750'},
 	async ({editVocabularyPage, page, vocabulariesPage}) => {
 		editVocabularyPage.goto();
@@ -330,6 +330,42 @@ test(
 
 		await clickAndExpectToBeVisible({
 			target: page.getByText('The Asset Types field is required.'),
+			trigger: editVocabularyPage.saveButton,
+		});
+	}
+);
+
+test(
+	'Validate that a UI error appears when attempting to create a vocabulary with an existing name',
+	{tag: '@LPD-57497'},
+	async ({editVocabularyPage, page}) => {
+		await editVocabularyPage.goto();
+
+		const name = `Vocabulary${getRandomInt()}`;
+
+		await editVocabularyPage.changeGeneralInfo({
+			description: getRandomString(),
+			name,
+		});
+
+		await clickAndExpectToBeVisible({
+			target: page.getByText(
+				`Success:${name} was published successfully.`
+			),
+			trigger: editVocabularyPage.saveButton,
+		});
+
+		await editVocabularyPage.goto();
+
+		await editVocabularyPage.changeGeneralInfo({
+			description: getRandomString(),
+			name,
+		});
+
+		await clickAndExpectToBeVisible({
+			target: page.getByText(
+				'Please enter a unique name. This one is already in use.'
+			),
 			trigger: editVocabularyPage.saveButton,
 		});
 	}

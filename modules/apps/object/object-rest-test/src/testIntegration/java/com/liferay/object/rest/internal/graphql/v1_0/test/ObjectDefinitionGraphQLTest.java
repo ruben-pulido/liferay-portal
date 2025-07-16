@@ -180,7 +180,7 @@ public class ObjectDefinitionGraphQLTest {
 				childObjectDefinition.getObjectDefinitionId());
 
 		_parentObjectEntry = ObjectEntryLocalServiceUtil.addObjectEntry(
-			TestPropsValues.getUserId(), 0,
+			0, TestPropsValues.getUserId(),
 			_parentObjectDefinition.getObjectDefinitionId(),
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			null,
@@ -192,7 +192,7 @@ public class ObjectDefinitionGraphQLTest {
 			ServiceContextTestUtil.getServiceContext());
 
 		_childObjectEntry = ObjectEntryLocalServiceUtil.addObjectEntry(
-			TestPropsValues.getUserId(), 0,
+			0, TestPropsValues.getUserId(),
 			childObjectDefinition.getObjectDefinitionId(),
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			null,
@@ -606,7 +606,7 @@ public class ObjectDefinitionGraphQLTest {
 				});
 
 		ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
-			TestPropsValues.getUserId(), 0,
+			0, TestPropsValues.getUserId(),
 			_parentObjectDefinition.getObjectDefinitionId(),
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			null,
@@ -1178,7 +1178,7 @@ public class ObjectDefinitionGraphQLTest {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, false, true, false,
-				enableObjectEntryDraft, false,
+				enableObjectEntryDraft, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),

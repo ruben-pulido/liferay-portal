@@ -55,11 +55,7 @@ public class CommerceTaxMethodAvalaraRateRelsScreenNavigationEntry
 
 		String engineKey = commerceTaxMethod.getEngineKey();
 
-		if (engineKey.equals("avalara")) {
-			return true;
-		}
-
-		return false;
+		return engineKey.equals("avalara");
 	}
 
 	@Override
@@ -70,7 +66,7 @@ public class CommerceTaxMethodAvalaraRateRelsScreenNavigationEntry
 
 		RenderRequest renderRequest =
 			(RenderRequest)httpServletRequest.getAttribute(
-				JavaConstants.JAVAX_PORTLET_REQUEST);
+				JavaConstants.JAKARTA_PORTLET_REQUEST);
 
 		CommerceAvalaraTaxRateRelsDisplayContext
 			commerceTaxAvalaraRelsDisplayContext =

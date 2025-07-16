@@ -13,19 +13,20 @@ import com.liferay.dispatch.exception.DuplicateDispatchTriggerException;
 import com.liferay.dispatch.executor.DispatchTaskClusterMode;
 import com.liferay.dispatch.executor.DispatchTaskExecutorRegistry;
 import com.liferay.dispatch.executor.DispatchTaskStatus;
-import com.liferay.dispatch.internal.messaging.TestDispatchTaskExecutor;
+import com.liferay.dispatch.executor.internal.messaging.TestDispatchTaskExecutor;
 import com.liferay.dispatch.model.DispatchLog;
 import com.liferay.dispatch.model.DispatchTrigger;
 import com.liferay.dispatch.service.DispatchLogLocalService;
 import com.liferay.dispatch.service.DispatchTriggerLocalService;
-import com.liferay.dispatch.service.test.util.CronExpressionUtil;
-import com.liferay.dispatch.service.test.util.DispatchTriggerTestUtil;
+import com.liferay.dispatch.test.util.CronExpressionTestUtil;
+import com.liferay.dispatch.test.util.DispatchTriggerTestUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
@@ -325,10 +326,11 @@ public class DispatchTriggerLocalServiceTest {
 					dispatchTrigger.getDispatchTriggerId(),
 					expectedDispatchTrigger.isActive(),
 					expectedDispatchTrigger.getCronExpression(),
-					dispatchTaskClusterMode, CronExpressionUtil.getMonth() + 1,
-					20, CronExpressionUtil.getYear(), 23, 59, false, true,
-					CronExpressionUtil.getMonth() - 1, 1,
-					CronExpressionUtil.getYear(), 0, 0, "UTC");
+					dispatchTaskClusterMode,
+					CronExpressionTestUtil.getMonth() + 1, 20,
+					CronExpressionTestUtil.getYear(), 23, 59, false, true,
+					CronExpressionTestUtil.getMonth() - 1, 1,
+					CronExpressionTestUtil.getYear(), 0, 0, "UTC");
 
 			_basicAssertEquals(expectedDispatchTrigger, dispatchTrigger);
 
@@ -488,12 +490,13 @@ public class DispatchTriggerLocalServiceTest {
 
 		dispatchTrigger = _dispatchTriggerLocalService.updateDispatchTrigger(
 			dispatchTrigger.getDispatchTriggerId(), true,
-			CronExpressionUtil.getCronExpression(),
+			CronExpressionTestUtil.getCronExpression(),
 			DispatchTaskClusterMode.valueOf(
 				dispatchTrigger.getDispatchTaskClusterMode()),
-			CronExpressionUtil.getMonth() + 1, 20, CronExpressionUtil.getYear(),
-			23, 59, false, true, CronExpressionUtil.getMonth() - 1, 1,
-			CronExpressionUtil.getYear(), 0, 0, "UTC");
+			CronExpressionTestUtil.getMonth() + 1, 20,
+			CronExpressionTestUtil.getYear(), 23, 59, false, true,
+			CronExpressionTestUtil.getMonth() - 1, 1,
+			CronExpressionTestUtil.getYear(), 0, 0, "UTC");
 
 		DispatchTaskClusterMode dispatchTaskClusterMode =
 			DispatchTaskClusterMode.valueOf(
@@ -502,12 +505,12 @@ public class DispatchTriggerLocalServiceTest {
 		DispatchTrigger updateDispatchTrigger =
 			_dispatchTriggerLocalService.updateDispatchTrigger(
 				dispatchTrigger.getDispatchTriggerId(), true,
-				CronExpressionUtil.getCronExpression(),
+				CronExpressionTestUtil.getCronExpression(),
 				DispatchTaskClusterMode.SINGLE_NODE_MEMORY_CLUSTERED,
-				CronExpressionUtil.getMonth() + 1, 20,
-				CronExpressionUtil.getYear(), 23, 59, false, true,
-				CronExpressionUtil.getMonth() - 1, 1,
-				CronExpressionUtil.getYear(), 0, 0, "UTC");
+				CronExpressionTestUtil.getMonth() + 1, 20,
+				CronExpressionTestUtil.getYear(), 23, 59, false, true,
+				CronExpressionTestUtil.getMonth() - 1, 1,
+				CronExpressionTestUtil.getYear(), 0, 0, "UTC");
 
 		DispatchTaskClusterMode updateDispatchTaskClusterMode =
 			DispatchTaskClusterMode.valueOf(
@@ -762,6 +765,14 @@ public class DispatchTriggerLocalServiceTest {
 		@Override
 		public void clearLocalCache() {
 			_entityCache.clearLocalCache();
+		}
+
+		@Override
+		public <T extends CacheModel<?>> T fetchCacheModel(
+			Class<?> clazz, Serializable primaryKey, Class<T> cacheModelClass) {
+
+			return _entityCache.fetchCacheModel(
+				clazz, primaryKey, cacheModelClass);
 		}
 
 		@Override

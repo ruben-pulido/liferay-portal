@@ -287,7 +287,7 @@ test('can create calendar event different start/end dates ensuring that the end 
 
 	await calendarWidgetPage.addEvent({
 		allDay: false,
-		dateEnd: endDateFormatted,
+		endDate: endDateFormatted,
 		publishEvent: true,
 		title,
 	});
@@ -472,4 +472,41 @@ test('can update an event with recurrence', async ({
 	await calendarWidgetPage.publishEvent({recurrenceOption: 'Single Event'});
 
 	await expect(calendarWidgetPage.successAlert).toBeVisible();
+});
+
+test('event ending at midnight does not render on the next day', async ({
+	calendarWidgetPage,
+	page,
+}) => {
+	const eventStartDay = new Date();
+	eventStartDay.setDate(15);
+
+	const eventEndDay = new Date();
+	eventEndDay.setDate(eventStartDay.getDate() + 1);
+
+	const [startDate, endDate] = [eventStartDay, eventEndDay].map((date) =>
+		toLocalDateTimeFormatted(date.toUTCString(), {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+		})
+	);
+
+	const title = getRandomInt().toString();
+
+	await calendarWidgetPage.addEvent({
+		allDay: false,
+		endDate,
+		endTime: '1200AM',
+		publishEvent: true,
+		startDate,
+		startTime: '1200PM',
+		title,
+	});
+
+	await calendarWidgetPage.closeModalEvent();
+	await calendarWidgetPage.monthViewTab.click();
+
+	await expect(page.getByTitle(title)).toHaveCount(1);
+	await expect(page.locator('.lfr-busy-day')).toHaveCount(1);
 });

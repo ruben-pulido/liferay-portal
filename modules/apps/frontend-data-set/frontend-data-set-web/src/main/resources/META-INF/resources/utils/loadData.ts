@@ -6,7 +6,7 @@
 import {fetch} from 'frontend-js-web';
 
 import {DEFAULT_FETCH_HEADERS} from '../constants';
-import {TSort} from './../index';
+import {TSort} from './types';
 
 function createOdataFilter(filters: Array<string>): string {
 	return filters.map((filter: string) => `(${filter})`).join(' and ');
@@ -46,9 +46,9 @@ export async function loadData({
 	additionalAPIURLParameters?: string;
 	apiURL: string;
 	currentURL?: string;
-	delta: number;
+	delta?: number;
 	odataFiltersStrings?: Array<string>;
-	page: number;
+	page?: number;
 	searchParam?: string;
 	sorts?: TSort[];
 }) {
@@ -79,8 +79,13 @@ export async function loadData({
 		url.searchParams.append('doAsUserId', Liferay.ThemeDisplay.getUserId());
 	}
 
-	url.searchParams.append('page', page.toString());
-	url.searchParams.append('pageSize', delta.toString());
+	if (page) {
+		url.searchParams.append('page', page.toString());
+	}
+
+	if (delta) {
+		url.searchParams.append('pageSize', delta.toString());
+	}
 
 	if (searchParam) {
 		url.searchParams.append('search', searchParam);

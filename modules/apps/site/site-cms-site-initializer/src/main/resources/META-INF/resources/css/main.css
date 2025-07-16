@@ -2,7 +2,32 @@
 	margin-top: 0;
 }
 
-.cms-section .space-renderer-sticker .sticker-sm {
-	height: 1rem;
-	width: 1rem;
+.cms-fds-fluid .container-fluid {
+	padding: 0;
+}
+
+.cms-fds-fluid .table-list {
+	border: 0;
+	margin-bottom: 0;
+}
+
+.cms-fds-fluid .table-list .cell-item-actions {
+	width: 10% !important;
+}
+
+.cms-fds-fluid .table-list thead {
+	display: none;
+}
+
+.cms-fds-fluid .table-responsive {
+	margin-bottom: 0;
+}
+
+.cms-fds-fluid .visualization-mode-table {
+	border: 0 !important;
+	margin-inline: -1rem;
+}
+
+.cursor-pointer {
+	cursor: pointer;
 }

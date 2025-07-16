@@ -6,13 +6,13 @@
 import {openConfirmModal} from 'frontend-js-components-web';
 import {navigate} from 'frontend-js-web';
 
-import {IItemsActions} from '../../index';
 import {openPermissionsModal} from '../modals/openPermissionsModal';
 import {resolveModalSize} from '../modals/resolveModalSize';
+import {ESelectionTrigger, IItemsActions} from '../types';
 import {ACTION_ITEM_TARGETS} from './constants';
 import formatActionURL from './formatActionURL';
 
-const {MODAL_PERMISSIONS} = ACTION_ITEM_TARGETS;
+const {INFO_PANEL, MODAL_PERMISSIONS} = ACTION_ITEM_TARGETS;
 
 const handleActionClick = ({
 	action,
@@ -20,10 +20,13 @@ const handleActionClick = ({
 	event,
 	executeAsyncItemAction,
 	highlightItems,
+	infoPanelOpen,
 	itemData,
 	itemId,
 	loadData,
 	onActionDropdownItemClick,
+	onInfoPanelToggleButtonClick,
+	onItemSelectionChange,
 	openModal,
 	openSidePanel,
 	setLoading,
@@ -34,10 +37,13 @@ const handleActionClick = ({
 	event: Event;
 	executeAsyncItemAction: Function;
 	highlightItems: Function;
+	infoPanelOpen?: boolean;
 	itemData: any;
 	itemId: string | number;
 	loadData: Function;
 	onActionDropdownItemClick: Function;
+	onInfoPanelToggleButtonClick?: Function;
+	onItemSelectionChange?: Function;
 	openModal: Function;
 	openSidePanel: Function;
 	setLoading?: Function;
@@ -59,7 +65,15 @@ const handleActionClick = ({
 	const url = formatActionURL(href, itemData, target);
 
 	const doAction = ({defaultPrevented}: {defaultPrevented: boolean}) => {
-		if (target?.includes('modal')) {
+		if (target === INFO_PANEL && onInfoPanelToggleButtonClick) {
+			onItemSelectionChange?.({
+				item: itemData,
+				trigger: ESelectionTrigger.CONTAINER,
+			});
+
+			!infoPanelOpen && onInfoPanelToggleButtonClick();
+		}
+		else if (target?.includes('modal')) {
 			event.preventDefault();
 
 			if (target === MODAL_PERMISSIONS) {

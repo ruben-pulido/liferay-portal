@@ -3,28 +3,48 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import Button from '@clayui/button';
+import Icon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
 import {Status} from '@clayui/modal/lib/types';
 import {formatDistance} from 'date-fns';
+import {useMemo} from 'react';
 import useSWR from 'swr';
 
 import ListView, {ListViewProps} from '../../../components/ListView';
-import {FilterOption} from '../../../components/ListView/components/ManagementToolbar';
-import {ListViewTypes} from '../../../components/ListView/hooks/ListViewContext';
+import {ManagementToolbarProps} from '../../../components/ListView/components/ManagementToolbar';
 import Page from '../../../components/Page';
 import SearchBuilder from '../../../core/SearchBuilder';
 import {
 	OrderTypes,
-	OrderWorkflowDisplayType,
-	PaymentWorkflowDisplayType,
 	orderTypeLabel,
+	orderWorkflowDisplayType,
+	paymentWorkflowDisplayType,
 } from '../../../enums/Order';
 import i18n from '../../../i18n';
 import {Liferay} from '../../../liferay/liferay';
+import {FilterSchemaOption} from '../../../schema/filters';
+import marketplaceOAuth2 from '../../../services/oauth/Marketplace';
 import CommerceSelectAccount from '../../../services/rest/CommerceSelectAccount';
 import HeadlessCommerceAdminOrder from '../../../services/rest/HeadlessCommerceAdminOrder';
 import {getLastDayOfMonth} from '../../../utils/date';
 import InfoCard from '../components/InfoCard';
+import useOrderMetrics from '../hooks/useOrderMetrics';
+
+type AdministratorOrdersListViewProps = {
+	isSortable?: boolean;
+	listViewProps?: Partial<ListViewProps<Order>>;
+	managementToolbarProps?: {
+		visible?: boolean;
+	} & Omit<
+		ManagementToolbarProps,
+		| 'actions'
+		| 'onSelectAllRows'
+		| 'rowSelectable'
+		| 'tableProps'
+		| 'totalItems'
+	>;
+};
 
 function redirectTo(path: string) {
 	return async function (order: Order) {
@@ -44,90 +64,50 @@ function redirectTo(path: string) {
 	};
 }
 
-type AdministratorOrdersListViewProps = {
-	listViewProps?: Partial<ListViewProps<Order>>;
-};
-
-const orderTypes = [
-	OrderTypes.CLIENT_EXTENSION,
-	OrderTypes.CLOUDAPP,
-	OrderTypes.COMPOSITE_APP,
-	OrderTypes.DXPAPP,
-	OrderTypes.LOW_CODE_CONFIGURATION,
-	OrderTypes.OTHER,
-];
-
-const orderTypeFilters: FilterOption[] = orderTypes.map((orderType) => ({
-	name: orderTypeLabel[orderType] || '',
-	onClick: (dispatch) => {
-		dispatch({
-			payload: {
-				filters: {
-					filter: {
-						orderTypeExternalReferenceCode: orderType,
-					},
-				},
-			},
-			type: ListViewTypes.SET_FILTERS,
-		});
-	},
-}));
-
 export function AdministratorOrdersListView({
+	isSortable = false,
 	listViewProps,
+	managementToolbarProps,
 }: AdministratorOrdersListViewProps) {
 	return (
 		<ListView<Order>
 			emptyStateProps={{title: i18n.translate('no-orders-yet')}}
 			id="administrator-orders"
 			managementToolbarProps={{
-				filterItems: [
-					{
-						children: orderTypeFilters,
-						name: i18n.translate('app-type'),
+				actionButton: (
+					filter: {
+						[key: string]: string;
 					},
-				],
-				visible: true,
-			}}
-			paginationOptions={{displayType: 'always'}}
-			resource={function getAdministratorOrders({
-				filters,
-				keywords,
-				page,
-				pageSize,
-				sort,
-			}) {
-				const searchBuilder = new SearchBuilder();
+					filterSchema?: FilterSchemaOption
+				) => {
+					return (
+						<Button
+							className="align-items-center d-flex h-100 justify-content-center ml-3 mr-4"
+							displayType="unstyled"
+							onClick={() =>
+								marketplaceOAuth2.downloadOrderReport(
+									filter,
+									filterSchema
+								)
+							}
+						>
+							<Icon className="mr-2" symbol="download" />
+							<span className="d-block text-center">
+								{i18n.translate('export-csv')}
+							</span>
+						</Button>
+					);
+				},
 
-				if (filters.filter) {
-					for (const [key, value] of Object.entries(filters.filter)) {
-						searchBuilder.contains(key, String(value));
-					}
-				}
-				else {
-					searchBuilder.in('orderTypeExternalReferenceCode', [
-						OrderTypes.CLIENT_EXTENSION,
-						OrderTypes.CLOUDAPP,
-						OrderTypes.DXPAPP,
-						OrderTypes.COMPOSITE_APP,
-						OrderTypes.LOW_CODE_CONFIGURATION,
-						OrderTypes.OTHER,
-					]);
-				}
-
-				return HeadlessCommerceAdminOrder.getOrders(
-					new URLSearchParams({
-						filter: searchBuilder.build(),
-						nestedFields: 'account,orderItems',
-						page: page.toString(),
-						pageSize: pageSize.toString(),
-						search: keywords,
-						sort: sort.key
-							? `${sort.key}:${sort.direction}`
-							: 'createDate:desc',
-					})
-				);
+				filterSchema: 'administratorOrders',
+				...managementToolbarProps,
 			}}
+			resource={`/o/headless-commerce-admin-order/v1.0/orders?${new URLSearchParams(
+				{
+					nestedFields: 'account,orderItems',
+					sort: 'createDate:desc',
+				}
+			)}`}
 			tableProps={{
 				actions: [
 					{
@@ -138,7 +118,6 @@ export function AdministratorOrdersListView({
 						name: i18n.translate('publisher-dashboard'),
 						onClick: redirectTo('/publisher-dashboard'),
 					},
-
 					{
 						name: i18n.translate('order-details'),
 						onClick: (order: Order) => {
@@ -191,8 +170,8 @@ export function AdministratorOrdersListView({
 							<ClayLabel
 								className="text-nowrap"
 								displayType={
-									OrderWorkflowDisplayType[
-										orderStatusInfo.code as keyof typeof OrderWorkflowDisplayType
+									orderWorkflowDisplayType[
+										orderStatusInfo.code as keyof typeof orderWorkflowDisplayType
 									] as Status
 								}
 							>
@@ -207,8 +186,8 @@ export function AdministratorOrdersListView({
 							<ClayLabel
 								className="text-nowrap"
 								displayType={
-									PaymentWorkflowDisplayType[
-										paymentStatusInfo?.code as keyof typeof PaymentWorkflowDisplayType
+									paymentWorkflowDisplayType[
+										paymentStatusInfo?.code as keyof typeof paymentWorkflowDisplayType
 									] as Status
 								}
 							>
@@ -228,7 +207,7 @@ export function AdministratorOrdersListView({
 								)}
 							</span>
 						),
-						sortable: true,
+						sortable: isSortable,
 					},
 				],
 			}}
@@ -301,30 +280,55 @@ export default function Orders() {
 		])
 	);
 
+	const {data: orders} = useOrderMetrics('week');
+
+	const infoCard = useMemo(
+		() => [
+			{
+				growth: orders?.growth ?? 0,
+				growthContext: `+${orders?.lastPeriod ?? 0} this week `,
+				title: 'Total Orders',
+				value: totalOrders,
+			},
+			{
+				growth: orders?.growth ?? 0,
+				growthContext: `+${orders?.lastPeriod ?? 0} this week `,
+				title: 'Monthly Orders',
+				value: montlyOrders,
+			},
+			{
+				growth: orders?.growth ?? 0,
+				growthContext: `+${orders?.lastPeriod ?? 0} this week `,
+				title: 'Current Year Orders',
+				value: currentYearOrders,
+			},
+		],
+		[
+			currentYearOrders,
+			montlyOrders,
+			orders?.growth,
+			orders?.lastPeriod,
+			totalOrders,
+		]
+	);
+
 	return (
 		<>
 			<div className="d-flex flex-column">
 				<div className="d-flex flex-wrap info-container mb-4">
-					<InfoCard
-						expanded
-						symbol="shopping-cart"
-						title="Total Orders"
-						value={totalOrders}
-					/>
-
-					<InfoCard
-						expanded
-						symbol="shopping-cart"
-						title="Montly Orders"
-						value={montlyOrders}
-					/>
-
-					<InfoCard
-						expanded
-						symbol="shopping-cart"
-						title="Current Years Orders"
-						value={currentYearOrders}
-					/>
+					{infoCard.map((card, index) => {
+						return (
+							<InfoCard
+								expanded
+								growth={card?.growth ?? 0}
+								growthContext={card?.growthContext ?? 0}
+								key={index}
+								symbol="shopping-cart"
+								title={card.title}
+								value={card.value}
+							/>
+						);
+					})}
 				</div>
 			</div>
 
@@ -332,7 +336,13 @@ export default function Orders() {
 				pageRendererProps={{className: 'border py-2'}}
 				title={i18n.translate('orders')}
 			>
-				<AdministratorOrdersListView />
+				<AdministratorOrdersListView
+					isSortable
+					managementToolbarProps={{
+						searchVisible: true,
+						visible: true,
+					}}
+				/>
 			</Page>
 		</>
 	);

@@ -5,11 +5,11 @@
 
 import {addParams} from 'frontend-js-web';
 
-import ApiHelper from '../../services/ApiHelper';
+import ApiHelper from '../../common/services/ApiHelper';
 import {config} from '../config';
-import {State} from '../contexts/StateContext';
+import {Structure} from '../types/Structure';
 
-async function resetDisplayPage({id}: {id: State['id']}) {
+async function resetDisplayPage({id}: {id: Structure['id']}) {
 	const resetStructureDisplayPageURL = addParams(
 		{
 			objectDefinitionId: id,

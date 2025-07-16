@@ -2005,28 +2005,34 @@ public abstract class BaseStructuredContentFolderResourceImpl
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				structuredContentFolderUnsafeFunction =
 					structuredContentFolder -> {
+						StructuredContentFolder getStructuredContentFolder =
+							null;
 						StructuredContentFolder
 							persistedStructuredContentFolder = null;
 
 						try {
-							StructuredContentFolder getStructuredContentFolder =
-								getSiteStructuredContentFolderByExternalReferenceCode(
-									structuredContentFolder.getSiteId() !=
-										null ?
-											structuredContentFolder.
-												getSiteId() :
-													(Long)parameters.get(
-														"siteId"),
-									structuredContentFolder.
-										getExternalReferenceCode());
+							if (parameters.containsKey("assetLibraryId")) {
+								getStructuredContentFolder =
+									getAssetLibraryStructuredContentFolderByExternalReferenceCode(
+										(Long)parameters.get("assetLibraryId"),
+										structuredContentFolder.
+											getExternalReferenceCode());
+							}
+							else if (parameters.containsKey("siteId")) {
+								getStructuredContentFolder =
+									getSiteStructuredContentFolderByExternalReferenceCode(
+										(Long)parameters.get("siteId"),
+										structuredContentFolder.
+											getExternalReferenceCode());
+							}
+							else {
+								throw new NotSupportedException(
+									"One of the following parameters must be specified: [assetLibraryId, siteId]");
+							}
 
 							persistedStructuredContentFolder =
 								patchStructuredContentFolder(
-									getStructuredContentFolder.getId() != null ?
-										getStructuredContentFolder.getId() :
-											_parseLong(
-												(String)parameters.get(
-													"structuredContentFolderId")),
+									getStructuredContentFolder.getId(),
 									structuredContentFolder);
 						}
 						catch (NoSuchModelException noSuchModelException) {
@@ -2044,7 +2050,7 @@ public abstract class BaseStructuredContentFolderResourceImpl
 							}
 							else {
 								throw new NotSupportedException(
-									"One of the following parameters must be specified: [assetLibraryId]");
+									"One of the following parameters must be specified: [assetLibraryId, siteId]");
 							}
 						}
 
@@ -2054,13 +2060,33 @@ public abstract class BaseStructuredContentFolderResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 				structuredContentFolderUnsafeFunction =
-					structuredContentFolder ->
-						putSiteStructuredContentFolderByExternalReferenceCode(
-							structuredContentFolder.getSiteId() != null ?
-								structuredContentFolder.getSiteId() :
+					structuredContentFolder -> {
+						StructuredContentFolder
+							persistedStructuredContentFolder = null;
+
+						if (parameters.containsKey("assetLibraryId")) {
+							persistedStructuredContentFolder =
+								putAssetLibraryStructuredContentFolderByExternalReferenceCode(
+									(Long)parameters.get("assetLibraryId"),
+									structuredContentFolder.
+										getExternalReferenceCode(),
+									structuredContentFolder);
+						}
+						else if (parameters.containsKey("siteId")) {
+							persistedStructuredContentFolder =
+								putSiteStructuredContentFolderByExternalReferenceCode(
 									(Long)parameters.get("siteId"),
-							structuredContentFolder.getExternalReferenceCode(),
-							structuredContentFolder);
+									structuredContentFolder.
+										getExternalReferenceCode(),
+									structuredContentFolder);
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [assetLibraryId, siteId]");
+						}
+
+						return persistedStructuredContentFolder;
+					};
 			}
 		}
 
@@ -2221,23 +2247,13 @@ public abstract class BaseStructuredContentFolderResourceImpl
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			structuredContentFolderUnsafeFunction =
 				structuredContentFolder -> patchStructuredContentFolder(
-					structuredContentFolder.getId() != null ?
-						structuredContentFolder.getId() :
-							_parseLong(
-								(String)parameters.get(
-									"structuredContentFolderId")),
-					structuredContentFolder);
+					structuredContentFolder.getId(), structuredContentFolder);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			structuredContentFolderUnsafeFunction =
 				structuredContentFolder -> putStructuredContentFolder(
-					structuredContentFolder.getId() != null ?
-						structuredContentFolder.getId() :
-							_parseLong(
-								(String)parameters.get(
-									"structuredContentFolderId")),
-					structuredContentFolder);
+					structuredContentFolder.getId(), structuredContentFolder);
 		}
 
 		if (structuredContentFolderUnsafeFunction == null) {
@@ -2269,14 +2285,6 @@ public abstract class BaseStructuredContentFolderResourceImpl
 	private Boolean _parseBoolean(String value) {
 		if (value != null) {
 			return Boolean.parseBoolean(value);
-		}
-
-		return null;
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
 		}
 
 		return null;

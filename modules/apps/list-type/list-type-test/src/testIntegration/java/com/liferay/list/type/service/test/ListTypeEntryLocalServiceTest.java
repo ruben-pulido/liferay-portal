@@ -17,12 +17,16 @@ import com.liferay.list.type.model.ListTypeDefinition;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeDefinitionLocalService;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
+import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.test.AssertUtils;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -218,6 +222,34 @@ public class ListTypeEntryLocalServiceTest {
 				_listTypeDefinition.getListTypeDefinitionId()));
 	}
 
+	@Test
+	@TestInfo("LPD-55656")
+	public void testGetOrAddIncompleteListTypeEntry() throws Exception {
+
+		// Lazy referencing disabled
+
+		try {
+			_listTypeEntryLocalService.getOrAddIncompleteListTypeEntry(
+				TestPropsValues.getUserId(),
+				_listTypeDefinition.getListTypeDefinitionId(),
+				RandomTestUtil.randomString());
+
+			Assert.fail();
+		}
+		catch (NoSuchListTypeEntryException noSuchListTypeEntryException) {
+			Assert.assertNotNull(noSuchListTypeEntryException);
+		}
+
+		// Lazy referencing enabled
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			_testGetOrAddIncompleteListTypeEntry(_listTypeDefinition);
+			_testGetOrAddIncompleteListTypeEntry(_systemListTypeDefinition);
+		}
+	}
+
 	@FeatureFlag("LPD-24055")
 	@Test
 	public void testUpdateListTypeEntry() throws Exception {
@@ -314,6 +346,36 @@ public class ListTypeEntryLocalServiceTest {
 				_listTypeEntryLocalService.deleteListTypeEntry(listTypeEntry);
 			}
 		}
+	}
+
+	private void _testGetOrAddIncompleteListTypeEntry(
+			ListTypeDefinition listTypeDefinition)
+		throws Exception {
+
+		String key = RandomTestUtil.randomString();
+
+		ListTypeEntry listTypeEntry =
+			_listTypeEntryLocalService.getOrAddIncompleteListTypeEntry(
+				TestPropsValues.getUserId(),
+				listTypeDefinition.getListTypeDefinitionId(), key);
+
+		Assert.assertEquals(key, listTypeEntry.getKey());
+		Assert.assertEquals(key, listTypeEntry.getName(LocaleUtil.US));
+
+		Assert.assertEquals(
+			WorkflowConstants.STATUS_INCOMPLETE, listTypeEntry.getStatus());
+
+		Map<Locale, String> nameMap = RandomTestUtil.randomLocaleStringMap();
+
+		listTypeEntry = _listTypeEntryLocalService.updateListTypeEntry(
+			listTypeEntry.getExternalReferenceCode(),
+			listTypeEntry.getListTypeEntryId(), nameMap);
+
+		Assert.assertEquals(key, listTypeEntry.getKey());
+		Assert.assertEquals(nameMap, listTypeEntry.getNameMap());
+
+		Assert.assertEquals(
+			WorkflowConstants.STATUS_APPROVED, listTypeEntry.getStatus());
 	}
 
 	private ListTypeDefinition _listTypeDefinition;

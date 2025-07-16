@@ -14,7 +14,6 @@
 	"items": [
 		{
 			"className": "com.liferay.object.model.ObjectDefinition#Z7P5",
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableComments": true,
 			"enableFriendlyURLCustomization": true,
@@ -22,6 +21,7 @@
 			"enableLocalization": true,
 			"enableObjectEntryDraft": true,
 			"enableObjectEntryHistory": true,
+			"enableObjectEntryVersioning": true,
 			"externalReferenceCode": "L_BASIC_DOCUMENT",
 			"label": {
 				"en_US": "Basic Document"
@@ -116,7 +116,6 @@
 		},
 		{
 			"className": "com.liferay.object.model.ObjectDefinition#H4T4",
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableComments": true,
 			"enableFriendlyURLCustomization": true,
@@ -124,6 +123,7 @@
 			"enableLocalization": true,
 			"enableObjectEntryDraft": true,
 			"enableObjectEntryHistory": true,
+			"enableObjectEntryVersioning": true,
 			"externalReferenceCode": "L_BASIC_WEB_CONTENT",
 			"label": {
 				"en_US": "Basic Web Content"
@@ -196,7 +196,6 @@
 		},
 		{
 			"className": "com.liferay.object.model.ObjectDefinition#Y8H4",
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableComments": true,
 			"enableFriendlyURLCustomization": true,
@@ -204,6 +203,7 @@
 			"enableLocalization": true,
 			"enableObjectEntryDraft": true,
 			"enableObjectEntryHistory": true,
+			"enableObjectEntryVersioning": true,
 			"externalReferenceCode": "L_BLOG",
 			"label": {
 				"en_US": "Blog"
@@ -336,7 +336,6 @@
 		},
 		{
 			"className": "com.liferay.object.model.ObjectDefinition#S1T1",
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableComments": true,
 			"enableFriendlyURLCustomization": true,
@@ -344,6 +343,7 @@
 			"enableLocalization": true,
 			"enableObjectEntryDraft": true,
 			"enableObjectEntryHistory": true,
+			"enableObjectEntryVersioning": true,
 			"externalReferenceCode": "L_EXTERNAL_VIDEO",
 			"label": {
 				"en_US": "External Video"
@@ -377,6 +377,27 @@
 					"system": false,
 					"type": "String",
 					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"defaultValue": "null",
+					"externalReferenceCode": "VIDEO_URL",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Video URL"
+					},
+					"localized": true,
+					"name": "videoURL",
+					"readOnly": "false",
+					"readOnlyConditionExpression": "",
+					"required": false,
+					"state": false,
+					"system": false,
+					"type": "String",
+					"unique": false
 				}
 			],
 			"objectFolderExternalReferenceCode": "L_CMS_FILE_TYPES",
@@ -395,7 +416,6 @@
 		},
 		{
 			"className": "com.liferay.object.model.ObjectDefinition#H6H2",
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableComments": true,
 			"enableFriendlyURLCustomization": true,
@@ -403,6 +423,7 @@
 			"enableLocalization": true,
 			"enableObjectEntryDraft": true,
 			"enableObjectEntryHistory": true,
+			"enableObjectEntryVersioning": true,
 			"externalReferenceCode": "L_KNOWLEDGE_BASE",
 			"label": {
 				"en_US": "Knowledge Base"

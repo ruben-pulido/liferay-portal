@@ -109,7 +109,7 @@ public class FDSSamplePortlet extends MVCPortlet {
 		objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				user.getUserId(), 0, null, false, false, true, false, false,
-				false,
+				false, false, null,
 				LocalizedMapUtil.getLocalizedMap("Frontend Data Set Sample"),
 				"FDSSample", "100", null,
 				LocalizedMapUtil.getLocalizedMap("Frontend Data Set Samples"),
@@ -158,7 +158,7 @@ public class FDSSamplePortlet extends MVCPortlet {
 
 		for (int i = 1; i <= 100; i++) {
 			_objectEntryLocalService.addObjectEntry(
-				user.getUserId(), 0, objectDefinition.getObjectDefinitionId(),
+				0, user.getUserId(), objectDefinition.getObjectDefinitionId(),
 				ObjectEntryFolderConstants.
 					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 				null,

@@ -3,12 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
-import SpaceService from '../../../services/SpaceService';
-import SpaceSticker from '../../components/SpaceSticker';
-
-const {useEffect, useState} = React;
+import SpaceService from '../../../common/services/SpaceService';
+import {Space} from '../../../common/types/Space';
+import SpacesDisplay from '../../components/SpacesDisplay';
 
 interface ObjectDefinitionSetting {
 	name: string;
@@ -41,40 +40,27 @@ const StructureScopeRenderer = ({
 }: {
 	itemData: {objectDefinitionSettings: ObjectDefinitionSetting[]};
 }) => {
-	const [spaceName, setSpaceName] = useState(Liferay.Language.get('loading'));
+	const [spaces, setSpaces] = useState<Space[]>([]);
 
-	const fetchSpaceName = async (externalReferenceCodes: string[]) => {
-		if (!externalReferenceCodes.length) {
-			setSpaceName('');
-		}
-		else {
-			const space = await SpaceService.getSpace(
-				externalReferenceCodes[0]
-			);
+	useEffect(() => {
+		const fetchSpaces = async () => {
+			const response = await SpaceService.getSpaces();
 
-			setSpaceName(space.name);
-		}
-	};
+			setSpaces(response);
+		};
+
+		fetchSpaces();
+	}, []);
 
 	const spaceExternalReferenceCodes = getSpaceExternalReferenceCodes(
 		itemData.objectDefinitionSettings
 	);
 
-	useEffect(() => {
-		fetchSpaceName(spaceExternalReferenceCodes);
-	}, [spaceExternalReferenceCodes]);
-
-	return !spaceExternalReferenceCodes.length ? (
-		<span className="badge badge-pill badge-secondary">
-			<span className="badge-item badge-item-expand">
-				{Liferay.Language.get('all-spaces')}
-			</span>
-		</span>
-	) : (
-		<span className="align-items-center d-flex space-renderer-sticker">
-			<SpaceSticker name={spaceName} size="sm" />
-		</span>
+	const structureSpaces = spaces.filter((space) =>
+		spaceExternalReferenceCodes.includes(space.externalReferenceCode)
 	);
+
+	return <SpacesDisplay spaces={structureSpaces} />;
 };
 
 export default StructureScopeRenderer;

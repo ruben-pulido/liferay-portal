@@ -3207,113 +3207,6 @@ definition {
 		Blueprints.viewEntriesSpecificOrder(entryList = "Test Element 2,Test Element 3,Test Element 1");
 	}
 
-	@description = "This is a use case for LPS-181689."
-	@priority = 3
-	test UseBlueprintsAsCollectionProviders {
-		property custom.properties = "feature.flag.LPS-129412=true";
-
-		task ("Create a Blueprint with Pages as the only searchable asset type") {
-			Blueprints.openBlueprintsAdmin();
-
-			Blueprints.createBlueprint(title = "Pages Blueprint");
-
-			Navigator.gotoNavNested(navNested = "Query Settings");
-
-			Check.checkNotVisible(
-				locator1 = "Radio#ANY",
-				radioLabel = "Selected Types");
-
-			Button.click(button = "Select Asset Types");
-
-			Check.checkNotVisible(
-				key_assetType = "Page",
-				locator1 = "Blueprints#BLUEPRINTS_SEARCHABLE_ASSET_TYPE_CHECKBOX");
-
-			Button.clickDone();
-
-			PortletEntry.save();
-		}
-
-		task ("Create a Blueprint with Web Content Articles as the only searchable asset type") {
-			Blueprints.openBlueprintsAdmin();
-
-			Blueprints.createBlueprint(title = "Web Content Articles Blueprint");
-
-			Navigator.gotoNavNested(navNested = "Query Settings");
-
-			Check.checkNotVisible(
-				locator1 = "Radio#ANY",
-				radioLabel = "Selected Types");
-
-			Button.click(button = "Select Asset Types");
-
-			Check.checkNotVisible(
-				key_assetType = "Web Content Article",
-				locator1 = "Blueprints#BLUEPRINTS_SEARCHABLE_ASSET_TYPE_CHECKBOX");
-
-			Button.clickDone();
-
-			PortletEntry.save();
-		}
-
-		task ("Create a Web Content Article") {
-			JSONWebcontent.addWebContent(
-				content = "WC WebContent Content",
-				groupName = "Guest",
-				title = "WC WebContent Title");
-		}
-
-		task ("Create two content pages with Collection Displays configured with the previously created Blueprints as Collection Providers") {
-			for (var assetType : list "Pages,Web Content Articles") {
-				JSONLayout.addPublicLayout(
-					groupName = "Guest",
-					layoutName = "${assetType} Collection Display Page",
-					type = "content");
-
-				JSONLayout.publishLayout(
-					groupName = "Guest",
-					layoutName = "${assetType} Collection Display Page");
-
-				ContentPagesNavigator.openEditContentPage(
-					pageName = "${assetType} Collection Display Page",
-					siteName = "Guest");
-
-				PageEditor.addFragment(
-					collectionName = "Content Display",
-					fragmentName = "Collection Display");
-
-				PageEditor.editCollectionDisplay(
-					fragmentName = "Collection Display",
-					infoListProviderName = "${assetType} Blueprint",
-					styleDisplay = "Bulleted List");
-
-				PageEditor.publish();
-			}
-		}
-
-		task ("Assert the Collection Display configured with the Pages Collection Provider blueprint is displaying page assets") {
-			Navigator.openSitePage(
-				pageName = "Pages Collection Display Page",
-				siteName = "Guest");
-
-			for (var title : list "Pages Collection Display Page,Web Content Articles Collection Display Page,Search,Home,My Profile,My Dashboard") {
-				AssertElementPresent(
-					locator1 = "Fragment#CONTENT_DISPLAY_ASSET_BULLET_LIST_ITEM",
-					text = ${title});
-			}
-		}
-
-		task ("Assert the Collection Display configured with the Web Content Articles Collection Provider blueprint is displaying Web Content Articles") {
-			Navigator.openSitePage(
-				pageName = "Web Content Articles Collection Display Page",
-				siteName = "Guest");
-
-			AssertElementPresent(
-				locator1 = "Fragment#CONTENT_DISPLAY_ASSET_BULLET_LIST_ITEM",
-				text = "WC WebContent Title");
-		}
-	}
-
 	@priority = 3
 	test ViewBlueprintEditTitle {
 		Blueprints.openBlueprintsAdmin();
@@ -3386,7 +3279,9 @@ definition {
 			key_entryTitle = "Test Blueprint 1",
 			locator1 = "Blueprints#BLUEPRINTS_ADMIN_ENTRY_CHECKBOX");
 
-		Button.clickTrash();
+		Click(locator1 = "Icon#NAVBAR_ELLIPSIS");
+
+		DropdownMenuItem.click(menuItem = "Delete");
 
 		Blueprints.viewNoEntry(title = "Test Blueprint 1");
 
@@ -3416,7 +3311,9 @@ definition {
 
 		Click.clickAtNotVisible(locator1 = "Checkbox#FDS_SELECT_ALL");
 
-		Button.clickTrash();
+		Click(locator1 = "Icon#NAVBAR_ELLIPSIS");
+
+		DropdownMenuItem.click(menuItem = "Delete");
 
 		Blueprints.viewNoEntry(title = "Test Blueprint 2");
 
@@ -3428,9 +3325,7 @@ definition {
 			key_entryTitle = "Test Blueprint 3",
 			locator1 = "Blueprints#BLUEPRINTS_ADMIN_ENTRY_CHECKBOX");
 
-		Click(
-			key_text = "Select All",
-			locator1 = "Link#ANY");
+		Click.clickAtNotVisible(locator1 = "Checkbox#FDS_SELECT_ALL");
 
 		AssertChecked.assertCheckedNotVisible(
 			key_entryTitle = "Test Blueprint 3",
@@ -3440,7 +3335,9 @@ definition {
 			key_entryTitle = "Test Blueprint 4",
 			locator1 = "Blueprints#BLUEPRINTS_ADMIN_ENTRY_CHECKBOX");
 
-		Button.clickTrash();
+		Click(locator1 = "Icon#NAVBAR_ELLIPSIS");
+
+		DropdownMenuItem.click(menuItem = "Delete");
 
 		Blueprints.viewNoEntry(title = "Test Blueprint 3");
 
@@ -4625,7 +4522,9 @@ definition {
 			key_entryTitle = "Test Element 1",
 			locator1 = "Blueprints#BLUEPRINTS_ADMIN_ENTRY_CHECKBOX");
 
-		Button.clickTrash();
+		Click(locator1 = "Icon#NAVBAR_ELLIPSIS");
+
+		DropdownMenuItem.click(menuItem = "Delete");
 
 		Blueprints.viewNoEntry(title = "Test Element 1");
 
@@ -4655,7 +4554,9 @@ definition {
 
 		Click.clickAtNotVisible(locator1 = "Checkbox#FDS_SELECT_ALL");
 
-		Button.clickTrash();
+		Click(locator1 = "Icon#NAVBAR_ELLIPSIS");
+
+		DropdownMenuItem.click(menuItem = "Delete");
 
 		Blueprints.viewNoEntry(title = "Test Element 2");
 
@@ -4667,9 +4568,7 @@ definition {
 			key_entryTitle = "Test Element 3",
 			locator1 = "Blueprints#BLUEPRINTS_ADMIN_ENTRY_CHECKBOX");
 
-		Click(
-			key_text = "Select All",
-			locator1 = "Link#ANY");
+		Click.clickAtNotVisible(locator1 = "Checkbox#FDS_SELECT_ALL");
 
 		AssertChecked.assertCheckedNotVisible(
 			key_entryTitle = "Test Element 3",
@@ -4679,7 +4578,9 @@ definition {
 			key_entryTitle = "Test Element 4",
 			locator1 = "Blueprints#BLUEPRINTS_ADMIN_ENTRY_CHECKBOX");
 
-		Button.clickTrash();
+		Click(locator1 = "Icon#NAVBAR_ELLIPSIS");
+
+		DropdownMenuItem.click(menuItem = "Delete");
 
 		Alert.viewErrorMessage(errorMessage = "System read only elements cannot be deleted.");
 
@@ -4805,7 +4706,9 @@ definition {
 			key_linkText = "Learn more",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Search Blueprints Elements Reference - Liferay Learn");
+		var documentationSuffix = "Liferay Official Documentation - Liferay Learn";
+
+		SelectWindow(value1 = "Search Blueprints Elements Reference - ${documentationSuffix}");
 
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
@@ -4820,7 +4723,7 @@ definition {
 			key_linkText = "Learn more",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Creating and Managing Search Blueprints - Liferay Learn");
+		SelectWindow(value1 = "Creating and Managing Search Blueprints - ${documentationSuffix}");
 
 		Close.closeAndSelectWindow(value1 = "Edit Blueprint - ${siteName}");
 
@@ -4835,7 +4738,7 @@ definition {
 			key_linkText = "Learn more",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Creating and Managing Search Blueprints - Liferay Learn");
+		SelectWindow(value1 = "Creating and Managing Search Blueprints - ${documentationSuffix}");
 
 		Close.closeAndSelectWindow(value1 = "Edit Blueprint - ${siteName}");
 
@@ -4850,7 +4753,7 @@ definition {
 			key_linkText = "Learn more",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Search Blueprints Configuration Reference - Liferay Learn");
+		SelectWindow(value1 = "Search Blueprints Configuration Reference - ${documentationSuffix}");
 
 		Close.closeAndSelectWindow(value1 = "Edit Blueprint - ${siteName}");
 
@@ -4859,7 +4762,7 @@ definition {
 			key_linkText = "Learn more",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Search Blueprints Configuration Reference - Liferay Learn");
+		SelectWindow(value1 = "Search Blueprints Configuration Reference - ${documentationSuffix}");
 
 		Close.closeAndSelectWindow(value1 = "Edit Blueprint - ${siteName}");
 
@@ -4868,7 +4771,7 @@ definition {
 			key_linkText = "Learn more",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Search Blueprints Configuration Reference - Liferay Learn");
+		SelectWindow(value1 = "Search Blueprints Configuration Reference - ${documentationSuffix}");
 
 		Close.closeAndSelectWindow(value1 = "Edit Blueprint - ${siteName}");
 
@@ -4877,7 +4780,7 @@ definition {
 			key_linkText = "Learn more",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Search Blueprints Configuration Reference - Liferay Learn");
+		SelectWindow(value1 = "Search Blueprints Configuration Reference - ${documentationSuffix}");
 
 		Close.closeAndSelectWindow(value1 = "Edit Blueprint - ${siteName}");
 
@@ -4886,7 +4789,7 @@ definition {
 			key_linkText = "Learn more",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Search Blueprints Configuration Reference - Liferay Learn");
+		SelectWindow(value1 = "Search Blueprints Configuration Reference - ${documentationSuffix}");
 
 		Close.closeAndSelectWindow(value1 = "Edit Blueprint - ${siteName}");
 
@@ -4895,7 +4798,7 @@ definition {
 			key_linkText = "Learn more",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Search Blueprints Configuration Reference - Liferay Learn");
+		SelectWindow(value1 = "Search Blueprints Configuration Reference - ${documentationSuffix}");
 
 		Close.closeAndSelectWindow(value1 = "Edit Blueprint - ${siteName}");
 
@@ -4912,7 +4815,7 @@ definition {
 			key_linkText = "Learn more",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Creating Elements - Liferay Learn");
+		SelectWindow(value1 = "Creating Elements - ${documentationSuffix}");
 
 		Close.closeAndSelectWindow(value1 = "View Element - ${siteName}");
 
@@ -4936,225 +4839,7 @@ definition {
 			key_linkText = "Learn how",
 			locator1 = "Blueprints#DOC_LINK_GENERIC");
 
-		SelectWindow(value1 = "Using a Search Blueprint on a Search Page - Liferay Learn");
-	}
-
-	@priority = 3
-	test ViewMappedAssetInBlueprintCollectionProvider {
-		property custom.properties = "feature.flag.LPS-129412=true${line.separator}feature.flag.LPS-193551=true";
-
-		task ("Create a test structure and a few sample web contents with the structure") {
-			WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
-
-			NavItem.gotoStructures();
-
-			WebContentStructures.addCP(structureName = "Test Structure");
-
-			DEBuilder.addField(
-				fieldLabel = "Custom Title",
-				fieldName = "Text");
-
-			DEBuilder.addField(
-				fieldLabel = "Custom Content",
-				fieldName = "Rich Text");
-
-			WebContentStructures.saveCP();
-
-			WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
-
-			for (var count : list "1,2,3") {
-				WebContentNavigator.gotoAddWithStructureCP(structureName = "Test Structure");
-
-				WebContent.addWithStructureCP(
-					structureName = "Test Structure",
-					webContentRichText = "Some HTML ${count}",
-					webContentRichTextFieldLabel = "Custom Content",
-					webContentText = "Test Web Content ${count}",
-					webContentTextFieldLabel = "Custom Title",
-					webContentTitle = "Test Web Content ${count}");
-
-				WebContent.publishWithPermissions();
-			}
-		}
-
-		task ("Create a blueprint and configure to only search for Web Content Articles") {
-			Blueprints.openBlueprintsAdmin();
-
-			Blueprints.createBlueprint(title = "Test Blueprint");
-
-			Navigator.gotoNavNested(navNested = "Query Settings");
-
-			Check.checkNotVisible(
-				locator1 = "Radio#ANY",
-				radioLabel = "Selected Types");
-
-			Button.click(button = "Select Asset Types");
-
-			Check.checkNotVisible(
-				key_assetType = "Web Content Article",
-				locator1 = "Blueprints#BLUEPRINTS_SEARCHABLE_ASSET_TYPE_CHECKBOX");
-
-			Button.clickDone();
-		}
-
-		task ("Fetch the ddmStructureKey of the created test structure") {
-			Navigator.gotoNavTab(navTab = "Configuration");
-
-			var customJson = '''
-	{
-		"source": {
-			"fetchSource": true
-		}
-	}
-		''';
-
-			Type.typeCodeMirrorEditorNoError(
-				key_configurationField = "Advanced Configuration",
-				locator1 = "Blueprints#BLUEPRINTS_CONFIGURATION_EDITOR",
-				value1 = ${customJson});
-
-			Navigator.gotoNavTab(navTab = "Query Builder");
-
-			Blueprints.searchBlueprintsPreview(searchTerm = "Test Web Content 1");
-
-			Click(locator1 = "Blueprints#BLUEPRINTS_PREVIEW_EXPAND_RESULT_BUTTON");
-
-			var ddmStructureKey = selenium.getText("//div[contains(@class,'preview-results-list')]//*[contains(@class,'row')]//*[contains(.,'ddmStructureKey')]/following-sibling::div");
-		}
-
-		task ("Add a Filter by Exact Terms Mtach element to the blueprint with the ddmStructureKey") {
-			Click(
-				ariaLabel = "Add Query Element",
-				locator1 = "Button#ANY_WITH_ARIA_LABEL");
-
-			Blueprints.addElement(element = "Filter by Exact Terms Match");
-
-			Type(
-				key_elementName = "Filter by Exact Terms Match",
-				key_fieldLabel = "Field",
-				locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_INPUT_FIELD",
-				value1 = "ddmStructureKey");
-
-			Type(
-				key_elementName = "Filter by Exact Terms Match",
-				key_fieldLabel = "Values",
-				locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_INPUT_FIELD",
-				value1 = ${ddmStructureKey});
-		}
-
-		task ("Assert in the preview sidebar that the test web contents appear as the only results") {
-			Blueprints.searchBlueprintsPreview(searchTerm = "");
-
-			Click(locator1 = "Blueprints#BLUEPRINTS_PREVIEW_EXPAND_RESULT_BUTTON");
-
-			AssertElementPresent(
-				key_resultTitle = "Test Web Content 1",
-				locator1 = "Blueprints#BLUEPRINTS_PREVIEW_SEARCH_RESULT_TITLE");
-
-			AssertElementPresent(
-				key_resultTitle = "Test Web Content 2",
-				locator1 = "Blueprints#BLUEPRINTS_PREVIEW_SEARCH_RESULT_TITLE");
-
-			AssertElementPresent(
-				key_resultTitle = "Test Web Content 3",
-				locator1 = "Blueprints#BLUEPRINTS_PREVIEW_SEARCH_RESULT_TITLE");
-
-			AssertElementPresent(
-				key_resultTotal = "3 Results",
-				locator1 = "Blueprints#BLUEPRINTS_PREVIEW_SEARCH_RESULT_TOTAL_HITS");
-
-			PortletEntry.save();
-		}
-
-		task ("Create a test content page with a collection display fragment") {
-			JSONLayout.addPublicLayout(
-				groupName = "Guest",
-				layoutName = "Test Content Page",
-				type = "content");
-
-			JSONLayout.publishLayout(
-				groupName = "Guest",
-				layoutName = "Test Content Page");
-
-			ContentPagesNavigator.openEditContentPage(
-				pageName = "Test Content Page",
-				siteName = "Guest");
-
-			PageEditor.addFragment(
-				collectionName = "Content Display",
-				fragmentName = "Collection Display");
-		}
-
-		task ("Select the collection provider for 'Web Content Article - Test Structure'") {
-			PageEditor.clickConfigurableField(
-				fragmentName = "Collection Display",
-				index = 1);
-
-			PageEditor.gotoTab(tabName = "Browser");
-
-			AssertVisible(
-				key_sidebarButton = "Browser",
-				locator1 = "PageEditor#FRAGMENT_SIDEBAR_TITLE");
-
-			Navigator.gotoNavTab(navTab = "General");
-
-			Click(
-				key_fieldLabel = "Collection",
-				key_text = "plus",
-				locator1 = "Icon#ANY_ITEM_SELECTOR");
-
-			SelectFrame(locator1 = "IFrame#MODAL_BODY");
-
-			NavItem.click(navItem = "Collection Providers");
-
-			ManagementBar.setFilterAndOrder(filterBy = "Web Content Article");
-
-			LexiconCard.clickCard(card = "Test Blueprint");
-
-			SelectFrameTop();
-
-			PageEditor.waitForAutoSave();
-		}
-
-		task ("Add Heading and HTML fragment to collection display and map them to Custom Title and Content respectively") {
-			PageEditor.addFragmentToCollectionDisplay(
-				collectionName = "Basic Components",
-				entryTitle = "Test Web Content 1",
-				fragmentName = "Heading");
-
-			PageEditorMapping.mapEditableTextToField(
-				field = "Custom Title",
-				fragmentName = "Heading",
-				id = "element-text");
-
-			PageEditor.addFragmentToCollectionDisplay(
-				collectionName = "Basic Components",
-				fragmentName = "HTML",
-				targetFragmentName = "Heading");
-
-			PageEditorMapping.gotoEditableFieldMapping(
-				fragmentName = "HTML",
-				id = "element-html");
-
-			Select(
-				key_fieldLabel = "Field",
-				locator1 = "Select#GENERIC_SELECT_FIELD",
-				value1 = "Custom Content");
-		}
-
-		task ("Publish and assert that only the sample test structure contents are shown") {
-			PageEditor.publish();
-
-			for (var count : list "1,2,3") {
-				AssertElementPresent(
-					key_text = "Test Web Content ${count}",
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT");
-
-				AssertElementPresent(
-					key_text = "Some HTML ${count}",
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT");
-			}
-		}
+		SelectWindow(value1 = "Using a Search Blueprint on a Search Page - ${documentationSuffix}");
 	}
 
 	@priority = 3

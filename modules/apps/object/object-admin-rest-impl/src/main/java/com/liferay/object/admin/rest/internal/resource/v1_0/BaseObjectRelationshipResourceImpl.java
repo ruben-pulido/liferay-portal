@@ -679,10 +679,16 @@ public abstract class BaseObjectRelationshipResourceImpl
 				"updateStrategy", "UPDATE");
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				objectRelationshipUnsafeFunction = objectRelationship ->
-					putObjectRelationshipByExternalReferenceCode(
-						objectRelationship.getExternalReferenceCode(),
-						objectRelationship);
+				objectRelationshipUnsafeFunction = objectRelationship -> {
+					ObjectRelationship persistedObjectRelationship = null;
+
+					persistedObjectRelationship =
+						putObjectRelationshipByExternalReferenceCode(
+							objectRelationship.getExternalReferenceCode(),
+							objectRelationship);
+
+					return persistedObjectRelationship;
+				};
 			}
 		}
 
@@ -822,11 +828,7 @@ public abstract class BaseObjectRelationshipResourceImpl
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			objectRelationshipUnsafeFunction =
 				objectRelationship -> putObjectRelationship(
-					objectRelationship.getId() != null ?
-						objectRelationship.getId() :
-							_parseLong(
-								(String)parameters.get("objectRelationshipId")),
-					objectRelationship);
+					objectRelationship.getId(), objectRelationship);
 		}
 
 		if (objectRelationshipUnsafeFunction == null) {

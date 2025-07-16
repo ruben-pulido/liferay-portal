@@ -7,8 +7,8 @@ import ClayIcon from '@clayui/icon';
 import {LinkOrButton} from '@clayui/shared';
 import React from 'react';
 
-import {IQuickActions} from '../index';
 import formatActionURL from '../utils/actionItems/formatActionURL';
+import {IQuickActions} from '../utils/types';
 
 function QuickActions({actions, itemData, itemId, onClick}: IQuickActions) {
 	return (
@@ -18,6 +18,7 @@ function QuickActions({actions, itemData, itemId, onClick}: IQuickActions) {
 					<LinkOrButton
 						aria-label={action.label || action.icon}
 						className="component-action quick-action-item"
+						disabled={action.disabled}
 						displayType="unstyled"
 						href={
 							action.href &&
@@ -29,14 +30,16 @@ function QuickActions({actions, itemData, itemId, onClick}: IQuickActions) {
 						}
 						key={action.data?.id || action.label}
 						monospaced={false}
-						onClick={(event: any) =>
+						onClick={(event: any) => {
+							event.stopPropagation();
+
 							onClick({
 								action,
 								event,
 								itemData,
 								itemId,
-							})
-						}
+							});
+						}}
 						symbol={action.icon}
 						title={action.label}
 					>

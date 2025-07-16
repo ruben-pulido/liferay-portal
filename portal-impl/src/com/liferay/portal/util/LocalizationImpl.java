@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Tuple;
@@ -1414,6 +1415,18 @@ public class LocalizationImpl implements Localization {
 
 		if (!Validator.isXml(xml)) {
 			return defaultValue;
+		}
+
+		int startIndex = xml.indexOf(name + "=\"");
+
+		if (startIndex != -1) {
+			startIndex += name.length() + 2;
+
+			int endIndex = xml.indexOf('"', startIndex);
+
+			if (endIndex != -1) {
+				return xml.substring(startIndex, endIndex);
+			}
 		}
 
 		String value = null;

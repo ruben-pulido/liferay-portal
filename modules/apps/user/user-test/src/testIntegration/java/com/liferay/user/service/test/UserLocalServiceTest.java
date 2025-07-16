@@ -16,6 +16,7 @@ import com.liferay.portal.kernel.bean.ClassLoaderBeanHandler;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.ContactBirthdayException;
 import com.liferay.portal.kernel.exception.NoSuchTicketException;
 import com.liferay.portal.kernel.exception.PasswordExpiredException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -83,6 +84,7 @@ import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -108,7 +110,6 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.test.rule.SynchronousMailTestRule;
-import com.liferay.portal.util.DigesterImpl;
 
 import java.sql.Connection;
 
@@ -255,6 +256,21 @@ public class UserLocalServiceTest {
 				TestPropsValues.getUserId()));
 
 		Assert.assertTrue(Validator.isNotNull(user.getPassword()));
+	}
+
+	@Test(expected = ContactBirthdayException.class)
+	public void testAddUserWithInvalidBirthday() throws Exception {
+		_userLocalService.addUser(
+			0, TestPropsValues.getCompanyId(), true, StringPool.BLANK,
+			StringPool.BLANK, false, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString() + "@liferay.com", LocaleUtil.US,
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), 0, 0, true, 1, 1, 2099,
+			StringPool.BLANK, UserConstants.TYPE_REGULAR, new long[0],
+			new long[0], new long[0], new long[0], false,
+			ServiceContextTestUtil.getServiceContext(
+				TestPropsValues.getCompanyId(), TestPropsValues.getGroupId(),
+				TestPropsValues.getUserId()));
 	}
 
 	@Test(expected = UserEmailAddressException.class)
@@ -937,7 +953,7 @@ public class UserLocalServiceTest {
 
 		try (AutoCloseable autoCloseable1 =
 				ReflectionTestUtil.setFieldValueWithAutoCloseable(
-					DigesterImpl.class, "_BASE_64", false);
+					DigesterUtil.class, "_BASE_64", false);
 			AutoCloseable autoCloseable2 =
 				ReflectionTestUtil.setFieldValueWithAutoCloseable(
 					PasswordEncryptorUtil.class,
@@ -1502,7 +1518,7 @@ public class UserLocalServiceTest {
 	public void testUpdateTicketWithModifiedEncryption() throws Exception {
 		try (AutoCloseable autoCloseable1 =
 				ReflectionTestUtil.setFieldValueWithAutoCloseable(
-					DigesterImpl.class, "_BASE_64", false);
+					DigesterUtil.class, "_BASE_64", false);
 			AutoCloseable autoCloseable2 =
 				ReflectionTestUtil.setFieldValueWithAutoCloseable(
 					PasswordEncryptorUtil.class,

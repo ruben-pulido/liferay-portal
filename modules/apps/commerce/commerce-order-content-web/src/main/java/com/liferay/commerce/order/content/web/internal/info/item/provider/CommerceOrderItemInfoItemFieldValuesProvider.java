@@ -5,17 +5,17 @@
 
 package com.liferay.commerce.order.content.web.internal.info.item.provider;
 
-import com.liferay.commerce.context.CommerceContextThreadLocal;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.order.content.web.internal.info.CommerceOrderItemInfoItemFields;
 import com.liferay.commerce.order.content.web.internal.util.CommerceOrderItemUtil;
 import com.liferay.commerce.price.CommerceOrderItemPrice;
 import com.liferay.commerce.price.CommerceOrderPriceCalculation;
+import com.liferay.commerce.product.helper.CPDefinitionHelper;
+import com.liferay.commerce.product.helper.CPInstanceHelper;
 import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.service.CPInstanceService;
-import com.liferay.commerce.product.util.CPDefinitionHelper;
-import com.liferay.commerce.product.util.CPInstanceHelper;
+import com.liferay.commerce.util.CommerceContextThreadLocal;
 import com.liferay.commerce.util.CommerceUtil;
 import com.liferay.expando.info.item.provider.ExpandoInfoItemFieldSetProvider;
 import com.liferay.info.field.InfoFieldValue;
