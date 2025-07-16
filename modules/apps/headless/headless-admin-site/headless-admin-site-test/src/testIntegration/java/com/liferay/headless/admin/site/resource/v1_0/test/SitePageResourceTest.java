@@ -313,6 +313,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			SitePage.Type.CONTENT_PAGE);
 		_testPutSiteSiteByExternalReferenceCodeSitePage(
 			SitePage.Type.WIDGET_PAGE);
+		_testPutSiteSiteByExternalReferenceCodeSitePageWithCustomFields();
 		_testPutSiteSiteByExternalReferenceCodeSitePageWithPriority();
 
 		ServiceContext serviceContext =
@@ -1315,6 +1316,14 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 					ListUtil.filter(
 						_types, curType -> !Objects.equals(curType, type))),
 				sitePage.getUuid()));
+	}
+
+	private void _testPutSiteSiteByExternalReferenceCodeSitePageWithCustomFields()
+		throws Exception {
+
+		_testAddOrUpdateSiteSiteByExternalReferenceCodeSitePageWithCustomFields(
+			(SitePage sitePage) -> sitePage,
+			sitePageResource::putSiteSiteByExternalReferenceCodeSitePage);
 	}
 
 	private void _testPutSiteSiteByExternalReferenceCodeSitePageWithPriority()
