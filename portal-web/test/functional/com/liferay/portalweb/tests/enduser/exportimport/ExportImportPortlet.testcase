@@ -527,7 +527,6 @@ definition {
 	@description = "This is a use case for LPS-83326 and LPS-99287. Verify is possible export/import Web Content Folder with a Workflow."
 	@priority = 3
 	test ExportImportWebContentFolderWithWorkflow {
-		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
@@ -937,7 +936,7 @@ definition {
 				specificURL = "http://www.able.com:8080",
 				userEmailAddress = "test@www.able.com");
 
-			Staging.enableDeleteApplicationDataBeforeImport();
+			Staging.enableDeleteApplicationDataBeforeImport(navigate = "false");
 
 			WebContentNavigator.openWebContentAdmin(
 				baseURL = "http://www.able.com:8080",

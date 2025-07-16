@@ -16,25 +16,31 @@ type ClayInputProps = {
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 const FieldText = ({
+	component = 'input',
 	disabled,
 	errorMessage,
+	formGroupProps,
+	helpIcon,
 	helpMessage,
 	id,
 	label,
 	name,
 	required,
-	type = 'input',
+	type = 'text',
 	value = '',
 	...restProps
 }: {
+	component?: 'textarea' | 'input';
 	disabled?: boolean;
 	errorMessage?: string;
+	formGroupProps?: {className: string};
+	helpIcon?: string;
 	helpMessage?: string;
 	id?: string;
 	label: string;
 	name: string;
 	required?: boolean;
-	type?: 'textarea' | 'input';
+	type?: 'text' | 'number';
 	value?: string;
 } & ClayInputProps) => {
 	const fieldId = id ?? name;
@@ -42,10 +48,12 @@ const FieldText = ({
 
 	return (
 		<FieldWrapper
+			className={formGroupProps?.className}
 			disabled={disabled}
 			errorMessage={errorMessage}
 			feedbackId={feedbackId}
 			fieldId={fieldId}
+			helpIcon={helpIcon}
 			helpMessage={helpMessage}
 			label={label}
 			required={required}
@@ -53,10 +61,11 @@ const FieldText = ({
 			<ClayInput
 				{...restProps}
 				aria-describedby={(errorMessage || helpMessage) ?? feedbackId}
-				component={type}
+				component={component}
 				disabled={disabled}
 				id={fieldId}
 				name={name}
+				required={required}
 				type={type}
 				value={value}
 			/>

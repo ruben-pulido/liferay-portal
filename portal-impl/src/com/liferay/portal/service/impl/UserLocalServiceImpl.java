@@ -153,7 +153,6 @@ import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.BatchProcessor;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
-import com.liferay.portal.kernel.util.Digester;
 import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.EscapableObject;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
@@ -170,6 +169,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -191,7 +191,6 @@ import com.liferay.portal.security.pwd.PwdAuthenticator;
 import com.liferay.portal.security.pwd.PwdToolkitUtil;
 import com.liferay.portal.security.pwd.RegExpToolkit;
 import com.liferay.portal.service.base.UserLocalServiceBaseImpl;
-import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.usersadmin.util.UsersAdminUtil;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
@@ -1459,6 +1458,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		workflowServiceContext.setAttribute("autoPassword", autoPassword);
 		workflowServiceContext.setAttribute("sendEmail", sendEmail);
+		workflowServiceContext.setIndexingEnabled(true);
 
 		user = WorkflowHandlerRegistryUtil.startWorkflowInstance(
 			companyId, WorkflowConstants.DEFAULT_GROUP_ID, workflowUserId,
@@ -1783,10 +1783,10 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		String[] digestArray = StringUtil.split(user.getDigest());
 
 		for (String ha1 : digestArray) {
-			String ha2 = DigesterUtil.digestHex(Digester.MD5, method, uri);
+			String ha2 = DigesterUtil.digestHex(DigesterUtil.MD5, method, uri);
 
 			String curResponse = DigesterUtil.digestHex(
-				Digester.MD5, ha1, nonce, ha2);
+				DigesterUtil.MD5, ha1, nonce, ha2);
 
 			if (response.equals(curResponse)) {
 				resetFailedLoginAttempts(user);

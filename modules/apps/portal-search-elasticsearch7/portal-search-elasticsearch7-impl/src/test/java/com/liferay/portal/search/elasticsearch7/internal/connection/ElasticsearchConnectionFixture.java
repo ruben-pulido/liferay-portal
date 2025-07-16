@@ -20,7 +20,6 @@ import com.liferay.portal.search.elasticsearch7.internal.sidecar.HttpPortRange;
 import com.liferay.portal.search.elasticsearch7.internal.sidecar.PathUtil;
 import com.liferay.portal.search.elasticsearch7.internal.sidecar.Sidecar;
 import com.liferay.portal.search.elasticsearch7.internal.sidecar.SidecarManager;
-import com.liferay.portal.util.PropsImpl;
 
 import java.io.IOException;
 
@@ -51,9 +50,7 @@ public class ElasticsearchConnectionFixture
 	}
 
 	public ElasticsearchConnection createElasticsearchConnection() {
-		PropsUtil.setProps(new PropsImpl());
-
-		com.liferay.portal.util.PropsUtil.set(
+		PropsUtil.set(
 			PropsKeys.LIFERAY_SHIELDED_CONTAINER_LIB_PORTAL_DIR,
 			String.valueOf(_TMP_PATH.resolve("lib-process-executor")));
 
@@ -65,6 +62,12 @@ public class ElasticsearchConnectionFixture
 							ElasticsearchConfiguration.class,
 							_elasticsearchConfigurationProperties));
 				}
+
+				@Override
+				public String httpCORSAllowOrigin() {
+					return "'*'";
+				}
+
 			};
 
 		Sidecar sidecar = new Sidecar(

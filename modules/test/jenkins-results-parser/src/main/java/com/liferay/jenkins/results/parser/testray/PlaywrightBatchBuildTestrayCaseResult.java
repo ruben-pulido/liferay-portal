@@ -5,19 +5,28 @@
 
 package com.liferay.jenkins.results.parser.testray;
 
-import com.liferay.jenkins.results.parser.Build;
+import com.liferay.jenkins.results.parser.BuildReport;
+import com.liferay.jenkins.results.parser.DownstreamBuildReport;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
-import com.liferay.jenkins.results.parser.TestClassResult;
-import com.liferay.jenkins.results.parser.TestResult;
-import com.liferay.jenkins.results.parser.TopLevelBuild;
+import com.liferay.jenkins.results.parser.TestClassReport;
+import com.liferay.jenkins.results.parser.TestReport;
+import com.liferay.jenkins.results.parser.TopLevelBuildReport;
 import com.liferay.jenkins.results.parser.test.clazz.PlaywrightJUnitTestClass;
 import com.liferay.jenkins.results.parser.test.clazz.PlaywrightTestClassMethod;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassMethod;
 import com.liferay.jenkins.results.parser.test.clazz.group.AxisTestClassGroup;
 
+import java.io.IOException;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Kenji Heigel
@@ -26,11 +35,11 @@ public class PlaywrightBatchBuildTestrayCaseResult
 	extends BatchBuildTestrayCaseResult {
 
 	public PlaywrightBatchBuildTestrayCaseResult(
-		TestrayBuild testrayBuild, TopLevelBuild topLevelBuild,
+		TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport,
 		AxisTestClassGroup axisTestClassGroup, TestClass testClass,
 		TestClassMethod testClassMethod) {
 
-		super(testrayBuild, topLevelBuild, axisTestClassGroup);
+		super(testrayBuild, topLevelBuildReport, axisTestClassGroup);
 
 		_playwrightJUnitTestClass = (PlaywrightJUnitTestClass)testClass;
 		_playwrightTestClassMethod = (PlaywrightTestClassMethod)testClassMethod;
@@ -57,32 +66,32 @@ public class PlaywrightBatchBuildTestrayCaseResult
 	public String getErrors() {
 		String errors = null;
 
-		Build build = getBuild();
+		BuildReport buildReport = getBuildReport();
 
-		TestResult testResult = getTestResult();
+		TestReport testReport = getTestReport();
 
-		if (testResult == null) {
-			if (build == null) {
+		if (testReport == null) {
+			if (buildReport == null) {
 				return "Unable to run build on CI";
 			}
 
 			errors = "Failed prior to running test";
 
-			String result = build.getResult();
+			String result = buildReport.getResult();
 
 			if (result == null) {
 				errors = "Unable to finish build on CI";
 			}
 
 			if (result.equals("ABORTED")) {
-				errors = build.getJobName() + " timed out after 2 hours";
+				errors = buildReport.getJobName() + " timed out after 2 hours";
 			}
 
 			if (result.equals("SUCCESS") || result.equals("UNSTABLE")) {
 				errors = "Unable to run test on CI";
 			}
 
-			String failureMessage = build.getFailureMessage();
+			String failureMessage = buildReport.getFailureMessage();
 
 			if (JenkinsResultsParserUtil.isNullOrEmpty(failureMessage)) {
 				return errors;
@@ -91,25 +100,25 @@ public class PlaywrightBatchBuildTestrayCaseResult
 			return errors + ": " + failureMessage;
 		}
 
-		if (testResult.isSkipped()) {
+		if (testReport.isSkipped()) {
 			return "Failed to run test on CI";
 		}
 
-		if (!testResult.isFailing()) {
+		if (!testReport.isFailing()) {
 			return null;
 		}
 
-		errors = testResult.getErrorDetails();
+		errors = testReport.getErrorDetails();
 
 		if (JenkinsResultsParserUtil.isNullOrEmpty(errors)) {
-			errors = build.getFailureMessage();
+			errors = buildReport.getFailureMessage();
 		}
 
 		if (JenkinsResultsParserUtil.isNullOrEmpty(errors)) {
 			return "Failed for unknown reason";
 		}
 
-		String stackTrace = testResult.getErrorStackTrace();
+		String stackTrace = testReport.getErrorStackTrace();
 
 		if (stackTrace.length() > 500) {
 			int index = stackTrace.indexOf("›");
@@ -151,33 +160,52 @@ public class PlaywrightBatchBuildTestrayCaseResult
 
 		testrayAttachments.add(getPlaywrightReportTestrayAttachment());
 
+		TestrayAttachment playwrightTraceViewerTestrayAttachment =
+			getPlaywrightTraceViewerTestrayAttachment();
+
+		if (playwrightTraceViewerTestrayAttachment != null) {
+			testrayAttachments.add(playwrightTraceViewerTestrayAttachment);
+		}
+
 		testrayAttachments.removeAll(Collections.singleton(null));
 
 		return testrayAttachments;
 	}
 
 	@Override
-	public TestResult getTestResult() {
-		Build build = getBuild();
+	public TestReport getTestReport() {
+		DownstreamBuildReport downstreamBuildReport =
+			getDownstreamBuildReport();
 
-		if (build == null) {
+		if (downstreamBuildReport == null) {
 			return null;
 		}
 
-		TestClassResult testClassResult = build.getTestClassResult(
-			_playwrightJUnitTestClass.getSpecFilePath());
+		TestClassReport playwrightTestClassReport = null;
 
-		if (testClassResult == null) {
+		for (TestClassReport testClassReport :
+				downstreamBuildReport.getTestClassReports()) {
+
+			if (Objects.equals(
+					_playwrightJUnitTestClass.getSpecFilePath(),
+					testClassReport.getTestClassName())) {
+
+				playwrightTestClassReport = testClassReport;
+			}
+		}
+
+		if (playwrightTestClassReport == null) {
 			return null;
 		}
 
-		for (TestResult testResult : testClassResult.getTestResults()) {
+		for (TestReport testReport :
+				playwrightTestClassReport.getTestReports()) {
+
 			String fullTestName = JenkinsResultsParserUtil.combine(
-				testClassResult.getClassName(), " > ",
-				testResult.getTestName());
+				testReport.getTestClassName(), " > ", testReport.getTestName());
 
 			if (fullTestName.equals(getName())) {
-				return testResult;
+				return testReport;
 			}
 		}
 
@@ -188,9 +216,74 @@ public class PlaywrightBatchBuildTestrayCaseResult
 
 	protected TestrayAttachment getPlaywrightReportTestrayAttachment() {
 		return getTestrayAttachment(
-			getBuild(), "Playwright Report",
-			getAxisBuildURLPath() + "/playwright-report/index.html");
+			getBuildReport(), "Playwright Report",
+			"/playwright-report/index.html");
 	}
+
+	protected TestrayAttachment getPlaywrightTraceViewerTestrayAttachment() {
+		TestReport testReport = getTestReport();
+
+		if (testReport == null) {
+			return null;
+		}
+
+		Matcher matcher = _traceZipPattern.matcher(
+			testReport.getErrorStackTrace());
+
+		if (!matcher.find()) {
+			return null;
+		}
+
+		String traceZipFilePath = matcher.group("traceZipFilePath");
+
+		URL traceZipURL = null;
+
+		BuildReport buildReport = getBuildReport();
+
+		for (URL testrayAttachmentURL :
+				buildReport.getTestrayAttachmentURLs()) {
+
+			String testrayAttachmentURLString = String.valueOf(
+				testrayAttachmentURL);
+
+			if (testrayAttachmentURLString.endsWith(traceZipFilePath)) {
+				traceZipURL = testrayAttachmentURL;
+
+				break;
+			}
+		}
+
+		if (traceZipURL == null) {
+			return null;
+		}
+
+		String traceZipURLPath = String.valueOf(traceZipURL);
+
+		try {
+			traceZipURLPath = traceZipURLPath.replace(
+				JenkinsResultsParserUtil.getBuildProperty(
+					"build.base.artifact.url"),
+				"https://playwright.liferay.com/testray-results");
+		}
+		catch (IOException ioException) {
+			return null;
+		}
+
+		try {
+			URL url = new URL(
+				"https://playwright.liferay.com/?trace=" + traceZipURLPath);
+
+			return new DefaultTestrayAttachment(
+				this, "Trace Viewer", traceZipURLPath, url);
+		}
+		catch (MalformedURLException malformedURLException) {
+			throw new RuntimeException(malformedURLException);
+		}
+	}
+
+	private static final Pattern _traceZipPattern = Pattern.compile(
+		"npx playwright show-trace " +
+			"(?<traceZipFilePath>test-results/[^/]+/trace.zip)");
 
 	private final PlaywrightJUnitTestClass _playwrightJUnitTestClass;
 	private final PlaywrightTestClassMethod _playwrightTestClassMethod;

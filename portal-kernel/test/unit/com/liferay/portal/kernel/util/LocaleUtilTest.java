@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.logging.Level;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -89,8 +88,8 @@ public class LocaleUtilTest {
 			true
 		);
 
-		try (LogCapture logCapture = LoggerTestUtil.configureJDKLogger(
-				LocaleUtil.class.getName(), Level.WARNING)) {
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				LocaleUtil.class.getName(), LoggerTestUtil.WARN)) {
 
 			List<LogEntry> logEntries = logCapture.getLogEntries();
 

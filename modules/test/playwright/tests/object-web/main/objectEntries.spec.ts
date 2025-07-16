@@ -35,11 +35,17 @@ import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest
 import getPageDefinition from '../../layout-content-page-editor-web/main/utils/getPageDefinition';
 import getWidgetDefinition from '../../layout-content-page-editor-web/main/utils/getWidgetDefinition';
 import {mockedObjectFields} from './dependencies/objectMockedFields';
-import {getFDSDateFormat, getPageEditorDateFormat} from './utils/dateFormat';
+import {
+	getFDSDateFormat,
+	getObjectEntryUIDateTimeFormat,
+	getPageEditorDateFormat,
+	getUTCOffsetFormatted,
+} from './utils/dateFormat';
+import {createFile, deleteFile} from './utils/fileHelpers';
 import evaluateKeepCheckingAfterFound from './utils/keepCheckingAfterFound';
 import {createObjectFields, mockObjectFields} from './utils/mockObjectFields';
 
-export const test = mergeTests(
+const test = mergeTests(
 	accountSettingsPagesTest,
 	applicationsMenuPageTest,
 	collectionsPagesTest,
@@ -59,13 +65,31 @@ export const test = mergeTests(
 	usersAndOrganizationsPagesTest
 );
 
+const scheduleTest = mergeTests(
+	test,
+	featureFlagsTest({
+		'LPD-17564': {enabled: true},
+	})
+);
+
+let displayPageId: string;
 let siteLanguage = 'en';
 
-test.afterEach(async ({page}) => {
+test.afterEach(async ({apiHelpers, page}) => {
 	if (siteLanguage !== 'en') {
 		await page.goto('en');
 
 		siteLanguage = 'en';
+	}
+
+	if (displayPageId) {
+		await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.deleteLayoutPageTemplateEntry(
+			{
+				layoutPageTemplateEntryId: displayPageId,
+			}
+		);
+
+		displayPageId = '';
 	}
 });
 
@@ -112,7 +136,8 @@ test.describe('Manage object entries through Friendly URL', () => {
 			type: 'objectDefinition',
 		});
 
-		_objectEntryFriendlyURLPath = '/l/C_' + _objectDefinition.name + '/';
+		_objectEntryFriendlyURLPath =
+			'/c_' + _objectDefinition.name.toLowerCase() + '/';
 
 		await viewObjectEntriesPage.goto(
 			_objectDefinition.className,
@@ -126,92 +151,109 @@ test.describe('Manage object entries through Friendly URL', () => {
 	test('can access object entry via friendly URL', async ({
 		apiHelpers,
 		displayPageTemplatesPage,
+		editObjectDetailsPage,
 		page,
 		pageEditorPage,
 		site,
 		viewObjectEntriesPage,
 	}) => {
-
-		// Create object entry with friendly URL
-
-		const friendlyUrl = page.getByLabel('Friendly URL').nth(1);
-
-		await friendlyUrl.fill('Test URL');
-
+		let displayPage: LayoutPageTemplateEntry;
+		const displayPageTemplateName = getRandomString();
 		const objectFieldValue = getRandomString();
 
-		await page.getByTestId('visibleChangeInput').fill(objectFieldValue);
+		await test.step('Create object entry with friendly URL', async () => {
+			const friendlyUrl = page.getByLabel('Friendly URL').nth(1);
 
-		await viewObjectEntriesPage.saveObjectEntryButton.click();
+			await friendlyUrl.fill('Test URL');
 
-		await expect(viewObjectEntriesPage.successMessage).toBeVisible();
+			await page.getByTestId('visibleChangeInput').fill(objectFieldValue);
 
-		await expect(friendlyUrl).toHaveValue('test-url');
+			await viewObjectEntriesPage.saveObjectEntryButton.click();
 
-		// Create display page template
+			await expect(viewObjectEntriesPage.successMessage).toBeVisible();
 
-		const className =
-			await apiHelpers.jsonWebServicesClassName.fetchClassName(
-				_objectDefinition.className
-			);
+			await expect(friendlyUrl).toHaveValue('test-url');
+		});
 
-		const displayPageTemplateName = getRandomString();
+		await test.step('Create display page template', async () => {
+			const className =
+				await apiHelpers.jsonWebServicesClassName.fetchClassName(
+					_objectDefinition.className
+				);
 
-		const displayPage =
-			await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.addDisplayPageLayoutPageTemplateEntry(
+			displayPage =
+				await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.addDisplayPageLayoutPageTemplateEntry(
+					{
+						classNameId: className.classNameId,
+						groupId: site.id,
+						name: displayPageTemplateName,
+					}
+				);
+
+			displayPageId = displayPage.layoutPageTemplateEntryId;
+
+			await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.markAsDefaultDisplayPageLayoutPageTemplateEntry(
 				{
-					classNameId: className.classNameId,
-					groupId: site.id,
-					name: displayPageTemplateName,
+					layoutPageTemplateEntryId:
+						displayPage.layoutPageTemplateEntryId,
+				}
+			);
+		});
+
+		await test.step('Add heading fragment and map it to the object field', async () => {
+			displayPageTemplatesPage.goto(site.friendlyUrlPath);
+
+			displayPageTemplatesPage.editTemplate(displayPageTemplateName);
+
+			await pageEditorPage.addFragment('Basic Components', 'Heading');
+
+			await page.getByText('Heading Example', {exact: true}).click();
+
+			await pageEditorPage.setMappingConfiguration({
+				mapping: {
+					field: _objectField.label['en_US'],
+				},
+				source: 'structure',
+			});
+
+			await displayPageTemplatesPage.publishTemplate();
+		});
+
+		await test.step('Access the object entry via friendly URL', async () => {
+			await page.goto(
+				`/web${site.friendlyUrlPath}${_objectEntryFriendlyURLPath}` +
+					'test-url',
+				{
+					waitUntil: 'networkidle',
 				}
 			);
 
-		await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.markAsDefaultDisplayPageLayoutPageTemplateEntry(
-			{
-				layoutPageTemplateEntryId:
-					displayPage.layoutPageTemplateEntryId,
-			}
-		);
-
-		// Add heading fragment and map it to the object field
-
-		displayPageTemplatesPage.goto(site.friendlyUrlPath);
-
-		displayPageTemplatesPage.editTemplate(displayPageTemplateName);
-
-		await pageEditorPage.addFragment('Basic Components', 'Heading');
-
-		await page.getByText('Heading Example', {exact: true}).click();
-
-		await pageEditorPage.setMappingConfiguration({
-			mapping: {
-				field: _objectField.label['en_US'],
-			},
-			source: 'structure',
+			await expect(page.getByText(objectFieldValue)).toBeVisible();
 		});
 
-		await displayPageTemplatesPage.publishTemplate();
+		await test.step('Change the object friendly URL separator and access the object entry again', async () => {
+			const newObjectFriendlyURLSeparator = 'c_separator_updated';
 
-		// Access the object entry via friendly URL
+			await editObjectDetailsPage.goto(_objectDefinition.label['en_US']);
 
-		await page.goto(
-			`/web${site.friendlyUrlPath}${_objectEntryFriendlyURLPath}` +
-				'test-url',
-			{
-				waitUntil: 'networkidle',
-			}
-		);
+			await page
+				.getByRole('textbox', {name: 'Object Entry URL Separator'})
+				.fill(newObjectFriendlyURLSeparator);
 
-		await expect(page.getByText(objectFieldValue)).toBeVisible();
+			await editObjectDetailsPage.saveObjectDefinition();
 
-		// Delete the display page template
+			await page.waitForLoadState('networkidle');
 
-		await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.deleteLayoutPageTemplateEntry(
-			{
-				layoutPageTemplateEntryId:
-					displayPage.layoutPageTemplateEntryId,
-			}
-		);
+			await page.goto(
+				`/web${site.friendlyUrlPath}/${newObjectFriendlyURLSeparator}/` +
+					'test-url',
+				{
+					waitUntil: 'networkidle',
+				}
+			);
+
+			await expect(page.getByText(objectFieldValue)).toBeVisible();
+		});
 	});
 
 	test('can restore old friendly URL', async ({
@@ -259,15 +301,13 @@ test.describe('Manage object entries through Friendly URL', () => {
 		await page.getByRole('button', {name: 'History'}).click();
 
 		await expect(page.getByText('Active URL')).toBeVisible();
-		await expect(
-			page.getByText('C_' + _objectDefinition.name + '/second-url')
-		).toBeVisible();
+		await expect(page.getByText('second-url')).toBeVisible();
 
 		// Restore the friendly URL to its first value
 
 		await page.getByText('first-url').hover();
 
-		await page.locator("button[data-title='Restore URL']").nth(1).click();
+		await page.locator("button[data-title='Restore URL']").click();
 
 		await page.getByRole('button', {name: 'Close'}).click();
 
@@ -819,105 +859,153 @@ test.describe('Manage object entries through View Object Entries', () => {
 		).toBeVisible();
 	});
 
-	test('can deselect the last selected option in multiple select picklist and the field is not removed from the DOM when doing so', async ({
-		apiHelpers,
-		page,
-		viewObjectEntriesPage,
-	}) => {
-		const {listTypeDefinition, objectEntry, objectFields} =
-			await mockObjectFields({
-				apiHelpers,
-				objectEntryReturn: {format: 'UI'},
-				objectFieldBusinessTypes: [
-					'autoIncrement',
-					'boolean',
-					'date',
-					'decimal',
-					'integer',
-					'longInteger',
-					'longText',
-					'multiselectPicklist',
-					'precisionDecimal',
-					'richText',
-					'text',
-				],
-			});
-
-		apiHelpers.data.push({
-			id: listTypeDefinition.id,
-			type: 'listTypeDefinition',
-		});
-
-		const objectDefinitionAPIClient =
-			await apiHelpers.buildRestClient(ObjectDefinitionAPI);
-
-		const {body: objectDefinition} =
-			await objectDefinitionAPIClient.postObjectDefinition({
-				active: true,
-				externalReferenceCode: getRandomString(),
-				label: {
-					en_US: getRandomString(),
-				},
-				name: 'ObjectDefinitionName' + getRandomInt(),
-				objectFields,
-				panelCategoryKey: 'control_panel.object',
-				pluralLabel: {
-					en_US: 'NewObject',
-				},
-				portlet: true,
-				scope: 'company',
-				status: {
-					code: 0,
-				},
-			});
-
-		apiHelpers.data.push({
-			id: objectDefinition.id,
-			type: 'objectDefinition',
-		});
-
-		await viewObjectEntriesPage.goto(objectDefinition.className);
-
-		await viewObjectEntriesPage.clickAddObjectEntry(
-			objectDefinition.label['en_US']
-		);
-
-		await page.waitForLoadState('domcontentloaded');
-
-		const placeHolderText = 'Choose Options';
-
-		await expect(page.getByPlaceholder(placeHolderText)).toBeVisible();
-
-		await page.getByPlaceholder(placeHolderText).click();
-
-		const multiselectPicklistField = objectFields.find(
-			({businessType}) => businessType === 'MultiselectPicklist'
-		);
-
-		const firstOptionName = objectEntry[multiselectPicklistField.name][0];
-
-		await page.getByTestId(`labelItem-${firstOptionName}`).click();
-
-		await expect
-			.soft(page.getByText(firstOptionName, {exact: true}))
-			.toBeVisible({timeout: 50});
-
-		const removeOptionButton = page.getByLabel('Remove ' + firstOptionName);
-
-		await removeOptionButton.click();
-
-		const keepsAttached = await evaluateKeepCheckingAfterFound({
-			duration: 4000,
+	test(
+		'can attach files after changing the overall maximum upload request size setting',
+		{tag: ['@LPD-56964']},
+		async ({
+			apiHelpers,
+			objectFieldsPage,
 			page,
-			selector: `input[placeholder="${placeHolderText}"]`,
-		});
+			systemSettingsPage,
+			viewObjectDefinitionsPage,
+			viewObjectEntriesPage,
+		}) => {
+			try {
+				await test.step('set overall maximum upload request size to 2MB in system settings', async () => {
+					await systemSettingsPage.goToSystemSetting(
+						'Infrastructure',
+						'Upload Servlet Request'
+					);
 
-		expect.soft(keepsAttached).toBeTruthy();
+					await page
+						.getByLabel('Overall Maximum Upload Request Size')
+						.fill('2097152');
 
-		await expect.soft(removeOptionButton).not.toBeVisible();
+					await page
+						.getByRole('button', {name: 'Save'})
+						.or(page.getByRole('button', {name: 'Update'}))
+						.click();
+				});
 
-		expect(test.info().errors).toHaveLength(0);
-	});
+				const objectDefinition: ObjectDefinition =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+					});
+
+				await test.step('create attachment object field', async () => {
+					apiHelpers.data.push({
+						id: objectDefinition.id,
+						type: 'objectDefinition',
+					});
+
+					await viewObjectDefinitionsPage.goto();
+
+					await objectFieldsPage.goto(
+						objectDefinition.label['en_US']
+					);
+
+					await objectFieldsPage.addObjectField({
+						attachmentSource: 'Upload Directly from the User',
+						objectFieldBusinessType: 'Attachment',
+						objectFieldLabel: 'Attachment',
+					});
+				});
+
+				await test.step('Verify attachment field maximum file size validation', async () => {
+					await objectFieldsPage.openObjectField('Attachment');
+
+					await expect(objectFieldsPage.maximumFileSize).toHaveValue(
+						'0'
+					);
+
+					await objectFieldsPage.maximumFileSize.fill('3');
+
+					await objectFieldsPage.editFieldSaveButton.click();
+
+					await expect(
+						objectFieldsPage.getMaximumFileSizeErrorMessage({
+							maximumFileSizeAllowed: '2',
+						})
+					).toBeVisible();
+				});
+
+				const FILE_NAME_3MB = '3MB.txt';
+				const FILE_SIZE_3MB = 3;
+
+				createFile(FILE_NAME_3MB, FILE_SIZE_3MB);
+
+				await test.step('attempt upload with file exceeding attachment maximum allowed size', async () => {
+					await viewObjectEntriesPage.goto(
+						objectDefinition.className
+					);
+
+					await viewObjectEntriesPage.clickAddObjectEntry(
+						objectDefinition.label['en_US']
+					);
+
+					await expect(
+						page.getByText(
+							'Upload a jpeg, jpg, pdf, png no larger than 2 MB.',
+							{exact: true}
+						)
+					).toBeVisible();
+
+					await viewObjectEntriesPage.selectFileFromUserComputer(
+						__dirname,
+						FILE_NAME_3MB
+					);
+
+					await expect(
+						viewObjectEntriesPage.getMaximumFileSizeErrorMessage({
+							maximumFileSizeAllowed: '2',
+						})
+					).toBeVisible();
+				});
+
+				const FILE_NAME_2MB = '2MB.png';
+				const FILE_SIZE_2MB = 2;
+
+				createFile(FILE_NAME_2MB, FILE_SIZE_2MB);
+
+				await test.step('successfully upload file at maximum allowed size', async () => {
+					await viewObjectEntriesPage.selectFileFromUserComputer(
+						__dirname,
+						FILE_NAME_2MB
+					);
+
+					await expect(
+						viewObjectEntriesPage.getMaximumFileSizeErrorMessage({
+							maximumFileSizeAllowed: '2',
+						})
+					).toBeHidden();
+
+					await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+					await waitForAlert(
+						page,
+						'Success:Your request completed successfully.'
+					);
+				});
+
+				deleteFile(FILE_NAME_3MB);
+				deleteFile(FILE_NAME_2MB);
+			}
+			finally {
+				await test.step('set overall maximum upload request size to 10MB in system settings', async () => {
+					await systemSettingsPage.goToSystemSetting(
+						'Infrastructure',
+						'Upload Servlet Request'
+					);
+
+					await page
+						.getByLabel('Overall Maximum Upload Request Size')
+						.fill('104857600');
+
+					await page.getByRole('button', {name: 'Update'}).click();
+				});
+			}
+		}
+	);
 
 	test('can download and delete a file from the Attachment field when adding an object entry', async ({
 		apiHelpers,
@@ -1558,6 +1646,170 @@ test.describe('Manage object entries through View Object Entries', () => {
 		});
 	});
 
+	test('loading element count is one even when pressing save button multiple times', async ({
+		apiHelpers,
+		page,
+		viewObjectEntriesPage,
+	}) => {
+		const {objectFields} = await mockObjectFields({
+			apiHelpers,
+			objectFieldBusinessTypes: ['text'],
+		});
+
+		const requiredObjectFields = objectFields.map((objectField) => {
+			return {
+				...objectField,
+				required: true,
+			};
+		});
+
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				objectFields: requiredObjectFields,
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await viewObjectEntriesPage.addObjectEntryButton.click();
+
+		for (let i = 0; i <= 10; i++) {
+			await viewObjectEntriesPage.saveObjectEntryButton.click();
+		}
+
+		await expect(page.locator('.loading-animation')).toHaveCount(1);
+	});
+
+	test(
+		'multiselect picklist field does not flicker',
+		{tag: ['@LPD-26139', '@LPD-56673']},
+		async ({apiHelpers, page, viewObjectEntriesPage}) => {
+			let objectEntry: Partial<ObjectEntry>;
+			let objectFields: ObjectField[];
+			let textFieldData: ObjectField;
+
+			const placeHolderText = 'Choose Options';
+
+			const multiselectPicklistFieldKeepsAttached = async () => {
+				return await evaluateKeepCheckingAfterFound({
+					duration: 4000,
+					page,
+					selector: `input[placeholder="${placeHolderText}"]`,
+				});
+			};
+
+			await test.step('setup and navigate to add object entry', async () => {
+				const mockedObjectFields = await mockObjectFields({
+					apiHelpers,
+					objectEntryReturn: {format: 'UI'},
+					objectFieldBusinessTypes: ['text', 'multiselectPicklist'],
+				});
+
+				const listTypeDefinition =
+					mockedObjectFields.listTypeDefinition;
+
+				objectFields = mockedObjectFields.objectFields;
+
+				objectEntry = mockedObjectFields.objectEntry;
+
+				textFieldData = objectFields[0];
+
+				textFieldData.required = true;
+
+				apiHelpers.data.push({
+					id: listTypeDefinition.id,
+					type: 'listTypeDefinition',
+				});
+
+				const objectDefinitionAPIClient =
+					await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+				const {body: objectDefinition} =
+					await objectDefinitionAPIClient.postObjectDefinition({
+						active: true,
+						externalReferenceCode: getRandomString(),
+						label: {
+							en_US: getRandomString(),
+						},
+						name: 'ObjectDefinitionName' + getRandomInt(),
+						objectFields,
+						panelCategoryKey: 'control_panel.object',
+						pluralLabel: {
+							en_US: 'NewObject',
+						},
+						portlet: true,
+						scope: 'company',
+						status: {
+							code: 0,
+						},
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition.id,
+					type: 'objectDefinition',
+				});
+
+				await viewObjectEntriesPage.goto(objectDefinition.className);
+
+				await viewObjectEntriesPage.clickAddObjectEntry(
+					objectDefinition.label['en_US']
+				);
+
+				await page.waitForLoadState('domcontentloaded');
+			});
+
+			await test.step('Assert that it does not flicker when option is deselected', async () => {
+				await expect(
+					page.getByPlaceholder(placeHolderText)
+				).toBeVisible();
+
+				await page.getByPlaceholder(placeHolderText).click();
+
+				const multiselectPicklistField = objectFields.find(
+					({businessType}) => businessType === 'MultiselectPicklist'
+				);
+
+				const firstOptionName =
+					objectEntry[multiselectPicklistField.name][0];
+
+				await page.getByTestId(`labelItem-${firstOptionName}`).click();
+
+				await expect
+					.soft(page.getByText(firstOptionName, {exact: true}))
+					.toBeVisible({timeout: 50});
+
+				const removeOptionButton = page.getByLabel(
+					'Remove ' + firstOptionName
+				);
+
+				await removeOptionButton.click();
+
+				expect
+					.soft(await multiselectPicklistFieldKeepsAttached())
+					.toBeTruthy();
+			});
+
+			await test.step('Assert that it does not flicker when interacting with mandatory field', async () => {
+				const textField = page.getByLabel(textFieldData.label['en_US']);
+
+				await textField.focus();
+
+				await textField.press('a');
+
+				expect
+					.soft(await multiselectPicklistFieldKeepsAttached())
+					.toBeTruthy();
+			});
+
+			expect(test.info().errors).toHaveLength(0);
+		}
+	);
+
 	test('Verify that temporary files are deleted from the database if the object creation is not completed', async ({
 		apiHelpers,
 		page,
@@ -1589,6 +1841,10 @@ test.describe('Manage object entries through View Object Entries', () => {
 			'sampleFile.txt'
 		);
 
+		await page
+			.getByRole('button', {name: 'sampleFile.txt'})
+			.waitFor({state: 'visible'});
+
 		const fileEntryId1 = await page.getAttribute(
 			'input[data-field-name^="testAttachment"]',
 			'value'
@@ -1608,6 +1864,10 @@ test.describe('Manage object entries through View Object Entries', () => {
 			__dirname,
 			'astronaut.png'
 		);
+
+		await page
+			.getByRole('button', {name: 'astronaut.png'})
+			.waitFor({state: 'visible'});
 
 		expect(
 			await apiHelpers.headlessDelivery.getDocument(fileEntryId1)
@@ -1641,6 +1901,10 @@ test.describe('Manage object entries through View Object Entries', () => {
 			'sampleFile.txt'
 		);
 
+		await page
+			.getByRole('button', {name: 'sampleFile.txt'})
+			.waitFor({state: 'visible'});
+
 		const fileEntryId3 = await page.getAttribute(
 			'input[data-field-name^="testAttachment"]',
 			'value'
@@ -1659,6 +1923,10 @@ test.describe('Manage object entries through View Object Entries', () => {
 			'astronaut.png'
 		);
 
+		await page
+			.getByRole('button', {name: 'astronaut.png'})
+			.waitFor({state: 'visible'});
+
 		await viewObjectEntriesPage.saveObjectEntryButton.click();
 
 		await expect(viewObjectEntriesPage.successMessage).toBeVisible();
@@ -1670,6 +1938,10 @@ test.describe('Manage object entries through View Object Entries', () => {
 			__dirname,
 			'sampleFile.txt'
 		);
+
+		await page
+			.getByRole('button', {name: 'sampleFile.txt'})
+			.waitFor({state: 'visible'});
 
 		await page.reload();
 
@@ -1946,6 +2218,321 @@ test.describe('Manage object entries through Workflow', () => {
 					'input[placeholder="__/__/____ __:__ _"][value="10/05/2025 09:00 AM"]'
 				)
 			).toHaveValue('10/05/2025 09:00 AM');
+		}
+	);
+});
+
+scheduleTest.describe('Manage object entries schedule properties', () => {
+	let _objectDefinition: ObjectDefinition;
+
+	scheduleTest.afterEach(async ({accountSettingsPage}) => {
+		await accountSettingsPage.goToDisplaySettings();
+
+		await accountSettingsPage.setTimeZone('UTC');
+	});
+
+	scheduleTest.beforeEach(async ({accountSettingsPage, apiHelpers, page}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 2},
+			});
+
+		_objectDefinition = objectDefinition;
+
+		const objectDefinitionAPIClient =
+			await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+		const shouldEnableConfiguration = !scheduleTest
+			.info()
+			.tags.includes('@enableObjectEntryScheduleFalse');
+
+		if (shouldEnableConfiguration) {
+			await objectDefinitionAPIClient.patchObjectDefinition(
+				_objectDefinition.id,
+				{
+					enableObjectEntrySchedule: true,
+				}
+			);
+
+			await objectDefinitionAPIClient.postObjectDefinitionPublish(
+				_objectDefinition.id
+			);
+		}
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const utcOffsetFormatted = getUTCOffsetFormatted(new Date());
+
+		await accountSettingsPage.goToDisplaySettings();
+
+		if (utcOffsetFormatted === 'UTC') {
+			return await accountSettingsPage.setTimeZone('UTC');
+		}
+
+		const timeZoneValue = await page
+			.locator('select option', {hasText: utcOffsetFormatted})
+			.first()
+			.getAttribute('value');
+
+		await accountSettingsPage.setTimeZone(timeZoneValue);
+	});
+
+	scheduleTest(
+		'can create, read, update, and delete a expirationDate of an object entry',
+		async ({page, viewObjectEntriesPage}) => {
+			await viewObjectEntriesPage.goto(_objectDefinition.className);
+
+			await viewObjectEntriesPage.clickAddObjectEntry(
+				_objectDefinition.label['en_US']
+			);
+
+			await viewObjectEntriesPage.neverExpire.uncheck();
+
+			const date = new Date();
+
+			// Add a few minutes since expiration cant be scheduled for current dateTime
+
+			date.setMinutes(date.getMinutes() + 2);
+
+			const today = getObjectEntryUIDateTimeFormat(date);
+
+			await viewObjectEntriesPage.expirationDateInput.fill(today);
+
+			await page.keyboard.press('Escape');
+
+			await viewObjectEntriesPage.choosePublicationOption('publish');
+
+			await waitForAlert(page);
+
+			await expect(viewObjectEntriesPage.expirationDateInput).toHaveValue(
+				today
+			);
+
+			date.setDate(date.getDate() + 1);
+
+			const tomorrow = getObjectEntryUIDateTimeFormat(date);
+
+			await viewObjectEntriesPage.expirationDateInput.fill(tomorrow);
+
+			await viewObjectEntriesPage.choosePublicationOption('publish');
+
+			await waitForAlert(page);
+
+			await expect(viewObjectEntriesPage.expirationDateInput).toHaveValue(
+				tomorrow
+			);
+
+			await viewObjectEntriesPage.neverExpire.check();
+
+			await viewObjectEntriesPage.choosePublicationOption('publish');
+
+			await waitForAlert(page);
+
+			await expect(viewObjectEntriesPage.expirationDateInput).toHaveValue(
+				''
+			);
+		}
+	);
+
+	scheduleTest(
+		'can create, read, update, and delete a reviewDate of an object entry',
+		async ({page, viewObjectEntriesPage}) => {
+			await viewObjectEntriesPage.goto(_objectDefinition.className);
+
+			await viewObjectEntriesPage.clickAddObjectEntry(
+				_objectDefinition.label['en_US']
+			);
+
+			await viewObjectEntriesPage.neverReview.uncheck();
+
+			await viewObjectEntriesPage.scheduleForCurrentDate('Review');
+
+			await page.keyboard.press('Escape');
+
+			await viewObjectEntriesPage.choosePublicationOption('publish');
+
+			await waitForAlert(page);
+
+			const date = new Date();
+
+			const today = getObjectEntryUIDateTimeFormat(date);
+
+			await expect(viewObjectEntriesPage.reviewDateInput).toHaveValue(
+				today
+			);
+
+			date.setDate(date.getDate() + 1);
+
+			const tomorrow = getObjectEntryUIDateTimeFormat(date);
+
+			await viewObjectEntriesPage.reviewDateInput.fill(tomorrow);
+
+			await viewObjectEntriesPage.choosePublicationOption('publish');
+
+			await waitForAlert(page);
+
+			await expect(viewObjectEntriesPage.reviewDateInput).toHaveValue(
+				tomorrow
+			);
+
+			await viewObjectEntriesPage.neverReview.check();
+
+			await viewObjectEntriesPage.choosePublicationOption('publish');
+
+			await waitForAlert(page);
+
+			await expect(viewObjectEntriesPage.reviewDateInput).toHaveValue('');
+		}
+	);
+
+	scheduleTest(
+		'cannot submit an empty displayDate',
+		async ({page, viewObjectEntriesPage}) => {
+			await viewObjectEntriesPage.goto(_objectDefinition.className);
+
+			await viewObjectEntriesPage.clickAddObjectEntry(
+				_objectDefinition.label['en_US']
+			);
+
+			await viewObjectEntriesPage.choosePublicationOption('schedule');
+
+			let requestWasMade = false;
+
+			page.on('request', (request) => {
+				if (request.url().includes(_objectDefinition.restContextPath)) {
+					requestWasMade = true;
+				}
+			});
+
+			await viewObjectEntriesPage.schedulePublicationButton.click();
+
+			// Wait a second before doing the assertion to simulate the time needed for the request to happen
+
+			await page.waitForTimeout(1000);
+
+			expect(requestWasMade).toBe(false);
+
+			await expect(
+				page.getByText('This field is required')
+			).toBeVisible();
+
+			await viewObjectEntriesPage.schedulePublicationCloseButton.click();
+		}
+	);
+
+	scheduleTest(
+		'cannot submit an empty expirationDate and reviewDate when it is enabled',
+		async ({page, viewObjectEntriesPage}) => {
+			await viewObjectEntriesPage.goto(_objectDefinition.className);
+
+			await viewObjectEntriesPage.clickAddObjectEntry(
+				_objectDefinition.label['en_US']
+			);
+
+			for (const scheduleProperty of ['Expire', 'Review']) {
+				await viewObjectEntriesPage.page
+					.getByLabel(`Never ${scheduleProperty}`, {exact: true})
+					.uncheck();
+
+				let requestWasMade = false;
+
+				page.on('request', (request) => {
+					if (
+						request
+							.url()
+							.includes(_objectDefinition.restContextPath)
+					) {
+						requestWasMade = true;
+					}
+				});
+
+				await viewObjectEntriesPage.choosePublicationOption('publish');
+
+				// Wait a second before doing the assertion to simulate the time needed for the request to happen
+
+				await page.waitForTimeout(1000);
+
+				expect(requestWasMade).toBe(false);
+
+				await expect(
+					page.getByText('This field is required')
+				).toBeVisible();
+
+				await viewObjectEntriesPage.page
+					.getByLabel(`Never ${scheduleProperty}`, {exact: true})
+					.check();
+			}
+		}
+	);
+
+	scheduleTest(
+		'cannot submit a past expirationDate',
+		async ({page, viewObjectEntriesPage}) => {
+			await viewObjectEntriesPage.goto(_objectDefinition.className);
+
+			await viewObjectEntriesPage.clickAddObjectEntry(
+				_objectDefinition.label['en_US']
+			);
+
+			await viewObjectEntriesPage.neverExpire.uncheck();
+
+			await viewObjectEntriesPage.scheduleForCurrentDate('Expiration');
+
+			await viewObjectEntriesPage.page.keyboard.press('Escape');
+
+			let requestWasMade = false;
+
+			page.on('request', (request) => {
+				if (request.url().includes(_objectDefinition.restContextPath)) {
+					requestWasMade = true;
+				}
+			});
+
+			await viewObjectEntriesPage.choosePublicationOption('publish');
+
+			// Wait a second before doing the assertion to simulate the time needed for the request to happen
+
+			await page.waitForTimeout(1000);
+
+			expect(requestWasMade).toBe(false);
+
+			await expect(
+				page.getByText('The date entered is in the past')
+			).toBeVisible();
+		}
+	);
+
+	scheduleTest(
+		'schedule container is not visible when enableObjectEntrySchedule is disabled',
+		{tag: '@enableObjectEntryScheduleFalse'},
+		async ({apiHelpers, viewObjectEntriesPage}) => {
+			const objectDefinitionAPIClient =
+				await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+			await objectDefinitionAPIClient.postObjectDefinitionPublish(
+				_objectDefinition.id
+			);
+
+			await viewObjectEntriesPage.goto(_objectDefinition.className);
+
+			await viewObjectEntriesPage.clickAddObjectEntry(
+				_objectDefinition.label['en_US']
+			);
+
+			await expect(
+				viewObjectEntriesPage.schedulePanelButton
+			).not.toBeVisible();
+
+			await expect(
+				viewObjectEntriesPage.expirationDateInput
+			).not.toBeVisible();
+
+			await expect(
+				viewObjectEntriesPage.reviewDateInput
+			).not.toBeVisible();
 		}
 	);
 });

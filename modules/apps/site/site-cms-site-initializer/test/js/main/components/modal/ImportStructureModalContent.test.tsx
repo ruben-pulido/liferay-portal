@@ -7,11 +7,11 @@ import '@testing-library/jest-dom/extend-expect';
 import {fireEvent, render, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 
+import ApiHelper from '../../../../../src/main/resources/META-INF/resources/js/common/services/ApiHelper';
 import ImportStructureModalContent from '../../../../../src/main/resources/META-INF/resources/js/main/components/modal/ImportStructureModalContent';
-import ApiHelper from '../../../../../src/main/resources/META-INF/resources/js/services/ApiHelper';
 
 jest.mock(
-	'../../../../../src/main/resources/META-INF/resources/js/services/ApiHelper'
+	'../../../../../src/main/resources/META-INF/resources/js/common/services/ApiHelper'
 );
 
 const mockPostFormData = ApiHelper.postFormData as jest.MockedFunction<
@@ -98,7 +98,11 @@ describe('ImportStructureModalContent', () => {
 			expect(screen.getByText('import-and-override')).toBeEnabled();
 		});
 
-		mockPostFormData.mockResolvedValue({data: {}, error: null});
+		mockPostFormData.mockResolvedValue({
+			data: {},
+			error: null,
+			status: null,
+		});
 
 		fireEvent.click(screen.getByText('import-and-override'));
 
@@ -129,6 +133,7 @@ describe('ImportStructureModalContent', () => {
 		mockPostFormData.mockResolvedValue({
 			data: null,
 			error: 'Error importing structure',
+			status: 'ERROR',
 		});
 
 		fireEvent.click(importButton);

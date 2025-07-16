@@ -556,20 +556,16 @@ public abstract class BaseProductGroupResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				productGroupUnsafeFunction = productGroup -> {
+					ProductGroup getProductGroup = null;
 					ProductGroup persistedProductGroup = null;
 
 					try {
-						ProductGroup getProductGroup =
+						getProductGroup =
 							getProductGroupByExternalReferenceCode(
 								productGroup.getExternalReferenceCode());
 
 						patchProductGroup(
-							getProductGroup.getId() != null ?
-								getProductGroup.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"productGroupId")),
-							productGroup);
+							getProductGroup.getId(), productGroup);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedProductGroup = postProductGroup(productGroup);
@@ -580,9 +576,16 @@ public abstract class BaseProductGroupResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				productGroupUnsafeFunction =
-					productGroup -> putProductGroupByExternalReferenceCode(
-						productGroup.getExternalReferenceCode(), productGroup);
+				productGroupUnsafeFunction = productGroup -> {
+					ProductGroup persistedProductGroup = null;
+
+					persistedProductGroup =
+						putProductGroupByExternalReferenceCode(
+							productGroup.getExternalReferenceCode(),
+							productGroup);
+
+					return persistedProductGroup;
+				};
 			}
 		}
 
@@ -734,10 +737,7 @@ public abstract class BaseProductGroupResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			productGroupUnsafeFunction = productGroup -> {
-				patchProductGroup(
-					productGroup.getId() != null ? productGroup.getId() :
-						_parseLong((String)parameters.get("productGroupId")),
-					productGroup);
+				patchProductGroup(productGroup.getId(), productGroup);
 
 				return null;
 			};
@@ -762,14 +762,6 @@ public abstract class BaseProductGroupResourceImpl
 				productGroupUnsafeFunction.apply(productGroup);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

@@ -14,7 +14,8 @@ import {openModal} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
-import ApiHelper from '../../../services/ApiHelper';
+import ApiHelper from '../../../common/services/ApiHelper';
+import {LogoColor} from '../../../common/types/Space';
 import {executeAsyncItemAction} from '../../FDSPropsTransformer/utils/executeAsyncItemAction';
 import SpaceSticker from '../../components/SpaceSticker';
 
@@ -168,9 +169,6 @@ export default function MergeTagsModalContent({
 			'ViewsSpaceTableCellRenderer';
 
 		const ViewsSpaceTableCell = ({itemData}: {itemData: any}) => {
-			const assetLibraryNames = itemData.assetLibraries.map(
-				(assetLibrary: any) => assetLibrary.name
-			);
 			const assetLibraryIds = itemData.assetLibraries.map(
 				(assetLibrary: any) => assetLibrary.id
 			);
@@ -182,22 +180,34 @@ export default function MergeTagsModalContent({
 					</span>
 				);
 			}
-			else {
-				return (
-					<>
-						{assetLibraryNames.map(
-							(name: string, index: number) => (
-								<span
-									className="align-items-center d-flex space-renderer-sticker"
-									key={index}
-								>
-									<SpaceSticker name={name} size="sm" />
-								</span>
-							)
-						)}
-					</>
-				);
-			}
+
+			return (
+				<>
+					{itemData.assetLibraries.map(
+						(
+							assetLibrary: {
+								name: string;
+								settings?: {logoColor: string};
+							},
+							index: number
+						) => (
+							<span
+								className="align-items-center d-flex space-renderer-sticker"
+								key={index}
+							>
+								<SpaceSticker
+									displayType={
+										assetLibrary.settings
+											?.logoColor as LogoColor
+									}
+									name={assetLibrary.name}
+									size="sm"
+								/>
+							</span>
+						)
+					)}
+				</>
+			);
 		};
 
 		return (
@@ -356,7 +366,7 @@ export default function MergeTagsModalContent({
 						</span>
 					</label>
 
-					<ClayInput readOnly value={tagName} />
+					<ClayInput disabled value={tagName} />
 				</Form.Group>
 			</ClayModal.Body>
 

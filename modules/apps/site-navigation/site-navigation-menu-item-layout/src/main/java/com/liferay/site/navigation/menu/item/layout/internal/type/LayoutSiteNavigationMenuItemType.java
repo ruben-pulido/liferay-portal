@@ -11,7 +11,7 @@ import com.liferay.exportimport.kernel.staging.LayoutStaging;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
-import com.liferay.layout.item.selector.criterion.LayoutItemSelectorCriterion;
+import com.liferay.layout.item.selector.LayoutItemSelectorCriterion;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.NoSuchLayoutException;
@@ -167,7 +167,7 @@ public class LayoutSiteNavigationMenuItemType
 	public String getItemSelectorURL(HttpServletRequest httpServletRequest) {
 		RenderResponse renderResponse =
 			(RenderResponse)httpServletRequest.getAttribute(
-				JavaConstants.JAVAX_PORTLET_RESPONSE);
+				JavaConstants.JAKARTA_PORTLET_RESPONSE);
 
 		LayoutItemSelectorCriterion layoutItemSelectorCriterion =
 			new LayoutItemSelectorCriterion();

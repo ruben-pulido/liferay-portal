@@ -27,7 +27,6 @@ import com.liferay.portal.util.FileImpl;
 import java.io.File;
 
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.sql.DataSource;
 
@@ -62,10 +61,9 @@ public class DynamicDataSourceTest {
 
 		fileUtil.setFile(new FileImpl());
 
-		_currentTransactionReadOnlyThreadLocal =
-			ReflectionTestUtil.getFieldValue(
-				SpringHibernateThreadLocalUtil.class,
-				"_currentTransactionReadOnlyThreadLocal");
+		_currentTransactionReadOnly = ReflectionTestUtil.getFieldValue(
+			SpringHibernateThreadLocalUtil.class,
+			"_currentTransactionReadOnly");
 
 		_tempDir = FileUtil.createTempFolder();
 
@@ -83,17 +81,17 @@ public class DynamicDataSourceTest {
 		_dynamicDataSource = new DynamicDataSource(
 			readDataSource, writeDataSource);
 
-		_writeDataSourceThreadLocal = ReflectionTestUtil.getFieldValue(
-			DynamicDataSource.class, "_writeDataSourceThreadLocal");
+		_writeDynamicDataSource = ReflectionTestUtil.getFieldValue(
+			DynamicDataSource.class, "_writeDynamicDataSource");
 	}
 
 	@After
 	public void tearDown() {
-		_currentTransactionReadOnlyThreadLocal.remove();
+		_currentTransactionReadOnly.remove();
 
 		FileUtil.deltree(_tempDir);
 
-		_writeDataSourceThreadLocal.remove();
+		_writeDynamicDataSource.remove();
 	}
 
 	@Test
@@ -190,18 +188,18 @@ public class DynamicDataSourceTest {
 		boolean currentTransactionReadOnly, DataSource expectedDataSource,
 		List<String> expectedLogMessages, boolean writeDataSource) {
 
-		_writeDataSourceThreadLocal.set(writeDataSource);
+		_writeDynamicDataSource.set(writeDataSource);
 
 		if (currentTransactionReadOnly) {
-			_currentTransactionReadOnlyThreadLocal.set(true);
+			_currentTransactionReadOnly.set(true);
 		}
 		else {
-			_currentTransactionReadOnlyThreadLocal.remove();
+			_currentTransactionReadOnly.remove();
 		}
 
-		try (LogCapture logCapture = LoggerTestUtil.configureJDKLogger(
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
 				"com.liferay.portal.dao.jdbc.util.DynamicDataSource",
-				Level.FINEST)) {
+				LoggerTestUtil.TRACE)) {
 
 			Assert.assertSame(
 				expectedDataSource,
@@ -228,9 +226,9 @@ public class DynamicDataSourceTest {
 		}
 	}
 
-	private ThreadLocal<Boolean> _currentTransactionReadOnlyThreadLocal;
+	private ThreadLocal<Boolean> _currentTransactionReadOnly;
 	private DynamicDataSource _dynamicDataSource;
 	private File _tempDir;
-	private ThreadLocal<Boolean> _writeDataSourceThreadLocal;
+	private ThreadLocal<Boolean> _writeDynamicDataSource;
 
 }

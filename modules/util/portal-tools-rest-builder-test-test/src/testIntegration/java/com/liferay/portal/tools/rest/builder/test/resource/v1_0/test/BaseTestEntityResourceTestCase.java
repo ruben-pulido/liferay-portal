@@ -14,11 +14,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import com.liferay.headless.batch.engine.client.dto.v1_0.ImportTask;
+import com.liferay.headless.batch.engine.client.http.HttpInvoker.HttpResponse;
 import com.liferay.headless.batch.engine.client.resource.v1_0.ImportTaskResource;
 import com.liferay.oauth2.provider.scope.ScopeChecker;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -40,6 +42,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.search.test.rule.SearchTestRule;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -247,11 +250,86 @@ public abstract class BaseTestEntityResourceTestCase {
 	}
 
 	@Test
+	public void testGraphQLDeleteTestEntity() throws Exception {
+
+		// No namespace
+
+		TestEntity testEntity1 = testGraphQLDeleteTestEntity_addTestEntity();
+
+		Assert.assertTrue(
+			JSONUtil.getValueAsBoolean(
+				invokeGraphQLMutation(
+					new GraphQLField(
+						"deleteTestEntity",
+						new HashMap<String, Object>() {
+							{
+								put("testEntityId", testEntity1.getId());
+							}
+						})),
+				"JSONObject/data", "Object/deleteTestEntity"));
+
+		JSONArray errorsJSONArray1 = JSONUtil.getValueAsJSONArray(
+			invokeGraphQLQuery(
+				new GraphQLField(
+					"testEntity",
+					new HashMap<String, Object>() {
+						{
+							put("testEntityId", testEntity1.getId());
+						}
+					},
+					new GraphQLField("id"))),
+			"JSONArray/errors");
+
+		Assert.assertTrue(errorsJSONArray1.length() > 0);
+
+		// Using the namespace test_v1_0
+
+		TestEntity testEntity2 = testGraphQLDeleteTestEntity_addTestEntity();
+
+		Assert.assertTrue(
+			JSONUtil.getValueAsBoolean(
+				invokeGraphQLMutation(
+					new GraphQLField(
+						"test_v1_0",
+						new GraphQLField(
+							"deleteTestEntity",
+							new HashMap<String, Object>() {
+								{
+									put("testEntityId", testEntity2.getId());
+								}
+							}))),
+				"JSONObject/data", "JSONObject/test_v1_0",
+				"Object/deleteTestEntity"));
+
+		JSONArray errorsJSONArray2 = JSONUtil.getValueAsJSONArray(
+			invokeGraphQLQuery(
+				new GraphQLField(
+					"test_v1_0",
+					new GraphQLField(
+						"testEntity",
+						new HashMap<String, Object>() {
+							{
+								put("testEntityId", testEntity2.getId());
+							}
+						},
+						new GraphQLField("id")))),
+			"JSONArray/errors");
+
+		Assert.assertTrue(errorsJSONArray2.length() > 0);
+	}
+
+	protected TestEntity testGraphQLDeleteTestEntity_addTestEntity()
+		throws Exception {
+
+		return testGraphQLTestEntity_addTestEntity();
+	}
+
+	@Test
 	public void testDeleteTestEntityBatch() throws Exception {
 		TestEntity testEntity1 = testDeleteTestEntityBatch_addTestEntity();
 
 		testDeleteTestEntityBatch_deleteTestEntity(
-			"COMPLETED", null, testEntity1.getId());
+			202, null, testEntity1.getId());
 
 		assertHttpResponseStatusCode(
 			404,
@@ -265,7 +343,7 @@ public abstract class BaseTestEntityResourceTestCase {
 	}
 
 	protected void testDeleteTestEntityBatch_deleteTestEntity(
-			String expectedExecuteStatus, String externalReferenceCode, Long id)
+			int expectedStatusCode, String externalReferenceCode, Long id)
 		throws Exception {
 
 		HttpInvoker.HttpResponse httpResponse =
@@ -278,16 +356,16 @@ public abstract class BaseTestEntityResourceTestCase {
 						"id", () -> id
 					)));
 
-		Assert.assertEquals(202, httpResponse.getStatusCode());
+		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
 
 		waitForFinish(
-			expectedExecuteStatus,
+			"COMPLETED",
 			JSONFactoryUtil.createJSONObject(httpResponse.getContent()));
 	}
 
 	@Test
 	public void testGetTestEntitiesPage() throws Exception {
-		Page<TestEntity> page = testEntityResource.getTestEntitiesPage();
+		Page<TestEntity> page = testEntityResource.getTestEntitiesPage(null);
 
 		long totalCount = page.getTotalCount();
 
@@ -297,7 +375,7 @@ public abstract class BaseTestEntityResourceTestCase {
 		TestEntity testEntity2 = testGetTestEntitiesPage_addTestEntity(
 			randomTestEntity());
 
-		page = testEntityResource.getTestEntitiesPage();
+		page = testEntityResource.getTestEntitiesPage(null);
 
 		Assert.assertEquals(totalCount + 2, page.getTotalCount());
 
@@ -319,12 +397,161 @@ public abstract class BaseTestEntityResourceTestCase {
 		return expectedActions;
 	}
 
+	@Test
+	public void testGetTestEntitiesPageWithFilterDateTimeEquals()
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(
+			EntityField.Type.DATE_TIME);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		TestEntity testEntity1 = randomTestEntity();
+
+		testEntity1 = testGetTestEntitiesPage_addTestEntity(testEntity1);
+
+		for (EntityField entityField : entityFields) {
+			Page<TestEntity> page = testEntityResource.getTestEntitiesPage(
+				getFilterString(entityField, "between", testEntity1));
+
+			assertEquals(
+				Collections.singletonList(testEntity1),
+				(List<TestEntity>)page.getItems());
+		}
+	}
+
+	@Test
+	public void testGetTestEntitiesPageWithFilterDoubleEquals()
+		throws Exception {
+
+		testGetTestEntitiesPageWithFilter("eq", EntityField.Type.DOUBLE);
+	}
+
+	@Test
+	public void testGetTestEntitiesPageWithFilterStringContains()
+		throws Exception {
+
+		testGetTestEntitiesPageWithFilter("contains", EntityField.Type.STRING);
+	}
+
+	@Test
+	public void testGetTestEntitiesPageWithFilterStringEquals()
+		throws Exception {
+
+		testGetTestEntitiesPageWithFilter("eq", EntityField.Type.STRING);
+	}
+
+	@Test
+	public void testGetTestEntitiesPageWithFilterStringStartsWith()
+		throws Exception {
+
+		testGetTestEntitiesPageWithFilter(
+			"startswith", EntityField.Type.STRING);
+	}
+
+	protected void testGetTestEntitiesPageWithFilter(
+			String operator, EntityField.Type type)
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(type);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		TestEntity testEntity1 = testGetTestEntitiesPage_addTestEntity(
+			randomTestEntity());
+
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		TestEntity testEntity2 = testGetTestEntitiesPage_addTestEntity(
+			randomTestEntity());
+
+		for (EntityField entityField : entityFields) {
+			Page<TestEntity> page = testEntityResource.getTestEntitiesPage(
+				getFilterString(entityField, operator, testEntity1));
+
+			assertEquals(
+				Collections.singletonList(testEntity1),
+				(List<TestEntity>)page.getItems());
+		}
+	}
+
 	protected TestEntity testGetTestEntitiesPage_addTestEntity(
 			TestEntity testEntity)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGraphQLGetTestEntitiesPage() throws Exception {
+		GraphQLField graphQLField = new GraphQLField(
+			"testEntities",
+			new HashMap<String, Object>() {
+				{
+				}
+			},
+			new GraphQLField("items", getGraphQLFields()),
+			new GraphQLField("page"), new GraphQLField("totalCount"));
+
+		// No namespace
+
+		JSONObject testEntitiesJSONObject = JSONUtil.getValueAsJSONObject(
+			invokeGraphQLQuery(graphQLField), "JSONObject/data",
+			"JSONObject/testEntities");
+
+		long totalCount = testEntitiesJSONObject.getLong("totalCount");
+
+		TestEntity testEntity1 = testGraphQLGetTestEntitiesPage_addTestEntity();
+		TestEntity testEntity2 = testGraphQLGetTestEntitiesPage_addTestEntity();
+
+		testEntitiesJSONObject = JSONUtil.getValueAsJSONObject(
+			invokeGraphQLQuery(graphQLField), "JSONObject/data",
+			"JSONObject/testEntities");
+
+		Assert.assertEquals(
+			totalCount + 2, testEntitiesJSONObject.getLong("totalCount"));
+
+		assertContains(
+			testEntity1,
+			Arrays.asList(
+				TestEntitySerDes.toDTOs(
+					testEntitiesJSONObject.getString("items"))));
+		assertContains(
+			testEntity2,
+			Arrays.asList(
+				TestEntitySerDes.toDTOs(
+					testEntitiesJSONObject.getString("items"))));
+
+		// Using the namespace test_v1_0
+
+		testEntitiesJSONObject = JSONUtil.getValueAsJSONObject(
+			invokeGraphQLQuery(new GraphQLField("test_v1_0", graphQLField)),
+			"JSONObject/data", "JSONObject/test_v1_0",
+			"JSONObject/testEntities");
+
+		Assert.assertEquals(
+			totalCount + 2, testEntitiesJSONObject.getLong("totalCount"));
+
+		assertContains(
+			testEntity1,
+			Arrays.asList(
+				TestEntitySerDes.toDTOs(
+					testEntitiesJSONObject.getString("items"))));
+		assertContains(
+			testEntity2,
+			Arrays.asList(
+				TestEntitySerDes.toDTOs(
+					testEntitiesJSONObject.getString("items"))));
+	}
+
+	protected TestEntity testGraphQLGetTestEntitiesPage_addTestEntity()
+		throws Exception {
+
+		return testGraphQLTestEntity_addTestEntity();
 	}
 
 	@Test
@@ -532,6 +759,99 @@ public abstract class BaseTestEntityResourceTestCase {
 	}
 
 	@Test
+	public void testGraphQLGetTestEntity() throws Exception {
+		TestEntity testEntity = testGraphQLGetTestEntity_addTestEntity();
+
+		// No namespace
+
+		Assert.assertTrue(
+			equals(
+				testEntity,
+				TestEntitySerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"testEntity",
+								new HashMap<String, Object>() {
+									{
+										put("testEntityId", testEntity.getId());
+									}
+								},
+								getGraphQLFields())),
+						"JSONObject/data", "Object/testEntity"))));
+
+		// Using the namespace test_v1_0
+
+		Assert.assertTrue(
+			equals(
+				testEntity,
+				TestEntitySerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"test_v1_0",
+								new GraphQLField(
+									"testEntity",
+									new HashMap<String, Object>() {
+										{
+											put(
+												"testEntityId",
+												testEntity.getId());
+										}
+									},
+									getGraphQLFields()))),
+						"JSONObject/data", "JSONObject/test_v1_0",
+						"Object/testEntity"))));
+	}
+
+	@Test
+	public void testGraphQLGetTestEntityNotFound() throws Exception {
+		Long irrelevantTestEntityId = RandomTestUtil.randomLong();
+
+		// No namespace
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"testEntity",
+						new HashMap<String, Object>() {
+							{
+								put("testEntityId", irrelevantTestEntityId);
+							}
+						},
+						getGraphQLFields())),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+
+		// Using the namespace test_v1_0
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"test_v1_0",
+						new GraphQLField(
+							"testEntity",
+							new HashMap<String, Object>() {
+								{
+									put("testEntityId", irrelevantTestEntityId);
+								}
+							},
+							getGraphQLFields()))),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+	}
+
+	protected TestEntity testGraphQLGetTestEntity_addTestEntity()
+		throws Exception {
+
+		return testGraphQLTestEntity_addTestEntity();
+	}
+
+	@Test
 	public void testGetTestEntityCount() throws Exception {
 		Assert.assertTrue(false);
 	}
@@ -684,15 +1004,72 @@ public abstract class BaseTestEntityResourceTestCase {
 		assertValid(getTestEntity);
 	}
 
+	protected TestEntity testPutTestEntity_addTestEntity() throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
 	protected Long testPutTestEntity_getOptionalParameter() throws Exception {
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected TestEntity testPutTestEntity_addTestEntity() throws Exception {
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+	@Test
+	public void testBatchEngineDeleteImportTask() throws Exception {
+		TestEntity testEntity1 =
+			testBatchEngineDeleteImportTask_addTestEntity();
+
+		testBatchEngineDeleteImportTask_deleteTestEntity(
+			200, null, testEntity1.getId());
+
+		assertHttpResponseStatusCode(
+			404,
+			testEntityResource.getTestEntityHttpResponse(testEntity1.getId()));
 	}
+
+	protected TestEntity testBatchEngineDeleteImportTask_addTestEntity()
+		throws Exception {
+
+		return testDeleteTestEntity_addTestEntity();
+	}
+
+	protected void testBatchEngineDeleteImportTask_deleteTestEntity(
+			int expectedStatusCode, String externalReferenceCode, Long id,
+			String... parameters)
+		throws Exception {
+
+		ImportTaskResource importTaskResource = ImportTaskResource.builder(
+		).authentication(
+			_testCompanyAdminUser.getEmailAddress(),
+			PropsValues.DEFAULT_ADMIN_PASSWORD
+		).endpoint(
+			testCompany.getVirtualHostname(), 8080, "http"
+		).parameters(
+			parameters
+		).build();
+
+		HttpResponse httpResponse =
+			importTaskResource.deleteImportTaskHttpResponse(
+				"com.liferay.portal.tools.rest.builder.test.dto.v1_0.TestEntity",
+				null, null, null, null,
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"externalReferenceCode", () -> externalReferenceCode
+					).put(
+						"id", () -> id
+					)));
+
+		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
+
+		if (expectedStatusCode == 200) {
+			waitForFinish(
+				"COMPLETED",
+				JSONFactoryUtil.createJSONObject(httpResponse.getContent()));
+		}
+	}
+
+	@Rule
+	public SearchTestRule searchTestRule = new SearchTestRule();
 
 	protected TestEntity testGraphQLTestEntity_addTestEntity()
 		throws Exception {

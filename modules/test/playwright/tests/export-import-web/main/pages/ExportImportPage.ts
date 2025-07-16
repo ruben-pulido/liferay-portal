@@ -12,22 +12,43 @@ import {getTempDir} from '../../../../utils/temp';
 
 export class ExportImportPage {
 	readonly continueButton: Locator;
+	readonly copyAsNewRadioButton: Locator;
+	readonly deleteApplicationDataAlert: Locator;
+	readonly deleteApplicationDataCheckbox: Locator;
+	readonly deleteApplicationDataBeforeImportingWarningLabel: Locator;
 	readonly deletionsLabel: Locator;
 	readonly downloadButton: Locator;
 	readonly exportButton: Locator;
 	readonly exportPermissionsButton: Locator;
 	readonly fileSelector: Locator;
 	readonly importButton: Locator;
+	readonly importModalButton: Locator;
 	readonly importPermissionsButton: Locator;
+	readonly mirrorWithOverwritingRadioButton: Locator;
 	readonly newExportButton: Locator;
 	readonly newImportButton: Locator;
 	readonly page: Page;
 	readonly productMenuPage: ProductMenuPage;
 	readonly title: Locator;
+	readonly updateDataAlert: Locator;
+	readonly updateDataMirrorWarningLabel: Locator;
 	readonly useCurrentUserAsAuthorCheckbox: Locator;
+	readonly warningHeader: Locator;
 
 	constructor(page: Page) {
 		this.continueButton = page.getByRole('button', {name: 'Continue'});
+		this.copyAsNewRadioButton = page.getByLabel('Copy as new');
+		this.deleteApplicationDataAlert = page.locator('[role="alert"]', {
+			hasText: 'This option does not apply to object entries.',
+		});
+		this.deleteApplicationDataCheckbox = page.getByLabel(
+			'Delete Application Data'
+		);
+		this.deleteApplicationDataBeforeImportingWarningLabel = page
+			.getByLabel('Important Info About Your Import')
+			.getByText(
+				'Delete Application Data Before Importing: This option does not apply to object'
+			);
 		this.deletionsLabel = page
 			.getByLabel('Deletions', {exact: true})
 			.locator('label');
@@ -36,15 +57,33 @@ export class ExportImportPage {
 		this.exportPermissionsButton = page.getByLabel('Export Permissions');
 		this.fileSelector = page.getByRole('button', {name: 'Select File'});
 		this.importButton = page.getByRole('button', {name: 'Import'});
+		this.importModalButton = page
+			.getByLabel('Important Info About Your Import')
+			.getByRole('button', {name: 'Import'});
 		this.importPermissionsButton = page.getByLabel('Import Permissions');
+		this.mirrorWithOverwritingRadioButton = page.getByLabel(
+			'Mirror with overwriting'
+		);
 		this.newExportButton = page.getByRole('link', {name: 'Custom Export'});
 		this.newImportButton = page.getByRole('link', {name: 'Import'});
 		this.page = page;
 		this.productMenuPage = new ProductMenuPage(page);
 		this.title = page.getByPlaceholder('Enter the name of the process');
+		this.updateDataAlert = page.locator('[role="alert"]', {
+			hasText:
+				'Objects entries are always mirrored regardless of the selection.',
+		});
+		this.updateDataMirrorWarningLabel = page
+			.getByLabel('Important Info About Your Import')
+			.getByText(
+				'Update Data (Mirror): Objects entries are always mirrored regardless of the selection.'
+			);
 		this.useCurrentUserAsAuthorCheckbox = page.getByLabel(
 			'Use the Current User as Author: Assign the current user as the author of all'
 		);
+		this.warningHeader = page.getByRole('heading', {
+			name: 'Important Info About Your Import',
+		});
 	}
 
 	async export(title: string, itemLabel?: string) {

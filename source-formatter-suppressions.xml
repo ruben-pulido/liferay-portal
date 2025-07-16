@@ -69,9 +69,9 @@
 		<suppress checks="StaticVariableNameCheck" files="portal-kernel/src/com/liferay/portal/kernel/backgroundtask/BackgroundTaskResult\.java" />
 		<suppress checks="StaticVariableNameCheck" files="util-slf4j/src/org/slf4j/impl/StaticLoggerBinder\.java" />
 		<suppress checks="TryWithResourcesCheck" files="portal-impl/src/com/liferay/portal/db/index/IndexUpdaterUtil\.java" />
-		<suppress checks="UnprocessedExceptionCheck" files="portal-impl/src/com/liferay/portal/log/Log4jLogContextLogWrapper\.java" />
-		<suppress checks="UnprocessedExceptionCheck" files="portal-impl/src/com/liferay/portal/log/Log4jLogFactoryImpl\.java" />
 		<suppress checks="UnprocessedExceptionCheck" files="portal-impl/src/com/liferay/portal/spring/bean/LiferayBeanFactory\.java" />
+		<suppress checks="UnprocessedExceptionCheck" files="portal-kernel/src/com/liferay/portal/kernel/internal/log4j/Log4jLogContextLogWrapper\.java" />
+		<suppress checks="UnprocessedExceptionCheck" files="portal-kernel/src/com/liferay/portal/kernel/internal/log4j/Log4jLogFactoryImpl\.java" />
 		<suppress checks="UnprocessedExceptionCheck" files="portal-kernel/src/com/liferay/portal/kernel/module/service/Snapshot\.java" />
 		<suppress checks="URLInputStreamCheck" files="portal-impl/src/com/liferay/portal/db/DBResourceUtil\.java" />
 		<suppress checks="URLInputStreamCheck" files="portal-kernel/src/com/liferay/portal/kernel/util/PropertiesUtil.java" />
@@ -121,11 +121,11 @@
 		<suppress checks="JavaVerifyUpgradeConnectionCheck" files="portal-impl/src/com/liferay/portal/upgrade/util/BaseUpgradeTableImpl.java" />
 		<suppress checks="JavaVerifyUpgradeConnectionCheck" files="portal-kernel/src/com/liferay/portal/kernel/upgrade/UpgradeProcess.java" />
 		<suppress checks="JavaVerifyUpgradeConnectionCheck" files="portal-kernel/src/com/liferay/portal/kernel/upgrade/util/UpgradeProcessUtil.java" />
-		<suppress checks="JavaXMLSecurityCheck" files="portal-impl/src/com/liferay/portal/log4j/internal/Log4jConfigUtil\.java" />
 		<suppress checks="JavaXMLSecurityCheck" files="portal-impl/src/com/liferay/portal/security/xml/SecureXMLFactoryProviderImpl\.java" />
 		<suppress checks="JavaXMLSecurityCheck" files="portal-impl/src/com/liferay/portal/tools/ToolDependencies\.java" />
 		<suppress checks="JavaXMLSecurityCheck" files="portal-impl/src/com/liferay/portal/util/InitUtil.java" />
 		<suppress checks="JavaXMLSecurityCheck" files="portal-impl/src/com/liferay/portal/xml/SAXReaderFactory\.java" />
+		<suppress checks="JavaXMLSecurityCheck" files="portal-kernel/src/com/liferay/portal/kernel/internal/log4j/Log4jConfigUtil\.java" />
 		<suppress checks="JavaXMLSecurityCheck" files="util-java/src/com/liferay/util/xml/XMLMergerRunner\.java" />
 		<suppress checks="JSPIllegalSyntaxCheck" files="modules/apps/portal-remote/portal-remote-json-web-service-web/src/main/resources/META-INF/resources/action\.jsp" />
 		<suppress checks="JSPLanguageKeysCheck" files="portal-web/docroot/html/portal/saml/.*" />

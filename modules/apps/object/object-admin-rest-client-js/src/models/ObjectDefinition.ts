@@ -35,8 +35,10 @@
 			"enableLocalization"?: boolean;
 			"enableObjectEntryDraft"?: boolean;
 			"enableObjectEntryHistory"?: boolean;
+			"enableObjectEntrySchedule"?: boolean;
 			"enableObjectEntryVersioning"?: boolean;
 			"externalReferenceCode"?: string;
+			"friendlyURLSeparator"?: string;
 			"id"?: number;
 			"label"?: {[key: string]: string;};
 			"modifiable"?: boolean;
@@ -150,6 +152,11 @@
 			type: "boolean",
 		},
 		{
+			baseName: "enableObjectEntrySchedule",
+			name: "enableObjectEntrySchedule",
+			type: "boolean",
+		},
+		{
 			baseName: "enableObjectEntryVersioning",
 			name: "enableObjectEntryVersioning",
 			type: "boolean",
@@ -157,6 +164,11 @@
 		{
 			baseName: "externalReferenceCode",
 			name: "externalReferenceCode",
+			type: "string",
+		},
+		{
+			baseName: "friendlyURLSeparator",
+			name: "friendlyURLSeparator",
 			type: "string",
 		},
 		{

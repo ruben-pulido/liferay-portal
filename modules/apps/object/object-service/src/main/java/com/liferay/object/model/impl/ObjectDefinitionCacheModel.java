@@ -69,7 +69,7 @@ public class ObjectDefinitionCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(81);
+		StringBundler sb = new StringBundler(83);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
@@ -95,8 +95,6 @@ public class ObjectDefinitionCacheModel
 		sb.append(descriptionObjectFieldId);
 		sb.append(", objectFolderId=");
 		sb.append(objectFolderId);
-		sb.append(", rootObjectDefinitionId=");
-		sb.append(rootObjectDefinitionId);
 		sb.append(", titleObjectFieldId=");
 		sb.append(titleObjectFieldId);
 		sb.append(", accountEntryRestricted=");
@@ -121,8 +119,12 @@ public class ObjectDefinitionCacheModel
 		sb.append(enableObjectEntryDraft);
 		sb.append(", enableObjectEntryHistory=");
 		sb.append(enableObjectEntryHistory);
+		sb.append(", enableObjectEntrySchedule=");
+		sb.append(enableObjectEntrySchedule);
 		sb.append(", enableObjectEntryVersioning=");
 		sb.append(enableObjectEntryVersioning);
+		sb.append(", friendlyURLSeparator=");
+		sb.append(friendlyURLSeparator);
 		sb.append(", label=");
 		sb.append(label);
 		sb.append(", modifiable=");
@@ -207,7 +209,6 @@ public class ObjectDefinitionCacheModel
 		objectDefinitionImpl.setDescriptionObjectFieldId(
 			descriptionObjectFieldId);
 		objectDefinitionImpl.setObjectFolderId(objectFolderId);
-		objectDefinitionImpl.setRootObjectDefinitionId(rootObjectDefinitionId);
 		objectDefinitionImpl.setTitleObjectFieldId(titleObjectFieldId);
 		objectDefinitionImpl.setAccountEntryRestricted(accountEntryRestricted);
 		objectDefinitionImpl.setActive(active);
@@ -235,8 +236,17 @@ public class ObjectDefinitionCacheModel
 		objectDefinitionImpl.setEnableObjectEntryDraft(enableObjectEntryDraft);
 		objectDefinitionImpl.setEnableObjectEntryHistory(
 			enableObjectEntryHistory);
+		objectDefinitionImpl.setEnableObjectEntrySchedule(
+			enableObjectEntrySchedule);
 		objectDefinitionImpl.setEnableObjectEntryVersioning(
 			enableObjectEntryVersioning);
+
+		if (friendlyURLSeparator == null) {
+			objectDefinitionImpl.setFriendlyURLSeparator("");
+		}
+		else {
+			objectDefinitionImpl.setFriendlyURLSeparator(friendlyURLSeparator);
+		}
 
 		if (label == null) {
 			objectDefinitionImpl.setLabel("");
@@ -336,8 +346,6 @@ public class ObjectDefinitionCacheModel
 
 		objectFolderId = objectInput.readLong();
 
-		rootObjectDefinitionId = objectInput.readLong();
-
 		titleObjectFieldId = objectInput.readLong();
 
 		accountEntryRestricted = objectInput.readBoolean();
@@ -360,7 +368,10 @@ public class ObjectDefinitionCacheModel
 
 		enableObjectEntryHistory = objectInput.readBoolean();
 
+		enableObjectEntrySchedule = objectInput.readBoolean();
+
 		enableObjectEntryVersioning = objectInput.readBoolean();
+		friendlyURLSeparator = objectInput.readUTF();
 		label = objectInput.readUTF();
 
 		modifiable = objectInput.readBoolean();
@@ -422,8 +433,6 @@ public class ObjectDefinitionCacheModel
 
 		objectOutput.writeLong(objectFolderId);
 
-		objectOutput.writeLong(rootObjectDefinitionId);
-
 		objectOutput.writeLong(titleObjectFieldId);
 
 		objectOutput.writeBoolean(accountEntryRestricted);
@@ -458,7 +467,16 @@ public class ObjectDefinitionCacheModel
 
 		objectOutput.writeBoolean(enableObjectEntryHistory);
 
+		objectOutput.writeBoolean(enableObjectEntrySchedule);
+
 		objectOutput.writeBoolean(enableObjectEntryVersioning);
+
+		if (friendlyURLSeparator == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(friendlyURLSeparator);
+		}
 
 		if (label == null) {
 			objectOutput.writeUTF("");
@@ -546,7 +564,6 @@ public class ObjectDefinitionCacheModel
 	public long accountEntryRestrictedObjectFieldId;
 	public long descriptionObjectFieldId;
 	public long objectFolderId;
-	public long rootObjectDefinitionId;
 	public long titleObjectFieldId;
 	public boolean accountEntryRestricted;
 	public boolean active;
@@ -559,7 +576,9 @@ public class ObjectDefinitionCacheModel
 	public boolean enableLocalization;
 	public boolean enableObjectEntryDraft;
 	public boolean enableObjectEntryHistory;
+	public boolean enableObjectEntrySchedule;
 	public boolean enableObjectEntryVersioning;
+	public String friendlyURLSeparator;
 	public String label;
 	public boolean modifiable;
 	public String name;

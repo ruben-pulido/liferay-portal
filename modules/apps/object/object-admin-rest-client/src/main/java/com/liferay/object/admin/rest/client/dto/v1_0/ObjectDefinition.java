@@ -377,6 +377,31 @@ public class ObjectDefinition implements Cloneable, Serializable {
 
 	protected Boolean enableObjectEntryHistory;
 
+	public Boolean getEnableObjectEntrySchedule() {
+		return enableObjectEntrySchedule;
+	}
+
+	public void setEnableObjectEntrySchedule(
+		Boolean enableObjectEntrySchedule) {
+
+		this.enableObjectEntrySchedule = enableObjectEntrySchedule;
+	}
+
+	public void setEnableObjectEntrySchedule(
+		UnsafeSupplier<Boolean, Exception>
+			enableObjectEntryScheduleUnsafeSupplier) {
+
+		try {
+			enableObjectEntrySchedule =
+				enableObjectEntryScheduleUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Boolean enableObjectEntrySchedule;
+
 	public Boolean getEnableObjectEntryVersioning() {
 		return enableObjectEntryVersioning;
 	}
@@ -422,6 +447,27 @@ public class ObjectDefinition implements Cloneable, Serializable {
 	}
 
 	protected String externalReferenceCode;
+
+	public String getFriendlyURLSeparator() {
+		return friendlyURLSeparator;
+	}
+
+	public void setFriendlyURLSeparator(String friendlyURLSeparator) {
+		this.friendlyURLSeparator = friendlyURLSeparator;
+	}
+
+	public void setFriendlyURLSeparator(
+		UnsafeSupplier<String, Exception> friendlyURLSeparatorUnsafeSupplier) {
+
+		try {
+			friendlyURLSeparator = friendlyURLSeparatorUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String friendlyURLSeparator;
 
 	public Long getId() {
 		return id;

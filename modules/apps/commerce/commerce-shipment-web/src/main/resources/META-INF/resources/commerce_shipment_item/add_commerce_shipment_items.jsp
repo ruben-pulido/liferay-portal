@@ -16,10 +16,11 @@ CommerceShipment commerceShipment = commerceShipmentDisplayContext.getCommerceSh
 <portlet:actionURL name="/commerce_shipment/edit_commerce_shipment" var="editCommerceShipmentURL" />
 
 <commerce-ui:modal-content
-	contentCssClasses="p-0"
+	contentCssClasses="px-0"
 	redirect="<%= redirect %>"
 	showSubmitButton="<%= true %>"
 	title='<%= LanguageUtil.get(request, "add-shipment-items") %>'
+	useNativeSubmit="<%= false %>"
 >
 	<aui:form action="<%= editCommerceShipmentURL %>" method="post" name="fm">
 		<aui:input name="<%= Constants.CMD %>" type="hidden" value="addShipmentItems" />

@@ -1269,6 +1269,42 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 	}
 
 	@Test
+	public void testIncludeMappedImageFile() throws Exception {
+		_layout.setType(LayoutConstants.TYPE_ASSET_DISPLAY);
+
+		UnicodeProperties typeSettingsUnicodeProperties =
+			_layout.getTypeSettingsProperties();
+
+		typeSettingsUnicodeProperties.put(
+			"mapped-openGraphImage", "mappedImageFileFieldName");
+		typeSettingsUnicodeProperties.put(
+			"mapped-openGraphImageAlt", "mappedImageAltFieldName");
+
+		_layout = _layoutLocalService.updateLayout(_layout);
+
+		HttpServletRequest httpServletRequest = _getHttpServletRequest();
+		MockHttpServletResponse mockHttpServletResponse =
+			new MockHttpServletResponse();
+
+		_testWithMockInfoItem(
+			httpServletRequest,
+			() -> _testWithLayoutSEOCompanyConfiguration(
+				() -> _dynamicInclude.include(
+					httpServletRequest, mockHttpServletResponse,
+					RandomTestUtil.randomString()),
+				false, true));
+
+		Document document = Jsoup.parse(
+			mockHttpServletResponse.getContentAsString());
+
+		_assertMetaTag(
+			document, "og:image", "http://localhost:8080/imageFileURL");
+		_assertMetaTag(document, "og:image:alt", "mappedImageAlt");
+		_assertMetaTag(
+			document, "og:image:url", "http://localhost:8080/imageFileURL");
+	}
+
+	@Test
 	public void testIncludeMappedTitleAndDescription() throws Exception {
 		_layout.setType(LayoutConstants.TYPE_ASSET_DISPLAY);
 
@@ -2120,17 +2156,6 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 					).namespace(
 						StringPool.BLANK
 					).name(
-						"title"
-					).build(),
-					"defaultMappedTitle")
-			).infoFieldValue(
-				new InfoFieldValue<>(
-					InfoField.builder(
-					).infoFieldType(
-						TextInfoFieldType.INSTANCE
-					).namespace(
-						StringPool.BLANK
-					).name(
 						"mappedDescriptionFieldName"
 					).build(),
 					"<p>mappedDescription</p>")
@@ -2142,20 +2167,9 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 					).namespace(
 						StringPool.BLANK
 					).name(
-						"mappedTitleFieldName"
+						"mappedImageAltFieldName"
 					).build(),
-					"mappedTitle")
-			).infoFieldValue(
-				new InfoFieldValue<>(
-					InfoField.builder(
-					).infoFieldType(
-						TextInfoFieldType.INSTANCE
-					).namespace(
-						StringPool.BLANK
-					).name(
-						"mappedTitleFieldName"
-					).build(),
-					"mappedTitle")
+					"mappedImageAlt")
 			).infoFieldValue(
 				new InfoFieldValue<>(
 					InfoField.builder(
@@ -2171,13 +2185,35 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 				new InfoFieldValue<>(
 					InfoField.builder(
 					).infoFieldType(
+						ImageInfoFieldType.INSTANCE
+					).namespace(
+						StringPool.BLANK
+					).name(
+						"mappedImageFileFieldName"
+					).build(),
+					"/imageFileURL")
+			).infoFieldValue(
+				new InfoFieldValue<>(
+					InfoField.builder(
+					).infoFieldType(
 						TextInfoFieldType.INSTANCE
 					).namespace(
 						StringPool.BLANK
 					).name(
-						"mappedImageAltFieldName"
+						"mappedTitleFieldName"
 					).build(),
-					"mappedImageAlt")
+					"mappedTitle")
+			).infoFieldValue(
+				new InfoFieldValue<>(
+					InfoField.builder(
+					).infoFieldType(
+						TextInfoFieldType.INSTANCE
+					).namespace(
+						StringPool.BLANK
+					).name(
+						"title"
+					).build(),
+					"defaultMappedTitle")
 			).build();
 		}
 

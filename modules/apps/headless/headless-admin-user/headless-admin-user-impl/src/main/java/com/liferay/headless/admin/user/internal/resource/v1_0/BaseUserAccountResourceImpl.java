@@ -2514,14 +2514,22 @@ public abstract class BaseUserAccountResourceImpl
 			"createStrategy", "INSERT");
 
 		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
-			userAccountUnsafeFunction = userAccount -> postUserAccount(
-				userAccount);
-
 			if (parameters.containsKey("accountId")) {
 				userAccountUnsafeFunction =
 					userAccount -> postAccountUserAccount(
 						_parseLong((String)parameters.get("accountId")),
 						userAccount);
+			}
+			else if (parameters.containsKey("externalReferenceCode")) {
+				userAccountUnsafeFunction =
+					userAccount ->
+						postAccountUserAccountByExternalReferenceCode(
+							(String)parameters.get("externalReferenceCode"),
+							userAccount);
+			}
+			else {
+				userAccountUnsafeFunction = userAccount -> postUserAccount(
+					userAccount);
 			}
 		}
 
@@ -2531,26 +2539,30 @@ public abstract class BaseUserAccountResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				userAccountUnsafeFunction = userAccount -> {
+					UserAccount getUserAccount = null;
 					UserAccount persistedUserAccount = null;
 
 					try {
-						UserAccount getUserAccount =
-							getUserAccountByExternalReferenceCode(
-								userAccount.getExternalReferenceCode());
+						getUserAccount = getUserAccountByExternalReferenceCode(
+							userAccount.getExternalReferenceCode());
 
 						persistedUserAccount = patchUserAccount(
-							getUserAccount.getId() != null ?
-								getUserAccount.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"userAccountId")),
-							userAccount);
+							getUserAccount.getId(), userAccount);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						if (parameters.containsKey("accountId")) {
 							persistedUserAccount = postAccountUserAccount(
 								_parseLong((String)parameters.get("accountId")),
 								userAccount);
+						}
+						else if (parameters.containsKey(
+									"externalReferenceCode")) {
+
+							persistedUserAccount =
+								postAccountUserAccountByExternalReferenceCode(
+									(String)parameters.get(
+										"externalReferenceCode"),
+									userAccount);
 						}
 						else {
 							persistedUserAccount = postUserAccount(userAccount);
@@ -2562,9 +2574,16 @@ public abstract class BaseUserAccountResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				userAccountUnsafeFunction =
-					userAccount -> putUserAccountByExternalReferenceCode(
-						userAccount.getExternalReferenceCode(), userAccount);
+				userAccountUnsafeFunction = userAccount -> {
+					UserAccount persistedUserAccount = null;
+
+					persistedUserAccount =
+						putUserAccountByExternalReferenceCode(
+							userAccount.getExternalReferenceCode(),
+							userAccount);
+
+					return persistedUserAccount;
+				};
 			}
 		}
 
@@ -2733,16 +2752,12 @@ public abstract class BaseUserAccountResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			userAccountUnsafeFunction = userAccount -> patchUserAccount(
-				userAccount.getId() != null ? userAccount.getId() :
-					_parseLong((String)parameters.get("userAccountId")),
-				userAccount);
+				userAccount.getId(), userAccount);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			userAccountUnsafeFunction = userAccount -> putUserAccount(
-				userAccount.getId() != null ? userAccount.getId() :
-					_parseLong((String)parameters.get("userAccountId")),
-				userAccount);
+				userAccount.getId(), userAccount);
 		}
 
 		if (userAccountUnsafeFunction == null) {

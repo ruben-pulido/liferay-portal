@@ -274,7 +274,7 @@ public abstract class BaseObjectDefinitionResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PATCH' 'http://localhost:8080/o/object-admin/v1.0/object-definitions/{objectDefinitionId}' -d $'{"accountEntryRestricted": ___, "accountEntryRestrictedObjectFieldName": ___, "active": ___, "className": ___, "defaultLanguageId": ___, "enableCategorization": ___, "enableComments": ___, "enableFriendlyURLCustomization": ___, "enableIndexSearch": ___, "enableLocalization": ___, "enableObjectEntryDraft": ___, "enableObjectEntryHistory": ___, "enableObjectEntryVersioning": ___, "externalReferenceCode": ___, "label": ___, "modifiable": ___, "name": ___, "objectActions": ___, "objectDefinitionSettings": ___, "objectFields": ___, "objectFolderExternalReferenceCode": ___, "objectLayouts": ___, "objectRelationships": ___, "objectValidationRules": ___, "objectViews": ___, "panelAppOrder": ___, "panelCategoryKey": ___, "pluralLabel": ___, "portlet": ___, "scope": ___, "status": ___, "storageType": ___, "system": ___, "titleObjectFieldName": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PATCH' 'http://localhost:8080/o/object-admin/v1.0/object-definitions/{objectDefinitionId}' -d $'{"accountEntryRestricted": ___, "accountEntryRestrictedObjectFieldName": ___, "active": ___, "className": ___, "defaultLanguageId": ___, "enableCategorization": ___, "enableComments": ___, "enableFriendlyURLCustomization": ___, "enableIndexSearch": ___, "enableLocalization": ___, "enableObjectEntryDraft": ___, "enableObjectEntryHistory": ___, "enableObjectEntrySchedule": ___, "enableObjectEntryVersioning": ___, "externalReferenceCode": ___, "friendlyURLSeparator": ___, "label": ___, "modifiable": ___, "name": ___, "objectActions": ___, "objectDefinitionSettings": ___, "objectFields": ___, "objectFolderExternalReferenceCode": ___, "objectLayouts": ___, "objectRelationships": ___, "objectValidationRules": ___, "objectViews": ___, "panelAppOrder": ___, "panelCategoryKey": ___, "pluralLabel": ___, "portlet": ___, "scope": ___, "status": ___, "storageType": ___, "system": ___, "titleObjectFieldName": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -366,6 +366,11 @@ public abstract class BaseObjectDefinitionResourceImpl
 				objectDefinition.getEnableObjectEntryHistory());
 		}
 
+		if (objectDefinition.getEnableObjectEntrySchedule() != null) {
+			existingObjectDefinition.setEnableObjectEntrySchedule(
+				objectDefinition.getEnableObjectEntrySchedule());
+		}
+
 		if (objectDefinition.getEnableObjectEntryVersioning() != null) {
 			existingObjectDefinition.setEnableObjectEntryVersioning(
 				objectDefinition.getEnableObjectEntryVersioning());
@@ -374,6 +379,11 @@ public abstract class BaseObjectDefinitionResourceImpl
 		if (objectDefinition.getExternalReferenceCode() != null) {
 			existingObjectDefinition.setExternalReferenceCode(
 				objectDefinition.getExternalReferenceCode());
+		}
+
+		if (objectDefinition.getFriendlyURLSeparator() != null) {
+			existingObjectDefinition.setFriendlyURLSeparator(
+				objectDefinition.getFriendlyURLSeparator());
 		}
 
 		if (objectDefinition.getLabel() != null) {
@@ -440,7 +450,7 @@ public abstract class BaseObjectDefinitionResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/object-admin/v1.0/object-definitions' -d $'{"accountEntryRestricted": ___, "accountEntryRestrictedObjectFieldName": ___, "active": ___, "className": ___, "defaultLanguageId": ___, "enableCategorization": ___, "enableComments": ___, "enableFriendlyURLCustomization": ___, "enableIndexSearch": ___, "enableLocalization": ___, "enableObjectEntryDraft": ___, "enableObjectEntryHistory": ___, "enableObjectEntryVersioning": ___, "externalReferenceCode": ___, "label": ___, "modifiable": ___, "name": ___, "objectActions": ___, "objectDefinitionSettings": ___, "objectFields": ___, "objectFolderExternalReferenceCode": ___, "objectLayouts": ___, "objectRelationships": ___, "objectValidationRules": ___, "objectViews": ___, "panelAppOrder": ___, "panelCategoryKey": ___, "pluralLabel": ___, "portlet": ___, "scope": ___, "status": ___, "storageType": ___, "system": ___, "titleObjectFieldName": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/object-admin/v1.0/object-definitions' -d $'{"accountEntryRestricted": ___, "accountEntryRestrictedObjectFieldName": ___, "active": ___, "className": ___, "defaultLanguageId": ___, "enableCategorization": ___, "enableComments": ___, "enableFriendlyURLCustomization": ___, "enableIndexSearch": ___, "enableLocalization": ___, "enableObjectEntryDraft": ___, "enableObjectEntryHistory": ___, "enableObjectEntrySchedule": ___, "enableObjectEntryVersioning": ___, "externalReferenceCode": ___, "friendlyURLSeparator": ___, "label": ___, "modifiable": ___, "name": ___, "objectActions": ___, "objectDefinitionSettings": ___, "objectFields": ___, "objectFolderExternalReferenceCode": ___, "objectLayouts": ___, "objectRelationships": ___, "objectValidationRules": ___, "objectViews": ___, "panelAppOrder": ___, "panelCategoryKey": ___, "pluralLabel": ___, "portlet": ___, "scope": ___, "status": ___, "storageType": ___, "system": ___, "titleObjectFieldName": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.tags.Tags(
 		value = {
@@ -622,7 +632,7 @@ public abstract class BaseObjectDefinitionResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/object-admin/v1.0/object-definitions/{objectDefinitionId}' -d $'{"accountEntryRestricted": ___, "accountEntryRestrictedObjectFieldName": ___, "active": ___, "className": ___, "defaultLanguageId": ___, "enableCategorization": ___, "enableComments": ___, "enableFriendlyURLCustomization": ___, "enableIndexSearch": ___, "enableLocalization": ___, "enableObjectEntryDraft": ___, "enableObjectEntryHistory": ___, "enableObjectEntryVersioning": ___, "externalReferenceCode": ___, "label": ___, "modifiable": ___, "name": ___, "objectActions": ___, "objectDefinitionSettings": ___, "objectFields": ___, "objectFolderExternalReferenceCode": ___, "objectLayouts": ___, "objectRelationships": ___, "objectValidationRules": ___, "objectViews": ___, "panelAppOrder": ___, "panelCategoryKey": ___, "pluralLabel": ___, "portlet": ___, "scope": ___, "status": ___, "storageType": ___, "system": ___, "titleObjectFieldName": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/object-admin/v1.0/object-definitions/{objectDefinitionId}' -d $'{"accountEntryRestricted": ___, "accountEntryRestrictedObjectFieldName": ___, "active": ___, "className": ___, "defaultLanguageId": ___, "enableCategorization": ___, "enableComments": ___, "enableFriendlyURLCustomization": ___, "enableIndexSearch": ___, "enableLocalization": ___, "enableObjectEntryDraft": ___, "enableObjectEntryHistory": ___, "enableObjectEntrySchedule": ___, "enableObjectEntryVersioning": ___, "externalReferenceCode": ___, "friendlyURLSeparator": ___, "label": ___, "modifiable": ___, "name": ___, "objectActions": ___, "objectDefinitionSettings": ___, "objectFields": ___, "objectFolderExternalReferenceCode": ___, "objectLayouts": ___, "objectRelationships": ___, "objectValidationRules": ___, "objectViews": ___, "panelAppOrder": ___, "panelCategoryKey": ___, "pluralLabel": ___, "portlet": ___, "scope": ___, "status": ___, "storageType": ___, "system": ___, "titleObjectFieldName": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -702,7 +712,7 @@ public abstract class BaseObjectDefinitionResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/object-admin/v1.0/object-definitions/by-external-reference-code/{externalReferenceCode}' -d $'{"accountEntryRestricted": ___, "accountEntryRestrictedObjectFieldName": ___, "active": ___, "className": ___, "defaultLanguageId": ___, "enableCategorization": ___, "enableComments": ___, "enableFriendlyURLCustomization": ___, "enableIndexSearch": ___, "enableLocalization": ___, "enableObjectEntryDraft": ___, "enableObjectEntryHistory": ___, "enableObjectEntryVersioning": ___, "externalReferenceCode": ___, "label": ___, "modifiable": ___, "name": ___, "objectActions": ___, "objectDefinitionSettings": ___, "objectFields": ___, "objectFolderExternalReferenceCode": ___, "objectLayouts": ___, "objectRelationships": ___, "objectValidationRules": ___, "objectViews": ___, "panelAppOrder": ___, "panelCategoryKey": ___, "pluralLabel": ___, "portlet": ___, "scope": ___, "status": ___, "storageType": ___, "system": ___, "titleObjectFieldName": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/object-admin/v1.0/object-definitions/by-external-reference-code/{externalReferenceCode}' -d $'{"accountEntryRestricted": ___, "accountEntryRestrictedObjectFieldName": ___, "active": ___, "className": ___, "defaultLanguageId": ___, "enableCategorization": ___, "enableComments": ___, "enableFriendlyURLCustomization": ___, "enableIndexSearch": ___, "enableLocalization": ___, "enableObjectEntryDraft": ___, "enableObjectEntryHistory": ___, "enableObjectEntrySchedule": ___, "enableObjectEntryVersioning": ___, "externalReferenceCode": ___, "friendlyURLSeparator": ___, "label": ___, "modifiable": ___, "name": ___, "objectActions": ___, "objectDefinitionSettings": ___, "objectFields": ___, "objectFolderExternalReferenceCode": ___, "objectLayouts": ___, "objectRelationships": ___, "objectValidationRules": ___, "objectViews": ___, "panelAppOrder": ___, "panelCategoryKey": ___, "pluralLabel": ___, "portlet": ___, "scope": ___, "status": ___, "storageType": ___, "system": ___, "titleObjectFieldName": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -759,20 +769,16 @@ public abstract class BaseObjectDefinitionResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				objectDefinitionUnsafeFunction = objectDefinition -> {
+					ObjectDefinition getObjectDefinition = null;
 					ObjectDefinition persistedObjectDefinition = null;
 
 					try {
-						ObjectDefinition getObjectDefinition =
+						getObjectDefinition =
 							getObjectDefinitionByExternalReferenceCode(
 								objectDefinition.getExternalReferenceCode());
 
 						persistedObjectDefinition = patchObjectDefinition(
-							getObjectDefinition.getId() != null ?
-								getObjectDefinition.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"objectDefinitionId")),
-							objectDefinition);
+							getObjectDefinition.getId(), objectDefinition);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedObjectDefinition = postObjectDefinition(
@@ -784,11 +790,16 @@ public abstract class BaseObjectDefinitionResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				objectDefinitionUnsafeFunction =
-					objectDefinition ->
+				objectDefinitionUnsafeFunction = objectDefinition -> {
+					ObjectDefinition persistedObjectDefinition = null;
+
+					persistedObjectDefinition =
 						putObjectDefinitionByExternalReferenceCode(
 							objectDefinition.getExternalReferenceCode(),
 							objectDefinition);
+
+					return persistedObjectDefinition;
+				};
 			}
 		}
 
@@ -921,21 +932,13 @@ public abstract class BaseObjectDefinitionResourceImpl
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			objectDefinitionUnsafeFunction =
 				objectDefinition -> patchObjectDefinition(
-					objectDefinition.getId() != null ?
-						objectDefinition.getId() :
-							_parseLong(
-								(String)parameters.get("objectDefinitionId")),
-					objectDefinition);
+					objectDefinition.getId(), objectDefinition);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			objectDefinitionUnsafeFunction =
 				objectDefinition -> putObjectDefinition(
-					objectDefinition.getId() != null ?
-						objectDefinition.getId() :
-							_parseLong(
-								(String)parameters.get("objectDefinitionId")),
-					objectDefinition);
+					objectDefinition.getId(), objectDefinition);
 		}
 
 		if (objectDefinitionUnsafeFunction == null) {
@@ -957,14 +960,6 @@ public abstract class BaseObjectDefinitionResourceImpl
 				objectDefinitionUnsafeFunction.apply(objectDefinition);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

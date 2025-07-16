@@ -673,20 +673,16 @@ public abstract class BaseReplenishmentItemResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				replenishmentItemUnsafeFunction = replenishmentItem -> {
+					ReplenishmentItem getReplenishmentItem = null;
 					ReplenishmentItem persistedReplenishmentItem = null;
 
 					try {
-						ReplenishmentItem getReplenishmentItem =
+						getReplenishmentItem =
 							getReplenishmentItemByExternalReferenceCode(
 								replenishmentItem.getExternalReferenceCode());
 
 						persistedReplenishmentItem = patchReplenishmentItem(
-							getReplenishmentItem.getId() != null ?
-								getReplenishmentItem.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"replenishmentItemId")),
-							replenishmentItem);
+							getReplenishmentItem.getId(), replenishmentItem);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedReplenishmentItem = postReplenishmentItem(
@@ -699,10 +695,16 @@ public abstract class BaseReplenishmentItemResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				replenishmentItemUnsafeFunction = replenishmentItem ->
-					putReplenishmentItemByExternalReferenceCode(
-						replenishmentItem.getExternalReferenceCode(),
-						replenishmentItem);
+				replenishmentItemUnsafeFunction = replenishmentItem -> {
+					ReplenishmentItem persistedReplenishmentItem = null;
+
+					persistedReplenishmentItem =
+						putReplenishmentItemByExternalReferenceCode(
+							replenishmentItem.getExternalReferenceCode(),
+							replenishmentItem);
+
+					return persistedReplenishmentItem;
+				};
 			}
 		}
 
@@ -858,11 +860,7 @@ public abstract class BaseReplenishmentItemResourceImpl
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			replenishmentItemUnsafeFunction =
 				replenishmentItem -> patchReplenishmentItem(
-					replenishmentItem.getId() != null ?
-						replenishmentItem.getId() :
-							_parseLong(
-								(String)parameters.get("replenishmentItemId")),
-					replenishmentItem);
+					replenishmentItem.getId(), replenishmentItem);
 		}
 
 		if (replenishmentItemUnsafeFunction == null) {

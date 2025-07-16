@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
+import com.liferay.portal.vulcan.custom.field.CustomFieldsUtil;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
@@ -262,11 +263,15 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 
 		ServiceContext serviceContext = ServiceContextBuilder.create(
 			groupId, contextHttpServletRequest, sitePage.getViewableByAsString()
+		).expandoBridgeAttributes(
+			CustomFieldsUtil.toMap(
+				Layout.class.getName(), contextCompany.getCompanyId(),
+				sitePage.getCustomFields(), null)
 		).build();
 
 		serviceContext.setUuid(sitePage.getUuid());
 
-		return _layoutService.addLayout(
+		Layout layout = _layoutService.addLayout(
 			externalReferenceCode, groupId, false,
 			_getParentLayoutId(
 				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, groupId,
@@ -279,6 +284,15 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			LocalizedMapUtil.getLocalizedMap(
 				sitePage.getFriendlyUrlPath_i18n()),
 			0, serviceContext);
+
+		PageSettings pageSettings = sitePage.getPageSettings();
+
+		if ((pageSettings != null) && (pageSettings.getPriority() != null)) {
+			layout = _layoutService.updatePriority(
+				layout.getPlid(), pageSettings.getPriority());
+		}
+
+		return layout;
 	}
 
 	private long _getParentLayoutId(
@@ -373,6 +387,15 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 				sitePage.getFriendlyUrlPath_i18n());
 		}
 
+		ServiceContext serviceContext = ServiceContextBuilder.create(
+			layout.getGroupId(), contextHttpServletRequest,
+			sitePage.getViewableByAsString()
+		).expandoBridgeAttributes(
+			CustomFieldsUtil.toMap(
+				Layout.class.getName(), contextCompany.getCompanyId(),
+				sitePage.getCustomFields(), null)
+		).build();
+
 		layout = _layoutService.updateLayout(
 			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
 			_getParentLayoutId(
@@ -384,10 +407,19 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 				layout.isHidden(), sitePage.getPageSettings()),
 			friendlyURLMap, layout.isIconImage(), null,
 			layout.getStyleBookEntryId(), layout.getFaviconFileEntryId(),
-			layout.getMasterLayoutPlid(),
-			ServiceContextUtil.createServiceContext(
-				layout.getGroupId(), contextHttpServletRequest,
-				contextUser.getUserId()));
+			layout.getMasterLayoutPlid(), serviceContext);
+
+		int priority = Integer.MAX_VALUE;
+
+		PageSettings pageSettings = sitePage.getPageSettings();
+
+		if ((pageSettings != null) && (pageSettings.getPriority() != null)) {
+			priority = pageSettings.getPriority();
+		}
+
+		if (layout.getPriority() != priority) {
+			layout = _layoutService.updatePriority(layout.getPlid(), priority);
+		}
 
 		String typeSettings = _getTypeSettings(sitePage);
 

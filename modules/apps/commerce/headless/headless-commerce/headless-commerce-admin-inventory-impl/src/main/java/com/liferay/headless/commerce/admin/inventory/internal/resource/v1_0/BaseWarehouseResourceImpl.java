@@ -504,9 +504,14 @@ public abstract class BaseWarehouseResourceImpl
 				"updateStrategy", "UPDATE");
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				warehouseUnsafeFunction =
-					warehouse -> putWarehouseByExternalReferenceCode(
+				warehouseUnsafeFunction = warehouse -> {
+					Warehouse persistedWarehouse = null;
+
+					persistedWarehouse = putWarehouseByExternalReferenceCode(
 						warehouse.getExternalReferenceCode(), warehouse);
+
+					return persistedWarehouse;
+				};
 			}
 		}
 

@@ -8,8 +8,8 @@ import {openModal} from 'frontend-js-components-web';
 import {navigate, sub} from 'frontend-js-web';
 import React from 'react';
 
+import MultipleSpacesRenderer from '../../FDSPropsTransformer/cell_renderers/MultipleSpacesRenderer';
 import {executeAsyncItemAction} from '../../FDSPropsTransformer/utils/executeAsyncItemAction';
-import SpaceSticker from '../../components/SpaceSticker';
 import CategorizationToolbar from '../CategorizationToolbar';
 import CreateTagsModal from './CreateTagsModal';
 import EditTagsModal from './EditTagsModal';
@@ -63,37 +63,6 @@ export default function ViewTags({
 		},
 	];
 
-	const ViewsSpaceTableCell = ({itemData}: {itemData: any}) => {
-		const assetLibraryNames = itemData.assetLibraries.map(
-			(assetLibrary: any) => assetLibrary.name
-		);
-		const assetLibraryIds = itemData.assetLibraries.map(
-			(assetLibrary: any) => assetLibrary.id
-		);
-
-		if (assetLibraryIds.includes(-1)) {
-			return (
-				<span className="align-items-center d-flex space-renderer-sticker">
-					<SpaceSticker name="All Spaces" size="sm" />
-				</span>
-			);
-		}
-		else {
-			return (
-				<>
-					{assetLibraryNames.map((name: string, index: number) => (
-						<span
-							className="align-items-center d-flex space-renderer-sticker"
-							key={index}
-						>
-							<SpaceSticker name={name} size="sm" />
-						</span>
-					))}
-				</>
-			);
-		}
-	};
-
 	const views = [
 		{
 			contentRenderer: 'table',
@@ -127,7 +96,7 @@ export default function ViewTags({
 
 	const emptyState = {
 		description: Liferay.Language.get('click-new-to-create-your-first-tag'),
-		image: '/states/cms_empty_state.svg',
+		image: '/states/cms_empty_state_categorization.svg',
 		title: Liferay.Language.get('no-tags-yet'),
 	};
 
@@ -254,7 +223,7 @@ export default function ViewTags({
 				customRenderers={{
 					tableCell: [
 						{
-							component: ViewsSpaceTableCell,
+							component: MultipleSpacesRenderer,
 							name: VIEWS_SPACE_TABLE_CELL_RENDERER_NAME,
 							type: 'internal',
 						},

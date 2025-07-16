@@ -115,6 +115,22 @@ public class AssetCategoryServiceImpl extends AssetCategoryServiceBaseImpl {
 	}
 
 	@Override
+	public AssetCategory deleteCategoryByExternalReferenceCode(
+			String externalReferenceCode, long groupId)
+		throws PortalException {
+
+		AssetCategory assetCategory =
+			assetCategoryLocalService.getAssetCategoryByExternalReferenceCode(
+				externalReferenceCode, groupId);
+
+		AssetCategoryPermission.check(
+			getPermissionChecker(), assetCategory.getCategoryId(),
+			ActionKeys.DELETE);
+
+		return assetCategoryLocalService.deleteCategory(assetCategory);
+	}
+
+	@Override
 	public AssetCategory fetchCategory(long categoryId) throws PortalException {
 		AssetCategory category = assetCategoryLocalService.fetchCategory(
 			categoryId);
@@ -286,6 +302,14 @@ public class AssetCategoryServiceImpl extends AssetCategoryServiceBaseImpl {
 	public AssetCategory getOrAddIncompleteCategory(
 			String externalReferenceCode, long groupId)
 		throws PortalException {
+
+		AssetCategory category =
+			assetCategoryService.fetchCategoryByExternalReferenceCode(
+				externalReferenceCode, groupId);
+
+		if (category != null) {
+			return category;
+		}
 
 		AssetCategoriesPermission.check(
 			getPermissionChecker(), groupId, ActionKeys.ADD_CATEGORY);

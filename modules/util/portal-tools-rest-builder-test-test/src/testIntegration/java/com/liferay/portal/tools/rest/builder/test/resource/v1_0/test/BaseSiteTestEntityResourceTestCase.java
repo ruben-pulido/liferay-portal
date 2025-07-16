@@ -221,6 +221,42 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 	}
 
 	@Test
+	public void testDeleteSiteSiteTestEntityByExternalReferenceCode()
+		throws Exception {
+
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		SiteTestEntity siteTestEntity =
+			testDeleteSiteSiteTestEntityByExternalReferenceCode_addSiteTestEntity();
+
+		assertHttpResponseStatusCode(
+			204,
+			siteTestEntityResource.
+				deleteSiteSiteTestEntityByExternalReferenceCodeHttpResponse(
+					siteTestEntity.getSiteId(),
+					siteTestEntity.getExternalReferenceCode()));
+
+		assertHttpResponseStatusCode(
+			404,
+			siteTestEntityResource.
+				getSiteSiteTestEntityByExternalReferenceCodeHttpResponse(
+					siteTestEntity.getSiteId(),
+					siteTestEntity.getExternalReferenceCode()));
+		assertHttpResponseStatusCode(
+			404,
+			siteTestEntityResource.
+				getSiteSiteTestEntityByExternalReferenceCodeHttpResponse(
+					siteTestEntity.getSiteId(), "-"));
+	}
+
+	protected SiteTestEntity
+			testDeleteSiteSiteTestEntityByExternalReferenceCode_addSiteTestEntity()
+		throws Exception {
+
+		return siteTestEntityResource.postSiteSiteTestEntity(
+			testGroup.getGroupId(), randomSiteTestEntity());
+	}
+
+	@Test
 	public void testGetSiteSiteTestEntitiesPage() throws Exception {
 		Long siteId = testGetSiteSiteTestEntitiesPage_getSiteId();
 		Long irrelevantSiteId =
@@ -318,6 +354,80 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 	}
 
 	@Test
+	public void testGraphQLGetSiteSiteTestEntitiesPage() throws Exception {
+		Long siteId = testGetSiteSiteTestEntitiesPage_getSiteId();
+
+		GraphQLField graphQLField = new GraphQLField(
+			"siteTestEntities",
+			new HashMap<String, Object>() {
+				{
+					put("siteKey", "\"" + siteId + "\"");
+				}
+			},
+			new GraphQLField("items", getGraphQLFields()),
+			new GraphQLField("page"), new GraphQLField("totalCount"));
+
+		// No namespace
+
+		JSONObject siteTestEntitiesJSONObject = JSONUtil.getValueAsJSONObject(
+			invokeGraphQLQuery(graphQLField), "JSONObject/data",
+			"JSONObject/siteTestEntities");
+
+		long totalCount = siteTestEntitiesJSONObject.getLong("totalCount");
+
+		SiteTestEntity siteTestEntity1 =
+			testGraphQLGetSiteSiteTestEntitiesPage_addSiteTestEntity();
+		SiteTestEntity siteTestEntity2 =
+			testGraphQLGetSiteSiteTestEntitiesPage_addSiteTestEntity();
+
+		siteTestEntitiesJSONObject = JSONUtil.getValueAsJSONObject(
+			invokeGraphQLQuery(graphQLField), "JSONObject/data",
+			"JSONObject/siteTestEntities");
+
+		Assert.assertEquals(
+			totalCount + 2, siteTestEntitiesJSONObject.getLong("totalCount"));
+
+		assertContains(
+			siteTestEntity1,
+			Arrays.asList(
+				SiteTestEntitySerDes.toDTOs(
+					siteTestEntitiesJSONObject.getString("items"))));
+		assertContains(
+			siteTestEntity2,
+			Arrays.asList(
+				SiteTestEntitySerDes.toDTOs(
+					siteTestEntitiesJSONObject.getString("items"))));
+
+		// Using the namespace test_v1_0
+
+		siteTestEntitiesJSONObject = JSONUtil.getValueAsJSONObject(
+			invokeGraphQLQuery(new GraphQLField("test_v1_0", graphQLField)),
+			"JSONObject/data", "JSONObject/test_v1_0",
+			"JSONObject/siteTestEntities");
+
+		Assert.assertEquals(
+			totalCount + 2, siteTestEntitiesJSONObject.getLong("totalCount"));
+
+		assertContains(
+			siteTestEntity1,
+			Arrays.asList(
+				SiteTestEntitySerDes.toDTOs(
+					siteTestEntitiesJSONObject.getString("items"))));
+		assertContains(
+			siteTestEntity2,
+			Arrays.asList(
+				SiteTestEntitySerDes.toDTOs(
+					siteTestEntitiesJSONObject.getString("items"))));
+	}
+
+	protected SiteTestEntity
+			testGraphQLGetSiteSiteTestEntitiesPage_addSiteTestEntity()
+		throws Exception {
+
+		return testGraphQLSiteTestEntity_addSiteTestEntity();
+	}
+
+	@Test
 	public void testGetSiteSiteTestEntityByExternalReferenceCode()
 		throws Exception {
 
@@ -326,9 +436,8 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 
 		SiteTestEntity getSiteTestEntity =
 			siteTestEntityResource.getSiteSiteTestEntityByExternalReferenceCode(
-				postSiteTestEntity.getExternalReferenceCode(),
-				testGetSiteSiteTestEntityByExternalReferenceCode_getSiteId(
-					postSiteTestEntity));
+				postSiteTestEntity.getSiteId(),
+				postSiteTestEntity.getExternalReferenceCode());
 
 		assertEquals(postSiteTestEntity, getSiteTestEntity);
 		assertValid(getSiteTestEntity);
@@ -338,18 +447,10 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 		getSiteTestEntity =
 			permissionsSiteTestEntityResource.
 				getSiteSiteTestEntityByExternalReferenceCode(
-					postSiteTestEntity.getExternalReferenceCode(),
-					testGetSiteSiteTestEntityByExternalReferenceCode_getSiteId(
-						postSiteTestEntity));
+					postSiteTestEntity.getSiteId(),
+					postSiteTestEntity.getExternalReferenceCode());
 
 		Assert.assertNotNull(getSiteTestEntity.getPermissions());
-	}
-
-	protected Long testGetSiteSiteTestEntityByExternalReferenceCode_getSiteId(
-			SiteTestEntity siteTestEntity)
-		throws Exception {
-
-		return siteTestEntity.getSiteId();
 	}
 
 	protected SiteTestEntity
@@ -358,6 +459,135 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 
 		return siteTestEntityResource.postSiteSiteTestEntity(
 			testGroup.getGroupId(), randomSiteTestEntity());
+	}
+
+	@Test
+	public void testGraphQLGetSiteSiteTestEntityByExternalReferenceCode()
+		throws Exception {
+
+		SiteTestEntity siteTestEntity =
+			testGraphQLGetSiteSiteTestEntityByExternalReferenceCode_addSiteTestEntity();
+
+		// No namespace
+
+		Assert.assertTrue(
+			equals(
+				siteTestEntity,
+				SiteTestEntitySerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"siteTestEntityByExternalReferenceCode",
+								new HashMap<String, Object>() {
+									{
+										put(
+											"siteKey",
+											"\"" + siteTestEntity.getSiteId() +
+												"\"");
+										put(
+											"externalReferenceCode",
+											"\"" +
+												siteTestEntity.
+													getExternalReferenceCode() +
+														"\"");
+									}
+								},
+								getGraphQLFields())),
+						"JSONObject/data",
+						"Object/siteTestEntityByExternalReferenceCode"))));
+
+		// Using the namespace test_v1_0
+
+		Assert.assertTrue(
+			equals(
+				siteTestEntity,
+				SiteTestEntitySerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"test_v1_0",
+								new GraphQLField(
+									"siteTestEntityByExternalReferenceCode",
+									new HashMap<String, Object>() {
+										{
+											put(
+												"siteKey",
+												"\"" +
+													siteTestEntity.getSiteId() +
+														"\"");
+											put(
+												"externalReferenceCode",
+												"\"" +
+													siteTestEntity.
+														getExternalReferenceCode() +
+															"\"");
+										}
+									},
+									getGraphQLFields()))),
+						"JSONObject/data", "JSONObject/test_v1_0",
+						"Object/siteTestEntityByExternalReferenceCode"))));
+	}
+
+	@Test
+	public void testGraphQLGetSiteSiteTestEntityByExternalReferenceCodeNotFound()
+		throws Exception {
+
+		String irrelevantExternalReferenceCode =
+			"\"" + RandomTestUtil.randomString() + "\"";
+
+		// No namespace
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"siteTestEntityByExternalReferenceCode",
+						new HashMap<String, Object>() {
+							{
+								put(
+									"siteKey",
+									"\"" + irrelevantGroup.getGroupId() + "\"");
+								put(
+									"externalReferenceCode",
+									irrelevantExternalReferenceCode);
+							}
+						},
+						getGraphQLFields())),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+
+		// Using the namespace test_v1_0
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"test_v1_0",
+						new GraphQLField(
+							"siteTestEntityByExternalReferenceCode",
+							new HashMap<String, Object>() {
+								{
+									put(
+										"siteKey",
+										"\"" + irrelevantGroup.getGroupId() +
+											"\"");
+									put(
+										"externalReferenceCode",
+										irrelevantExternalReferenceCode);
+								}
+							},
+							getGraphQLFields()))),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+	}
+
+	protected SiteTestEntity
+			testGraphQLGetSiteSiteTestEntityByExternalReferenceCode_addSiteTestEntity()
+		throws Exception {
+
+		return testGraphQLSiteTestEntity_addSiteTestEntity();
 	}
 
 	@Test
@@ -580,7 +810,108 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 	}
 
 	@Test
+	public void testGraphQLGetSiteTestEntity() throws Exception {
+		SiteTestEntity siteTestEntity =
+			testGraphQLGetSiteTestEntity_addSiteTestEntity();
+
+		// No namespace
+
+		Assert.assertTrue(
+			equals(
+				siteTestEntity,
+				SiteTestEntitySerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"testEntity",
+								new HashMap<String, Object>() {
+									{
+										put(
+											"siteTestEntityId",
+											siteTestEntity.getId());
+									}
+								},
+								getGraphQLFields())),
+						"JSONObject/data", "Object/testEntity"))));
+
+		// Using the namespace test_v1_0
+
+		Assert.assertTrue(
+			equals(
+				siteTestEntity,
+				SiteTestEntitySerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"test_v1_0",
+								new GraphQLField(
+									"testEntity",
+									new HashMap<String, Object>() {
+										{
+											put(
+												"siteTestEntityId",
+												siteTestEntity.getId());
+										}
+									},
+									getGraphQLFields()))),
+						"JSONObject/data", "JSONObject/test_v1_0",
+						"Object/testEntity"))));
+	}
+
+	@Test
+	public void testGraphQLGetSiteTestEntityNotFound() throws Exception {
+		Long irrelevantSiteTestEntityId = RandomTestUtil.randomLong();
+
+		// No namespace
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"testEntity",
+						new HashMap<String, Object>() {
+							{
+								put(
+									"siteTestEntityId",
+									irrelevantSiteTestEntityId);
+							}
+						},
+						getGraphQLFields())),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+
+		// Using the namespace test_v1_0
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"test_v1_0",
+						new GraphQLField(
+							"testEntity",
+							new HashMap<String, Object>() {
+								{
+									put(
+										"siteTestEntityId",
+										irrelevantSiteTestEntityId);
+								}
+							},
+							getGraphQLFields()))),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+	}
+
+	protected SiteTestEntity testGraphQLGetSiteTestEntity_addSiteTestEntity()
+		throws Exception {
+
+		return testGraphQLSiteTestEntity_addSiteTestEntity();
+	}
+
+	@Test
 	public void testGetSiteTestEntityPermissionsPage() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		SiteTestEntity postSiteTestEntity =
 			testGetSiteTestEntityPermissionsPage_addSiteTestEntity();
 
@@ -595,8 +926,8 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 			testGetSiteTestEntityPermissionsPage_addSiteTestEntity()
 		throws Exception {
 
-		return testPostSiteSiteTestEntity_addSiteTestEntity(
-			randomSiteTestEntity());
+		return siteTestEntityResource.postSiteSiteTestEntity(
+			testGroup.getGroupId(), randomSiteTestEntity());
 	}
 
 	@Test
@@ -678,6 +1009,16 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 	}
 
 	@Test
+	public void testGraphQLPostSiteSiteTestEntity() throws Exception {
+		SiteTestEntity randomSiteTestEntity = randomSiteTestEntity();
+
+		SiteTestEntity siteTestEntity =
+			testGraphQLSiteTestEntity_addSiteTestEntity(randomSiteTestEntity);
+
+		Assert.assertTrue(equals(randomSiteTestEntity, siteTestEntity));
+	}
+
+	@Test
 	public void testPutSiteSiteTestEntityByExternalReferenceCode()
 		throws Exception {
 
@@ -688,9 +1029,8 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 
 		SiteTestEntity putSiteTestEntity =
 			siteTestEntityResource.putSiteSiteTestEntityByExternalReferenceCode(
+				postSiteTestEntity.getSiteId(),
 				postSiteTestEntity.getExternalReferenceCode(),
-				testPutSiteSiteTestEntityByExternalReferenceCode_getSiteId(
-					postSiteTestEntity),
 				randomSiteTestEntity);
 
 		assertEquals(randomSiteTestEntity, putSiteTestEntity);
@@ -700,9 +1040,8 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 
 		SiteTestEntity getSiteTestEntity =
 			siteTestEntityResource.getSiteSiteTestEntityByExternalReferenceCode(
-				putSiteTestEntity.getExternalReferenceCode(),
-				testPutSiteSiteTestEntityByExternalReferenceCode_getSiteId(
-					putSiteTestEntity));
+				putSiteTestEntity.getSiteId(),
+				putSiteTestEntity.getExternalReferenceCode());
 
 		assertEquals(randomSiteTestEntity, getSiteTestEntity);
 		assertValid(getSiteTestEntity);
@@ -712,9 +1051,8 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 
 		putSiteTestEntity =
 			siteTestEntityResource.putSiteSiteTestEntityByExternalReferenceCode(
+				postSiteTestEntity.getSiteId(),
 				postSiteTestEntity.getExternalReferenceCode(),
-				testPutSiteSiteTestEntityByExternalReferenceCode_getSiteId(
-					postSiteTestEntity),
 				randomPermissionsSiteTestEntity);
 
 		assertEquals(randomPermissionsSiteTestEntity, putSiteTestEntity);
@@ -725,9 +1063,8 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 		putSiteTestEntity =
 			permissionsSiteTestEntityResource.
 				putSiteSiteTestEntityByExternalReferenceCode(
+					postSiteTestEntity.getSiteId(),
 					postSiteTestEntity.getExternalReferenceCode(),
-					testPutSiteSiteTestEntityByExternalReferenceCode_getSiteId(
-						postSiteTestEntity),
 					randomPermissionsSiteTestEntity);
 
 		Assert.assertNotNull(putSiteTestEntity.getPermissions());
@@ -737,9 +1074,8 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 
 		putSiteTestEntity =
 			siteTestEntityResource.putSiteSiteTestEntityByExternalReferenceCode(
+				newSiteTestEntity.getSiteId(),
 				newSiteTestEntity.getExternalReferenceCode(),
-				testPutSiteSiteTestEntityByExternalReferenceCode_getSiteId(
-					newSiteTestEntity),
 				newSiteTestEntity);
 
 		assertEquals(newSiteTestEntity, putSiteTestEntity);
@@ -747,9 +1083,8 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 
 		getSiteTestEntity =
 			siteTestEntityResource.getSiteSiteTestEntityByExternalReferenceCode(
-				putSiteTestEntity.getExternalReferenceCode(),
-				testPutSiteSiteTestEntityByExternalReferenceCode_getSiteId(
-					putSiteTestEntity));
+				putSiteTestEntity.getSiteId(),
+				putSiteTestEntity.getExternalReferenceCode());
 
 		assertEquals(newSiteTestEntity, getSiteTestEntity);
 
@@ -758,11 +1093,12 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 			putSiteTestEntity.getExternalReferenceCode());
 	}
 
-	protected Long testPutSiteSiteTestEntityByExternalReferenceCode_getSiteId(
-			SiteTestEntity siteTestEntity)
+	protected SiteTestEntity
+			testPutSiteSiteTestEntityByExternalReferenceCode_addSiteTestEntity()
 		throws Exception {
 
-		return siteTestEntity.getSiteId();
+		return siteTestEntityResource.postSiteSiteTestEntity(
+			testGroup.getGroupId(), randomSiteTestEntity());
 	}
 
 	protected SiteTestEntity
@@ -770,14 +1106,6 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 		throws Exception {
 
 		return randomSiteTestEntity();
-	}
-
-	protected SiteTestEntity
-			testPutSiteSiteTestEntityByExternalReferenceCode_addSiteTestEntity()
-		throws Exception {
-
-		return siteTestEntityResource.postSiteSiteTestEntity(
-			testGroup.getGroupId(), randomSiteTestEntity());
 	}
 
 	@Test
@@ -869,6 +1197,11 @@ public abstract class BaseSiteTestEntityResourceTestCase {
 
 		return siteTestEntityResource.postSiteSiteTestEntity(
 			testGroup.getGroupId(), randomSiteTestEntity());
+	}
+
+	@Test
+	public void testBatchEngineDeleteImportTask() throws Exception {
+		Assert.assertTrue(true);
 	}
 
 	protected void appendGraphQLFieldValue(StringBuilder sb, Object value)

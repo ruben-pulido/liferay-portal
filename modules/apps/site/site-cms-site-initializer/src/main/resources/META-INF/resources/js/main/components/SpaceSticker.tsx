@@ -4,46 +4,57 @@
  */
 
 import ClaySticker from '@clayui/sticker';
+import cx from 'classnames';
 import React from 'react';
 
-function getDisplayType(
-	char: string
-): React.ComponentProps<typeof ClaySticker>['displayType'] {
-	const validDisplayTypes: React.ComponentProps<
-		typeof ClaySticker
-	>['displayType'][] = [
-		'outline-0',
-		'outline-1',
-		'outline-2',
-		'outline-3',
-		'outline-4',
-		'outline-5',
-		'outline-6',
-		'outline-7',
-		'outline-8',
-		'outline-9',
-	];
+import {LogoColor} from '../../common/types/Space';
 
-	return validDisplayTypes[char.charCodeAt(0) % validDisplayTypes.length];
+export const logoColors: Record<LogoColor, string> = {
+	'outline-0': Liferay.Language.get('gray'),
+	'outline-1': Liferay.Language.get('purple'),
+	'outline-2': Liferay.Language.get('yellow'),
+	'outline-3': Liferay.Language.get('green'),
+	'outline-4': Liferay.Language.get('red'),
+	'outline-5': Liferay.Language.get('orange'),
+	'outline-6': Liferay.Language.get('teal'),
+	'outline-7': Liferay.Language.get('blue'),
+	'outline-8': Liferay.Language.get('pink'),
+	'outline-9': Liferay.Language.get('white'),
+};
+
+function getDisplayType(char: string): LogoColor {
+	const displayTypes = Object.keys(logoColors);
+
+	return displayTypes[char.charCodeAt(0) % displayTypes.length] as LogoColor;
 }
 
 export default function SpaceSticker({
 	displayType,
+	hideName,
 	name,
 	size,
+	...otherProps
 }: {
+	hideName?: boolean;
 	name: string;
-} & Pick<React.ComponentProps<typeof ClaySticker>, 'displayType' | 'size'>) {
+} & Pick<
+	React.ComponentProps<typeof ClaySticker>,
+	'className' | 'displayType' | 'id' | 'size'
+>) {
+	const gap = size === 'lg' ? 'c-gap-3' : 'c-gap-2';
+	const wrapperClasses = cx('align-items-center d-flex', gap);
+
 	return (
-		<>
+		<div className={wrapperClasses}>
 			<ClaySticker
-				displayType={displayType ?? getDisplayType(name)}
+				displayType={displayType || getDisplayType(name)}
 				size={size}
+				{...otherProps}
 			>
 				{name.charAt(0).toUpperCase()}
 			</ClaySticker>
 
-			<span className="ml-2">{name}</span>
-		</>
+			{!hideName && <span>{name}</span>}
+		</div>
 	);
 }

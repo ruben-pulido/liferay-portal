@@ -19,15 +19,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ReleaseConstants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ReleaseInfo;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.spring.hibernate.DialectDetector;
 import com.liferay.portal.upgrade.PortalUpgradeProcess;
-import com.liferay.portal.util.PropsUtil;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 import java.util.Date;
 import java.util.Objects;
@@ -63,14 +60,12 @@ public class DBInitUtil {
 			throw new IllegalStateException("Data source is null");
 		}
 
+		DBPartitionUtil.checkDatabasePartitionSchemaNamePrefix();
+
+		_dataSource = DBPartitionUtil.wrapDataSource(_dataSource);
+
 		try (Connection connection = _dataSource.getConnection()) {
 			_init(DBManagerUtil.getDB(), connection);
-
-			DBPartitionUtil.checkDatabasePartitionSchemaNamePrefix();
-
-			_dataSource = DBPartitionUtil.wrapDataSource(_dataSource);
-
-			DBPartitionUtil.setDefaultCompanyId(connection);
 		}
 
 		_dataSource = new LazyConnectionDataSourceProxy(_dataSource);
@@ -121,28 +116,16 @@ public class DBInitUtil {
 		_setDBNew();
 	}
 
-	private static boolean _hasDefaultReleaseWithTestString(
-			Connection connection, String testString)
-		throws Exception {
-
-		try (PreparedStatement preparedStatement = connection.prepareStatement(
-				"select count(*) from Release_ where releaseId = ? and " +
-					"testString = ?")) {
-
-			preparedStatement.setLong(1, ReleaseConstants.DEFAULT_ID);
-			preparedStatement.setString(2, testString);
-
-			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				if (resultSet.next() && (resultSet.getInt(1) > 0)) {
-					return true;
-				}
+	private static void _init(DB db, Connection connection) throws Exception {
+		try {
+			DBPartitionUtil.setDefaultCompanyId(connection);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
 			}
 		}
 
-		return false;
-	}
-
-	private static void _init(DB db, Connection connection) throws Exception {
 		if (_checkDefaultRelease(connection)) {
 			_setSupportsStringCaseSensitiveQuery(db, connection);
 
@@ -164,6 +147,17 @@ public class DBInitUtil {
 			db.runSQL(
 				connection,
 				"alter table Release_ add schemaVersion VARCHAR(75) null");
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+		}
+
+		try {
+			db.runSQL(
+				connection,
+				"alter table Release_ add versionDisplayName VARCHAR(75) null");
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
@@ -194,6 +188,8 @@ public class DBInitUtil {
 			_createTablesAndPopulate(db, connection);
 
 			_setSupportsStringCaseSensitiveQuery(db, connection);
+
+			DBPartitionUtil.setDefaultCompanyId(connection);
 		}
 	}
 
@@ -247,15 +243,9 @@ public class DBInitUtil {
 				"Release_ table was not initialized properly");
 		}
 
-		if (_hasDefaultReleaseWithTestString(
-				connection,
-				StringUtil.toUpperCase(ReleaseConstants.TEST_STRING))) {
-
-			db.setSupportsStringCaseSensitiveQuery(false);
-		}
-		else {
-			db.setSupportsStringCaseSensitiveQuery(true);
-		}
+		db.setSupportsStringCaseSensitiveQuery(
+			PortalUpgradeProcess.isSupportsStringCaseSensitiveQuery(
+				connection));
 	}
 
 	private DBInitUtil() {

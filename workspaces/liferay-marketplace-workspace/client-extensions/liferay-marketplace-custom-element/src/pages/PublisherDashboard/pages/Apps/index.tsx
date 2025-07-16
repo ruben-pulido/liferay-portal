@@ -11,12 +11,30 @@ import OrderStatus from '../../../../components/OrderStatus';
 import Page from '../../../../components/Page';
 import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
 import SearchBuilder from '../../../../core/SearchBuilder';
-import {MarketplaceProduct} from '../../../../entity/MarketplaceProduct';
-import {ProductTypeVocabulary} from '../../../../enums/Product';
+import {
+	ProductSpecificationKey,
+	ProductTypeLabels,
+	ProductTypeVocabulary,
+	ProductWorkflowStatusCode,
+	ProductWorkflowStatusLabel,
+} from '../../../../enums/Product';
 import i18n from '../../../../i18n';
-import HeadlessCommerceAdminCatalog from '../../../../services/rest/HeadlessCommerceAdminCatalog';
 import {formatDate} from '../../../../utils/date';
 import {usePublisherDashboardOutletContext} from '../../PublisherDashboardOutlet';
+
+function filterLatestProductVersions(products: Product[]): Product[] {
+	const latestVersions = new Map<number, Product>();
+
+	for (const product of products) {
+		const current = latestVersions.get(product.productId);
+
+		if (!current || product.version > current.version) {
+			latestVersions.set(product.productId, product);
+		}
+	}
+
+	return [...latestVersions.values()];
+}
 
 const Apps = () => {
 	const {catalogId} = usePublisherDashboardOutletContext();
@@ -47,6 +65,15 @@ const Apps = () => {
 			title={i18n.translate('apps')}
 		>
 			<ListView<Product>
+				defaultFilters={{
+					filter: new SearchBuilder()
+						.eq('catalogId', (catalogId || 0) as number, {
+							unquote: true,
+						})
+						.and()
+						.lambda('categoryNames', ProductTypeVocabulary.APP)
+						.build(),
+				}}
 				emptyStateProps={{
 					className:
 						'border px-4 py-6 d-flex align-items-center flex-column justify-content-center',
@@ -56,32 +83,25 @@ const Apps = () => {
 					type: 'BLANK',
 				}}
 				id={`publisher-apps/${catalogId}`}
-				resource={function getPublisherProducts({page, pageSize}) {
-					return HeadlessCommerceAdminCatalog.getProducts(
-						new URLSearchParams({
-							'accountId': '-1',
-							'filter': new SearchBuilder()
-								.eq('catalogId', (catalogId || 0) as number, {
-									unquote: true,
-								})
-								.and()
-								.lambda(
-									'categoryNames',
-									ProductTypeVocabulary.APP
-								)
-								.build(),
-							'nestedFields': 'productSpecifications,skus',
-							'page': page.toString(),
-							'pageSize': pageSize.toString(),
-							'skus.accountId': '-1',
-							'sort': 'createDate:desc',
-						})
-					);
+				initialContext={{
+					pageSize: 20,
+					paginationDeltaOptions: [20, 40, 80, 120],
 				}}
+				resource={`/o/headless-commerce-admin-catalog/v1.0/products?${new URLSearchParams(
+					{
+						'accountId': '-1',
+						'nestedFields': 'productSpecifications,sku',
+						'skus.accountId': '-1',
+						'sort': 'createDate:desc',
+					}
+				)}`}
 				tableProps={{
 					actions: isNewAppEnabled
 						? [
 								{
+									disabled: (row: Product) =>
+										row.productStatus ===
+										ProductWorkflowStatusCode.PENDING,
 									name: i18n.translate('edit-details'),
 									onClick: (row: Product) =>
 										navigate(
@@ -89,11 +109,13 @@ const Apps = () => {
 										),
 								},
 								{
-									disabled: true,
+									disabled: (row: Product) =>
+										row.productStatus !==
+										ProductWorkflowStatusCode.APPROVED,
 									name: i18n.translate('add-new-version'),
 									onClick: (row: Product) =>
 										navigate(
-											`newapp/${row.productId}/publisher/build`
+											`newapp/${row.productId}/newbuild`
 										),
 								},
 							]
@@ -105,7 +127,7 @@ const Apps = () => {
 							name: i18n.translate('name'),
 							render: (name, item) => {
 								return (
-									<>
+									<div className="align-items-center d-flex">
 										<img
 											alt={`${name.en_US} app icon`}
 											className="app-details-page-table-icon"
@@ -115,25 +137,52 @@ const Apps = () => {
 											width={32}
 										/>
 
-										<span className="font-weight-semi-bold ml-2">
+										<span className="font-weight-semi-bold ml-2 text-truncate">
 											{name.en_US}
 										</span>
-									</>
+									</div>
 								);
 							},
 							size: 'sm',
 						},
 						{
-							id: '__marketplaceProduct',
+							id: 'productSpecifications',
 							name: i18n.translate('version'),
-							render: (marketplaceProduct: MarketplaceProduct) =>
-								marketplaceProduct.appVersion || '',
+							render: (productSpecification) => {
+								const version = productSpecification.find(
+									(specification) =>
+										specification.specificationKey ===
+										ProductSpecificationKey.APP_VERSION
+								)?.value?.en_US;
+
+								return (
+									<div className="text-capitalize">
+										{version ? version : '1.0.0'}
+									</div>
+								);
+							},
 						},
 						{
-							id: '__marketplaceProduct',
+							id: 'productSpecifications',
 							name: i18n.translate('app-type'),
-							render: (marketplaceProduct: MarketplaceProduct) =>
-								marketplaceProduct.appType,
+							render: (productSpecifications) => {
+								const productType = productSpecifications.find(
+									({specificationKey}) =>
+										specificationKey ===
+										ProductSpecificationKey.APP_TYPE
+								)?.value?.en_US;
+
+								const label =
+									ProductTypeLabels[
+										productType as keyof typeof ProductTypeLabels
+									];
+
+								return (
+									<div className="text-capitalize">
+										{label}
+									</div>
+								);
+							},
 						},
 						{
 							id: 'modifiedDate',
@@ -154,13 +203,28 @@ const Apps = () => {
 									<OrderStatus
 										orderStatus={workflowStatusInfo.label}
 									>
-										{workflowStatusInfo.label}
+										{
+											ProductWorkflowStatusLabel[
+												workflowStatusInfo.code as keyof typeof ProductWorkflowStatusLabel
+											]
+										}
 									</OrderStatus>
 								);
 							},
 						},
 					],
 					navigateTo: (item) => `/app/${item.productId}`,
+				}}
+				transformData={(response) => {
+					const items = filterLatestProductVersions(response.items);
+
+					return {
+						...response,
+						items,
+						totalCount:
+							response.totalCount -
+							(items.length - response.items.length),
+					};
 				}}
 			/>
 		</Page>

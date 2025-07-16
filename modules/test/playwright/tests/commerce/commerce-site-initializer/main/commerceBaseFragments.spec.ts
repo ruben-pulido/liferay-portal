@@ -77,10 +77,7 @@ test(
 	}) => {
 		test.setTimeout(180000);
 
-		const {catalog, channel, site} = await classicCommerceSetUp(
-			apiHelpers,
-			getRandomString()
-		);
+		const {catalog, channel, site} = await classicCommerceSetUp(apiHelpers);
 
 		const account = await apiHelpers.headlessAdminUser.postAccount({
 			name: getRandomString(),
@@ -154,10 +151,15 @@ test(
 	}
 );
 
-test.skip(
+test(
 	'Returns and Shipments tabs should not be visible when the order is open',
 	{tag: ['@LPD-53393']},
-	async ({apiHelpers, commerceThemeClassicOrdersPage, page}) => {
+	async ({
+		apiHelpers,
+		commerceAdminHealthCheckPage,
+		commerceThemeClassicOrdersPage,
+		page,
+	}) => {
 		test.setTimeout(180000);
 
 		let account;
@@ -169,9 +171,27 @@ test.skip(
 		let site;
 		let user;
 
+		await test.step('Assign Return permissions to User ', async () => {
+			await commerceAdminHealthCheckPage.goto();
+
+			await expect(commerceAdminHealthCheckPage.pageTitle).toBeVisible();
+
+			if (
+				await commerceAdminHealthCheckPage.userRolesButton.isEnabled()
+			) {
+				await commerceAdminHealthCheckPage.userRolesButton.click();
+				await page.waitForTimeout(1000);
+				await page.reload();
+			}
+
+			await expect(
+				commerceAdminHealthCheckPage.userRolesButton
+			).toBeDisabled();
+		});
+
 		await test.step('Initialize Commerce Classic Site', async () => {
 			const {channel: channelSetUp, site: siteSetUp} =
-				await classicCommerceSetUp(apiHelpers, getRandomString());
+				await classicCommerceSetUp(apiHelpers);
 
 			channel = channelSetUp;
 			site = siteSetUp;
@@ -295,7 +315,7 @@ test.skip(
 				(warehouse) => warehouse.name.en_US === 'Italy'
 			);
 
-			const shipment =
+			shipment =
 				await apiHelpers.headlessCommerceAdminShipment.postShipment({
 					orderId: checkoutCart.id,
 					shipmentItems: [

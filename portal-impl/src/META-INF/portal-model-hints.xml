@@ -977,6 +977,7 @@
 	</model>
 	<model name="com.liferay.portal.kernel.model.LayoutSetPrototype">
 		<field name="mvccVersion" type="long" />
+		<field name="ctCollectionId" type="long" />
 		<field name="uuid" type="String" />
 		<field name="layoutSetPrototypeId" type="long" />
 		<field name="companyId" type="long" />
@@ -1343,6 +1344,7 @@
 		<field name="schemaVersion" type="String" />
 		<field name="buildNumber" type="int" />
 		<field name="buildDate" type="Date" />
+		<field name="versionDisplayName" type="String" />
 		<field name="verified" type="boolean" />
 		<field name="state" type="int" />
 		<field name="testString" type="String">

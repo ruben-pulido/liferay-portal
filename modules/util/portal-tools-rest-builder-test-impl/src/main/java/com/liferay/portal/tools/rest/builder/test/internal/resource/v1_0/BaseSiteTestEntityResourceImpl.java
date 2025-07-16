@@ -89,6 +89,46 @@ public abstract class BaseSiteTestEntityResourceImpl
 			   VulcanBatchEngineTaskItemDelegate<SiteTestEntity>,
 			   VulcanCRUDItemDelegate<SiteTestEntity> {
 
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -X 'DELETE' 'http://localhost:8080/o/test/v1.0/sites/{siteId}/site-test-entities/by-external-reference-code/{externalReferenceCode}'  -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "siteId"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "externalReferenceCode"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "SiteTestEntity")
+		}
+	)
+	@jakarta.ws.rs.DELETE
+	@jakarta.ws.rs.Path(
+		"/sites/{siteId}/site-test-entities/by-external-reference-code/{externalReferenceCode}"
+	)
+	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public void deleteSiteSiteTestEntityByExternalReferenceCode(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("siteId")
+			Long siteId,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("externalReferenceCode")
+			String externalReferenceCode)
+		throws Exception {
+	}
+
 	protected abstract Page<SiteTestEntity> doGetSiteSiteTestEntitiesPage(
 			Long siteId)
 		throws Exception;
@@ -147,7 +187,7 @@ public abstract class BaseSiteTestEntityResourceImpl
 
 	protected abstract SiteTestEntity
 			doGetSiteSiteTestEntityByExternalReferenceCode(
-				String externalReferenceCode, Long siteId)
+				Long siteId, String externalReferenceCode)
 		throws Exception;
 
 	/**
@@ -159,11 +199,11 @@ public abstract class BaseSiteTestEntityResourceImpl
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "externalReferenceCode"
+				name = "siteId"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "siteId"
+				name = "externalReferenceCode"
 			)
 		}
 	)
@@ -181,17 +221,17 @@ public abstract class BaseSiteTestEntityResourceImpl
 	public final SiteTestEntity getSiteSiteTestEntityByExternalReferenceCode(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
-			@jakarta.ws.rs.PathParam("externalReferenceCode")
-			String externalReferenceCode,
+			@jakarta.ws.rs.PathParam("siteId")
+			Long siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
-			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId)
+			@jakarta.ws.rs.PathParam("externalReferenceCode")
+			String externalReferenceCode)
 		throws Exception {
 
 		SiteTestEntity getSiteTestEntity =
 			doGetSiteSiteTestEntityByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				siteId, externalReferenceCode);
 
 		getSiteTestEntity.setPermissions(
 			() -> NestedFieldsSupplier.supply(
@@ -576,7 +616,7 @@ public abstract class BaseSiteTestEntityResourceImpl
 
 	protected abstract SiteTestEntity
 			doPutSiteSiteTestEntityByExternalReferenceCode(
-				String externalReferenceCode, Long siteId,
+				Long siteId, String externalReferenceCode,
 				SiteTestEntity siteTestEntity)
 		throws Exception;
 
@@ -589,11 +629,11 @@ public abstract class BaseSiteTestEntityResourceImpl
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "externalReferenceCode"
+				name = "siteId"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "siteId"
+				name = "externalReferenceCode"
 			)
 		}
 	)
@@ -612,12 +652,12 @@ public abstract class BaseSiteTestEntityResourceImpl
 	public final SiteTestEntity putSiteSiteTestEntityByExternalReferenceCode(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
-			@jakarta.ws.rs.PathParam("externalReferenceCode")
-			String externalReferenceCode,
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
 			Long siteId,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("externalReferenceCode")
+			String externalReferenceCode,
 			SiteTestEntity siteTestEntity)
 		throws Exception {
 
@@ -625,7 +665,7 @@ public abstract class BaseSiteTestEntityResourceImpl
 
 		SiteTestEntity putSiteTestEntity =
 			doPutSiteSiteTestEntityByExternalReferenceCode(
-				externalReferenceCode, siteId, siteTestEntity);
+				siteId, externalReferenceCode, siteTestEntity);
 
 		if (permissions != null) {
 			Page<Permission> permissionsPage = putSiteTestEntityPermissionsPage(
@@ -874,28 +914,32 @@ public abstract class BaseSiteTestEntityResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				siteTestEntityUnsafeFunction = siteTestEntity -> {
+					SiteTestEntity getSiteTestEntity = null;
 					SiteTestEntity persistedSiteTestEntity = null;
 
 					try {
-						SiteTestEntity getSiteTestEntity =
-							getSiteSiteTestEntityByExternalReferenceCode(
-								siteTestEntity.getExternalReferenceCode(),
-								siteTestEntity.getSiteId() != null ?
-									siteTestEntity.getSiteId() :
-										(Long)parameters.get("siteId"));
+						if (parameters.containsKey("siteId")) {
+							getSiteTestEntity =
+								getSiteSiteTestEntityByExternalReferenceCode(
+									(Long)parameters.get("siteId"),
+									siteTestEntity.getExternalReferenceCode());
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [siteId]");
+						}
 
 						persistedSiteTestEntity = patchSiteTestEntity(
-							getSiteTestEntity.getId() != null ?
-								getSiteTestEntity.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"siteTestEntityId")),
-							siteTestEntity);
+							getSiteTestEntity.getId(), siteTestEntity);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						if (parameters.containsKey("siteId")) {
 							persistedSiteTestEntity = postSiteSiteTestEntity(
 								(Long)parameters.get("siteId"), siteTestEntity);
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [siteId]");
 						}
 					}
 
@@ -904,14 +948,23 @@ public abstract class BaseSiteTestEntityResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				siteTestEntityUnsafeFunction =
-					siteTestEntity ->
-						putSiteSiteTestEntityByExternalReferenceCode(
-							siteTestEntity.getExternalReferenceCode(),
-							siteTestEntity.getSiteId() != null ?
-								siteTestEntity.getSiteId() :
-									(Long)parameters.get("siteId"),
-							siteTestEntity);
+				siteTestEntityUnsafeFunction = siteTestEntity -> {
+					SiteTestEntity persistedSiteTestEntity = null;
+
+					if (parameters.containsKey("siteId")) {
+						persistedSiteTestEntity =
+							putSiteSiteTestEntityByExternalReferenceCode(
+								(Long)parameters.get("siteId"),
+								siteTestEntity.getExternalReferenceCode(),
+								siteTestEntity);
+					}
+					else {
+						throw new NotSupportedException(
+							"One of the following parameters must be specified: [siteId]");
+					}
+
+					return persistedSiteTestEntity;
+				};
 			}
 		}
 
@@ -1031,16 +1084,12 @@ public abstract class BaseSiteTestEntityResourceImpl
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			siteTestEntityUnsafeFunction =
 				siteTestEntity -> patchSiteTestEntity(
-					siteTestEntity.getId() != null ? siteTestEntity.getId() :
-						_parseLong((String)parameters.get("siteTestEntityId")),
-					siteTestEntity);
+					siteTestEntity.getId(), siteTestEntity);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			siteTestEntityUnsafeFunction = siteTestEntity -> putSiteTestEntity(
-				siteTestEntity.getId() != null ? siteTestEntity.getId() :
-					_parseLong((String)parameters.get("siteTestEntityId")),
-				siteTestEntity);
+				siteTestEntity.getId(), siteTestEntity);
 		}
 
 		if (siteTestEntityUnsafeFunction == null) {
@@ -1062,14 +1111,6 @@ public abstract class BaseSiteTestEntityResourceImpl
 				siteTestEntityUnsafeFunction.apply(siteTestEntity);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

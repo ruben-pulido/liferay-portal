@@ -1733,18 +1733,16 @@ public abstract class BaseOrganizationResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				organizationUnsafeFunction = organization -> {
+					Organization getOrganization = null;
 					Organization persistedOrganization = null;
 
 					try {
-						Organization getOrganization =
+						getOrganization =
 							getOrganizationByExternalReferenceCode(
 								organization.getExternalReferenceCode());
 
 						persistedOrganization = patchOrganization(
-							getOrganization.getId() != null ?
-								getOrganization.getId() :
-									(String)parameters.get("organizationId"),
-							organization);
+							getOrganization.getId(), organization);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedOrganization = postOrganization(organization);
@@ -1755,9 +1753,16 @@ public abstract class BaseOrganizationResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				organizationUnsafeFunction =
-					organization -> putOrganizationByExternalReferenceCode(
-						organization.getExternalReferenceCode(), organization);
+				organizationUnsafeFunction = organization -> {
+					Organization persistedOrganization = null;
+
+					persistedOrganization =
+						putOrganizationByExternalReferenceCode(
+							organization.getExternalReferenceCode(),
+							organization);
+
+					return persistedOrganization;
+				};
 			}
 		}
 
@@ -1918,16 +1923,12 @@ public abstract class BaseOrganizationResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			organizationUnsafeFunction = organization -> patchOrganization(
-				organization.getId() != null ? organization.getId() :
-					(String)parameters.get("organizationId"),
-				organization);
+				organization.getId(), organization);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			organizationUnsafeFunction = organization -> putOrganization(
-				organization.getId() != null ? organization.getId() :
-					(String)parameters.get("organizationId"),
-				organization);
+				organization.getId(), organization);
 		}
 
 		if (organizationUnsafeFunction == null) {

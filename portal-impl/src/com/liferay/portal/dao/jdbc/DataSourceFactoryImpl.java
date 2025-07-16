@@ -22,18 +22,16 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.JavaDetector;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.hibernate.DialectDetector;
-import com.liferay.portal.util.DigesterImpl;
 import com.liferay.portal.util.JarUtil;
-import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -307,10 +305,6 @@ public class DataSourceFactoryImpl implements DataSourceFactory {
 			}
 
 			try {
-				DigesterUtil digesterUtil = new DigesterUtil();
-
-				digesterUtil.setDigester(new DigesterImpl());
-
 				JarUtil.downloadAndInstallJar(
 					new URL(url),
 					Paths.get(
@@ -490,7 +484,7 @@ public class DataSourceFactoryImpl implements DataSourceFactory {
 					StringBundler.concat(
 						"At attempt ", maxRetries - count, " of ", maxRetries,
 						" in acquiring a JDBC connection after a ", delay,
-						" second ", delay));
+						" seconds delay"));
 			}
 
 			try {

@@ -12,11 +12,13 @@ import {callWindowGlobalFunction} from '../../js/utils/callWindowGlobalFunction'
 
 interface ObjectEntryFooterProps {
 	backURL: string;
+	portletNamespace: string;
 	submitRef: string;
 }
 
 export default function ObjectEntryFooter({
 	backURL,
+	portletNamespace,
 	submitRef,
 }: ObjectEntryFooterProps) {
 	return (
@@ -34,10 +36,24 @@ export default function ObjectEntryFooter({
 					>
 						<ClayDropDown.ItemList>
 							<ClayDropDown.Item
-								onClick={(event) => {
-									event.preventDefault();
+								onClick={() => {
+									const hiddenInput = document.getElementById(
+										`${portletNamespace}scheduleContainer`
+									) as HTMLInputElement;
+
+									if (hiddenInput.value) {
+										const currenthiddenInputValue =
+											JSON.parse(hiddenInput.value);
+
+										hiddenInput.value = JSON.stringify({
+											...currenthiddenInputValue,
+											displayDate: null,
+										});
+									}
 
 									callWindowGlobalFunction(submitRef);
+
+									Liferay.fire('submitObjectEntry');
 								}}
 								symbolLeft="arrow-right-full"
 							>
@@ -45,7 +61,9 @@ export default function ObjectEntryFooter({
 							</ClayDropDown.Item>
 
 							<ClayDropDown.Item
-								onClick={() => {}}
+								onClick={() =>
+									Liferay.fire('openModalSchedulePublication')
+								}
 								symbolLeft="date-time"
 							>
 								{Liferay.Language.get('schedule-publication')}

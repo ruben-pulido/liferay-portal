@@ -8,6 +8,11 @@ package com.liferay.jenkins.results.parser.test.clazz.group;
 import com.google.common.collect.Lists;
 
 import com.liferay.jenkins.results.parser.BatchHistory;
+import com.liferay.jenkins.results.parser.BuildDatabase;
+import com.liferay.jenkins.results.parser.BuildDatabaseUtil;
+import com.liferay.jenkins.results.parser.BuildReportFactory;
+import com.liferay.jenkins.results.parser.CloudBucketUtil;
+import com.liferay.jenkins.results.parser.DownstreamBuildReport;
 import com.liferay.jenkins.results.parser.GitWorkingDirectory;
 import com.liferay.jenkins.results.parser.JenkinsMaster;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
@@ -19,6 +24,8 @@ import com.liferay.jenkins.results.parser.RootCauseAnalysisToolJob;
 import com.liferay.jenkins.results.parser.TestHistory;
 import com.liferay.jenkins.results.parser.TestSuiteJob;
 import com.liferay.jenkins.results.parser.TestTaskHistory;
+import com.liferay.jenkins.results.parser.Workspace;
+import com.liferay.jenkins.results.parser.WorkspaceGitRepository;
 import com.liferay.jenkins.results.parser.job.property.GlobJobProperty;
 import com.liferay.jenkins.results.parser.job.property.JobProperty;
 import com.liferay.jenkins.results.parser.job.property.JobPropertyFactory;
@@ -46,6 +53,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -140,9 +148,7 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 			return Integer.parseInt(jobPropertyValue);
 		}
 
-		int testClassCount = testClasses.size();
-
-		if (testClassCount == 0) {
+		if (!containsTestClasses()) {
 			return 0;
 		}
 
@@ -153,7 +159,7 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 				"'test.batch.axis.max.size' cannot be 0 or less");
 		}
 
-		return (int)Math.ceil((double)testClassCount / axisMaxSize);
+		return (int)Math.ceil((double)getTestClassCount() / axisMaxSize);
 	}
 
 	public AxisTestClassGroup getAxisTestClassGroup(int axisId) {
@@ -200,6 +206,89 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 
 	public String getBatchName() {
 		return batchName;
+	}
+
+	public List<DownstreamBuildReport> getCachedDownstreamBuildReports() {
+		List<DownstreamBuildReport> cachedDownstreamBuildReports =
+			new ArrayList<>();
+
+		if (!JenkinsResultsParserUtil.isCloudCINode()) {
+			return cachedDownstreamBuildReports;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		try {
+			sb.append(
+				JenkinsResultsParserUtil.getBuildProperty(
+					"cloud.ci.s3.bucket.build.reports.path"));
+		}
+		catch (IOException ioException) {
+			throw new RuntimeException(ioException);
+		}
+
+		BuildDatabase buildDatabase = BuildDatabaseUtil.getBuildDatabase();
+
+		List<Workspace> workspaces = buildDatabase.getWorkspaces();
+
+		if (workspaces.isEmpty()) {
+			return cachedDownstreamBuildReports;
+		}
+
+		File baseDir = new File(
+			System.getProperty("java.io.tmpdir"),
+			"cached-build-report-files/" + getBatchName());
+
+		if (!baseDir.exists()) {
+			sb.append("/");
+
+			Workspace workspace = workspaces.get(0);
+
+			WorkspaceGitRepository workspaceGitRepository =
+				workspace.getPrimaryWorkspaceGitRepository();
+
+			sb.append(workspaceGitRepository.getName());
+
+			sb.append("/");
+			sb.append(workspaceGitRepository.getBaseBranchSHA());
+			sb.append("/");
+			sb.append(workspaceGitRepository.getSenderBranchSHA());
+			sb.append("/");
+			sb.append(getBatchName());
+
+			CloudBucketUtil.syncS3Files(
+				JenkinsResultsParserUtil.getCanonicalPath(baseDir),
+				sb.toString());
+		}
+
+		File[] buildReportFiles = baseDir.listFiles();
+
+		if (buildReportFiles == null) {
+			return cachedDownstreamBuildReports;
+		}
+
+		for (File buildReportFile : buildReportFiles) {
+			try {
+				String buildReportFileContent = JenkinsResultsParserUtil.read(
+					buildReportFile);
+
+				if (JenkinsResultsParserUtil.isNullOrEmpty(
+						buildReportFileContent)) {
+
+					continue;
+				}
+
+				cachedDownstreamBuildReports.add(
+					BuildReportFactory.newDownstreamBuildReport(
+						getBatchName(), new JSONObject(buildReportFileContent),
+						null));
+			}
+			catch (IOException | JSONException exception) {
+				System.out.println("WARNING: " + exception.getMessage());
+			}
+		}
+
+		return cachedDownstreamBuildReports;
 	}
 
 	public String getCohortName() {
@@ -506,6 +595,13 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 		_setTestRelevantJUnitTestsOnlyInStable();
 
 		_setIncludeStableTestSuite();
+	}
+
+	@Override
+	protected void addTestClass(TestClass testClass) {
+		super.addTestClass(testClass);
+
+		testClass.setBatchTestClassGroup(this);
 	}
 
 	protected int getAxisMaxSize() {
@@ -865,15 +961,15 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 	}
 
 	protected void setAxisTestClassGroups() {
-		int testClassCount = testClasses.size();
-
-		if (testClassCount == 0) {
+		if (!containsTestClasses()) {
 			return;
 		}
 
 		int axisCount = getAxisCount();
 
-		int axisSize = (int)Math.ceil((double)testClassCount / axisCount);
+		int axisSize = (int)Math.ceil((double)getTestClassCount() / axisCount);
+
+		List<TestClass> testClasses = getTestClasses();
 
 		for (List<TestClass> axisTestClasses :
 				Lists.partition(testClasses, axisSize)) {

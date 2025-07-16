@@ -12,17 +12,17 @@ export const PORTLET_URLS = {
 	bookmarks:
 		'/~/control_panel/manage?p_p_id=com_liferay_bookmarks_web_portlet_BookmarksAdminPortlet',
 	categoriesAdmin: '/~/control_panel/manage/-/categories_admin/vocabularies',
-	cmsCategories: 'web/cms/categorization/view_categories',
+	cmsCategories: 'web/cms/categorization/view-categories',
 	cmsContents: 'web/cms/contents',
-	cmsEditCategory: 'web/cms/categorization/edit_category',
+	cmsEditCategory: 'web/cms/categorization/edit-category',
 	cmsFiles: 'web/cms/files',
-	cmsNewCategory: 'web/cms/categorization/new_category',
-	cmsNewVocabulary: 'web/cms/categorization/new_vocabulary',
+	cmsNewCategory: 'web/cms/categorization/new-category',
+	cmsNewVocabulary: 'web/cms/categorization/new-vocabulary',
 	cmsPicklistBuilder: 'web/cms/picklist-builder',
 	cmsStructureBuilder: 'web/cms/structure-builder',
 	cmsStructures: 'web/cms/structures',
-	cmsTags: 'web/cms/categorization/view_tags',
-	cmsVocabularies: 'web/cms/categorization/view_vocabularies',
+	cmsTags: 'web/cms/categorization/view-tags',
+	cmsVocabularies: 'web/cms/categorization/view-vocabularies',
 	collections:
 		'/~/control_panel/manage?p_p_id=com_liferay_asset_list_web_portlet_AssetListPortlet',
 	contentDashboard:
@@ -118,4 +118,6 @@ export const PORTLET_URLS = {
 		'/~/control_panel/manage?p_p_id=com_liferay_wiki_web_portlet_WikiAdminPortlet',
 	workflow:
 		'/~/control_panel/manage?p_p_id=com_liferay_portal_workflow_web_internal_portlet_SiteAdministrationWorkflowPortlet',
+	workflowMetrics:
+		'/~/control_panel/manage?p_p_id=com_liferay_portal_workflow_metrics_web_internal_portlet_WorkflowMetricsPortlet',
 };

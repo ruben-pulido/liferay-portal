@@ -5,6 +5,7 @@
 
 package com.liferay.object.internal.field.business.type;
 
+import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
@@ -17,6 +18,7 @@ import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.system.SystemObjectDefinitionManager;
@@ -89,7 +91,8 @@ public class RelationshipObjectFieldBusinessType
 
 	@Override
 	public Object getValue(
-			ObjectField objectField, long userId, Map<String, Object> values)
+			Long groupId, ObjectField objectField, long userId,
+			Map<String, Object> values)
 		throws PortalException {
 
 		String relationshipName = StringUtil.split(
@@ -164,6 +167,10 @@ public class RelationshipObjectFieldBusinessType
 		if (values.containsKey(objectField.getName())) {
 			Object value = values.get(objectField.getName());
 
+			if (value == null) {
+				return 0;
+			}
+
 			long valueLong = GetterUtil.getLong(value);
 
 			if (valueLong == 0) {
@@ -210,17 +217,44 @@ public class RelationshipObjectFieldBusinessType
 			String externalReferenceCode = MapUtil.getString(
 				values, objectRelationshipERCObjectFieldName);
 
-			ObjectDefinition objectDefinition = _getObjectDefinition(
-				objectField);
-
-			if (objectDefinition.isUnmodifiableSystemObject()) {
-				return _getPrimaryKeyObj(
-					externalReferenceCode, objectDefinition, 0L);
+			if (Validator.isNull(externalReferenceCode)) {
+				return 0;
 			}
 
-			ObjectEntry objectEntry = _objectEntryService.getObjectEntry(
-				externalReferenceCode,
-				objectDefinition.getObjectDefinitionId());
+			ObjectRelationship objectRelationship =
+				_objectRelationshipLocalService.
+					fetchObjectRelationshipByObjectFieldId2(
+						objectField.getObjectFieldId());
+
+			ObjectDefinition objectDefinition1 =
+				_objectDefinitionLocalService.getObjectDefinition(
+					objectRelationship.getObjectDefinitionId1());
+
+			if (objectDefinition1.isUnmodifiableSystemObject()) {
+				return _getPrimaryKeyObj(
+					externalReferenceCode, objectDefinition1, 0L);
+			}
+
+			long objectDefinition1GroupId = 0;
+
+			ObjectDefinition objectDefinition2 =
+				_objectDefinitionLocalService.getObjectDefinition(
+					objectRelationship.getObjectDefinitionId2());
+
+			if (Objects.equals(
+					objectDefinition1.getScope(),
+					ObjectDefinitionConstants.SCOPE_SITE) &&
+				Objects.equals(
+					objectDefinition2.getScope(),
+					ObjectDefinitionConstants.SCOPE_SITE)) {
+
+				objectDefinition1GroupId = GetterUtil.getLong(groupId);
+			}
+
+			ObjectEntry objectEntry =
+				_objectEntryLocalService.getOrAddIncompleteObjectEntry(
+					externalReferenceCode, objectDefinition1GroupId, userId,
+					objectDefinition1.getObjectDefinitionId());
 
 			return objectEntry.getObjectEntryId();
 		}
@@ -279,6 +313,9 @@ public class RelationshipObjectFieldBusinessType
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Reference
+	private ObjectEntryLocalService _objectEntryLocalService;
 
 	@Reference
 	private ObjectEntryService _objectEntryService;

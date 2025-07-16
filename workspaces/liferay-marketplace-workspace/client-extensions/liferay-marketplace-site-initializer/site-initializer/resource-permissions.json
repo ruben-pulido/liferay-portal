@@ -97,6 +97,25 @@
 			"VIEW"
 		],
 		"primKey": "0",
+		"resourceName": "com.liferay.commerce.model.CommerceOrderType",
+		"roleName": "Dashboard Viewer",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"VIEW_COMMERCE_ORDERS",
+			"VIEW_OPEN_COMMERCE_ORDERS"
+		],
+		"primKey": "0",
+		"resourceName": "com.liferay.commerce.order",
+		"roleName": "Dashboard Viewer",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"primKey": "0",
 		"resourceName": "com.liferay.commerce.product.model.CPOption",
 		"roleName": "Supplier",
 		"scope": "1"
@@ -124,6 +143,15 @@
 			"VIEW"
 		],
 		"primKey": "0",
+		"resourceName": "com.liferay.commerce.product.model.CommerceCatalog",
+		"roleName": "Dashboard Viewer",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"primKey": "0",
 		"resourceName": "com.liferay.commerce.product.model.CommerceChannel",
 		"roleName": "Guest",
 		"scope": "1"
@@ -139,10 +167,29 @@
 	},
 	{
 		"actionIds": [
-			"ADD_DOCUMENT"
+			"ADD_DOCUMENT",
+			"ADD_FOLDER"
 		],
 		"primKey": "0",
 		"resourceName": "com.liferay.document.library",
+		"roleName": "Supplier",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"DELETE"
+		],
+		"resourceName": "com.liferay.document.library.kernel.model.DLFileEntry",
+		"roleName": "Supplier",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"ADD_DOCUMENT",
+			"ADD_SUBFOLDER",
+			"DELETE"
+		],
+		"resourceName": "com.liferay.document.library.kernel.model.DLFolder",
 		"roleName": "Supplier",
 		"scope": "1"
 	},
@@ -189,6 +236,15 @@
 		"primKey": "0",
 		"resourceName": "com.liferay.object#[$OBJECT_DEFINITION_ID:PublisherAssets$]",
 		"roleName": "Account Administrator (Regular)",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"ADD_OBJECT_ENTRY"
+		],
+		"primKey": "0",
+		"resourceName": "com.liferay.object#[$OBJECT_DEFINITION_ID:PublisherAssets$]",
+		"roleName": "Supplier",
 		"scope": "1"
 	},
 	{

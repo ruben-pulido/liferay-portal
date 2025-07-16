@@ -70,7 +70,6 @@ import com.liferay.portal.kernel.servlet.PortalWebResourcesUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ColorSchemeFactoryUtil;
-import com.liferay.portal.kernel.util.Digester;
 import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -84,6 +83,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.SessionParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -95,7 +95,6 @@ import com.liferay.portal.theme.ThemeDisplayFactory;
 import com.liferay.portal.util.LayoutClone;
 import com.liferay.portal.util.LayoutCloneFactory;
 import com.liferay.portal.util.LayoutTypeAccessPolicyTracker;
-import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.sites.kernel.util.SitesUtil;
 
@@ -911,14 +910,14 @@ public class ServicePreAction extends Action {
 
 		Long realUserId = (Long)httpSession.getAttribute(WebKeys.USER_ID);
 
-		if ((realUserId != null) &&
-			(user.getUserId() != realUserId.longValue())) {
-
-			realUser = UserLocalServiceUtil.getUserById(realUserId.longValue());
-		}
-
-		if (!user.isActive() && (realUserId == user.getUserId())) {
-			httpSession.invalidate();
+		if (realUserId != null) {
+			if (user.getUserId() != realUserId.longValue()) {
+				realUser = UserLocalServiceUtil.getUserById(
+					realUserId.longValue());
+			}
+			else if (!user.isActive()) {
+				httpSession.invalidate();
+			}
 		}
 
 		boolean signedIn = !user.isGuestUser();
@@ -2063,7 +2062,7 @@ public class ServicePreAction extends Action {
 		httpServletResponse.setHeader(
 			"X-Liferay-Request-User",
 			DigesterUtil.digestHex(
-				Digester.MD5, String.valueOf(user.getUserId())));
+				DigesterUtil.MD5, String.valueOf(user.getUserId())));
 	}
 
 	private void _updateUserLayouts(User user) throws Exception {

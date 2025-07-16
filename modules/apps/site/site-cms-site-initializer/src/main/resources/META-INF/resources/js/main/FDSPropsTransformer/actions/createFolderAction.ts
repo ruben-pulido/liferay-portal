@@ -6,21 +6,20 @@
 import {openModal, openToast} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
 
-import FolderService from '../../../services/FolderService';
-import CreationModalContent, {
-	AssetLibrary,
-} from '../../components/modal/CreationModalContent';
+import FolderService from '../../../common/services/FolderService';
+import {AssetLibrary} from '../../../common/types/AssetLibrary';
+import CreationModalContent from '../../components/modal/CreationModalContent';
 
 export type FolderData = {
 	action: 'createFolder';
 	assetLibraries: AssetLibrary[];
 	baseAssetLibraryViewURL: string;
 	baseFolderViewURL: string;
+	parentObjectEntryFolderExternalReferenceCode: string;
 };
 
 export default function createFolderAction(
 	data: FolderData,
-	additionalProps: {parentObjectEntryFolderExternalReferenceCode: string},
 	loadData?: () => {}
 ) {
 	openModal({
@@ -37,8 +36,8 @@ export default function createFolderAction(
 							title: string;
 						}>(
 							groupId,
-							title,
-							additionalProps.parentObjectEntryFolderExternalReferenceCode
+							data.parentObjectEntryFolderExternalReferenceCode,
+							title
 						);
 
 					if (!error) {

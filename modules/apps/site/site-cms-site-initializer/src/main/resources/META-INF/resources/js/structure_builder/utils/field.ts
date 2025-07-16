@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Uuid} from '../contexts/StateContext';
+import {Uuid} from '../types/Uuid';
 import getRandomId from './getRandomId';
 import getUuid from './getUuid';
 import normalizeName from './normalizeName';
@@ -96,6 +96,7 @@ type BaseField = {
 	label: Liferay.Language.LocalizedValue<string>;
 	localized: boolean;
 	name: string;
+	parent: Uuid;
 	required: boolean;
 	settings: {};
 	uuid: Uuid;
@@ -188,10 +189,12 @@ export type FieldBusinessType =
 export function getDefaultField({
 	label,
 	name,
+	parent,
 	type,
 }: {
 	label?: string;
 	name?: string;
+	parent: Uuid;
 	type: FieldType;
 }): Field {
 	const base = {
@@ -207,6 +210,7 @@ export function getDefaultField({
 		},
 		localized: Liferay.FeatureFlags['LPD-32050'],
 		name: name ?? normalizeName(type),
+		parent,
 		required: false,
 		settings: {},
 		uuid: getUuid(),

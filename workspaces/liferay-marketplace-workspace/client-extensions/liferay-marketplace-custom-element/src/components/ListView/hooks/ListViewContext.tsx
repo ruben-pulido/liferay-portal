@@ -52,6 +52,7 @@ export type InitialState = {
 	keywords: string;
 	page: number;
 	pageSize: number;
+	paginationDeltaOptions: number[];
 	selectedRows: number[];
 	sort: Sort;
 };
@@ -68,11 +69,13 @@ const initialState: InitialState = {
 	keywords: '',
 	page: 1,
 	pageSize: PAGINATION_DELTA[0],
+	paginationDeltaOptions: PAGINATION_DELTA,
 	selectedRows: [],
 	sort: {direction: SortOption.ASC, key: ''},
 };
 
 export enum ListViewTypes {
+	SET_APPLY_FILTERS = 'SET_APPLY_FILTERS',
 	SET_CHECKED_ALL_ROWS = 'SET_CHECKED_ALL_ROWS',
 	SET_CHECKED_ROW = 'SET_CHECKED_ROW',
 	SET_CLEAR = 'SET_CLEAR',
@@ -86,6 +89,7 @@ export enum ListViewTypes {
 }
 
 type ListViewPayload = {
+	[ListViewTypes.SET_APPLY_FILTERS]: boolean;
 	[ListViewTypes.SET_CHECKED_ALL_ROWS]: boolean;
 	[ListViewTypes.SET_CHECKED_ROW]: number | number[];
 	[ListViewTypes.SET_CLEAR]: null;
@@ -107,6 +111,12 @@ export const ListViewContext = createContext<
 
 const reducer = (state: InitialState, action: AppActions) => {
 	switch (action.type) {
+		case ListViewTypes.SET_APPLY_FILTERS:
+			return {
+				...state,
+				appliedFilter: action.payload,
+			};
+
 		case ListViewTypes.SET_CHECKED_ROW:
 			const rowIds = action.payload;
 

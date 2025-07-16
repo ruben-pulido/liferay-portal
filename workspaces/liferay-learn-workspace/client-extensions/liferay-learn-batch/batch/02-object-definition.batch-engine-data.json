@@ -12,7 +12,6 @@
 	"items": [
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableLocalization": true,
 			"enableObjectEntryHistory": false,
 			"externalReferenceCode": "P2S3_ASSESSMENT",
@@ -143,7 +142,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3assessments",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -153,7 +152,99 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
+			"enableLocalization": true,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "P2S3_AUDIO_LESSON",
+			"label": {
+				"en_US": "P2S3 Audio Lesson"
+			},
+			"modifiable": true,
+			"name": "P2S3AudioLesson",
+			"objectFields": [
+				{
+					"DBType": "Long",
+					"businessType": "Attachment",
+					"externalReferenceCode": "AUDIO",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Audio"
+					},
+					"localized": false,
+					"name": "audio",
+					"objectFieldSettings": [
+						{
+							"name": "acceptedFileExtensions",
+							"value": "mp3, mp4"
+						},
+						{
+							"name": "fileSource",
+							"value": "documentsAndMedia"
+						},
+						{
+							"name": "maximumFileSize",
+							"value": 100
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "LANGUAGE",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Language"
+					},
+					"localized": false,
+					"name": "language",
+					"readOnly": "false",
+					"required": true,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "VOICE_NAME",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Voice Name"
+					},
+					"localized": false,
+					"name": "voiceName",
+					"readOnly": "false",
+					"required": true,
+					"state": false,
+					"type": "String",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "P2S3_LEARNING_MANAGEMENT_SYSTEM",
+			"pluralLabel": {
+				"en_US": "P2S3 Audio Lessons"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/p2s3audiolessons",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			}
+		},
+		{
+			"active": true,
 			"enableCategorization": true,
 			"enableLocalization": true,
 			"enableObjectEntryHistory": false,
@@ -260,7 +351,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3badges",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -270,7 +361,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableLocalization": true,
 			"enableObjectEntryHistory": false,
 			"externalReferenceCode": "P2S3_CERTIFICATION",
@@ -385,7 +475,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3certifications",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -395,7 +485,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableComments": true,
 			"enableLocalization": true,
@@ -614,7 +703,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3courses",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -624,7 +713,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableObjectEntryDraft": false,
 			"externalReferenceCode": "P2S3_ENROLLMENT",
@@ -706,7 +794,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3enrollments",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -715,7 +803,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": false,
 			"enableLocalization": false,
 			"enableObjectEntryDraft": false,
@@ -883,7 +970,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3examresults",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -892,7 +979,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": false,
 			"enableLocalization": false,
 			"enableObjectEntryDraft": false,
@@ -977,7 +1063,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3examresultssynchronizations",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -986,7 +1072,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableLocalization": true,
 			"enableObjectEntryDraft": false,
@@ -1112,7 +1197,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3externalmedias",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -1122,7 +1207,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableLocalization": true,
 			"enableObjectEntryHistory": false,
@@ -1252,7 +1336,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3faqquestions",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -1262,7 +1346,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableComments": false,
 			"enableLocalization": true,
 			"enableObjectEntryDraft": false,
@@ -1385,14 +1468,14 @@
 					"type": "oneToMany"
 				}
 			],
-			"panelCategoryKey": "site_administration.content",
+			"panelCategoryKey": "control_panel.object",
 			"parameterRequired": false,
 			"pluralLabel": {
 				"en_US": "P2S3 FAQ Topics"
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3faqtopics",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -1403,7 +1486,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableComments": true,
 			"enableLocalization": true,
@@ -1749,7 +1831,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableComments": true,
 			"enableLocalization": true,
@@ -1828,7 +1909,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableComments": true,
 			"enableLocalization": true,
@@ -2019,7 +2099,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3learningpaths",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -2029,7 +2109,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableLocalization": true,
 			"enableObjectEntryDraft": true,
@@ -2143,7 +2222,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3learningpathsteps",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -2153,7 +2232,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableComments": true,
 			"enableLocalization": true,
@@ -2311,12 +2389,25 @@
 				}
 			],
 			"objectFolderExternalReferenceCode": "P2S3_LEARNING_MANAGEMENT_SYSTEM",
+			"objectRelationships": [
+				{
+					"deletionType": "disassociate",
+					"externalReferenceCode": "P2S3_LESSON_TO_P2S3_AUDIO_LESSONS",
+					"label": {
+						"en_US": "P2S3 Lesson to P2S3 Audio Lessons"
+					},
+					"name": "p2s3LessonToP2S3AudioLessons",
+					"objectDefinitionExternalReferenceCode1": "P2S3_LESSON",
+					"objectDefinitionExternalReferenceCode2": "P2S3_AUDIO_LESSON",
+					"type": "oneToMany"
+				}
+			],
 			"pluralLabel": {
 				"en_US": "P2S3 Lessons"
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3lessons",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -2326,7 +2417,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableComments": false,
 			"enableLocalization": true,
 			"enableObjectEntryDraft": true,
@@ -2463,7 +2553,7 @@
 			},
 			"portlet": true,
 			"restContextPath": "/o/c/p2s3modules",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -2473,7 +2563,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableLocalization": true,
 			"externalReferenceCode": "P2S3_QUIZ",
 			"label": {
@@ -2647,7 +2736,7 @@
 				"en_US": "P2S3 Quizzes"
 			},
 			"restContextPath": "/o/c/p2s3quizzes",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -2657,7 +2746,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableLocalization": true,
 			"externalReferenceCode": "P2S3_QUIZ_ANSWER",
 			"label": {
@@ -2748,7 +2836,7 @@
 				"en_US": "P2S3 Quiz Answers"
 			},
 			"restContextPath": "/o/c/p2s3quizanswers",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -2758,7 +2846,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableLocalization": true,
 			"externalReferenceCode": "P2S3_QUIZ_QUESTION",
 			"label": {
@@ -2881,7 +2968,7 @@
 				"en_US": "P2S3 Quiz Questions"
 			},
 			"restContextPath": "/o/c/p2s3quizquestions",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -2891,7 +2978,6 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": false,
 			"externalReferenceCode": "P2S3_QUIZ_RESULT",
 			"label": {
@@ -2957,7 +3043,7 @@
 			},
 			"portlet": false,
 			"restContextPath": "/o/c/p2s3quizresults",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",
@@ -2966,7 +3052,682 @@
 		},
 		{
 			"active": true,
-			"defaultLanguageId": "en_US",
+			"enableComments": false,
+			"enableLocalization": true,
+			"enableObjectEntryDraft": true,
+			"externalReferenceCode": "P2S3_TRAINER_KIT",
+			"label": {
+				"en_US": "P2S3 Trainer Kit"
+			},
+			"modifiable": true,
+			"name": "P2S3TrainerKit",
+			"objectFields": [
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "DEMO_RECORDINGS_URL",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Demo Recordings URL"
+					},
+					"localized": false,
+					"name": "demoRecordingsURL",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "DEMO_SCRIPTS_URL",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Demo Scripts URL"
+					},
+					"localized": false,
+					"name": "demoScriptsURL",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "DURATION",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Duration"
+					},
+					"localized": false,
+					"name": "duration",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "EMAIL_TEMPLATES_URL",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "E-mail Templates URL"
+					},
+					"localized": false,
+					"name": "emailTemplatesURL",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "EXERCISES_URL",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Exercises URL"
+					},
+					"localized": false,
+					"name": "exercisesURL",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "GITHUB_REPO_URL",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "GitHub Repo URL"
+					},
+					"localized": false,
+					"name": "gitHubRepoURL",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"externalReferenceCode": "OVERVIEW",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Overview"
+					},
+					"localized": true,
+					"name": "overview",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "MultiselectPicklist",
+					"externalReferenceCode": "PERSONA",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Persona"
+					},
+					"listTypeDefinitionExternalReferenceCode": "P2S3_PERSONAS",
+					"localized": false,
+					"name": "persona",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "RELEASE_VERSION",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Release Version"
+					},
+					"localized": false,
+					"name": "releaseVersion",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "SLIDES_URL",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Slides URL"
+					},
+					"localized": false,
+					"name": "slidesURL",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "RichText",
+					"externalReferenceCode": "STUDENT_PREREQUISITES",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Student Prerequisites"
+					},
+					"localized": true,
+					"name": "studentPrerequisites",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "RichText",
+					"externalReferenceCode": "STUDENT_SETUP_REQUIREMENTS",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Student Setup Requirements"
+					},
+					"localized": true,
+					"name": "studentSetupRequirements",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "TIMESHEET_URL",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Timesheet URL"
+					},
+					"localized": false,
+					"name": "timesheetURL",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "TITLE",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Title"
+					},
+					"localized": true,
+					"name": "title",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "P2S3_ENABLEMENT_HUB",
+			"objectLayouts": [
+				{
+					"defaultObjectLayout": true,
+					"name": {
+						"en_US": "Trainer Kit"
+					},
+					"objectDefinitionExternalReferenceCode": "P2S3_TRAINER_KIT",
+					"objectLayoutTabs": [
+						{
+							"name": {
+								"en_US": "Main"
+							},
+							"objectLayoutBoxes": [
+								{
+									"collapsable": false,
+									"name": {
+										"en_US": "Trainer Kit"
+									},
+									"objectLayoutRows": [
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "title",
+													"priority": 0,
+													"size": 12
+												}
+											],
+											"priority": 0
+										},
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "overview",
+													"priority": 0,
+													"size": 12
+												}
+											],
+											"priority": 0
+										},
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "persona",
+													"priority": 0,
+													"size": 6
+												},
+												{
+													"objectFieldName": "releaseVersion",
+													"priority": 0,
+													"size": 6
+												}
+											],
+											"priority": 0
+										},
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "emailTemplatesURL",
+													"priority": 0,
+													"size": 6
+												},
+												{
+													"objectFieldName": "duration",
+													"priority": 0,
+													"size": 6
+												}
+											],
+											"priority": 0
+										},
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "studentPrerequisites",
+													"priority": 0,
+													"size": 12
+												}
+											],
+											"priority": 0
+										},
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "studentSetupRequirements",
+													"priority": 0,
+													"size": 12
+												}
+											],
+											"priority": 0
+										},
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "demoRecordingsURL",
+													"priority": 0,
+													"size": 6
+												},
+												{
+													"objectFieldName": "demoScriptsURL",
+													"priority": 0,
+													"size": 6
+												}
+											],
+											"priority": 0
+										},
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "exercisesURL",
+													"priority": 0,
+													"size": 6
+												},
+												{
+													"objectFieldName": "gitHubRepoURL",
+													"priority": 0,
+													"size": 6
+												}
+											],
+											"priority": 0
+										},
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "slidesURL",
+													"priority": 0,
+													"size": 6
+												},
+												{
+													"objectFieldName": "timesheetURL",
+													"priority": 0,
+													"size": 6
+												}
+											],
+											"priority": 0
+										}
+									],
+									"priority": 0,
+									"type": "regular"
+								},
+								{
+									"collapsable": true,
+									"name": {
+										"en_US": "Categorization"
+									},
+									"priority": 0,
+									"type": "categorization"
+								}
+							],
+							"priority": 0
+						},
+						{
+							"name": {
+								"en_US": "Agenda"
+							},
+							"objectRelationshipExternalReferenceCode": "P2S3_TRAINER_KIT_TO_P2S3_TRAINER_KIT_AGENDA",
+							"priority": 0
+						},
+						{
+							"name": {
+								"en_US": "FAQ"
+							},
+							"objectRelationshipExternalReferenceCode": "P2S3_TRAINER_KIT_TO_P2S3_FAQ_TOPIC",
+							"priority": 0
+						},
+						{
+							"name": {
+								"en_US": "Related Courses"
+							},
+							"objectRelationshipExternalReferenceCode": "P2S3_TRAINER_KIT_TO_P2S3_COURSE",
+							"priority": 0
+						},
+						{
+							"name": {
+								"en_US": "Related Learning Paths"
+							},
+							"objectRelationshipExternalReferenceCode": "P2S3_TRAINER_KIT_TO_P2S3_LEARNING_PATH",
+							"priority": 0
+						}
+					]
+				}
+			],
+			"objectRelationships": [
+				{
+					"deletionType": "disassociate",
+					"externalReferenceCode": "P2S3_TRAINER_KIT_TO_P2S3_COURSE",
+					"label": {
+						"en_US": "P2S3 Trainer Kit to P2S3 Course"
+					},
+					"name": "p2s3TrainerKitToP2S3Course",
+					"objectDefinitionExternalReferenceCode1": "P2S3_TRAINER_KIT",
+					"objectDefinitionExternalReferenceCode2": "P2S3_COURSE",
+					"objectDefinitionModifiable2": true,
+					"objectDefinitionName2": "P2S3Course",
+					"objectDefinitionScope2": "company",
+					"objectDefinitionSystem2": false,
+					"reverse": false,
+					"system": false,
+					"type": "manyToMany"
+				},
+				{
+					"deletionType": "disassociate",
+					"externalReferenceCode": "P2S3_TRAINER_KIT_TO_P2S3_FAQ_TOPIC",
+					"label": {
+						"en_US": "P2S3 Trainer Kit to P2S3 FAQ Topic"
+					},
+					"name": "p2s3TrainerKitToP2S3FAQTopic",
+					"objectDefinitionExternalReferenceCode1": "P2S3_TRAINER_KIT",
+					"objectDefinitionExternalReferenceCode2": "P2S3_FAQ_TOPIC",
+					"objectDefinitionModifiable2": true,
+					"objectDefinitionName2": "P2S3FAQTopic",
+					"objectDefinitionScope2": "company",
+					"objectDefinitionSystem2": false,
+					"reverse": false,
+					"system": false,
+					"type": "manyToMany"
+				},
+				{
+					"deletionType": "disassociate",
+					"externalReferenceCode": "P2S3_TRAINER_KIT_TO_P2S3_LEARNING_PATH",
+					"label": {
+						"en_US": "P2S3 Trainer Kit to P2S3 Learning Path"
+					},
+					"name": "p2s3TrainerKitToP2S3LearningPath",
+					"objectDefinitionExternalReferenceCode1": "P2S3_TRAINER_KIT",
+					"objectDefinitionExternalReferenceCode2": "P2S3_LEARNING_PATH",
+					"objectDefinitionModifiable2": true,
+					"objectDefinitionName2": "P2S3LearningPath",
+					"objectDefinitionScope2": "company",
+					"objectDefinitionSystem2": false,
+					"reverse": false,
+					"system": false,
+					"type": "manyToMany"
+				},
+				{
+					"deletionType": "disassociate",
+					"externalReferenceCode": "P2S3_TRAINER_KIT_TO_P2S3_TRAINER_KIT_AGENDA",
+					"label": {
+						"en_US": "P2S3 Trainer Kit to P2S3 Trainer Kit Agenda"
+					},
+					"name": "p2s3TrainerKitToP2S3TrainerKitAgenda",
+					"objectDefinitionExternalReferenceCode1": "P2S3_TRAINER_KIT",
+					"objectDefinitionExternalReferenceCode2": "P2S3_TRAINER_KIT_AGENDA",
+					"objectDefinitionModifiable2": true,
+					"objectDefinitionName2": "P2S3TrainerKitAgenda",
+					"objectDefinitionScope2": "company",
+					"objectDefinitionSystem2": false,
+					"reverse": false,
+					"system": false,
+					"type": "oneToMany"
+				}
+			],
+			"panelCategoryKey": "control_panel.object",
+			"pluralLabel": {
+				"en_US": "P2S3 Trainer Kits"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/p2s3trainerkits",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "title"
+		},
+		{
+			"active": true,
+			"enableCategorization": true,
+			"enableLocalization": true,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "P2S3_TRAINER_KIT_AGENDA",
+			"label": {
+				"en_US": "P2S3 Trainer Kit Agenda"
+			},
+			"modifiable": true,
+			"name": "P2S3TrainerKitAgenda",
+			"objectFields": [
+				{
+					"DBType": "Clob",
+					"businessType": "RichText",
+					"externalReferenceCode": "CONTENT",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Content"
+					},
+					"localized": true,
+					"name": "content",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "Integer",
+					"businessType": "Integer",
+					"externalReferenceCode": "POSITION",
+					"indexed": false,
+					"indexedAsKeyword": false,
+					"label": {
+						"en_US": "Position"
+					},
+					"localized": false,
+					"name": "position",
+					"readOnly": "false",
+					"required": true,
+					"state": false,
+					"type": "Integer",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"externalReferenceCode": "TITLE",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Title"
+					},
+					"localized": true,
+					"name": "title",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "P2S3_ENABLEMENT_HUB",
+			"objectLayouts": [
+				{
+					"defaultObjectLayout": true,
+					"name": {
+						"en_US": "Trainer Kit Agenda"
+					},
+					"objectDefinitionExternalReferenceCode": "P2S3_TRAINER_KIT_AGENDA",
+					"objectLayoutTabs": [
+						{
+							"name": {
+								"en_US": "Trainer Kit Agenda"
+							},
+							"objectLayoutBoxes": [
+								{
+									"collapsable": false,
+									"name": {
+										"en_US": "Main"
+									},
+									"objectLayoutRows": [
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "title",
+													"priority": 0,
+													"size": 12
+												}
+											],
+											"priority": 0
+										},
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "content",
+													"priority": 0,
+													"size": 12
+												}
+											],
+											"priority": 0
+										},
+										{
+											"objectLayoutColumns": [
+												{
+													"objectFieldName": "position",
+													"priority": 0,
+													"size": 4
+												}
+											],
+											"priority": 0
+										}
+									],
+									"priority": 0,
+									"type": "regular"
+								}
+							],
+							"priority": 0
+						}
+					]
+				}
+			],
+			"pluralLabel": {
+				"en_US": "P2S3 Trainer Kit Agendas"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/p2s3trainerkitagendas",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "title"
+		},
+		{
+			"active": true,
 			"enableCategorization": true,
 			"externalReferenceCode": "P2S3_USER_BADGE",
 			"label": {
@@ -3015,7 +3776,7 @@
 				"en_US": "P2S3 User Badges"
 			},
 			"restContextPath": "/o/c/p2s3userbadges",
-			"scope": "site",
+			"scope": "company",
 			"status": {
 				"code": 0,
 				"label": "approved",

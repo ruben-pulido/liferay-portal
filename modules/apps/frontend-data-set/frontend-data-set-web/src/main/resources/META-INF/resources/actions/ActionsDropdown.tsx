@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {IActionsDropdown, IItemsActions} from '..';
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
@@ -17,6 +16,7 @@ import FrontendDataSetContext, {
 } from '../FrontendDataSetContext';
 import formatActionURL from '../utils/actionItems/formatActionURL';
 import isLink from '../utils/isLink';
+import {IActionsDropdown, IItemsActions} from '../utils/types';
 
 interface IDropdownItem {
 	action: IItemsActions;
@@ -31,6 +31,7 @@ function DropdownItem({action, closeMenu, onClick, url}: IDropdownItem) {
 
 	return (
 		<ClayDropDown.Item
+			disabled={action.disabled}
 			href={isLink(target, null) ? url : undefined}
 			onClick={(event) =>
 				onClick({
@@ -151,6 +152,7 @@ function ActionsDropdown({
 			<LinkOrButton
 				aria-label={action.label}
 				className="btn btn-secondary btn-sm"
+				disabled={action.disabled}
 				href={
 					isLink(
 						action.target,
@@ -161,6 +163,8 @@ function ActionsDropdown({
 				}
 				monospaced={Boolean(action.icon)}
 				onClick={(event: any) => {
+					event.stopPropagation();
+
 					onClick({
 						action,
 						event,
@@ -215,6 +219,7 @@ function ActionsDropdown({
 				onActiveChange={() =>
 					onMenuActiveChange && onMenuActiveChange(!menuActive)
 				}
+				onClick={(event) => event.stopPropagation()}
 				trigger={
 					<ClayButton
 						className="component-action dropdown-toggle"

@@ -1067,11 +1067,22 @@ public abstract class BaseWikiNodeResourceImpl
 				"updateStrategy", "UPDATE");
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				wikiNodeUnsafeFunction =
-					wikiNode -> putSiteWikiNodeByExternalReferenceCode(
-						wikiNode.getSiteId() != null ? wikiNode.getSiteId() :
-							(Long)parameters.get("siteId"),
-						wikiNode.getExternalReferenceCode(), wikiNode);
+				wikiNodeUnsafeFunction = wikiNode -> {
+					WikiNode persistedWikiNode = null;
+
+					if (parameters.containsKey("siteId")) {
+						persistedWikiNode =
+							putSiteWikiNodeByExternalReferenceCode(
+								(Long)parameters.get("siteId"),
+								wikiNode.getExternalReferenceCode(), wikiNode);
+					}
+					else {
+						throw new NotSupportedException(
+							"One of the following parameters must be specified: [siteId]");
+					}
+
+					return persistedWikiNode;
+				};
 			}
 		}
 
@@ -1210,9 +1221,7 @@ public abstract class BaseWikiNodeResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			wikiNodeUnsafeFunction = wikiNode -> putWikiNode(
-				wikiNode.getId() != null ? wikiNode.getId() :
-					_parseLong((String)parameters.get("wikiNodeId")),
-				wikiNode);
+				wikiNode.getId(), wikiNode);
 		}
 
 		if (wikiNodeUnsafeFunction == null) {
@@ -1234,14 +1243,6 @@ public abstract class BaseWikiNodeResourceImpl
 				wikiNodeUnsafeFunction.apply(wikiNode);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

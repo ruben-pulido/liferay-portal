@@ -522,13 +522,15 @@ public class AssetVocabularyServiceTest {
 		try (SafeCloseable safeCloseable =
 				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
 
+			// With permissions
+
 			AssetVocabulary vocabulary =
 				_assetVocabularyService.getOrAddIncompleteVocabulary(
 					RandomTestUtil.randomString(), _group.getGroupId());
 
 			Assert.assertNotNull(vocabulary);
 
-			// Without resource permission
+			// Without permissions
 
 			User user = UserTestUtil.addGroupUser(
 				_group, RoleConstants.SITE_MEMBER);
@@ -547,6 +549,26 @@ public class AssetVocabularyServiceTest {
 			catch (PrincipalException.MustHavePermission principalException) {
 				Assert.assertNotNull(principalException);
 			}
+
+			// Without permissions, existing vocabulary
+
+			String externalReferenceCode = RandomTestUtil.randomString();
+
+			_assetVocabularyLocalService.addVocabulary(
+				externalReferenceCode, TestPropsValues.getUserId(),
+				_group.getGroupId(), RandomTestUtil.randomString(),
+				RandomTestUtil.randomString(),
+				HashMapBuilder.put(
+					LocaleUtil.SPAIN, RandomTestUtil.randomString()
+				).build(),
+				null, null, AssetVocabularyConstants.VISIBILITY_TYPE_PUBLIC,
+				ServiceContextTestUtil.getServiceContext(
+					_group.getGroupId(), TestPropsValues.getUserId()));
+
+			vocabulary = _assetVocabularyService.getOrAddIncompleteVocabulary(
+				externalReferenceCode, _group.getGroupId());
+
+			Assert.assertNotNull(vocabulary);
 		}
 	}
 

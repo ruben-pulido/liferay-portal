@@ -335,11 +335,11 @@ public class LayoutLocalServiceWrapper
 							fetchLayoutClassedModelUsage(
 								targetLayout.getGroupId(),
 								sourceLayoutLayoutClassedModelUsage.
+									getClassExternalReferenceCode(),
+								sourceLayoutLayoutClassedModelUsage.
 									getClassNameId(),
 								sourceLayoutLayoutClassedModelUsage.
 									getClassPK(),
-								sourceLayoutLayoutClassedModelUsage.
-									getClassedModelExternalReferenceCode(),
 								containerKey,
 								sourceLayoutLayoutClassedModelUsage.
 									getContainerType(),
@@ -353,11 +353,10 @@ public class LayoutLocalServiceWrapper
 
 			_layoutClassedModelUsageLocalService.addLayoutClassedModelUsage(
 				sourceLayoutLayoutClassedModelUsage.getGroupId(),
-				sourceLayoutLayoutClassedModelUsage.getClassNameId(),
-				sourceLayoutLayoutClassedModelUsage.getClassPK(),
 				sourceLayoutLayoutClassedModelUsage.
-					getClassedModelExternalReferenceCode(),
-				containerKey,
+					getClassExternalReferenceCode(),
+				sourceLayoutLayoutClassedModelUsage.getClassNameId(),
+				sourceLayoutLayoutClassedModelUsage.getClassPK(), containerKey,
 				sourceLayoutLayoutClassedModelUsage.getContainerType(),
 				targetLayout.getPlid(),
 				ServiceContextThreadLocal.getServiceContext());
@@ -1111,6 +1110,13 @@ public class LayoutLocalServiceWrapper
 				sourceLayoutfragmentEntryLink.getFragmentEntryLinkId(),
 				newFragmentEntryLink.getFragmentEntryLinkId(),
 				className -> serviceContext);
+		}
+
+		for (DeletedLayoutStructureItem deletedLayoutStructureItem :
+				layoutStructure.getDeletedLayoutStructureItems()) {
+
+			layoutStructure.deleteLayoutStructureItem(
+				deletedLayoutStructureItem.getItemId());
 		}
 
 		return layoutStructure.toJSONObject();

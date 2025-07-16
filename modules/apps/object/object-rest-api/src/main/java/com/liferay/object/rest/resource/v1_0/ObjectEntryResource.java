@@ -63,6 +63,10 @@ public interface ObjectEntryResource {
 			String scopeKey, String externalReferenceCode)
 		throws Exception;
 
+	public void deleteScopeScopeKeyByExternalReferenceCodeByVersion(
+			String scopeKey, String externalReferenceCode, Integer version)
+		throws Exception;
+
 	public ObjectEntry getByExternalReferenceCode(String externalReferenceCode)
 		throws Exception;
 
@@ -98,6 +102,16 @@ public interface ObjectEntryResource {
 
 	public ObjectEntry getScopeScopeKeyByExternalReferenceCode(
 			String scopeKey, String externalReferenceCode)
+		throws Exception;
+
+	public ObjectEntry getScopeScopeKeyByExternalReferenceCodeByVersion(
+			String scopeKey, String externalReferenceCode, Integer version)
+		throws Exception;
+
+	public Page<ObjectEntry>
+			getScopeScopeKeyByExternalReferenceCodeVersionsPage(
+				String scopeKey, String externalReferenceCode,
+				Pagination pagination)
 		throws Exception;
 
 	public Page<ObjectEntry> getScopeScopeKeyPage(
@@ -150,8 +164,19 @@ public interface ObjectEntryResource {
 			Long objectEntryId, Integer version)
 		throws Exception;
 
+	public ObjectEntry postObjectEntryExpire(Long objectEntryId)
+		throws Exception;
+
 	public ObjectEntry postScopeScopeKey(
 			String scopeKey, ObjectEntry objectEntry)
+		throws Exception;
+
+	public ObjectEntry postScopeScopeKeyByExternalReferenceCodeByVersionCopy(
+			String scopeKey, String externalReferenceCode, Integer version)
+		throws Exception;
+
+	public ObjectEntry postScopeScopeKeyByExternalReferenceCodeByVersionExpire(
+			String scopeKey, String externalReferenceCode, Integer version)
 		throws Exception;
 
 	public ValidationResponse postScopeScopeKeyValidate(
@@ -167,13 +192,6 @@ public interface ObjectEntryResource {
 
 	public ObjectEntry putByExternalReferenceCodeByVersionRestore(
 			String externalReferenceCode, Integer version)
-		throws Exception;
-
-	public ObjectEntry
-			putByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode(
-				String currentExternalReferenceCode,
-				String objectRelationshipName,
-				String relatedExternalReferenceCode)
 		throws Exception;
 
 	public void putByExternalReferenceCodeObjectActionObjectActionName(
@@ -204,6 +222,10 @@ public interface ObjectEntryResource {
 	public ObjectEntry putScopeScopeKeyByExternalReferenceCode(
 			String scopeKey, String externalReferenceCode,
 			ObjectEntry objectEntry)
+		throws Exception;
+
+	public ObjectEntry putScopeScopeKeyByExternalReferenceCodeByVersionRestore(
+			String scopeKey, String externalReferenceCode, Integer version)
 		throws Exception;
 
 	public void

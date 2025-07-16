@@ -1360,28 +1360,32 @@ public abstract class BaseBlogPostingResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				blogPostingUnsafeFunction = blogPosting -> {
+					BlogPosting getBlogPosting = null;
 					BlogPosting persistedBlogPosting = null;
 
 					try {
-						BlogPosting getBlogPosting =
-							getSiteBlogPostingByExternalReferenceCode(
-								blogPosting.getSiteId() != null ?
-									blogPosting.getSiteId() :
-										(Long)parameters.get("siteId"),
-								blogPosting.getExternalReferenceCode());
+						if (parameters.containsKey("siteId")) {
+							getBlogPosting =
+								getSiteBlogPostingByExternalReferenceCode(
+									(Long)parameters.get("siteId"),
+									blogPosting.getExternalReferenceCode());
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [siteId]");
+						}
 
 						persistedBlogPosting = patchBlogPosting(
-							getBlogPosting.getId() != null ?
-								getBlogPosting.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"blogPostingId")),
-							blogPosting);
+							getBlogPosting.getId(), blogPosting);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						if (parameters.containsKey("siteId")) {
 							persistedBlogPosting = postSiteBlogPosting(
 								(Long)parameters.get("siteId"), blogPosting);
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [siteId]");
 						}
 					}
 
@@ -1390,12 +1394,23 @@ public abstract class BaseBlogPostingResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				blogPostingUnsafeFunction =
-					blogPosting -> putSiteBlogPostingByExternalReferenceCode(
-						blogPosting.getSiteId() != null ?
-							blogPosting.getSiteId() :
+				blogPostingUnsafeFunction = blogPosting -> {
+					BlogPosting persistedBlogPosting = null;
+
+					if (parameters.containsKey("siteId")) {
+						persistedBlogPosting =
+							putSiteBlogPostingByExternalReferenceCode(
 								(Long)parameters.get("siteId"),
-						blogPosting.getExternalReferenceCode(), blogPosting);
+								blogPosting.getExternalReferenceCode(),
+								blogPosting);
+					}
+					else {
+						throw new NotSupportedException(
+							"One of the following parameters must be specified: [siteId]");
+					}
+
+					return persistedBlogPosting;
+				};
 			}
 		}
 
@@ -1534,16 +1549,12 @@ public abstract class BaseBlogPostingResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			blogPostingUnsafeFunction = blogPosting -> patchBlogPosting(
-				blogPosting.getId() != null ? blogPosting.getId() :
-					_parseLong((String)parameters.get("blogPostingId")),
-				blogPosting);
+				blogPosting.getId(), blogPosting);
 		}
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			blogPostingUnsafeFunction = blogPosting -> putBlogPosting(
-				blogPosting.getId() != null ? blogPosting.getId() :
-					_parseLong((String)parameters.get("blogPostingId")),
-				blogPosting);
+				blogPosting.getId(), blogPosting);
 		}
 
 		if (blogPostingUnsafeFunction == null) {
@@ -1565,14 +1576,6 @@ public abstract class BaseBlogPostingResourceImpl
 				blogPostingUnsafeFunction.apply(blogPosting);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

@@ -2462,6 +2462,16 @@ public class JenkinsResultsParserUtil {
 		return _URL_LOAD_BALANCER_DEFAULT;
 	}
 
+	public static JenkinsMaster getJenkinsMaster(URL buildURL) {
+		Matcher matcher = _buildURLPattern.matcher(String.valueOf(buildURL));
+
+		if (!matcher.find()) {
+			throw new RuntimeException("Invalid Build URL");
+		}
+
+		return JenkinsMaster.getInstance(matcher.group("masterHostname"));
+	}
+
 	public static String getJenkinsMasterName(String jenkinsSlaveName) {
 		jenkinsSlaveName = jenkinsSlaveName.replaceAll("([^\\.]+).*", "$1");
 

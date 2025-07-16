@@ -1039,6 +1039,13 @@ public class JournalArticleStagedModelDataHandler
 				}
 			}
 
+			importedArticle.setModifiedDate(article.getModifiedDate());
+			importedArticle.setStatusByUserId(article.getStatusByUserId());
+			importedArticle.setStatusByUserName(article.getStatusByUserName());
+
+			importedArticle = _journalArticleLocalService.updateJournalArticle(
+				importedArticle);
+
 			Map<Long, Long> primaryKeys =
 				(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
 					JournalArticle.class);

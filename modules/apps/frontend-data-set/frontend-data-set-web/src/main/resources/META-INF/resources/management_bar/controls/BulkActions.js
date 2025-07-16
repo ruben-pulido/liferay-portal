@@ -15,6 +15,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import FrontendDataSetContext from '../../FrontendDataSetContext';
 import {OPEN_SIDE_PANEL} from '../../utils/eventsDefinitions';
 import {getOpenedSidePanel} from '../../utils/sidePanels';
+import InfoPanelToggleButton from './InfoPanelToggleButton';
 import SelectionCheckbox from './SelectionCheckbox';
 
 function getQueryString(key, values = []) {
@@ -50,6 +51,7 @@ function BulkActions({
 		onBulkActionItemClick,
 		showBulkActionsManagementBar,
 		showBulkActionsManagementBarActions,
+		showInfoPanel,
 	} = useContext(FrontendDataSetContext);
 
 	const [currentSidePanelActionPayload, setCurrentSidePanelActionPayload] =
@@ -157,7 +159,10 @@ function BulkActions({
 				selectable,
 				sidePanelId,
 			}) => (
-				<nav className="management-bar management-bar-primary navbar navbar-expand-md">
+				<nav
+					className="management-bar management-bar-primary navbar navbar-expand-md"
+					data-qa-id="selectionToolbar"
+				>
 					<div
 						className={classNames(
 							'container-fluid',
@@ -327,6 +332,12 @@ function BulkActions({
 										</DropDown>
 									</li>
 								)}
+
+								{showInfoPanel && (
+									<li className="nav-item">
+										<InfoPanelToggleButton symbol="info-circle" />
+									</li>
+								)}
 							</ul>
 						)}
 					</div>
@@ -337,7 +348,7 @@ function BulkActions({
 }
 
 BulkActions.propTypes = {
-	allItemsSelectedActive: PropTypes.bool.isRequired,
+	allItemsSelectedActive: PropTypes.bool,
 	bulkActions: PropTypes.arrayOf(
 		PropTypes.shape({
 			href: PropTypes.string.isRequired,

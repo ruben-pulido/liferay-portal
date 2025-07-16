@@ -22,23 +22,36 @@ import com.liferay.depot.service.DepotEntryGroupRelLocalService;
 import com.liferay.depot.service.DepotEntryService;
 import com.liferay.object.model.ObjectDefinitionTable;
 import com.liferay.object.model.ObjectEntryTable;
+import com.liferay.object.model.ObjectEntryVersionTable;
 import com.liferay.object.model.ObjectFolderTable;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
+import com.liferay.petra.sql.dsl.expression.Expression;
 import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
+import com.liferay.petra.sql.dsl.spi.expression.DSLFunction;
+import com.liferay.petra.sql.dsl.spi.expression.DSLFunctionType;
+import com.liferay.petra.sql.dsl.spi.expression.Scalar;
+import com.liferay.portal.kernel.dao.db.DB;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
+import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.SearchUtil;
+
+import java.text.DateFormat;
+import java.text.ParseException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,7 +74,8 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 
 	@Override
 	public Overview getContentOverview(
-			String languageId, Integer rangeKey, Integer spaceId)
+			String languageId, String rangeEnd, Integer rangeKey,
+			String rangeStart, Long spaceId)
 		throws Exception {
 
 		List<DepotEntry> depotEntries = _getDepotEntries(spaceId);
@@ -74,14 +88,17 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 
 		return _toOverview(
 			_getOverviewObjects(
-				"L_CMS_CONTENT_STRUCTURES", groupIds, languageId, rangeKey),
+				"L_CMS_CONTENT_STRUCTURES", groupIds, languageId, rangeEnd,
+				rangeKey, rangeStart),
 			_getPreviousTotalCount(
-				"L_CMS_CONTENT_STRUCTURES", groupIds, languageId, rangeKey));
+				"L_CMS_CONTENT_STRUCTURES", groupIds, languageId, rangeEnd,
+				rangeKey, rangeStart));
 	}
 
 	@Override
 	public Overview getFileOverview(
-			String languageId, Integer rangeKey, Integer spaceId)
+			String languageId, String rangeEnd, Integer rangeKey,
+			String rangeStart, Long spaceId)
 		throws Exception {
 
 		List<DepotEntry> depotEntries = _getDepotEntries(spaceId);
@@ -94,14 +111,18 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 
 		return _toOverview(
 			_getOverviewObjects(
-				"L_CMS_FILE_TYPES", groupIds, languageId, rangeKey),
+				"L_CMS_FILE_TYPES", groupIds, languageId, rangeEnd, rangeKey,
+				rangeStart),
 			_getPreviousTotalCount(
-				"L_CMS_FILE_TYPES", groupIds, languageId, rangeKey));
+				"L_CMS_FILE_TYPES", groupIds, languageId, rangeEnd, rangeKey,
+				rangeStart));
 	}
 
-	private List<DepotEntry> _getDepotEntries(Integer spaceId)
-		throws Exception {
+	private DateFormat _getDateFormat() {
+		return DateFormatFactoryUtil.getSimpleDateFormat("yyyy-MM-dd");
+	}
 
+	private List<DepotEntry> _getDepotEntries(Long spaceId) throws Exception {
 		List<DepotEntry> depotEntries = new ArrayList<>();
 
 		if (spaceId == null) {
@@ -112,6 +133,30 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 		}
 
 		return depotEntries;
+	}
+
+	private Date _getEndDate(String rangeEnd) {
+		try {
+			Calendar calendar = Calendar.getInstance();
+
+			DateFormat dateFormat = _getDateFormat();
+
+			calendar.setTime(dateFormat.parse(rangeEnd));
+
+			calendar.set(Calendar.HOUR_OF_DAY, 23);
+			calendar.set(Calendar.MILLISECOND, 59);
+			calendar.set(Calendar.MINUTE, 59);
+			calendar.set(Calendar.SECOND, 59);
+
+			return calendar.getTime();
+		}
+		catch (ParseException parseException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(parseException);
+			}
+		}
+
+		return null;
 	}
 
 	private Long[] _getGroupIds(List<DepotEntry> depotEntries) {
@@ -135,7 +180,7 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 
 	private Object[] _getOverviewObjects(
 		String externalReferenceCode, Long[] groupIds, String languageId,
-		int rangeKey) {
+		String rangeEnd, Integer rangeKey, String rangeStart) {
 
 		AssetCategoryTable assetCategoryTable = AssetCategoryTable.INSTANCE;
 		AssetEntries_AssetTagsTable assetEntriesAssetTagsTable =
@@ -153,6 +198,8 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 		ObjectDefinitionTable objectDefinitionTable =
 			ObjectDefinitionTable.INSTANCE;
 		ObjectEntryTable objectEntryTable = ObjectEntryTable.INSTANCE;
+		ObjectEntryVersionTable objectEntryVersionTable =
+			ObjectEntryVersionTable.INSTANCE;
 		ObjectFolderTable objectFolderTable = ObjectFolderTable.INSTANCE;
 
 		Long[] assetGroupIds = groupIds;
@@ -193,6 +240,16 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 			objectEntryTable.objectDefinitionId.eq(
 				objectDefinitionTable.objectDefinitionId)
 		).innerJoinON(
+			objectEntryVersionTable,
+			objectEntryVersionTable.objectEntryId.eq(
+				objectEntryTable.objectEntryId
+			).and(
+				objectEntryVersionTable.version.eq(objectEntryTable.version)
+			).and(
+				objectEntryVersionTable.status.eq(
+					WorkflowConstants.STATUS_APPROVED)
+			)
+		).innerJoinON(
 			assetEntryTable,
 			assetEntryTable.classPK.eq(objectEntryTable.objectEntryId)
 		).leftJoinOn(
@@ -229,7 +286,8 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 			)
 		).where(
 			_getWhereClause(
-				externalReferenceCode, groupIds, languageId, false, rangeKey)
+				externalReferenceCode, groupIds, languageId, false, rangeEnd,
+				rangeKey, rangeStart)
 		);
 
 		List<Object[]> results = _objectEntryLocalService.dslQuery(dslQuery);
@@ -241,11 +299,33 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 		return results.get(0);
 	}
 
-	private Date _getPreviousStartDate(int rangeKey) {
+	private Date _getPreviousStartDate(
+		String rangeEnd, Integer rangeKey, String rangeStart) {
+
 		Calendar calendar = Calendar.getInstance();
 
-		calendar.add(Calendar.DAY_OF_MONTH, -(rangeKey * 2));
-		calendar.set(Calendar.HOUR_OF_DAY, 12);
+		if (Validator.isNotNull(rangeEnd) && Validator.isNotNull(rangeStart)) {
+			try {
+				calendar.setTime(_getStartDate(null, rangeStart));
+
+				DateFormat dateFormat = _getDateFormat();
+
+				int delta = DateUtil.getDaysBetween(
+					dateFormat.parse(rangeStart), dateFormat.parse(rangeEnd));
+
+				calendar.add(Calendar.DAY_OF_MONTH, -delta);
+			}
+			catch (ParseException parseException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(parseException);
+				}
+			}
+		}
+		else {
+			calendar.add(Calendar.DAY_OF_MONTH, -(rangeKey * 2));
+		}
+
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
@@ -255,12 +335,14 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 
 	private long _getPreviousTotalCount(
 		String externalReferenceCode, Long[] groupIds, String languageId,
-		int rangeKey) {
+		String rangeEnd, Integer rangeKey, String rangeStart) {
 
 		AssetEntryTable assetEntryTable = AssetEntryTable.INSTANCE;
 		ObjectDefinitionTable objectDefinitionTable =
 			ObjectDefinitionTable.INSTANCE;
 		ObjectEntryTable objectEntryTable = ObjectEntryTable.INSTANCE;
+		ObjectEntryVersionTable objectEntryVersionTable =
+			ObjectEntryVersionTable.INSTANCE;
 		ObjectFolderTable objectFolderTable = ObjectFolderTable.INSTANCE;
 
 		DSLQuery dslQuery = DSLQueryFactoryUtil.select(
@@ -280,11 +362,22 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 			objectEntryTable.objectDefinitionId.eq(
 				objectDefinitionTable.objectDefinitionId)
 		).innerJoinON(
+			objectEntryVersionTable,
+			objectEntryVersionTable.objectEntryId.eq(
+				objectEntryTable.objectEntryId
+			).and(
+				objectEntryVersionTable.version.eq(objectEntryTable.version)
+			).and(
+				objectEntryVersionTable.status.eq(
+					WorkflowConstants.STATUS_APPROVED)
+			)
+		).innerJoinON(
 			assetEntryTable,
 			assetEntryTable.classPK.eq(objectEntryTable.objectEntryId)
 		).where(
 			_getWhereClause(
-				externalReferenceCode, groupIds, languageId, true, rangeKey)
+				externalReferenceCode, groupIds, languageId, true, rangeEnd,
+				rangeKey, rangeStart)
 		);
 
 		List<Object[]> results = _objectEntryLocalService.dslQuery(dslQuery);
@@ -296,11 +389,44 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 		return GetterUtil.getLong(results.get(0));
 	}
 
-	private Date _getStartDate(int rangeKey) {
+	private <T> Expression<T> _getPropertyValueExpression(
+		Expression<T> expression, String propertyName) {
+
+		DB db = DBManagerUtil.getDB();
+
+		if ((db.getDBType() == DBType.MYSQL) ||
+			(db.getDBType() == DBType.MARIADB)) {
+
+			return new DSLFunction<>(
+				new DSLFunctionType("JSON_EXTRACT(", ")"), expression,
+				new Scalar<>(propertyName));
+		}
+
+		return new DSLFunction<>(
+			new DSLFunctionType("JSON_QUERY(", ")"), expression,
+			new Scalar<>(propertyName));
+	}
+
+	private Date _getStartDate(Integer rangeKey, String rangeStart) {
 		Calendar calendar = Calendar.getInstance();
 
-		calendar.add(Calendar.DAY_OF_MONTH, -rangeKey);
-		calendar.set(Calendar.HOUR_OF_DAY, 12);
+		if (Validator.isNotNull(rangeStart)) {
+			try {
+				DateFormat dateFormat = _getDateFormat();
+
+				calendar.setTime(dateFormat.parse(rangeStart));
+			}
+			catch (ParseException parseException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(parseException);
+				}
+			}
+		}
+		else {
+			calendar.add(Calendar.DAY_OF_MONTH, -rangeKey);
+		}
+
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
@@ -346,7 +472,8 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 
 	private Predicate _getWhereClause(
 		String externalReferenceCode, Long[] groupIds, String languageId,
-		boolean previous, int rangeKey) {
+		boolean previous, String rangeEnd, Integer rangeKey,
+		String rangeStart) {
 
 		Predicate predicate =
 			ObjectFolderTable.INSTANCE.externalReferenceCode.eq(
@@ -363,21 +490,31 @@ public class OverviewResourceImpl extends BaseOverviewResourceImpl {
 
 		if (!Validator.isBlank(languageId)) {
 			predicate = predicate.and(
-				AssetEntryTable.INSTANCE.title.like(
-					"%language-id=\"" + languageId + "\"%"));
+				_getPropertyValueExpression(
+					ObjectEntryVersionTable.INSTANCE.content, "$.properties"
+				).like(
+					"%\"" + languageId + "\":%"
+				));
 		}
 
 		if (!previous) {
 			predicate = predicate.and(
 				ObjectEntryTable.INSTANCE.createDate.gte(
-					_getStartDate(rangeKey)));
+					_getStartDate(rangeKey, rangeStart)));
+
+			if (Validator.isNotNull(rangeEnd)) {
+				predicate = predicate.and(
+					ObjectEntryTable.INSTANCE.createDate.lte(
+						_getEndDate(rangeEnd)));
+			}
 		}
 		else {
 			predicate = predicate.and(
 				ObjectEntryTable.INSTANCE.createDate.gte(
-					_getPreviousStartDate(rangeKey))
+					_getPreviousStartDate(rangeEnd, rangeKey, rangeStart))
 			).and(
-				ObjectEntryTable.INSTANCE.createDate.lt(_getStartDate(rangeKey))
+				ObjectEntryTable.INSTANCE.createDate.lt(
+					_getStartDate(rangeKey, rangeStart))
 			);
 		}
 

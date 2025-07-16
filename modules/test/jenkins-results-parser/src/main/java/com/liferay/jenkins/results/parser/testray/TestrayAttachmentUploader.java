@@ -16,6 +16,8 @@ public interface TestrayAttachmentUploader {
 
 	public File getPreparedFilesBaseDir();
 
+	public TestrayAttachmentRecorder getTestrayAttachmentRecorder();
+
 	public URL getTestrayServerLogsURL();
 
 	public URL getTestrayServerURL();
@@ -23,11 +25,5 @@ public interface TestrayAttachmentUploader {
 	public void prepareFiles();
 
 	public void upload();
-
-	public static enum Type {
-
-		RSYNC, S3
-
-	}
 
 }

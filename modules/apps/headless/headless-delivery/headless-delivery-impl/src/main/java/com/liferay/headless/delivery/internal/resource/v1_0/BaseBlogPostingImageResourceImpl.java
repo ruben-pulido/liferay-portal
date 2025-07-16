@@ -579,8 +579,7 @@ public abstract class BaseBlogPostingImageResourceImpl
 			if (parameters.containsKey("siteId")) {
 				blogPostingImageUnsafeFunction =
 					blogPostingImage -> postSiteBlogPostingImage(
-						(Long)parameters.get("siteId"),
-						(MultipartBody)parameters.get("multipartBody"));
+						(Long)parameters.get("siteId"), null);
 			}
 			else {
 				throw new NotSupportedException(

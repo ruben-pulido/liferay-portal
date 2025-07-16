@@ -85,9 +85,15 @@ public class OpenAPIResourceImpl {
 
 	private final Set<Class<?>> _resourceClasses = new HashSet<Class<?>>() {
 		{
+			add(AssetLibraryTestEntityResourceImpl.class);
+
+			add(BatchTestEntityResourceImpl.class);
+
 			add(CompanyTestEntityResourceImpl.class);
 
 			add(ERCAssetLibraryTestEntityResourceImpl.class);
+
+			add(ERCScopedTestEntityResourceImpl.class);
 
 			add(ERCSiteTestEntityResourceImpl.class);
 
@@ -100,6 +106,8 @@ public class OpenAPIResourceImpl {
 			add(MultipartTestEntityResourceImpl.class);
 
 			add(SchemaResourceImpl.class);
+
+			add(ScopedTestEntityResourceImpl.class);
 
 			add(SiteTestEntityResourceImpl.class);
 

@@ -15,6 +15,7 @@ import {
 	useNewAppContext,
 } from '../../../../../context/NewAppContext';
 import {
+	ProductTags,
 	ProductVocabulary,
 	ProductWorkflowStatusCode,
 } from '../../../../../enums/Product';
@@ -34,7 +35,10 @@ const Profile = () => {
 		{
 			_product,
 			profile: {areas, categories, description, file, name, tags},
-			references: {vocabulariesAndCategories},
+			references: {
+				flags: {canModifyProductProfileCategory},
+				vocabulariesAndCategories,
+			},
 		},
 		dispatch,
 	] = useNewAppContext();
@@ -70,6 +74,7 @@ const Profile = () => {
 			preview: URL.createObjectURL(_file),
 			progress: 0,
 			readableSize: filesize(_file.size),
+			tags: [ProductTags.APP_ICON],
 			uploaded: true,
 		};
 
@@ -179,6 +184,7 @@ const Profile = () => {
 						defaultOption
 						defaultOptionLabel={i18n.translate('select-category')}
 						disabled={
+							!canModifyProductProfileCategory &&
 							!!_product?.productId &&
 							_product.productStatus !==
 								ProductWorkflowStatusCode.DRAFT

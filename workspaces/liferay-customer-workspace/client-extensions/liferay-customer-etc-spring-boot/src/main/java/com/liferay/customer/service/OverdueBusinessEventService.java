@@ -7,13 +7,14 @@ package com.liferay.customer.service;
 
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.client.extension.util.spring.boot3.service.BaseService;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.petra.string.StringPool;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Felipe Veloso
@@ -28,7 +30,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OverdueBusinessEventService extends BaseService {
 
-	@Scheduled(cron = "0 0 0 * * *")
+	@Scheduled(cron = "${liferay.customer.overdue.business.event.cron}")
 	public void scheduled() {
 		Date date = new Date();
 		DateFormat dateFormat = new SimpleDateFormat(
@@ -40,36 +42,49 @@ public class OverdueBusinessEventService extends BaseService {
 			JSONObject jsonObject = new JSONObject(
 				get(
 					_getAuthorization(),
-					StringBundler.concat(
-						"/o/c/businessevents?page=", page,
-						"&pageSize=500&filter=eventStatus eq 'open' and ",
-						"targetGoLiveDateTime lt ", dateFormat.format(date))));
+					UriComponentsBuilder.fromPath(
+						"/o/c/businessevents"
+					).queryParam(
+						"filter",
+						"eventStatus eq 'open' and targetGoLiveDateTime lt " +
+							dateFormat.format(date)
+					).queryParam(
+						"page", page
+					).queryParam(
+						"pageSize", 500
+					).build(
+					).toUri()));
 
 			JSONArray jsonArray = jsonObject.getJSONArray("items");
 
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject businessEventJSONObject = jsonArray.getJSONObject(i);
 
-				patch(
-					_getAuthorization(),
-					new JSONObject(
-					).put(
-						"eventStatus",
+				try {
+					patch(
+						_getAuthorization(),
 						new JSONObject(
 						).put(
-							"key", "overdue"
-						).put(
-							"name", "Overdue"
-						)
-					).toString(),
-					"/o/c/businessevents/" +
-						businessEventJSONObject.getInt("id"));
-
-				put(
-					_getAuthorization(), StringPool.BLANK,
-					"/o/c/businessevents/" +
-						businessEventJSONObject.getInt("id") +
-							"/object-actions/overdueBusinessEventAction");
+							"eventStatus",
+							new JSONObject(
+							).put(
+								"key", "overdue"
+							).put(
+								"name", "Overdue"
+							)
+						).toString(),
+						UriComponentsBuilder.fromPath(
+							"/o/c/businessevents/" +
+								businessEventJSONObject.getInt("id")
+						).build(
+						).toUri());
+				}
+				catch (Exception exception) {
+					_log.error(
+						"Unable to update business event:\n" +
+							businessEventJSONObject.toString(),
+						exception);
+				}
 			}
 
 			if (jsonObject.getInt("lastPage") == page) {
@@ -85,6 +100,9 @@ public class OverdueBusinessEventService extends BaseService {
 		return _liferayOAuth2AccessTokenManager.getAuthorization(
 			"liferay-customer-etc-spring-boot-oahs");
 	}
+
+	private static final Log _log = LogFactory.getLog(
+		OverdueBusinessEventService.class);
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;

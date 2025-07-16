@@ -5,6 +5,8 @@
 
 package com.liferay.saml.opensaml.integration.internal.resolver;
 
+import com.liferay.expando.kernel.model.ExpandoColumn;
+import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -14,6 +16,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -26,6 +29,7 @@ import com.liferay.saml.opensaml.integration.field.expression.handler.UserFieldE
 import com.liferay.saml.opensaml.integration.field.expression.handler.registry.UserFieldExpressionHandlerRegistry;
 import com.liferay.saml.opensaml.integration.field.expression.resolver.UserFieldExpressionResolver;
 import com.liferay.saml.opensaml.integration.field.expression.resolver.registry.UserFieldExpressionResolverRegistry;
+import com.liferay.saml.opensaml.integration.internal.util.SamlProvisioningUtil;
 import com.liferay.saml.opensaml.integration.processor.UserProcessor;
 import com.liferay.saml.opensaml.integration.processor.factory.UserProcessorFactory;
 import com.liferay.saml.opensaml.integration.resolver.UserResolver;
@@ -127,6 +131,16 @@ public class DefaultUserResolver implements UserResolver {
 		if (_log.isDebugEnabled()) {
 			_log.debug("Added user " + user.toString());
 		}
+
+		ExpandoColumn expandoColumn =
+			SamlProvisioningUtil.getOrAddExpandoColumn(
+				serviceContext.getCompanyId(), User.class.getName(),
+				"samlIdpEntityId");
+
+		_expandoValueLocalService.addValue(
+			_classNameLocalService.getClassNameId(User.class.getName()),
+			expandoColumn.getTableId(), expandoColumn.getColumnId(),
+			user.getUserId(), samlSpIdpConnection.getSamlIdpEntityId());
 
 		return user;
 	}
@@ -395,7 +409,13 @@ public class DefaultUserResolver implements UserResolver {
 		DefaultUserResolver.class);
 
 	@Reference
+	private ClassNameLocalService _classNameLocalService;
+
+	@Reference
 	private CompanyLocalService _companyLocalService;
+
+	@Reference
+	private ExpandoValueLocalService _expandoValueLocalService;
 
 	@Reference
 	private SamlPeerBindingLocalService _samlPeerBindingLocalService;

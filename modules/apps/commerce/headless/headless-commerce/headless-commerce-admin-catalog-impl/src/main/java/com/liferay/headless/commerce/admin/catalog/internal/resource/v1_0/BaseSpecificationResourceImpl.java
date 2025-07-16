@@ -622,20 +622,16 @@ public abstract class BaseSpecificationResourceImpl
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 				specificationUnsafeFunction = specification -> {
+					Specification getSpecification = null;
 					Specification persistedSpecification = null;
 
 					try {
-						Specification getSpecification =
+						getSpecification =
 							getSpecificationByExternalReferenceCode(
 								specification.getExternalReferenceCode());
 
 						persistedSpecification = patchSpecification(
-							getSpecification.getId() != null ?
-								getSpecification.getId() :
-									_parseLong(
-										(String)parameters.get(
-											"specificationId")),
-							specification);
+							getSpecification.getId(), specification);
 					}
 					catch (NoSuchModelException noSuchModelException) {
 						persistedSpecification = postSpecification(
@@ -647,10 +643,16 @@ public abstract class BaseSpecificationResourceImpl
 			}
 
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
-				specificationUnsafeFunction =
-					specification -> putSpecificationByExternalReferenceCode(
-						specification.getExternalReferenceCode(),
-						specification);
+				specificationUnsafeFunction = specification -> {
+					Specification persistedSpecification = null;
+
+					persistedSpecification =
+						putSpecificationByExternalReferenceCode(
+							specification.getExternalReferenceCode(),
+							specification);
+
+					return persistedSpecification;
+				};
 			}
 		}
 
@@ -802,9 +804,7 @@ public abstract class BaseSpecificationResourceImpl
 
 		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			specificationUnsafeFunction = specification -> patchSpecification(
-				specification.getId() != null ? specification.getId() :
-					_parseLong((String)parameters.get("specificationId")),
-				specification);
+				specification.getId(), specification);
 		}
 
 		if (specificationUnsafeFunction == null) {
@@ -826,14 +826,6 @@ public abstract class BaseSpecificationResourceImpl
 				specificationUnsafeFunction.apply(specification);
 			}
 		}
-	}
-
-	private Long _parseLong(String value) {
-		if (value != null) {
-			return Long.parseLong(value);
-		}
-
-		return null;
 	}
 
 	@Override

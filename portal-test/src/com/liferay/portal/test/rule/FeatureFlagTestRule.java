@@ -5,16 +5,10 @@
 
 package com.liferay.portal.test.rule;
 
-import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
-import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagListener;
 import com.liferay.portal.kernel.feature.flag.constants.FeatureFlagConstants;
-import com.liferay.portal.kernel.model.CompanyConstants;
-import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.test.rule.AbstractTestRule;
 import com.liferay.portal.kernel.util.KeyValuePair;
-import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
-import com.liferay.portal.util.PropsUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +21,8 @@ import org.junit.runner.Description;
 public class FeatureFlagTestRule
 	extends AbstractTestRule<Map<String, String>, Map<String, String>> {
 
-	public FeatureFlagTestRule(boolean enableFeatureFlagListeners) {
-		_enableFeatureFlagListeners = enableFeatureFlagListeners;
-	}
+	public static final FeatureFlagTestRule INSTANCE =
+		new FeatureFlagTestRule();
 
 	@Override
 	protected void afterClass(
@@ -63,50 +56,10 @@ public class FeatureFlagTestRule
 		return _updateFeatureFlags(description);
 	}
 
-	private void _invokeFeatureFlagListeners(
-		String featureFlagKey, boolean enabled) {
-
-		if (!_enableFeatureFlagListeners) {
-			return;
-		}
-
-		try (ServiceTrackerList<FeatureFlagListener> featureFlagListeners =
-				ServiceTrackerListFactory.open(
-					SystemBundleUtil.getBundleContext(),
-					FeatureFlagListener.class,
-					"(featureFlagKey=" + featureFlagKey + ")")) {
-
-			for (FeatureFlagListener featureFlagListener :
-					featureFlagListeners) {
-
-				featureFlagListener.onValue(
-					CompanyConstants.SYSTEM, featureFlagKey, enabled);
-			}
-		}
-	}
-
 	private void _restoreFeatureFlags(Map<String, String> previousValues) {
-		Map<String, String> values = new HashMap<>();
-
 		for (Map.Entry<String, String> entry : previousValues.entrySet()) {
-			String value = entry.getValue();
-
-			if (value == null) {
-				PropsUtil.set(entry.getKey(), value);
-
-				continue;
-			}
-
-			values.put(entry.getKey(), entry.getValue());
-
-			_invokeFeatureFlagListeners(
-				entry.getKey(), Boolean.parseBoolean(entry.getValue()));
+			PropsUtil.set(entry.getKey(), entry.getValue());
 		}
-
-		PropsUtil.addProperties(
-			UnicodePropertiesBuilder.create(
-				values, true
-			).build());
 	}
 
 	private KeyValuePair _updateFeatureFlag(FeatureFlag featureFlag) {
@@ -116,12 +69,7 @@ public class FeatureFlagTestRule
 		KeyValuePair previousKeyValuePair = new KeyValuePair(
 			featureFlagKey, PropsUtil.get(featureFlagKey));
 
-		PropsUtil.addProperties(
-			UnicodePropertiesBuilder.setProperty(
-				featureFlagKey, String.valueOf(featureFlag.enable())
-			).build());
-
-		_invokeFeatureFlagListeners(featureFlag.value(), featureFlag.enable());
+		PropsUtil.set(featureFlagKey, String.valueOf(featureFlag.enable()));
 
 		return previousKeyValuePair;
 	}
@@ -158,7 +106,5 @@ public class FeatureFlagTestRule
 
 		return previousValues;
 	}
-
-	private final boolean _enableFeatureFlagListeners;
 
 }
