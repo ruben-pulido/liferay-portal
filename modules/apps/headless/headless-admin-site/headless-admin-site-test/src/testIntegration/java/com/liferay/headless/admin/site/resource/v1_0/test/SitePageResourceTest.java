@@ -6,12 +6,10 @@
 package com.liferay.headless.admin.site.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
-import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
 import com.liferay.headless.admin.site.client.custom.field.CustomField;
 import com.liferay.headless.admin.site.client.custom.field.CustomValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSettings;
@@ -69,8 +67,6 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
-
-import java.io.Serializable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -421,20 +417,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		return super.testPutSiteSitePagePermissionsPage_addSitePage();
 	}
 
-	private ExpandoTable _addExpandoTable() throws PortalException {
-		ExpandoTable expandoTable = _expandoTableLocalService.addDefaultTable(
-			PortalUtil.getDefaultCompanyId(), Layout.class.getName());
-
-		for (int i = 0; i < _EXPANDO_ATTRIBUTE_NAMES.length; i++) {
-			_expandoColumnLocalService.addColumn(
-				expandoTable.getTableId(), _EXPANDO_ATTRIBUTE_NAMES[i],
-				ExpandoColumnConstants.STRING,
-				_EXPANDO_ATTRIBUTE_DEFAULT_VALUES[i]);
-		}
-
-		return expandoTable;
-	}
-
 	private Layout _addLayout(
 			String type, String typeSettings, ServiceContext serviceContext)
 		throws Exception {
@@ -453,55 +435,6 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		Assert.assertTrue(
 			sitePage.getPageSettings() instanceof ContentPageSettings);
-	}
-
-	private void _assertCustomField(
-		Map<String, Serializable> attributes, CustomField customField) {
-
-		CustomValue customValue = customField.getCustomValue();
-
-		Assert.assertEquals(
-			customValue.getData(), attributes.get(customField.getName()));
-	}
-
-	private void _assertCustomFields(
-			CustomField[] expectedCustomFields, SitePage sitePage)
-		throws Exception {
-
-		Assert.assertTrue(
-			ArrayUtil.isNotEmpty(sitePage.getPageSpecifications()));
-
-		for (PageSpecification pageSpecification :
-				sitePage.getPageSpecifications()) {
-
-			CustomField[] customFields = pageSpecification.getCustomFields();
-
-			Assert.assertEquals(
-				Arrays.toString(customFields), expectedCustomFields.length,
-				customFields.length);
-
-			Assert.assertTrue(
-				Arrays.toString(customFields) +
-					" does not contain all custom fields in " +
-						Arrays.toString(expectedCustomFields),
-				ArrayUtil.containsAll(customFields, expectedCustomFields));
-
-			Layout layout =
-				_layoutLocalService.getLayoutByExternalReferenceCode(
-					pageSpecification.getExternalReferenceCode(),
-					testGroup.getGroupId());
-
-			ExpandoBridge expandoBridge = layout.getExpandoBridge();
-
-			Map<String, Serializable> attributes =
-				expandoBridge.getAttributes();
-
-			Assert.assertFalse(attributes.isEmpty());
-
-			for (CustomField customField : expectedCustomFields) {
-				_assertCustomField(attributes, customField);
-			}
-		}
 	}
 
 	private void
@@ -768,6 +701,17 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			widgetPageSettings.getLayoutTemplateId());
 	}
 
+	private CustomField _getCustomField(
+		String attributeName, CustomField[] customFields) {
+
+		CustomField[] filteredCustomFields = ArrayUtil.filter(
+			customFields,
+			customField -> Objects.equals(
+				customField.getName(), attributeName));
+
+		return filteredCustomFields[0];
+	}
+
 	private CustomField _getCustomField(String curName, String curData) {
 		return new CustomField() {
 			{
@@ -919,90 +863,11 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		).build();
 	}
 
-	private void
-			_testAddOrUpdateSiteSiteByExternalReferenceCodeSitePageWithCustomFields(
-				Function<SitePage, SitePage> getUpdateBodySitePageFunction,
-				UnsafeTriFunction<String, String, SitePage, SitePage, Throwable>
-					updateSitePageUnsafeTriFunction,
-				SitePage.Type type)
-		throws Exception {
-
-		PermissionChecker originalPermissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
-		try {
-			PermissionThreadLocal.setPermissionChecker(
-				PermissionCheckerFactoryUtil.create(TestPropsValues.getUser()));
-
-			ExpandoTable expandoTable = _addExpandoTable();
-
-			try {
-				_testAddOrUpdateSiteSiteByExternalReferenceCodeSitePageWithCustomFields2(
-					getUpdateBodySitePageFunction,
-					updateSitePageUnsafeTriFunction, type);
-			}
-			finally {
-				ExpandoTableLocalServiceUtil.deleteTable(expandoTable);
-			}
-		}
-		finally {
-			PermissionThreadLocal.setPermissionChecker(
-				originalPermissionChecker);
-		}
-	}
-
-	private void
-			_testAddOrUpdateSiteSiteByExternalReferenceCodeSitePageWithCustomFields2(
-				Function<SitePage, SitePage> getUpdateBodySitePageFunction,
-				UnsafeTriFunction<String, String, SitePage, SitePage, Throwable>
-					updateSitePageUnsafeTriFunction,
-				SitePage.Type type)
-		throws Exception {
-
-		CustomField customField1 = _getCustomField(
-			_EXPANDO_ATTRIBUTE_NAMES[0], RandomTestUtil.randomString());
-		CustomField customField3 = _getCustomField(
-			_EXPANDO_ATTRIBUTE_NAMES[2], RandomTestUtil.randomString());
-
-		SitePage randomSitePage = _getRandomSitePage(type);
-
-		String draftPageSpecificationExternalReferenceCode =
-			RandomTestUtil.randomString();
-
-		PageSpecification[] pageSpecifications =
-			PageSpecificationsTestUtil.getPageSpecifications(
-				draftPageSpecificationExternalReferenceCode,
-				randomSitePage.getExternalReferenceCode(), type);
-
-		for (PageSpecification pageSpecification : pageSpecifications) {
-			pageSpecification.setCustomFields(
-				new CustomField[] {customField1, customField3});
-		}
-
-		randomSitePage.setPageSpecifications(pageSpecifications);
-
-		SitePageResource sitePageResource = _getSitePageResource(
-			"pageSpecifications");
-
-		SitePage sitePage =
-			sitePageResource.postByExternalReferenceCodeSitePage(
-				testGroup.getExternalReferenceCode(), randomSitePage);
-
-		CustomField customField2 = _getCustomField(
-			_EXPANDO_ATTRIBUTE_NAMES[1], _EXPANDO_ATTRIBUTE_DEFAULT_VALUES[1]);
-
-		_assertCustomFields(
-			new CustomField[] {customField1, customField2, customField3},
-			sitePage);
-
-		if (getUpdateBodySitePageFunction == null) {
-			return;
-		}
-
-		CustomField updatedCustomField1 = _getCustomField(
-			_EXPANDO_ATTRIBUTE_NAMES[0], null);
-		CustomField updatedCustomField2 = _getCustomField(
-			_EXPANDO_ATTRIBUTE_NAMES[1], RandomTestUtil.randomString());
+	private SitePage _getUpdateSitePage(
+		Function<SitePage, SitePage> getUpdateBodySitePageFunction,
+		UnsafeTriFunction<String, String, SitePage, SitePage, Throwable>
+			updateSitePageUnsafeTriFunction,
+		SitePage sitePage, CustomField[] customFields) {
 
 		SitePage updateBodySitePage = getUpdateBodySitePageFunction.apply(
 			sitePage);
@@ -1014,21 +879,61 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				updateBodySitePagePageSpecifications) {
 
 			updateBodySitePageSpecification.setCustomFields(
-				new CustomField[] {updatedCustomField1, updatedCustomField2});
+				new CustomField[] {customFields[0], customFields[1]});
 		}
 
 		try {
-			sitePage = updateSitePageUnsafeTriFunction.apply(
+			return updateSitePageUnsafeTriFunction.apply(
 				testGroup.getExternalReferenceCode(),
 				sitePage.getExternalReferenceCode(), updateBodySitePage);
 		}
 		catch (Throwable throwable) {
 			throw new RuntimeException(throwable);
 		}
+	}
 
-		_assertCustomFields(
-			new CustomField[] {customField1, updatedCustomField2, customField3},
-			sitePage);
+	private void
+			_testAddOrUpdateSiteSiteByExternalReferenceCodeSitePageWithCustomFields(
+				Function<SitePage, SitePage> getUpdateBodySitePageFunction,
+				UnsafeTriFunction<String, String, SitePage, SitePage, Throwable>
+					updateSitePageUnsafeTriFunction,
+				SitePage.Type type)
+		throws Exception {
+
+		try (ExpandoTableAutoCloseable expandoTableAutoCloseable =
+				new ExpandoTableAutoCloseable()) {
+
+			SitePage postSitePage = _testPostSitePageWithCustomFields(type);
+
+			if (getUpdateBodySitePageFunction == null) {
+				return;
+			}
+
+			CustomField[] postCustomFields = ArrayUtil.clone(
+				postSitePage.getPageSpecifications()[0].getCustomFields());
+
+			CustomField[] updatedCustomFields = {
+				_getCustomField(_EXPANDO_ATTRIBUTE_NAMES[0], (String)null),
+				_getCustomField(
+					_EXPANDO_ATTRIBUTE_NAMES[1], RandomTestUtil.randomString())
+			};
+
+			SitePage updateSitePage = _getUpdateSitePage(
+				getUpdateBodySitePageFunction, updateSitePageUnsafeTriFunction,
+				postSitePage, updatedCustomFields);
+
+			PageSpecificationsTestUtil.assertCustomFields(
+				testGroup.getGroupId(),
+				new CustomField[] {
+					_getCustomField(
+						_EXPANDO_ATTRIBUTE_NAMES[0], postCustomFields),
+					_getCustomField(
+						_EXPANDO_ATTRIBUTE_NAMES[1], updatedCustomFields),
+					_getCustomField(
+						_EXPANDO_ATTRIBUTE_NAMES[2], postCustomFields)
+				},
+				updateSitePage.getPageSpecifications());
+		}
 	}
 
 	private void _testDeleteSiteSiteByExternalReferenceCodeSitePage(
@@ -1429,6 +1334,49 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				testGroup.getExternalReferenceCode(), sitePage));
 	}
 
+	private SitePage _testPostSitePageWithCustomFields(SitePage.Type type)
+		throws Exception {
+
+		CustomField customField1 = _getCustomField(
+			_EXPANDO_ATTRIBUTE_NAMES[0], RandomTestUtil.randomString());
+		CustomField customField3 = _getCustomField(
+			_EXPANDO_ATTRIBUTE_NAMES[2], RandomTestUtil.randomString());
+
+		SitePage randomSitePage = _getRandomSitePage(type);
+
+		String draftPageSpecificationExternalReferenceCode =
+			RandomTestUtil.randomString();
+
+		PageSpecification[] pageSpecifications =
+			PageSpecificationsTestUtil.getPageSpecifications(
+				draftPageSpecificationExternalReferenceCode,
+				randomSitePage.getExternalReferenceCode(), type);
+
+		for (PageSpecification pageSpecification : pageSpecifications) {
+			pageSpecification.setCustomFields(
+				new CustomField[] {customField1, customField3});
+		}
+
+		randomSitePage.setPageSpecifications(pageSpecifications);
+
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
+
+		SitePage postSitePage =
+			sitePageResource.postByExternalReferenceCodeSitePage(
+				testGroup.getExternalReferenceCode(), randomSitePage);
+
+		CustomField customField2 = _getCustomField(
+			_EXPANDO_ATTRIBUTE_NAMES[1], _EXPANDO_ATTRIBUTE_DEFAULT_VALUES[1]);
+
+		PageSpecificationsTestUtil.assertCustomFields(
+			testGroup.getGroupId(),
+			new CustomField[] {customField1, customField2, customField3},
+			postSitePage.getPageSpecifications());
+
+		return postSitePage;
+	}
+
 	private void _testPutSiteSiteByExternalReferenceCodeSitePage(
 			SitePage.Type type)
 		throws Exception {
@@ -1717,10 +1665,11 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		RandomTestUtil.randomString(), RandomTestUtil.randomString(), null
 	};
 
-	private static final String[] _EXPANDO_ATTRIBUTE_NAMES = {
-		RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-		RandomTestUtil.randomString()
-	};
+	private static final String[] _EXPANDO_ATTRIBUTE_NAMES = {"f1", "f2", "f3"};
+	//	private static final String[] _EXPANDO_ATTRIBUTE_NAMES = {
+	//		RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+	//		RandomTestUtil.randomString()
+	//	};
 
 	@Inject
 	private static ExpandoColumnLocalService _expandoColumnLocalService;
@@ -1738,5 +1687,53 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	private LayoutLocalService _layoutLocalService;
 
 	private final Map<String, Integer> _priorities = new HashMap<>();
+
+	private class ExpandoTableAutoCloseable implements AutoCloseable {
+
+		public ExpandoTableAutoCloseable() throws Exception {
+			_originalPermissionChecker =
+				PermissionThreadLocal.getPermissionChecker();
+
+			PermissionThreadLocal.setPermissionChecker(
+				PermissionCheckerFactoryUtil.create(TestPropsValues.getUser()));
+
+			_expandoTable = _addExpandoTable();
+		}
+
+		@Override
+		public void close() {
+			try {
+				if (_expandoTable != null) {
+					_expandoTableLocalService.deleteTable(_expandoTable);
+				}
+			}
+			catch (PortalException portalException) {
+				throw new RuntimeException(portalException);
+			}
+			finally {
+				PermissionThreadLocal.setPermissionChecker(
+					_originalPermissionChecker);
+			}
+		}
+
+		private ExpandoTable _addExpandoTable() throws Exception {
+			ExpandoTable expandoTable =
+				_expandoTableLocalService.addDefaultTable(
+					PortalUtil.getDefaultCompanyId(), Layout.class.getName());
+
+			for (int i = 0; i < _EXPANDO_ATTRIBUTE_NAMES.length; i++) {
+				_expandoColumnLocalService.addColumn(
+					expandoTable.getTableId(), _EXPANDO_ATTRIBUTE_NAMES[i],
+					ExpandoColumnConstants.STRING,
+					_EXPANDO_ATTRIBUTE_DEFAULT_VALUES[i]);
+			}
+
+			return expandoTable;
+		}
+
+		private final ExpandoTable _expandoTable;
+		private final PermissionChecker _originalPermissionChecker;
+
+	}
 
 }

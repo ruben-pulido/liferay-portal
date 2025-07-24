@@ -26,6 +26,7 @@ import java.util.Date;
  */
 public class ServiceContextUtil {
 
+	// TODO Add here CustomFields
 	public static ServiceContext createServiceContext(
 			ItemExternalReference[] assetCategoriesItemExternalReferences,
 			Date createDate, long groupId,
