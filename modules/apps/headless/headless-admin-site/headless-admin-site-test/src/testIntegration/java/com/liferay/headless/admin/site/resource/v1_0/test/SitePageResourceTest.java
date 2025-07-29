@@ -6,6 +6,7 @@
 package com.liferay.headless.admin.site.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.headless.admin.site.client.custom.field.CustomField;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSettings;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.FriendlyUrlHistory;
@@ -24,6 +25,7 @@ import com.liferay.layout.test.util.ContentLayoutTestUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.function.UnsafeTriConsumer;
+import com.liferay.petra.function.UnsafeTriFunction;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -40,6 +42,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -62,6 +65,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -838,6 +842,72 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		).build();
 	}
 
+	private SitePage _getUpdateSitePage(
+		CustomField[][] customFields,
+		Function<SitePage, SitePage> getUpdateBodySitePageFunction,
+		SitePage sitePage,
+		UnsafeTriFunction<String, String, SitePage, SitePage, Throwable>
+			updateSitePageUnsafeTriFunction) {
+
+		SitePage updateBodySitePage = getUpdateBodySitePageFunction.apply(
+			sitePage);
+
+		PageSpecification[] updateBodyPagePageSpecifications =
+			updateBodySitePage.getPageSpecifications();
+
+		CustomField[] publishedCustomFields = customFields[0];
+
+		updateBodyPagePageSpecifications[0].setCustomFields(
+			new CustomField[] {
+				publishedCustomFields[0], publishedCustomFields[1]
+			});
+
+		if (updateBodyPagePageSpecifications.length == 2) {
+			CustomField[] draftCustomFields = customFields[1];
+
+			updateBodyPagePageSpecifications[1].setCustomFields(
+				new CustomField[] {draftCustomFields[0], draftCustomFields[1]});
+		}
+
+		try {
+			return updateSitePageUnsafeTriFunction.apply(
+				testGroup.getExternalReferenceCode(),
+				sitePage.getExternalReferenceCode(), updateBodySitePage);
+		}
+		catch (Throwable throwable) {
+			throw new RuntimeException(throwable);
+		}
+	}
+
+	private SitePage
+			_postByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type type)
+		throws Exception {
+
+		SitePage randomSitePage = _getRandomSitePage(type);
+
+		PageSpecification[] pageSpecifications =
+			PageSpecificationsTestUtil.
+				getPostPageSpecificationsWithCustomFields(
+					randomSitePage.getExternalReferenceCode(),
+					_getPageSpecificationType(type));
+
+		randomSitePage.setPageSpecifications(pageSpecifications);
+
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
+
+		SitePage postSitePage =
+			sitePageResource.postByExternalReferenceCodeSitePage(
+				testGroup.getExternalReferenceCode(), randomSitePage);
+
+		PageSpecificationsTestUtil.assertPostCustomFields(
+			testGroup.getGroupId(), pageSpecifications,
+			postSitePage.getPageSpecifications());
+
+		return postSitePage;
+	}
+
 	private void _testDeleteSiteSiteByExternalReferenceCodeSitePage(
 			Layout... layouts)
 		throws Exception {
@@ -1328,6 +1398,43 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 						testGroup.getGroupId()),
 					putSitePage);
 			});
+	}
+
+	private void
+			_testUpdateSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				Function<SitePage, SitePage> getUpdateBodySitePageFunction,
+				UnsafeTriFunction<String, String, SitePage, SitePage, Throwable>
+					updateSitePageUnsafeTriFunction,
+				SitePage.Type type)
+		throws Exception {
+
+		SitePage postSitePage =
+			_postByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				type);
+
+		CustomField[][] postCustomFields = {
+			ArrayUtil.clone(
+				postSitePage.getPageSpecifications()[0].getCustomFields())
+		};
+
+		if (type == SitePage.Type.CONTENT_PAGE) {
+			postCustomFields = ArrayUtil.append(
+				postCustomFields,
+				ArrayUtil.clone(
+					postSitePage.getPageSpecifications()[1].getCustomFields()));
+		}
+
+		CustomField[][] updateCustomFields =
+			PageSpecificationsTestUtil.getUpdateCustomFields(
+				_getPageSpecificationType(type));
+
+		SitePage updateSitePage = _getUpdateSitePage(
+			updateCustomFields, getUpdateBodySitePageFunction, postSitePage,
+			updateSitePageUnsafeTriFunction);
+
+		PageSpecificationsTestUtil.assertUpdateCustomFields(
+			testGroup.getGroupId(), updateSitePage.getPageSpecifications(),
+			postCustomFields, updateCustomFields);
 	}
 
 	private void _testUpdateSiteSiteByExternalReferenceCodeSitePageWithPriority(
