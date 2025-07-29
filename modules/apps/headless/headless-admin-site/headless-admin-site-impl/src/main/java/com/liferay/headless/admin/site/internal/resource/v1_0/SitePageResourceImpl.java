@@ -14,9 +14,9 @@ import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSettings;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.SitePageTypeUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.GroupUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
+import com.liferay.headless.admin.site.internal.resource.v1_0.util.PageSpecificationUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.ServiceContextUtil;
 import com.liferay.headless.admin.site.resource.v1_0.SitePageResource;
-import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.petra.string.StringBundler;
@@ -271,12 +271,20 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			String externalReferenceCode, long groupId, SitePage sitePage)
 		throws Exception {
 
-		ServiceContext serviceContext = ServiceContextBuilder.create(
-			groupId, contextHttpServletRequest, sitePage.getViewableByAsString()
-		).build();
+		if (sitePage.getExternalReferenceCode() == null) {
+			sitePage.setExternalReferenceCode(() -> externalReferenceCode);
+		}
 
-		serviceContext.setUserId(contextUser.getUserId());
-		serviceContext.setUuid(sitePage.getUuid());
+		if (!Objects.equals(
+				externalReferenceCode, sitePage.getExternalReferenceCode())) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		ServiceContext serviceContext = ServiceContextUtil.createServiceContext(
+			null, sitePage.getDateCreated(), groupId, contextHttpServletRequest,
+			null, sitePage.getDateModified(), contextUser.getUserId(),
+			sitePage.getUuid());
 
 		_validatePageSpecificationExternalReferenceCode(
 			serviceContext, sitePage);
@@ -301,24 +309,18 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 				WorkflowConstants.STATUS_APPROVED, serviceContext);
 		}
 		else {
-			String typeSettings = null;
-
-			if (typeSettingsUnicodeProperties != null) {
-				typeSettings = typeSettingsUnicodeProperties.toString();
-			}
-
-			layout = _layoutService.addLayout(
-				externalReferenceCode, groupId, false,
+			layout = LayoutUtil.addPortletLayout(
+				contextCompany.getCompanyId(),
+				sitePage.getExternalReferenceCode(), groupId, nameMap,
+				LocalizedMapUtil.getLocalizedMap(
+					sitePage.getFriendlyUrlPath_i18n()),
+				_isHiddenFromNavigation(false, sitePage.getPageSettings()),
 				_getParentLayoutId(
 					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, groupId,
 					sitePage.getParentSitePageExternalReferenceCode()),
-				nameMap, null, null, null, null,
-				SitePageTypeUtil.toInternalType(sitePage.getType()),
-				typeSettings,
-				_isHiddenFromNavigation(false, sitePage.getPageSettings()),
-				LocalizedMapUtil.getLocalizedMap(
-					sitePage.getFriendlyUrlPath_i18n()),
-				0, serviceContext);
+				typeSettingsUnicodeProperties, serviceContext,
+				PageSpecificationUtil.getWidgetPageSpecification(
+					sitePage.getPageSpecifications()));
 		}
 
 		PageSettings pageSettings = sitePage.getPageSettings();
@@ -450,7 +452,8 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			layout = LayoutUtil.updatePortletLayout(
 				layout, nameMap, friendlyURLMap,
 				_getTypeSettingsUnicodeProperties(sitePage), serviceContext,
-				null);
+				PageSpecificationUtil.getWidgetPageSpecification(
+					sitePage.getPageSpecifications()));
 		}
 
 		int priority = Integer.MAX_VALUE;
