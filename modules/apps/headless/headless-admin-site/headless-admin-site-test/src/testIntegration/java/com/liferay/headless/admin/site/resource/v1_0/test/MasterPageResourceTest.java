@@ -8,6 +8,7 @@ package com.liferay.headless.admin.site.resource.v1_0.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.exportimport.kernel.service.StagingLocalService;
 import com.liferay.exportimport.kernel.staging.MergeLayoutPrototypesThreadLocal;
+import com.liferay.headless.admin.site.client.custom.field.CustomField;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.ItemExternalReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.MasterPage;
@@ -21,6 +22,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.petra.function.UnsafeRunnable;
+import com.liferay.petra.function.UnsafeTriFunction;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
@@ -37,6 +39,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -50,6 +53,7 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.sites.kernel.util.Sites;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -626,6 +630,66 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 		).build();
 	}
 
+	private MasterPage _getUpdateMasterPage(
+		CustomField[][] customFields,
+		Function<MasterPage, MasterPage> getUpdateBodyMasterPageFunction,
+		MasterPage masterPage,
+		UnsafeTriFunction<String, String, MasterPage, MasterPage, Throwable>
+			updateMasterPageUnsafeTriFunction) {
+
+		MasterPage updateBodyMasterPage = getUpdateBodyMasterPageFunction.apply(
+			masterPage);
+
+		PageSpecification[] updateBodyPagePageSpecifications =
+			updateBodyMasterPage.getPageSpecifications();
+
+		CustomField[] publishedCustomFields = customFields[0];
+		CustomField[] draftCustomFields = customFields[1];
+
+		updateBodyPagePageSpecifications[0].setCustomFields(
+			new CustomField[] {
+				publishedCustomFields[0], publishedCustomFields[1]
+			});
+		updateBodyPagePageSpecifications[1].setCustomFields(
+			new CustomField[] {draftCustomFields[0], draftCustomFields[1]});
+
+		try {
+			return updateMasterPageUnsafeTriFunction.apply(
+				testGroup.getExternalReferenceCode(),
+				masterPage.getExternalReferenceCode(), updateBodyMasterPage);
+		}
+		catch (Throwable throwable) {
+			throw new RuntimeException(throwable);
+		}
+	}
+
+	private MasterPage
+			_postByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields()
+		throws Exception {
+
+		MasterPage randomMasterPage = randomMasterPage();
+
+		PageSpecification[] pageSpecifications =
+			PageSpecificationsTestUtil.
+				getPostPageSpecificationsWithCustomFields(
+					randomMasterPage.getExternalReferenceCode(),
+					PageSpecification.Type.CONTENT_PAGE_SPECIFICATION);
+
+		randomMasterPage.setPageSpecifications(pageSpecifications);
+
+		MasterPageResource masterPageResource = _getMasterPageResource();
+
+		MasterPage postMasterPage =
+			masterPageResource.postSiteSiteByExternalReferenceCodeMasterPage(
+				testGroup.getExternalReferenceCode(), randomMasterPage);
+
+		PageSpecificationsTestUtil.assertPostCustomFields(
+			testGroup.getGroupId(), pageSpecifications,
+			postMasterPage.getPageSpecifications());
+
+		return postMasterPage;
+	}
+
 	private void _testGetSiteSiteByExternalReferenceCodeMasterPage(
 			MasterPage masterPage)
 		throws Exception {
@@ -957,6 +1021,39 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 				testGroup.getExternalReferenceCode(),
 				masterPage.getExternalReferenceCode(), masterPage),
 			draftContentPageSpecification, publishedContentPageSpecification);
+	}
+
+
+	private void
+			_testUpdateSiteSiteByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields(
+				Function<MasterPage, MasterPage>
+					getUpdateBodyMasterPageFunction,
+				UnsafeTriFunction
+					<String, String, MasterPage, MasterPage, Throwable>
+						updateMasterPageUnsafeTriFunction)
+		throws Exception {
+
+		MasterPage postMasterPage =
+			_postByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields();
+
+		CustomField[][] postCustomFields = {
+			ArrayUtil.clone(
+				postMasterPage.getPageSpecifications()[0].getCustomFields()),
+			ArrayUtil.clone(
+				postMasterPage.getPageSpecifications()[1].getCustomFields())
+		};
+
+		CustomField[][] updateCustomFields =
+			PageSpecificationsTestUtil.getUpdateCustomFields(
+				PageSpecification.Type.CONTENT_PAGE_SPECIFICATION);
+
+		MasterPage updateMasterPage = _getUpdateMasterPage(
+			updateCustomFields, getUpdateBodyMasterPageFunction, postMasterPage,
+			updateMasterPageUnsafeTriFunction);
+
+		PageSpecificationsTestUtil.assertUpdateCustomFields(
+			testGroup.getGroupId(), updateMasterPage.getPageSpecifications(),
+			postCustomFields, updateCustomFields);
 	}
 
 	private void _updateLayoutPageTemplateEntryStatus(
