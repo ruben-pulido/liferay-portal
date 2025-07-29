@@ -1070,6 +1070,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		_testPatchSiteSiteByExternalReferenceCodeSitePageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT,
 			PageSpecification.Status.APPROVED, PageSpecification.Status.DRAFT);
+		_testPatchSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields();
 	}
 
 	private void
@@ -1127,6 +1128,48 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 							});
 					}
 				}));
+	}
+
+	private void _testPatchSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields()
+		throws Exception {
+
+		Function<SitePage, SitePage> getUpdateBodySitePageFunction =
+			(SitePage sitePage) -> new SitePage() {
+				{
+					setExternalReferenceCode(
+						sitePage.getExternalReferenceCode());
+					setPageSpecifications(
+						PageSpecificationsTestUtil.getPatchPageSpecifications(
+							sitePage.getPageSpecifications()));
+					setType(sitePage.getType());
+				}
+			};
+
+		UnsafeTriFunction<String, String, SitePage, SitePage, Throwable>
+			updateSitePageUnsafeTriFunction =
+				(siteExternalReferenceCode, sitePageExternalReferenceCode,
+				 sitePage) -> {
+
+					SitePageResource sitePageResource = _getSitePageResource(
+						"pageSpecifications");
+
+					return sitePageResource.
+						patchSiteSiteByExternalReferenceCodeSitePage(
+							siteExternalReferenceCode,
+							sitePageExternalReferenceCode, sitePage);
+				};
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			_testUpdateSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				getUpdateBodySitePageFunction, updateSitePageUnsafeTriFunction,
+				SitePage.Type.CONTENT_PAGE);
+			_testUpdateSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				getUpdateBodySitePageFunction, updateSitePageUnsafeTriFunction,
+				SitePage.Type.WIDGET_PAGE);
+		}
 	}
 
 	private void _testPatchSiteSiteByExternalReferenceCodeSitePageWithPriority()
@@ -1199,6 +1242,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			PageSpecification.Status.DRAFT, PageSpecification.Status.APPROVED);
 		_testPostByExternalReferenceCodeSitePageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT);
+		_testPostByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields();
 
 		SitePage sitePage = _getRandomSitePage(SitePage.Type.CONTENT_PAGE);
 
@@ -1260,6 +1304,20 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				testGroup.getExternalReferenceCode(), sitePage));
 	}
 
+	private void _testPostByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields()
+		throws Exception {
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			_postByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type.CONTENT_PAGE);
+			_postByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type.WIDGET_PAGE);
+		}
+	}
+
 	private void _testPutSiteSiteByExternalReferenceCodeSitePage(
 			SitePage.Type type)
 		throws Exception {
@@ -1318,6 +1376,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		_testPutSiteSiteByExternalReferenceCodeSitePageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT,
 			PageSpecification.Status.APPROVED, PageSpecification.Status.DRAFT);
+		_testPutSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields();
 	}
 
 	private void
@@ -1364,6 +1423,39 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			sitePageResource.putSiteSiteByExternalReferenceCodeSitePage(
 				testGroup.getExternalReferenceCode(),
 				sitePage.getExternalReferenceCode(), sitePage));
+	}
+
+	private void _testPutSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields()
+		throws Exception {
+
+		Function<SitePage, SitePage> getUpdateBodySitePageFunction =
+			(SitePage sitePage) -> sitePage;
+
+		UnsafeTriFunction<String, String, SitePage, SitePage, Throwable>
+			updateSitePageUnsafeTriFunction =
+				(siteExternalReferenceCode, sitePageExternalReferenceCode,
+				 sitePage) -> {
+
+					SitePageResource sitePageResource = _getSitePageResource(
+						"pageSpecifications");
+
+					return sitePageResource.
+						putSiteSiteByExternalReferenceCodeSitePage(
+							siteExternalReferenceCode,
+							sitePageExternalReferenceCode, sitePage);
+				};
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			_testUpdateSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				getUpdateBodySitePageFunction, updateSitePageUnsafeTriFunction,
+				SitePage.Type.CONTENT_PAGE);
+			_testUpdateSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				getUpdateBodySitePageFunction, updateSitePageUnsafeTriFunction,
+				SitePage.Type.WIDGET_PAGE);
+		}
 	}
 
 	private void _testPutSiteSiteByExternalReferenceCodeSitePageWithPriority()
