@@ -767,6 +767,7 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 		_testPatchSiteSiteByExternalReferenceCodeMasterPageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT,
 			PageSpecification.Status.APPROVED, PageSpecification.Status.DRAFT);
+		_testPatchSiteSiteByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields();
 	}
 
 	private void
@@ -822,6 +823,44 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 			draftContentPageSpecification, publishedContentPageSpecification);
 	}
 
+	private void _testPatchSiteSiteByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields()
+		throws Exception {
+
+		Function<MasterPage, MasterPage> getUpdateBodyMasterPageFunction =
+			(MasterPage masterPage) -> new MasterPage() {
+				{
+					setExternalReferenceCode(
+						masterPage.getExternalReferenceCode());
+					setPageSpecifications(
+						PageSpecificationsTestUtil.getPatchPageSpecifications(
+							masterPage.getPageSpecifications()));
+				}
+			};
+
+		UnsafeTriFunction<String, String, MasterPage, MasterPage, Throwable>
+			updateMasterPageUnsafeTriFunction =
+				(siteExternalReferenceCode, masterPageExternalReferenceCode,
+				 masterPage) -> {
+
+					MasterPageResource masterPageResource =
+						_getMasterPageResource();
+
+					return masterPageResource.
+						patchSiteSiteByExternalReferenceCodeMasterPage(
+							siteExternalReferenceCode,
+							masterPageExternalReferenceCode, masterPage);
+				};
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			_testUpdateSiteSiteByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields(
+				getUpdateBodyMasterPageFunction,
+				updateMasterPageUnsafeTriFunction);
+		}
+	}
+
 	private void _testPostSiteSiteByExternalReferenceCodeMasterPageWithPageSpecifications()
 		throws Exception {
 
@@ -834,6 +873,7 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 			PageSpecification.Status.DRAFT, PageSpecification.Status.APPROVED);
 		_testPostSiteSiteByExternalReferenceCodeMasterPageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT);
+		_testPostSiteSiteByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields();
 	}
 
 	private void
@@ -864,6 +904,17 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 			masterPageResource.postSiteSiteByExternalReferenceCodeMasterPage(
 				testGroup.getExternalReferenceCode(), masterPage),
 			draftContentPageSpecification, publishedContentPageSpecification);
+	}
+
+	private void _testPostSiteSiteByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields()
+		throws Exception {
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			_postByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields();
+		}
 	}
 
 	private void _testPostSiteSiteByExternalReferenceCodeMasterPageWithSiteTemplatePageSpecification()
@@ -979,6 +1030,7 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 		_testPutSiteSiteByExternalReferenceCodeMasterPageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT,
 			PageSpecification.Status.APPROVED, PageSpecification.Status.DRAFT);
+		_testPutSiteSiteByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields();
 	}
 
 	private void
@@ -1023,6 +1075,35 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 			draftContentPageSpecification, publishedContentPageSpecification);
 	}
 
+	private void _testPutSiteSiteByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields()
+		throws Exception {
+
+		Function<MasterPage, MasterPage> getUpdateBodyMasterPageFunction =
+			(MasterPage masterPage) -> masterPage;
+
+		UnsafeTriFunction<String, String, MasterPage, MasterPage, Throwable>
+			updateMasterPageUnsafeTriFunction =
+				(siteExternalReferenceCode, masterPageExternalReferenceCode,
+				 masterPage) -> {
+
+					MasterPageResource masterPageResource =
+						_getMasterPageResource();
+
+					return masterPageResource.
+						putSiteSiteByExternalReferenceCodeMasterPage(
+							siteExternalReferenceCode,
+							masterPageExternalReferenceCode, masterPage);
+				};
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			_testUpdateSiteSiteByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields(
+				getUpdateBodyMasterPageFunction,
+				updateMasterPageUnsafeTriFunction);
+		}
+	}
 
 	private void
 			_testUpdateSiteSiteByExternalReferenceCodeMasterPageWithPageSpecificationsWithCustomFields(
