@@ -5,11 +5,15 @@
 
 package com.liferay.headless.admin.site.resource.v1_0.test.util;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.headless.admin.site.client.custom.field.CustomField;
+import com.liferay.headless.admin.site.client.custom.field.CustomValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageElement;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageExperience;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.Settings;
+import com.liferay.headless.admin.site.client.dto.v1_0.SitePage;
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPageSpecification;
 import com.liferay.headless.admin.site.client.problem.Problem;
 import com.liferay.layout.constants.LayoutTypeSettingsConstants;
@@ -26,11 +30,15 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 
+import java.io.Serializable;
+
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 import org.junit.Assert;
@@ -75,6 +83,39 @@ public class PageSpecificationsTestUtil {
 		Assert.assertEquals(
 			PageSpecification.Type.CONTENT_PAGE_SPECIFICATION,
 			pageSpecification.getType());
+	}
+
+	public static void assertCustomFields(
+			long groupId, CustomField[] expectedCustomFields,
+			PageSpecification[] pageSpecifications)
+		throws Exception {
+
+		Assert.assertTrue(ArrayUtil.isNotEmpty(pageSpecifications));
+
+		for (PageSpecification pageSpecification : pageSpecifications) {
+			CustomField[] customFields = pageSpecification.getCustomFields();
+
+			Assert.assertTrue(
+				Arrays.toString(customFields) +
+					" does not contain all custom fields in " +
+						Arrays.toString(expectedCustomFields),
+				ArrayUtil.containsAll(customFields, expectedCustomFields));
+
+			Layout layout =
+				LayoutLocalServiceUtil.getLayoutByExternalReferenceCode(
+					pageSpecification.getExternalReferenceCode(), groupId);
+
+			ExpandoBridge expandoBridge = layout.getExpandoBridge();
+
+			Map<String, Serializable> attributes =
+				expandoBridge.getAttributes();
+
+			Assert.assertFalse(attributes.isEmpty());
+
+			for (CustomField customField : expectedCustomFields) {
+				_assertCustomField(attributes, customField);
+			}
+		}
 	}
 
 	public static void assertPageSpecifications(
@@ -257,10 +298,22 @@ public class PageSpecificationsTestUtil {
 		String draftContentPageSpecificationExternalReferenceCode,
 		PageSpecification.Status status) {
 
+		// TODO Si hay custom fields de Layout definidos, añadirselos
+		// Solo habrá donde hayamos utilizzado el autocloseable
+
+		return getContentPageSpecification(
+			RandomTestUtil.randomString(),
+			draftContentPageSpecificationExternalReferenceCode, status);
+	}
+
+	public static ContentPageSpecification getContentPageSpecification(
+		String contentPageSpecificationExternalReferenceCode,
+		String draftContentPageSpecificationExternalReferenceCode,
+		PageSpecification.Status status) {
+
 		ContentPageSpecification contentPageSpecification =
 			new ContentPageSpecification() {
 				{
-					setExternalReferenceCode(RandomTestUtil::randomString);
 					setType(() -> Type.CONTENT_PAGE_SPECIFICATION);
 				}
 			};
@@ -268,6 +321,8 @@ public class PageSpecificationsTestUtil {
 		contentPageSpecification.
 			setDraftContentPageSpecificationExternalReferenceCode(
 				draftContentPageSpecificationExternalReferenceCode);
+		contentPageSpecification.setExternalReferenceCode(
+			contentPageSpecificationExternalReferenceCode);
 		contentPageSpecification.setPageExperiences(
 			() -> {
 				PageExperience pageExperience = new PageExperience();
@@ -287,6 +342,93 @@ public class PageSpecificationsTestUtil {
 		contentPageSpecification.setStatus(status);
 
 		return contentPageSpecification;
+	}
+
+	public static PageSpecification[] getPageSpecifications(
+		String draftPageSpecificationExternalReferenceCode,
+		String publishedPageSpecificationExternalReferenceCode,
+		SitePage.Type type) {
+
+		if (type == SitePage.Type.CONTENT_PAGE) {
+			return _getContentPageSpecifications(
+				draftPageSpecificationExternalReferenceCode,
+				publishedPageSpecificationExternalReferenceCode);
+		}
+
+		return new PageSpecification[] {
+			getWidgetPageSpecification(
+				publishedPageSpecificationExternalReferenceCode, null,
+				PageSpecification.Status.APPROVED)
+		};
+	}
+
+	public static PageSpecification[] getPatchPageSpecifications(
+		PageSpecification[] pageSpecifications) {
+
+		if (pageSpecifications.length == 2) {
+			ContentPageSpecification draftContentPageSpecification = null;
+
+			ContentPageSpecification publishedContentPageSpecification =
+				(ContentPageSpecification)pageSpecifications[0];
+
+			String draftContentPageSpecificationExternalReferenceCode =
+				publishedContentPageSpecification.
+					getDraftContentPageSpecificationExternalReferenceCode();
+
+			if (draftContentPageSpecificationExternalReferenceCode != null) {
+				draftContentPageSpecification =
+					(ContentPageSpecification)pageSpecifications[1];
+			}
+			else {
+				draftContentPageSpecification =
+					publishedContentPageSpecification;
+				publishedContentPageSpecification =
+					(ContentPageSpecification)pageSpecifications[1];
+			}
+
+			ContentPageSpecification[] updatedPageSpecifications =
+				_getContentPageSpecifications(
+					draftContentPageSpecification.getExternalReferenceCode(),
+					publishedContentPageSpecification.
+						getExternalReferenceCode());
+
+			updatedPageSpecifications[0].setPageExperiences(
+				publishedContentPageSpecification.getPageExperiences());
+			updatedPageSpecifications[1].setPageExperiences(
+				draftContentPageSpecification.getPageExperiences());
+
+			return updatedPageSpecifications;
+		}
+
+		WidgetPageSpecification widgetPageSpecification =
+			(WidgetPageSpecification)pageSpecifications[0];
+
+		return new PageSpecification[] {
+			getWidgetPageSpecification(
+				widgetPageSpecification.getExternalReferenceCode(), null,
+				PageSpecification.Status.APPROVED)
+		};
+	}
+
+	public static PageSpecification getPublishedPageSpecification(
+		PageSpecification[] pageSpecifications) {
+
+		if (pageSpecifications.length == 1) {
+			return pageSpecifications[0];
+		}
+
+		ContentPageSpecification publishedContentPageSpecification =
+			(ContentPageSpecification)pageSpecifications[0];
+
+		if (Validator.isNull(
+				publishedContentPageSpecification.
+					getDraftContentPageSpecificationExternalReferenceCode())) {
+
+			publishedContentPageSpecification =
+				(ContentPageSpecification)pageSpecifications[1];
+		}
+
+		return publishedContentPageSpecification;
 	}
 
 	public static WidgetPageSpecification getWidgetPageSpecification(
@@ -432,10 +574,39 @@ public class PageSpecificationsTestUtil {
 		}
 	}
 
+	private static ContentPageSpecification[] _getContentPageSpecifications(
+		String draftPageSpecificationExternalReferenceCode,
+		String publishedPageSpecificationExternalReferenceCode) {
+
+		ContentPageSpecification draftContentPageSpecification =
+			getContentPageSpecification(
+				draftPageSpecificationExternalReferenceCode, null,
+				PageSpecification.Status.DRAFT);
+
+		ContentPageSpecification publishedContentPageSpecification =
+			getContentPageSpecification(
+				publishedPageSpecificationExternalReferenceCode,
+				draftContentPageSpecification.getExternalReferenceCode(),
+				PageSpecification.Status.APPROVED);
+
+		return new ContentPageSpecification[] {
+			publishedContentPageSpecification, draftContentPageSpecification
+		};
+	}
+
 	private static boolean _isPublished(Layout draftLayout) {
 		return GetterUtil.getBoolean(
 			draftLayout.getTypeSettingsProperty(
 				LayoutTypeSettingsConstants.KEY_PUBLISHED));
+	}
+
+	private void _assertCustomField(
+		Map<String, Serializable> attributes, CustomField customField) {
+
+		CustomValue customValue = customField.getCustomValue();
+
+		Assert.assertEquals(
+			customValue.getData(), attributes.get(customField.getName()));
 	}
 
 }

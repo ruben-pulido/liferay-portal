@@ -11,9 +11,11 @@ import com.liferay.headless.admin.site.dto.v1_0.PageSettings;
 import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.SitePage;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSettings;
+import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSpecification;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.SitePageTypeUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.GroupUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
+import com.liferay.headless.admin.site.internal.resource.v1_0.util.PageSpecificationUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.ServiceContextUtil;
 import com.liferay.headless.admin.site.resource.v1_0.SitePageResource;
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
@@ -37,6 +39,7 @@ import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
+import com.liferay.portal.vulcan.custom.field.CustomFieldsUtil;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
@@ -307,6 +310,17 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 				typeSettings = typeSettingsUnicodeProperties.toString();
 			}
 
+			WidgetPageSpecification widgetPageSpecification =
+				PageSpecificationUtil.getWidgetPageSpecification(
+					sitePage.getPageSpecifications());
+
+			if (widgetPageSpecification != null) {
+				serviceContext.setExpandoBridgeAttributes(
+					CustomFieldsUtil.toMap(
+						Layout.class.getName(), contextCompany.getCompanyId(),
+						widgetPageSpecification.getCustomFields(), null));
+			}
+
 			layout = _layoutService.addLayout(
 				externalReferenceCode, groupId, false,
 				_getParentLayoutId(
@@ -450,7 +464,8 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			layout = LayoutUtil.updatePortletLayout(
 				layout, nameMap, friendlyURLMap,
 				_getTypeSettingsUnicodeProperties(sitePage), serviceContext,
-				null);
+				PageSpecificationUtil.getWidgetPageSpecification(
+					sitePage.getPageSpecifications()));
 		}
 
 		int priority = Integer.MAX_VALUE;
