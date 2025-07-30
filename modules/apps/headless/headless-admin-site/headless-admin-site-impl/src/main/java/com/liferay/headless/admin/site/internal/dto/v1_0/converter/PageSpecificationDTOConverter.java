@@ -166,7 +166,7 @@ public class PageSpecificationDTOConverter
 			PageExperience.class);
 	}
 
-	private Settings _setSettings(Layout layout) throws Exception {
+	private Settings _getSettings(Layout layout) throws Exception {
 		long classNameId = _portal.getClassNameId(Layout.class.getName());
 		UnicodeProperties unicodeProperties =
 			layout.getTypeSettingsProperties();
@@ -332,7 +332,7 @@ public class PageSpecificationDTOConverter
 				setExternalReferenceCode(layout::getExternalReferenceCode);
 				setPageExperiences(
 					() -> _getPageExperiences(dtoConverterContext, layout));
-				setSettings(() -> _setSettings(layout));
+				setSettings(() -> _getSettings(layout));
 				setSiteTemplatePageSpecificationExternalReferenceCode(
 					() -> {
 						Layout layoutSetPrototypeLayout =
@@ -391,7 +391,7 @@ public class PageSpecificationDTOConverter
 						return layoutPageTemplateEntry.
 							getExternalReferenceCode();
 					});
-				setSettings(() -> _setSettings(layout));
+				setSettings(() -> _getSettings(layout));
 				setSiteTemplatePageSpecificationExternalReferenceCode(
 					() -> {
 						Layout layoutSetPrototypeLayout =
