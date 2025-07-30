@@ -166,7 +166,63 @@ public class PageSpecificationDTOConverter
 			PageExperience.class);
 	}
 
-	private Settings _getSettings(Layout layout) throws Exception {
+	private PageSpecification _toContentPageSpecification(
+		DTOConverterContext dtoConverterContext, Layout layout) {
+
+		return new ContentPageSpecification() {
+			{
+				setCustomFields(
+					() -> CustomFieldsUtil.toCustomFields(
+						true, Layout.class.getName(), layout.getPlid(),
+						layout.getCompanyId(), null));
+				setDraftContentPageSpecificationExternalReferenceCode(
+					() -> {
+						Layout draftLayout = layout.fetchDraftLayout();
+
+						if (draftLayout == null) {
+							return null;
+						}
+
+						return draftLayout.getExternalReferenceCode();
+					});
+				setExternalReferenceCode(layout::getExternalReferenceCode);
+				setPageExperiences(
+					() -> _getPageExperiences(dtoConverterContext, layout));
+				setSettings(() -> _toSettings(layout));
+				setSiteTemplatePageSpecificationExternalReferenceCode(
+					() -> {
+						Layout layoutSetPrototypeLayout =
+							layout.getLayoutSetPrototypeLayout();
+
+						if (layoutSetPrototypeLayout == null) {
+							return null;
+						}
+
+						return layoutSetPrototypeLayout.
+							getExternalReferenceCode();
+					});
+				setStatus(
+					() -> {
+						if (layout.isDraftLayout()) {
+							if (layout.isApproved()) {
+								return Status.APPROVED;
+							}
+
+							return Status.DRAFT;
+						}
+
+						if (LayoutUtil.isPublished(layout)) {
+							return Status.APPROVED;
+						}
+
+						return Status.DRAFT;
+					});
+				setType(() -> Type.CONTENT_PAGE_SPECIFICATION);
+			}
+		};
+	}
+
+	private Settings _toSettings(Layout layout) throws Exception {
 		long classNameId = _portal.getClassNameId(Layout.class.getName());
 		UnicodeProperties unicodeProperties =
 			layout.getTypeSettingsProperties();
@@ -310,62 +366,6 @@ public class PageSpecificationDTOConverter
 		};
 	}
 
-	private PageSpecification _toContentPageSpecification(
-		DTOConverterContext dtoConverterContext, Layout layout) {
-
-		return new ContentPageSpecification() {
-			{
-				setCustomFields(
-					() -> CustomFieldsUtil.toCustomFields(
-						true, Layout.class.getName(), layout.getPlid(),
-						layout.getCompanyId(), null));
-				setDraftContentPageSpecificationExternalReferenceCode(
-					() -> {
-						Layout draftLayout = layout.fetchDraftLayout();
-
-						if (draftLayout == null) {
-							return null;
-						}
-
-						return draftLayout.getExternalReferenceCode();
-					});
-				setExternalReferenceCode(layout::getExternalReferenceCode);
-				setPageExperiences(
-					() -> _getPageExperiences(dtoConverterContext, layout));
-				setSettings(() -> _getSettings(layout));
-				setSiteTemplatePageSpecificationExternalReferenceCode(
-					() -> {
-						Layout layoutSetPrototypeLayout =
-							layout.getLayoutSetPrototypeLayout();
-
-						if (layoutSetPrototypeLayout == null) {
-							return null;
-						}
-
-						return layoutSetPrototypeLayout.
-							getExternalReferenceCode();
-					});
-				setStatus(
-					() -> {
-						if (layout.isDraftLayout()) {
-							if (layout.isApproved()) {
-								return Status.APPROVED;
-							}
-
-							return Status.DRAFT;
-						}
-
-						if (LayoutUtil.isPublished(layout)) {
-							return Status.APPROVED;
-						}
-
-						return Status.DRAFT;
-					});
-				setType(() -> Type.CONTENT_PAGE_SPECIFICATION);
-			}
-		};
-	}
-
 	private PageSpecification _toWidgetPageSpecification(Layout layout) {
 		return new WidgetPageSpecification() {
 			{
@@ -391,7 +391,7 @@ public class PageSpecificationDTOConverter
 						return layoutPageTemplateEntry.
 							getExternalReferenceCode();
 					});
-				setSettings(() -> _getSettings(layout));
+				setSettings(() -> _toSettings(layout));
 				setSiteTemplatePageSpecificationExternalReferenceCode(
 					() -> {
 						Layout layoutSetPrototypeLayout =
