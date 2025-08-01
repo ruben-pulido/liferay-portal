@@ -3074,7 +3074,7 @@ components:
                         widgetPageTemplateReference:
                             $ref: "#/components/schemas/ItemExternalReference"
                     required:
-                        -   layoutPageTemplateId
+                        -   layoutTemplateId
             # @review
             description:
                 The settings of a widget page.
