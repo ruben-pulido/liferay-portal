@@ -15,6 +15,8 @@ import com.liferay.headless.admin.site.dto.v1_0.ItemExternalReference;
 import com.liferay.headless.admin.site.dto.v1_0.PageExperience;
 import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.Settings;
+import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSection;
+import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSettings;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSpecification;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
@@ -26,6 +28,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocal
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutTypePortletConstants;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -33,6 +36,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.vulcan.custom.field.CustomFieldsUtil;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.segments.service.SegmentsExperienceService;
@@ -165,7 +169,63 @@ public class PageSpecificationDTOConverter
 			PageExperience.class);
 	}
 
-	private Settings _setSettings(Layout layout) throws Exception {
+	private PageSpecification _toContentPageSpecification(
+		DTOConverterContext dtoConverterContext, Layout layout) {
+
+		return new ContentPageSpecification() {
+			{
+				setCustomFields(
+					() -> CustomFieldsUtil.toCustomFields(
+						true, Layout.class.getName(), layout.getPlid(),
+						layout.getCompanyId(), null));
+				setDraftContentPageSpecificationExternalReferenceCode(
+					() -> {
+						Layout draftLayout = layout.fetchDraftLayout();
+
+						if (draftLayout == null) {
+							return null;
+						}
+
+						return draftLayout.getExternalReferenceCode();
+					});
+				setExternalReferenceCode(layout::getExternalReferenceCode);
+				setPageExperiences(
+					() -> _getPageExperiences(dtoConverterContext, layout));
+				setSettings(() -> _toSettings(layout));
+				setSiteTemplatePageSpecificationExternalReferenceCode(
+					() -> {
+						Layout layoutSetPrototypeLayout =
+							layout.getLayoutSetPrototypeLayout();
+
+						if (layoutSetPrototypeLayout == null) {
+							return null;
+						}
+
+						return layoutSetPrototypeLayout.
+							getExternalReferenceCode();
+					});
+				setStatus(
+					() -> {
+						if (layout.isDraftLayout()) {
+							if (layout.isApproved()) {
+								return Status.APPROVED;
+							}
+
+							return Status.DRAFT;
+						}
+
+						if (LayoutUtil.isPublished(layout)) {
+							return Status.APPROVED;
+						}
+
+						return Status.DRAFT;
+					});
+				setType(() -> Type.CONTENT_PAGE_SPECIFICATION);
+			}
+		};
+	}
+
+	private Settings _toSettings(Layout layout) throws Exception {
 		long classNameId = _portal.getClassNameId(Layout.class.getName());
 		UnicodeProperties unicodeProperties =
 			layout.getTypeSettingsProperties();
@@ -309,61 +369,42 @@ public class PageSpecificationDTOConverter
 		};
 	}
 
-	private PageSpecification _toContentPageSpecification(
-		DTOConverterContext dtoConverterContext, Layout layout) {
+	private WidgetPageSection[] _toWidgetPageSections(Layout layout)
+		throws Exception {
 
-		return new ContentPageSpecification() {
-			{
-				setDraftContentPageSpecificationExternalReferenceCode(
-					() -> {
-						Layout draftLayout = layout.fetchDraftLayout();
-
-						if (draftLayout == null) {
-							return null;
-						}
-
-						return draftLayout.getExternalReferenceCode();
-					});
-				setExternalReferenceCode(layout::getExternalReferenceCode);
-				setPageExperiences(
-					() -> _getPageExperiences(dtoConverterContext, layout));
-				setSettings(() -> _setSettings(layout));
-				setSiteTemplatePageSpecificationExternalReferenceCode(
-					() -> {
-						Layout layoutSetPrototypeLayout =
-							layout.getLayoutSetPrototypeLayout();
-
-						if (layoutSetPrototypeLayout == null) {
-							return null;
-						}
-
-						return layoutSetPrototypeLayout.
-							getExternalReferenceCode();
-					});
-				setStatus(
-					() -> {
-						if (layout.isDraftLayout()) {
-							if (layout.isApproved()) {
-								return Status.APPROVED;
-							}
-
-							return Status.DRAFT;
-						}
-
-						if (LayoutUtil.isPublished(layout)) {
-							return Status.APPROVED;
-						}
-
-						return Status.DRAFT;
-					});
-				setType(() -> Type.CONTENT_PAGE_SPECIFICATION);
+		return new WidgetPageSection[] {
+			new WidgetPageSection() {
+				{
+				}
 			}
+		};
+	}
+
+	private WidgetPageSettings _toWidgetPageSettings(Layout layout)
+		throws Exception {
+
+			return new WidgetPageSettings() {
+				{
+					setCustomizable(() -> layout.isCustomizable());
+					setLayoutTemplateId(
+						() -> {
+							UnicodeProperties typeSettingsUnicodeProperties =
+								layout.getTypeSettingsProperties();
+
+							return typeSettingsUnicodeProperties.getProperty(
+								LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID);
+						});
+				}
 		};
 	}
 
 	private PageSpecification _toWidgetPageSpecification(Layout layout) {
 		return new WidgetPageSpecification() {
 			{
+				setCustomFields(
+					() -> CustomFieldsUtil.toCustomFields(
+						true, Layout.class.getName(), layout.getPlid(),
+						layout.getCompanyId(), null));
 				setExternalReferenceCode(
 					() -> {
 						LayoutPageTemplateEntry layoutPageTemplateEntry =
@@ -382,7 +423,7 @@ public class PageSpecificationDTOConverter
 						return layoutPageTemplateEntry.
 							getExternalReferenceCode();
 					});
-				setSettings(() -> _setSettings(layout));
+				setSettings(() -> _toSettings(layout));
 				setSiteTemplatePageSpecificationExternalReferenceCode(
 					() -> {
 						Layout layoutSetPrototypeLayout =
@@ -397,6 +438,7 @@ public class PageSpecificationDTOConverter
 					});
 				setStatus(() -> Status.APPROVED);
 				setType(() -> Type.WIDGET_PAGE_SPECIFICATION);
+				setWidgetPageSections(() -> _toWidgetPageSections(layout));
 			}
 		};
 	}

@@ -6,6 +6,7 @@
 package com.liferay.headless.admin.site.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.headless.admin.site.client.custom.field.CustomField;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSettings;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.FriendlyUrlHistory;
@@ -17,6 +18,7 @@ import com.liferay.headless.admin.site.client.pagination.Page;
 import com.liferay.headless.admin.site.client.pagination.Pagination;
 import com.liferay.headless.admin.site.client.problem.Problem;
 import com.liferay.headless.admin.site.client.resource.v1_0.SitePageResource;
+import com.liferay.headless.admin.site.resource.v1_0.test.util.AssetTestUtil;
 import com.liferay.headless.admin.site.resource.v1_0.test.util.LayoutPageTemplateEntryTestUtil;
 import com.liferay.headless.admin.site.resource.v1_0.test.util.LayoutUtilityPageEntryTestUtil;
 import com.liferay.headless.admin.site.resource.v1_0.test.util.PageSpecificationsTestUtil;
@@ -40,6 +42,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -252,7 +255,8 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		Layout layout = LayoutTestUtil.addTypeContentLayout(testGroup);
 
-		SitePageResource sitePageResource = _getSitePageResource();
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
 
 		SitePage sitePage =
 			sitePageResource.getSiteSiteByExternalReferenceCodeSitePage(
@@ -338,8 +342,9 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {
-			"externalReferenceCode", "friendlyUrlPath_i18n", "name_i18n",
-			"type", "uuid"
+			"externalReferenceCode", "friendlyUrlPath_i18n", "keywords",
+			"name_i18n", "taxonomyCategoryItemExternalReferences", "type",
+			"uuid"
 		};
 	}
 
@@ -747,6 +752,20 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		};
 	}
 
+	private PageSpecification.Type _getPageSpecificationType(
+		SitePage.Type type) {
+
+		PageSpecification.Type pageSpecificationType =
+			PageSpecification.Type.CONTENT_PAGE_SPECIFICATION;
+
+		if (type == SitePage.Type.WIDGET_PAGE) {
+			pageSpecificationType =
+				PageSpecification.Type.WIDGET_PAGE_SPECIFICATION;
+		}
+
+		return pageSpecificationType;
+	}
+
 	private SitePage _getRandomSitePage(SitePage.Type type) throws Exception {
 		return _getRandomSitePage(
 			StringUtil.toLowerCase(RandomTestUtil.randomString()), null, type,
@@ -775,6 +794,13 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				StringPool.FORWARD_SLASH +
 					StringUtil.toLowerCase(RandomTestUtil.randomString())
 			).build());
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				testGroup, TestPropsValues.getUserId());
+
+		sitePage.setKeywords(AssetTestUtil.randomKeywords(serviceContext));
+
 		sitePage.setName_i18n(
 			() -> HashMapBuilder.put(
 				LocaleUtil.toBCP47LanguageId(LocaleUtil.US),
@@ -796,6 +822,9 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		sitePage.setParentSitePageExternalReferenceCode(
 			parentSitePageExternalReferenceCode);
+		sitePage.setTaxonomyCategoryItemExternalReferences(
+			AssetTestUtil.randomTaxonomyCategoryItemExternalReferences(
+				testCompany.getGroupId(), serviceContext));
 		sitePage.setType(type);
 		sitePage.setUuid(uuid);
 
@@ -806,7 +835,9 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		return types.get(RandomTestUtil.randomInt(0, types.size() - 1));
 	}
 
-	private SitePageResource _getSitePageResource() throws Exception {
+	private SitePageResource _getSitePageResource(String nestedFields)
+		throws Exception {
+
 		User user = UserTestUtil.getAdminUser(testCompany.getCompanyId());
 
 		return SitePageResource.builder(
@@ -817,8 +848,37 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		).locale(
 			LocaleUtil.getDefault()
 		).parameters(
-			"nestedFields", "friendlyUrlHistory,pageSpecifications"
+			"nestedFields", nestedFields
 		).build();
+	}
+
+	private SitePage
+			_postByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type type)
+		throws Exception {
+
+		SitePage randomSitePage = _getRandomSitePage(type);
+
+		PageSpecification[] pageSpecifications =
+			PageSpecificationsTestUtil.
+				getPostPageSpecificationsWithCustomFields(
+					randomSitePage.getExternalReferenceCode(),
+					_getPageSpecificationType(type));
+
+		randomSitePage.setPageSpecifications(pageSpecifications);
+
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
+
+		SitePage postSitePage =
+			sitePageResource.postByExternalReferenceCodeSitePage(
+				testGroup.getExternalReferenceCode(), randomSitePage);
+
+		PageSpecificationsTestUtil.assertPostCustomFields(
+			testGroup.getGroupId(), pageSpecifications,
+			postSitePage.getPageSpecifications());
+
+		return postSitePage;
 	}
 
 	private void _testDeleteSiteSiteByExternalReferenceCodeSitePage(
@@ -854,7 +914,8 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				SitePage sitePage)
 		throws Exception {
 
-		SitePageResource sitePageResource = _getSitePageResource();
+		SitePageResource sitePageResource = _getSitePageResource(
+			"friendlyUrlHistory,pageSpecifications");
 
 		_assertNestedFields(
 			sitePageResource.getSiteSiteByExternalReferenceCodeSitePage(
@@ -892,6 +953,25 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 					setExternalReferenceCode(
 						sitePage::getExternalReferenceCode);
 					setFriendlyUrlPath_i18n(sitePage::getFriendlyUrlPath_i18n);
+					setType(sitePage::getType);
+					setUuid(sitePage::getUuid);
+				}
+			});
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				testGroup, TestPropsValues.getUserId());
+
+		sitePage.setKeywords(
+			() -> AssetTestUtil.randomKeywords(serviceContext));
+
+		_assertPatchSiteSiteByExternalReferenceCodeSitePage(
+			sitePage,
+			new SitePage() {
+				{
+					setExternalReferenceCode(
+						sitePage::getExternalReferenceCode);
+					setKeywords(sitePage::getKeywords);
 					setType(sitePage::getType);
 					setUuid(sitePage::getUuid);
 				}
@@ -955,6 +1035,23 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				}
 			});
 
+		sitePage.setTaxonomyCategoryItemExternalReferences(
+			AssetTestUtil.randomTaxonomyCategoryItemExternalReferences(
+				testCompany.getGroupId(), serviceContext));
+
+		_assertPatchSiteSiteByExternalReferenceCodeSitePage(
+			sitePage,
+			new SitePage() {
+				{
+					setExternalReferenceCode(
+						sitePage::getExternalReferenceCode);
+					setTaxonomyCategoryItemExternalReferences(
+						sitePage::getTaxonomyCategoryItemExternalReferences);
+					setType(sitePage::getType);
+					setUuid(sitePage::getUuid);
+				}
+			});
+
 		_assertPatchSiteSiteByExternalReferenceCodeSitePageProblemException(
 			_getRandomSitePage(
 				sitePage.getExternalReferenceCode(), null,
@@ -982,6 +1079,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		_testPatchSiteSiteByExternalReferenceCodeSitePageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT,
 			PageSpecification.Status.APPROVED, PageSpecification.Status.DRAFT);
+		_testPatchSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields();
 	}
 
 	private void
@@ -1011,7 +1109,8 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				publishedContentPageSpecification, draftContentPageSpecification
 			});
 
-		SitePageResource sitePageResource = _getSitePageResource();
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
 
 		SitePage postSitePage =
 			sitePageResource.postByExternalReferenceCodeSitePage(
@@ -1038,6 +1137,86 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 							});
 					}
 				}));
+	}
+
+	private void _testPatchSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields()
+		throws Exception {
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			_testPatchSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type.CONTENT_PAGE);
+			_testPatchSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type.WIDGET_PAGE);
+		}
+	}
+
+	private void
+			_testPatchSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type type)
+		throws Exception {
+
+		SitePage postSitePage =
+			_postByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				type);
+
+		CustomField[][] postCustomFields = {
+			ArrayUtil.clone(
+				postSitePage.getPageSpecifications()[0].getCustomFields())
+		};
+
+		if (type == SitePage.Type.CONTENT_PAGE) {
+			postCustomFields = ArrayUtil.append(
+				postCustomFields,
+				ArrayUtil.clone(
+					postSitePage.getPageSpecifications()[1].getCustomFields()));
+		}
+
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
+
+		SitePage patchBodySitePage = new SitePage() {
+			{
+				setExternalReferenceCode(
+					postSitePage.getExternalReferenceCode());
+				setPageSpecifications(
+					PageSpecificationsTestUtil.getPatchPageSpecifications(
+						postSitePage.getPageSpecifications()));
+				setType(postSitePage.getType());
+			}
+		};
+
+		PageSpecification[] patchBodyPagePageSpecifications =
+			patchBodySitePage.getPageSpecifications();
+
+		CustomField[][] updateCustomFields =
+			PageSpecificationsTestUtil.getUpdateCustomFields(
+				_getPageSpecificationType(type));
+
+		CustomField[] publishedCustomFields = updateCustomFields[0];
+
+		patchBodyPagePageSpecifications[0].setCustomFields(
+			new CustomField[] {
+				publishedCustomFields[0], publishedCustomFields[1]
+			});
+
+		if (patchBodyPagePageSpecifications.length == 2) {
+			CustomField[] draftCustomFields = updateCustomFields[1];
+
+			patchBodyPagePageSpecifications[1].setCustomFields(
+				new CustomField[] {draftCustomFields[0], draftCustomFields[1]});
+		}
+
+		SitePage patchSitePage =
+			sitePageResource.patchSiteSiteByExternalReferenceCodeSitePage(
+				testGroup.getExternalReferenceCode(),
+				postSitePage.getExternalReferenceCode(), patchBodySitePage);
+
+		PageSpecificationsTestUtil.assertUpdateCustomFields(
+			testGroup.getGroupId(), patchSitePage.getPageSpecifications(),
+			postCustomFields, updateCustomFields);
 	}
 
 	private void _testPatchSiteSiteByExternalReferenceCodeSitePageWithPriority()
@@ -1110,6 +1289,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			PageSpecification.Status.DRAFT, PageSpecification.Status.APPROVED);
 		_testPostByExternalReferenceCodeSitePageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT);
+		_testPostByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields();
 
 		SitePage sitePage = _getRandomSitePage(SitePage.Type.CONTENT_PAGE);
 
@@ -1162,12 +1342,27 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				publishedContentPageSpecification, draftContentPageSpecification
 			});
 
-		SitePageResource sitePageResource = _getSitePageResource();
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
 
 		_assertPageSpecifications(
 			draftContentPageSpecification, publishedContentPageSpecification,
 			sitePageResource.postByExternalReferenceCodeSitePage(
 				testGroup.getExternalReferenceCode(), sitePage));
+	}
+
+	private void _testPostByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields()
+		throws Exception {
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			_postByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type.CONTENT_PAGE);
+			_postByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type.WIDGET_PAGE);
+		}
 	}
 
 	private void _testPutSiteSiteByExternalReferenceCodeSitePage(
@@ -1199,7 +1394,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		_assertSitePage(
 			_layoutLocalService.getLayoutByExternalReferenceCode(
 				sitePage.getExternalReferenceCode(), testGroup.getGroupId()),
-			sitePage);
+			putSitePage);
 
 		_assertPutSiteSiteByExternalReferenceCodeSitePageProblemException(
 			_getRandomSitePage(
@@ -1228,6 +1423,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		_testPutSiteSiteByExternalReferenceCodeSitePageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT,
 			PageSpecification.Status.APPROVED, PageSpecification.Status.DRAFT);
+		_testPutSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields();
 	}
 
 	private void
@@ -1257,7 +1453,8 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				publishedContentPageSpecification, draftContentPageSpecification
 			});
 
-		SitePageResource sitePageResource = _getSitePageResource();
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
 
 		_assertPageSpecifications(
 			draftContentPageSpecification, publishedContentPageSpecification,
@@ -1273,6 +1470,75 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			sitePageResource.putSiteSiteByExternalReferenceCodeSitePage(
 				testGroup.getExternalReferenceCode(),
 				sitePage.getExternalReferenceCode(), sitePage));
+	}
+
+	private void _testPutSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields()
+		throws Exception {
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			_testPutSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type.CONTENT_PAGE);
+			_testPutSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type.WIDGET_PAGE);
+		}
+	}
+
+	private void
+			_testPutSiteSiteByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				SitePage.Type type)
+		throws Exception {
+
+		SitePage postSitePage =
+			_postByExternalReferenceCodeSitePageWithPageSpecificationsWithCustomFields(
+				type);
+
+		CustomField[][] postCustomFields = {
+			ArrayUtil.clone(
+				postSitePage.getPageSpecifications()[0].getCustomFields())
+		};
+
+		if (type == SitePage.Type.CONTENT_PAGE) {
+			postCustomFields = ArrayUtil.append(
+				postCustomFields,
+				ArrayUtil.clone(
+					postSitePage.getPageSpecifications()[1].getCustomFields()));
+		}
+
+		CustomField[][] updateCustomFields =
+			PageSpecificationsTestUtil.getUpdateCustomFields(
+				_getPageSpecificationType(type));
+
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
+
+		PageSpecification[] putBodyPagePageSpecifications =
+			postSitePage.getPageSpecifications();
+
+		CustomField[] publishedCustomFields = updateCustomFields[0];
+
+		putBodyPagePageSpecifications[0].setCustomFields(
+			new CustomField[] {
+				publishedCustomFields[0], publishedCustomFields[1]
+			});
+
+		if (putBodyPagePageSpecifications.length == 2) {
+			CustomField[] draftCustomFields = updateCustomFields[1];
+
+			putBodyPagePageSpecifications[1].setCustomFields(
+				new CustomField[] {draftCustomFields[0], draftCustomFields[1]});
+		}
+
+		SitePage updateSitePage =
+			sitePageResource.putSiteSiteByExternalReferenceCodeSitePage(
+				testGroup.getExternalReferenceCode(),
+				postSitePage.getExternalReferenceCode(), postSitePage);
+
+		PageSpecificationsTestUtil.assertUpdateCustomFields(
+			testGroup.getGroupId(), updateSitePage.getPageSpecifications(),
+			postCustomFields, updateCustomFields);
 	}
 
 	private void _testPutSiteSiteByExternalReferenceCodeSitePageWithPriority()
