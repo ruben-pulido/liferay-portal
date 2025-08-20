@@ -9,15 +9,24 @@ import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
 import com.liferay.client.extension.model.ClientExtensionEntryRel;
 import com.liferay.client.extension.service.ClientExtensionEntryLocalServiceUtil;
 import com.liferay.client.extension.service.ClientExtensionEntryRelLocalServiceUtil;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
+import com.liferay.document.library.test.util.DLTestUtil;
 import com.liferay.headless.admin.site.client.dto.v1_0.ClientExtension;
-import com.liferay.headless.admin.site.client.dto.v1_0.FavIcon;
 import com.liferay.headless.admin.site.client.dto.v1_0.ItemExternalReference;
+import com.liferay.headless.admin.site.client.dto.v1_0.Scope;
 import com.liferay.headless.admin.site.client.dto.v1_0.Settings;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
@@ -67,21 +76,78 @@ public class SettingsTestUtil {
 		}
 
 		ClientExtension clientExtension = null;
+		ItemExternalReference favIconItemExternalReference = null;
 
-		FavIcon favIcon = settings.getFavIcon();
+		Map<String, Object> favIcon =
+			(Map<String, Object>)settings.getFavIcon();
 
-		if ((favIcon != null) &&
-			Objects.equals(
-				favIcon.getClassName(),
-				com.liferay.headless.admin.site.dto.v1_0.ClientExtension.class.
-					getName())) {
-
+		if ((favIcon != null) && (favIcon.get("className") == null)) {
 			clientExtension = new ClientExtension() {
 				{
-					setClientExtensionConfig(favIcon::getClientExtensionConfig);
-					setExternalReferenceCode(favIcon::getExternalReferenceCode);
+					setClientExtensionConfig(
+						() -> (Map<String, String>)favIcon.get(
+							"clientExtensionConfig"));
+					setExternalReferenceCode(
+						() -> (String)favIcon.get("externalReferenceCode"));
 				}
 			};
+		}
+		else if ((favIcon != null) && (favIcon.get("className") != null)) {
+			favIconItemExternalReference = new ItemExternalReference() {
+				{
+					setExternalReferenceCode(
+						() -> (String)favIcon.get("externalReferenceCode"));
+					setScope(
+						() -> {
+							Map<String, String> scopeMap =
+								(Map<String, String>)favIcon.get("scope");
+
+							if (scopeMap == null) {
+								return null;
+							}
+
+							return new Scope() {
+								{
+									setExternalReferenceCode(
+										() -> scopeMap.get(
+											"externalReferenceCode"));
+									setType(
+										() -> Type.valueOf(
+											scopeMap.get("type")));
+								}
+							};
+						});
+				}
+			};
+		}
+
+		if (layout.getFaviconFileEntryId() == 0) {
+			Assert.assertNull(favIconItemExternalReference);
+		}
+		else {
+			DLFileEntry dlFileEntry =
+				DLFileEntryLocalServiceUtil.fetchDLFileEntry(
+					layout.getFaviconFileEntryId());
+
+			Assert.assertEquals(
+				dlFileEntry.getExternalReferenceCode(),
+				favIconItemExternalReference.getExternalReferenceCode());
+
+			Scope scope = favIconItemExternalReference.getScope();
+
+			if (scope == null) {
+				Assert.assertEquals(
+					dlFileEntry.getGroupId(), layout.getGroupId());
+			}
+			else {
+				Group group =
+					GroupLocalServiceUtil.fetchGroupByExternalReferenceCode(
+						scope.getExternalReferenceCode(),
+						layout.getCompanyId());
+
+				Assert.assertEquals(
+					dlFileEntry.getGroupId(), group.getGroupId());
+			}
 		}
 
 		_assertClientExtensions(
@@ -509,19 +575,32 @@ public class SettingsTestUtil {
 		return clientExtension;
 	}
 
-	private static FavIcon _getFavIcon() throws Exception {
-		ClientExtension clientExtension = _getClientExtension();
+	private static Map<String, Object> _getFavIcon() throws Exception {
+		return (Map<String, Object>)JSONFactoryUtil.looseDeserialize(
+			String.valueOf(_getItemExternalReference()));
+	}
 
-		return new FavIcon() {
+	private static ItemExternalReference _getItemExternalReference()
+		throws Exception {
+
+		Company company = CompanyLocalServiceUtil.getCompany(
+			TestPropsValues.getCompanyId());
+
+		DLFolder dlFolder = DLTestUtil.addDLFolder(company.getGroupId());
+
+		DLFileEntry dlFileEntry = DLTestUtil.addDLFileEntry(
+			dlFolder.getFolderId());
+
+		return new ItemExternalReference() {
 			{
-				setClassName(
-					() ->
-						com.liferay.headless.admin.site.dto.v1_0.
-							ClientExtension.class.getName());
-				setClientExtensionConfig(
-					clientExtension::getClientExtensionConfig);
-				setExternalReferenceCode(
-					clientExtension::getExternalReferenceCode);
+				setExternalReferenceCode(dlFileEntry::getExternalReferenceCode);
+				setScope(
+					() -> new Scope() {
+						{
+							setExternalReferenceCode(() -> "L_GLOBAL");
+							setType(() -> Type.SITE);
+						}
+					});
 			}
 		};
 	}
@@ -542,6 +621,16 @@ public class SettingsTestUtil {
 		}
 
 		return themeSettingsUnicodeProperties;
+	}
+
+	private Map<String, Object> _getFavIconClientExtension() throws Exception {
+		ClientExtension clientExtension = _getClientExtension();
+
+		return HashMapBuilder.<String, Object>put(
+			"clientExtensionConfig", clientExtension.getClientExtensionConfig()
+		).put(
+			"externalReferenceCode", clientExtension.getExternalReferenceCode()
+		).build();
 	}
 
 }
