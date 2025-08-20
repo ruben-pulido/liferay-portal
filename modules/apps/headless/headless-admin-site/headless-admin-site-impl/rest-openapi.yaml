@@ -735,6 +735,14 @@ components:
                         The localized message to display when the collection is empty or no results match the applied
                         filters ('No Results Found' by default).
                     type: object
+        FavIcon:
+            oneOf:
+                -   $ref: "#/components/schemas/ClientExtension"
+                -   $ref: "#/components/schemas/ItemExternalReference"
+            # @review
+            description:
+                A reference to a FavIcon.
+            type: object
         FormConfig:
             # @review
             description:
@@ -2562,9 +2570,16 @@ components:
                     # @review
                     description:
                         The FavIcon of the page specification.
-                    oneOf:
-                        -   $ref: "#/components/schemas/ClientExtension"
-                        -   $ref: "#/components/schemas/ItemExternalReference"
+                    allOf:
+                        -   $ref: "#/components/schemas/FavIcon"
+                        -   properties:
+                                type:
+                                    enum:
+                                        -   ClientExtension
+                                        -   ItemExternalReference
+                                    type: string
+                    required:
+                        -   type
                 globalCSSClientExtensions:
                     description:
                         The client extensions for global CSS associated to the page.
