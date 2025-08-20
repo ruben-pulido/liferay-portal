@@ -73,6 +73,9 @@ public abstract class BaseDuplicateItemMVCActionCommand
 				CheckNoninstanceablePortletThreadLocal.
 					setCheckNoninstanceablePortletWithSafeCloseable(true)) {
 
+			JSONObject duplicatedEditableValuesJSONObject =
+				jsonFactory.createJSONObject();
+
 			FragmentEntryLink fragmentEntryLink =
 				fragmentEntryLinkLocalService.getFragmentEntryLink(
 					fragmentEntryLinkId);
@@ -108,6 +111,20 @@ public abstract class BaseDuplicateItemMVCActionCommand
 						serviceContext.getRequest(), portletId, oldInstanceId,
 						namespace);
 				}
+
+				FragmentEntryLink duplicatedFragmentEntryLink =
+					fragmentEntryLinkService.addFragmentEntryLink(
+						null, fragmentEntryLink.getGroupId(), 0,
+						fragmentEntryLink.getFragmentEntryId(),
+						fragmentEntryLink.getSegmentsExperienceId(),
+						fragmentEntryLink.getPlid(), fragmentEntryLink.getCss(),
+						fragmentEntryLink.getHtml(), fragmentEntryLink.getJs(),
+						fragmentEntryLink.getConfiguration(),
+						editableValuesJSONObject.toString(), namespace, 0,
+						fragmentEntryLink.getRendererKey(),
+						fragmentEntryLink.getType(), serviceContext);
+
+				return duplicatedFragmentEntryLink.getFragmentEntryLinkId();
 			}
 
 			if (fragmentEntryLink.isTypeInput()) {
@@ -122,6 +139,31 @@ public abstract class BaseDuplicateItemMVCActionCommand
 				}
 			}
 
+			for (String key : editableValuesJSONObject.keySet()) {
+				Object value = editableValuesJSONObject.get(key);
+
+				if (!(value instanceof JSONObject)) {
+					duplicatedEditableValuesJSONObject.put(key, value);
+
+					continue;
+				}
+
+				JSONObject jsonObject = (JSONObject)value;
+				JSONObject duplicatedJSONObject =
+					jsonFactory.createJSONObject();
+
+				for (String curKey : jsonObject.keySet()) {
+					duplicatedJSONObject.put(
+						StringUtil.replace(
+							curKey, fragmentEntryLink.getNamespace(),
+							namespace),
+						jsonObject.get(curKey));
+				}
+
+				duplicatedEditableValuesJSONObject.put(
+					key, duplicatedJSONObject);
+			}
+
 			FragmentEntryLink duplicatedFragmentEntryLink =
 				fragmentEntryLinkService.addFragmentEntryLink(
 					null, fragmentEntryLink.getGroupId(), 0,
@@ -130,7 +172,7 @@ public abstract class BaseDuplicateItemMVCActionCommand
 					fragmentEntryLink.getPlid(), fragmentEntryLink.getCss(),
 					fragmentEntryLink.getHtml(), fragmentEntryLink.getJs(),
 					fragmentEntryLink.getConfiguration(),
-					editableValuesJSONObject.toString(), namespace, 0,
+					duplicatedEditableValuesJSONObject.toString(), namespace, 0,
 					fragmentEntryLink.getRendererKey(),
 					fragmentEntryLink.getType(), serviceContext);
 

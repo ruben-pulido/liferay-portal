@@ -10,7 +10,7 @@ export class MarketplaceUserAccount {
 	constructor(protected userAccount: UserAccount) {}
 
 	get accountBriefs() {
-		return this.userAccount.accountBriefs;
+		return this.userAccount?.accountBriefs ?? [];
 	}
 
 	get accountName() {
@@ -22,20 +22,35 @@ export class MarketplaceUserAccount {
 	}
 
 	get isAdmin() {
-		return this.userAccount?.roleBriefs.some(
-			(role) => role?.name === 'Administrator'
-		);
+		return this.hasRegularRole(AccountRoleType.ADMINISTRATOR);
 	}
 
 	get isSolutionPublisher() {
-		return this.userAccount.accountBriefs.some(
+		return this.hasAccountRole(AccountRoleType.SOLUTION_PUBLISHER);
+	}
+
+	get isSSAAdmin() {
+		return this.hasAccountRole(AccountRoleType.SSA_ADMIN);
+	}
+
+	get isSSAUser() {
+		return this.hasAccountRole(AccountRoleType.SSA);
+	}
+
+	private hasAccountRole(roleName: AccountRoleType) {
+		return this.accountBriefs.some(
 			(accountBrief) =>
 				accountBrief.id ===
 					Liferay.CommerceContext.account?.accountId &&
 				accountBrief.roleBriefs.some(
-					(roleBrief) =>
-						roleBrief.name === AccountRoleType.SOLUTION_PUBLISHER
+					(roleBrief) => roleBrief.name === roleName
 				)
+		);
+	}
+
+	private hasRegularRole(roleName: AccountRoleType) {
+		return this.userAccount?.roleBriefs.some(
+			(role) => role?.name === roleName
 		);
 	}
 }

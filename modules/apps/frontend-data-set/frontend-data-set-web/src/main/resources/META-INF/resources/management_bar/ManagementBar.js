@@ -14,6 +14,7 @@ import ActiveFiltersBar from './controls/filters/ActiveFiltersBar';
 function ManagementBar({
 	bulkActions,
 	creationMenu,
+	dataLoading,
 	deselectItems,
 	fluid,
 	items,
@@ -77,7 +78,11 @@ function ManagementBar({
 				/>
 			)}
 
-			<ActiveFiltersBar disabled={!!selectedItemsValue.length} />
+			<ActiveFiltersBar
+				dataLoading={dataLoading}
+				disabled={!!selectedItemsValue.length}
+				total={total}
+			/>
 		</>
 	);
 }

@@ -92,7 +92,7 @@ public class CPConfigurationEntryLocalServiceTest {
 				_commerceCatalog.getGroupId(),
 				masterCPConfigurationList.getCPConfigurationListId(), false,
 				RandomTestUtil.randomString(), 2, 1, 1, 2024, 0, 0, 0, 0, 0, 0,
-				0, true);
+				0, true, new ServiceContext());
 
 		_cpDefinition = CPTestUtil.addCPDefinition(
 			_commerceCatalog.getGroupId());
@@ -129,7 +129,7 @@ public class CPConfigurationEntryLocalServiceTest {
 				_cpConfigurationList.getCPConfigurationListId(), 0, "123", true,
 				0, "cpde", 1.0, true, true, true, 1.0, "lowstoc",
 				BigDecimal.TEN, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,
-				true, true, 1.0, true, true, true, 1.0, 1.0);
+				true, true, 1.0, true, true, 1.0, 1.0);
 
 		Assert.assertNotNull(cpConfigurationEntry1);
 		Assert.assertEquals(
@@ -201,7 +201,7 @@ public class CPConfigurationEntryLocalServiceTest {
 				_cpConfigurationList.getCPConfigurationListId(), 0, "123", true,
 				0, "cpde", 1.0, true, true, true, 1.0, "lowstoc",
 				BigDecimal.TEN, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,
-				true, true, 1.0, true, true, true, 1.0, 1.0);
+				true, true, 1.0, true, true, 1.0, 1.0);
 
 		Assert.assertNotNull(cpConfigurationEntry1);
 		Assert.assertEquals(
@@ -225,7 +225,8 @@ public class CPConfigurationEntryLocalServiceTest {
 				RandomTestUtil.randomString(), 1, calendar.get(Calendar.MONTH),
 				calendar.get(Calendar.DAY_OF_MONTH),
 				calendar.get(Calendar.YEAR), displayDateHour,
-				calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true);
+				calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true,
+				new ServiceContext());
 
 		_cpConfigurationLists.add(cpConfigurationList1);
 
@@ -254,7 +255,8 @@ public class CPConfigurationEntryLocalServiceTest {
 				RandomTestUtil.randomString(), 1, calendar.get(Calendar.MONTH),
 				calendar.get(Calendar.DAY_OF_MONTH),
 				calendar.get(Calendar.YEAR), displayDateHour,
-				calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true);
+				calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true,
+				new ServiceContext());
 
 		_cpConfigurationLists.add(cpConfigurationList2);
 
@@ -287,7 +289,7 @@ public class CPConfigurationEntryLocalServiceTest {
 				cpConfigurationList2.getCPConfigurationListId(), 0, "123", true,
 				0, "cpde", 1.0, true, true, true, 1.0, "lowstoc",
 				BigDecimal.TEN, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,
-				true, true, 1.0, true, true, true, 1.0, 1.0);
+				true, true, 1.0, true, true, 1.0, 1.0);
 
 		Assert.assertFalse(
 			ListUtil.isEmpty(
@@ -314,7 +316,8 @@ public class CPConfigurationEntryLocalServiceTest {
 				RandomTestUtil.randomString(), 1, calendar.get(Calendar.MONTH),
 				calendar.get(Calendar.DAY_OF_MONTH),
 				calendar.get(Calendar.YEAR), displayDateHour,
-				calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true);
+				calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true,
+				new ServiceContext());
 
 		_cpConfigurationLists.add(cpConfigurationList3);
 
@@ -374,7 +377,7 @@ public class CPConfigurationEntryLocalServiceTest {
 				_cpConfigurationList.getCPConfigurationListId(), 0, "123", true,
 				0, "cpde", 1.0, true, true, true, 1.0, "lowstoc",
 				BigDecimal.TEN, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,
-				true, true, 1.0, true, true, true, 1.0, 1.0);
+				true, true, 1.0, true, true, 1.0, 1.0);
 
 		_cpConfigurationEntryLocalService.deleteCPConfigurationEntry(
 			cpConfigurationEntry.getCPConfigurationEntryId());
@@ -432,7 +435,7 @@ public class CPConfigurationEntryLocalServiceTest {
 				_cpConfigurationList.getCPConfigurationListId(), 0, "123", true,
 				0, "cpde", 1.0, true, true, true, 1.0, "lowstoc",
 				BigDecimal.TEN, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,
-				true, true, 1.0, true, true, true, 1.0, 1.0);
+				true, true, 1.0, true, true, 1.0, 1.0);
 
 		Assert.assertNotNull(cpConfigurationEntry);
 		Assert.assertEquals(
@@ -456,7 +459,8 @@ public class CPConfigurationEntryLocalServiceTest {
 				RandomTestUtil.randomString(), 1, calendar.get(Calendar.MONTH),
 				calendar.get(Calendar.DAY_OF_MONTH),
 				calendar.get(Calendar.YEAR), displayDateHour,
-				calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true);
+				calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true,
+				new ServiceContext());
 
 		_cpConfigurationLists.add(cpConfigurationList);
 

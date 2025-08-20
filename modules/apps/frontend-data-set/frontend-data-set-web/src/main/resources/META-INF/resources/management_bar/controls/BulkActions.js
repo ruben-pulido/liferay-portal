@@ -15,6 +15,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import FrontendDataSetContext from '../../FrontendDataSetContext';
 import {OPEN_SIDE_PANEL} from '../../utils/eventsDefinitions';
 import {getOpenedSidePanel} from '../../utils/sidePanels';
+import ViewsContext from '../../views/ViewsContext';
 import InfoPanelToggleButton from './InfoPanelToggleButton';
 import SelectionCheckbox from './SelectionCheckbox';
 
@@ -49,13 +50,32 @@ function BulkActions({
 		actionParameterName,
 		allItemsSelectedActive,
 		onBulkActionItemClick,
+		searchParam,
 		showBulkActionsManagementBar,
 		showBulkActionsManagementBarActions,
 		showInfoPanel,
 	} = useContext(FrontendDataSetContext);
 
+	const [{filters}] = useContext(ViewsContext);
+
 	const [currentSidePanelActionPayload, setCurrentSidePanelActionPayload] =
 		useState(null);
+
+	function getAdditionalData(filters, searchParam) {
+		return {
+			filters: filters
+				.filter((item) => item.active)
+				.map((item) => {
+					return {
+						id: item.id,
+						multiple: item.multiple,
+						odataFilterString: item.odataFilterString,
+						selectedItemsLabel: item.selectedItemsLabel,
+					};
+				}),
+			searchQuery: searchParam,
+		};
+	}
 
 	function handleActionClick(
 		actionDefinition,
@@ -96,6 +116,8 @@ function BulkActions({
 					items: allItemsSelectedActive ? [] : selectedItems,
 					keyValues: allItemsSelectedActive ? [] : selectedItemsValue,
 					selectAll: allItemsSelectedActive,
+					...(allItemsSelectedActive &&
+						getAdditionalData(filters, searchParam)),
 				},
 			});
 		}
@@ -113,6 +135,8 @@ function BulkActions({
 								? []
 								: selectedItemsValue.join(','),
 						selectAll: allItemsSelectedActive,
+						...(allItemsSelectedActive &&
+							getAdditionalData(filters, searchParam)),
 					},
 					url: href || form.action,
 				});
@@ -205,7 +229,7 @@ function BulkActions({
 								</span>
 
 								<ClayLink
-									className="ml-3"
+									className="c-ml-3"
 									href="#"
 									onClick={(event) => {
 										event.preventDefault();
@@ -220,7 +244,7 @@ function BulkActions({
 									showSelectAll &&
 									!allItemsSelectedActive && (
 										<ClayLink
-											className="ml-3"
+											className="c-ml-3"
 											href="#"
 											onClick={(event) => {
 												event.preventDefault();

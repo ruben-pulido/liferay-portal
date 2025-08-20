@@ -53,7 +53,6 @@ test('COMMERCE-12316 Mini cart bundle with UOM', async ({
 	});
 
 	await apiHelpers.headlessCommerceAdminChannel.postChannel({
-		name: 'Mini Cart Channel',
 		siteGroupId: site.id,
 	});
 
@@ -615,7 +614,7 @@ test('LPD-45736 Order items are split on the mini cart with quick add to cart wh
 	page,
 }) => {
 	const account = await apiHelpers.headlessAdminUser.postAccount({
-		name: 'admin',
+		name: getRandomString(),
 		type: 'business',
 	});
 

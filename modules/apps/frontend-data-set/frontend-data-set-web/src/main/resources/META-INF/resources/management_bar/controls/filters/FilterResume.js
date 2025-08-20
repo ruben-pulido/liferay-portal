@@ -10,11 +10,13 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useContext, useState} from 'react';
 
+import FrontendDataSetContext from '../../../FrontendDataSetContext';
 import ViewsContext from '../../../views/ViewsContext';
 import {VIEWS_ACTION_TYPES} from '../../../views/viewsReducer';
 import Filter from './Filter';
 
 function FilterResume(props) {
+	const {setSearching} = useContext(FrontendDataSetContext);
 	const [{filters}, viewsDispatch] = useContext(ViewsContext);
 
 	const [open, setOpen] = useState(false);
@@ -22,23 +24,23 @@ function FilterResume(props) {
 	const button = (
 		<ClayButton
 			className={classNames(
-				'filter-resume component-label tbar-label',
+				'c-ml-2',
+				'component-label',
+				'filter-resume',
+				'tbar-label',
 				open && 'active'
 			)}
 			disabled={props.disabled}
 			displayType="secondary"
 			size="sm"
 		>
-			<div className="filter-resume-content">
-				<ClayIcon
-					className="mr-2"
-					symbol={open ? 'caret-top' : 'caret-bottom'}
-				/>
+			<span className="inline-item inline-item-before">
+				<ClayIcon symbol={open ? 'caret-top' : 'caret-bottom'} />
+			</span>
 
-				<div className="label-section">
-					{props.label}: {props.selectedItemsLabel}
-				</div>
-			</div>
+			<span className="label-section">
+				{props.label}: <strong>{props.selectedItemsLabel}</strong>
+			</span>
 		</ClayButton>
 	);
 
@@ -61,7 +63,9 @@ function FilterResume(props) {
 				disabled={props.disabled}
 				displayType="secondary"
 				monospaced
-				onClick={() =>
+				onClick={() => {
+					setSearching(true);
+
 					viewsDispatch({
 						type: VIEWS_ACTION_TYPES.UPDATE_FILTERS,
 						value: filters.map((filter) => ({
@@ -74,8 +78,8 @@ function FilterResume(props) {
 									}
 								: {}),
 						})),
-					})
-				}
+					});
+				}}
 				size="sm"
 				title={Liferay.Language.get('remove-filter')}
 			>

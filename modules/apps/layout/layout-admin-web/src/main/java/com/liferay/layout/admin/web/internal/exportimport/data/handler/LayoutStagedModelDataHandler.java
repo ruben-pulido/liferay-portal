@@ -747,15 +747,17 @@ public class LayoutStagedModelDataHandler
 					layout, Layout.class, layout.getGroupId(),
 					masterLayoutUuid);
 
-			long originalPlid = portletDataContext.getPlid();
+			if (masterLayoutElement != null) {
+				long originalPlid = portletDataContext.getPlid();
 
-			try {
-				StagedModelDataHandlerUtil.importStagedModel(
-					portletDataContext, masterLayoutElement);
-			}
-			finally {
-				portletDataContext.setPlid(originalPlid);
-				portletDataContext.setPrivateLayout(privateLayout);
+				try {
+					StagedModelDataHandlerUtil.importStagedModel(
+						portletDataContext, masterLayoutElement);
+				}
+				finally {
+					portletDataContext.setPlid(originalPlid);
+					portletDataContext.setPrivateLayout(privateLayout);
+				}
 			}
 
 			long masterLayoutPlid = GetterUtil.getLong(
@@ -918,8 +920,8 @@ public class LayoutStagedModelDataHandler
 					priority = TransactionInvokerUtil.invoke(
 						_transactionConfig,
 						() -> _layoutLocalServiceHelper.getNextPriority(
-							groupId, finalPrivateLayout, finalParentLayoutId,
-							null, -1));
+							groupId, null, finalPrivateLayout,
+							finalParentLayoutId, -1));
 				}
 
 				importedLayout.setPriority(priority);

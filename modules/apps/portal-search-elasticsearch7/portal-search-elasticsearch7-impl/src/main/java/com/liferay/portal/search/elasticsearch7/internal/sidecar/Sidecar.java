@@ -12,7 +12,6 @@ import com.liferay.petra.process.ProcessConfig;
 import com.liferay.petra.process.ProcessException;
 import com.liferay.petra.process.ProcessExecutor;
 import com.liferay.petra.process.ProcessLog;
-import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
@@ -341,7 +340,7 @@ public class Sidecar {
 					"logger.deprecation.name=org.elasticsearch.deprecation",
 					"logger.deprecation.level=error", _getLogProperties(),
 					ResourceUtil.getResourceAsString(
-						Sidecar.class, "/log4j2-sidecar.properties")));
+						Sidecar.class, "/log4j2.properties")));
 		}
 		catch (IOException ioException) {
 			_log.error(
@@ -388,15 +387,24 @@ public class Sidecar {
 
 		// Apply agent to load modified classes
 
+		Path agentPath = null;
+
 		URL sidecarAgentBundleURL = _getBundleURL(SidecarAgent.class);
 
 		try {
-			arguments.add(
-				"-javaagent:" + Path.of(sidecarAgentBundleURL.toURI()));
+			agentPath = Path.of(sidecarAgentBundleURL.toURI());
 		}
 		catch (URISyntaxException uriSyntaxException) {
-			ReflectionUtil.throwException(uriSyntaxException);
+			if (_log.isDebugEnabled()) {
+				_log.debug(uriSyntaxException);
+			}
+
+			File file = new File(sidecarAgentBundleURL.getPath());
+
+			agentPath = file.toPath();
 		}
+
+		arguments.add("-javaagent:" + agentPath);
 
 		return arguments;
 	}

@@ -275,6 +275,22 @@ public class Mutation {
 	}
 
 	@GraphQLField
+	public boolean deleteCompanyTestEntityByExternalReferenceCode(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode)
+		throws Exception {
+
+		_applyVoidComponentServiceObjects(
+			_companyTestEntityResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			companyTestEntityResource ->
+				companyTestEntityResource.
+					deleteCompanyTestEntityByExternalReferenceCode(
+						externalReferenceCode));
+
+		return true;
+	}
+
+	@GraphQLField
 	public CompanyTestEntity patchCompanyTestEntity(
 			@GraphQLName("companyTestEntityId") Long companyTestEntityId,
 			@GraphQLName("companyTestEntity") CompanyTestEntity
@@ -497,6 +513,33 @@ public class Mutation {
 						assetLibraryExternalReferenceCode,
 						ercAssetLibraryTestEntityExternalReferenceCode,
 						ercAssetLibraryTestEntity));
+	}
+
+	@GraphQLField
+	public java.util.Collection<com.liferay.portal.vulcan.permission.Permission>
+			updateAssetLibraryERCAssetLibraryTestEntityPermissionsPage(
+				@GraphQLName("assetLibraryExternalReferenceCode") @NotEmpty
+					String assetLibraryExternalReferenceCode,
+				@GraphQLName("ercAssetLibraryTestEntityExternalReferenceCode")
+					String ercAssetLibraryTestEntityExternalReferenceCode,
+				@GraphQLName("permissions")
+					com.liferay.portal.vulcan.permission.Permission[]
+						permissions)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_ercAssetLibraryTestEntityResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			ercAssetLibraryTestEntityResource -> {
+				Page paginationPage =
+					ercAssetLibraryTestEntityResource.
+						putAssetLibraryERCAssetLibraryTestEntityPermissionsPage(
+							assetLibraryExternalReferenceCode,
+							ercAssetLibraryTestEntityExternalReferenceCode,
+							permissions);
+
+				return paginationPage.getItems();
+			});
 	}
 
 	@GraphQLField
@@ -772,6 +815,33 @@ public class Mutation {
 	}
 
 	@GraphQLField
+	public java.util.Collection<com.liferay.portal.vulcan.permission.Permission>
+			updateSiteERCSiteTestEntityPermissionsPage(
+				@GraphQLName("siteExternalReferenceCode") @NotEmpty String
+					siteExternalReferenceCode,
+				@GraphQLName("ercSiteTestEntityExternalReferenceCode") String
+					ercSiteTestEntityExternalReferenceCode,
+				@GraphQLName("permissions")
+					com.liferay.portal.vulcan.permission.Permission[]
+						permissions)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_ercSiteTestEntityResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			ercSiteTestEntityResource -> {
+				Page paginationPage =
+					ercSiteTestEntityResource.
+						putSiteERCSiteTestEntityPermissionsPage(
+							siteExternalReferenceCode,
+							ercSiteTestEntityExternalReferenceCode,
+							permissions);
+
+				return paginationPage.getItems();
+			});
+	}
+
+	@GraphQLField
 	public Response createFiltersPageExportBatch(
 			@GraphQLName("callbackURL") String callbackURL,
 			@GraphQLName("contentType") String contentType,
@@ -798,6 +868,50 @@ public class Mutation {
 			multipartTestEntityResource ->
 				multipartTestEntityResource.patchMultipartTestEntity(
 					multipartTestEntityId, multipartTestEntity));
+	}
+
+	@GraphQLField
+	public MultipartTestEntity createMultipartTestEntity(
+			@GraphQLName("multipartTestEntity") MultipartTestEntity
+				multipartTestEntity)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_multipartTestEntityResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			multipartTestEntityResource ->
+				multipartTestEntityResource.postMultipartTestEntity(
+					multipartTestEntity));
+	}
+
+	@GraphQLField
+	@GraphQLName(
+		description = "null", value = "postMultipartTestEntityMultipartBody"
+	)
+	public MultipartTestEntity createMultipartTestEntity(
+			@GraphQLName("multipartBody") MultipartBody multipartBody)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_multipartTestEntityResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			multipartTestEntityResource ->
+				multipartTestEntityResource.postMultipartTestEntity(
+					multipartBody));
+	}
+
+	@GraphQLField
+	public Response createMultipartTestEntityBatch(
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_multipartTestEntityResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			multipartTestEntityResource ->
+				multipartTestEntityResource.postMultipartTestEntityBatch(
+					callbackURL, object));
 	}
 
 	@GraphQLField
@@ -1412,6 +1526,19 @@ public class Mutation {
 			this::_populateResourceContext,
 			testEntityResource -> testEntityResource.putTestEntityBatch(
 				optionalParameter, callbackURL, object));
+	}
+
+	@GraphQLField
+	public TestEntity updateTestEntityStatus(
+			@GraphQLName("testEntityId") Long testEntityId,
+			@GraphQLName("testEntity") TestEntity testEntity)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_testEntityResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			testEntityResource -> testEntityResource.putTestEntityStatus(
+				testEntityId, testEntity));
 	}
 
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R

@@ -5,6 +5,7 @@
 
 package com.liferay.headless.admin.site.internal.resource.v1_0;
 
+import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.headless.admin.site.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.UtilityPage;
@@ -25,6 +26,7 @@ import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
@@ -152,7 +154,7 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 
 		return (ContentPageSpecification)_pageSpecificationDTOConverter.toDTO(
 			LayoutUtil.addDraftToLayout(
-				contentPageSpecification,
+				_cetManager, contentPageSpecification,
 				_layoutLocalService.getLayout(layoutUtilityPageEntry.getPlid()),
 				ServiceContextUtil.createServiceContext(
 					layoutUtilityPageEntry.getGroupId(),
@@ -181,6 +183,8 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 			return _addLayoutUtilityPageEntry(groupId, utilityPage);
 		}
 
+		_validateUtilityPage(utilityPage);
+
 		Layout layout = _layoutLocalService.getLayout(
 			layoutUtilityPageEntry.getPlid());
 
@@ -204,7 +208,7 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 		}
 
 		LayoutUtil.updateContentLayout(
-			layout, layout.getNameMap(), titleMap, descriptionMap,
+			_cetManager, layout, layout.getNameMap(), titleMap, descriptionMap,
 			layout.getRobotsMap(),
 			LocalizedMapUtil.getLocalizedMap(
 				utilityPage.getFriendlyUrlPath_i18n()),
@@ -286,6 +290,8 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 			ServiceContext serviceContext)
 		throws Exception {
 
+		_validateUtilityPage(utilityPage);
+
 		Map<Locale, String> nameMap = Collections.singletonMap(
 			_portal.getSiteDefaultLocale(groupId), utilityPage.getName());
 
@@ -312,9 +318,9 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 			"layout.instanceable.allowed", Boolean.TRUE);
 
 		Layout layout = LayoutUtil.addContentLayout(
-			groupId, utilityPage.getPageSpecifications(), false, nameMap,
-			titleMap, descriptionMap, null, LayoutConstants.TYPE_UTILITY, null,
-			true, true,
+			_cetManager, groupId, utilityPage.getPageSpecifications(), false,
+			nameMap, titleMap, descriptionMap, null,
+			LayoutConstants.TYPE_UTILITY, null, true, true,
 			LocalizedMapUtil.getLocalizedMap(
 				utilityPage.getFriendlyUrlPath_i18n()),
 			WorkflowConstants.STATUS_DRAFT, serviceContext);
@@ -343,6 +349,20 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 		throw new UnsupportedOperationException();
 	}
 
+	private void _validateUtilityPage(UtilityPage utilityPage) {
+		if (ArrayUtil.isEmpty(utilityPage.getPageSpecifications())) {
+			return;
+		}
+
+		for (PageSpecification pageSpecification :
+				utilityPage.getPageSpecifications()) {
+
+			if (pageSpecification.getCustomFields() != null) {
+				throw new UnsupportedOperationException();
+			}
+		}
+	}
+
 	private static final Map<UtilityPage.Type, String>
 		_externalToInternalValuesMap = HashMapBuilder.put(
 			UtilityPage.Type.COOKIE_POLICY,
@@ -367,6 +387,9 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 			UtilityPage.Type.TERMS_OF_USE,
 			LayoutUtilityPageEntryConstants.TYPE_TERMS_OF_USE
 		).build();
+
+	@Reference
+	private CETManager _cetManager;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

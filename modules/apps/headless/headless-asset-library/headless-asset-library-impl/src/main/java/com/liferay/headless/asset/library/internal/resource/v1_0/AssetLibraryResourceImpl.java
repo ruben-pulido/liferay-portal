@@ -6,6 +6,7 @@
 package com.liferay.headless.asset.library.internal.resource.v1_0;
 
 import com.liferay.depot.constants.DepotActionKeys;
+import com.liferay.depot.constants.DepotConstants;
 import com.liferay.depot.model.DepotAppCustomization;
 import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.model.DepotEntryPin;
@@ -22,10 +23,13 @@ import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
@@ -380,7 +384,8 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 		}
 
 		DepotEntry depotEntry = _depotEntryService.addDepotEntry(
-			nameMap, descriptionMap, serviceContext);
+			nameMap, descriptionMap, DepotConstants.TYPE_ASSET_LIBRARY,
+			serviceContext);
 
 		group = depotEntry.getGroup();
 
@@ -565,6 +570,34 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 			new DefaultDTOConverterContext(
 				contextAcceptLanguage.isAcceptAllLanguages(),
 				HashMapBuilder.put(
+					"assign-members",
+					() -> {
+						if (!_userModelResourcePermission.contains(
+								PermissionThreadLocal.getPermissionChecker(),
+								depotEntry.getGroupId(),
+								ActionKeys.ASSIGN_MEMBERS)) {
+
+							return null;
+						}
+
+						return addAction(
+							ActionKeys.VIEW, depotEntry, "getAssetLibrary");
+					}
+				).put(
+					"connect-sites",
+					() -> {
+						if (!_depotEntryModelResourcePermission.contains(
+								PermissionThreadLocal.getPermissionChecker(),
+								depotEntry.getDepotEntryId(),
+								ActionKeys.UPDATE)) {
+
+							return null;
+						}
+
+						return addAction(
+							ActionKeys.VIEW, depotEntry, "getAssetLibrary");
+					}
+				).put(
 					"create",
 					addAction(
 						DepotActionKeys.ADD_DEPOT_ENTRY, depotEntry,
@@ -592,6 +625,34 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 					"update",
 					addAction(
 						ActionKeys.UPDATE, depotEntry, "patchAssetLibrary")
+				).put(
+					"view-members",
+					() -> {
+						if (_userModelResourcePermission.contains(
+								PermissionThreadLocal.getPermissionChecker(),
+								depotEntry.getGroupId(),
+								ActionKeys.ASSIGN_MEMBERS)) {
+
+							return null;
+						}
+
+						return addAction(
+							ActionKeys.VIEW, depotEntry, "getAssetLibrary");
+					}
+				).put(
+					"view-sites",
+					() -> {
+						if (_depotEntryModelResourcePermission.contains(
+								PermissionThreadLocal.getPermissionChecker(),
+								depotEntry.getDepotEntryId(),
+								ActionKeys.UPDATE)) {
+
+							return null;
+						}
+
+						return addAction(
+							ActionKeys.VIEW, depotEntry, "getAssetLibrary");
+					}
 				).build(),
 				_dtoConverterRegistry, depotEntry.getDepotEntryId(),
 				contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
@@ -607,15 +668,22 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 
 		MimeTypeLimit[] mimeTypeLimits = settings.getMimeTypeLimits();
 
-		if (mimeTypeLimits != null) {
-			for (MimeTypeLimit mimeTypeLimit : settings.getMimeTypeLimits()) {
-				String mimeType = mimeTypeLimit.getMimeType();
+		if (mimeTypeLimits == null) {
+			_dlSizeLimitConfigurationProvider.updateGroupSizeLimit(
+				groupId, 0L, 0L, mimeTypeSizeLimits);
 
-				if (Validator.isNotNull(mimeType)) {
-					mimeTypeSizeLimits.put(
-						mimeType,
-						GetterUtil.getLong(mimeTypeLimit.getMaximumSize()));
-				}
+			return;
+		}
+
+		mimeTypeSizeLimits = new LinkedHashMap<>();
+
+		for (MimeTypeLimit mimeTypeLimit : mimeTypeLimits) {
+			String mimeType = mimeTypeLimit.getMimeType();
+
+			if (Validator.isNotNull(mimeType)) {
+				mimeTypeSizeLimits.put(
+					mimeType,
+					GetterUtil.getLong(mimeTypeLimit.getMaximumSize()));
 			}
 		}
 
@@ -631,6 +699,10 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 	@Reference
 	private DepotAppCustomizationLocalService
 		_depotAppCustomizationLocalService;
+
+	@Reference(target = "(model.class.name=com.liferay.depot.model.DepotEntry)")
+	private ModelResourcePermission<DepotEntry>
+		_depotEntryModelResourcePermission;
 
 	@Reference
 	private DepotEntryPinLocalService _depotEntryPinLocalService;
@@ -649,5 +721,10 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 
 	@Reference
 	private GroupLocalService _groupLocalService;
+
+	@Reference(
+		target = "(model.class.name=com.liferay.portal.kernel.model.User)"
+	)
+	private ModelResourcePermission<User> _userModelResourcePermission;
 
 }

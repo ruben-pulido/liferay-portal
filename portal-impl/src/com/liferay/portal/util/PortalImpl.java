@@ -833,26 +833,20 @@ public class PortalImpl implements Portal {
 			String[] values = renderParameters.get(
 				actionResponse.getNamespace() + actionParameterName);
 
-			if (values == null) {
-				values = actionRequest.getParameterValues(actionParameterName);
-
-				if (values == null) {
-					values = new String[0];
-				}
-				else {
-					values = ArrayUtil.filter(
-						values,
-						s -> {
-							if (s == null) {
-								return false;
-							}
-
-							return true;
-						});
-				}
-
-				actionResponse.setRenderParameter(actionParameterName, values);
+			if (values != null) {
+				continue;
 			}
+
+			values = actionRequest.getParameterValues(actionParameterName);
+
+			if (values == null) {
+				values = new String[0];
+			}
+			else {
+				values = ArrayUtil.filter(values, s -> s != null);
+			}
+
+			actionResponse.setRenderParameter(actionParameterName, values);
 		}
 	}
 
@@ -1095,38 +1089,42 @@ public class PortalImpl implements Portal {
 			Map<String, String[]> params, Map<String, Object> requestContext)
 		throws PortalException {
 
+		if (Validator.isNotNull(friendlyURL)) {
+			return getPortletFriendlyURLMapperLayoutQueryStringComposite(
+				groupId, privateLayout, friendlyURL, params, requestContext);
+		}
+
 		Layout layout = null;
 
-		if (Validator.isNull(friendlyURL)) {
-			if (AuthLoginGroupSettingsUtil.isPromptEnabled(groupId) &&
-				!_isSignedIn(
-					(HttpServletRequest)requestContext.get("request"))) {
+		HttpServletRequest httpServletRequest =
+			(HttpServletRequest)requestContext.get("request");
 
-				// Ensure that virtual layouts are merged. See LPS-42222.
+		if (AuthLoginGroupSettingsUtil.isPromptEnabled(groupId) &&
+			!_isSignedIn(httpServletRequest) &&
+			!GetterUtil.getBoolean(
+				httpServletRequest.getAttribute(
+					NoSuchLayoutException.class.getName()))) {
 
-				List<Layout> layouts = LayoutLocalServiceUtil.getLayouts(
-					groupId, privateLayout,
-					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, true, 0, 1);
+			// Ensure that virtual layouts are merged. See LPS-42222.
 
-				if (!layouts.isEmpty()) {
-					layout = layouts.get(0);
-				}
-			}
-			else {
-				layout = LayoutServiceUtil.fetchFirstLayout(
-					groupId, privateLayout, true);
-			}
+			List<Layout> layouts = LayoutLocalServiceUtil.getLayouts(
+				groupId, privateLayout,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, true, 0, 1);
 
-			if (layout == null) {
-				throw new NoSuchLayoutException(
-					StringBundler.concat(
-						"{groupId=", groupId, ", privateLayout=", privateLayout,
-						"}"));
+			if (!layouts.isEmpty()) {
+				layout = layouts.get(0);
 			}
 		}
 		else {
-			return getPortletFriendlyURLMapperLayoutQueryStringComposite(
-				groupId, privateLayout, friendlyURL, params, requestContext);
+			layout = LayoutServiceUtil.fetchFirstLayout(
+				groupId, privateLayout, true);
+		}
+
+		if (layout == null) {
+			throw new NoSuchLayoutException(
+				StringBundler.concat(
+					"{groupId=", groupId, ", privateLayout=", privateLayout,
+					"}"));
 		}
 
 		return new LayoutQueryStringComposite(
@@ -3970,7 +3968,7 @@ public class PortalImpl implements Portal {
 				groupId, privateLayout,
 				layoutQueryStringComposite.getFriendlyURL());
 
-			if (Validator.isNotNull(layout.getSourcePrototypeLayoutUuid())) {
+			if (Validator.isNotNull(layout.getLayoutSetPrototypeLayoutERC())) {
 				layout = LayoutLocalServiceUtil.getLayout(layout.getPlid());
 			}
 		}

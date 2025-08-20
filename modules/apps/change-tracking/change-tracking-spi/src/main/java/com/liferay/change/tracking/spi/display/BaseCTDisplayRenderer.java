@@ -6,9 +6,25 @@
 package com.liferay.change.tracking.spi.display;
 
 import com.liferay.change.tracking.spi.display.context.DisplayContext;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.Value;
+import com.liferay.dynamic.data.mapping.service.DDMFieldLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesConverterUtil;
+import com.liferay.frontend.taglib.clay.servlet.taglib.LinkTag;
 import com.liferay.petra.function.UnsafeSupplier;
+import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -18,11 +34,14 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.CamelCaseUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.JspException;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -32,7 +51,9 @@ import java.sql.Blob;
 
 import java.text.Format;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -82,7 +103,7 @@ public abstract class BaseCTDisplayRenderer<T extends BaseModel<T>>
 
 		writer.write("<div class=\"table-responsive\"><table class=\"");
 		writer.write("publications-render-table table table-autofit ");
-		writer.write("table-nowrap\">");
+		writer.write("table-nowrap table-striped\">");
 
 		HttpServletRequest httpServletRequest =
 			displayContext.getHttpServletRequest();
@@ -91,10 +112,14 @@ public abstract class BaseCTDisplayRenderer<T extends BaseModel<T>>
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		buildDisplay(
-			new DisplayBuilderImpl<>(
-				displayContext, getResourceBundle(displayContext.getLocale()),
-				themeDisplay));
+		DisplayBuilder<T> displayBuilder = new DisplayBuilderImpl<>(
+			displayContext, getResourceBundle(displayContext.getLocale()),
+			themeDisplay);
+
+		displayBuilder.displaySectionHeader("metadata");
+
+		buildDisplay(displayBuilder);
+		buildStructureDisplay(displayBuilder);
 
 		PermissionChecker permissionChecker =
 			themeDisplay.getPermissionChecker();
@@ -133,6 +158,140 @@ public abstract class BaseCTDisplayRenderer<T extends BaseModel<T>>
 		}
 	}
 
+	protected void buildStructureDisplay(DisplayBuilder<T> displayBuilder)
+		throws Exception {
+
+		T model = displayBuilder.getModel();
+
+		Map<String, Function<T, Object>> attributeGetterFunctions =
+			model.getAttributeGetterFunctions();
+
+		if (attributeGetterFunctions.containsKey("DDMStructureId")) {
+			Function<T, Object> ddmStructureIdGetterFunction =
+				attributeGetterFunctions.get("DDMStructureId");
+
+			DDMStructure ddmStructure =
+				DDMStructureLocalServiceUtil.getStructure(
+					(Long)ddmStructureIdGetterFunction.apply(model));
+
+			DDMForm ddmForm = ddmStructure.getDDMForm();
+
+			Function<T, Object> idGetterFunction = attributeGetterFunctions.get(
+				"id");
+
+			DDMFormValues ddmFormValues =
+				DDMFieldLocalServiceUtil.getDDMFormValues(
+					ddmForm, (Long)idGetterFunction.apply(model));
+
+			if (ddmFormValues == null) {
+				return;
+			}
+
+			ddmFormValues.setDDMFormFieldValues(
+				DDMFormValuesConverterUtil.addMissingDDMFormFieldValues(
+					ddmForm.getDDMFormFields(),
+					ddmFormValues.getDDMFormFieldValuesMap(true)));
+
+			List<DDMFormFieldValue> ddmFormFieldValues =
+				ddmFormValues.getDDMFormFieldValues();
+
+			List<DDMFormFieldValue> imageDDMFormFieldValues = new ArrayList<>();
+			List<DDMFormFieldValue> nonimageDDMFormFieldValues =
+				new ArrayList<>();
+
+			ddmFormFieldValues.forEach(
+				ddmFormFieldValue -> {
+					DDMFormField ddmFormField =
+						ddmFormFieldValue.getDDMFormField();
+
+					if (StringUtil.equals(
+							ddmFormField.getType(),
+							DDMFormFieldTypeConstants.IMAGE)) {
+
+						imageDDMFormFieldValues.add(ddmFormFieldValue);
+					}
+					else {
+						nonimageDDMFormFieldValues.add(ddmFormFieldValue);
+					}
+				});
+
+			if (!nonimageDDMFormFieldValues.isEmpty()) {
+				displayBuilder.displaySectionHeader("fields");
+
+				nonimageDDMFormFieldValues.forEach(
+					ddmFormFieldValue -> {
+						DDMFormField ddmFormField =
+							ddmFormFieldValue.getDDMFormField();
+
+						Value value = ddmFormFieldValue.getValue();
+
+						displayBuilder.display(
+							ddmFormField.getName(),
+							value.getString(displayBuilder.getLocale()));
+					});
+			}
+
+			ListUtil.isNotEmptyForEach(
+				imageDDMFormFieldValues,
+				ddmFormFieldValue -> {
+					try {
+						displayBuilder.displaySectionHeader("image");
+
+						Value value = ddmFormFieldValue.getValue();
+
+						JSONObject jsonObject =
+							JSONFactoryUtil.createJSONObject(
+								value.getString(displayBuilder.getLocale()));
+
+						DLFileEntry dlFileEntry =
+							DLFileEntryLocalServiceUtil.getDLFileEntry(
+								jsonObject.getLong("fileEntryId"));
+
+						displayBuilder.display(
+							"mime-type", dlFileEntry.getMimeType()
+						).display(
+							"version", dlFileEntry.getVersion()
+						).display(
+							"size", dlFileEntry.getSize()
+						).display(
+							"download",
+							getDownloadLink(
+								displayBuilder.getDisplayContext(),
+								dlFileEntry.getVersion(), dlFileEntry.getSize(),
+								dlFileEntry.getFileName()),
+							false
+						);
+					}
+					catch (Exception exception) {
+						ReflectionUtil.throwException(exception);
+					}
+				});
+		}
+	}
+
+	protected String getDownloadLink(
+		DisplayContext<?> displayContext, String version, long size,
+		String fileName) {
+
+		LinkTag linkTag = new LinkTag();
+
+		linkTag.setDisplayType("primary");
+		linkTag.setHref(displayContext.getDownloadURL(version, size, fileName));
+		linkTag.setIcon("download");
+		linkTag.setLabel("download");
+		linkTag.setSmall(true);
+		linkTag.setType("button");
+
+		try {
+			return linkTag.doTagAsString(
+				displayContext.getHttpServletRequest(),
+				displayContext.getHttpServletResponse());
+		}
+		catch (JspException jspException) {
+			return ReflectionUtil.throwException(jspException);
+		}
+	}
+
 	protected ResourceBundle getResourceBundle(Locale locale) {
 		return ResourceBundleUtil.getBundle(locale, getClass());
 	}
@@ -163,6 +322,8 @@ public abstract class BaseCTDisplayRenderer<T extends BaseModel<T>>
 			String languageKey,
 			UnsafeSupplier<Object, Exception> unsafeSupplier, boolean escape,
 			boolean formatted);
+
+		public DisplayBuilder<T> displaySectionHeader(String languageKey);
 
 		public DisplayContext<T> getDisplayContext();
 
@@ -327,6 +488,29 @@ public abstract class BaseCTDisplayRenderer<T extends BaseModel<T>>
 				if (_log.isWarnEnabled()) {
 					_log.warn(exception);
 				}
+			}
+
+			return this;
+		}
+
+		@Override
+		public DisplayBuilder<T> displaySectionHeader(String languageKey) {
+			HttpServletResponse httpServletResponse =
+				_displayContext.getHttpServletResponse();
+
+			try {
+				Writer writer = httpServletResponse.getWriter();
+
+				writer.write("<tr><td class=\"publications-section-header ");
+				writer.write("table-cell-expand-small\">");
+				writer.write(
+					StringUtil.toUpperCase(
+						LanguageUtil.get(_resourceBundle, languageKey)));
+				writer.write("</td><td class=\"publications-section-header ");
+				writer.write("table-cell-expand\" /></tr>");
+			}
+			catch (IOException ioException) {
+				throw new UncheckedIOException(ioException);
 			}
 
 			return this;

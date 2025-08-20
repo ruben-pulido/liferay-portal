@@ -231,7 +231,7 @@ public class ObjectEntryResourceImpl
 					_objectDefinition.getStorageType()));
 
 		defaultObjectEntryManager.deleteObjectEntry(
-			_objectDefinition, objectEntryId);
+			_getDTOConverterContext(null), _objectDefinition, objectEntryId);
 	}
 
 	@Override
@@ -354,8 +354,8 @@ public class ObjectEntryResourceImpl
 
 	@Override
 	public Page<ObjectEntry> getObjectEntriesPage(
-			Boolean flatten, String search, Aggregation aggregation,
-			Filter filter, Pagination pagination, Sort[] sorts)
+			String search, Aggregation aggregation, Filter filter,
+			Pagination pagination, Sort[] sorts)
 		throws Exception {
 
 		ObjectEntryManager objectEntryManager =
@@ -383,7 +383,8 @@ public class ObjectEntryResourceImpl
 					_objectDefinition.getStorageType()));
 
 		return defaultObjectEntryManager.getVersionedObjectEntries(
-			_getDTOConverterContext(objectEntryId), objectEntryId, pagination);
+			_getDTOConverterContext(objectEntryId), _objectDefinition,
+			objectEntryId, pagination);
 	}
 
 	@Override
@@ -499,9 +500,8 @@ public class ObjectEntryResourceImpl
 
 	@Override
 	public Page<ObjectEntry> getScopeScopeKeyPage(
-			String scopeKey, Boolean flatten, String search,
-			Aggregation aggregation, Filter filter, Pagination pagination,
-			Sort[] sorts)
+			String scopeKey, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
 
 		ObjectEntryManager objectEntryManager =
@@ -597,7 +597,7 @@ public class ObjectEntryResourceImpl
 			String externalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-42577")) {
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -607,8 +607,8 @@ public class ObjectEntryResourceImpl
 					_objectDefinition.getStorageType()));
 
 		defaultObjectEntryManager.subscribeObjectEntry(
-			_getDTOConverterContext(null), externalReferenceCode,
-			_objectDefinition, null);
+			externalReferenceCode, _objectDefinition, null,
+			contextUser.getUserId());
 	}
 
 	@Override
@@ -616,7 +616,7 @@ public class ObjectEntryResourceImpl
 			String externalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-42577")) {
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -626,8 +626,8 @@ public class ObjectEntryResourceImpl
 					_objectDefinition.getStorageType()));
 
 		defaultObjectEntryManager.unsubscribeObjectEntry(
-			_getDTOConverterContext(null), externalReferenceCode,
-			_objectDefinition, null);
+			externalReferenceCode, _objectDefinition, null,
+			contextUser.getUserId());
 	}
 
 	@Override
@@ -766,11 +766,26 @@ public class ObjectEntryResourceImpl
 	}
 
 	@Override
+	public ObjectEntry postScopeScopeKeyByExternalReferenceCodeExpire(
+			String scopeKey, String externalReferenceCode)
+		throws Exception {
+
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(
+				_objectEntryManagerRegistry.getObjectEntryManager(
+					_objectDefinition.getStorageType()));
+
+		return defaultObjectEntryManager.expireObjectEntry(
+			_getDTOConverterContext(null), externalReferenceCode,
+			_objectDefinition, scopeKey);
+	}
+
+	@Override
 	public void postScopeScopeKeyByExternalReferenceCodeSubscribe(
 			String scopeKey, String externalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-42577")) {
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -780,8 +795,8 @@ public class ObjectEntryResourceImpl
 					_objectDefinition.getStorageType()));
 
 		defaultObjectEntryManager.subscribeObjectEntry(
-			_getDTOConverterContext(null), externalReferenceCode,
-			_objectDefinition, scopeKey);
+			externalReferenceCode, _objectDefinition, scopeKey,
+			contextUser.getUserId());
 	}
 
 	@Override
@@ -789,7 +804,7 @@ public class ObjectEntryResourceImpl
 			String scopeKey, String externalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-42577")) {
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -799,8 +814,8 @@ public class ObjectEntryResourceImpl
 					_objectDefinition.getStorageType()));
 
 		defaultObjectEntryManager.unsubscribeObjectEntry(
-			_getDTOConverterContext(null), externalReferenceCode,
-			_objectDefinition, scopeKey);
+			externalReferenceCode, _objectDefinition, scopeKey,
+			contextUser.getUserId());
 	}
 
 	@Override
@@ -989,14 +1004,11 @@ public class ObjectEntryResourceImpl
 
 		if (objectScopeProvider.isGroupAware()) {
 			return getScopeScopeKeyPage(
-				_getScopeKey(parameters),
-				Boolean.parseBoolean((String)parameters.get("flatten")), search,
-				null, filter, pagination, sorts);
+				_getScopeKey(parameters), search, null, filter, pagination,
+				sorts);
 		}
 
-		return getObjectEntriesPage(
-			Boolean.parseBoolean((String)parameters.get("flatten")), search,
-			null, filter, pagination, sorts);
+		return getObjectEntriesPage(search, null, filter, pagination, sorts);
 	}
 
 	public void setObjectDefinition(ObjectDefinition objectDefinition) {

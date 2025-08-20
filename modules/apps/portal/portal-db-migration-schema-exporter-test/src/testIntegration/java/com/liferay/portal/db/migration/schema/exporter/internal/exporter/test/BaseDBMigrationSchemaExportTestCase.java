@@ -25,7 +25,6 @@ import java.io.File;
 
 import java.nio.file.Files;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -156,18 +155,14 @@ public abstract class BaseDBMigrationSchemaExportTestCase {
 
 			Assert.assertEquals(logEntries.toString(), 2, logEntries.size());
 
-			List<String> logMessages = new ArrayList<>();
-
-			for (LogEntry entry : logEntries) {
-				logMessages.add(entry.getMessage());
-			}
+			List<String> messages = logCapture.getMessages();
 
 			Assert.assertEquals(
-				"Start database schema definition export", logMessages.get(0));
+				"Start database schema definition export", messages.get(0));
 			Assert.assertEquals(
 				"Finished database schema definition export to " +
 					folder.getAbsolutePath(),
-				logMessages.get(1));
+				messages.get(1));
 		}
 	}
 

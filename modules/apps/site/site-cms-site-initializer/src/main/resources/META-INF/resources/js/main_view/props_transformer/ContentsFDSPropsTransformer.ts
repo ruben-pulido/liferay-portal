@@ -4,11 +4,14 @@
  */
 
 import {IInternalRenderer} from '@liferay/frontend-data-set-web';
+import {openModal} from 'frontend-js-components-web';
 
+import formatActionURL from '../../common/utils/formatActionURL';
 import AssetTypeInfoPanel from '../info_panel/AssetTypeInfoPanelContent';
 import {EVENTS} from '../info_panel/util/constants';
 import createAssetAction from './actions/createAssetAction';
 import createFolderAction from './actions/createFolderAction';
+import shareAction from './actions/shareAction';
 import AuthorRenderer from './cell_renderers/AuthorRenderer';
 import NameRenderer from './cell_renderers/NameRenderer';
 import SimpleActionLinkRenderer from './cell_renderers/SimpleActionLinkRenderer';
@@ -25,10 +28,16 @@ const OBJECT_ENTRY_FOLDER_CLASSNAME =
 	'com.liferay.object.model.ObjectEntryFolder';
 
 export default function ContentFDSPropsTransformer({
+	additionalProps,
 	creationMenu,
 	itemsActions = [],
 	...otherProps
 }: {
+	additionalProps: {
+		autocompleteURL: string;
+		cmsGroupId?: number;
+		collaboratorURLs: Record<string, string>;
+	};
 	creationMenu: any;
 	itemsActions?: any[];
 	otherProps: any;
@@ -71,7 +80,7 @@ export default function ContentFDSPropsTransformer({
 				} as IInternalRenderer,
 			],
 		},
-		infoPanelComponent: () => AssetTypeInfoPanel(otherProps),
+		infoPanelComponent: () => AssetTypeInfoPanel({additionalProps}),
 		itemsActions: itemsActions.map((action) => {
 			if (action?.data?.id === 'actionLink') {
 				return {
@@ -84,15 +93,9 @@ export default function ContentFDSPropsTransformer({
 				};
 			}
 
-			if (action?.data?.id === 'viewContent') {
+			if (action?.data?.id === 'view-content') {
 				return {
 					...action,
-					data: {
-						...action.data,
-						disableHeader: false,
-						size: 'full-screen',
-						title: 'View',
-					},
 					isVisible: (item: any) =>
 						Boolean(
 							item?.entryClassName !==
@@ -100,18 +103,46 @@ export default function ContentFDSPropsTransformer({
 						),
 				};
 			}
+			else if (action?.data?.id === 'view-file') {
+				return {
+					...action,
+					isVisible: () => false,
+				};
+			}
 
 			return action;
 		}),
 		onActionDropdownItemClick: ({
 			action,
+			event,
 			itemData,
 		}: {
 			action: any;
-			itemData: [];
+			event: Event;
+			itemData: any;
 		}) => {
-			if (action?.data?.id === 'show-details') {
+			if (action?.data?.id === 'share') {
+				const {autocompleteURL, collaboratorURLs} = additionalProps;
+
+				shareAction({
+					autocompleteURL,
+					collaboratorURL: collaboratorURLs[itemData.entryClassName],
+					creator: itemData.embedded.creator,
+					itemId: itemData.embedded.id,
+					title: itemData.embedded?.title,
+				});
+			}
+			else if (action?.data?.id === 'show-details') {
 				Liferay.fire(EVENTS.ASSET_DATA, {items: [{...itemData}]});
+			}
+			else if (action?.data?.id === 'viewContent') {
+				event?.preventDefault();
+
+				openModal({
+					size: 'full-screen',
+					title: itemData.embedded.title,
+					url: formatActionURL(itemData, action.href),
+				});
 			}
 		},
 		onSelectedItemsChange: (selectedItems: any[]) => {

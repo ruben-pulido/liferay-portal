@@ -16,6 +16,7 @@ import com.liferay.headless.admin.site.dto.v1_0.PageExperience;
 import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.Settings;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSpecification;
+import com.liferay.headless.admin.site.internal.dto.v1_0.util.ScopeUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
@@ -33,6 +34,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.vulcan.custom.field.CustomFieldsUtil;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.segments.service.SegmentsExperienceService;
@@ -195,7 +197,16 @@ public class PageSpecificationDTOConverter
 							ClientExtensionEntryConstants.TYPE_THEME_FAVICON);
 
 						if (clientExtension != null) {
-							return clientExtension;
+							return new ClientExtension() {
+								{
+									setClientExtensionConfig(
+										clientExtension::
+											getClientExtensionConfig);
+									setExternalReferenceCode(
+										clientExtension::
+											getExternalReferenceCode);
+								}
+							};
 						}
 
 						long faviconFileEntryId =
@@ -214,9 +225,14 @@ public class PageSpecificationDTOConverter
 
 						return new ItemExternalReference() {
 							{
-								setClassName(() -> FileEntry.class.getName());
+//								setClassName(() -> FileEntry.class.getName());
 								setExternalReferenceCode(
 									fileEntry::getExternalReferenceCode);
+// TODO
+//								setScope(
+//									() -> ScopeUtil.getScope(
+//										layout.getGroupId(),
+//										fileEntry.getGroupId()));
 							}
 						};
 					});
@@ -314,6 +330,16 @@ public class PageSpecificationDTOConverter
 
 		return new ContentPageSpecification() {
 			{
+				setCustomFields(
+					() -> {
+						if (layout.isTypeUtility()) {
+							return null;
+						}
+
+						return CustomFieldsUtil.toCustomFields(
+							true, Layout.class.getName(), layout.getPlid(),
+							layout.getCompanyId(), null);
+					});
 				setDraftContentPageSpecificationExternalReferenceCode(
 					() -> {
 						Layout draftLayout = layout.fetchDraftLayout();
@@ -364,6 +390,10 @@ public class PageSpecificationDTOConverter
 	private PageSpecification _toWidgetPageSpecification(Layout layout) {
 		return new WidgetPageSpecification() {
 			{
+				setCustomFields(
+					() -> CustomFieldsUtil.toCustomFields(
+						true, Layout.class.getName(), layout.getPlid(),
+						layout.getCompanyId(), null));
 				setExternalReferenceCode(
 					() -> {
 						LayoutPageTemplateEntry layoutPageTemplateEntry =

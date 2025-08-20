@@ -627,6 +627,11 @@ components:
                     description:
                         The display page template folder's name.
                     type: string
+                parentDisplayPageTemplateFolder:
+                    $ref: "#/components/schemas/DisplayPageTemplateFolder"
+                    # @review
+                    description:
+                        The parent display page template folder.
                 parentDisplayPageTemplateFolderExternalReferenceCode:
                     # @review
                     description:
@@ -730,6 +735,14 @@ components:
                         The localized message to display when the collection is empty or no results match the applied
                         filters ('No Results Found' by default).
                     type: object
+        FavIcon:
+            oneOf:
+                -   $ref: "#/components/schemas/ClientExtension"
+                -   $ref: "#/components/schemas/ItemExternalReference"
+            # @review
+            description:
+                A reference to a FavIcon.
+            type: object
         FormConfig:
             # @review
             description:
@@ -2172,6 +2185,14 @@ components:
                     WidgetPageSpecification: "#/components/schemas/WidgetPageSpecification"
                 propertyName: type
             properties:
+                customFields:
+                    # @review
+                    description:
+                        Custom fields associated with the page specification. Not available if this page specification
+                        belongs to a utility page.
+                    items:
+                        type: customField
+                    type: array
                 externalReferenceCode:
                     description:
                         The page specification's external reference code, unique per site.
@@ -2549,9 +2570,16 @@ components:
                     # @review
                     description:
                         The FavIcon of the page specification.
-                    oneOf:
-                        -   $ref: "#/components/schemas/ClientExtension"
-                        -   $ref: "#/components/schemas/ItemExternalReference"
+                    allOf:
+                        -   $ref: "#/components/schemas/FavIcon"
+                        -   properties:
+                                type:
+                                    enum:
+                                        -   ClientExtension
+                                        -   ItemExternalReference
+                                    type: string
+                    required:
+                        -   type
                 globalCSSClientExtensions:
                     description:
                         The client extensions for global CSS associated to the page.
@@ -2627,13 +2655,6 @@ components:
                     description:
                         The page's creator external reference code.
                     type: string
-                customFields:
-                    # @review
-                    description:
-                        Custom fields associated with the page.
-                    items:
-                        type: customField
-                    type: array
                 dateCreated:
                     # @review
                     description:
@@ -3489,7 +3510,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.site.client', and version '1.0.13'."
+        'com.liferay.headless.admin.site.client', and version '1.0.14'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

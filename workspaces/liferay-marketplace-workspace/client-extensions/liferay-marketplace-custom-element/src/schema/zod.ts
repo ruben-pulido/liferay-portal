@@ -190,6 +190,14 @@ const zodSchema = {
 		email: z.string().email(i18n.translate('please-fill-in-a-valid-email')),
 		name: z.string().min(3, i18n.sub('x-is-required', 'name')),
 	}),
+	extendSSATrial: z.object({
+		duration: z.coerce
+			.number()
+			.int()
+			.min(1, 'Please enter a valid number (1-60)')
+			.max(60, 'Please enter a valid number (1-60)'),
+		reason: z.string().min(3),
+	}),
 	generateLicenseKey: z.object({
 		description: z.string().max(100, {message: 'Invalid license name'}),
 		hostname: z.string(),
@@ -278,6 +286,39 @@ const zodSchema = {
 		}),
 		termsAndConditions: z.boolean().refine((data) => data === true),
 	},
+	ssaTrialForm: z.object({
+		demoDuration: z.coerce
+			.number()
+			.int()
+			.min(1, 'Please enter a valid number (1-60)')
+			.max(60, 'Please enter a valid number (1-60)'),
+		emailAddress: z
+			.array(
+				z.object({
+					key: z.string(),
+					label: z.string(),
+					value: z.string(),
+				})
+			)
+			.refine(
+				(emails) =>
+					emails.every(
+						(error) =>
+							z.string().email().safeParse(error.value).success
+					),
+				{message: 'One or more email addresses are invalid'}
+			)
+			.optional(),
+		objective: z.string().refine((val) => ['Test', 'Trial'].includes(val), {
+			message: 'Select an Option',
+		}),
+		projectId: z
+			.string()
+			.min(3, {message: 'Project ID must have at least 3 characters'})
+			.regex(/^[a-zA-Z0-9-]*$/, {
+				message: 'Only letters, numbers, and hyphens are allowed',
+			}),
+	}),
 	trialForm: z.object({
 		accountId: z.string().optional(),
 		consoleInviteEmailAddresses: z.array(z.string().email()),

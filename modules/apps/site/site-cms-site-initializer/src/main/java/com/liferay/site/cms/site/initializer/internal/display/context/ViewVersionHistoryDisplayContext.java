@@ -6,12 +6,19 @@
 package com.liferay.site.cms.site.initializer.internal.display.context;
 
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.frontend.data.set.model.FDSSortItem;
+import com.liferay.frontend.data.set.model.FDSSortItemBuilder;
+import com.liferay.frontend.data.set.model.FDSSortItemList;
+import com.liferay.frontend.data.set.model.FDSSortItemListBuilder;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -54,31 +61,72 @@ public class ViewVersionHistoryDisplayContext {
 				_language.get(_httpServletRequest, "download"), "get", null,
 				"link"),
 			new FDSActionDropdownItem(
+				StringBundler.concat(
+					_themeDisplay.getPortalURL(), _themeDisplay.getPathMain(),
+					GroupConstants.CMS_FRIENDLY_URL,
+					"/edit_content_item?objectEntryId={id}",
+					"&p_l_mode=read&p_p_state=", LiferayWindowState.POP_UP,
+					"&redirect=", _themeDisplay.getURLCurrent()),
+				"view", "view-content",
+				LanguageUtil.get(_httpServletRequest, "view"), null, null,
+				null),
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "view", "view-file",
+				_language.get(_httpServletRequest, "view"), null, null, null),
+			new FDSActionDropdownItem(
 				"{actions.restore.href}", "restore", "restore",
 				_language.get(_httpServletRequest, "restore"), "put", "restore",
-				"headless"),
+				null),
 			new FDSActionDropdownItem(
 				"{actions.expire.href}", "time", "expire",
 				_language.get(_httpServletRequest, "expire"), "post", "expire",
-				"headless"),
+				null),
 			new FDSActionDropdownItem(
 				"{actions.copy.href}", "copy", "copy",
 				_language.get(_httpServletRequest, "make-a-copy"), "post",
 				"copy", null),
 			new FDSActionDropdownItem(
-				_language.get(
-					_httpServletRequest,
-					"are-you-sure-you-want-to-delete-this-entry"),
 				"{actions.delete.href}", "trash", "delete",
 				_language.get(_httpServletRequest, "delete"), "delete",
-				"delete", "headless"));
+				"delete", null));
+	}
+
+	public FDSSortItemList getFDSSortItemList() {
+		return FDSSortItemListBuilder.add(
+			_getFDSSortItem(false, "asc", "dateModified", "modified")
+		).add(
+			_getFDSSortItem(false, "asc", "title", "title")
+		).add(
+			_getFDSSortItem(true, "desc", "version", "version")
+		).build();
 	}
 
 	public Map<String, Object> getProps() throws PortalException {
 		return HashMapBuilder.<String, Object>put(
 			"backURL", ParamUtil.getString(_httpServletRequest, "backURL")
 		).put(
-			"title", _objectEntry.getTitleValue(_themeDisplay.getLanguageId())
+			"objectEntryTitle",
+			_objectEntry.getTitleValue(_themeDisplay.getLanguageId())
+		).put(
+			"title",
+			StringBundler.concat(
+				StringPool.QUOTE,
+				_objectEntry.getTitleValue(_themeDisplay.getLanguageId(), true),
+				"\" ", _language.get(_themeDisplay.getLocale(), "history"))
+		).build();
+	}
+
+	private FDSSortItem _getFDSSortItem(
+		boolean active, String direction, String key, String labelKey) {
+
+		return FDSSortItemBuilder.setActive(
+			active
+		).setDirection(
+			direction
+		).setKey(
+			key
+		).setLabel(
+			_language.get(_themeDisplay.getLocale(), labelKey)
 		).build();
 	}
 

@@ -222,6 +222,7 @@ public class BatchEnginePortletDataHandlerTest {
 		Assert.assertNull(
 			_objectEntryLocalService.fetchObjectEntry(
 				objectEntry.getExternalReferenceCode(),
+				objectEntry.getGroupId(),
 				objectDefinition.getObjectDefinitionId()));
 		Assert.assertNotEquals(
 			objectEntry.getExternalReferenceCode(),
@@ -320,7 +321,6 @@ public class BatchEnginePortletDataHandlerTest {
 		}
 	}
 
-	@Ignore("LPD-40798")
 	@Test
 	public void testExportImportSiteObjectEntriesToOtherSite()
 		throws Exception {
@@ -710,7 +710,7 @@ public class BatchEnginePortletDataHandlerTest {
 			Assert.assertNull(
 				_objectEntryLocalService.fetchObjectEntry(
 					objectEntry.getExternalReferenceCode(),
-					objectDefinitionId));
+					objectEntry.getGroupId(), objectDefinitionId));
 		}
 	}
 
@@ -721,7 +721,8 @@ public class BatchEnginePortletDataHandlerTest {
 		for (ObjectEntry objectEntry : objectEntries) {
 			ObjectEntry importedObjectEntry =
 				_objectEntryLocalService.getObjectEntry(
-					objectEntry.getExternalReferenceCode(), objectDefinitionId);
+					objectEntry.getExternalReferenceCode(),
+					objectEntry.getGroupId(), objectDefinitionId);
 
 			DLFileEntry dlFileEntry = _dlFileEntryLocalService.getFileEntry(
 				MapUtil.getLong(

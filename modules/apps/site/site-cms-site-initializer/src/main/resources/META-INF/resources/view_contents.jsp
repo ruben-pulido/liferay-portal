@@ -23,28 +23,8 @@ ViewContentsSectionDisplayContext viewContentsSectionDisplayContext = (ViewConte
 		id="<%= CMSSiteInitializerFDSNames.CONTENTS_SECTION %>"
 		itemsPerPage="<%= 20 %>"
 		propsTransformer="{ContentsFDSPropsTransformer} from site-cms-site-initializer"
-		selectedItemsKey="id"
+		selectedItemsKey="embedded.id"
 		selectionType="multiple"
 		style="fluid"
 	/>
 </div>
-
-<aui:script>
-	(function () {
-		const sessionKey = 'com.liferay.site.cms.site.initializer.successMessage';
-
-		const successMessage = Liferay.Util.SessionStorage.getItem(
-			sessionKey,
-			Liferay.Util.SessionStorage.TYPES.NECESSARY
-		);
-
-		if (successMessage) {
-			Liferay.Util.openToast({
-				message: successMessage,
-				type: 'success',
-			});
-
-			Liferay.Util.SessionStorage.removeItem(sessionKey);
-		}
-	})();
-</aui:script>

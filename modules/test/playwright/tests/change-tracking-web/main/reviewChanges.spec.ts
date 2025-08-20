@@ -11,19 +11,113 @@ import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {changeTrackingPagesTest} from '../../../fixtures/changeTrackingPagesTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
+import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
+import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
+import {pagesAdminPagesTest} from '../../../fixtures/pagesAdminPagesTest';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
+import fillAndClickOutside from '../../../utils/fillAndClickOutside';
 import getRandomString from '../../../utils/getRandomString';
 import {performLoginViaApi, performLogout} from '../../../utils/performLogin';
 import {PORTLET_URLS} from '../../../utils/portletUrls';
+import {waitForAlert} from '../../../utils/waitForAlert';
+import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
+import getDataStructureDefinition from '../../journal-web/main/utils/getDataStructureDefinition';
 
 export const test = mergeTests(
 	apiHelpersTest,
 	changeTrackingPagesTest,
 	dataApiHelpersTest,
+	isolatedSiteTest,
+	journalPagesTest,
+	pagesAdminPagesTest,
+	pageEditorPagesTest,
 	featureFlagsTest({
 		'LPD-20131': {enabled: true},
 	})
 );
+
+test('LPD-61649 Assert structure content fields are shown in the data tab', async ({
+	apiHelpers,
+	changeTrackingPage,
+	ctCollection,
+	journalEditArticlePage,
+	page,
+	site,
+}) => {
+	await changeTrackingPage.workOnPublication(ctCollection);
+
+	const basicTextFieldName = 'Text1234';
+	const nonLocalizableFieldName = 'TextNonLocalizable';
+	const structureName = 'Structure 1';
+
+	const dataDefinition = getDataStructureDefinition({
+		defaultLanguageId: 'en_US',
+		fields: [
+			{name: basicTextFieldName},
+			{
+				localizable: false,
+				name: nonLocalizableFieldName,
+				required: true,
+			},
+		],
+		name: structureName,
+	});
+
+	await apiHelpers.dataEngine.createStructure(site.id, dataDefinition);
+
+	await journalEditArticlePage.goto({
+		siteUrl: site.friendlyUrlPath,
+		structureName,
+	});
+
+	const title = getRandomString();
+
+	await journalEditArticlePage.fillTitle(title);
+
+	const content = getRandomString();
+
+	await fillAndClickOutside(
+		page,
+		page.getByLabel(basicTextFieldName),
+		content
+	);
+
+	await fillAndClickOutside(
+		page,
+		page.getByLabel(nonLocalizableFieldName),
+		content
+	);
+
+	await journalEditArticlePage.publishArticle();
+
+	await waitForAlert(page, `Success:${title} was created successfully.`);
+
+	await changeTrackingPage.goToReviewChanges(ctCollection.body.name);
+
+	await changeTrackingPage.viewChanges({
+		click: true,
+		title,
+		type: 'Web Content Article',
+	});
+
+	await changeTrackingPage.selectTab('Data');
+
+	await page.waitForTimeout(3000);
+
+	await expect(
+		page.locator(
+			'//td[contains(@class,"publications-section-header") and text()="FIELDS"]'
+		)
+	).toBeVisible();
+	await expect(
+		page.getByText(basicTextFieldName, {exact: true})
+	).toBeVisible();
+	await expect(
+		page.getByText(nonLocalizableFieldName, {exact: true})
+	).toBeVisible();
+	await expect(page.getByText(structureName, {exact: true})).toBeVisible();
+	await expect(page.getByText(content, {exact: true}).first()).toBeVisible();
+});
 
 test('LPD-28276 Assert tag data persists in parent tab', async ({
 	changeTrackingPage,
@@ -323,4 +417,62 @@ test('LPD-52950 Assert publications user cannot see publications they do not hav
 	await performLogout(page);
 
 	await performLoginViaApi({page, screenName: 'test'});
+});
+
+test('LPD-61747 Discarding changes in a Publication containing a deletion change throws NPE', async ({
+	apiHelpers,
+	changeTrackingPage,
+	ctCollection,
+	page,
+	pageEditorPage,
+	pagesAdminPage,
+}) => {
+	const site =
+		await apiHelpers.headlessAdminUser.getSiteByFriendlyUrlPath('guest');
+
+	await pagesAdminPage.goto(site.friendlyUrlPath);
+
+	await page
+		.getByTestId('creationMenuNewButton')
+		.locator('visible=true')
+		.click();
+
+	const pageTitle = getRandomString();
+
+	await pagesAdminPage.addPage({
+		name: pageTitle,
+	});
+
+	await pageEditorPage.addFragment('Basic Components', 'Heading');
+
+	await pageEditorPage.publishPage();
+
+	await changeTrackingPage.workOnPublication(ctCollection);
+
+	await pagesAdminPage.goto(site.friendlyUrlPath);
+	await pagesAdminPage.clickOnAction('Edit', pageTitle);
+
+	const headingId = await pageEditorPage.getFragmentId('Heading');
+
+	await pageEditorPage.deleteFragment(headingId);
+
+	await pageEditorPage.publishPage();
+
+	await changeTrackingPage.goToReviewChanges(ctCollection.body.name);
+
+	const firstDropdown = page
+		.locator('.cell-item-actions .dropdown svg.lexicon-icon-ellipsis-v')
+		.first();
+	await firstDropdown.waitFor();
+	await firstDropdown.click();
+
+	await clickAndExpectToBeVisible({
+		autoClick: true,
+		target: page.getByRole('menuitem', {name: 'Discard'}),
+		trigger: firstDropdown,
+	});
+
+	await page.getByRole('button', {name: 'Discard'}).click();
+
+	await waitForAlert(page, 'Success:Your request completed successfully.');
 });

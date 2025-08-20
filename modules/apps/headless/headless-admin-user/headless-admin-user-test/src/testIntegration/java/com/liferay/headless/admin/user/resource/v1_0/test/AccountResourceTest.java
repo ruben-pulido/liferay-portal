@@ -6,6 +6,7 @@
 package com.liferay.headless.admin.user.resource.v1_0.test;
 
 import com.liferay.account.constants.AccountConstants;
+import com.liferay.account.constants.AccountListTypeConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.model.AccountEntryModel;
 import com.liferay.account.model.AccountEntryOrganizationRel;
@@ -35,6 +36,8 @@ import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.expando.test.util.ExpandoTestUtil;
+import com.liferay.exportimport.test.rule.LazyReferencing;
+import com.liferay.exportimport.test.rule.LazyReferencingTestRule;
 import com.liferay.headless.admin.user.client.custom.field.CustomField;
 import com.liferay.headless.admin.user.client.custom.field.CustomValue;
 import com.liferay.headless.admin.user.client.dto.v1_0.Account;
@@ -59,7 +62,9 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Address;
+import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.ListType;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
@@ -72,6 +77,7 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ListTypeLocalService;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
@@ -114,6 +120,8 @@ import java.util.Objects;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -123,6 +131,11 @@ import org.junit.runner.RunWith;
 @DataGuard(scope = DataGuard.Scope.METHOD)
 @RunWith(Arquillian.class)
 public class AccountResourceTest extends BaseAccountResourceTestCase {
+
+	@ClassRule
+	@Rule
+	public static final LazyReferencingTestRule lazyReferencingTestRule =
+		LazyReferencingTestRule.INSTANCE;
 
 	@Before
 	@Override
@@ -477,6 +490,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 	}
 
 	@FeatureFlag("LPD-47858")
+	@LazyReferencing
 	@Override
 	@Test
 	public void testPostAccount() throws Exception {
@@ -1166,6 +1180,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 				addressLocality = RandomTestUtil.randomString();
 				addressRegion = "California";
 				addressType = "other";
+				name = RandomTestUtil.randomString();
 				postalCode = String.valueOf(RandomTestUtil.randomInt());
 				streetAddressLine1 = RandomTestUtil.randomString();
 			}
@@ -1831,6 +1846,41 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 	private void _testPostAccountBatch() throws Exception {
 		Account account = randomAccount();
 
+		AccountContactInformation accountContactInformation =
+			_randomAccountContactInformation();
+
+		EmailAddress[] emailAddresses =
+			accountContactInformation.getEmailAddresses();
+
+		emailAddresses[0].setId(RandomTestUtil.randomLong());
+		emailAddresses[0].setType(
+			AccountListTypeConstants.ACCOUNT_ENTRY_CONTACT_ADDRESS_TYPE_OTHER);
+		emailAddresses[1].setType(
+			AccountListTypeConstants.ACCOUNT_ENTRY_CONTACT_ADDRESS_TYPE_OTHER);
+
+		accountContactInformation.setEmailAddresses(emailAddresses);
+
+		Phone[] phones = accountContactInformation.getTelephones();
+
+		phones[0].setId(RandomTestUtil.randomLong());
+
+		accountContactInformation.setTelephones(phones);
+
+		PostalAddress[] postalAddresses =
+			accountContactInformation.getPostalAddresses();
+
+		postalAddresses[0].setId(RandomTestUtil.randomLong());
+
+		accountContactInformation.setPostalAddresses(postalAddresses);
+
+		WebUrl[] webUrls = accountContactInformation.getWebUrls();
+
+		webUrls[0].setId(RandomTestUtil.randomLong());
+
+		accountContactInformation.setWebUrls(webUrls);
+
+		account.setAccountContactInformation(accountContactInformation);
+
 		AccountGroup accountGroup1 = _accountGroupLocalService.addAccountGroup(
 			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
@@ -1962,6 +2012,76 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 				).toString(),
 				"headless-admin-user/v1.0/accounts/batch", Http.Method.POST));
 
+		AccountEntry accountEntry =
+			_accountEntryLocalService.fetchAccountEntryByExternalReferenceCode(
+				account.getExternalReferenceCode(),
+				TestPropsValues.getCompanyId());
+
+		ListType listType = _listTypeLocalService.getListType(
+			TestPropsValues.getCompanyId(),
+			AccountListTypeConstants.ACCOUNT_ENTRY_CONTACT_ADDRESS_TYPE_OTHER,
+			AccountListTypeConstants.ACCOUNT_ENTRY_CONTACT_ADDRESS);
+
+		List<Address> addresses = accountEntry.getListTypeAddresses(
+			new long[] {listType.getListTypeId()});
+
+		Assert.assertTrue(
+			ListUtil.exists(
+				addresses,
+				address2 -> Objects.equals(
+					address2.getName(), postalAddresses[0].getName())));
+		Assert.assertTrue(
+			ListUtil.exists(
+				addresses,
+				address2 -> Objects.equals(
+					address2.getName(), postalAddresses[1].getName())));
+
+		Contact contact2 = accountEntry.fetchContact();
+
+		Assert.assertEquals(
+			contact2.getFacebookSn(), accountContactInformation.getFacebook());
+		Assert.assertEquals(
+			contact2.getJabberSn(), accountContactInformation.getJabber());
+		Assert.assertEquals(
+			contact2.getSmsSn(), accountContactInformation.getSms());
+		Assert.assertEquals(
+			contact2.getSkypeSn(), accountContactInformation.getSkype());
+		Assert.assertEquals(
+			contact2.getTwitterSn(), accountContactInformation.getTwitter());
+
+		Assert.assertTrue(
+			ListUtil.exists(
+				accountEntry.getEmailAddresses(),
+				emailAddress2 -> Objects.equals(
+					emailAddress2.getAddress(),
+					emailAddresses[0].getEmailAddress())));
+		Assert.assertTrue(
+			ListUtil.exists(
+				accountEntry.getEmailAddresses(),
+				emailAddress2 -> Objects.equals(
+					emailAddress2.getAddress(),
+					emailAddresses[1].getEmailAddress())));
+		Assert.assertTrue(
+			ListUtil.exists(
+				accountEntry.getPhones(),
+				phone2 -> Objects.equals(
+					phone2.getNumber(), phones[0].getPhoneNumber())));
+		Assert.assertTrue(
+			ListUtil.exists(
+				accountEntry.getPhones(),
+				phone2 -> Objects.equals(
+					phone2.getNumber(), phones[1].getPhoneNumber())));
+		Assert.assertTrue(
+			ListUtil.exists(
+				accountEntry.getWebsites(),
+				website2 -> Objects.equals(
+					website2.getUrl(), webUrls[0].getUrl())));
+		Assert.assertTrue(
+			ListUtil.exists(
+				accountEntry.getWebsites(),
+				website2 -> Objects.equals(
+					website2.getUrl(), webUrls[1].getUrl())));
+
 		AccountGroup accountGroup2 =
 			_accountGroupLocalService.fetchAccountGroupByExternalReferenceCode(
 				accountGroupBrief1.getExternalReferenceCode(),
@@ -1970,11 +2090,6 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			accountGroup1.getAccountGroupId(),
 			accountGroup2.getAccountGroupId());
-
-		AccountEntry accountEntry =
-			_accountEntryLocalService.fetchAccountEntryByExternalReferenceCode(
-				account.getExternalReferenceCode(),
-				TestPropsValues.getCompanyId());
 
 		List<AccountGroupRel> accountGroupRels =
 			_accountGroupRelLocalService.getAccountGroupRels(
@@ -1999,7 +2114,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 					accountGroupRel.getAccountGroupId() ==
 						accountGroup3.getAccountGroupId()));
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE, accountGroup3.getStatus());
+			WorkflowConstants.STATUS_EMPTY, accountGroup3.getStatus());
 
 		AccountRole serviceBuilderAccountRole =
 			_accountRoleLocalService.fetchAccountRoleByExternalReferenceCode(
@@ -2017,7 +2132,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			accountEntry.getDefaultBillingAddressId(), address1.getAddressId());
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE, address1.getStatus());
+			WorkflowConstants.STATUS_EMPTY, address1.getStatus());
 
 		Address address2 =
 			_addressLocalService.fetchAddressByExternalReferenceCode(
@@ -2028,7 +2143,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 			accountEntry.getDefaultShippingAddressId(),
 			address2.getAddressId());
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE, address2.getStatus());
+			WorkflowConstants.STATUS_EMPTY, address2.getStatus());
 
 		Assert.assertNotEquals(0, accountEntry.getLogoId());
 
@@ -2065,7 +2180,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 					accountEntryOrganizationRel.getOrganizationId() ==
 						organization3.getOrganizationId()));
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE, organization3.getStatus());
+			WorkflowConstants.STATUS_EMPTY, organization3.getStatus());
 
 		AccountEntry parentAccountEntry =
 			_accountEntryLocalService.fetchAccountEntryByExternalReferenceCode(
@@ -2073,8 +2188,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 				TestPropsValues.getCompanyId());
 
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE,
-			parentAccountEntry.getStatus());
+			WorkflowConstants.STATUS_EMPTY, parentAccountEntry.getStatus());
 
 		Role serviceBuilderRole2 =
 			_roleLocalService.fetchRoleByExternalReferenceCode(
@@ -2130,8 +2244,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 			RoleConstants.getLabelType(permission2.getRoleType()),
 			serviceBuilderRole3.getType());
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE,
-			serviceBuilderRole3.getStatus());
+			WorkflowConstants.STATUS_EMPTY, serviceBuilderRole3.getStatus());
 
 		AssetCategory assetCategory2 =
 			_assetCategoryLocalService.
@@ -2166,7 +2279,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 					assetCategory.getCategoryId() ==
 						assetCategory3.getCategoryId()));
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE, assetCategory3.getStatus());
+			WorkflowConstants.STATUS_EMPTY, assetCategory3.getStatus());
 	}
 
 	private void _testPostAccountDuplicateExternalReferenceCode()
@@ -2676,6 +2789,9 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 
 	@Inject
 	private JSONFactory _jsonFactory;
+
+	@Inject
+	private ListTypeLocalService _listTypeLocalService;
 
 	@Inject
 	private OrganizationLocalService _organizationLocalService;

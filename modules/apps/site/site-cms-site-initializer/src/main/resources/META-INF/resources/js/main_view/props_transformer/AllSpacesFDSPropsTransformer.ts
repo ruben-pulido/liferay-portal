@@ -8,6 +8,7 @@ import {IInternalRenderer} from '@liferay/frontend-data-set-web';
 import manageMembersAction, {
 	ManageMembersData,
 } from './actions/manageMembersAction';
+import manageSitesAction, {ManageSitesData} from './actions/manageSitesAction';
 import SpaceRenderer from './cell_renderers/SpaceRenderer';
 import addOnClickToCreationMenuItems from './utils/addOnClickToCreationMenuItems';
 
@@ -71,11 +72,13 @@ export default function AllSpacesFDSPropsTransformer({
 			action: {
 				data: {
 					id: string;
+					permissionKey: string | null;
 				};
 			};
 			itemData: {
 				creatorUserId: string;
 				id: string;
+				siteId: string;
 			};
 			loadData: () => {};
 		}) => {
@@ -84,16 +87,30 @@ export default function AllSpacesFDSPropsTransformer({
 			}
 
 			if (action.data.id === 'view-members') {
+				const hasAssignMembersPermission =
+					action.data.permissionKey === 'assign-members';
 				const assetLibraryCreatorUserId = itemData.creatorUserId;
 				const assetLibraryId = itemData.id;
 
 				const data: ManageMembersData = {
 					assetLibraryCreatorUserId,
 					assetLibraryId,
+					hasAssignMembersPermission,
 					title: Liferay.Language.get('all-members'),
 				};
 
 				manageMembersAction(data, loadData);
+			}
+			else if (action.data.id === 'view-sites') {
+				const hasConnectSitesPermission =
+					action.data.permissionKey === 'connect-sites';
+
+				const data: ManageSitesData = {
+					groupId: itemData.siteId,
+					hasConnectSitesPermission,
+				};
+
+				manageSitesAction(data, loadData);
 			}
 		},
 	};

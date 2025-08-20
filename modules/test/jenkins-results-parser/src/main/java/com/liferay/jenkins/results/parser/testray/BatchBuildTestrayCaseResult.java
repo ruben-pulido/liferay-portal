@@ -619,20 +619,22 @@ public class BatchBuildTestrayCaseResult extends BuildTestrayCaseResult {
 			return null;
 		}
 
-		TestrayS3Bucket testrayS3Bucket = TestrayS3Bucket.getInstance();
+		TestrayCloudBucket testrayCloudBucket =
+			TestrayCloudBucket.getInstance();
 
-		String testrayS3ObjectPath = getTopLevelBuildURLPath() + "/" + key;
+		String testrayCloudObjectPath = getTopLevelBuildURLPath() + "/" + key;
 
-		TestrayS3Object testrayS3Object = testrayS3Bucket.getTestrayS3Object(
-			testrayS3ObjectPath);
+		TestrayCloudObject testrayCloudObject =
+			testrayCloudBucket.getTestrayCloudObject(testrayCloudObjectPath);
 
-		if (testrayS3Object != null) {
+		if (testrayCloudObject != null) {
 			return new DefaultTestrayAttachment(
-				this, name, testrayS3ObjectPath, testrayS3Object.getURL());
+				this, name, testrayCloudObjectPath,
+				testrayCloudObject.getURL());
 		}
 
 		return uploadTestrayAttachment(
-			name, testrayS3ObjectPath,
+			name, testrayCloudObjectPath,
 			new Callable<File>() {
 
 				@Override

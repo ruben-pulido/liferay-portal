@@ -116,8 +116,30 @@ public class JSUnitModulesBatchTestClassGroup
 			List<File> moduleTestDirs = _getModulesProjectDirs(moduleDir);
 
 			for (File moduleTestDir : moduleTestDirs) {
+				String moduleTestDirPath =
+					JenkinsResultsParserUtil.getCanonicalPath(moduleTestDir);
 				TestClass testClass = TestClassFactory.newTestClass(
 					this, moduleTestDir);
+
+				for (File jsUnitFile :
+						portalGitWorkingDirectory.getJSUnitFiles()) {
+
+					String jsUnitFilePath =
+						JenkinsResultsParserUtil.getCanonicalPath(jsUnitFile);
+
+					if (!jsUnitFilePath.startsWith(moduleTestDirPath)) {
+						continue;
+					}
+
+					String testClassMethodName =
+						JenkinsResultsParserUtil.getPathRelativeTo(
+							jsUnitFile,
+							portalGitWorkingDirectory.getWorkingDirectory());
+
+					testClass.addTestClassMethod(
+						TestClassFactory.newTestClassMethod(
+							false, testClassMethodName, testClass));
+				}
 
 				if (!testClass.hasTestClassMethods()) {
 					continue;
@@ -150,7 +172,7 @@ public class JSUnitModulesBatchTestClassGroup
 		}
 	}
 
-	private List<File> _getModulesProjectDirs(final File portalModulesBaseDir)
+	private List<File> _getModulesProjectDirs(File portalModulesBaseDir)
 		throws IOException {
 
 		List<File> modulesProjectDirs = new ArrayList<>();
@@ -164,10 +186,6 @@ public class JSUnitModulesBatchTestClassGroup
 				@Override
 				public FileVisitResult preVisitDirectory(
 					Path filePath, BasicFileAttributes basicFileAttributes) {
-
-					if (filePath.equals(portalModulesBaseDir.toPath())) {
-						return FileVisitResult.CONTINUE;
-					}
 
 					File file = filePath.toFile();
 

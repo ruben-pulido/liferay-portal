@@ -7,18 +7,17 @@ package com.liferay.site.cms.site.initializer.internal.display.context;
 
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.model.GroupConstants;
-import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,6 +50,15 @@ public class ViewContentsSectionDisplayContext
 	}
 
 	@Override
+	public List<DropdownItem> getBulkActionDropdownItems() {
+		return ListUtil.fromArray(
+			new FDSActionDropdownItem(
+				"#", "trash", "remove",
+				LanguageUtil.get(httpServletRequest, "remove"), null, null,
+				null));
+	}
+
+	@Override
 	public Map<String, Object> getEmptyState() {
 		return HashMapBuilder.<String, Object>put(
 			"description",
@@ -76,17 +84,11 @@ public class ViewContentsSectionDisplayContext
 				LanguageUtil.get(httpServletRequest, "show-details"), null,
 				null, "infoPanel"));
 		fdsActionDropdownItems.add(
-			4,
+			3,
 			new FDSActionDropdownItem(
-				StringBundler.concat(
-					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-					GroupConstants.CMS_FRIENDLY_URL,
-					"/edit_content_item?objectEntryId={embedded.id}",
-					"&p_l_mode=read&p_p_state=", LiferayWindowState.POP_UP,
-					"&redirect=", themeDisplay.getURLCurrent()),
-				"view", "viewContent",
-				LanguageUtil.get(httpServletRequest, "view"), "get", null,
-				"modal"));
+				null, "share", "share",
+				LanguageUtil.get(httpServletRequest, "share"), "get", null,
+				"link"));
 
 		return fdsActionDropdownItems;
 	}

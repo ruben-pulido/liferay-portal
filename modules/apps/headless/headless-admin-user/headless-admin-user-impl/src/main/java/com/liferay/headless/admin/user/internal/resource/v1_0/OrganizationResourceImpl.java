@@ -14,6 +14,7 @@ import com.liferay.account.service.AccountEntryService;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryService;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.headless.admin.user.dto.v1_0.Account;
 import com.liferay.headless.admin.user.dto.v1_0.AccountBrief;
 import com.liferay.headless.admin.user.dto.v1_0.EmailAddress;
@@ -46,6 +47,7 @@ import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Address;
+import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ListTypeConstants;
 import com.liferay.portal.kernel.model.OrgLabor;
@@ -100,6 +102,7 @@ import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.roles.admin.role.type.contributor.provider.RoleTypeContributorProvider;
+import com.liferay.users.admin.constants.UsersAdminPortletKeys;
 
 import jakarta.ws.rs.core.MultivaluedMap;
 
@@ -125,7 +128,9 @@ import org.osgi.service.component.annotations.ServiceScope;
 	property = "nested.field.support=true", scope = ServiceScope.PROTOTYPE,
 	service = OrganizationResource.class
 )
-public class OrganizationResourceImpl extends BaseOrganizationResourceImpl {
+public class OrganizationResourceImpl
+	extends BaseOrganizationResourceImpl
+	implements ExportImportVulcanBatchEngineTaskItemDelegate<Organization> {
 
 	@Override
 	public void deleteAccountByExternalReferenceCodeOrganization(
@@ -291,6 +296,13 @@ public class OrganizationResourceImpl extends BaseOrganizationResourceImpl {
 	}
 
 	@Override
+	public List<String> getNestedFields() {
+		return List.of(
+			"accountBriefs", "imageBase64", "roleBriefs",
+			"taxonomyCategoryBriefs", "userAccountBriefs");
+	}
+
+	@Override
 	public Organization getOrganization(String organizationId)
 		throws Exception {
 
@@ -389,6 +401,22 @@ public class OrganizationResourceImpl extends BaseOrganizationResourceImpl {
 					0L)
 			).build(),
 			null, flatten, filter, search, pagination, sorts);
+	}
+
+	@Override
+	public String getPortletId() {
+		if (FeatureFlagManagerUtil.isEnabled(
+				CompanyConstants.SYSTEM, "LPD-35914")) {
+
+			return UsersAdminPortletKeys.ORGANIZATIONS_ADMIN;
+		}
+
+		return null;
+	}
+
+	@Override
+	public Scope getScope() {
+		return Scope.COMPANY;
 	}
 
 	@Override
@@ -736,7 +764,7 @@ public class OrganizationResourceImpl extends BaseOrganizationResourceImpl {
 
 		try {
 			AccountEntry accountEntry =
-				_accountEntryService.getOrAddIncompleteAccountEntry(
+				_accountEntryService.getOrAddEmptyAccountEntry(
 					externalReferenceCode, accountBrief.getName(),
 					accountBrief.getType());
 
@@ -766,7 +794,7 @@ public class OrganizationResourceImpl extends BaseOrganizationResourceImpl {
 			return organization;
 		}
 
-		Role role = _roleService.getOrAddIncompleteRole(
+		Role role = _roleService.getOrAddEmptyRole(
 			externalReferenceCode, Role.class.getName(), 0, roleBrief.getName(),
 			roleBrief.getRoleType());
 
@@ -866,7 +894,7 @@ public class OrganizationResourceImpl extends BaseOrganizationResourceImpl {
 					}
 
 					AssetCategory assetCategory =
-						_assetCategoryService.getOrAddIncompleteCategory(
+						_assetCategoryService.getOrAddEmptyCategory(
 							externalReferenceCode, group.getGroupId());
 
 					return assetCategory.getCategoryId();
@@ -1111,7 +1139,7 @@ public class OrganizationResourceImpl extends BaseOrganizationResourceImpl {
 
 		com.liferay.portal.kernel.model.Organization
 			serviceBuilderOrganization =
-				_organizationLocalService.getOrAddIncompleteOrganization(
+				_organizationLocalService.getOrAddEmptyOrganization(
 					externalReferenceCode, contextUser.getCompanyId(),
 					contextUser.getUserId(), parentOrganization.getName());
 

@@ -38,7 +38,7 @@ public class JSUnitBatchBuildTestrayCaseResult
 
 	@Override
 	public BuildReport getBuildReport() {
-		if (JenkinsResultsParserUtil.isBuildCachingEnabled()) {
+		if (_jsUnitModulesTestClass.isBuildCachingEnabled()) {
 			DownstreamBuildReport cachedDownstreamBuildReport =
 				_jsUnitModulesTestClass.getCachedDownstreamBuildReport();
 
@@ -142,9 +142,9 @@ public class JSUnitBatchBuildTestrayCaseResult
 
 		if (errorMessages.size() > 1) {
 			return JenkinsResultsParserUtil.combine(
-				"Failed tests: ",
+				"Failed tests:\n",
 				JenkinsResultsParserUtil.join(
-					", ", new ArrayList<>(errorMessages.keySet())));
+					"\n", new ArrayList<>(errorMessages.keySet())));
 		}
 		else if (errorMessages.size() == 1) {
 			List<String> values = new ArrayList<>(errorMessages.values());
@@ -195,7 +195,7 @@ public class JSUnitBatchBuildTestrayCaseResult
 			return _testClassReport;
 		}
 
-		if (JenkinsResultsParserUtil.isBuildCachingEnabled()) {
+		if (_jsUnitModulesTestClass.isBuildCachingEnabled()) {
 			TestClassReport cachedTestClassReport =
 				_jsUnitModulesTestClass.getCachedTestClassReport();
 

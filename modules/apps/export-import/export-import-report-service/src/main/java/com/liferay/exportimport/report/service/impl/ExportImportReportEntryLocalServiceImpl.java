@@ -25,11 +25,10 @@ import org.osgi.service.component.annotations.Component;
 public class ExportImportReportEntryLocalServiceImpl
 	extends ExportImportReportEntryLocalServiceBaseImpl {
 
-	@Override
-	public ExportImportReportEntry addErrorExportImportReportEntry(
+	public ExportImportReportEntry addEmptyExportImportReportEntry(
 		long groupId, long companyId, String classExternalReferenceCode,
-		long classNameId, long exportImportConfigurationId, String error,
-		String errorStacktrace) {
+		long classNameId, long exportImportConfigurationId, String modelName,
+		int origin, String scope, String scopeKey) {
 
 		ExportImportReportEntry exportImportReportEntry =
 			exportImportReportEntryPersistence.create(
@@ -42,19 +41,24 @@ public class ExportImportReportEntryLocalServiceImpl
 		exportImportReportEntry.setClassNameId(classNameId);
 		exportImportReportEntry.setExportImportConfigurationId(
 			exportImportConfigurationId);
-		exportImportReportEntry.setError(error);
-		exportImportReportEntry.setErrorStacktrace(errorStacktrace);
+		exportImportReportEntry.setModelName(modelName);
+		exportImportReportEntry.setOrigin(origin);
+		exportImportReportEntry.setScope(scope);
+		exportImportReportEntry.setScopeKey(scopeKey);
 		exportImportReportEntry.setType(
-			ExportImportReportEntryConstants.TYPE_ERROR);
+			ExportImportReportEntryConstants.TYPE_EMPTY);
+		exportImportReportEntry.setStatus(
+			ExportImportReportEntryConstants.STATUS_UNRESOLVED);
 
 		return exportImportReportEntryPersistence.update(
 			exportImportReportEntry);
 	}
 
-	@Override
-	public ExportImportReportEntry addIncompleteExportImportReportEntry(
+	public ExportImportReportEntry addErrorExportImportReportEntry(
 		long groupId, long companyId, String classExternalReferenceCode,
-		long classNameId, long exportImportConfigurationId) {
+		long classNameId, long classPK, long exportImportConfigurationId,
+		String error, String errorStacktrace, String modelName, int origin,
+		String scope, String scopeKey) {
 
 		ExportImportReportEntry exportImportReportEntry =
 			exportImportReportEntryPersistence.create(
@@ -65,10 +69,19 @@ public class ExportImportReportEntryLocalServiceImpl
 		exportImportReportEntry.setClassExternalReferenceCode(
 			classExternalReferenceCode);
 		exportImportReportEntry.setClassNameId(classNameId);
+		exportImportReportEntry.setClassPK(classPK);
 		exportImportReportEntry.setExportImportConfigurationId(
 			exportImportConfigurationId);
+		exportImportReportEntry.setError(error);
+		exportImportReportEntry.setErrorStacktrace(errorStacktrace);
+		exportImportReportEntry.setModelName(modelName);
+		exportImportReportEntry.setOrigin(origin);
+		exportImportReportEntry.setScope(scope);
+		exportImportReportEntry.setScopeKey(scopeKey);
 		exportImportReportEntry.setType(
-			ExportImportReportEntryConstants.TYPE_INCOMPLETE);
+			ExportImportReportEntryConstants.TYPE_ERROR);
+		exportImportReportEntry.setStatus(
+			ExportImportReportEntryConstants.STATUS_UNRESOLVED);
 
 		return exportImportReportEntryPersistence.update(
 			exportImportReportEntry);

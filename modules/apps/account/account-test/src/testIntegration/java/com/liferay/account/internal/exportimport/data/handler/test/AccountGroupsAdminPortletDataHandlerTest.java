@@ -170,7 +170,7 @@ public class AccountGroupsAdminPortletDataHandlerTest {
 				TestPropsValues.getCompanyId());
 
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE, accountEntry.getStatus());
+			WorkflowConstants.STATUS_EMPTY, accountEntry.getStatus());
 
 		List<ExportImportReportEntry> exportImportReportEntries =
 			_exportImportReportEntryLocalService.getExportImportReportEntries(
@@ -191,7 +191,7 @@ public class AccountGroupsAdminPortletDataHandlerTest {
 						exportImportReportEntry.getClassExternalReferenceCode(),
 						externalReferenceCode) &&
 					(exportImportReportEntry.getType() ==
-						ExportImportReportEntryConstants.TYPE_INCOMPLETE)));
+						ExportImportReportEntryConstants.TYPE_EMPTY)));
 	}
 
 	@Test

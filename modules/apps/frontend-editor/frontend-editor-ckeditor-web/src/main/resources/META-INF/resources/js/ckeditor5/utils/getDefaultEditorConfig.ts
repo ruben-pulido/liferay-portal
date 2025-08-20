@@ -41,6 +41,7 @@ import {
 } from 'ckeditor5';
 import {sub} from 'frontend-js-web';
 
+import AICreator from '../plugins/AICreator';
 import ItemSelector from '../plugins/ItemSelector';
 import {EEditorConfigPreset, EEditorVariant} from './types';
 
@@ -90,6 +91,8 @@ const getDefaultEditorConfig = ({
 			plugins: basicPlugins,
 			toolbar: {
 				items: [
+					'accessibilityHelp',
+					'|',
 					'undo',
 					'redo',
 					'|',
@@ -115,6 +118,7 @@ const getDefaultEditorConfig = ({
 
 	const advancedPlugins = [
 		...basicPlugins,
+		AICreator,
 		Alignment,
 		BlockQuote,
 		Font,
@@ -143,6 +147,8 @@ const getDefaultEditorConfig = ({
 	}
 
 	const toolbarItems = [
+		'accessibilityHelp',
+		'|',
 		'undo',
 		'redo',
 		'|',
@@ -176,6 +182,9 @@ const getDefaultEditorConfig = ({
 		'horizontalLine',
 		'|',
 		'alignment',
+		'|',
+		'aiCreator',
+		'|',
 	];
 
 	if (editorVariant === EEditorVariant.CLASSIC) {

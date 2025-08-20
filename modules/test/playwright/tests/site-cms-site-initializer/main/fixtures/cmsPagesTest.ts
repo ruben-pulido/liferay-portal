@@ -10,7 +10,7 @@ import {EditVocabularyPage} from '../pages/EditVocabularyPage';
 import {FilesPage} from '../pages/FilesPage';
 import {FolderPage} from '../pages/FolderPage';
 import {PicklistBuilderPage} from '../pages/PicklistBuilderPage';
-import {StructureBuilderPage} from '../pages/StructureBuilderPage';
+import {SpaceSummaryPage} from '../pages/SpaceSummaryPage';
 import {StructuresPage} from '../pages/StructuresPage';
 import {TagsPage} from '../pages/TagsPage';
 import {VocabulariesPage} from '../pages/VocabulariesPage';
@@ -21,7 +21,7 @@ const cmsPagesTest = test.extend<{
 	filesPage: FilesPage;
 	folderPage: FolderPage;
 	picklistBuilderPage: PicklistBuilderPage;
-	structureBuilderPage: StructureBuilderPage;
+	spaceSummaryPage: SpaceSummaryPage;
 	structuresPage: StructuresPage;
 	tagsPage: TagsPage;
 	vocabulariesPage: VocabulariesPage;
@@ -41,8 +41,8 @@ const cmsPagesTest = test.extend<{
 	picklistBuilderPage: async ({page}, use) => {
 		await use(new PicklistBuilderPage(page));
 	},
-	structureBuilderPage: async ({page}, use) => {
-		await use(new StructureBuilderPage(page));
+	spaceSummaryPage: async ({page}, use) => {
+		await use(new SpaceSummaryPage(page));
 	},
 	structuresPage: async ({page}, use) => {
 		await use(new StructuresPage(page));

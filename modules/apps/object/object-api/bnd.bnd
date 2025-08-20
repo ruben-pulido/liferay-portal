@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Object API
 Bundle-SymbolicName: com.liferay.object.api
-Bundle-Version: 109.1.0
+Bundle-Version: 110.0.1
 Export-Package:\
 	com.liferay.object.action.engine,\
 	com.liferay.object.action.executor,\
@@ -22,6 +22,7 @@ Export-Package:\
 	com.liferay.object.entries.frontend.data.set.data.model,\
 	com.liferay.object.entry,\
 	com.liferay.object.entry.contributor,\
+	com.liferay.object.entry.folder.subscription.util,\
 	com.liferay.object.entry.folder.util,\
 	com.liferay.object.entry.util,\
 	com.liferay.object.exception,\
@@ -50,6 +51,7 @@ Export-Package:\
 	com.liferay.object.system,\
 	com.liferay.object.tree,\
 	com.liferay.object.tree.constants,\
+	com.liferay.object.util,\
 	com.liferay.object.util.comparator,\
 	com.liferay.object.validation.rule,\
 	com.liferay.object.validation.rule.setting.builder

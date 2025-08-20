@@ -12,6 +12,7 @@ export enum Colors {
 	Green = '#9be169',
 	Indigo = '#7785ff',
 	Indigo2 = '#6675ff',
+	LightGray = '#a6a8bb',
 	Orange = '#ffb46e',
 	Pink = '#ff73c3',
 	Pink2 = '#ff73c3',
@@ -34,25 +35,19 @@ export enum Individuals {
 	KnownIndividuals = 'KNOWN',
 }
 
-export enum RangeSelectors {
-	Last24Hours = '0',
-	Last7Days = '7',
-	Last28Days = '28',
-	Last30Days = '30',
-	Last90Days = '90',
-}
-
 export enum MetricName {
 	Comments = 'commentsMetric',
 	Downloads = 'downloadsMetric',
-	Previews = 'previewsMetric',
-	Undefined = 'undefinedMetric',
+	Impressions = 'impressionMadeMetric',
+	Undefined = 'undefined',
 	Views = 'viewsMetric',
 }
 
 export enum AssetTypes {
 	Blog = 'blog',
+	Content = 'L_CONTENTS',
 	Document = 'document',
+	Files = 'L_FILES',
 	Undefined = 'undefined',
 	WebContent = 'journal',
 }
@@ -60,7 +55,7 @@ export enum AssetTypes {
 export enum MetricType {
 	Comments = 'COMMENTS',
 	Downloads = 'DOWNLOADS',
-	Previews = 'PREVIEWS',
+	Impressions = 'IMPRESSIONS',
 	Undefined = 'UNDEFINED',
 	Views = 'VIEWS',
 }
@@ -82,3 +77,5 @@ export type Version = {
 	createDate: string;
 	version: string;
 };
+
+export type objectEntryFolderExternalReferenceCode = {};

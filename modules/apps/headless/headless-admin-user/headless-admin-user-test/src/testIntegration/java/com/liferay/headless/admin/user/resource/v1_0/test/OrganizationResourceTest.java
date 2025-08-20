@@ -27,6 +27,8 @@ import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
+import com.liferay.exportimport.test.rule.LazyReferencing;
+import com.liferay.exportimport.test.rule.LazyReferencingTestRule;
 import com.liferay.headless.admin.user.client.custom.field.CustomField;
 import com.liferay.headless.admin.user.client.custom.field.CustomValue;
 import com.liferay.headless.admin.user.client.dto.v1_0.AccountBrief;
@@ -116,6 +118,11 @@ import org.junit.runner.RunWith;
 @DataGuard(scope = DataGuard.Scope.METHOD)
 @RunWith(Arquillian.class)
 public class OrganizationResourceTest extends BaseOrganizationResourceTestCase {
+
+	@ClassRule
+	@Rule
+	public static final LazyReferencingTestRule lazyReferencingTestRule =
+		LazyReferencingTestRule.INSTANCE;
 
 	@ClassRule
 	@Rule
@@ -409,6 +416,7 @@ public class OrganizationResourceTest extends BaseOrganizationResourceTestCase {
 	}
 
 	@FeatureFlag("LPD-47858")
+	@LazyReferencing
 	@Override
 	@Test
 	public void testPostOrganization() throws Exception {
@@ -1367,7 +1375,7 @@ public class OrganizationResourceTest extends BaseOrganizationResourceTestCase {
 					accountEntryOrganizationRel.getAccountEntryId() ==
 						accountEntry3.getAccountEntryId()));
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE, accountEntry3.getStatus());
+			WorkflowConstants.STATUS_EMPTY, accountEntry3.getStatus());
 
 		Assert.assertNotEquals(0, serviceBuilderOrganization.getLogoId());
 
@@ -1386,7 +1394,7 @@ public class OrganizationResourceTest extends BaseOrganizationResourceTestCase {
 				serviceBuilderOrganization.getParentOrganizationId());
 
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE,
+			WorkflowConstants.STATUS_EMPTY,
 			serviceBuilderParentOrganization.getStatus());
 
 		Role role3 = _roleLocalService.fetchRoleByExternalReferenceCode(
@@ -1441,8 +1449,7 @@ public class OrganizationResourceTest extends BaseOrganizationResourceTestCase {
 		Assert.assertEquals(
 			RoleConstants.getLabelType(permission2.getRoleType()),
 			role4.getType());
-		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE, role4.getStatus());
+		Assert.assertEquals(WorkflowConstants.STATUS_EMPTY, role4.getStatus());
 
 		Role role5 = _roleLocalService.fetchRoleByExternalReferenceCode(
 			roleBrief1.getExternalReferenceCode(),
@@ -1467,8 +1474,7 @@ public class OrganizationResourceTest extends BaseOrganizationResourceTestCase {
 				roleBrief -> Objects.equals(
 					roleBrief.getExternalReferenceCode(),
 					role6.getExternalReferenceCode())));
-		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE, role6.getStatus());
+		Assert.assertEquals(WorkflowConstants.STATUS_EMPTY, role6.getStatus());
 
 		AssetCategory assetCategory2 =
 			_assetCategoryLocalService.
@@ -1504,7 +1510,7 @@ public class OrganizationResourceTest extends BaseOrganizationResourceTestCase {
 					assetCategory.getCategoryId() ==
 						assetCategory3.getCategoryId()));
 		Assert.assertEquals(
-			WorkflowConstants.STATUS_INCOMPLETE, assetCategory3.getStatus());
+			WorkflowConstants.STATUS_EMPTY, assetCategory3.getStatus());
 	}
 
 	private void _testPostOrganizationWithCustomFields() throws Exception {

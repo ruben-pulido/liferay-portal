@@ -22,6 +22,7 @@ import com.liferay.object.service.ObjectDefinitionSettingLocalService;
 import com.liferay.object.service.ObjectEntryFolderLocalServiceUtil;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -56,6 +57,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,11 +170,7 @@ public abstract class BaseSectionDisplayContext {
 	}
 
 	public List<DropdownItem> getBulkActionDropdownItems() {
-		return ListUtil.fromArray(
-			new FDSActionDropdownItem(
-				"#", "document", "sampleBulkAction",
-				LanguageUtil.get(httpServletRequest, "label"), null, null,
-				null));
+		return Collections.emptyList();
 	}
 
 	public CreationMenu getCreationMenu() {
@@ -267,6 +265,24 @@ public abstract class BaseSectionDisplayContext {
 				"pencil", "actionLink",
 				LanguageUtil.get(httpServletRequest, "edit"), "get", "update",
 				null),
+			new FDSActionDropdownItem(
+				"{actions.expire.href}", "time", "expire",
+				LanguageUtil.get(httpServletRequest, "expire"), "post",
+				"expire", "headless"),
+			new FDSActionDropdownItem(
+				StringBundler.concat(
+					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+					GroupConstants.CMS_FRIENDLY_URL,
+					"/edit_content_item?&p_l_mode=read&p_p_state=",
+					LiferayWindowState.POP_UP, "&redirect=",
+					themeDisplay.getURLCurrent(),
+					"&objectEntryId={embedded.id}"),
+				"view", "view-content",
+				LanguageUtil.get(httpServletRequest, "view"), "get", null,
+				"modal"),
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "view", "view-file",
+				LanguageUtil.get(httpServletRequest, "view"), null, null, null),
 			new FDSActionDropdownItem(
 				StringBundler.concat(
 					themeDisplay.getPathFriendlyURLPublic(),

@@ -23,6 +23,7 @@ import {TYPES} from '../ModelBuilderContext/typesEnum';
 import {nonRelationshipObjectFieldsInfo} from '../types';
 
 import './RightSidebarObjectDefinitionDetails.scss';
+import {InheritanceObjectDefinitionAlert} from '../../ObjectDetails/InheritanceObjectDefinitionAlert';
 import {SubscriptionsContainer} from '../../ObjectDetails/SubscriptionsContainer';
 
 interface RightSidebarObjectDefinitionDetailsProps {
@@ -61,8 +62,14 @@ export function RightSidebarObjectDefinitionDetails({
 		setNonRelationshipObjectFieldsInfo,
 	] = useState<nonRelationshipObjectFieldsInfo[]>();
 
-	const [{selectedObjectDefinitionNode, selectedObjectFolder}, dispatch] =
-		useObjectFolderContext();
+	const [
+		{
+			learnResourceContext,
+			selectedObjectDefinitionNode,
+			selectedObjectFolder,
+		},
+		dispatch,
+	] = useObjectFolderContext();
 
 	const [backEndErrors, setBackEndErrors] = useState<Error>({});
 
@@ -81,11 +88,6 @@ export function RightSidebarObjectDefinitionDetails({
 			},
 			onSubmit: () => {},
 		});
-
-	const isRootDescendantNode =
-		!!values.rootObjectDefinitionExternalReferenceCode &&
-		values.externalReferenceCode !==
-			values.rootObjectDefinitionExternalReferenceCode;
 
 	useEffect(() => {
 		const makeFetch = async () => {
@@ -190,6 +192,11 @@ export function RightSidebarObjectDefinitionDetails({
 		}
 	};
 
+	const isRootDescendantNode =
+		!!values.rootObjectDefinitionExternalReferenceCode &&
+		values.externalReferenceCode !==
+			values.rootObjectDefinitionExternalReferenceCode;
+
 	const objectDefinitionNodeDetailsTitle = sub(
 		Liferay.Language.get('x-details'),
 		stringUtils.getLocalizableLabel({
@@ -210,7 +217,7 @@ export function RightSidebarObjectDefinitionDetails({
 		);
 
 	const showSubscriptionSection =
-		Liferay.FeatureFlags['LPD-42577'] &&
+		Liferay.FeatureFlags['LPD-17564'] &&
 		!(!values.modifiable && values.system);
 
 	return (
@@ -224,6 +231,12 @@ export function RightSidebarObjectDefinitionDetails({
 				</div>
 			</div>
 			<div className="lfr-objects__model-builder-right-sidebar-object-definition-node-content">
+				{isRootDescendantNode && (
+					<InheritanceObjectDefinitionAlert
+						learnResources={learnResourceContext}
+					/>
+				)}
+
 				<ObjectDataContainer
 					dbTableName={
 						selectedObjectDefinitionNode?.data?.dbTableName
@@ -270,7 +283,6 @@ export function RightSidebarObjectDefinitionDetails({
 						selectedObjectDefinitionNode?.data
 							?.linkedObjectDefinition ?? false
 					}
-					isRootDescendantNode={isRootDescendantNode}
 					onSubmit={onSubmit}
 					setValues={setValues}
 					sites={sites}
@@ -286,7 +298,6 @@ export function RightSidebarObjectDefinitionDetails({
 							selectedObjectDefinitionNode?.data
 								?.linkedObjectDefinition ?? false
 						}
-						isRootDescendantNode={isRootDescendantNode}
 						objectFields={
 							(values?.objectFields as ObjectField[]) ?? []
 						}
@@ -308,7 +319,6 @@ export function RightSidebarObjectDefinitionDetails({
 						selectedObjectDefinitionNode?.data
 							?.linkedObjectDefinition ?? false
 					}
-					isRootDescendantNode={isRootDescendantNode}
 					onSubmit={onSubmit}
 					setValues={setValues}
 					values={values as ObjectDefinition}

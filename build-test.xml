@@ -2668,7 +2668,10 @@ war.path=${app.server.portal.dir}/</echo>
 
 			<if>
 				<and>
-					<isset property="browser.docker.image" />
+					<or>
+						<isset property="browser.docker.image" />
+						<isset property="playwright.docker.image" />
+					</or>
 					<isset property="env.JENKINS_HOME" />
 					<or>
 						<equals arg1="${app.server.type}" arg2="jboss" />
@@ -12346,9 +12349,13 @@ admin.email.from.address=test@liferay.com
 announcements.email.to.address=noreply@liferay.com
 login.secure.forgot.password=false
 captcha.enforce.disabled=true
-configuration.override.com.liferay.captcha.configuration.CaptchaConfiguration_createAccountCaptchaEnabled=B"false"
-configuration.override.com.liferay.captcha.configuration.CaptchaConfiguration_maxChallenges=I"-1"
-configuration.override.com.liferay.captcha.configuration.CaptchaConfiguration_sendPasswordCaptchaEnabled=B"false"</echo>
+		</echo>
+
+		<mkdir dir="${liferay.home}/osgi/configs" />
+
+		<echo file="${liferay.home}/osgi/configs/com.liferay.captcha.configuration.CaptchaConfiguration.config"><![CDATA[createAccountCaptchaEnabled="false"
+maxChallenges="-1"
+sendPasswordCaptchaEnabled="false"]]></echo>
 
 		<if>
 			<equals arg1="${database.type}" arg2="oracle" />

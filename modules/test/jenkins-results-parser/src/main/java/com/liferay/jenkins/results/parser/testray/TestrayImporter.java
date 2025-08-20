@@ -22,6 +22,7 @@ import com.liferay.jenkins.results.parser.PortalWorkspaceGitRepository;
 import com.liferay.jenkins.results.parser.PullRequest;
 import com.liferay.jenkins.results.parser.QAWebsitesGitRepositoryJob;
 import com.liferay.jenkins.results.parser.QAWebsitesWorkspaceGitRepository;
+import com.liferay.jenkins.results.parser.TestSuiteJob;
 import com.liferay.jenkins.results.parser.TopLevelBuildReport;
 import com.liferay.jenkins.results.parser.Workspace;
 import com.liferay.jenkins.results.parser.WorkspaceGitRepository;
@@ -33,8 +34,8 @@ import com.liferay.jenkins.results.parser.test.clazz.group.AxisTestClassGroup;
 import com.liferay.jenkins.results.parser.test.clazz.group.FunctionalAxisTestClassGroup;
 import com.liferay.jenkins.results.parser.test.clazz.group.JSUnitAxisTestClassGroup;
 import com.liferay.jenkins.results.parser.test.clazz.group.JUnitAxisTestClassGroup;
+import com.liferay.jenkins.results.parser.test.clazz.group.ModulesAxisTestClassGroup;
 import com.liferay.jenkins.results.parser.test.clazz.group.PlaywrightAxisTestClassGroup;
-import com.liferay.jenkins.results.parser.test.clazz.group.SemVerModulesAxisTestClassGroup;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +46,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -921,6 +923,17 @@ public class TestrayImporter {
 		List<Callable<Void>> callables = new ArrayList<>();
 
 		for (Job job : _jobs) {
+			if (job instanceof TestSuiteJob) {
+				TestSuiteJob testSuiteJob = (TestSuiteJob)job;
+
+				if (!Objects.equals(
+						_topLevelBuildReport.getTestSuiteName(),
+						testSuiteJob.getTestSuiteName())) {
+
+					continue;
+				}
+			}
+
 			axisTestClassGroups.addAll(job.getAxisTestClassGroups());
 			axisTestClassGroups.addAll(job.getDependentAxisTestClassGroups());
 
@@ -1379,7 +1392,7 @@ public class TestrayImporter {
 		if (axisTestClassGroup instanceof FunctionalAxisTestClassGroup ||
 			axisTestClassGroup instanceof JSUnitAxisTestClassGroup ||
 			axisTestClassGroup instanceof JUnitAxisTestClassGroup ||
-			axisTestClassGroup instanceof SemVerModulesAxisTestClassGroup) {
+			axisTestClassGroup instanceof ModulesAxisTestClassGroup) {
 
 			PortalLogBatchBuildTestrayCaseResult
 				portalLogBatchBuildTestrayCaseResult =
@@ -1457,9 +1470,9 @@ public class TestrayImporter {
 			Element propertiesElement = testcaseElement.addElement(
 				"properties");
 
-			String jobName = _topLevelBuildReport.getJobName();
+			String testSuiteName = _topLevelBuildReport.getTestSuiteName();
 
-			if (jobName.contains("upstream-dxp")) {
+			if (testSuiteName.equals("upstream-dxp")) {
 				if (testrayCaseResult instanceof
 						JUnitBatchBuildTestrayCaseResult) {
 

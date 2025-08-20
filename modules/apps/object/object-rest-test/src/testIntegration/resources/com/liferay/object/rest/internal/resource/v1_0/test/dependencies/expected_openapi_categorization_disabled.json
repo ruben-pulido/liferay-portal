@@ -328,6 +328,14 @@
 						},
 						"type": "array"
 					},
+					"removedBy": {
+						"$ref": "#/components/schemas/Creator"
+					},
+					"removedDate": {
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
 					"reviewDate": {
 						"format": "date-time",
 						"readOnly": false,
@@ -588,6 +596,7 @@
 					"type": {
 						"enum": [
 							"AssetLibrary",
+							"CMS",
 							"Site"
 						],
 						"type": "string"
@@ -778,13 +787,6 @@
 					{
 						"in": "query",
 						"name": "filter",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "flatten",
 						"schema": {
 							"type": "string"
 						}

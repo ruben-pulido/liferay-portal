@@ -3,28 +3,26 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {RangeSelectors} from '../../js/types/global';
-import {
-	formatDate,
-	formatTooltipDate,
-	getDateRange,
-	toUnix,
-} from '../../js/utils/date';
+import {RangeSelectors} from '../../js/components/RangeSelectorsDropdown';
+import {formatDate, getDateRange, toUnix} from '../../js/utils/date';
 
 describe('date utils', () => {
 	it('format date', () => {
-		const formattedDate = formatDate(new Date(0));
-
-		expect(formattedDate).toEqual('jan 1');
-	});
-
-	it('format tooltip date', () => {
-		const formattedTooltipDate = formatTooltipDate(
-			new Date(0).getTime(),
+		const formattedDate = formatDate(
+			new Date(0),
 			RangeSelectors.Last30Days
 		);
 
-		expect(formattedTooltipDate).toEqual('1970 Jan 1');
+		expect(formattedDate).toEqual('1970 Jan 1');
+	});
+
+	it('format date for last 24 hours', () => {
+		const formattedDate = formatDate(
+			new Date(0),
+			RangeSelectors.Last24Hours
+		);
+
+		expect(formattedDate).toEqual('Jan 1, 12 AM');
 	});
 
 	it('get date range', () => {

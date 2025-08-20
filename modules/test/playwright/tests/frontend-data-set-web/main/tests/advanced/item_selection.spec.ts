@@ -16,6 +16,7 @@ const test = mergeTests(
 	apiHelpersTest,
 	fdsSamplePageTest,
 	featureFlagsTest({
+		'LPD-52212': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	isolatedSiteTest,
@@ -112,16 +113,20 @@ test(
 		const itemsSelectorCheckbox = page.locator(
 			'input[name="items-selector"]'
 		);
+		let sentFilters: Array<object>;
 		let sentItems: Array<number>;
 		let sentKeyValues: Array<number>;
+		let sentSearchQuery: string;
 		let sentSelectAll: boolean;
 
 		await page.route('/o/c/fdssamples/', async (route, request) => {
 			if (request.method() === 'POST') {
 				const postData = request.postDataJSON();
 
+				sentFilters = postData.filters;
 				sentItems = postData.items;
 				sentKeyValues = postData.keyValues;
+				sentSearchQuery = postData.searchQuery;
 				sentSelectAll = postData.selectAll;
 			}
 
@@ -164,8 +169,10 @@ test(
 				.getByRole('menuitem', {name: 'test'})
 				.click();
 
+			expect(sentFilters).toBeUndefined();
 			expect(sentItems).toHaveLength(19);
 			expect(sentKeyValues).toHaveLength(19);
+			expect(sentSearchQuery).toBeUndefined();
 			expect(sentSelectAll).toBe(false);
 
 			expect(
@@ -176,6 +183,18 @@ test(
 		});
 
 		await test.step('With Select All flag active, requests sent the flag instead of selected items', async () => {
+			await test.step('Enter a search term', async () => {
+				await fdsSamplePage.selectionToolbar.clearButton.click();
+
+				await fdsSamplePage.managementToolbar.searchInput.fill(
+					'Sample'
+				);
+
+				await fdsSamplePage.managementToolbar.container
+					.getByRole('button', {name: 'Search'})
+					.click();
+			});
+
 			await itemsSelectorCheckbox.click();
 
 			await fdsSamplePage.selectAllCheckbox.click();
@@ -187,8 +206,17 @@ test(
 				.getByRole('menuitem', {name: 'test'})
 				.click();
 
+			expect(sentFilters).toEqual([
+				{
+					id: 'color',
+					multiple: true,
+					odataFilterString: "color in ('Blue', 'Green', 'Yellow')",
+					selectedItemsLabel: 'Blue, Green, Yellow',
+				},
+			]);
 			expect(sentItems).toEqual([]);
 			expect(sentKeyValues).toEqual([]);
+			expect(sentSearchQuery).toEqual('Sample');
 			expect(sentSelectAll).toBe(true);
 
 			expect(
@@ -420,7 +448,7 @@ test('InfoPanel behavior', async ({fdsSamplePage, page}) => {
 	});
 
 	await test.step('Can open Info Panel when using an infoPanel type item action', async () => {
-		await page.getByText('Clear').click();
+		await fdsSamplePage.selectionToolbar.clearButton.click();
 
 		await fdsSamplePage.clickItemAction('View Details');
 
@@ -462,7 +490,7 @@ test(
 		});
 
 		await test.step('Change visualization mode to Cards', async () => {
-			await page.getByText('Clear').click();
+			await fdsSamplePage.selectionToolbar.clearButton.click();
 
 			await fdsSamplePage.changeVisualizationMode({
 				page,
@@ -487,7 +515,7 @@ test(
 		});
 
 		await test.step('Change visualization mode to Table', async () => {
-			await page.getByText('Clear').click();
+			await fdsSamplePage.selectionToolbar.clearButton.click();
 
 			await fdsSamplePage.changeVisualizationMode({
 				page,
@@ -530,7 +558,7 @@ test(
 		});
 
 		await test.step('Can select only one items when clicking in a simple table cell', async () => {
-			await page.getByText('Clear').click();
+			await fdsSamplePage.selectionToolbar.clearButton.click();
 
 			fdsSamplePage.selectByRowAndCell({
 				filter: 'This is a description',
@@ -551,7 +579,7 @@ test(
 		});
 
 		await test.step('Can deselect an item when clicking in a simple table cell', async () => {
-			await page.getByText('Clear').click();
+			await fdsSamplePage.selectionToolbar.clearButton.click();
 
 			fdsSamplePage.selectByRowAndCell({
 				filter: 'This is a description',
@@ -582,7 +610,7 @@ test(
 	}
 );
 
-test('Pagination and items per page', async ({page}) => {
+test('Pagination and items per page', async ({fdsSamplePage, page}) => {
 	const itemsSelectorCheckbox = page.locator('input[name="items-selector"]');
 
 	await test.step('Change delta to 60 items', async () => {
@@ -649,7 +677,7 @@ test('Pagination and items per page', async ({page}) => {
 	});
 
 	await test.step('Unselect all items using clear button', async () => {
-		await page.getByText('Clear').click();
+		await fdsSamplePage.selectionToolbar.clearButton.click();
 
 		await expect(itemsSelectorCheckbox).not.toBeChecked();
 

@@ -27,8 +27,8 @@ import com.liferay.jenkins.results.parser.test.clazz.JUnitTestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassMethod;
 import com.liferay.jenkins.results.parser.test.clazz.group.AxisTestClassGroup;
-import com.liferay.jenkins.results.parser.testray.TestrayS3Bucket;
-import com.liferay.jenkins.results.parser.testray.TestrayS3Object;
+import com.liferay.jenkins.results.parser.testray.TestrayCloudBucket;
+import com.liferay.jenkins.results.parser.testray.TestrayCloudObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,7 +73,7 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 
 		_uploadJenkinsConsoleTestrayAttachment();
 
-		if (!JenkinsResultsParserUtil.isBuildCachingEnabled() ||
+		if (!isBuildCachingEnabled() ||
 			!JenkinsResultsParserUtil.isCloudCINode() || isFailing()) {
 
 			return;
@@ -385,21 +385,21 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 		return _gitHubMessageElement;
 	}
 
-	public Map<String, List<String>> getTestClassMethodsMap() {
+	public Map<String, List<String>> getTestClassMethodNamesMap() {
 		String batchName = getBatchName();
 
 		if (!batchName.contains("integration") && !batchName.contains("unit")) {
 			return Collections.emptyMap();
 		}
 
-		Map<String, List<String>> testClassMethodsMap = new HashMap<>();
+		Map<String, List<String>> testClassMethodNamesMap = new HashMap<>();
 
 		AxisTestClassGroup axisTestClassGroup = getAxisTestClassGroup();
 
 		if ((axisTestClassGroup == null) ||
 			!axisTestClassGroup.hasTestClasses()) {
 
-			return testClassMethodsMap;
+			return testClassMethodNamesMap;
 		}
 
 		List<TestClass> testClasses = axisTestClassGroup.getTestClasses();
@@ -423,11 +423,11 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 				}
 			}
 
-			testClassMethodsMap.put(
+			testClassMethodNamesMap.put(
 				jUnitTestClass.getTestClassName(), methodNames);
 		}
 
-		return testClassMethodsMap;
+		return testClassMethodNamesMap;
 	}
 
 	@Override
@@ -470,11 +470,11 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 		return uniqueFailureTestResults;
 	}
 
-	public Map<String, List<String>> getUntestedTestClassMethodsMap() {
-		Map<String, List<String>> untestedTestClassMethodsMap =
-			getTestClassMethodsMap();
+	public Map<String, List<String>> getUntestedTestClassMethodNamesMap() {
+		Map<String, List<String>> untestedTestClassMethodNamesMap =
+			getTestClassMethodNamesMap();
 
-		if (untestedTestClassMethodsMap.isEmpty()) {
+		if (untestedTestClassMethodNamesMap.isEmpty()) {
 			return Collections.emptyMap();
 		}
 
@@ -487,23 +487,25 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 		for (TestResult testResult : testResults) {
 			String testResultClassName = testResult.getClassName();
 
-			if (untestedTestClassMethodsMap.containsKey(testResultClassName)) {
-				List<String> testClassMethods = untestedTestClassMethodsMap.get(
-					testResultClassName);
+			if (untestedTestClassMethodNamesMap.containsKey(
+					testResultClassName)) {
 
-				testClassMethods.remove(testResult.getTestName());
+				List<String> testClassMethodNames =
+					untestedTestClassMethodNamesMap.get(testResultClassName);
 
-				untestedTestClassMethodsMap.put(
-					testResultClassName, testClassMethods);
+				testClassMethodNames.remove(testResult.getTestName());
+
+				untestedTestClassMethodNamesMap.put(
+					testResultClassName, testClassMethodNames);
 			}
 		}
 
-		return untestedTestClassMethodsMap;
+		return untestedTestClassMethodNamesMap;
 	}
 
 	public List<TestResult> getUntestedTestResults() {
 		Map<String, List<String>> untestedTestsMap =
-			getUntestedTestClassMethodsMap();
+			getUntestedTestClassMethodNamesMap();
 
 		if (untestedTestsMap.isEmpty()) {
 			return Collections.emptyList();
@@ -514,13 +516,13 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 		for (Map.Entry<String, List<String>> entry :
 				untestedTestsMap.entrySet()) {
 
-			List<String> testClassMethods = entry.getValue();
+			List<String> testClassMethodNames = entry.getValue();
 
-			if (testClassMethods.isEmpty()) {
+			if (testClassMethodNames.isEmpty()) {
 				continue;
 			}
 
-			for (String methodName : testClassMethods) {
+			for (String methodName : testClassMethodNames) {
 				JSONObject caseJSONObject = new JSONObject();
 
 				String testClassName = entry.getKey();
@@ -1160,16 +1162,17 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 			JenkinsResultsParserUtil.gzip(
 				jenkinsConsoleFile, jenkinsConsoleGzFile);
 
-			TestrayS3Bucket testrayS3Bucket = TestrayS3Bucket.getInstance();
+			TestrayCloudBucket testrayCloudBucket =
+				TestrayCloudBucket.getInstance();
 
-			TestrayS3Object testrayS3Object =
-				testrayS3Bucket.createTestrayS3Object(
+			TestrayCloudObject testrayCloudObject =
+				testrayCloudBucket.createTestrayCloudObject(
 					JenkinsResultsParserUtil.combine(
 						_getTestrayAttachmentBaseKey(), "/",
 						jenkinsConsoleGzFile.getName()),
 					jenkinsConsoleGzFile);
 
-			addTestrayAttachmentURL(testrayS3Object.getURL());
+			addTestrayAttachmentURL(testrayCloudObject.getURL());
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);

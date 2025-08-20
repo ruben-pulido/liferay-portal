@@ -15,14 +15,12 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.upgrade.data.cleanup.util.OrphanReferencesDataCleanupUtil;
 import com.liferay.portal.test.log.LogCapture;
-import com.liferay.portal.test.log.LogEntry;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.upgrade.data.cleanup.DDMStructureDataCleanupPreupgradeProcess;
 
 import java.sql.Connection;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -82,14 +80,14 @@ public class DDMStructureDataCleanupPreupgradeProcessTest
 							RandomTestUtil.nextLong(), ", '", structureId,
 							"')"));
 				},
-				logMessages -> {
+				messages -> {
 					Assert.assertTrue(
-						logMessages.contains(
+						messages.contains(
 							_getExpectedMessage(
 								1, "JournalArticle", "structureKey",
 								"DDMStructure", structureId)));
 					Assert.assertTrue(
-						logMessages.contains(
+						messages.contains(
 							_getExpectedMessage(
 								1, "JournalFeed", "structureKey",
 								"DDMStructure", structureId)));
@@ -132,14 +130,14 @@ public class DDMStructureDataCleanupPreupgradeProcessTest
 							RandomTestUtil.nextLong(), ", '", structureId,
 							"')"));
 				},
-				logMessages -> {
+				messages -> {
 					Assert.assertTrue(
-						logMessages.contains(
+						messages.contains(
 							_getExpectedMessage(
 								1, "JournalArticle", "structureKey",
 								"DDMStructure", structureId)));
 					Assert.assertTrue(
-						logMessages.contains(
+						messages.contains(
 							_getExpectedMessage(
 								1, "JournalFeed", "structureKey",
 								"DDMStructure", structureId)));
@@ -172,14 +170,14 @@ public class DDMStructureDataCleanupPreupgradeProcessTest
 						RandomTestUtil.nextLong(), ", ",
 						RandomTestUtil.nextLong(), ", ", structureId, ")"));
 			},
-			logMessages -> {
+			messages -> {
 				Assert.assertTrue(
-					logMessages.contains(
+					messages.contains(
 						_getExpectedMessage(
 							1, "JournalArticle", "structureId", "DDMStructure",
 							structureId)));
 				Assert.assertTrue(
-					logMessages.contains(
+					messages.contains(
 						_getExpectedMessage(
 							1, "JournalFeed", "structureId", "DDMStructure",
 							structureId)));
@@ -213,15 +211,7 @@ public class DDMStructureDataCleanupPreupgradeProcessTest
 
 			doUpgrade();
 
-			List<LogEntry> logEntries = logCapture.getLogEntries();
-
-			List<String> logMessages = new ArrayList<>();
-
-			for (LogEntry logEntry : logEntries) {
-				logMessages.add(logEntry.getMessage());
-			}
-
-			verifyUnsafeConsumer.accept(logMessages);
+			verifyUnsafeConsumer.accept(logCapture.getMessages());
 		}
 	}
 

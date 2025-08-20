@@ -36,6 +36,19 @@ public class DisplayPageTemplateFolderDTOConverter
 			LayoutPageTemplateCollection layoutPageTemplateCollection)
 		throws Exception {
 
+		return _getDisplayPageTemplateFolder(layoutPageTemplateCollection);
+	}
+
+	private DisplayPageTemplateFolder _getDisplayPageTemplateFolder(
+			LayoutPageTemplateCollection layoutPageTemplateCollection)
+		throws Exception {
+
+		LayoutPageTemplateCollection parentLayoutPageTemplateCollection =
+			_layoutPageTemplateCollectionService.
+				fetchLayoutPageTemplateCollection(
+					layoutPageTemplateCollection.
+						getParentLayoutPageTemplateCollectionId());
+
 		return new DisplayPageTemplateFolder() {
 			{
 				setDateCreated(layoutPageTemplateCollection::getCreateDate);
@@ -47,15 +60,17 @@ public class DisplayPageTemplateFolderDTOConverter
 					layoutPageTemplateCollection::
 						getLayoutPageTemplateCollectionKey);
 				setName(layoutPageTemplateCollection::getName);
+				setParentDisplayPageTemplateFolder(
+					() -> {
+						if (parentLayoutPageTemplateCollection == null) {
+							return null;
+						}
+
+						return _getDisplayPageTemplateFolder(
+							parentLayoutPageTemplateCollection);
+					});
 				setParentDisplayPageTemplateFolderExternalReferenceCode(
 					() -> {
-						LayoutPageTemplateCollection
-							parentLayoutPageTemplateCollection =
-								_layoutPageTemplateCollectionService.
-									fetchLayoutPageTemplateCollection(
-										layoutPageTemplateCollection.
-											getParentLayoutPageTemplateCollectionId());
-
 						if (parentLayoutPageTemplateCollection == null) {
 							return null;
 						}

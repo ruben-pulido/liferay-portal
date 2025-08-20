@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -204,6 +205,25 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 		jsonObject.put("target_duration", getTargetAxisDuration());
 
 		return jsonObject;
+	}
+
+	public List<String> getTestClassMethodNames(
+		File file, Map<String, List<String>> globTestClassMethodNamesMap) {
+
+		for (Map.Entry<String, List<String>> globTestClassMethodEntry :
+				globTestClassMethodNamesMap.entrySet()) {
+
+			String glob = globTestClassMethodEntry.getKey();
+
+			PathMatcher pathMatcher = JenkinsResultsParserUtil.toPathMatcher(
+				_getWorkingDirectory() + "/", glob);
+
+			if (pathMatcher.matches(file.toPath())) {
+				return globTestClassMethodNamesMap.get(glob);
+			}
+		}
+
+		return null;
 	}
 
 	public void writeTestCSVReportFile() throws Exception {
@@ -389,7 +409,7 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 
 	protected List<PathMatcher> getIncludesPathMatchers() {
 		if (!isRootCauseAnalysis()) {
-			return getPathMatchers(getIncludesJobProperties());
+			return getIncludePathMatchers(getIncludesJobProperties());
 		}
 
 		List<String> includeGlobs = new ArrayList<>();
@@ -704,12 +724,10 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 
 		long start = System.currentTimeMillis();
 
-		List<PathMatcher> filterPathMatchers = getPathMatchers(
-			getFilterJobProperties());
 		List<PathMatcher> excludesPathMatchers = getPathMatchers(
 			getExcludesJobProperties());
-
-		BatchTestClassGroup batchTestClassGroup = this;
+		List<PathMatcher> filterPathMatchers = getPathMatchers(
+			getFilterJobProperties());
 
 		for (final File javaTestClassFile : _javaTestClassFiles) {
 			if (JenkinsResultsParserUtil.isFileExcluded(
@@ -723,8 +741,21 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 				continue;
 			}
 
-			TestClass testClass = TestClassFactory.newTestClass(
-				batchTestClassGroup, javaTestClassFile);
+			TestClass testClass = null;
+
+			List<String> testClassMethodNames = getTestClassMethodNames(
+				javaTestClassFile, getGlobTestClassMethodNamesMap());
+
+			if ((testClassMethodNames != null) &&
+				!testClassMethodNames.isEmpty()) {
+
+				testClass = TestClassFactory.newTestClass(
+					this, javaTestClassFile, testClassMethodNames);
+			}
+			else {
+				testClass = TestClassFactory.newTestClass(
+					this, javaTestClassFile);
+			}
 
 			if ((testClass != null) && !testClass.isIgnored() &&
 				testClass.hasTestClassMethods()) {

@@ -7,17 +7,17 @@ package com.liferay.site.cms.site.initializer.internal.display.context;
 
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,6 +50,19 @@ public class ViewFilesSectionDisplayContext
 	}
 
 	@Override
+	public List<DropdownItem> getBulkActionDropdownItems() {
+		return ListUtil.fromArray(
+			new FDSActionDropdownItem(
+				"#", "password-policies", "permissions",
+				LanguageUtil.get(httpServletRequest, "permissions"), null, null,
+				null),
+			new FDSActionDropdownItem(
+				"#", "trash", "remove",
+				LanguageUtil.get(httpServletRequest, "remove"), null, null,
+				null));
+	}
+
+	@Override
 	public Map<String, Object> getEmptyState() {
 		return HashMapBuilder.<String, Object>put(
 			"description",
@@ -68,26 +81,13 @@ public class ViewFilesSectionDisplayContext
 			super.getFDSActionDropdownItems();
 
 		fdsActionDropdownItems.add(
-			1,
+			3,
 			new FDSActionDropdownItem(
-				"{embedded.file.link.href}", "download", "download",
-				LanguageUtil.get(httpServletRequest, "download"), "get", null,
+				null, "share", "share",
+				LanguageUtil.get(httpServletRequest, "share"), "get", null,
 				"link"));
 		fdsActionDropdownItems.add(
-			2,
-			new FDSActionDropdownItem(
-				StringBundler.concat(
-					"/o", GroupConstants.CMS_FRIENDLY_URL, "/download-folder/",
-					portal.getClassNameId(ObjectEntryFolder.class),
-					"/{embedded.id}"),
-				"download", "download-folder",
-				LanguageUtil.get(httpServletRequest, "download"), "get", null,
-				"link",
-				HashMapBuilder.<String, Object>put(
-					"entryClassName", ObjectEntryFolder.class.getName()
-				).build()));
-		fdsActionDropdownItems.add(
-			3,
+			5,
 			new FDSActionDropdownItem(
 				StringPool.BLANK, "info-circle-open", "show-details",
 				LanguageUtil.get(httpServletRequest, "show-details"), null,

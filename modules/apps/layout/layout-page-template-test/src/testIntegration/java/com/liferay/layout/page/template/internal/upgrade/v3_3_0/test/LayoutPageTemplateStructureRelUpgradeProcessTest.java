@@ -135,7 +135,7 @@ public class LayoutPageTemplateStructureRelUpgradeProcessTest {
 				FragmentEntryProcessorConstants.
 					KEY_EDITABLE_FRAGMENT_ENTRY_PROCESSOR,
 				JSONUtil.put(
-					"element-text",
+					"element-html",
 					JSONUtil.put(
 						_SEGMENTS_EXPERIENCE_ID_PREFIX +
 							_SEGMENTS_EXPERIENCE_ID_DEFAULT,
@@ -231,7 +231,7 @@ public class LayoutPageTemplateStructureRelUpgradeProcessTest {
 
 		FragmentEntry fragmentEntry =
 			_fragmentCollectionContributorRegistry.getFragmentEntry(
-				"BASIC_COMPONENT-heading");
+				"BASIC_COMPONENT-html");
 
 		FragmentEntryLink fragmentEntryLink =
 			ContentLayoutTestUtil.addFragmentEntryLinkToLayout(
@@ -339,15 +339,15 @@ public class LayoutPageTemplateStructureRelUpgradeProcessTest {
 			FragmentEntryProcessorConstants.
 				KEY_EDITABLE_FRAGMENT_ENTRY_PROCESSOR);
 
-		JSONObject elementTextJSONObject = editableJSONObject.getJSONObject(
-			"element-text");
+		JSONObject elementHTMLJSONObject = editableJSONObject.getJSONObject(
+			"element-html");
 
 		Assert.assertTrue(
 			Validator.isNotNull(
-				elementTextJSONObject.getString("defaultValue")));
+				elementHTMLJSONObject.getString("defaultValue")));
 
 		Assert.assertEquals(
-			expectedValue, elementTextJSONObject.getString(_languageId));
+			expectedValue, elementHTMLJSONObject.getString(_languageId));
 	}
 
 	private void _assertFragmentEntryLink(

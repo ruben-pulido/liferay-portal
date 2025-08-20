@@ -79,7 +79,7 @@ test('LPD-33466 User can update pricing quantity of UOM', async ({
 
 	await expect(
 		commerceAdminProductDetailsSkusPage.pricinQuantity
-	).toHaveValue('1');
+	).toHaveValue('1.0');
 
 	await commerceAdminProductDetailsSkusPage.pricinQuantity.fill('2');
 
@@ -95,7 +95,7 @@ test('LPD-33466 User can update pricing quantity of UOM', async ({
 
 	await expect(
 		commerceAdminProductDetailsSkusPage.pricinQuantity
-	).toHaveValue('2');
+	).toHaveValue('2.0');
 });
 
 test('LPD-36797 Quantity selector starting quantity in catalog page and minicart is correct when UOM is set with decimal base unit quantity and decimal multiple order quantity', async ({
@@ -2269,7 +2269,6 @@ test(
 
 			channel = await apiHelpers.headlessCommerceAdminChannel.postChannel(
 				{
-					name: getRandomString(),
 					siteGroupId: site.id,
 				}
 			);
@@ -2905,5 +2904,80 @@ test(
 				).toContainText('2');
 			}
 		});
+	}
+);
+
+test(
+	'UOM incremental order quantity and pricing quantity display double value',
+	{tag: ['@LPD-62187']},
+	async ({
+		apiHelpers,
+		applicationsMenuPage,
+		commerceAdminProductDetailsPage,
+		commerceAdminProductDetailsSkusPage,
+		commerceAdminProductPage,
+	}) => {
+		const catalog =
+			await apiHelpers.headlessCommerceAdminCatalog.postCatalog({
+				name: 'Catalog',
+			});
+
+		const product =
+			await apiHelpers.headlessCommerceAdminCatalog.postProduct({
+				catalogId: catalog.id,
+				name: {
+					en_US: 'Product',
+				},
+			});
+
+		const productSkus = await apiHelpers.headlessCommerceAdminCatalog
+			.getProduct(product.productId)
+			.then((product) => {
+				return product.skus;
+			});
+
+		const sku = productSkus[0];
+
+		await apiHelpers.headlessCommerceAdminCatalog.postSkuUnitOfMeasure(
+			sku.id,
+			{
+				incrementalOrderQuantity: 1.5,
+				name: {en_US: 'UOM'},
+				precision: 1,
+				pricingQuantity: 1.5,
+				priority: 0,
+			}
+		);
+
+		await applicationsMenuPage.goToProducts();
+
+		await commerceAdminProductPage.managementToolbarSearchInput.fill(
+			'Product'
+		);
+		await commerceAdminProductPage.managementToolbarSearchInput.press(
+			'Enter'
+		);
+
+		await commerceAdminProductPage.productsTableRowLink('Product').click();
+
+		await commerceAdminProductDetailsPage.goToProductSkus();
+
+		await commerceAdminProductDetailsSkusPage
+			.skusTableRowLink(`${sku.sku}`)
+			.click();
+
+		await commerceAdminProductDetailsSkusPage.goToSkuUOM();
+
+		await commerceAdminProductDetailsSkusPage
+			.uomTableRowLink('UOM')
+			.click();
+
+		await expect(
+			commerceAdminProductDetailsSkusPage.incrementalOrderQuantity
+		).toHaveValue('1.5');
+
+		await expect(
+			commerceAdminProductDetailsSkusPage.pricinQuantity
+		).toHaveValue('1.5');
 	}
 );

@@ -5,8 +5,8 @@
 
 package com.liferay.jenkins.results.parser;
 
-import com.liferay.jenkins.results.parser.testray.TestrayS3Bucket;
-import com.liferay.jenkins.results.parser.testray.TestrayS3Object;
+import com.liferay.jenkins.results.parser.testray.TestrayCloudBucket;
+import com.liferay.jenkins.results.parser.testray.TestrayCloudObject;
 
 import java.io.IOException;
 
@@ -151,12 +151,13 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
-	public TestrayS3Object getBuildReportTestrayS3Object() {
+	public TestrayCloudObject getBuildReportTestrayCloudObject() {
 		JenkinsMaster jenkinsMaster = getJenkinsMaster();
 
-		TestrayS3Bucket testrayS3Bucket = TestrayS3Bucket.getInstance();
+		TestrayCloudBucket testrayCloudBucket =
+			TestrayCloudBucket.getInstance();
 
-		return testrayS3Bucket.getTestrayS3Object(
+		return testrayCloudBucket.getTestrayCloudObject(
 			JenkinsResultsParserUtil.combine(
 				getStartYearMonth(), "/", jenkinsMaster.getName(), "/",
 				getJobName(), "/", String.valueOf(getBuildNumber()),

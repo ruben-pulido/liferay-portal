@@ -13,8 +13,11 @@ import com.liferay.customer.service.NotificationQueueEntryService;
 import com.liferay.customer.service.TicketAttachmentService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.StackTraceUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -131,12 +135,10 @@ public class TicketAttachmentsCompleteUploadRestController
 			Jwt jwt, TicketAttachment ticketAttachment, String commentBody)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(3);
 
-		sb.append(lxcDXPServerProtocol);
-		sb.append("://");
-		sb.append(lxcDXPMainDomain);
-		sb.append("/placeholder/");
+		sb.append(_customerPortalURL);
+		sb.append("/ticket-attachments/#/id/");
 		sb.append(ticketAttachment.getTicketAttachmentId());
 
 		return new JSONObject(
@@ -176,13 +178,8 @@ public class TicketAttachmentsCompleteUploadRestController
 							).put(
 								"content",
 								new JSONArray(
-								).put(
-									new JSONObject(
-									).put(
-										"text", commentBody
-									).put(
-										"type", "text"
-									)
+								).putAll(
+									_getCommentBodyJSONArray(commentBody)
 								)
 							)
 						)
@@ -271,8 +268,63 @@ public class TicketAttachmentsCompleteUploadRestController
 		return sb.toString();
 	}
 
+	private JSONArray _getCommentBodyJSONArray(String commentBody) {
+		JSONArray jsonArray = new JSONArray();
+
+		Matcher matcher = _pattern.matcher(commentBody);
+
+		for (String part : commentBody.split(_URL_REGEX)) {
+			if (Validator.isNotNull(part)) {
+				jsonArray.put(
+					new JSONObject(
+					).put(
+						"text", part
+					).put(
+						"type", "text"
+					));
+			}
+
+			if (matcher.find()) {
+				String link = matcher.group(1);
+
+				jsonArray.put(
+					new JSONObject(
+					).put(
+						"type", "text"
+					).put(
+						"text", link
+					).put(
+						"marks",
+						new JSONArray(
+						).put(
+							new JSONObject(
+							).put(
+								"type", "link"
+							).put(
+								"attrs",
+								new JSONObject(
+								).put(
+									"href", link
+								)
+							)
+						)
+					));
+			}
+		}
+
+		return jsonArray;
+	}
+
+	private static final String _URL_REGEX =
+		"((?:https?:\\/\\/|www\\.)[^\\s()]+\\b)";
+
 	private static final Log _log = LogFactory.getLog(
 		TicketAttachmentsCompleteUploadRestController.class);
+
+	private static final Pattern _pattern = Pattern.compile(_URL_REGEX);
+
+	@Value("${liferay.customer.portal.url}")
+	private String _customerPortalURL;
 
 	@Autowired
 	private JiraService _jiraService;

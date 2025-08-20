@@ -18,6 +18,7 @@ export interface AddSpaceMembersProps {
 	assetLibraryId: string;
 	assetLibraryName: string;
 	baseAssetLibraryURL: string;
+	hasAssignMembersPermission: boolean;
 	learnResources: ILearnResourceContext;
 }
 
@@ -26,6 +27,7 @@ export function AddSpaceMembers({
 	assetLibraryId,
 	assetLibraryName,
 	baseAssetLibraryURL,
+	hasAssignMembersPermission,
 	learnResources,
 }: AddSpaceMembersProps) {
 	const [hasSelectedMembers, setHasSelectedMembers] = useState(false);
@@ -35,8 +37,8 @@ export function AddSpaceMembers({
 	};
 
 	return (
-		<ClayLayout.Row className="add-space-members">
-			<ClayLayout.Col className="mw-50 px-9 w-50">
+		<ClayLayout.Row className="add-space-members m-2 m-md-4">
+			<ClayLayout.Col className="px-md-4 px-xl-9" lg={6}>
 				<NewSpaceFormSection
 					description={Liferay.Language.get(
 						'add-team-members-to-this-space-to-start-collaborating'
@@ -53,6 +55,7 @@ export function AddSpaceMembers({
 					<SpaceMembersWithList
 						assetLibraryCreatorUserId={assetLibraryCreatorUserId}
 						assetLibraryId={assetLibraryId}
+						hasAssignMembersPermission={hasAssignMembersPermission}
 						onHasSelectedMembersChange={setHasSelectedMembers}
 					/>
 
@@ -71,11 +74,13 @@ export function AddSpaceMembers({
 				</NewSpaceFormSection>
 			</ClayLayout.Col>
 
-			<ClayLayout.Col>
-				<img
-					aria-hidden="true"
-					src={getImage('add_space_members_illustration.svg')}
-				></img>
+			<ClayLayout.Col className="d-lg-flex d-none" lg={6}>
+				<div className="border overflow-hidden rounded-lg">
+					<img
+						alt=""
+						src={getImage('add_space_members_illustration.svg')}
+					></img>
+				</div>
 			</ClayLayout.Col>
 		</ClayLayout.Row>
 	);

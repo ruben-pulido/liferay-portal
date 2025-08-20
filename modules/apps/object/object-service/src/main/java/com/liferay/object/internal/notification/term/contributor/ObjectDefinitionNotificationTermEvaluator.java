@@ -190,20 +190,20 @@ public class ObjectDefinitionNotificationTermEvaluator
 		Context context, String termName, Map<String, Object> termValues) {
 
 		if (!FeatureFlagManagerUtil.isEnabled(
-				_objectDefinition.getCompanyId(), "LPD-42577") ||
+				_objectDefinition.getCompanyId(), "LPD-17564") ||
 			!termName.equals("[%OBJECT_DEFINITION_NAME%]")) {
 
 			return null;
 		}
 
-		return _objectDefinition.getName();
+		return _objectDefinition.getShortName();
 	}
 
 	private String _evaluateObjectEntry(
 		Context context, String termName, Map<String, Object> termValues) {
 
 		if (!FeatureFlagManagerUtil.isEnabled(
-				_objectDefinition.getCompanyId(), "LPD-42577")) {
+				_objectDefinition.getCompanyId(), "LPD-17564")) {
 
 			return null;
 		}
@@ -234,8 +234,16 @@ public class ObjectDefinitionNotificationTermEvaluator
 			return objectEntryFolder.getName();
 		}
 		else if (termName.equals("[%OBJECT_ENTRY_TITLE_FIELD%]")) {
+			ObjectDefinition objectDefinition =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					_objectDefinition.getObjectDefinitionId());
+
 			ObjectField objectField = _objectFieldLocalService.fetchObjectField(
-				_objectDefinition.getTitleObjectFieldId());
+				objectDefinition.getTitleObjectFieldId());
+
+			if (objectField == null) {
+				return null;
+			}
 
 			return _getObjectFieldValue(objectField, termValues);
 		}

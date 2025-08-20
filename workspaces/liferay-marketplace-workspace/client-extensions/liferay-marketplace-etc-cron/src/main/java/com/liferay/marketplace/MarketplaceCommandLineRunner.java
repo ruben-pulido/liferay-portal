@@ -507,8 +507,7 @@ public class MarketplaceCommandLineRunner
 				String koroneikiProject = customFields.get("koroneiki-project");
 
 				if (Validator.isNull(koroneikiProject)) {
-					if (!accountExternalReferenceCode.startsWith("KOR-") ||
-						Validator.isNull(
+					if (Validator.isNull(
 							_getUserAccount(
 								order.getCreatorEmailAddress(),
 								userAccounts))) {

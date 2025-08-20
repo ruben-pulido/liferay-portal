@@ -15,17 +15,19 @@ import fillAndClickOutside from '../../../utils/fillAndClickOutside';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
 import {waitForAlert} from '../../../utils/waitForAlert';
+import {structureBuilderPagesTest} from '../structure-builder/fixtures/structureBuilderPagesTest';
 import {cmsPagesTest} from './fixtures/cmsPagesTest';
 
 const test = mergeTests(
 	cmsPagesTest,
 	dataApiHelpersTest,
 	featureFlagsTest({
-		'LPD-11232': {enabled: true},
 		'LPD-17564': {enabled: true},
+		'LPS-179669': {enabled: true},
 	}),
 	loginTest(),
-	pageEditorPagesTest
+	pageEditorPagesTest,
+	structureBuilderPagesTest
 );
 
 test(
@@ -140,7 +142,7 @@ test(
 
 		// Create new structure for Default space
 
-		await structureBuilderPage.createStructure();
+		await structureBuilderPage.goToCreateStructure();
 
 		await structureBuilderPage.selectSpaces(['Default']);
 
@@ -501,4 +503,77 @@ test.describe('Comments Panel', () => {
 			type: 'danger',
 		});
 	});
+});
+
+test.describe('Schedule Panel', () => {
+	test(
+		'Do not allow publishing if there are errors in the fields',
+		{tag: '@LPD-62099'},
+		async ({contentsPage, page}) => {
+
+			// Create a Blog
+
+			await contentsPage.goto();
+
+			await contentsPage.createContent('Basic Web Content');
+
+			await contentsPage.openSidePanel('Schedule');
+
+			const title = getRandomString();
+
+			await page.getByPlaceholder('New Basic Web Content').fill(title);
+
+			// Fill the input with an error
+
+			const expireCheckbox = page.getByLabel('Never Expire').first();
+
+			await expireCheckbox.uncheck();
+
+			const expirationDateField = page.getByRole('textbox', {
+				name: 'Expiration Date',
+			});
+
+			await expirationDateField.fill('05/12/2025');
+
+			// Try to publish the content
+
+			await contentsPage.publishButton.click();
+
+			const error = page.getByText('The field value is invalid.');
+
+			await expect(error).toBeVisible();
+
+			await expect(expirationDateField).toBeFocused();
+
+			// Close the panel and try to publish again
+
+			await page.getByTitle('Close', {exact: true}).click();
+
+			await expect(error).not.toBeVisible();
+
+			await contentsPage.publishButton.click();
+
+			await expect(error).toBeVisible();
+
+			await expect(expirationDateField).toBeFocused();
+
+			// Set a valid date and publish
+
+			const nextYear = new Date().getFullYear() + 1;
+
+			await expirationDateField.fill(`05/12/${nextYear} 12:55 PM`);
+
+			await expect(error).not.toBeVisible();
+
+			await contentsPage.publishButton.click();
+
+			await expect(
+				page.locator('.table-list-title a', {hasText: title})
+			).toBeAttached();
+
+			// Delete content
+
+			await contentsPage.deleteContent(title);
+		}
+	);
 });

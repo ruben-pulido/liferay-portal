@@ -19,7 +19,6 @@ import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.net.URI;
 
@@ -109,14 +108,17 @@ public class TrialRestController extends BaseRestController {
 				orderTypeExternalReferenceCode)
 		throws Exception {
 
+		JSONObject jsonObject = _getTrialProvisioningContextJSONObject(
+			orderTypeExternalReferenceCode);
+
+		String virtualHost =
+			projectPrefix + "." + jsonObject.getString("domain");
+
 		Page<PortalInstance> portalInstancePage = _getPortalInstancesPage(
-			_getTrialProvisioningContextJSONObject(
-				orderTypeExternalReferenceCode));
+			jsonObject);
 
 		for (PortalInstance portalInstance : portalInstancePage.getItems()) {
-			String virtualHost = portalInstance.getVirtualHost();
-
-			if (virtualHost.startsWith(projectPrefix)) {
+			if (Objects.equals(virtualHost, portalInstance.getVirtualHost())) {
 				return ResponseEntity.status(
 					HttpStatus.CONFLICT
 				).build();
@@ -171,7 +173,7 @@ public class TrialRestController extends BaseRestController {
 
 		Order order = _marketplaceService.getOrder(
 			trialExtensionRequestJSONObject.getLong(
-				"r_orderTrialExtensionRequest_commerceOrderId"));
+				"r_orderToTrialExtensionRequest_commerceOrderId"));
 
 		Map<String, String> customFields =
 			(Map<String, String>)order.getCustomFields();
@@ -186,18 +188,20 @@ public class TrialRestController extends BaseRestController {
 			"trial-end-date",
 			trialEndDateZonedDateTime.format(DateTimeFormatter.ISO_INSTANT));
 
-		patch(
-			_liferayOAuth2AccessTokenManager.getAuthorization(
-				"liferay-marketplace-etc-spring-boot-oauth-application-" +
-					"headless-server"),
-			new JSONObject(
-			).put(
-				"dueStatus", "Approved"
-			).toString(),
-			UriComponentsBuilder.fromPath(
-				"/o/c/trialextensionrequests/" + id
-			).build(
-			).toUri());
+		if (Objects.equals(dueStatusJSONObject.getString("key"), "Pending")) {
+			patch(
+				_liferayOAuth2AccessTokenManager.getAuthorization(
+					"liferay-marketplace-etc-spring-boot-oauth-application-" +
+						"headless-server"),
+				new JSONObject(
+				).put(
+					"dueStatus", "Approved"
+				).toString(),
+				UriComponentsBuilder.fromPath(
+					"/o/c/trialextensionrequests/" + id
+				).build(
+				).toUri());
+		}
 
 		_marketplaceService.updateOrder(
 			customFields, order.getId(), order.getOrderStatus());
@@ -221,8 +225,7 @@ public class TrialRestController extends BaseRestController {
 				ZonedDateTime.parse(
 					customFields.get("trial-end-date")
 				).format(
-					DateTimeFormatter.ofPattern(
-						"MMMM d, yyyy", LocaleUtil.ENGLISH)
+					DateTimeFormatter.ofPattern("MMMM d, yyyy")
 				)
 			).build());
 
@@ -305,11 +308,25 @@ public class TrialRestController extends BaseRestController {
 				).build());
 		}
 
-		PortalInstance portalInstance = _postPortalInstance(
-			jwt, modelDTOOrderJSONObject.getString("creatorEmailAddress"),
-			trialSettingsJSONObject.optString(
-				"projectId", String.valueOf(orderId)),
-			trialProvisioningContextJSONObject);
+		PortalInstance portalInstance = null;
+
+		try {
+			portalInstance = _postPortalInstance(
+				jwt, modelDTOOrderJSONObject.getString("creatorEmailAddress"),
+				trialSettingsJSONObject.optString(
+					"projectId", String.valueOf(orderId)),
+				trialProvisioningContextJSONObject);
+		}
+		catch (Exception exception) {
+			_log.error(
+				"Unable to provision portal instance for order " + orderId,
+				exception);
+
+			_marketplaceService.updateOrder(
+				null, orderId, MarketplaceConstants.ORDER_STATUS_CANCELLED);
+
+			throw exception;
+		}
 
 		try {
 			_consoleService.setUpProject(

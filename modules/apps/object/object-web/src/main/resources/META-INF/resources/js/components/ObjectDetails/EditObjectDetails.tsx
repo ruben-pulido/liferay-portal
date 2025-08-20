@@ -5,6 +5,7 @@
 
 import ClayPanel from '@clayui/panel';
 import {API, openToast, stringUtils} from '@liferay/object-js-components-web';
+import {ILearnResourceContext} from 'frontend-js-components-web';
 import React, {useEffect, useState} from 'react';
 
 import {Error, handleErrors} from '../../utils/errors';
@@ -13,15 +14,16 @@ import {AccountRestrictionContainer} from './AccountRestrictionContainer';
 import {ConfigurationContainer} from './ConfigurationContainer';
 import {EntryDisplayContainer} from './EntryDisplayContainer';
 import {ExternalDataSourceContainer} from './ExternalDataSourceContainer';
+import {InheritanceObjectDefinitionAlert} from './InheritanceObjectDefinitionAlert';
 import {ObjectDataContainer} from './ObjectDataContainer';
 import {ScopeContainer} from './ScopeContainer';
 import {SeoContainer} from './SeoContainer';
 import Sheet from './Sheet';
+import {SubscriptionsContainer} from './SubscriptionsContainer';
 import {TranslationsContainer} from './TranslationsContainer';
 import {useObjectDetailsForm} from './useObjectDetailsForm';
 
 import './ObjectDetails.scss';
-import {SubscriptionsContainer} from './SubscriptionsContainer';
 
 export type Scope = {
 	items: LabelValueObject[];
@@ -39,6 +41,7 @@ interface EditObjectDetailsProps {
 	isRootDescendantNode: boolean;
 	isRootNode: boolean;
 	label: LocalizedValue<string>;
+	learnResources: ILearnResourceContext;
 	nonRelationshipObjectFieldsInfo: {
 		label: LocalizedValue<string>;
 		name: string;
@@ -85,6 +88,7 @@ export default function EditObjectDetails({
 	isRootDescendantNode,
 	isRootNode,
 	label,
+	learnResources,
 	nonRelationshipObjectFieldsInfo,
 	objectDefinitionExternalReferenceCode,
 	objectDefinitionId,
@@ -210,7 +214,7 @@ export default function EditObjectDetails({
 		);
 
 	const showSubscriptionSection =
-		Liferay.FeatureFlags['LPD-42577'] &&
+		Liferay.FeatureFlags['LPD-17564'] &&
 		!(!values.modifiable && values.system);
 
 	return (
@@ -244,6 +248,12 @@ export default function EditObjectDetails({
 
 			<div className="lfr-objects__object-definition-details">
 				<Sheet title={Liferay.Language.get('basic-information')}>
+					{isRootDescendantNode && (
+						<InheritanceObjectDefinitionAlert
+							learnResources={learnResources}
+						/>
+					)}
+
 					<ClayPanel
 						displayTitle={Liferay.Language.get(
 							'object-definition-data'
@@ -325,7 +335,6 @@ export default function EditObjectDetails({
 									hasUpdateObjectDefinitionPermission
 								}
 								isApproved={isApproved}
-								isRootDescendantNode={isRootDescendantNode}
 								setValues={setValues}
 								sites={sites}
 								values={values}
@@ -346,7 +355,6 @@ export default function EditObjectDetails({
 								<AccountRestrictionContainer
 									errors={errors}
 									isApproved={isApproved}
-									isRootDescendantNode={isRootDescendantNode}
 									objectFields={objectFields}
 									setValues={setValues}
 									values={values}
@@ -369,7 +377,6 @@ export default function EditObjectDetails({
 								isEnableObjectEntrySchedule={
 									isEnableObjectEntrySchedule
 								}
-								isRootDescendantNode={isRootDescendantNode}
 								setValues={setValues}
 								values={values}
 							/>

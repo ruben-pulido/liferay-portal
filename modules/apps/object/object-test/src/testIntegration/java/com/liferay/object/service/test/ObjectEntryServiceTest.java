@@ -16,6 +16,7 @@ import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
+import com.liferay.object.exception.NoSuchObjectEntryException;
 import com.liferay.object.exception.ObjectEntryCountException;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
@@ -35,12 +36,14 @@ import com.liferay.object.tree.Edge;
 import com.liferay.object.tree.Node;
 import com.liferay.object.tree.Tree;
 import com.liferay.object.tree.constants.TreeConstants;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
@@ -57,6 +60,7 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserNotificationEventLocalService;
 import com.liferay.portal.kernel.service.permission.ModelPermissionsFactory;
 import com.liferay.portal.kernel.test.AssertUtils;
@@ -64,6 +68,7 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
@@ -758,6 +763,87 @@ public class ObjectEntryServiceTest {
 				"User ", _user.getUserId(), " must have VIEW permission for ",
 				_rootObjectDefinition.getClassName(), " ", rootObjectEntryId),
 			() -> _objectEntryService.getObjectEntry(rootObjectEntryId));
+	}
+
+	@Test
+	public void testGetOrAddEmptyObjectEntry() throws Exception {
+
+		// Lazy referencing disabled
+
+		Role role = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
+
+		RoleTestUtil.addResourcePermission(
+			role, _objectDefinition.getResourceName(),
+			ResourceConstants.SCOPE_COMPANY,
+			String.valueOf(TestPropsValues.getCompanyId()),
+			ObjectActionKeys.ADD_OBJECT_ENTRY);
+
+		User user = UserTestUtil.addUser();
+
+		UserLocalServiceUtil.addRoleUser(role.getRoleId(), user.getUserId());
+
+		_setUser(user);
+
+		long userId1 = user.getUserId();
+
+		String externalReferenceCode = RandomTestUtil.randomString();
+
+		AssertUtils.assertFailure(
+			NoSuchObjectEntryException.class,
+			StringBundler.concat(
+				"No ObjectEntry exists with the key {externalReferenceCode=",
+				externalReferenceCode, ", groupId=", _group.getGroupId(),
+				", companyId=", _group.getCompanyId(), ", objectDefinitionId=",
+				_objectDefinition.getObjectDefinitionId(), "}"),
+			() -> _objectEntryService.getOrAddEmptyObjectEntry(
+				externalReferenceCode, _group.getGroupId(), userId1,
+				_objectDefinition.getObjectDefinitionId()));
+
+		// Lazy referencing enabled
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			// With permissions
+
+			ObjectEntry objectEntry =
+				_objectEntryService.getOrAddEmptyObjectEntry(
+					RandomTestUtil.randomString(), _group.getGroupId(),
+					user.getUserId(),
+					_objectDefinition.getObjectDefinitionId());
+
+			// Without permissions
+
+			user = UserTestUtil.addUser();
+
+			_setUser(user);
+
+			long userId2 = user.getUserId();
+
+			AssertUtils.assertFailure(
+				PrincipalException.MustHavePermission.class,
+				StringBundler.concat(
+					"User ", userId2,
+					" must have ADD_OBJECT_ENTRY permission for ",
+					_objectDefinition.getResourceName(), " ",
+					_group.getGroupId()),
+				() -> _objectEntryService.getOrAddEmptyObjectEntry(
+					RandomTestUtil.randomString(), _group.getGroupId(), userId2,
+					_objectDefinition.getObjectDefinitionId()));
+
+			// Without permissions, existing object entry
+
+			AssertUtils.assertFailure(
+				PrincipalException.MustHavePermission.class,
+				StringBundler.concat(
+					"User ", userId2, " must have VIEW permission for ",
+					objectEntry.getModelClassName(), " ",
+					objectEntry.getObjectEntryId()),
+				() -> _objectEntryService.getOrAddEmptyObjectEntry(
+					objectEntry.getExternalReferenceCode(),
+					objectEntry.getGroupId(), userId2,
+					objectEntry.getObjectDefinitionId()));
+		}
 	}
 
 	@Test

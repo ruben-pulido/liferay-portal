@@ -1,17 +1,17 @@
 {
 	"dependencies": {
-		"@clayui/alert": "3.129.1",
-		"@clayui/button": "3.136.0",
-		"@clayui/core": "3.141.1",
-		"@clayui/date-picker": "3.141.1",
-		"@clayui/drop-down": "3.141.1",
-		"@clayui/empty-state": "3.128.0",
-		"@clayui/form": "3.141.1",
-		"@clayui/icon": "3.128.0",
-		"@clayui/link": "3.141.0",
-		"@clayui/list": "3.141.1",
-		"@clayui/loading-indicator": "3.128.0",
-		"@clayui/modal": "3.141.1",
+		"@clayui/alert": "3.130.0",
+		"@clayui/button": "3.137.0",
+		"@clayui/core": "3.142.2",
+		"@clayui/date-picker": "3.142.2",
+		"@clayui/drop-down": "3.142.2",
+		"@clayui/empty-state": "3.129.0",
+		"@clayui/form": "3.142.0",
+		"@clayui/icon": "3.129.0",
+		"@clayui/link": "3.142.0",
+		"@clayui/list": "3.142.2",
+		"@clayui/loading-indicator": "3.129.0",
+		"@clayui/modal": "3.142.0",
 		"classnames": "2.3.1",
 		"frontend-js-components-web": "*",
 		"frontend-js-web": "*",
@@ -28,5 +28,5 @@
 		"format": "node-scripts format",
 		"test": "node-scripts test"
 	},
-	"version": "5.0.149"
+	"version": "5.0.150"
 }

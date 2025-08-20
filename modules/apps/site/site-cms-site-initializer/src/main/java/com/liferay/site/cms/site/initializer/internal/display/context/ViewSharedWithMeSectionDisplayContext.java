@@ -5,11 +5,15 @@
 
 package com.liferay.site.cms.site.initializer.internal.display.context;
 
+import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,7 +29,7 @@ public class ViewSharedWithMeSectionDisplayContext {
 
 	public String getAPIURL() {
 		return "/o/headless-admin-user/v1.0/my-user-account/shared-assets" +
-			"/shared-with-me";
+			"/shared-with-me?filter=spaceDepotEntry eq true";
 	}
 
 	public Map<String, Object> getEmptyState() {
@@ -41,6 +45,15 @@ public class ViewSharedWithMeSectionDisplayContext {
 			LanguageUtil.get(
 				_httpServletRequest, "no-items-shared-with-you-yet")
 		).build();
+	}
+
+	public List<FDSActionDropdownItem> getFDSActionDropdownItems()
+		throws PortalException {
+
+		return ListUtil.fromArray(
+			new FDSActionDropdownItem(
+				"link/to/view/item", "pencil", "actionLink", "view", "get",
+				"view", null));
 	}
 
 	private final HttpServletRequest _httpServletRequest;

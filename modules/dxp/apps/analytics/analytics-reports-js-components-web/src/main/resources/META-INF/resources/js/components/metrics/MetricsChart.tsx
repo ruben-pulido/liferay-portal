@@ -16,7 +16,7 @@ import {
 	YAxis,
 } from 'recharts';
 
-import {RangeSelectors} from '../../types/global';
+import {RangeSelectors} from '../RangeSelectorsDropdown';
 import AccessibleTick, {IAccessibleTickProps} from './AccessibleTick';
 import EmptyChart, {IChartEmptyStateProps} from './EmptyChart';
 import MetricsChartLegend, {
@@ -95,6 +95,7 @@ interface IMetricsChartProps extends React.HTMLAttributes<HTMLElement> {
 	activeTabIndex: boolean;
 	emptyChartProps: IChartEmptyStateProps;
 	formattedData: FormattedData;
+	legendAlign?: string;
 	legendItems: IMetricsChartLegendProps['legendItems'];
 	onChartBlur: () => void;
 	onChartFocus: () => void;
@@ -139,6 +140,7 @@ const MetricsChart: React.FC<IMetricsChartProps> = ({
 	children,
 	emptyChartProps,
 	formattedData,
+	legendAlign = 'text-left',
 	legendItems,
 	onChartBlur,
 	onChartFocus,
@@ -172,9 +174,7 @@ const MetricsChart: React.FC<IMetricsChartProps> = ({
 						const firstLegend =
 							metricChartRef.current?.querySelector(
 								'.metrics-chart__legend li:first-child'
-							);
-
-						// @ts-ignore
+							) as HTMLElement;
 
 						firstLegend.focus();
 					}
@@ -189,12 +189,10 @@ const MetricsChart: React.FC<IMetricsChartProps> = ({
 						const firstTick =
 							metricChartRef.current?.querySelectorAll(
 								'.accessibility-tick-line'
-							)?.[0];
+							)?.[0] as HTMLElement;
 
 						if (firstTick) {
 							firstTick.classList.add('active');
-
-							// @ts-ignore
 
 							firstTick.focus();
 						}
@@ -238,6 +236,8 @@ const MetricsChart: React.FC<IMetricsChartProps> = ({
 								stroke: '#E7E7ED',
 							}}
 							dataKey={xAxisDataKey}
+
+							// eslint-disable-next-line react-compiler/react-compiler
 							tick={getAccessibleAxisX({
 								activeTabIndex,
 								changeTooltipProps: handleChangeTooltip,
@@ -302,6 +302,7 @@ const MetricsChart: React.FC<IMetricsChartProps> = ({
 
 				<MetricsChartLegend
 					activeTabIndex={activeTabIndex}
+					align={legendAlign}
 					legendItems={legendItems}
 					onDatakeyChange={onDatakeyChange}
 				/>

@@ -178,16 +178,6 @@ public abstract class BaseInventoryAnalysisResourceTestCase {
 		Assert.assertTrue(false);
 	}
 
-	@Test
-	public void testGraphQLGetInventoryAnalysis() throws Exception {
-		Assert.assertTrue(true);
-	}
-
-	@Test
-	public void testGraphQLGetInventoryAnalysisNotFound() throws Exception {
-		Assert.assertTrue(true);
-	}
-
 	protected void assertContains(
 		InventoryAnalysis inventoryAnalysis,
 		List<InventoryAnalysis> inventoryAnalysises) {

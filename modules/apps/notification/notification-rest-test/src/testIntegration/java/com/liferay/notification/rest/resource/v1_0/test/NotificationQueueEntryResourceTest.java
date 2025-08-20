@@ -6,10 +6,23 @@
 package com.liferay.notification.rest.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.notification.constants.NotificationConstants;
+import com.liferay.notification.constants.NotificationRecipientSettingConstants;
 import com.liferay.notification.rest.client.dto.v1_0.NotificationQueueEntry;
+import com.liferay.notification.rest.client.pagination.Page;
 import com.liferay.notification.rest.client.serdes.v1_0.NotificationQueueEntrySerDes;
+import com.liferay.notification.service.NotificationTemplateLocalService;
+import com.liferay.notification.test.util.NotificationTemplateUtil;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.test.util.ObjectActionTestUtil;
+import com.liferay.object.test.util.ObjectDefinitionTestUtil;
+import com.liferay.object.test.util.ObjectEntryTestUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.test.rule.Inject;
 
 import java.util.TreeMap;
 
@@ -172,11 +185,30 @@ public class NotificationQueueEntryResourceTest
 		super.testDeleteNotificationQueueEntryBatch();
 	}
 
-	@Ignore
 	@Override
 	@Test
 	public void testGetNotificationQueueEntriesPage() throws Exception {
 		super.testGetNotificationQueueEntriesPage();
+
+		ObjectDefinition objectDefinition =
+			ObjectDefinitionTestUtil.publishObjectDefinition();
+
+		ObjectActionTestUtil.addObjectAction(
+			_notificationTemplateLocalService.addNotificationTemplate(
+				NotificationTemplateUtil.createNotificationContext(
+					NotificationConstants.TYPE_EMAIL)),
+			objectDefinition);
+
+		ObjectEntryTestUtil.addObjectEntry(objectDefinition);
+
+		_objectDefinitionLocalService.deleteObjectDefinition(
+			objectDefinition.getObjectDefinitionId());
+
+		Page<NotificationQueueEntry> notificationQueueEntriesPage =
+			notificationQueueEntryResource.getNotificationQueueEntriesPage(
+				null, null, null, null);
+
+		Assert.assertTrue(notificationQueueEntriesPage.getTotalCount() > 0);
 	}
 
 	@Ignore
@@ -245,5 +277,45 @@ public class NotificationQueueEntryResourceTest
 	public void testVulcanCRUDItemDelegateGetItem() throws Exception {
 		super.testVulcanCRUDItemDelegateGetItem();
 	}
+
+	@Override
+	protected NotificationQueueEntry randomNotificationQueueEntry()
+		throws Exception {
+
+		return new NotificationQueueEntry() {
+			{
+				recipients = new Object[] {
+					HashMapBuilder.<String, Object>put(
+						NotificationRecipientSettingConstants.NAME_FROM,
+						"[%CURRENT_USER_EMAIL_ADDRESS%]"
+					).put(
+						NotificationRecipientSettingConstants.NAME_FROM_NAME,
+						"[%CURRENT_USER_FIRST_NAME%]"
+					).put(
+						NotificationRecipientSettingConstants.NAME_TO,
+						"[%CURRENT_USER_EMAIL_ADDRESS%]"
+					).build()
+				};
+				subject = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				type = NotificationConstants.TYPE_EMAIL;
+			}
+		};
+	}
+
+	@Override
+	protected NotificationQueueEntry
+			testGetNotificationQueueEntriesPage_addNotificationQueueEntry(
+				NotificationQueueEntry notificationQueueEntry)
+		throws Exception {
+
+		return notificationQueueEntryResource.postNotificationQueueEntry(
+			notificationQueueEntry);
+	}
+
+	@Inject
+	private NotificationTemplateLocalService _notificationTemplateLocalService;
+
+	@Inject
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 }

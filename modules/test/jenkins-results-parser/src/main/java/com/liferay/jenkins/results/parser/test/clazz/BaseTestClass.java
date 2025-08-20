@@ -176,6 +176,11 @@ public abstract class BaseTestClass implements TestClass {
 	}
 
 	@Override
+	public String getTestClassName() {
+		return getName();
+	}
+
+	@Override
 	public TestHistory getTestHistory() {
 		if (_testHistory != null) {
 			return _testHistory;
@@ -222,6 +227,13 @@ public abstract class BaseTestClass implements TestClass {
 		}
 
 		return true;
+	}
+
+	@Override
+	public boolean isBuildCachingEnabled() {
+		BatchTestClassGroup batchTestClassGroup = getBatchTestClassGroup();
+
+		return batchTestClassGroup.isBuildCachingEnabled();
 	}
 
 	@Override

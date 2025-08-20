@@ -5,10 +5,14 @@
 
 package com.liferay.site.cms.site.initializer.internal.display.context;
 
+import com.liferay.depot.model.DepotEntry;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -17,6 +21,7 @@ import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.cms.site.initializer.internal.constants.CMSSpaceConstants;
 import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
+import com.liferay.taglib.security.PermissionsURLTag;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -58,15 +63,41 @@ public class BreadcrumbDisplayContext {
 					"symbolLeft", "cog"
 				),
 				JSONUtil.put(
+					"href",
+					PermissionsURLTag.doTag(
+						StringPool.BLANK, DepotEntry.class.getName(),
+						group.getName(), null,
+						String.valueOf(group.getClassPK()),
+						LiferayWindowState.POP_UP.toString(), null,
+						_httpServletRequest)
+				).put(
 					"label",
 					LanguageUtil.get(_httpServletRequest, "permissions")
 				).put(
 					"symbolLeft", "password-policies"
+				).put(
+					"target", "modal"
 				),
 				JSONUtil.put(
+					"confirmationMessage",
+					LanguageUtil.get(
+						_httpServletRequest,
+						"are-you-sure-you-want-to-delete-this-entry")
+				).put(
+					"href",
+					"/o/headless-asset-library/v1.0/asset-libraries/" +
+						group.getClassPK()
+				).put(
 					"label", LanguageUtil.get(_httpServletRequest, "delete")
 				).put(
+					"redirect",
+					StringBundler.concat(
+						_themeDisplay.getPathFriendlyURLPublic(),
+						GroupConstants.CMS_FRIENDLY_URL, "/all-spaces")
+				).put(
 					"symbolLeft", "trash"
+				).put(
+					"target", "asyncDelete"
 				))
 		).put(
 			"breadcrumbItems",

@@ -195,6 +195,11 @@ public class ServletDataImpl implements ServletData {
 							BatchTestEntityResourceImpl.class,
 							"putBatchTestEntityByExternalReferenceCode"));
 					put(
+						"mutation#deleteCompanyTestEntityByExternalReferenceCode",
+						new ObjectValuePair<>(
+							CompanyTestEntityResourceImpl.class,
+							"deleteCompanyTestEntityByExternalReferenceCode"));
+					put(
 						"mutation#patchCompanyTestEntity",
 						new ObjectValuePair<>(
 							CompanyTestEntityResourceImpl.class,
@@ -259,6 +264,11 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							ERCAssetLibraryTestEntityResourceImpl.class,
 							"putAssetLibraryERCAssetLibraryTestEntity"));
+					put(
+						"mutation#updateAssetLibraryERCAssetLibraryTestEntityPermissionsPage",
+						new ObjectValuePair<>(
+							ERCAssetLibraryTestEntityResourceImpl.class,
+							"putAssetLibraryERCAssetLibraryTestEntityPermissionsPage"));
 					put(
 						"mutation#deleteAssetLibraryERCScopedTestEntity",
 						new ObjectValuePair<>(
@@ -335,6 +345,11 @@ public class ServletDataImpl implements ServletData {
 							ERCSiteTestEntityResourceImpl.class,
 							"putSiteERCSiteTestEntity"));
 					put(
+						"mutation#updateSiteERCSiteTestEntityPermissionsPage",
+						new ObjectValuePair<>(
+							ERCSiteTestEntityResourceImpl.class,
+							"putSiteERCSiteTestEntityPermissionsPage"));
+					put(
 						"mutation#createFiltersPageExportBatch",
 						new ObjectValuePair<>(
 							FilterResourceImpl.class,
@@ -344,6 +359,21 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							MultipartTestEntityResourceImpl.class,
 							"patchMultipartTestEntity"));
+					put(
+						"mutation#createMultipartTestEntity",
+						new ObjectValuePair<>(
+							MultipartTestEntityResourceImpl.class,
+							"postMultipartTestEntity"));
+					put(
+						"mutation#createMultipartTestEntity",
+						new ObjectValuePair<>(
+							MultipartTestEntityResourceImpl.class,
+							"postMultipartTestEntity"));
+					put(
+						"mutation#createMultipartTestEntityBatch",
+						new ObjectValuePair<>(
+							MultipartTestEntityResourceImpl.class,
+							"postMultipartTestEntityBatch"));
 					put(
 						"mutation#updateMultipartTestEntity",
 						new ObjectValuePair<>(
@@ -534,6 +564,11 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							TestEntityResourceImpl.class,
 							"putTestEntityBatch"));
+					put(
+						"mutation#updateTestEntityStatus",
+						new ObjectValuePair<>(
+							TestEntityResourceImpl.class,
+							"putTestEntityStatus"));
 
 					put(
 						"query#assetLibraryAssetLibraryTestEntities",
@@ -586,6 +621,11 @@ public class ServletDataImpl implements ServletData {
 							ERCAssetLibraryTestEntityResourceImpl.class,
 							"getAssetLibraryERCAssetLibraryTestEntity"));
 					put(
+						"query#assetLibraryERCAssetLibraryTestEntityPermissions",
+						new ObjectValuePair<>(
+							ERCAssetLibraryTestEntityResourceImpl.class,
+							"getAssetLibraryERCAssetLibraryTestEntityPermissionsPage"));
+					put(
 						"query#assetLibraryERCScopedTestEntities",
 						new ObjectValuePair<>(
 							ERCScopedTestEntityResourceImpl.class,
@@ -615,6 +655,11 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							ERCSiteTestEntityResourceImpl.class,
 							"getSiteERCSiteTestEntity"));
+					put(
+						"query#eRCSiteTestEntityPermissions",
+						new ObjectValuePair<>(
+							ERCSiteTestEntityResourceImpl.class,
+							"getSiteERCSiteTestEntityPermissionsPage"));
 					put(
 						"query#entityModelResourceTestEntities1",
 						new ObjectValuePair<>(

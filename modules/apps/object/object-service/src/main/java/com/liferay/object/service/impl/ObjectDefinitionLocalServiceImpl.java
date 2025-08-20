@@ -152,6 +152,7 @@ import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.ResourceLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.SystemEventLocalService;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
@@ -183,6 +184,7 @@ import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.sharing.security.permission.resource.SharingModelResourcePermissionConfigurator;
 import com.liferay.sharing.service.SharingEntryLocalService;
 import com.liferay.subscription.service.SubscriptionLocalService;
+import com.liferay.trash.service.TrashEntryLocalService;
 
 import java.sql.PreparedStatement;
 
@@ -592,8 +594,14 @@ public class ObjectDefinitionLocalServiceImpl
 						_classNameLocalService.getClassNameId(
 							objectDefinition.getClassName()));
 
-					if (FeatureFlagManagerUtil.isEnabled("LPD-42577")) {
+					if (FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
 						_subscriptionLocalService.deleteSubscriptions(
+							objectDefinition.getCompanyId(),
+							objectDefinition.getClassName());
+					}
+
+					if (FeatureFlagManagerUtil.isEnabled("LPD-53981")) {
+						_trashEntryLocalService.deleteTrashEntries(
 							objectDefinition.getCompanyId(),
 							objectDefinition.getClassName());
 					}
@@ -1033,7 +1041,7 @@ public class ObjectDefinitionLocalServiceImpl
 				_portletLocalService, _resourceActions, _userLocalService,
 				_resourcePermissionLocalService, _searchLocalizationHelper,
 				_sharingModelResourcePermissionConfigurator,
-				_workflowDefinitionLinkLocalService,
+				_systemEventLocalService, _workflowDefinitionLinkLocalService,
 				_workflowStatusModelPreFilterContributor,
 				_userGroupRoleLocalService);
 
@@ -1527,7 +1535,7 @@ public class ObjectDefinitionLocalServiceImpl
 		}
 
 		if (FeatureFlagManagerUtil.isEnabled(
-				objectDefinition.getCompanyId(), "LPD-42577")) {
+				objectDefinition.getCompanyId(), "LPD-17564")) {
 
 			objectDefinition.setEnableObjectEntrySubscription(
 				enableObjectEntrySubscription);
@@ -1571,7 +1579,7 @@ public class ObjectDefinitionLocalServiceImpl
 			objectDefinition, objectDefinitionSettings);
 
 		if (FeatureFlagManagerUtil.isEnabled(
-				objectDefinition.getCompanyId(), "LPD-42577") &&
+				objectDefinition.getCompanyId(), "LPD-17564") &&
 			objectDefinition.isEnableObjectEntrySubscription()) {
 
 			_objectActionLocalService.addOrUpdateSubscriptionObjectActions(
@@ -2539,7 +2547,7 @@ public class ObjectDefinitionLocalServiceImpl
 		}
 
 		if (FeatureFlagManagerUtil.isEnabled(
-				objectDefinition.getCompanyId(), "LPD-42577")) {
+				objectDefinition.getCompanyId(), "LPD-17564")) {
 
 			objectDefinition.setEnableObjectEntrySubscription(
 				enableObjectEntrySubscription);
@@ -2561,7 +2569,7 @@ public class ObjectDefinitionLocalServiceImpl
 		}
 
 		if (FeatureFlagManagerUtil.isEnabled(
-				objectDefinition.getCompanyId(), "LPD-42577") &&
+				objectDefinition.getCompanyId(), "LPD-17564") &&
 			(objectDefinition.isEnableObjectEntrySubscription() !=
 				oldEnableObjectEntrySubscription)) {
 
@@ -2923,7 +2931,7 @@ public class ObjectDefinitionLocalServiceImpl
 			boolean system)
 		throws PortalException {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-42577")) {
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
 			return;
 		}
 
@@ -3442,6 +3450,12 @@ public class ObjectDefinitionLocalServiceImpl
 
 	@Reference
 	private SubscriptionLocalService _subscriptionLocalService;
+
+	@Reference
+	private SystemEventLocalService _systemEventLocalService;
+
+	@Reference
+	private TrashEntryLocalService _trashEntryLocalService;
 
 	@Reference
 	private UserGroupRoleLocalService _userGroupRoleLocalService;

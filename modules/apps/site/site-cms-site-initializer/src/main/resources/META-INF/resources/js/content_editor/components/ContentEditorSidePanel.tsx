@@ -9,14 +9,19 @@ import '../../../css/content_editor/ContentEditorSidePanel.scss';
 
 import {Button, VerticalBar} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
+import {datetimeUtils} from '@liferay/object-js-components-web';
 import {LiferayEditorConfig} from 'frontend-editor-ckeditor-web';
 import {openToast} from 'frontend-js-components-web';
 import {fetch, objectToFormData} from 'frontend-js-web';
-import React, {useState} from 'react';
+import moment from 'moment';
+import React, {useEffect, useState} from 'react';
 
+import focusInvalidElement from '../../common/utils/focusInvalidElement';
+import {Comment} from '../services/CommentService';
+import {EVENT_VALIDATE_FORM} from './ContentEditorManagementBar';
 import CommentsPanel from './panels/CommentsPanel';
 import GeneralPanel from './panels/GeneralPanel';
-import {Comment} from './services/CommentService';
+import SchedulePanel from './panels/SchedulePanel';
 
 type Props = {
 	addCommentURL: string;
@@ -24,19 +29,43 @@ type Props = {
 	deleteCommentURL: string;
 	editCommentURL: string;
 	editorConfig: LiferayEditorConfig;
+	expirationDate: string;
 	id: string;
 	isSubscribed: boolean;
+	reviewDate: string;
 	subscribeURL: string;
 	type: string;
 	version: string;
 };
 
+type SidePanelProps = Props & {
+	dateConfig: datetimeUtils.DateConfig;
+	fields: ScheduleFields;
+	onUpdateFieldData: (props: UpdateFieldProps) => void;
+};
+
 type Item = {
-	component: React.ComponentType<Props>;
+	component: React.ComponentType<SidePanelProps>;
 	divider?: boolean;
 	icon: string;
 	id: string;
 	title: string;
+};
+
+type BaseData = {
+	error: string;
+	neverExpire: boolean;
+	value: string;
+};
+
+export type FieldData = BaseData & {
+	serverValue: string;
+};
+
+export type ScheduleFields = {expirationDate: FieldData; reviewDate: FieldData};
+
+export type UpdateFieldProps = BaseData & {
+	name: keyof ScheduleFields;
 };
 
 const items: Item[] = [
@@ -47,6 +76,12 @@ const items: Item[] = [
 		title: Liferay.Language.get('general'),
 	},
 	{
+		component: SchedulePanel,
+		icon: 'date-time',
+		id: 'schedule',
+		title: Liferay.Language.get('schedule'),
+	},
+	{
 		component: CommentsPanel,
 		icon: 'comments',
 		id: 'comments',
@@ -54,8 +89,112 @@ const items: Item[] = [
 	},
 ];
 
+const dateConfig = datetimeUtils.generateDateConfigurations({
+	defaultLanguageId: Liferay.ThemeDisplay.getDefaultLanguageId(),
+	locale: Liferay.ThemeDisplay.getLanguageId(),
+	type: 'DateTime',
+});
+
 export default function ContentEditorSidePanel(props: Props) {
+	const [formId, setFormId] = useState<string | undefined>();
+	const [scheduleFields, setScheduleFields] = useState<ScheduleFields>({
+		expirationDate: {
+			error: '',
+			neverExpire: Boolean(props.expirationDate),
+			serverValue: props.expirationDate,
+			value: toMomentDate(props.expirationDate),
+		},
+		reviewDate: {
+			error: '',
+			neverExpire: Boolean(props.reviewDate),
+			serverValue: props.reviewDate,
+			value: toMomentDate(props.reviewDate),
+		},
+	});
+
+	const onUpdateFieldData = ({
+		error,
+		name,
+		neverExpire,
+		value,
+	}: UpdateFieldProps) => {
+		const values = neverExpire
+			? {serverValue: ''}
+			: {
+					serverValue: toServerFormat(value).replace(' ', 'T'),
+					value,
+				};
+
+		setScheduleFields((fields: ScheduleFields) => ({
+			...fields,
+			[name]: {
+				...fields[name],
+				...values,
+				error,
+			},
+		}));
+	};
+
+	useEffect(() => {
+		const form = document.querySelector('.lfr-layout-structure-item-form');
+
+		if (form) {
+			setFormId(form.id);
+		}
+	}, []);
+
+	return (
+		<>
+			<SidePanel
+				{...props}
+				dateConfig={dateConfig}
+				fields={scheduleFields}
+				onUpdateFieldData={onUpdateFieldData}
+			/>
+			{Object.entries(scheduleFields).map(([name, {serverValue}]) => (
+				<input
+					form={formId}
+					key={name}
+					name={name}
+					type="hidden"
+					value={serverValue}
+				/>
+			))}
+		</>
+	);
+}
+
+function SidePanel(props: SidePanelProps) {
+	const [hasError, setHasError] = useState<boolean>(false);
 	const [panel, setPanel] = useState<React.Key | null>(null);
+
+	useEffect(() => {
+		const validateScheduleFields = ({event}: {event: MouseEvent}) => {
+			const hasError = Object.values(props.fields).some(
+				(field) => field.error && field.serverValue
+			);
+
+			if (hasError) {
+				event.preventDefault();
+
+				setPanel(Liferay.Language.get('schedule'));
+				setHasError(true);
+			}
+		};
+
+		Liferay.on(EVENT_VALIDATE_FORM, validateScheduleFields);
+
+		return () => {
+			Liferay.detach(EVENT_VALIDATE_FORM, validateScheduleFields);
+		};
+	}, [props.fields]);
+
+	useEffect(() => {
+		if (hasError) {
+			focusInvalidElement();
+			setHasError(false);
+		}
+	}, [hasError]);
 
 	return (
 		<VerticalBar
@@ -127,8 +266,8 @@ function SubscribeButton({
 	const [subscribed, setSubscribed] = useState<boolean>(isSubscribed);
 
 	const title = subscribed
-		? Liferay.Language.get('subscribe')
-		: Liferay.Language.get('unsubscribe');
+		? Liferay.Language.get('unsubscribe')
+		: Liferay.Language.get('subscribe');
 
 	return (
 		<ClayButtonWithIcon
@@ -177,8 +316,18 @@ function SubscribeButton({
 				}
 			}}
 			size="sm"
-			symbol={subscribed ? 'bell-on' : 'bell-off'}
+			symbol={subscribed ? 'bell-off' : 'bell-on'}
 			title={title}
 		/>
+	);
+}
+
+function toMomentDate(value: string) {
+	return value ? moment(value).format(dateConfig.momentFormat) : '';
+}
+
+export function toServerFormat(value: string) {
+	return moment(value, dateConfig.momentFormat, true).format(
+		dateConfig.serverFormat
 	);
 }

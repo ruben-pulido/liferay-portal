@@ -8,14 +8,15 @@ package com.liferay.jenkins.results.parser.testray;
 import com.liferay.jenkins.results.parser.Build;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.TopLevelBuildReport;
+import com.liferay.jenkins.results.parser.test.clazz.ServiceBuilderAntTargetTestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassMethod;
 import com.liferay.jenkins.results.parser.test.clazz.group.AxisTestClassGroup;
 import com.liferay.jenkins.results.parser.test.clazz.group.FunctionalAxisTestClassGroup;
 import com.liferay.jenkins.results.parser.test.clazz.group.JSUnitAxisTestClassGroup;
 import com.liferay.jenkins.results.parser.test.clazz.group.JUnitAxisTestClassGroup;
+import com.liferay.jenkins.results.parser.test.clazz.group.ModulesAxisTestClassGroup;
 import com.liferay.jenkins.results.parser.test.clazz.group.PlaywrightAxisTestClassGroup;
-import com.liferay.jenkins.results.parser.test.clazz.group.SemVerModulesAxisTestClassGroup;
 
 import java.io.File;
 
@@ -86,19 +87,23 @@ public class TestrayFactory {
 					testrayBuild, topLevelBuildReport, axisTestClassGroup,
 					testClass);
 			}
+			else if (axisTestClassGroup instanceof ModulesAxisTestClassGroup) {
+				if (testClass instanceof ServiceBuilderAntTargetTestClass) {
+					return new AntTargetBatchBuildTestrayCaseResult(
+						testrayBuild, topLevelBuildReport, axisTestClassGroup,
+						testClass);
+				}
+
+				return new ModulesBatchBuildTestrayCaseResult(
+					testrayBuild, topLevelBuildReport, axisTestClassGroup,
+					testClass);
+			}
 			else if (axisTestClassGroup instanceof
 						PlaywrightAxisTestClassGroup) {
 
 				return new PlaywrightBatchBuildTestrayCaseResult(
 					testrayBuild, topLevelBuildReport, axisTestClassGroup,
 					testClass, testClassMethod);
-			}
-			else if (axisTestClassGroup instanceof
-						SemVerModulesAxisTestClassGroup) {
-
-				return new SemVerModulesBatchBuildTestrayCaseResult(
-					testrayBuild, topLevelBuildReport, axisTestClassGroup,
-					testClass);
 			}
 		}
 
@@ -183,7 +188,7 @@ public class TestrayFactory {
 			return testrayAttachmentUploader;
 		}
 
-		testrayAttachmentUploader = new S3TestrayAttachmentUploader(
+		testrayAttachmentUploader = new CloudObjectTestrayAttachmentUploader(
 			build, testrayServerURL);
 
 		_testrayAttachmentUploaders.put(key, testrayAttachmentUploader);

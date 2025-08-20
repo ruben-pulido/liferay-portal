@@ -23,6 +23,7 @@ export interface SpaceMembersWithListProps {
 	assetLibraryCreatorUserId: string;
 	assetLibraryId: string;
 	className?: string;
+	hasAssignMembersPermission: boolean;
 	onHasSelectedMembersChange?: (hasSelectedMembers: boolean) => void;
 	pageSize?: number;
 }
@@ -32,6 +33,7 @@ const DEFAULT_PAGE_SIZE = 20;
 export function SpaceMembersWithList({
 	assetLibraryCreatorUserId,
 	assetLibraryId,
+	hasAssignMembersPermission,
 	className,
 	onHasSelectedMembersChange,
 	pageSize = DEFAULT_PAGE_SIZE,
@@ -301,9 +303,7 @@ export function SpaceMembersWithList({
 		if (error) {
 			openToast({
 				message: sub(
-					Liferay.Language.get(
-						'unable-to-remove-group-x-from-space-x'
-					),
+					Liferay.Language.get('unable-to-remove-group-x-from-space'),
 					[`<strong>${item.name}</strong>`]
 				),
 				type: 'danger',
@@ -313,7 +313,7 @@ export function SpaceMembersWithList({
 			openToast({
 				message: sub(
 					Liferay.Language.get(
-						'group-x-successfully-removed-from-space-x'
+						'group-x-successfully-removed-from-space'
 					),
 					[`<strong>${item.name}</strong>`]
 				),
@@ -327,6 +327,7 @@ export function SpaceMembersWithList({
 	return (
 		<div className={classNames('space-members-with-list', className)}>
 			<SpaceMembersInputWithSelect
+				disabled={!hasAssignMembersPermission}
 				onAutocompleteItemSelected={onAutocompleteItemSelected}
 				onSelectChange={(value) => {
 					setSelectedOption(value);
@@ -340,7 +341,7 @@ export function SpaceMembersWithList({
 
 			<ul
 				aria-labelledby={listLabelId}
-				className="c-mt-3 c-p-0 members-list"
+				className="c-mt-3 c-p-0 list-unstyled members-list"
 			>
 				{selectedOption === SelectOptions.USERS ? (
 					<MembersListItem
@@ -349,6 +350,7 @@ export function SpaceMembersWithList({
 						emptyMessage={Liferay.Language.get(
 							'this-space-has-no-user-yet'
 						)}
+						hasAssignMembersPermission={hasAssignMembersPermission}
 						itemType="user"
 						items={selectedUsers}
 						onRemoveItem={onRemoveItem}
@@ -358,6 +360,7 @@ export function SpaceMembersWithList({
 						emptyMessage={Liferay.Language.get(
 							'this-space-has-no-group-yet'
 						)}
+						hasAssignMembersPermission={hasAssignMembersPermission}
 						itemType="group"
 						items={selectedUserGroups}
 						onRemoveItem={onRemoveItem}

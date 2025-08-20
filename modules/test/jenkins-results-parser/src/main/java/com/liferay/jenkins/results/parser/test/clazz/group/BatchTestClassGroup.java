@@ -212,7 +212,7 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 		List<DownstreamBuildReport> cachedDownstreamBuildReports =
 			new ArrayList<>();
 
-		if (!JenkinsResultsParserUtil.isBuildCachingEnabled() ||
+		if (!isBuildCachingEnabled() ||
 			!JenkinsResultsParserUtil.isCloudCINode()) {
 
 			return cachedDownstreamBuildReports;
@@ -335,6 +335,10 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 		}
 
 		return topLevelJobName + batchJobSuffix;
+	}
+
+	public Map<String, List<String>> getGlobTestClassMethodNamesMap() {
+		return _globTestClassMethodNamesMap;
 	}
 
 	@Override
@@ -507,6 +511,12 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 		return testTaskHistory.getTestTaskName();
 	}
 
+	public boolean isBuildCachingEnabled() {
+		Job job = getJob();
+
+		return job.isBuildCachingEnabled();
+	}
+
 	public boolean isTestAnalyticsCloud() {
 		if (_testAnalyticsCloud != null) {
 			return _testAnalyticsCloud;
@@ -644,6 +654,49 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 		Collections.sort(globs);
 
 		return globs;
+	}
+
+	protected List<PathMatcher> getIncludePathMatchers(
+		List<JobProperty> jobProperties) {
+
+		List<PathMatcher> pathMatchers = new ArrayList<>();
+
+		for (JobProperty jobProperty : jobProperties) {
+			if (!(jobProperty instanceof GlobJobProperty)) {
+				continue;
+			}
+
+			GlobJobProperty globJobProperty = (GlobJobProperty)jobProperty;
+
+			List<PathMatcher> globPathMatchers =
+				globJobProperty.getPathMatchers();
+
+			if (globPathMatchers == null) {
+				continue;
+			}
+
+			Map<String, List<String>> globTestClassMethodNamesMap =
+				globJobProperty.getGlobTestClassMethodNamesMap();
+
+			if ((globTestClassMethodNamesMap != null) &&
+				!globTestClassMethodNamesMap.isEmpty()) {
+
+				_globTestClassMethodNamesMap.putAll(
+					globTestClassMethodNamesMap);
+			}
+
+			for (PathMatcher globPathMatcher : globPathMatchers) {
+				if ((globPathMatcher == null) ||
+					pathMatchers.contains(globPathMatcher)) {
+
+					continue;
+				}
+
+				pathMatchers.add(globPathMatcher);
+			}
+		}
+
+		return pathMatchers;
 	}
 
 	protected List<JobProperty> getJobProperties(
@@ -1544,6 +1597,8 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 	private final Map<String, Long> _averageTestOverheadDurations =
 		new HashMap<>();
 	private BatchHistory _batchHistory;
+	private final Map<String, List<String>> _globTestClassMethodNamesMap =
+		new HashMap<>();
 	private final List<JobProperty> _jobProperties = new ArrayList<>();
 	private final List<SegmentTestClassGroup> _segmentTestClassGroups =
 		new ArrayList<>();

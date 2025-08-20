@@ -18,6 +18,7 @@ import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.batch.engine.unit.BatchEngineUnitProcessor;
 import com.liferay.batch.engine.unit.BatchEngineUnitReader;
+import com.liferay.depot.constants.DepotConstants;
 import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
@@ -67,7 +68,7 @@ import org.osgi.framework.FrameworkUtil;
 	featureFlags = {
 		@FeatureFlag(value = "LPD-31149"), @FeatureFlag(value = "LPD-34594"),
 		@FeatureFlag(value = "LPS-179669"), @FeatureFlag(value = "LPD-17564"),
-		@FeatureFlag(value = "LPD-21926"), @FeatureFlag(value = "LPD-11232")
+		@FeatureFlag(value = "LPD-21926"), @FeatureFlag(value = "LPS-179669")
 	}
 )
 @RunWith(Arquillian.class)
@@ -108,7 +109,7 @@ public class OverviewResourceTest extends BaseOverviewResourceTestCase {
 			HashMapBuilder.put(
 				LocaleUtil.getDefault(), RandomTestUtil.randomString()
 			).build(),
-			_serviceContext);
+			DepotConstants.TYPE_ASSET_LIBRARY, _serviceContext);
 	}
 
 	@Override
@@ -137,7 +138,7 @@ public class OverviewResourceTest extends BaseOverviewResourceTestCase {
 					vocabulariesCount = 0L;
 				}
 			},
-			overviewResource.getContentOverview(null, null, 7, null, null));
+			overviewResource.getContentOverview(null, null, null, 7, null));
 
 		_assetVocabulary = _assetVocabularyLocalService.addVocabulary(
 			TestPropsValues.getUserId(), _depotEntry.getGroupId(), "novo",
@@ -168,7 +169,7 @@ public class OverviewResourceTest extends BaseOverviewResourceTestCase {
 					vocabulariesCount = 1L;
 				}
 			},
-			overviewResource.getContentOverview(null, null, 7, null, null));
+			overviewResource.getContentOverview(null, null, null, 7, null));
 
 		_objectEntry = ObjectEntryTestUtil.addObjectEntry(
 			_depotEntry.getGroupId(), objectDefinition, Collections.emptyMap(),
@@ -184,7 +185,7 @@ public class OverviewResourceTest extends BaseOverviewResourceTestCase {
 					vocabulariesCount = 1L;
 				}
 			},
-			overviewResource.getContentOverview(null, null, 7, null, null));
+			overviewResource.getContentOverview(null, null, null, 7, null));
 	}
 
 	@Override
@@ -230,7 +231,7 @@ public class OverviewResourceTest extends BaseOverviewResourceTestCase {
 					vocabulariesCount = 0L;
 				}
 			},
-			overviewResource.getFileOverview(null, null, 7, null, null));
+			overviewResource.getFileOverview(null, null, null, 7, null));
 	}
 
 	private void _setUpProcessedFile(Bundle bundle, String fileName) {

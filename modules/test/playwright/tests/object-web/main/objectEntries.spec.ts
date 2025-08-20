@@ -12,8 +12,11 @@ import {
 	ObjectValidationRuleAPI,
 } from '@liferay/object-admin-rest-client-js';
 import {Locator, expect, mergeTests} from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
 
 import {accountSettingsPagesTest} from '../../../fixtures/accountSettingsPagesTest';
+import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {applicationsMenuPageTest} from '../../../fixtures/applicationsMenuPageTest';
 import {collectionsPagesTest} from '../../../fixtures/collectionsPagesTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
@@ -24,6 +27,7 @@ import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {objectPagesTest} from '../../../fixtures/objectPagesTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
+import {pagesAdminPagesTest} from '../../../fixtures/pagesAdminPagesTest';
 import {usersAndOrganizationsPagesTest} from '../../../fixtures/usersAndOrganizationsPagesTest';
 import {workflowPagesTest} from '../../../fixtures/workflowPagesTest';
 import createUserWithPermissions from '../../../utils/createUserWithPermissions';
@@ -34,6 +38,7 @@ import {waitForAlert} from '../../../utils/waitForAlert';
 import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
 import getPageDefinition from '../../layout-content-page-editor-web/main/utils/getPageDefinition';
 import getWidgetDefinition from '../../layout-content-page-editor-web/main/utils/getWidgetDefinition';
+import {templatesPageTest} from '../../template-web/main/fixtures/templatesPageTest';
 import {mockedObjectFields} from './dependencies/objectMockedFields';
 import {
 	getFDSDateFormat,
@@ -48,6 +53,7 @@ import {createObjectFields, mockObjectFields} from './utils/mockObjectFields';
 const test = mergeTests(
 	accountSettingsPagesTest,
 	applicationsMenuPageTest,
+	apiHelpersTest,
 	collectionsPagesTest,
 	dataApiHelpersTest,
 	isolatedSiteTest,
@@ -61,6 +67,8 @@ const test = mergeTests(
 	loginTest(),
 	objectPagesTest,
 	pageEditorPagesTest,
+	pagesAdminPagesTest,
+	templatesPageTest,
 	workflowPagesTest,
 	usersAndOrganizationsPagesTest
 );
@@ -72,14 +80,16 @@ const scheduleTest = mergeTests(
 	})
 );
 
+let contentPageName: string;
 let displayPageId: string;
+let informationTemplateName: string;
 let siteLanguage = 'en';
 
-test.afterEach(async ({apiHelpers, page}) => {
-	if (siteLanguage !== 'en') {
-		await page.goto('en');
+test.afterEach(async ({apiHelpers, page, pagesAdminPage, templatesPage}) => {
+	if (contentPageName) {
+		await pagesAdminPage.goto();
 
-		siteLanguage = 'en';
+		await pagesAdminPage.deletePage(contentPageName);
 	}
 
 	if (displayPageId) {
@@ -90,6 +100,18 @@ test.afterEach(async ({apiHelpers, page}) => {
 		);
 
 		displayPageId = '';
+	}
+
+	if (informationTemplateName) {
+		await templatesPage.goto();
+
+		await templatesPage.deleteInformationTemplate(informationTemplateName);
+	}
+
+	if (siteLanguage !== 'en') {
+		await page.goto('en');
+
+		siteLanguage = 'en';
 	}
 });
 
@@ -683,6 +705,134 @@ test.describe('Manage object entries through Page Templates', () => {
 		await displayPageTemplatesPage.goto();
 
 		await displayPageTemplatesPage.deleteTemplate(objectDefinitionLabel);
+	});
+
+	test('verify it is possible to create a information template with an object as an item type and see its entries', async ({
+		apiHelpers,
+		page,
+		pageEditorPage,
+		pagesAdminPage,
+		templatesPage,
+	}) => {
+		const {listTypeDefinition, objectEntry, objectFields} =
+			await mockObjectFields({
+				apiHelpers,
+				objectEntryReturn: {format: 'API'},
+				objectFieldBusinessTypes: [
+					'boolean',
+					'decimal',
+					'integer',
+					'longText',
+					'picklist',
+					'text',
+				],
+			});
+
+		apiHelpers.data.push({
+			id: listTypeDefinition.id,
+			type: 'listTypeDefinition',
+		});
+
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				objectFields,
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const applicationName =
+			'c/' + objectDefinition.name.toLowerCase() + 's';
+
+		await apiHelpers.objectEntry.postObjectEntry(
+			objectEntry,
+			applicationName
+		);
+
+		informationTemplateName = 'Object Template' + getRandomInt();
+
+		await test.step('create information template and add object fields', async () => {
+			await templatesPage.goto();
+
+			await templatesPage.createInformationTemplate({
+				itemType: objectDefinition.label['en_US'],
+				name: informationTemplateName,
+			});
+
+			for (const objectField of objectFields) {
+				await page
+					.getByRole('button', {name: objectField.label['en_US']})
+					.click();
+			}
+
+			await templatesPage.saveTemplate(informationTemplateName);
+		});
+
+		contentPageName = getRandomString();
+
+		await test.step('create page template with HTML element linked to the informationTemplateName', async () => {
+			await pagesAdminPage.goto();
+
+			await pagesAdminPage.createNewPage({
+				name: contentPageName,
+			});
+
+			await pagesAdminPage.editPage(contentPageName);
+
+			await pageEditorPage.addFragment('Basic Components', 'HTML');
+
+			const htmlFragmentId = await pageEditorPage.getFragmentId('HTML');
+
+			await pageEditorPage.selectEditable(htmlFragmentId, 'element-html');
+
+			const {items} =
+				await apiHelpers.objectEntry.getObjectDefinitionObjectEntries(
+					applicationName
+				);
+
+			const objectEntryId = items[0].id;
+
+			await pageEditorPage.setMappedItem({
+				entity: objectDefinition.label['en_US'],
+				entry: objectEntryId.toString(),
+				entryLocator: page
+					.frameLocator('iframe[title="Select"]')
+					.getByText(objectEntryId.toString())
+					.first(),
+				field: informationTemplateName,
+			});
+
+			await pageEditorPage.waitForChangesSaved();
+
+			await pageEditorPage.publishPage();
+		});
+
+		await test.step('go to created page and assert object entries', async () => {
+			await page.goto(`/web/guest/${contentPageName}`);
+
+			const entries = Object.values(objectEntry)
+				.map((value) => {
+					if (typeof value === 'boolean') {
+						return value ? 'Yes' : 'No';
+					}
+
+					if (
+						typeof value === 'object' &&
+						value !== null &&
+						'key' in (value as object)
+					) {
+						return (value as {key: string}).key;
+					}
+
+					return String(value);
+				})
+				.join(' ');
+
+			await expect(page.getByText(entries)).toBeVisible();
+		});
 	});
 });
 
@@ -1746,6 +1896,116 @@ test.describe('Manage object entries through View Object Entries', () => {
 		});
 	});
 
+	test(
+		'error message is displayed when trying to view a deleted object entry with a user with view-only permissions',
+		{tag: ['@LPD-61276']},
+		async ({apiHelpers, page, viewObjectEntriesPage}) => {
+			let entryUrl: string;
+
+			const objectName = 'ObjectName' + getRandomInt();
+			const fieldName = 'textField' + getRandomInt();
+
+			const objectDefinitionAPIClient =
+				await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+			const {body: customObject} =
+				await objectDefinitionAPIClient.postObjectDefinition({
+					active: true,
+					label: {
+						en_US: objectName,
+					},
+					name: objectName,
+					objectFields: createObjectFields('text', [
+						{
+							label: fieldName,
+							name: fieldName,
+						},
+					]),
+					pluralLabel: {
+						en_US: objectName + 's',
+					},
+					scope: 'company',
+					status: {code: 0},
+					titleObjectFieldName: fieldName,
+				});
+
+			apiHelpers.data.push({
+				id: customObject.id,
+				type: 'objectDefinition',
+			});
+
+			const company =
+				await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
+					'liferay.com'
+				);
+
+			const user = await createUserWithPermissions({
+				apiHelpers,
+				rolePermissions: [
+					{
+						actionIds: ['VIEW_CONTROL_PANEL'],
+						primaryKey: company.companyId,
+						resourceName: '90',
+						scope: 1,
+					},
+					{
+						actionIds: ['ACCESS_IN_CONTROL_PANEL'],
+						primaryKey: company.companyId,
+						resourceName:
+							'com_liferay_users_admin_web_portlet_UsersAdminPortlet',
+						scope: 1,
+					},
+					{
+						actionIds: ['ACCESS_IN_CONTROL_PANEL'],
+						primaryKey: company.companyId,
+						resourceName: `com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet_${customObject.className.split('#')[1]}`,
+						scope: 1,
+					},
+					{
+						actionIds: ['VIEW'],
+						primaryKey: company.companyId,
+						resourceName: `${customObject.className}`,
+						scope: 1,
+					},
+				],
+			});
+
+			await test.step('Create object entry and get its URL', async () => {
+				await viewObjectEntriesPage.goto(customObject.className);
+
+				await viewObjectEntriesPage.addObjectEntryButton.click();
+
+				await page.getByLabel(fieldName).fill(getRandomString());
+
+				await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+				await page.waitForURL(/externalReferenceCode=/);
+
+				entryUrl = page.url();
+			});
+
+			await test.step('Delete the object entry', async () => {
+				await viewObjectEntriesPage.backButton.click();
+
+				await viewObjectEntriesPage.frontendDatasetActions.click();
+
+				await viewObjectEntriesPage.frontendDatasetDeleteAction.click();
+
+				await page.getByRole('button', {name: 'Delete'}).click();
+			});
+
+			await test.step('Switch user and assert that the error message is displayed', async () => {
+				await performUserSwitch(page, user.alternateName);
+
+				await page.goto(entryUrl);
+
+				await expect(
+					page.getByText('Error:The object entry could not be found.')
+				).toBeVisible();
+			});
+		}
+	);
+
 	test('loading element count is one even when pressing save button multiple times', async ({
 		apiHelpers,
 		page,
@@ -1909,6 +2169,70 @@ test.describe('Manage object entries through View Object Entries', () => {
 			expect(test.info().errors).toHaveLength(0);
 		}
 	);
+
+	test('verify that an appropriate error message appears after attempting to upload an oversized file', async ({
+		apiHelpers,
+		page,
+		viewObjectEntriesPage,
+	}) => {
+		const {objectFields} = await mockObjectFields({
+			apiHelpers,
+			objectFieldBusinessTypes: ['richText'],
+		});
+
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				objectFields,
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await test.step('Go to the object entry page, click to add an entry, attempt to upload the files, and verify the error messages', async () => {
+			await viewObjectEntriesPage.goto(objectDefinition.className);
+
+			await viewObjectEntriesPage.clickAddObjectEntry(
+				objectDefinition.label['en_US']
+			);
+
+			const filePath = path.join(__dirname, 'dependencies', 'planet.jpg');
+
+			const fileBase64 = fs.readFileSync(filePath).toString('base64');
+
+			const imageHtml = `<p><img alt="" src="data:image/jpeg;base64,${fileBase64}" /></p>`;
+
+			const sourceButton = page.getByLabel('Source');
+
+			await sourceButton.click();
+
+			await page.getByRole('textbox').last().fill(imageHtml);
+
+			await sourceButton.click();
+			await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+			await waitForAlert(page, 'Error:The input was too large.', {
+				type: 'danger',
+			});
+
+			await page.reload();
+
+			const imagesHtml = `<p><img alt="" src="data:image/jpeg;base64,${fileBase64}" /><img alt="" src="data:image/jpeg;base64,${fileBase64}" /><img alt="" src="data:image/jpeg;base64,${fileBase64}" /><img alt="" src="data:image/jpeg;base64,${fileBase64}" /><img alt="" src="data:image/jpeg;base64,${fileBase64}" /></p>`;
+
+			await sourceButton.click();
+
+			await page.getByRole('textbox').last().fill(imagesHtml);
+
+			await sourceButton.click();
+			await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+			await waitForAlert(page, 'Error:Upload size is too large.', {
+				type: 'danger',
+			});
+		});
+	});
 
 	test('Verify that temporary files are deleted from the database if the object creation is not completed', async ({
 		apiHelpers,

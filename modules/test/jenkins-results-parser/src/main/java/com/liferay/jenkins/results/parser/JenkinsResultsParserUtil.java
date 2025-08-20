@@ -1457,17 +1457,13 @@ public class JenkinsResultsParserUtil {
 
 			for (String url : _buildPropertiesURLs) {
 				if (url.startsWith("file://")) {
-					properties.putAll(
-						getProperties(new File(url.replace("file://", ""))));
+					properties.putAll(new EnvironmentBuildProperties(url));
 
 					continue;
 				}
 
-				properties.load(
-					new StringReader(
-						toString(
-							getLocalURL(url), false, 3, null, null, 30,
-							_MILLIS_TIMEOUT_DEFAULT, null, true)));
+				properties.putAll(
+					new EnvironmentBuildProperties(getLocalURL(url)));
 			}
 
 			if (!properties.containsKey("user.home")) {
@@ -3730,27 +3726,6 @@ public class JenkinsResultsParserUtil {
 		}
 	}
 
-	public static boolean isBuildCachingEnabled() {
-		String buildCachingEnabled = System.getenv("BUILD_CACHING_ENABLED");
-
-		if (Objects.equals(buildCachingEnabled, "true")) {
-			return true;
-		}
-
-		try {
-			buildCachingEnabled = getBuildProperty("build.caching.enabled");
-
-			if (Objects.equals(buildCachingEnabled, "true")) {
-				return true;
-			}
-		}
-		catch (IOException ioException) {
-			return false;
-		}
-
-		return false;
-	}
-
 	public static boolean isCINode() {
 		if (_ciNode != null) {
 			return _ciNode;
@@ -5525,6 +5500,12 @@ public class JenkinsResultsParserUtil {
 			httpAuthorization);
 	}
 
+	public static PathMatcher toPathMatcher(String prefix, String glob) {
+		FileSystem fileSystem = FileSystems.getDefault();
+
+		return fileSystem.getPathMatcher(combine("glob:", prefix, glob));
+	}
+
 	public static List<PathMatcher> toPathMatchers(
 		String prefix, List<String> globs) {
 
@@ -6807,7 +6788,11 @@ public class JenkinsResultsParserUtil {
 			Properties temporaryProperties = new Properties();
 
 			try {
-				temporaryProperties.load(new FileInputStream(propertiesFile));
+				String urlString = EnvironmentBuildProperties.toURLString(
+					propertiesFile);
+
+				temporaryProperties.putAll(
+					new EnvironmentBuildProperties(urlString));
 			}
 			catch (IOException ioException) {
 				throw new RuntimeException(

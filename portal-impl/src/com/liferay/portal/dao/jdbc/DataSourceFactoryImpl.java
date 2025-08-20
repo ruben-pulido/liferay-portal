@@ -47,6 +47,8 @@ import java.nio.file.Paths;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.Arrays;
@@ -173,13 +175,17 @@ public class DataSourceFactoryImpl implements DataSourceFactory {
 			_log.debug("Created data source " + dataSource.getClass());
 		}
 
-		if (Boolean.getBoolean("jdbc.data.source.anti.time.drift")) {
-			DBType dbType = DBManagerUtil.getDBType(
-				DialectDetector.getDialect(dataSource));
+		DBType dbType = DBManagerUtil.getDBType(
+			DialectDetector.getDialect(dataSource));
 
-			if (dbType == DBType.DB2) {
-				dataSource = new AntiTimeDriftDataSourceWrapper(dataSource);
-			}
+		if (Boolean.getBoolean("jdbc.data.source.anti.time.drift") &&
+			(dbType == DBType.DB2)) {
+
+			dataSource = new AntiTimeDriftDataSourceWrapper(dataSource);
+		}
+
+		if (dbType == DBType.SQLSERVER) {
+			_checkSQLServer(dataSource);
 		}
 
 		return dataSource;
@@ -322,6 +328,34 @@ public class DataSourceFactoryImpl implements DataSourceFactory {
 
 				throw classNotFoundException;
 			}
+		}
+	}
+
+	private void _checkSQLServer(DataSource dataSource) {
+		try (Connection connection = dataSource.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				"select name, is_read_committed_snapshot_on from " +
+					"sys.databases where name = db_name()");
+			ResultSet resultSet = preparedStatement.executeQuery()) {
+
+			if (!resultSet.next() ||
+				resultSet.getBoolean("is_read_committed_snapshot_on") ||
+				!_log.isWarnEnabled()) {
+
+				return;
+			}
+
+			String name = resultSet.getString("name");
+
+			_log.warn(
+				StringBundler.concat(
+					"SQL Server may have deadlocks because ",
+					"\"read_committed_snapshot\" is disabled for database \"",
+					name, "\". To enable, execute: alter database ", name,
+					" set read_committed_snapshot on"));
+		}
+		catch (Exception exception) {
+			_log.error("Unable to check SQL Server", exception);
 		}
 	}
 

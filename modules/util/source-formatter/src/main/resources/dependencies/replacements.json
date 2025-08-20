@@ -4814,6 +4814,14 @@
 		"to": "getHelperUtilities(param#1#)"
 	},
 	{
+		"classNames": [
+			"SitemapManager"
+		],
+		"from": "getSiteMapManager(long paramName, boolean paramName, ThemeDisplay paramName)",
+		"issueKey": "LPD-59820",
+		"to": "getSitemap(param#0#, param#1#, param#2#)"
+	},
+	{
 		"from": "CookieKeys.COMMERCE_CONTINUE_AS_GUEST",
 		"issueKey": "LPS-159679",
 		"newImports": [
@@ -5008,6 +5016,8 @@
 	},
 	{
 		"classNames": [
+			"CPDefinitionLocalServiceUtil",
+			"CPDefinitionServiceUtil",
 			"CPDefinitionLocalService",
 			"CPDefinitionService"
 		],
@@ -5537,11 +5547,17 @@
 	{
 		"from": "PortletDisplayTemplateManager.DISPLAY_STYLE_PREFIX",
 		"issueKey": "LPS-202918",
+		"newImports": [
+			"com.liferay.portlet.display.template.constants.PortletDisplayTemplateConstants"
+		],
 		"to": "PortletDisplayTemplateConstants.DISPLAY_STYLE_PREFIX"
 	},
 	{
 		"from": "PortletDisplayTemplateManager.ENTRIES",
 		"issueKey": "LPS-202918",
+		"newImports": [
+			"com.liferay.portlet.display.template.constants.PortletDisplayTemplateConstants"
+		],
 		"to": "PortletDisplayTemplateConstants.ENTRIES"
 	},
 	{

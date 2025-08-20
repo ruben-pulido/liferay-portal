@@ -5,11 +5,13 @@
 
 package com.liferay.depot.service.impl;
 
+import com.liferay.depot.constants.DepotConstants;
 import com.liferay.depot.constants.DepotRolesConstants;
 import com.liferay.depot.exception.DepotEntryGroupException;
 import com.liferay.depot.exception.DepotEntryNameException;
 import com.liferay.depot.exception.DepotEntryStagedException;
 import com.liferay.depot.model.DepotEntry;
+import com.liferay.depot.model.DepotEntryGroupRel;
 import com.liferay.depot.service.DepotAppCustomizationLocalService;
 import com.liferay.depot.service.DepotEntryPinLocalService;
 import com.liferay.depot.service.base.DepotEntryLocalServiceBaseImpl;
@@ -40,6 +42,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
@@ -79,6 +82,10 @@ public class DepotEntryLocalServiceImpl extends DepotEntryLocalServiceBaseImpl {
 		depotEntry.setGroupId(group.getGroupId());
 		depotEntry.setCompanyId(serviceContext.getCompanyId());
 		depotEntry.setUserId(serviceContext.getUserId());
+		depotEntry.setType(
+			GetterUtil.getInteger(
+				group.getTypeSettingsProperty("depotEntryType"),
+				DepotConstants.TYPE_ASSET_LIBRARY));
 
 		depotEntry = depotEntryPersistence.update(depotEntry);
 
@@ -93,7 +100,7 @@ public class DepotEntryLocalServiceImpl extends DepotEntryLocalServiceBaseImpl {
 	@Override
 	public DepotEntry addDepotEntry(
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			ServiceContext serviceContext)
+			int type, ServiceContext serviceContext)
 		throws PortalException {
 
 		_validateNameMap(nameMap, LocaleUtil.getDefault());
@@ -111,6 +118,14 @@ public class DepotEntryLocalServiceImpl extends DepotEntryLocalServiceBaseImpl {
 			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
 			"/asset-library-" + depotEntry.getDepotEntryId(), false, false,
 			true, serviceContext);
+
+		_groupLocalService.updateGroup(
+			group.getGroupId(),
+			UnicodePropertiesBuilder.create(
+				group.getTypeSettingsProperties(), true
+			).put(
+				"depotEntryType", type
+			).buildString());
 
 		_userLocalService.addGroupUsers(
 			group.getGroupId(), new long[] {serviceContext.getUserId()});
@@ -132,6 +147,7 @@ public class DepotEntryLocalServiceImpl extends DepotEntryLocalServiceBaseImpl {
 		depotEntry.setGroupId(group.getGroupId());
 		depotEntry.setCompanyId(serviceContext.getCompanyId());
 		depotEntry.setUserId(serviceContext.getUserId());
+		depotEntry.setType(type);
 
 		depotEntry = depotEntryPersistence.update(depotEntry);
 
@@ -202,18 +218,22 @@ public class DepotEntryLocalServiceImpl extends DepotEntryLocalServiceBaseImpl {
 
 	@Override
 	public List<DepotEntry> getGroupConnectedDepotEntries(
-			long groupId, int start, int end)
+			long groupId, int type, int start, int end)
 		throws PortalException {
 
 		return TransformUtil.transform(
-			_depotEntryGroupRelPersistence.findByToGroupId(groupId, start, end),
+			_getDepotEntryGroupRels(groupId, type, start, end),
 			depotEntryGroupRel -> depotEntryLocalService.getDepotEntry(
 				depotEntryGroupRel.getDepotEntryId()));
 	}
 
 	@Override
-	public int getGroupConnectedDepotEntriesCount(long groupId) {
-		return _depotEntryGroupRelPersistence.countByToGroupId(groupId);
+	public int getGroupConnectedDepotEntriesCount(long groupId, int type) {
+		if (type == DepotConstants.TYPE_ANY) {
+			return _depotEntryGroupRelPersistence.countByToGroupId(groupId);
+		}
+
+		return _depotEntryGroupRelPersistence.countByTGI_T(groupId, type);
 	}
 
 	@Override
@@ -303,6 +323,18 @@ public class DepotEntryLocalServiceImpl extends DepotEntryLocalServiceBaseImpl {
 		}
 
 		return _language.get(defaultLocale, "unnamed-asset-library");
+	}
+
+	private List<DepotEntryGroupRel> _getDepotEntryGroupRels(
+		long groupId, int type, int start, int end) {
+
+		if (type == DepotConstants.TYPE_ANY) {
+			return _depotEntryGroupRelPersistence.findByToGroupId(
+				groupId, start, end);
+		}
+
+		return _depotEntryGroupRelPersistence.findByTGI_T(
+			groupId, type, start, end);
 	}
 
 	private boolean _isStaged(DepotEntry depotEntry) throws PortalException {

@@ -34,6 +34,7 @@ import com.liferay.object.internal.search.spi.model.result.contributor.ObjectEnt
 import com.liferay.object.internal.security.permission.ObjectEntrySharingPermissionChecker;
 import com.liferay.object.internal.security.permission.resource.ObjectEntryModelResourcePermission;
 import com.liferay.object.internal.security.permission.resource.ObjectEntryPortletResourcePermissionLogic;
+import com.liferay.object.internal.trash.ObjectEntryTrashHandler;
 import com.liferay.object.internal.uad.anonymizer.ObjectEntryUADAnonymizer;
 import com.liferay.object.internal.uad.display.ObjectEntryUADDisplay;
 import com.liferay.object.internal.uad.exporter.ObjectEntryUADExporter;
@@ -81,9 +82,11 @@ import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.SystemEventLocalService;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
+import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -153,6 +156,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		SearchLocalizationHelper searchLocalizationHelper,
 		SharingModelResourcePermissionConfigurator
 			sharingModelResourcePermissionConfigurator,
+		SystemEventLocalService systemEventLocalService,
 		WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService,
 		ModelPreFilterContributor workflowStatusModelPreFilterContributor,
 		UserGroupRoleLocalService userGroupRoleLocalService) {
@@ -190,6 +194,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		_searchLocalizationHelper = searchLocalizationHelper;
 		_sharingModelResourcePermissionConfigurator =
 			sharingModelResourcePermissionConfigurator;
+		_systemEventLocalService = systemEventLocalService;
 		_workflowDefinitionLinkLocalService =
 			workflowDefinitionLinkLocalService;
 		_workflowStatusModelPreFilterContributor =
@@ -498,6 +503,15 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 
 			serviceRegistrations.add(
 				_bundleContext.registerService(
+					TrashHandler.class,
+					new ObjectEntryTrashHandler(
+						objectDefinition, _objectDefinitionLocalService,
+						_objectEntryService, _systemEventLocalService),
+					HashMapDictionaryBuilder.<String, Object>put(
+						"model.class.name", objectDefinition.getClassName()
+					).build()));
+			serviceRegistrations.add(
+				_bundleContext.registerService(
 					WorkflowHandler.class,
 					new ObjectEntryWorkflowHandler(
 						objectDefinition, _objectDefinitionLocalService,
@@ -673,6 +687,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		new ConcurrentHashMap<>();
 	private final SharingModelResourcePermissionConfigurator
 		_sharingModelResourcePermissionConfigurator;
+	private final SystemEventLocalService _systemEventLocalService;
 	private final UserGroupRoleLocalService _userGroupRoleLocalService;
 	private final UserLocalService _userLocalService;
 	private final WorkflowDefinitionLinkLocalService

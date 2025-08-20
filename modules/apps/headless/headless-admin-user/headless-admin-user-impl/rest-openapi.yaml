@@ -433,7 +433,6 @@ components:
                     description:
                         The email address's ID.
                     format: int64
-                    readOnly: true
                     type: integer
                 # @review
                 primary:
@@ -787,7 +786,6 @@ components:
                     description:
                         The address's ID.
                     format: int64
-                    readOnly: true
                     type: integer
                 name:
                     description:
@@ -7005,6 +7003,17 @@ paths:
             description:
                 Creates a new user account
             operationId: postUserAccount
+            parameters:
+                -   in: query
+                    name: captchaAnswer
+                    required: false
+                    schema:
+                        type: string
+                -   in: query
+                    name: captchaToken
+                    required: false
+                    schema:
+                        type: string
             requestBody:
                 content:
                     application/json:

@@ -882,19 +882,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	}
 
 	@Override
-	public String getSourcePrototypeLayoutUuid() {
-		if (Validator.isNull(_sourcePrototypeLayoutUuid)) {
-			Layout layout = getLayoutSetPrototypeLayout();
-
-			if (layout != null) {
-				_sourcePrototypeLayoutUuid = layout.getUuid();
-			}
-		}
-
-		return _sourcePrototypeLayoutUuid;
-	}
-
-	@Override
 	public String getTarget() {
 		return PortalUtil.getLayoutTarget(this);
 	}
@@ -1212,7 +1199,7 @@ public class LayoutImpl extends LayoutBaseImpl {
 	@Override
 	public boolean isLayoutDeleteable() {
 		try {
-			if (Validator.isNull(getSourcePrototypeLayoutUuid())) {
+			if (Validator.isNull(getLayoutSetPrototypeLayoutERC())) {
 				return true;
 			}
 
@@ -1222,10 +1209,9 @@ public class LayoutImpl extends LayoutBaseImpl {
 				return true;
 			}
 
-			if (LayoutLocalServiceUtil.hasLayoutSetPrototypeLayout(
-					layoutSet.getLayoutSetPrototypeUuid(), getCompanyId(),
-					getSourcePrototypeLayoutUuid())) {
+			Layout layoutSetPrototypeLayout = getLayoutSetPrototypeLayout();
 
+			if (layoutSetPrototypeLayout != null) {
 				return false;
 			}
 		}
@@ -1266,7 +1252,7 @@ public class LayoutImpl extends LayoutBaseImpl {
 	public boolean isLayoutUpdateable() {
 		try {
 			if (Validator.isNull(getLayoutPrototypeUuid()) &&
-				Validator.isNull(getSourcePrototypeLayoutUuid())) {
+				Validator.isNull(getLayoutSetPrototypeLayoutERC())) {
 
 				return true;
 			}
@@ -1916,7 +1902,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	private LayoutSet _layoutSet;
 	private transient LayoutType _layoutType;
 	private Layout _masterLayout;
-	private String _sourcePrototypeLayoutUuid;
 	private Theme _theme;
 	private UnicodeProperties _typeSettingsUnicodeProperties;
 

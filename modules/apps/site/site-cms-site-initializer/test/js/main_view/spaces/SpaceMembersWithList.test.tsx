@@ -75,6 +75,7 @@ describe('SpaceMembersWithList', () => {
 	const props: SpaceMembersWithListProps = {
 		assetLibraryCreatorUserId: testUsers[0].id,
 		assetLibraryId: testSpace.id,
+		hasAssignMembersPermission: true,
 	};
 
 	const {ResizeObserver: ResizeObserverOriginal} = window;
@@ -506,7 +507,7 @@ describe('SpaceMembersWithList', () => {
 
 				const alert = screen.getByRole('alert');
 				expect(alert).toHaveTextContent(
-					`unable-to-remove-group-${testUserGroups[0].name}-from-space-x`
+					`unable-to-remove-group-${testUserGroups[0].name}-from-space`
 				);
 			});
 		});
@@ -547,5 +548,43 @@ describe('SpaceMembersWithList', () => {
 		);
 
 		expect(linkSpy).toHaveBeenCalledTimes(1);
+	});
+
+	describe('When hasAssignMembersPermission is false', () => {
+		it('renders the add members input as disabled', () => {
+			render(
+				<SpaceMembersWithList
+					{...props}
+					hasAssignMembersPermission={false}
+				/>
+			);
+
+			expect(
+				screen.getByRole('combobox', {
+					name: 'add-people-to-collaborate',
+				})
+			).toBeInTheDocument();
+
+			expect(
+				screen.getByPlaceholderText('enter-name-or-email')
+			).toBeDisabled();
+		});
+
+		it('does not render the remove button for members', async () => {
+			render(
+				<SpaceMembersWithList
+					{...props}
+					hasAssignMembersPermission={false}
+				/>
+			);
+
+			await waitFor(() => {
+				expect(screen.getByText(testUsers[1].name)).toBeInTheDocument();
+			});
+
+			expect(
+				screen.queryByRole('button', {name: /remove/i})
+			).not.toBeInTheDocument();
+		});
 	});
 });
