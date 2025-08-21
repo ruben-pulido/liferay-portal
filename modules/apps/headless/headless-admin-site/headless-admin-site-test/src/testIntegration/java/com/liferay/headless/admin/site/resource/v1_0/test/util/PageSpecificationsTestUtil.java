@@ -18,6 +18,7 @@ import com.liferay.headless.admin.site.client.dto.v1_0.PageElement;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageExperience;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.Settings;
+import com.liferay.headless.admin.site.client.dto.v1_0.SitePage;
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPageSection;
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPageWidgetInstance;
@@ -207,6 +208,13 @@ public class PageSpecificationsTestUtil {
 			expectedDraftContentPageSpecification.getPageExperiences(),
 			draftLayout, draftContentPageSpecification.getPageExperiences());
 
+		SettingsTestUtil.assertSettings(
+			expectedDraftContentPageSpecification.getSettings(),
+			draftContentPageSpecification.getSettings());
+		SettingsTestUtil.assertSettings(
+			expectedPublishedContentPageSpecification.getSettings(),
+			publishedContentPageSpecification.getSettings());
+
 		Assert.assertEquals(
 			expectedDraftContentPageSpecification.
 				getSiteTemplatePageSpecificationExternalReferenceCode(),
@@ -313,6 +321,18 @@ public class PageSpecificationsTestUtil {
 			(WidgetPageSpecification)actualPageSpecifications[0]);
 	}
 
+	public static void assertWidgetPageSpecifications(
+		PageSpecification[] pageSpecifications,
+		WidgetPageSpecification widgetPageSpecification) {
+
+		Assert.assertEquals(
+			Arrays.toString(pageSpecifications), 1, pageSpecifications.length);
+
+		assertWidgetPageSpecification(
+			widgetPageSpecification,
+			(WidgetPageSpecification)pageSpecifications[0]);
+	}
+
 	public static ContentPageSpecification getContentPageSpecification(
 		String contentPageSpecificationExternalReferenceCode,
 		CustomField[] customFields,
@@ -387,6 +407,35 @@ public class PageSpecificationsTestUtil {
 		throws Exception {
 
 		return new ExpandoTableAutocloseable();
+	}
+
+	public static PageSpecification[] getPageSpecifications(
+		String externalReferenceCode, SitePage.Type type) {
+
+		if (type == SitePage.Type.CONTENT_PAGE) {
+			ContentPageSpecification draftContentPageSpecification =
+				getContentPageSpecification(
+					null, PageSpecification.Status.DRAFT);
+
+			ContentPageSpecification publishedContentPageSpecification =
+				getContentPageSpecification(
+					draftContentPageSpecification.getExternalReferenceCode(),
+					PageSpecification.Status.APPROVED);
+
+			publishedContentPageSpecification.setExternalReferenceCode(
+				externalReferenceCode);
+
+			return new PageSpecification[] {
+				publishedContentPageSpecification, draftContentPageSpecification
+			};
+		}
+
+		WidgetPageSpecification widgetPageSpecification =
+			getWidgetPageSpecification(
+				null, externalReferenceCode, null,
+				PageSpecification.Status.APPROVED, null);
+
+		return new PageSpecification[] {widgetPageSpecification};
 	}
 
 	public static PageSpecification[] getPatchPageSpecifications(

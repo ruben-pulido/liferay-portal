@@ -11,7 +11,6 @@ import com.liferay.client.extension.service.ClientExtensionEntryRelLocalService;
 import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.headless.admin.site.dto.v1_0.ClientExtension;
 import com.liferay.headless.admin.site.dto.v1_0.ContentPageSpecification;
-import com.liferay.headless.admin.site.dto.v1_0.FavIcon;
 import com.liferay.headless.admin.site.dto.v1_0.ItemExternalReference;
 import com.liferay.headless.admin.site.dto.v1_0.PageExperience;
 import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
@@ -19,6 +18,7 @@ import com.liferay.headless.admin.site.dto.v1_0.Settings;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSection;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageWidgetInstance;
+import com.liferay.headless.admin.site.internal.dto.v1_0.util.ScopeUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
@@ -207,10 +207,8 @@ public class PageSpecificationDTOConverter
 							ClientExtensionEntryConstants.TYPE_THEME_FAVICON);
 
 						if (clientExtension != null) {
-							return new FavIcon() {
+							return new ClientExtension() {
 								{
-									setClassName(
-										() -> ClientExtension.class.getName());
 									setClientExtensionConfig(
 										clientExtension::
 											getClientExtensionConfig);
@@ -235,11 +233,15 @@ public class PageSpecificationDTOConverter
 							return null;
 						}
 
-						return new FavIcon() {
+						return new ItemExternalReference() {
 							{
 								setClassName(() -> FileEntry.class.getName());
 								setExternalReferenceCode(
 									fileEntry::getExternalReferenceCode);
+								setScope(
+									() -> ScopeUtil.getScope(
+										layout.getGroupId(),
+										fileEntry.getGroupId()));
 							}
 						};
 					});

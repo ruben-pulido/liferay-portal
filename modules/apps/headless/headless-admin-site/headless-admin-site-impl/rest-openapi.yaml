@@ -735,14 +735,6 @@ components:
                         The localized message to display when the collection is empty or no results match the applied
                         filters ('No Results Found' by default).
                     type: object
-        FavIcon:
-            allOf:
-                -   $ref: "#/components/schemas/ClientExtension"
-                -   $ref: "#/components/schemas/ItemExternalReference"
-            # @review
-            description:
-                The FavIcon of the page specification.
-            type: object
         FormConfig:
             # @review
             description:
@@ -2567,10 +2559,12 @@ components:
                         The page specification's CSS.
                     type: string
                 favIcon:
-                    $ref: "#/components/schemas/FavIcon"
                     # @review
                     description:
                         The FavIcon of the page specification.
+                    oneOf:
+                        -   $ref: "#/components/schemas/ClientExtension"
+                        -   $ref: "#/components/schemas/ItemExternalReference"
                 globalCSSClientExtensions:
                     description:
                         The client extensions for global CSS associated to the page.
@@ -3499,7 +3493,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.site.client', and version '1.0.13'."
+        'com.liferay.headless.admin.site.client', and version '1.0.14'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
