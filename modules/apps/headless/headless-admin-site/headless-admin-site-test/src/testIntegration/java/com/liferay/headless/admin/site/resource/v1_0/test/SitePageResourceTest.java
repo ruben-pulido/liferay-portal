@@ -543,7 +543,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		Assert.assertEquals(expectedPriority, (int)pageSettings.getPriority());
 	}
 
-	private SitePage _assertPatchSiteSiteByExternalReferenceCodeSitePage(
+	private SitePage _testPatchSiteSiteByExternalReferenceCodeSitePage(
 			SitePage expectedSitePage, SitePage sitePage)
 		throws Exception {
 
@@ -982,7 +982,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 					StringUtil.toLowerCase(RandomTestUtil.randomString())
 			).build());
 
-		_assertPatchSiteSiteByExternalReferenceCodeSitePage(
+		_testPatchSiteSiteByExternalReferenceCodeSitePage(
 			sitePage,
 			new SitePage() {
 				{
@@ -1001,7 +1001,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		sitePage.setKeywords(
 			() -> AssetTestUtil.randomKeywords(serviceContext));
 
-		_assertPatchSiteSiteByExternalReferenceCodeSitePage(
+		_testPatchSiteSiteByExternalReferenceCodeSitePage(
 			sitePage,
 			new SitePage() {
 				{
@@ -1022,7 +1022,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				RandomTestUtil.randomString()
 			).build());
 
-		_assertPatchSiteSiteByExternalReferenceCodeSitePage(
+		_testPatchSiteSiteByExternalReferenceCodeSitePage(
 			sitePage,
 			new SitePage() {
 				{
@@ -1039,7 +1039,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		pageSettings.setHiddenFromNavigation(
 			() -> !pageSettings.getHiddenFromNavigation());
 
-		_assertPatchSiteSiteByExternalReferenceCodeSitePage(
+		_testPatchSiteSiteByExternalReferenceCodeSitePage(
 			sitePage,
 			new SitePage() {
 				{
@@ -1058,7 +1058,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		pageSettings.setPriority(0);
 
-		_assertPatchSiteSiteByExternalReferenceCodeSitePage(
+		_testPatchSiteSiteByExternalReferenceCodeSitePage(
 			sitePage,
 			new SitePage() {
 				{
@@ -1075,7 +1075,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			AssetTestUtil.randomTaxonomyCategoryItemExternalReferences(
 				testCompany.getGroupId(), serviceContext));
 
-		_assertPatchSiteSiteByExternalReferenceCodeSitePage(
+		_testPatchSiteSiteByExternalReferenceCodeSitePage(
 			sitePage,
 			new SitePage() {
 				{
@@ -1333,7 +1333,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		String sitePageExternalReferenceCode =
 			sitePage.getExternalReferenceCode();
 
-		sitePage = _assertPatchSiteSiteByExternalReferenceCodeSitePage(
+		sitePage = _testPatchSiteSiteByExternalReferenceCodeSitePage(
 			sitePage,
 			new SitePage() {
 				{
@@ -1358,7 +1358,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		widgetPageSettings.setCustomizableSectionIds(new String[] {"column-2"});
 		widgetPageSettings.setLayoutTemplateId("2_columns_ii");
 
-		sitePage = _assertPatchSiteSiteByExternalReferenceCodeSitePage(
+		sitePage = _testPatchSiteSiteByExternalReferenceCodeSitePage(
 			sitePage,
 			new SitePage() {
 				{
@@ -1382,7 +1382,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		widgetPageSettings.setCustomizableSectionIds(new String[0]);
 		widgetPageSettings.setLayoutTemplateId("2_columns_ii");
 
-		_assertPatchSiteSiteByExternalReferenceCodeSitePage(
+		_testPatchSiteSiteByExternalReferenceCodeSitePage(
 			sitePage,
 			new SitePage() {
 				{
