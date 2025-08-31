@@ -210,6 +210,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			SitePage.Type.WIDGET_PAGE);
 		_testPatchSiteSiteByExternalReferenceCodeSitePageWithPageSpecifications();
 		_testPatchSiteSiteByExternalReferenceCodeSitePageWithPriority();
+		_testPatchSiteSiteByExternalReferenceCodeSitePageWithWidgetPageSettings();
 
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(
@@ -1310,6 +1311,90 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 						sitePage.getExternalReferenceCode(),
 						testGroup.getGroupId()),
 					patchSitePage);
+			});
+	}
+
+	private void _testPatchSiteSiteByExternalReferenceCodeSitePageWithWidgetPageSettings()
+		throws Exception {
+
+		SitePage randomSitePage = _getRandomSitePage(SitePage.Type.WIDGET_PAGE);
+
+		SitePage sitePage = _testPutSiteSiteByExternalReferenceCodeSitePage(
+			randomSitePage, randomSitePage);
+
+		WidgetPageSettings widgetPageSettings =
+			(WidgetPageSettings)sitePage.getPageSettings();
+
+		widgetPageSettings.setCustomizable(true);
+		widgetPageSettings.setCustomizableSectionIds(
+			new String[] {"column-1", "column-3"});
+		widgetPageSettings.setLayoutTemplateId("1_2_columns_i");
+
+		String sitePageExternalReferenceCode =
+			sitePage.getExternalReferenceCode();
+
+		sitePage = _assertPatchSiteSiteByExternalReferenceCodeSitePage(
+			sitePage,
+			new SitePage() {
+				{
+					setExternalReferenceCode(sitePageExternalReferenceCode);
+					setPageSettings(
+						new WidgetPageSettings() {
+							{
+								setCustomizable(true);
+								setCustomizableSectionIds(
+									new String[] {"column-1", "column-3"});
+								setLayoutTemplateId("1_2_columns_i");
+								setType(Type.WIDGET_PAGE_SETTINGS);
+							}
+						});
+					setType(SitePage.Type.WIDGET_PAGE);
+				}
+			});
+
+		widgetPageSettings = (WidgetPageSettings)sitePage.getPageSettings();
+
+		widgetPageSettings.setCustomizable(true);
+		widgetPageSettings.setCustomizableSectionIds(new String[] {"column-2"});
+		widgetPageSettings.setLayoutTemplateId("2_columns_ii");
+
+		sitePage = _assertPatchSiteSiteByExternalReferenceCodeSitePage(
+			sitePage,
+			new SitePage() {
+				{
+					setExternalReferenceCode(sitePageExternalReferenceCode);
+					setPageSettings(
+						new WidgetPageSettings() {
+							{
+								setCustomizable(true);
+								setCustomizableSectionIds(
+									new String[] {"column-2"});
+								setType(Type.WIDGET_PAGE_SETTINGS);
+							}
+						});
+					setType(SitePage.Type.WIDGET_PAGE);
+				}
+			});
+
+		widgetPageSettings = (WidgetPageSettings)sitePage.getPageSettings();
+
+		widgetPageSettings.setCustomizable(false);
+		widgetPageSettings.setCustomizableSectionIds(new String[0]);
+		widgetPageSettings.setLayoutTemplateId("2_columns_ii");
+
+		_assertPatchSiteSiteByExternalReferenceCodeSitePage(
+			sitePage,
+			new SitePage() {
+				{
+					setExternalReferenceCode(sitePageExternalReferenceCode);
+					setPageSettings(
+						new WidgetPageSettings() {
+							{
+								setType(Type.WIDGET_PAGE_SETTINGS);
+							}
+						});
+					setType(SitePage.Type.WIDGET_PAGE);
+				}
 			});
 	}
 
