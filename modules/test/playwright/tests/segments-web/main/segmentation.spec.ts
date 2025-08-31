@@ -509,6 +509,538 @@ test(
 );
 
 test(
+	`Can delete unavailable segment criterion.`,
+
+	{
+		tag: '@LPS-152077',
+	},
+
+	async ({apiHelpers, page, pageEditorPage, segmentsPage}) => {
+		const segmentName1 = 'First Segment';
+		const segmentName2 = 'Second Segment';
+
+		page.on('dialog', async (dialog) => await dialog.accept());
+
+		await test.step('Given a user is created', async () => {
+			await apiHelpers.headlessAdminUser.postUserAccount({
+				emailAddress: `userea@liferay.com`,
+			});
+		});
+
+		await test.step('And a segment designer adds the first segment', async () => {
+			await goToSegmentsAdmin(page);
+
+			await segmentsPage.clickAddNewSegmentButton();
+
+			await pageEditorPage.segmentEditorPage.createSegment(segmentName1, {
+				user: ['Email Address'],
+			});
+
+			await segmentsPage.fillField('userea@liferay.com');
+
+			await segmentsPage.saveButton.click();
+		});
+
+		await test.step('And adds the second segment with 2 criterion', async () => {
+			await segmentsPage.clickAddNewSegmentButton();
+
+			await pageEditorPage.segmentEditorPage.createSegment(segmentName2, {
+				segments: ['Segments'],
+				user: ['First Name'],
+			});
+
+			await segmentsPage.fillField('userea');
+
+			await segmentsPage.selectButton.click();
+
+			await segmentsPage.selectSegment('First Segment');
+
+			await segmentsPage.saveButton.click();
+		});
+
+		await test.step('When deletes one of the segments', async () => {
+			await segmentsPage.deleteSegment('First Segment');
+		});
+
+		await test.step('And removes from second segment the criterion related to the first segment', async () => {
+			await goToSegmentsAdmin(page);
+
+			await segmentsPage.editSegmentsEntry(segmentName2);
+
+			await segmentsPage.deleteUnavailableProperty();
+
+			await segmentsPage.saveButton.click();
+		});
+
+		await test.step('Then asserts that the deleted criterion will not shown', async () => {
+			await segmentsPage.editSegmentsEntry(segmentName2);
+
+			await page.waitForLoadState('networkidle');
+
+			await expect(segmentsPage.criterionLabel).not.toContainText(
+				'Segment'
+			);
+		});
+	}
+);
+
+test(
+	`Can scroll down in segments editor sidebar.`,
+
+	{
+		tag: '@LPS-150511',
+	},
+
+	async ({page, segmentsPage}) => {
+		await test.step('Given a segment designer goes to the segments editor page', async () => {
+			await goToSegmentsAdmin(page);
+
+			await segmentsPage.clickAddNewSegmentButton();
+		});
+
+		await test.step('Then can scroll down in different properties on the sidebar', async () => {
+			await segmentsPage.selectAndScrollToProperty(
+				'Organization',
+				'Type'
+			);
+
+			await segmentsPage.selectAndScrollToProperty(
+				'Session',
+				'User Agent'
+			);
+
+			await segmentsPage.selectAndScrollToProperty('User', 'User Name');
+		});
+	}
+);
+
+test(
+	`Can validate a segment can be created using special characters in segment property`,
+
+	{
+		tag: '@LPS-131815',
+	},
+
+	async ({
+		editUserPage,
+		page,
+		pageEditorPage,
+		segmentsPage,
+		usersAndOrganizationsPage,
+	}) => {
+		const segmentName = 'Segment With Special Characters';
+
+		await test.step('Given a user is created', async () => {
+			await usersAndOrganizationsPage.goToUsers();
+			await usersAndOrganizationsPage.addUserButton.click();
+
+			await editUserPage.emailAddressInput.fill('u1@liferay.com');
+			await editUserPage.firstNameInput.fill('User');
+			await editUserPage.lastNameInput.fill(`1 + / ? # &`);
+			await editUserPage.screenNameInput.fill('u1');
+
+			await editUserPage.saveButton.click();
+		});
+
+		await test.step('When a segment designer adds a segment with last name property', async () => {
+			await goToSegmentsAdmin(page);
+
+			await segmentsPage.clickAddNewSegmentButton();
+
+			await pageEditorPage.segmentEditorPage.createSegment(segmentName, {
+				user: ['Last Name'],
+			});
+
+			await segmentsPage.fillField(`+ / ? # &`);
+
+			await segmentsPage.changeCriterionInput('contains');
+
+			const memberCountLocator = page.getByText('1 Member', {
+				exact: true,
+			});
+
+			await expect(memberCountLocator).toBeVisible();
+
+			await segmentsPage.saveButton.click();
+		});
+
+		await test.step('Then asserts that the segment is correctly created including the user', async () => {
+			await segmentsPage.clickLinkByText(segmentName);
+
+			await segmentsPage.viewMembers(undefined, `User 1 + / ? # &`);
+		});
+	}
+);
+
+test(
+	`Can validate the default segments is not displayed.`,
+
+	{
+		tag: '@LPS-136086',
+	},
+
+	async ({page}) => {
+		await test.step('Given a segment designer goes to the segments editor page', async () => {
+			await goToSegmentsAdmin(page);
+		});
+
+		await test.step('Then can assert that the default segment is not displayed', async () => {
+			await expect(
+				page.getByText('There are no segments.')
+			).toBeVisible();
+		});
+	}
+);
+
+test(
+	`Can validate the value input persist in a segment created with Organization criterion in view mode`,
+
+	{
+		tag: '@LPS-135880',
+	},
+
+	async ({apiHelpers, page, pageEditorPage, segmentsPage}) => {
+		const segmentName = 'Validate Organization Segment';
+
+		const orgName = 'Organization Name';
+
+		await test.step('Given an organization is created', async () => {
+			await apiHelpers.headlessAdminUser.postOrganization({
+				name: orgName,
+			});
+		});
+
+		await test.step('When a segment designer adds a segment with Organization criterion', async () => {
+			await goToSegmentsAdmin(page);
+
+			await segmentsPage.clickAddNewSegmentButton();
+
+			await pageEditorPage.segmentEditorPage.createSegment(segmentName, {
+				'user-organization': ['Organization'],
+			});
+
+			await segmentsPage.selectButton.click();
+
+			await segmentsPage.selectCheckboxItem(orgName);
+
+			await segmentsPage.saveButton.click();
+
+			await waitForAlert(page);
+		});
+
+		await test.step('Then can assert in view mode the segment is correctly created', async () => {
+			await segmentsPage.clickLinkByText(segmentName);
+
+			await page.waitForLoadState('networkidle');
+
+			await segmentsPage.viewCriterionValue('Organization Name');
+		});
+	}
+);
+
+test(
+	`Can validate the value input persist in a segment created with Parent Organization criterion in view mode`,
+
+	{
+		tag: '@LPS-135880',
+	},
+
+	async ({apiHelpers, page, pageEditorPage, segmentsPage}) => {
+		const segmentName = 'Validate Parent Organization Segment';
+
+		await test.step('Given 2 organizations are created, the first as the parent of the second', async () => {
+			const organization1 =
+				await apiHelpers.headlessAdminUser.postOrganization({
+					name: 'Parent Organization Name',
+				});
+
+			await apiHelpers.headlessAdminUser.postOrganization({
+				name: 'Organization Name',
+				parentOrganization: {
+					externalReferenceCode: organization1.externalReferenceCode,
+				},
+			});
+		});
+
+		await test.step('When a segment designer adds a segment with Parent Organization criterion', async () => {
+			await goToSegmentsAdmin(page);
+
+			await segmentsPage.clickAddNewSegmentButton();
+
+			await pageEditorPage.segmentEditorPage.createSegment(segmentName, {
+				'user-organization': ['Parent Organization'],
+			});
+
+			await segmentsPage.selectButton.click();
+
+			await segmentsPage.selectCheckboxItem('Parent Organization Name');
+
+			await segmentsPage.saveButton.click();
+
+			await waitForAlert(page);
+		});
+
+		await test.step('Then can assert in the view mode the segment is correctly created', async () => {
+			await segmentsPage.clickLinkByText(segmentName);
+
+			await page.waitForLoadState('networkidle');
+
+			await segmentsPage.viewCriterionValue('Parent Organization Name');
+		});
+	}
+);
+
+test(
+	`Can validate the value input persist in a segment created with Role criterion in view mode`,
+
+	{
+		tag: '@LPS-135880',
+	},
+
+	async ({page, pageEditorPage, segmentsPage}) => {
+		const segmentName = 'Validate Role Segment';
+
+		await test.step('When a segment designer adds a segment with Regular Role criterion', async () => {
+			await goToSegmentsAdmin(page);
+
+			await segmentsPage.clickAddNewSegmentButton();
+
+			await pageEditorPage.segmentEditorPage.createSegment(segmentName, {
+				user: ['Regular Role'],
+			});
+
+			await segmentsPage.selectButton.click();
+
+			await segmentsPage.selectCheckboxItem('Administrator');
+
+			await segmentsPage.saveButton.click();
+
+			await waitForAlert(page);
+		});
+
+		await test.step('Then can assert in view mode the segment is correctly created', async () => {
+			await segmentsPage.clickLinkByText(segmentName);
+
+			await page.waitForLoadState('networkidle');
+
+			await segmentsPage.viewCriterionValue('Administrator');
+		});
+	}
+);
+
+test(
+	`Can validate the value input persist in a segment created with Site criterion in view mode`,
+
+	{
+		tag: '@LPS-135880',
+	},
+
+	async ({page, pageEditorPage, segmentsPage}) => {
+		const segmentName = 'Validate Site Segment';
+
+		await test.step('When a segment designer adds a segment with Site criterion', async () => {
+			await goToSegmentsAdmin(page);
+
+			await segmentsPage.clickAddNewSegmentButton();
+
+			await pageEditorPage.segmentEditorPage.createSegment(segmentName, {
+				user: ['Site'],
+			});
+
+			await segmentsPage.selectButton.click();
+
+			await segmentsPage.selectCardItem(siteName);
+
+			await segmentsPage.saveButton.click();
+
+			await waitForAlert(page);
+		});
+
+		await test.step('Then can assert in view mode the segment is correctly created', async () => {
+			await segmentsPage.clickLinkByText(segmentName);
+
+			await page.waitForLoadState('networkidle');
+
+			await segmentsPage.viewCriterionValue(siteName);
+		});
+	}
+);
+
+test(
+	`Can validate the value input persist in a segment created with Team criterion in view mode`,
+
+	{
+		tag: '@LPS-135880',
+	},
+
+	async ({
+		page,
+		pageEditorPage,
+		productMenuPage,
+		segmentsPage,
+		teamsPage,
+	}) => {
+		const segmentName = 'Validate Site Segment';
+		const teamName = 'Test Team';
+
+		await test.step('Given a team is created', async () => {
+			await teamsPage.goTo(site.friendlyUrlPath);
+
+			await teamsPage.newTeamButton.click();
+
+			await teamsPage.nameInput.fill(teamName);
+
+			await teamsPage.saveButton.click();
+
+			await waitForAlert(page);
+
+			await expect(teamsPage.teamsTable.cell(teamName)).toBeVisible();
+		});
+
+		await test.step('When a segment designer adds a segment with Team criterion', async () => {
+			await productMenuPage.goToSegments();
+
+			await segmentsPage.clickAddNewSegmentButton();
+
+			await pageEditorPage.segmentEditorPage.createSegment(segmentName, {
+				user: ['Team'],
+			});
+
+			await segmentsPage.selectButton.click();
+
+			await segmentsPage.selectSegment(teamName);
+
+			await segmentsPage.saveButton.click();
+
+			await waitForAlert(page);
+		});
+
+		await test.step('Then can assert in view mode the segment is correctly created', async () => {
+			await segmentsPage.clickLinkByText(segmentName);
+
+			await page.waitForLoadState('networkidle');
+
+			await segmentsPage.viewCriterionValue(teamName);
+		});
+	}
+);
+
+test(
+	`Can validate the value input persist in a segment created with User criterion in view mode`,
+
+	{
+		tag: '@LPS-135880',
+	},
+
+	async ({page, pageEditorPage, segmentsPage}) => {
+		const segmentName = 'Validate User Segment';
+
+		await test.step('When a segment designer adds a segment with User criterion', async () => {
+			await goToSegmentsAdmin(page);
+
+			await segmentsPage.clickAddNewSegmentButton();
+
+			await pageEditorPage.segmentEditorPage.createSegment(segmentName, {
+				user: ['User'],
+			});
+
+			await segmentsPage.selectButton.click();
+
+			await segmentsPage.selectCheckboxItem('Test Test');
+
+			await segmentsPage.saveButton.click();
+
+			await waitForAlert(page);
+		});
+
+		await test.step('Then can assert in view mode the segment is correctly created', async () => {
+			await segmentsPage.clickLinkByText(segmentName);
+
+			await page.waitForLoadState('networkidle');
+
+			await segmentsPage.viewCriterionValue('Test Test');
+		});
+	}
+);
+
+test(
+	`Can validate the value input persist in a segment created with User Group criterion in view mode`,
+
+	{
+		tag: '@LPS-135880',
+	},
+
+	async ({
+		apiHelpers,
+		page,
+		pageEditorPage,
+		productMenuPage,
+		segmentsPage,
+	}) => {
+		const segmentName = 'Validate User Group Segment';
+
+		await test.step('Given a User Group is created', async () => {
+			await apiHelpers.headlessAdminUser.postUserGroup({
+				name: 'User Group Name',
+			});
+		});
+
+		await test.step('When a segment designer adds a segment with User Group criterion', async () => {
+			await productMenuPage.goToSegments();
+
+			await segmentsPage.clickAddNewSegmentButton();
+
+			await pageEditorPage.segmentEditorPage.createSegment(segmentName, {
+				user: ['User Group'],
+			});
+
+			await segmentsPage.selectButton.click();
+
+			await segmentsPage.selectCardItem('User Group Name');
+
+			await segmentsPage.saveButton.click();
+
+			await waitForAlert(page);
+		});
+
+		await test.step('Then can assert in view mode the segment is correctly created', async () => {
+			await segmentsPage.clickLinkByText(segmentName);
+
+			await page.waitForLoadState('networkidle');
+
+			await segmentsPage.viewCriterionValue('User Group Name');
+		});
+	}
+);
+
+test(
+	`Can validate the segment field types are displayed.`,
+
+	{
+		tag: '@LPS-103516',
+	},
+
+	async ({page, segmentsPage}) => {
+		await test.step('Given a segment designer goes to the segments editor page', async () => {
+			await goToSegmentsAdmin(page);
+
+			await segmentsPage.clickAddNewSegmentButton();
+		});
+
+		await test.step('Then can assert that the segment field types are displayed', async () => {
+			const fieldTypes = ['segments', 'user', 'user-organization'];
+			const sessionLocator = page.locator('div#context');
+
+			for (const typeName of fieldTypes) {
+				await segmentsPage.viewFieldTypes(typeName);
+			}
+
+			await expect(sessionLocator).toBeVisible();
+		});
+	}
+);
+
+test(
 	'Can understand the actions of keyboard from screen reader.',
 
 	{

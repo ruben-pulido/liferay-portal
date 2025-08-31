@@ -26,7 +26,15 @@ type File = {
 	thumbnailURL: string;
 };
 
-export default function FilePreviewerModalContent(file: File) {
+interface FilePreviewerModalContentProps {
+	file: File;
+	headerName?: string;
+}
+
+export default function FilePreviewerModalContent({
+	file,
+	headerName,
+}: FilePreviewerModalContentProps) {
 	const {link, name, thumbnailURL} = file;
 	const params = new URLSearchParams(thumbnailURL);
 	const hasImagePreview = params.has('imageThumbnail');
@@ -36,7 +44,9 @@ export default function FilePreviewerModalContent(file: File) {
 			<ClayModal.Header>
 				<div className="autofit-row autofit-row-center">
 					<div className="autofit-col autofit-col-expand">
-						<div className="text-truncate">{name}</div>
+						<div className="text-truncate">
+							{headerName ? headerName : name}
+						</div>
 					</div>
 
 					<div className="autofit-col pr-3">

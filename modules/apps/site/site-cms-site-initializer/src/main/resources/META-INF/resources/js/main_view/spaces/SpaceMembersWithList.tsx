@@ -9,16 +9,24 @@ import LoadingIndicator from '@clayui/loading-indicator';
 import classNames from 'classnames';
 import {openToast} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
-import React, {useCallback, useEffect, useId, useRef, useState} from 'react';
+import React, {
+	useCallback,
+	useEffect,
+	useId,
+	useMemo,
+	useRef,
+	useState,
+} from 'react';
 
+import AdminUserService from '../../common/services/AdminUserService';
 import SpaceService from '../../common/services/SpaceService';
+import {Role} from '../../common/types/Role';
 import {UserAccount, UserGroup} from '../../common/types/UserAccount';
 import {MembersListItem} from './MemberListItem';
 import {
 	SelectOptions,
 	SpaceMembersInputWithSelect,
 } from './SpaceMembersInputWithSelect';
-
 export interface SpaceMembersWithListProps {
 	assetLibraryCreatorUserId: string;
 	assetLibraryId: string;
@@ -38,6 +46,7 @@ export function SpaceMembersWithList({
 	onHasSelectedMembersChange,
 	pageSize = DEFAULT_PAGE_SIZE,
 }: SpaceMembersWithListProps) {
+	const listLabelId = useId();
 	const currentUserId = Liferay.ThemeDisplay.getUserId();
 	const [isFetchingMembers, setIsFetchingMembers] = useState(false);
 	const [selectedOption, setSelectedOption] = useState(SelectOptions.USERS);
@@ -50,30 +59,39 @@ export function SpaceMembersWithList({
 	const [userGroupsLastPage, setUserGroupsLastPage] = useState(0);
 	const [userGroupsPage, setUserGroupsPage] = useState(1);
 	const sentinelRef = useRef(null);
+	const [spacePermissionsRoles, setSpacePermissionsRoles] = useState<Role[]>(
+		[]
+	);
 
 	useEffect(() => {
 		const fetchMembers = async () => {
 			setIsFetchingMembers(true);
 
 			try {
-				const [spaceUsers, spaceUserGroups] = await Promise.all([
-					SpaceService.getSpaceUsers({
-						page: 1,
-						pageSize,
-						spaceId: assetLibraryId,
-					}),
-					SpaceService.getSpaceUserGroups({
-						nestedFields: 'numberOfUserAccounts',
-						page: 1,
-						pageSize,
-						spaceId: assetLibraryId,
-					}),
-				]);
+				const [spaceUsers, spaceUserGroups, userRoles] =
+					await Promise.all([
+						SpaceService.getSpaceUsers({
+							nestedFields: 'roles',
+							page: 1,
+							pageSize,
+							spaceId: assetLibraryId,
+						}),
+						SpaceService.getSpaceUserGroups({
+							nestedFields: 'numberOfUserAccounts,roles',
+							page: 1,
+							pageSize,
+							spaceId: assetLibraryId,
+						}),
+						AdminUserService.getUserRoles({
+							filter: 'type eq 5',
+						}),
+					]);
 
 				setSelectedUsers(spaceUsers.items);
 				setSelectedUserGroups(spaceUserGroups.items);
 				setUserGroupsLastPage(spaceUserGroups.lastPage);
 				setUsersLastPage(spaceUsers.lastPage);
+				setSpacePermissionsRoles(userRoles.items);
 			}
 			catch (error) {
 				console.error(error);
@@ -88,8 +106,8 @@ export function SpaceMembersWithList({
 
 	useEffect(() => {
 		const hasMembers =
-			selectedUsers?.length > 1 || selectedUserGroups?.length;
-		onHasSelectedMembersChange?.(Boolean(hasMembers));
+			selectedUsers?.length > 1 || selectedUserGroups?.length > 1;
+		onHasSelectedMembersChange?.(hasMembers);
 	}, [onHasSelectedMembersChange, selectedUsers, selectedUserGroups]);
 
 	const loadMoreItems = useCallback(async () => {
@@ -104,6 +122,7 @@ export function SpaceMembersWithList({
 
 			try {
 				const spaceUsers = await SpaceService.getSpaceUsers({
+					nestedFields: 'roles',
 					page: newUsersPage,
 					pageSize,
 					spaceId: assetLibraryId,
@@ -135,6 +154,7 @@ export function SpaceMembersWithList({
 
 		try {
 			const spaceUserGroups = await SpaceService.getSpaceUserGroups({
+				nestedFields: 'numberOfUserAccounts,roles',
 				page: newUserGroupsPage,
 				pageSize,
 				spaceId: assetLibraryId,
@@ -189,12 +209,20 @@ export function SpaceMembersWithList({
 	const onAutocompleteItemSelected = async (
 		item: UserAccount | UserGroup
 	) => {
+		const itemWithEmptyRoles = {
+			...item,
+			roles: [],
+		};
+
 		if (selectedOption === SelectOptions.USERS) {
 			if (selectedUsers.some((user) => user.id === item.id)) {
 				return;
 			}
 
-			setSelectedUsers([item as UserAccount, ...selectedUsers]);
+			setSelectedUsers([
+				itemWithEmptyRoles as UserAccount,
+				...selectedUsers,
+			]);
 
 			const {error} = await SpaceService.linkUserToSpace({
 				spaceId: assetLibraryId,
@@ -229,7 +257,10 @@ export function SpaceMembersWithList({
 			return;
 		}
 
-		setSelectedUserGroups([item, ...selectedUserGroups]);
+		setSelectedUserGroups([
+			itemWithEmptyRoles as UserGroup,
+			...selectedUserGroups,
+		]);
 
 		const {error} = await SpaceService.linkUserGroupToSpace({
 			spaceId: assetLibraryId,
@@ -322,7 +353,84 @@ export function SpaceMembersWithList({
 		}
 	};
 
-	const listLabelId = useId();
+	const onUpdateItemRoles = useCallback(
+		async (itemToUpdate: UserAccount | UserGroup, newRoles: string[]) => {
+			const isUser = selectedOption === SelectOptions.USERS;
+			const originalRoles = itemToUpdate.roles;
+
+			const newRoleObjects = spacePermissionsRoles.filter((role) =>
+				newRoles.includes(role.name)
+			);
+
+			const stateUpdater = isUser
+				? setSelectedUsers
+				: setSelectedUserGroups;
+
+			const setStateUpdater = stateUpdater as React.Dispatch<
+				React.SetStateAction<(UserAccount | UserGroup)[]>
+			>;
+
+			setStateUpdater((current) =>
+				current.map((item) =>
+					item.name === itemToUpdate.name
+						? {...item, roles: newRoleObjects}
+						: item
+				)
+			);
+
+			const {error} = isUser
+				? await SpaceService.updateUserRoles({
+						roleNames: newRoles,
+						spaceId: assetLibraryId,
+						userId: itemToUpdate.id,
+					})
+				: await SpaceService.updateUserGroupRoles({
+						roleNames: newRoles,
+						spaceId: assetLibraryId,
+						userGroupId: itemToUpdate.id,
+					});
+
+			if (error) {
+				setStateUpdater((current) =>
+					current.map((item) =>
+						item.id === itemToUpdate.id
+							? {...item, roles: originalRoles}
+							: item
+					)
+				);
+
+				openToast({
+					message: sub(
+						Liferay.Language.get(
+							isUser
+								? 'unable-to-update-roles-for-user-x'
+								: 'unable-to-update-roles-for-group-x'
+						),
+						[`<strong>${itemToUpdate.name}</strong>`]
+					),
+					type: 'danger',
+				});
+			}
+			else {
+				openToast({
+					message: sub(
+						Liferay.Language.get('x-role-was-successfully-updated'),
+						[`<strong>${itemToUpdate.name}</strong>`]
+					),
+					type: 'success',
+				});
+			}
+		},
+		[assetLibraryId, selectedOption, spacePermissionsRoles]
+	);
+
+	const hasMembersSelected = useMemo(() => {
+		if (selectedOption === SelectOptions.USERS) {
+			return selectedUsers.length;
+		}
+
+		return selectedUserGroups.length;
+	}, [selectedOption, selectedUsers, selectedUserGroups]);
 
 	return (
 		<div className={classNames('space-members-with-list', className)}>
@@ -335,46 +443,66 @@ export function SpaceMembersWithList({
 				selectValue={selectedOption}
 			/>
 
-			<label className="d-block" id={listLabelId}>
-				{Liferay.Language.get('who-has-access')}
-			</label>
+			{!hasMembersSelected ? (
+				<div className="border-top c-ml-n4 c-mr-n4 c-p-4 c-pb-0 text-center">
+					<p className="c-mb-1 c-mt-2 font-weight-semi-bold text-4">
+						{Liferay.Language.get('no-members-yet')}
+					</p>
 
-			<ul
-				aria-labelledby={listLabelId}
-				className="c-mt-3 c-p-0 list-unstyled members-list"
-			>
-				{selectedOption === SelectOptions.USERS ? (
-					<MembersListItem
-						assetLibraryCreatorUserId={assetLibraryCreatorUserId}
-						currentUserId={currentUserId}
-						emptyMessage={Liferay.Language.get(
-							'this-space-has-no-user-yet'
+					<p className="c-m-0 text-3 text-secondary">
+						{Liferay.Language.get('add-members-to-this-space')}
+					</p>
+				</div>
+			) : (
+				<>
+					<label className="d-block" id={listLabelId}>
+						{Liferay.Language.get('who-has-access')}
+					</label>
+					<ul
+						aria-labelledby={listLabelId}
+						className="c-mt-3 c-p-0 list-unstyled members-list"
+					>
+						{selectedOption === SelectOptions.USERS ? (
+							<MembersListItem
+								assetLibraryCreatorUserId={
+									assetLibraryCreatorUserId
+								}
+								currentUserId={currentUserId}
+								hasAssignMembersPermission={
+									hasAssignMembersPermission
+								}
+								itemType="user"
+								items={selectedUsers}
+								onRemoveItem={onRemoveItem}
+								onUpdateItemRoles={onUpdateItemRoles}
+								roles={spacePermissionsRoles}
+							/>
+						) : (
+							<MembersListItem
+								hasAssignMembersPermission={
+									hasAssignMembersPermission
+								}
+								itemType="group"
+								items={selectedUserGroups}
+								onRemoveItem={onRemoveItem}
+								onUpdateItemRoles={onUpdateItemRoles}
+								roles={spacePermissionsRoles}
+							/>
 						)}
-						hasAssignMembersPermission={hasAssignMembersPermission}
-						itemType="user"
-						items={selectedUsers}
-						onRemoveItem={onRemoveItem}
-					/>
-				) : (
-					<MembersListItem
-						emptyMessage={Liferay.Language.get(
-							'this-space-has-no-group-yet'
+
+						{isFetchingMembers && (
+							<li className="d-flex justify-content-center">
+								<LoadingIndicator
+									displayType="secondary"
+									size="sm"
+								/>
+							</li>
 						)}
-						hasAssignMembersPermission={hasAssignMembersPermission}
-						itemType="group"
-						items={selectedUserGroups}
-						onRemoveItem={onRemoveItem}
-					/>
-				)}
 
-				{isFetchingMembers && (
-					<li className="d-flex justify-content-center">
-						<LoadingIndicator displayType="secondary" size="sm" />
-					</li>
-				)}
-
-				<div ref={sentinelRef} />
-			</ul>
+						<div ref={sentinelRef} />
+					</ul>
+				</>
+			)}
 		</div>
 	);
 }

@@ -14,6 +14,7 @@ import {
 import React, {useEffect, useState} from 'react';
 
 import {defaultLanguageId} from '../../utils/constants';
+import {getNonInheritanceObjectRelationshipFields} from '../../utils/getNonInheritanceObjectRelationshipFields';
 import {TabsVisitor} from '../../utils/visitor';
 import InfoScreen from './InfoScreen/InfoScreen';
 import LayoutScreen from './LayoutScreen/LayoutScreen';
@@ -120,14 +121,11 @@ const Layout: React.FC<React.HTMLAttributes<HTMLElement>> = () => {
 				);
 
 			const objectFields =
-				await API.getObjectDefinitionByExternalReferenceCodeObjectFields(
-					objectDefinitionExternalReferenceCode
+				await getNonInheritanceObjectRelationshipFields(
+					objectDefinition
 				);
 
-			const objectRelationships =
-				await API.getObjectDefinitionByExternalReferenceCodeObjectRelationships(
-					objectDefinitionExternalReferenceCode
-				);
+			const {objectRelationships} = objectDefinition;
 
 			const objectLayout = {
 				defaultObjectLayout,

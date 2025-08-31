@@ -10,18 +10,21 @@ import ClayPanel from '@clayui/panel';
 import {fetch, sub} from 'frontend-js-web';
 import React, {useCallback, useEffect, useState} from 'react';
 
+import TagService from '../../../common/services/TagService';
 import {IAssetObjectEntry} from '../../../structure_builder/types/AssetType';
+import {Categorization} from '../services/ObjectEntryService';
+import {CategorizationInputSize} from './AssetCategorization';
 
 const AssetTags = ({
 	cmsGroupId,
+	inputSize,
 	objectEntry,
 	updateObjectEntry,
 }: {
-	cmsGroupId?: string | null;
+	cmsGroupId: string;
+	inputSize?: CategorizationInputSize;
 	objectEntry: IAssetObjectEntry;
-	updateObjectEntry: (
-		object: Pick<IAssetObjectEntry, 'keywords' | 'taxonomyCategoryIds'>
-	) => Promise<any>;
+	updateObjectEntry: (object: Categorization) => Promise<void>;
 }) => {
 	const [keywords, setKeywords] = useState([] as string[]);
 	const [networkStatus, setNetworkStatus] = useState(4);
@@ -41,14 +44,9 @@ const AssetTags = ({
 				return;
 			}
 
-			try {
-				await updateObjectEntry({
-					keywords: [...keywords, keyword.name],
-				});
-			}
-			catch (error) {
-				console.error('Failed to update asset tags.', error);
-			}
+			await updateObjectEntry({
+				keywords: [...keywords, keyword.name],
+			});
 		},
 		[keywords, updateObjectEntry]
 	);
@@ -57,33 +55,17 @@ const AssetTags = ({
 		async (event: any) => {
 			event.preventDefault();
 
-			let keyword = {};
+			const {data, error} = await TagService.createTag({
+				groupId: cmsGroupId,
+				name: value,
+			});
 
-			try {
-				const response = await fetch(
-					`/o/headless-admin-taxonomy/v1.0/sites/${cmsGroupId}/keywords`,
-					{
-						body: JSON.stringify({name: value} as any),
-						headers: {
-							'Accept': 'application/json',
-							'Content-Type': 'application/json',
-							'x-csrf-token': Liferay.authToken,
-						},
-						method: 'POST',
-					}
-				);
+			if (data) {
+				refetch();
 
-				keyword = await response.json();
-
-				if (!response.ok) {
-					throw new Error();
-				}
-
-				await refetch();
-
-				await addKeyword(keyword);
+				await addKeyword(data);
 			}
-			catch (error) {
+			else if (error) {
 				console.error('Failed to create new keyword.', error);
 			}
 		},
@@ -155,6 +137,7 @@ const AssetTags = ({
 					menuTrigger="focus"
 					onChange={setValue}
 					placeholder={sub(Liferay.Language.get('add-x'), 'tag')}
+					sizing={inputSize}
 					value={value}
 				>
 					{!items.length ? (

@@ -577,3 +577,76 @@ test.describe('Schedule Panel', () => {
 		}
 	);
 });
+
+test.describe('Categorization Panel', () => {
+	test(
+		'Add tags to content',
+		{tag: '@LPD-62047'},
+		async ({contentsPage, page, tagsPage}) => {
+
+			// Create a content
+
+			await contentsPage.goto();
+
+			await contentsPage.createContent('Basic Web Content');
+
+			await contentsPage.openSidePanel('Categorization');
+
+			// Add a new tag
+
+			const tagsAutocomplete = page.getByPlaceholder('Add tag');
+
+			const tagName = getRandomString();
+
+			await tagsAutocomplete.fill(tagName);
+
+			await page.getByRole('option', {name: 'Create New Tag:'}).click();
+
+			await expect(
+				page.locator('.label-item', {hasText: tagName})
+			).toBeAttached();
+
+			// Delete tag
+
+			await tagsPage.goto();
+
+			await tagsPage.deleteTag(tagName);
+		}
+	);
+});
+
+test(
+	'Check that the content shifts when the side panel opens',
+	{tag: '@LPD-62067'},
+	async ({contentsPage, page}) => {
+		const getContainerRightPadding = async () =>
+			page
+				.locator('#content')
+				.evaluate(
+					(element: HTMLDivElement) =>
+						window.getComputedStyle(element).paddingRight
+				);
+
+		// Create new Knowledge Base content
+
+		await contentsPage.goto();
+
+		await contentsPage.createContent('Knowledge Base');
+
+		// Compare the container padding when the side panel is closed and opened
+
+		let containerWidth = await getContainerRightPadding();
+
+		await contentsPage.openSidePanel();
+
+		await page
+			.locator(
+				'.content-editor__side-panel .sidebar:not(.c-slideout-transition)'
+			)
+			.waitFor();
+
+		containerWidth = await getContainerRightPadding();
+
+		expect(containerWidth).toBe('280px');
+	}
+);

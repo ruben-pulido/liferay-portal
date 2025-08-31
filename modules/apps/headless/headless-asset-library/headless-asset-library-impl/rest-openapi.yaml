@@ -142,7 +142,6 @@ components:
                 name:
                     description:
                         The role's name.
-                    readOnly: true
                     type: string
                 name_i18n:
                     additionalProperties:
@@ -288,7 +287,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.asset.library.client', and version '1.0.7'."
+        'com.liferay.headless.asset.library.client', and version '1.0.8'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -456,11 +455,11 @@ paths:
                     description:
                         default response
             tags: ["Site"]
-    "/asset-libraries/by-external-reference-code/{assetLibraryExternalReferenceCode}/user-accounts/by-external-reference-code/{userExternalReferenceCode}":
+    "/asset-libraries/by-external-reference-code/{assetLibraryExternalReferenceCode}/user-accounts/by-external-reference-code/{userAccountExternalReferenceCode}":
         delete:
             description:
-                Removes the user from the asset library using the provided external reference codes.
-            operationId: deleteAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserExternalReferenceCode
+                Removes the user account from the asset library using the provided external reference codes.
+            operationId: deleteAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCode
             parameters:
                 -   in: path
                     name: assetLibraryExternalReferenceCode
@@ -468,7 +467,7 @@ paths:
                     schema:
                         type: string
                 -   in: path
-                    name: userExternalReferenceCode
+                    name: userAccountExternalReferenceCode
                     required: true
                     schema:
                         type: string
@@ -482,8 +481,8 @@ paths:
             tags: ["UserAccount"]
         get:
             description:
-                Gets a user connected to the asset library using the provided external reference codes.
-            operationId: getAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserExternalReferenceCode
+                Gets a user account connected to the asset library using the provided external reference codes.
+            operationId: getAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCode
             parameters:
                 -   in: path
                     name: assetLibraryExternalReferenceCode
@@ -491,7 +490,7 @@ paths:
                     schema:
                         type: string
                 -   in: path
-                    name: userExternalReferenceCode
+                    name: userAccountExternalReferenceCode
                     required: true
                     schema:
                         type: string
@@ -509,8 +508,8 @@ paths:
             tags: ["UserAccount"]
         put:
             description:
-                Adds the user to the asset library using the provided external reference codes.
-            operationId: putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserExternalReferenceCode
+                Adds the user account to the asset library using the provided external reference codes.
+            operationId: putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCode
             parameters:
                 -   in: path
                     name: assetLibraryExternalReferenceCode
@@ -518,7 +517,7 @@ paths:
                     schema:
                         type: string
                 -   in: path
-                    name: userExternalReferenceCode
+                    name: userAccountExternalReferenceCode
                     required: true
                     schema:
                         type: string
@@ -534,6 +533,73 @@ paths:
                     description:
                         default response
             tags: ["UserAccount"]
+    "/asset-libraries/by-external-reference-code/{assetLibraryExternalReferenceCode}/user-accounts/by-external-reference-code/{userAccountExternalReferenceCode}/roles":
+        get:
+            operationId: getAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCodeRolesPage
+            parameters:
+                -   in: path
+                    name: assetLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: userAccountExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+            tags: ["Role"]
+        put:
+            operationId: putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCodeRolesPage
+            parameters:
+                -   in: path
+                    name: assetLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: userAccountExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            items:
+                                $ref: "#/components/schemas/Role"
+                            type: array
+                    application/xml:
+                        schema:
+                            items:
+                                $ref: "#/components/schemas/Role"
+                            type: array
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+            tags: ["Role"]
     "/asset-libraries/by-external-reference-code/{assetLibraryExternalReferenceCode}/user-groups/by-external-reference-code/{userGroupExternalReferenceCode}":
         delete:
             description:
@@ -612,6 +678,73 @@ paths:
                     description:
                         default response
             tags: ["UserGroup"]
+    "/asset-libraries/by-external-reference-code/{assetLibraryExternalReferenceCode}/user-groups/by-external-reference-code/{userGroupExternalReferenceCode}/roles":
+        get:
+            operationId: getAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCodeRolesPage
+            parameters:
+                -   in: path
+                    name: assetLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: userGroupExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+            tags: ["Role"]
+        put:
+            operationId: putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCodeRolesPage
+            parameters:
+                -   in: path
+                    name: assetLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: userGroupExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            items:
+                                $ref: "#/components/schemas/Role"
+                            type: array
+                    application/xml:
+                        schema:
+                            items:
+                                $ref: "#/components/schemas/Role"
+                            type: array
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+            tags: ["Role"]
     "/asset-libraries/by-external-reference-code/{externalReferenceCode}":
         delete:
             description:
@@ -811,7 +944,7 @@ paths:
     "/asset-libraries/by-external-reference-code/{externalReferenceCode}/user-accounts":
         get:
             description:
-                Get the asset library with the provided external reference code associated users. Results can be
+                Get the asset library with the provided external reference code associated user accounts. Results can be
                 paginated, filtered, searched, and sorted.
             operationId: getAssetLibraryByExternalReferenceCodeUserAccountsPage
             parameters:
@@ -1207,7 +1340,8 @@ paths:
     "/asset-libraries/{assetLibraryId}/user-accounts":
         get:
             description:
-                Get the asset library associated users. Results can be paginated, filtered, searched, and sorted.
+                Get the asset library associated user accounts. Results can be paginated, filtered, searched, and
+                sorted.
             operationId: getAssetLibraryUserAccountsPage
             parameters:
                 -   in: path
@@ -1256,10 +1390,10 @@ paths:
                     description:
                         default response
             tags: ["UserAccount"]
-    "/asset-libraries/{assetLibraryId}/user-accounts/{userId}":
+    "/asset-libraries/{assetLibraryId}/user-accounts/{userAccountId}":
         delete:
             description:
-                Removes the user from the asset library.
+                Removes the user account from the asset library.
             operationId: deleteAssetLibraryUserAccount
             parameters:
                 -   in: path
@@ -1269,7 +1403,7 @@ paths:
                         format: int64
                         type: integer
                 -   in: path
-                    name: userId
+                    name: userAccountId
                     required: true
                     schema:
                         format: int64
@@ -1284,7 +1418,7 @@ paths:
             tags: ["UserAccount"]
         get:
             description:
-                Gets a user connected to the asset library.
+                Gets a user account connected to the asset library.
             operationId: getAssetLibraryUserAccount
             parameters:
                 -   in: path
@@ -1294,7 +1428,7 @@ paths:
                         format: int64
                         type: integer
                 -   in: path
-                    name: userId
+                    name: userAccountId
                     required: true
                     schema:
                         format: int64
@@ -1323,7 +1457,7 @@ paths:
                         format: int64
                         type: integer
                 -   in: path
-                    name: userId
+                    name: userAccountId
                     required: true
                     schema:
                         format: int64
@@ -1340,6 +1474,77 @@ paths:
                     description:
                         default response
             tags: ["UserAccount"]
+    "/asset-libraries/{assetLibraryId}/user-accounts/{userAccountId}/roles":
+        get:
+            operationId: getAssetLibraryUserAccountRolesPage
+            parameters:
+                -   in: path
+                    name: assetLibraryId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+                -   in: path
+                    name: userAccountId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+            tags: ["Role"]
+        put:
+            operationId: putAssetLibraryUserAccountRolesPage
+            parameters:
+                -   in: path
+                    name: assetLibraryId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+                -   in: path
+                    name: userAccountId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            items:
+                                $ref: "#/components/schemas/Role"
+                            type: array
+                    application/xml:
+                        schema:
+                            items:
+                                $ref: "#/components/schemas/Role"
+                            type: array
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+            tags: ["Role"]
     "/asset-libraries/{assetLibraryId}/user-groups":
         get:
             description:
@@ -1476,3 +1681,74 @@ paths:
                     description:
                         default response
             tags: ["UserGroup"]
+    "/asset-libraries/{assetLibraryId}/user-groups/{userGroupId}/roles":
+        get:
+            operationId: getAssetLibraryUserGroupRolesPage
+            parameters:
+                -   in: path
+                    name: assetLibraryId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+                -   in: path
+                    name: userGroupId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+            tags: ["Role"]
+        put:
+            operationId: putAssetLibraryUserGroupRolesPage
+            parameters:
+                -   in: path
+                    name: assetLibraryId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+                -   in: path
+                    name: userGroupId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            items:
+                                $ref: "#/components/schemas/Role"
+                            type: array
+                    application/xml:
+                        schema:
+                            items:
+                                $ref: "#/components/schemas/Role"
+                            type: array
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                                type: array
+            tags: ["Role"]

@@ -105,6 +105,42 @@ public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 			Long relatedObjectEntryId)
 		throws Exception;
 
+	@DELETE
+	@Operation(
+		operationId = "deleteScopeScopeKeyByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode"
+	)
+	@Parameters(
+		{
+			@Parameter(in = ParameterIn.PATH, name = "scopeKey"),
+			@Parameter(
+				in = ParameterIn.PATH, name = "currentExternalReferenceCode"
+			),
+			@Parameter(in = ParameterIn.PATH, name = "objectRelationshipName"),
+			@Parameter(
+				in = ParameterIn.PATH, name = "relatedExternalReferenceCode"
+			)
+		}
+	)
+	@Path(
+		"/scopes/{scopeKey}/by-external-reference-code/{currentExternalReferenceCode}/{objectRelationshipName}/{relatedExternalReferenceCode}"
+	)
+	@Produces({"application/json", "application/xml"})
+	@Tags(@Tag(name = "ObjectEntry"))
+	public abstract void
+			deleteScopeScopeKeyByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode(
+				@NotNull @Parameter(hidden = true) @PathParam("scopeKey") String
+					scopeKey,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("currentExternalReferenceCode")
+				String currentExternalReferenceCode,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("objectRelationshipName")
+				String objectRelationshipName,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("relatedExternalReferenceCode")
+				String relatedExternalReferenceCode)
+		throws Exception;
+
 	@GET
 	@Operation(
 		operationId = "getByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNamePage"
@@ -231,6 +267,42 @@ public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 
 	@GET
 	@Operation(
+		operationId = "getScopeScopeKeyByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNamePage"
+	)
+	@Parameters(
+		{
+			@Parameter(in = ParameterIn.PATH, name = "scopeKey"),
+			@Parameter(
+				in = ParameterIn.PATH, name = "currentExternalReferenceCode"
+			),
+			@Parameter(in = ParameterIn.PATH, name = "objectRelationshipName"),
+			@Parameter(in = ParameterIn.QUERY, name = "fields"),
+			@Parameter(in = ParameterIn.QUERY, name = "nestedFields"),
+			@Parameter(in = ParameterIn.QUERY, name = "page"),
+			@Parameter(in = ParameterIn.QUERY, name = "pageSize"),
+			@Parameter(in = ParameterIn.QUERY, name = "restrictFields")
+		}
+	)
+	@Path(
+		"/scopes/{scopeKey}/by-external-reference-code/{currentExternalReferenceCode}/{objectRelationshipName}"
+	)
+	@Produces({"application/json", "application/xml"})
+	@Tags(@Tag(name = "ObjectEntry"))
+	public abstract Page<Object>
+			getScopeScopeKeyByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNamePage(
+				@NotNull @Parameter(hidden = true) @PathParam("scopeKey") String
+					scopeKey,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("currentExternalReferenceCode")
+				String currentExternalReferenceCode,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("objectRelationshipName")
+				String objectRelationshipName,
+				@Context Pagination pagination)
+		throws Exception;
+
+	@GET
+	@Operation(
 		operationId = "getScopeScopeKeyByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode"
 	)
 	@Parameters(
@@ -330,6 +402,44 @@ public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 
 	@Consumes({"application/json", "application/xml"})
 	@Operation(
+		operationId = "patchScopeScopeKeyByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode"
+	)
+	@Parameters(
+		{
+			@Parameter(in = ParameterIn.PATH, name = "scopeKey"),
+			@Parameter(
+				in = ParameterIn.PATH, name = "currentExternalReferenceCode"
+			),
+			@Parameter(in = ParameterIn.PATH, name = "objectRelationshipName"),
+			@Parameter(
+				in = ParameterIn.PATH, name = "relatedExternalReferenceCode"
+			)
+		}
+	)
+	@PATCH
+	@Path(
+		"/scopes/{scopeKey}/by-external-reference-code/{currentExternalReferenceCode}/{objectRelationshipName}/{relatedExternalReferenceCode}"
+	)
+	@Produces({"application/json", "application/xml"})
+	@Tags(@Tag(name = "ObjectEntry"))
+	public abstract Object
+			patchScopeScopeKeyByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode(
+				@NotNull @Parameter(hidden = true) @PathParam("scopeKey") String
+					scopeKey,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("currentExternalReferenceCode")
+				String currentExternalReferenceCode,
+				ObjectEntry objectEntry,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("objectRelationshipName")
+				String objectRelationshipName,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("relatedExternalReferenceCode")
+				String relatedExternalReferenceCode)
+		throws Exception;
+
+	@Consumes({"application/json", "application/xml"})
+	@Operation(
 		operationId = "postByExternalReferenceCodeObjectEntryObjectRelationshipName"
 	)
 	@Parameters(
@@ -410,7 +520,6 @@ public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 				String objectRelationshipName)
 		throws Exception;
 
-	@Consumes({"application/json", "application/xml"})
 	@Operation(
 		operationId = "putByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode"
 	)
@@ -436,7 +545,6 @@ public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 				@NotNull @Parameter(hidden = true)
 				@PathParam("currentExternalReferenceCode")
 				String currentExternalReferenceCode,
-				ObjectEntry objectEntry,
 				@NotNull @Parameter(hidden = true)
 				@PathParam("objectRelationshipName")
 				String objectRelationshipName,
@@ -445,7 +553,6 @@ public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 				String relatedExternalReferenceCode)
 		throws Exception;
 
-	@Consumes({"application/json", "application/xml"})
 	@Operation(operationId = "putCurrentObjectEntry")
 	@Parameters(
 		{
@@ -464,13 +571,50 @@ public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 			@NotNull @Parameter(hidden = true)
 			@PathParam("currentObjectEntryId")
 			Long currentObjectEntryId,
-			ObjectEntry objectEntry,
 			@NotNull @Parameter(hidden = true)
 			@PathParam("objectRelationshipName")
 			String objectRelationshipName,
 			@NotNull @Parameter(hidden = true)
 			@PathParam("relatedObjectEntryId")
 			Long relatedObjectEntryId)
+		throws Exception;
+
+	@Consumes({"application/json", "application/xml"})
+	@Operation(
+		operationId = "putScopeScopeKeyByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode"
+	)
+	@Parameters(
+		{
+			@Parameter(in = ParameterIn.PATH, name = "scopeKey"),
+			@Parameter(
+				in = ParameterIn.PATH, name = "currentExternalReferenceCode"
+			),
+			@Parameter(in = ParameterIn.PATH, name = "objectRelationshipName"),
+			@Parameter(
+				in = ParameterIn.PATH, name = "relatedExternalReferenceCode"
+			)
+		}
+	)
+	@Path(
+		"/scopes/{scopeKey}/by-external-reference-code/{currentExternalReferenceCode}/{objectRelationshipName}/{relatedExternalReferenceCode}"
+	)
+	@Produces({"application/json", "application/xml"})
+	@PUT
+	@Tags(@Tag(name = "ObjectEntry"))
+	public abstract Object
+			putScopeScopeKeyByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode(
+				@NotNull @Parameter(hidden = true) @PathParam("scopeKey") String
+					scopeKey,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("currentExternalReferenceCode")
+				String currentExternalReferenceCode,
+				ObjectEntry objectEntry,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("objectRelationshipName")
+				String objectRelationshipName,
+				@NotNull @Parameter(hidden = true)
+				@PathParam("relatedExternalReferenceCode")
+				String relatedExternalReferenceCode)
 		throws Exception;
 
 	protected <T, R, E extends Throwable> List<R> transform(

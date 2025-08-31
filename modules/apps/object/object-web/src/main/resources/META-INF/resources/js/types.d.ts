@@ -212,6 +212,7 @@ interface ObjectDefinition {
 	modifiable?: boolean;
 	name: string;
 	objectActions: [];
+	objectDefinitionSettings?: NameValueObject[];
 	objectFields: ObjectField[];
 	objectFolderExternalReferenceCode: string;
 	objectLayouts: [];
@@ -295,7 +296,9 @@ interface ObjectField {
 	listTypeDefinitionId?: number;
 	localized: boolean;
 	name: string;
+	objectDefinitionExternalReferenceCode1: string;
 	objectFieldSettings?: ObjectFieldSetting[];
+	objectRelationshipExternalReferenceCode?: string;
 	readOnly: ReadOnlyFieldValue;
 	readOnlyConditionExpression: string;
 	relationshipId?: number;

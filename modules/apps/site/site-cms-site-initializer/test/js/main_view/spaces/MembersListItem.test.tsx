@@ -9,36 +9,66 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import {MembersListItem} from '../../../../src/main/resources/META-INF/resources/js/main_view/spaces/MemberListItem';
+import {
+	SPACE_MEMBER_ROLE_NAME,
+	SpaceMembersPermissionSelect,
+} from '../../../../src/main/resources/META-INF/resources/js/main_view/spaces/SpaceMembersPermissionSelect';
 
 jest.mock('frontend-js-web', () => ({
 	sub: (str: string, arg: string) => str.replace('x', arg),
 }));
 
-describe('MembersListItem', () => {
+jest.mock(
+	'../../../../src/main/resources/META-INF/resources/js/main_view/spaces/SpaceMembersPermissionSelect',
+	() => ({
+		...(jest.requireActual(
+			'../../../../src/main/resources/META-INF/resources/js/main_view/spaces/SpaceMembersPermissionSelect'
+		) as object),
+		SpaceMembersPermissionSelect: jest.fn(() => null),
+	})
+);
+
+describe('MemberListItem', () => {
+	const mockRoles = [
+		{
+			externalReferenceCode: 'space-member-external-reference-code',
+			id: 100,
+			name: SPACE_MEMBER_ROLE_NAME,
+			name_i18n: {'en-US': 'Space Member US'},
+		},
+		{
+			externalReferenceCode: 'role-1-external-reference-code',
+			id: 101,
+			name: 'Role 1',
+			name_i18n: {'en-US': 'Role 1 US'},
+		},
+	];
+
 	const testUserAccount = {
 		emailAddress: 'brian.smith@example.com',
 		id: 'user',
 		image: '/images/brian_smith.png',
 		name: 'Brian Smith',
+		roles: [mockRoles[0]],
 	};
 
 	const testUserGroup = {
 		id: 'group',
 		name: 'Sample Group',
 		numberOfUserAccounts: '5',
+		roles: [mockRoles[0]],
 	};
 
 	const props = {
 		currentUserId: testUserAccount.id,
-		emptyMessage: 'No users',
 		hasAssignMembersPermission: true,
 		onRemoveItem: jest.fn(),
+		onUpdateItemRoles: jest.fn(),
+		roles: mockRoles,
 	};
 
-	it('renders default message when items is empty', () => {
-		render(<MembersListItem {...props} itemType="user" items={[]} />);
-
-		expect(screen.getByRole('listitem')).toHaveTextContent('No users');
+	afterEach(() => {
+		jest.clearAllMocks();
 	});
 
 	it('renders correctly when items is user', () => {
@@ -64,6 +94,8 @@ describe('MembersListItem', () => {
 			testUserAccount.name
 		);
 		expect(image).toHaveAttribute('src', testUserAccount.image);
+
+		expect(SpaceMembersPermissionSelect).toHaveBeenCalled();
 	});
 
 	it('renders a user with fallback image and without the (you) tag', () => {
@@ -71,6 +103,7 @@ describe('MembersListItem', () => {
 			emailAddress: 'another.user@example.com',
 			id: 'another-user-id',
 			name: 'Another User',
+			roles: [],
 		};
 
 		render(
@@ -85,7 +118,7 @@ describe('MembersListItem', () => {
 		expect(image).toHaveAttribute('src', '/image/user_portrait');
 	});
 
-	it('renders the word owner and hides the remove button when the user is the owner', () => {
+	it('renders the word owner and hides the remove button with permission select when the user is the owner', () => {
 		render(
 			<MembersListItem
 				{...props}
@@ -102,6 +135,8 @@ describe('MembersListItem', () => {
 		expect(
 			screen.queryByRole('button', {name: /remove/i})
 		).not.toBeInTheDocument();
+
+		expect(SpaceMembersPermissionSelect).not.toHaveBeenCalled();
 	});
 
 	it('renders correctly when items is group', () => {
@@ -123,12 +158,15 @@ describe('MembersListItem', () => {
 		expect(
 			within(listItemElement).getByRole('button', {name: 'remove-group'})
 		).toBeInTheDocument();
+
+		expect(SpaceMembersPermissionSelect).toHaveBeenCalled();
 	});
 
 	it('renders correctly when items is group and there is no members', () => {
 		const testUserGroupWithoutMembers = {
 			id: 'group',
 			name: 'Sample Group',
+			roles: [],
 		};
 
 		render(
@@ -152,6 +190,7 @@ describe('MembersListItem', () => {
 			emailAddress: 'another.user@example.com',
 			id: 'another-user-id',
 			name: 'Another User',
+			roles: [],
 		};
 
 		render(
@@ -195,4 +234,36 @@ describe('MembersListItem', () => {
 			expect(onRemoveItem).toHaveBeenCalledWith(items[0]);
 		}
 	);
+
+	it('calls onUpdateItemRoles when a role is changed', async () => {
+		const onUpdateItemRoles = jest.fn();
+
+		(SpaceMembersPermissionSelect as jest.Mock).mockImplementation(
+			({onChange}: {onChange: (roles: string[]) => void}) => (
+				<button
+					onClick={() => onChange([SPACE_MEMBER_ROLE_NAME, 'Role 1'])}
+				>
+					Change Role
+				</button>
+			)
+		);
+
+		render(
+			<MembersListItem
+				{...props}
+				itemType="user"
+				items={[testUserAccount]}
+				onUpdateItemRoles={onUpdateItemRoles}
+			/>
+		);
+
+		await userEvent.click(
+			screen.getByRole('button', {name: 'Change Role'})
+		);
+
+		expect(onUpdateItemRoles).toHaveBeenCalledWith(testUserAccount, [
+			SPACE_MEMBER_ROLE_NAME,
+			'Role 1',
+		]);
+	});
 });

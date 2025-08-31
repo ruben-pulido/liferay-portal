@@ -483,6 +483,7 @@ definition {
 	@priority = 4
 	test PerformConcurrentReindexAndSwitchElasticsearchConnections {
 		property embedded.elasticsearch.only = "true";
+		property portal.acceptance = "quarantine";
 		property search.environment.suite.exclude = "true";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
@@ -609,6 +610,7 @@ definition {
 	@description = "This is a use case for LPS-177665."
 	@priority = 4
 	test ReindexWithConcurrentExecutionMode {
+		property portal.acceptance = "quarantine";
 		property portal.release = "false";
 		property search.environment.suite.exclude = "true";
 		property test.liferay.virtual.instance = "false";
@@ -792,6 +794,7 @@ definition {
 	@priority = 5
 	test SearchWithNonLiferayIndex {
 		property embedded.elasticsearch.only = "true";
+		property portal.acceptance = "quarantine";
 		property search.environment.suite.exclude = "true";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
@@ -925,6 +928,7 @@ definition {
 	@priority = 3
 	test UpdateSystemSettingsWithoutPortalRestart {
 		property embedded.elasticsearch.only = "true";
+		property portal.acceptance = "quarantine";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 

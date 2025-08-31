@@ -7,6 +7,7 @@ package com.liferay.layout.internal.provider.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.layout.seo.service.LayoutSEOEntryLocalService;
+import com.liferay.layout.test.util.ContentLayoutTestUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
@@ -14,8 +15,10 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -23,10 +26,13 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
@@ -146,6 +152,65 @@ public class LayoutSitemapURLProviderTest {
 
 		Assert.assertEquals(
 			elements.toString(), availableLocales.size(), elements.size());
+
+		Map<Locale, String> alternateURLsMap = _portal.getAlternateURLs(
+			_portal.getCanonicalURL(
+				_portal.getLayoutFullURL(layout, _themeDisplay), _themeDisplay,
+				layout),
+			_themeDisplay, layout);
+
+		for (Element element : elements) {
+			String layoutLocalizedURL = element.elementText("loc");
+
+			Assert.assertTrue(
+				layoutLocalizedURL,
+				alternateURLsMap.containsValue(layoutLocalizedURL));
+		}
+	}
+
+	@Test
+	@TestInfo("LPD-63344")
+	public void testLayoutSitemapURLProviderContentLayoutTypeWithADisabledLanguageId()
+		throws Exception {
+
+		Element rootElement = _getRootElement();
+
+		Layout layout = LayoutTestUtil.addTypeContentLayout(
+			_group,
+			HashMapBuilder.put(
+				LocaleUtil.BRAZIL, RandomTestUtil.randomString()
+			).put(
+				LocaleUtil.SPAIN, RandomTestUtil.randomString()
+			).put(
+				LocaleUtil.US, RandomTestUtil.randomString()
+			).build());
+
+		Layout draftLayout = layout.fetchDraftLayout();
+
+		Assert.assertTrue(
+			ArrayUtil.contains(draftLayout.getAvailableLanguageIds(), "pt_BR"));
+
+		ContentLayoutTestUtil.publishLayout(draftLayout, layout);
+
+		UnicodeProperties typeSettingsUnicodeProperties =
+			_group.getTypeSettingsProperties();
+
+		typeSettingsUnicodeProperties.setProperty(
+			PropsKeys.LOCALES, "en_US,es_ES");
+		typeSettingsUnicodeProperties.setProperty(
+			"inheritLocales", Boolean.FALSE.toString());
+
+		_groupLocalService.updateGroup(
+			_group.getGroupId(), typeSettingsUnicodeProperties.toString());
+
+		_layoutSitemapURLProvider.visitLayout(
+			rootElement, layout.getUuid(), _layoutSet, _themeDisplay);
+
+		Assert.assertTrue(rootElement.hasContent());
+
+		List<Element> elements = rootElement.elements();
+
+		Assert.assertEquals(elements.toString(), 2, elements.size());
 
 		Map<Locale, String> alternateURLsMap = _portal.getAlternateURLs(
 			_portal.getCanonicalURL(
@@ -310,6 +375,9 @@ public class LayoutSitemapURLProviderTest {
 
 	@DeleteAfterTestRun
 	private Group _group;
+
+	@Inject
+	private GroupLocalService _groupLocalService;
 
 	@Inject
 	private LayoutLocalService _layoutLocalService;

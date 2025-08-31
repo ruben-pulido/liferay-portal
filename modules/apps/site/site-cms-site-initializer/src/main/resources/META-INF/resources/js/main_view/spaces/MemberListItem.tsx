@@ -6,36 +6,35 @@
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClaySticker from '@clayui/sticker';
+import cx from 'classnames';
 import {sub} from 'frontend-js-web';
 import React from 'react';
 
+import {Role} from '../../common/types/Role';
 import {UserAccount, UserGroup} from '../../common/types/UserAccount';
+import {SpaceMembersPermissionSelect} from './SpaceMembersPermissionSelect';
 
 interface MembersListItemProps {
 	assetLibraryCreatorUserId?: string | number;
 	currentUserId?: string;
-	emptyMessage: string;
 	hasAssignMembersPermission: boolean;
 	itemType: 'user' | 'group';
 	items: (UserAccount | UserGroup)[];
 	onRemoveItem: (item: UserAccount | UserGroup) => Promise<void>;
+	onUpdateItemRoles: (item: UserAccount | UserGroup, roles: string[]) => void;
+	roles: Role[];
 }
 
 export function MembersListItem({
 	assetLibraryCreatorUserId,
 	currentUserId,
-	emptyMessage,
 	hasAssignMembersPermission,
 	itemType,
 	items,
 	onRemoveItem,
+	onUpdateItemRoles,
+	roles,
 }: MembersListItemProps) {
-	if (!items || !items.length) {
-		return (
-			<li className="d-flex justify-content-center">{emptyMessage}</li>
-		);
-	}
-
 	return (
 		<>
 			{items.map((item) => {
@@ -43,6 +42,15 @@ export function MembersListItem({
 				const isOwner =
 					isUser &&
 					String(assetLibraryCreatorUserId) === String(item.id);
+
+				const memberRoles = item.roles.map((r) => r.name);
+				const selectedRoles = memberRoles.length ? memberRoles : [];
+				const classes = cx(
+					'align-items-center d-flex justify-content-between',
+					{
+						'c-pt-2 c-pb-2': isOwner,
+					}
+				);
 
 				const renderGroupCount = () => {
 					if (!isUser) {
@@ -59,10 +67,7 @@ export function MembersListItem({
 				};
 
 				return (
-					<li
-						className="align-items-center d-flex justify-content-between"
-						key={item.id}
-					>
+					<li className={classes} key={item.id}>
 						<div className="align-items-center d-flex">
 							<ClaySticker
 								displayType="primary"
@@ -105,21 +110,31 @@ export function MembersListItem({
 								({Liferay.Language.get('owner')})
 							</span>
 						) : hasAssignMembersPermission ? (
-							<ClayButtonWithIcon
-								aria-label={sub(
-									Liferay.Language.get('remove-x'),
-									isUser
-										? Liferay.Language.get('user')
-										: Liferay.Language.get('group')
-								)}
-								borderless
-								displayType="secondary"
-								onClick={async () => {
-									await onRemoveItem(item);
-								}}
-								symbol="times-circle"
-								translucent
-							/>
+							<div className="align-items-center c-gap-2 d-flex">
+								<SpaceMembersPermissionSelect
+									onChange={(newRoles) =>
+										onUpdateItemRoles(item, newRoles)
+									}
+									roles={roles}
+									selectedRoles={selectedRoles}
+								/>
+
+								<ClayButtonWithIcon
+									aria-label={sub(
+										Liferay.Language.get('remove-x'),
+										isUser
+											? Liferay.Language.get('user')
+											: Liferay.Language.get('group')
+									)}
+									borderless
+									displayType="secondary"
+									onClick={async () => {
+										await onRemoveItem(item);
+									}}
+									symbol="times-circle"
+									translucent
+								/>
+							</div>
 						) : null}
 					</li>
 				);

@@ -90,10 +90,12 @@ async function getSpaceUserGroups({
 }
 
 async function getSpaceUsers({
+	nestedFields,
 	page,
 	pageSize,
 	spaceId,
 }: {
+	nestedFields?: string;
 	page?: number;
 	pageSize?: number;
 	spaceId: string;
@@ -119,7 +121,7 @@ async function getSpaceUsers({
 		page: number;
 		totalCount: number;
 	}>(
-		`/o/headless-asset-library/v1.0/asset-libraries/${spaceId}/user-accounts?${urlParams.toString()}`
+		`/o/headless-asset-library/v1.0/asset-libraries/${spaceId}/user-accounts?${urlParams.toString()}${nestedFields ? '&nestedFields=' + nestedFields : ''}`
 	);
 
 	if (data) {
@@ -196,6 +198,40 @@ async function updateSpace(externalReferenceCode: string, body: any) {
 	);
 }
 
+async function updateUserRoles(payload: {
+	roleNames: string[];
+	spaceId: string;
+	userId: string;
+}) {
+	const {roleNames, spaceId, userId} = payload;
+
+	const body = roleNames.map((roleName) => ({
+		name: roleName,
+	}));
+
+	return await ApiHelper.put(
+		`/o/headless-asset-library/v1.0/asset-libraries/${spaceId}/user-accounts/${userId}/roles`,
+		body
+	);
+}
+
+async function updateUserGroupRoles(payload: {
+	roleNames: string[];
+	spaceId: string;
+	userGroupId: string;
+}) {
+	const {roleNames, spaceId, userGroupId} = payload;
+
+	const body = roleNames.map((roleName) => ({
+		name: roleName,
+	}));
+
+	return await ApiHelper.put(
+		`/o/headless-asset-library/v1.0/asset-libraries/${spaceId}/user-groups/${userGroupId}/roles`,
+		body
+	);
+}
+
 export default {
 	addSpace,
 	getSpace,
@@ -207,4 +243,6 @@ export default {
 	unlinkUserFromSpace,
 	unlinkUserGroupFromSpace,
 	updateSpace,
+	updateUserGroupRoles,
+	updateUserRoles,
 };

@@ -5,13 +5,20 @@
 
 package com.liferay.change.tracking.spi.display;
 
+import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvider;
+import com.liferay.asset.display.page.util.AssetDisplayPageUtil;
+import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.change.tracking.spi.display.context.DisplayContext;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMFieldLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
@@ -19,10 +26,15 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesConverterUtil;
 import com.liferay.frontend.taglib.clay.servlet.taglib.LinkTag;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -32,8 +44,10 @@ import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.CamelCaseUtil;
+import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -170,14 +184,18 @@ public abstract class BaseCTDisplayRenderer<T extends BaseModel<T>>
 			Function<T, Object> ddmStructureIdGetterFunction =
 				attributeGetterFunctions.get("DDMStructureId");
 
+			Function<T, Object> idGetterFunction = attributeGetterFunctions.get(
+				"id");
+
+			if (idGetterFunction == null) {
+				return;
+			}
+
 			DDMStructure ddmStructure =
 				DDMStructureLocalServiceUtil.getStructure(
 					(Long)ddmStructureIdGetterFunction.apply(model));
 
 			DDMForm ddmForm = ddmStructure.getDDMForm();
-
-			Function<T, Object> idGetterFunction = attributeGetterFunctions.get(
-				"id");
 
 			DDMFormValues ddmFormValues =
 				DDMFieldLocalServiceUtil.getDDMFormValues(
@@ -192,80 +210,47 @@ public abstract class BaseCTDisplayRenderer<T extends BaseModel<T>>
 					ddmForm.getDDMFormFields(),
 					ddmFormValues.getDDMFormFieldValuesMap(true)));
 
-			List<DDMFormFieldValue> ddmFormFieldValues =
-				ddmFormValues.getDDMFormFieldValues();
+			Map<String, List<DDMFormFieldValue>> ddmFormFieldValues =
+				ddmFormValues.getDDMFormFieldValuesMap(true);
 
 			List<DDMFormFieldValue> imageDDMFormFieldValues = new ArrayList<>();
 			List<DDMFormFieldValue> nonimageDDMFormFieldValues =
 				new ArrayList<>();
 
 			ddmFormFieldValues.forEach(
-				ddmFormFieldValue -> {
-					DDMFormField ddmFormField =
-						ddmFormFieldValue.getDDMFormField();
+				(key, value) -> value.forEach(
+					ddmFormFieldValue -> {
+						DDMFormField ddmFormField =
+							ddmFormFieldValue.getDDMFormField();
 
-					if (StringUtil.equals(
-							ddmFormField.getType(),
-							DDMFormFieldTypeConstants.IMAGE)) {
+						if (StringUtil.equals(
+								ddmFormField.getType(),
+								DDMFormFieldTypeConstants.IMAGE)) {
 
-						imageDDMFormFieldValues.add(ddmFormFieldValue);
-					}
-					else {
-						nonimageDDMFormFieldValues.add(ddmFormFieldValue);
-					}
-				});
+							imageDDMFormFieldValues.add(ddmFormFieldValue);
+						}
+						else if (!StringUtil.equals(
+									ddmFormField.getType(),
+									DDMFormFieldTypeConstants.FIELDSET)) {
+
+							nonimageDDMFormFieldValues.add(ddmFormFieldValue);
+						}
+					}));
+
+			Locale locale = displayBuilder.getLocale();
 
 			if (!nonimageDDMFormFieldValues.isEmpty()) {
 				displayBuilder.displaySectionHeader("fields");
 
 				nonimageDDMFormFieldValues.forEach(
-					ddmFormFieldValue -> {
-						DDMFormField ddmFormField =
-							ddmFormFieldValue.getDDMFormField();
-
-						Value value = ddmFormFieldValue.getValue();
-
-						displayBuilder.display(
-							ddmFormField.getName(),
-							value.getString(displayBuilder.getLocale()));
-					});
+					ddmFormFieldValue -> _buildStructureNonimageDisplay(
+						ddmFormFieldValue, displayBuilder, locale));
 			}
 
 			ListUtil.isNotEmptyForEach(
 				imageDDMFormFieldValues,
-				ddmFormFieldValue -> {
-					try {
-						displayBuilder.displaySectionHeader("image");
-
-						Value value = ddmFormFieldValue.getValue();
-
-						JSONObject jsonObject =
-							JSONFactoryUtil.createJSONObject(
-								value.getString(displayBuilder.getLocale()));
-
-						DLFileEntry dlFileEntry =
-							DLFileEntryLocalServiceUtil.getDLFileEntry(
-								jsonObject.getLong("fileEntryId"));
-
-						displayBuilder.display(
-							"mime-type", dlFileEntry.getMimeType()
-						).display(
-							"version", dlFileEntry.getVersion()
-						).display(
-							"size", dlFileEntry.getSize()
-						).display(
-							"download",
-							getDownloadLink(
-								displayBuilder.getDisplayContext(),
-								dlFileEntry.getVersion(), dlFileEntry.getSize(),
-								dlFileEntry.getFileName()),
-							false
-						);
-					}
-					catch (Exception exception) {
-						ReflectionUtil.throwException(exception);
-					}
-				});
+				ddmFormFieldValue -> _buildStructureImageDisplay(
+					ddmFormFieldValue, displayBuilder, locale));
 		}
 	}
 
@@ -294,6 +279,55 @@ public abstract class BaseCTDisplayRenderer<T extends BaseModel<T>>
 
 	protected ResourceBundle getResourceBundle(Locale locale) {
 		return ResourceBundleUtil.getBundle(locale, getClass());
+	}
+
+	protected String renderDisplayPagePreview(
+			AssetDisplayPageFriendlyURLProvider
+				assetDisplayPageFriendlyURLProvider,
+			DisplayContext<T> displayContext)
+		throws PortalException {
+
+		T model = displayContext.getModel();
+
+		AssetRendererFactory<?> assetRendererFactory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClass(
+				model.getModelClass());
+
+		AssetEntry assetEntry = assetRendererFactory.getAssetEntry(
+			model.getModelClassName(), (Long)model.getPrimaryKeyObj());
+
+		if (AssetDisplayPageUtil.hasAssetDisplayPage(
+				assetEntry.getGroupId(), assetEntry)) {
+
+			HttpServletRequest httpServletRequest =
+				displayContext.getHttpServletRequest();
+
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)httpServletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
+			ClassPKInfoItemIdentifier classPKInfoItemIdentifier =
+				new ClassPKInfoItemIdentifier(assetEntry.getClassPK());
+
+			String previewURL =
+				assetDisplayPageFriendlyURLProvider.getFriendlyURL(
+					new InfoItemReference(
+						assetEntry.getClassName(), classPKInfoItemIdentifier),
+					themeDisplay);
+
+			previewURL = HttpComponentsUtil.addParameter(
+				previewURL, "p_l_mode", Constants.PREVIEW);
+			previewURL = HttpComponentsUtil.addParameter(
+				previewURL, "previewCTCollectionId",
+				assetEntry.getCtCollectionId());
+
+			return StringBundler.concat(
+				"<iframe frameborder=\"0\" onload=\"this.style.height = ",
+				"(this.contentWindow.document.body.scrollHeight+20) + 'px';\" ",
+				"src=\"", previewURL, "\" width=\"100%\"></iframe>");
+		}
+
+		return null;
 	}
 
 	protected interface DisplayBuilder<T> {
@@ -333,6 +367,73 @@ public abstract class BaseCTDisplayRenderer<T extends BaseModel<T>>
 
 	}
 
+	private void _buildStructureImageDisplay(
+		DDMFormFieldValue ddmFormFieldValue, DisplayBuilder<T> displayBuilder,
+		Locale locale) {
+
+		try {
+			Value value = ddmFormFieldValue.getValue();
+
+			DDMFormField ddmFormField = ddmFormFieldValue.getDDMFormField();
+
+			LocalizedValue label = ddmFormField.getLabel();
+
+			displayBuilder.displaySectionHeader(
+				StringBundler.concat(
+					LanguageUtil.get(locale, "image"), StringPool.COLON,
+					StringPool.SPACE, label.getString(locale)));
+
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+				value.getString(locale));
+
+			DLFileEntry dlFileEntry =
+				DLFileEntryLocalServiceUtil.fetchDLFileEntry(
+					jsonObject.getLong("fileEntryId"));
+
+			displayBuilder.display(
+				"mime-type",
+				(dlFileEntry != null) ? dlFileEntry.getMimeType() :
+					StringPool.BLANK
+			).display(
+				"version",
+				(dlFileEntry != null) ? dlFileEntry.getVersion() :
+					StringPool.BLANK
+			).display(
+				"size",
+				(dlFileEntry != null) ? dlFileEntry.getSize() : StringPool.BLANK
+			).display(
+				"download",
+				() -> {
+					if (dlFileEntry != null) {
+						return getDownloadLink(
+							displayBuilder.getDisplayContext(),
+							dlFileEntry.getVersion(), dlFileEntry.getSize(),
+							dlFileEntry.getFileName());
+					}
+
+					return StringPool.BLANK;
+				},
+				false
+			);
+		}
+		catch (Exception exception) {
+			ReflectionUtil.throwException(exception);
+		}
+	}
+
+	private void _buildStructureNonimageDisplay(
+		DDMFormFieldValue ddmFormFieldValue, DisplayBuilder<T> displayBuilder,
+		Locale locale) {
+
+		DDMFormField ddmFormField = ddmFormFieldValue.getDDMFormField();
+
+		LocalizedValue label = ddmFormField.getLabel();
+
+		displayBuilder.display(
+			label.getString(locale),
+			_getOptionValue(ddmFormFieldValue, locale));
+	}
+
 	private void _buildTableContent(
 		HttpServletResponse httpServletResponse,
 		Map<String, Object> modelAttributes) {
@@ -363,6 +464,65 @@ public abstract class BaseCTDisplayRenderer<T extends BaseModel<T>>
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
 		}
+	}
+
+	private String _getOptionValue(
+		DDMFormFieldValue ddmFormFieldValue, Locale locale) {
+
+		Value value = ddmFormFieldValue.getValue();
+
+		if (value == null) {
+			return StringPool.BLANK;
+		}
+
+		DDMFormField ddmFormField = ddmFormFieldValue.getDDMFormField();
+
+		DDMFormFieldOptions ddmFormFieldOptions =
+			ddmFormField.getDDMFormFieldOptions();
+
+		String valueString = value.getString(locale);
+
+		LocalizedValue optionLabel = ddmFormFieldOptions.getOptionLabels(
+			valueString);
+
+		if (optionLabel != null) {
+			return optionLabel.getString(locale);
+		}
+
+		if (!StringUtil.startsWith(valueString, StringPool.OPEN_BRACKET) ||
+			!StringUtil.endsWith(valueString, StringPool.CLOSE_BRACKET)) {
+
+			return valueString;
+		}
+
+		try {
+			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(valueString);
+
+			if (jsonArray.length() > 0) {
+				StringBundler sb = new StringBundler(jsonArray.length());
+
+				for (int i = 0; i < jsonArray.length(); i++) {
+					if (i > 0) {
+						sb.append(StringPool.COMMA_AND_SPACE);
+					}
+
+					LocalizedValue localizedValue =
+						ddmFormFieldOptions.getOptionLabels(
+							jsonArray.getString(i));
+
+					sb.append(localizedValue.getString(locale));
+				}
+
+				return sb.toString();
+			}
+		}
+		catch (JSONException jsonException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(jsonException);
+			}
+		}
+
+		return StringPool.BLANK;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

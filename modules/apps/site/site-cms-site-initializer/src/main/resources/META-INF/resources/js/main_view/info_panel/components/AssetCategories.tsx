@@ -15,17 +15,19 @@ import {
 	IGroupedTaxonomies,
 	ITaxonomyCategoryFacade,
 } from '../../../structure_builder/types/AssetType';
+import {Categorization} from '../services/ObjectEntryService';
+import {CategorizationInputSize} from './AssetCategorization';
 
 const AssetCategories = ({
 	cmsGroupId,
+	inputSize,
 	objectEntry,
 	updateObjectEntry,
 }: {
-	cmsGroupId?: string | null;
+	cmsGroupId: string;
+	inputSize?: CategorizationInputSize;
 	objectEntry: IAssetObjectEntry;
-	updateObjectEntry: (
-		object: Pick<IAssetObjectEntry, 'keywords' | 'taxonomyCategoryIds'>
-	) => Promise<any>;
+	updateObjectEntry: (object: Categorization) => Promise<void>;
 }) => {
 	const [groupedTaxonomies, setGroupedTaxonomies] = useState(
 		{} as IGroupedTaxonomies
@@ -158,6 +160,7 @@ const AssetCategories = ({
 							Liferay.Language.get('add-x'),
 							'category'
 						)}
+						sizing={inputSize}
 						value={value}
 					>
 						{(item: any) => (

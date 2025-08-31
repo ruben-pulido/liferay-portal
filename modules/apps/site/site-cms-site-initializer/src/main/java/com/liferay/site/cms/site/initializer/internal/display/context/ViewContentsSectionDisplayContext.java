@@ -7,7 +7,6 @@ package com.liferay.site.cms.site.initializer.internal.display.context;
 
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
-import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
@@ -17,7 +16,6 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,15 +48,6 @@ public class ViewContentsSectionDisplayContext
 	}
 
 	@Override
-	public List<DropdownItem> getBulkActionDropdownItems() {
-		return ListUtil.fromArray(
-			new FDSActionDropdownItem(
-				"#", "trash", "remove",
-				LanguageUtil.get(httpServletRequest, "remove"), null, null,
-				null));
-	}
-
-	@Override
 	public Map<String, Object> getEmptyState() {
 		return HashMapBuilder.<String, Object>put(
 			"description",
@@ -87,7 +76,7 @@ public class ViewContentsSectionDisplayContext
 			3,
 			new FDSActionDropdownItem(
 				null, "share", "share",
-				LanguageUtil.get(httpServletRequest, "share"), "get", null,
+				LanguageUtil.get(httpServletRequest, "share"), "get", "share",
 				"link"));
 
 		return fdsActionDropdownItems;

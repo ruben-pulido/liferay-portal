@@ -28,10 +28,12 @@ const renderComponent = ({isSubscribed = false} = {}) => {
 		<ContentEditorSidePanel
 			addCommentURL="addCommentURL"
 			comments={[]}
+			contentAPIURL="contentAPIURL"
 			deleteCommentURL="deleteCommentURL"
 			editCommentURL="editCommentURL"
 			editorConfig={{}}
 			expirationDate={EXPIRATION_DATE}
+			groupId="21000"
 			id="contentId"
 			isSubscribed={isSubscribed}
 			reviewDate={REVIEW_DATE}
@@ -46,9 +48,9 @@ describe('ContentEditorSidePanel', () => {
 	it('renders ContentEditorSidePanel', () => {
 		renderComponent();
 
-		expect(screen.getByLabelText('general')).toBeInTheDocument();
-
-		expect(screen.getByLabelText('comments')).toBeInTheDocument();
+		['general', 'comments', 'schedule', 'categorization'].forEach((name) =>
+			expect(screen.getByLabelText(name)).toBeInTheDocument()
+		);
 	});
 
 	it('closes the panel pressing the Close button', async () => {

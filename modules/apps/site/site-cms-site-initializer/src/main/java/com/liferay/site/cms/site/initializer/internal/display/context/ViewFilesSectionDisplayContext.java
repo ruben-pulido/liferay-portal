@@ -17,7 +17,6 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,15 +50,21 @@ public class ViewFilesSectionDisplayContext
 
 	@Override
 	public List<DropdownItem> getBulkActionDropdownItems() {
-		return ListUtil.fromArray(
+		List<DropdownItem> fdsBulkActionDropdownItems =
+			super.getBulkActionDropdownItems();
+
+		fdsBulkActionDropdownItems.add(
+			new FDSActionDropdownItem(
+				"#", "download", "download",
+				LanguageUtil.get(httpServletRequest, "download"), null, null,
+				null));
+		fdsBulkActionDropdownItems.add(
 			new FDSActionDropdownItem(
 				"#", "password-policies", "permissions",
 				LanguageUtil.get(httpServletRequest, "permissions"), null, null,
-				null),
-			new FDSActionDropdownItem(
-				"#", "trash", "remove",
-				LanguageUtil.get(httpServletRequest, "remove"), null, null,
 				null));
+
+		return fdsBulkActionDropdownItems;
 	}
 
 	@Override
@@ -84,7 +89,7 @@ public class ViewFilesSectionDisplayContext
 			3,
 			new FDSActionDropdownItem(
 				null, "share", "share",
-				LanguageUtil.get(httpServletRequest, "share"), "get", null,
+				LanguageUtil.get(httpServletRequest, "share"), "get", "share",
 				"link"));
 		fdsActionDropdownItems.add(
 			5,
