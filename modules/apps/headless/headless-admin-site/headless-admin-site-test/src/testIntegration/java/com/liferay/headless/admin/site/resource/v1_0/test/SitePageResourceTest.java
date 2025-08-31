@@ -1312,10 +1312,17 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	private void _testPostByExternalReferenceCodeSitePage(SitePage sitePage)
 		throws Exception {
 
+		_testPostByExternalReferenceCodeSitePage(sitePage, sitePage);
+	}
+
+	private void _testPostByExternalReferenceCodeSitePage(
+			SitePage expectedSitePage, SitePage sitePage)
+		throws Exception {
+
 		SitePage postSitePage =
 			testPostByExternalReferenceCodeSitePage_addSitePage(sitePage);
 
-		assertEquals(sitePage, postSitePage);
+		assertEquals(expectedSitePage, postSitePage);
 		assertValid(postSitePage);
 
 		_assertSitePage(
