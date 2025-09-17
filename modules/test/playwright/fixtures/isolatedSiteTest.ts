@@ -37,14 +37,6 @@ const isolatedSiteTest = test.extend<{
 					`Isolated site could not be created, the default site will be used instead`
 				);
 			}
-			finally {
-
-				// Delete the site
-
-				if (site?.id) {
-					await apiHelpers.headlessSite.deleteSite(site.id);
-				}
-			}
 		},
 		{auto: true},
 	],

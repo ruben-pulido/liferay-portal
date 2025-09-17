@@ -35,19 +35,25 @@ export class JSONWebServicesLayoutApiHelper {
 	async addLayout({
 		externalReferenceCode = '',
 		groupId,
+		hidden = 'false',
 		masterLayoutPlid = '0',
 		options = {type: 'portlet'},
 		parentLayoutId = '0',
 		privateLayout = 'false',
+		serviceContext = {},
 		title,
+		userId,
 	}: {
 		externalReferenceCode?: string;
 		groupId: string;
+		hidden?: string;
 		masterLayoutPlid?: string;
 		options?: {publish?: boolean; type?: string};
 		parentLayoutId?: string;
 		privateLayout?: string;
+		serviceContext?: Record<string, string | boolean>;
 		title: string;
+		userId?: string;
 	}): Promise<Layout> {
 		if (options.publish && options.type !== 'content') {
 			throw new TypeError(
@@ -60,14 +66,12 @@ export class JSONWebServicesLayoutApiHelper {
 		const urlSearchParams = new URLSearchParams();
 
 		urlSearchParams.append('externalReferenceCode', externalReferenceCode);
+		urlSearchParams.append('userId', userId);
 		urlSearchParams.append('groupId', groupId);
 		urlSearchParams.append('privateLayout', privateLayout);
 		urlSearchParams.append('parentLayoutId', parentLayoutId);
-		urlSearchParams.append('localeNamesMap', JSON.stringify({en_US: name}));
-		urlSearchParams.append(
-			'localeTitlesMap',
-			JSON.stringify({en_US: title})
-		);
+		urlSearchParams.append('name', name);
+		urlSearchParams.append('title', title);
 		urlSearchParams.append(
 			'descriptionMap',
 			JSON.stringify({en_US: getRandomString()})
@@ -76,13 +80,13 @@ export class JSONWebServicesLayoutApiHelper {
 		urlSearchParams.append('robotsMap', JSON.stringify({en_US: ''}));
 		urlSearchParams.append('type', options.type);
 		urlSearchParams.append('typeSettings', '');
-		urlSearchParams.append('hidden', 'false');
-		urlSearchParams.append(
-			'friendlyURLMap',
-			JSON.stringify({en_US: `/${title}`})
-		);
+		urlSearchParams.append('hidden', hidden);
+		urlSearchParams.append('friendlyURL', '');
 		urlSearchParams.append('masterLayoutPlid', masterLayoutPlid);
-		urlSearchParams.append('serviceContext', JSON.stringify({}));
+		urlSearchParams.append(
+			'serviceContext',
+			JSON.stringify(serviceContext)
+		);
 
 		const layout = await this.apiHelpers.post(
 			`${liferayConfig.environment.baseUrl}${this.basePath}/add-layout`,
