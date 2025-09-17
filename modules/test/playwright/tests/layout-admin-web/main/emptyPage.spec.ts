@@ -53,15 +53,17 @@ test('Empty pages show correct label in UI and correct alert in view mode', asyn
 
 	const layout = await apiHelpers.jsonWebServicesLayout.addLayout({
 		externalReferenceCode: null,
-		groupId: companyId,
+		groupId: site.id,
 		hidden: 'true',
 		options: {
 			type: 'empty',
 		},
 		serviceContext: {
-			companyId,
-			'layout.instanceable.allowed': true,
-			'scopeGroupId': companyId,
+			companyId: companyId,
+            'attributes': {
+				'layout.instanceable.allowed': true,
+			},
+			'scopeGroupId': site.id,
 			'userId': user.id,
 		},
 		title: layoutTitle,

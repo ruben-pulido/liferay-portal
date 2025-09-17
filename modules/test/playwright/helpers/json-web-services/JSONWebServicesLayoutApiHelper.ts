@@ -51,7 +51,7 @@ export class JSONWebServicesLayoutApiHelper {
 		options?: {publish?: boolean; type?: string};
 		parentLayoutId?: string;
 		privateLayout?: string;
-		serviceContext?: Record<string, string | boolean>;
+		serviceContext?: Record<string, string | boolean | unknown>;
 		title: string;
 		userId?: string;
 	}): Promise<Layout> {
@@ -72,17 +72,10 @@ export class JSONWebServicesLayoutApiHelper {
 		urlSearchParams.append('parentLayoutId', parentLayoutId);
 		urlSearchParams.append('name', name);
 		urlSearchParams.append('title', title);
-		urlSearchParams.append(
-			'descriptionMap',
-			JSON.stringify({en_US: getRandomString()})
-		);
-		urlSearchParams.append('keywordsMap', JSON.stringify({en_US: ''}));
-		urlSearchParams.append('robotsMap', JSON.stringify({en_US: ''}));
+		urlSearchParams.append('description', '');
 		urlSearchParams.append('type', options.type);
-		urlSearchParams.append('typeSettings', '');
 		urlSearchParams.append('hidden', hidden);
 		urlSearchParams.append('friendlyURL', '');
-		urlSearchParams.append('masterLayoutPlid', masterLayoutPlid);
 		urlSearchParams.append(
 			'serviceContext',
 			JSON.stringify(serviceContext)
