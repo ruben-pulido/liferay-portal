@@ -25,6 +25,8 @@ import com.liferay.headless.admin.site.client.dto.v1_0.RowPageElementDefinition;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -176,7 +178,7 @@ public class PageElementsTestUtil {
 
 			pageElement.setExternalReferenceCode(RandomTestUtil::randomString);
 			pageElement.setPageElementDefinition(
-				getPageElementDefinition(PageElementDefinition.Type.CONTAINER));
+				getPageElementDefinition(_getRandomType()));
 			pageElement.setPosition(i);
 
 			if (RandomTestUtil.randomBoolean()) {
@@ -194,5 +196,14 @@ public class PageElementsTestUtil {
 
 		return pageElements;
 	}
+
+	private static PageElementDefinition.Type _getRandomType() {
+		return _types.get(RandomTestUtil.randomInt(0, _types.size() - 1));
+	}
+
+	private static final List<PageElementDefinition.Type> _types =
+		Arrays.asList(
+			PageElementDefinition.Type.CONTAINER,
+			PageElementDefinition.Type.FRAGMENT);
 
 }
