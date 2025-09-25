@@ -130,10 +130,14 @@ public class PageElementsTestUtil {
 					setDatePropagated(RandomTestUtil::nextDate);
 
 					setFragmentReference(
-						new DefaultFragmentReference() {
+						() -> new DefaultFragmentReference() {
 							{
 								setDefaultFragmentKey(
 									fragmentEntry::getFragmentEntryKey);
+								setFragmentReferenceType(
+									() ->
+										FragmentReferenceType.
+											DEFAULT_FRAGMENT_REFERENCE);
 							}
 						});
 					setFragmentType(FragmentType.BASIC);
