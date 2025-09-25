@@ -258,6 +258,7 @@ public class PageTemplateResourceImpl extends BasePageTemplateResourceImpl {
 				_layoutLocalService.getLayout(
 					layoutPageTemplateEntry.getPlid()),
 				ServiceContextUtil.createServiceContext(
+					contextCompany.getCompanyId(),
 					layoutPageTemplateEntry.getGroupId(),
 					contextHttpServletRequest, contextUser.getUserId())));
 	}

@@ -172,6 +172,7 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 				_cetManager, contentPageSpecification,
 				_layoutLocalService.getLayout(layoutUtilityPageEntry.getPlid()),
 				ServiceContextUtil.createServiceContext(
+					contextCompany.getCompanyId(),
 					layoutUtilityPageEntry.getGroupId(),
 					contextHttpServletRequest, contextUser.getUserId())));
 	}
@@ -348,7 +349,8 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 		long groupId, UtilityPage utilityPage) {
 
 		ServiceContext serviceContext = ServiceContextUtil.createServiceContext(
-			groupId, contextHttpServletRequest, contextUser.getUserId());
+			contextCompany.getCompanyId(), groupId, contextHttpServletRequest,
+			contextUser.getUserId());
 
 		serviceContext.setCreateDate(utilityPage.getDateCreated());
 		serviceContext.setModifiedDate(utilityPage.getDateModified());

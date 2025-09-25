@@ -90,8 +90,8 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 		_layoutService.deleteLayout(
 			layout.getPlid(),
 			ServiceContextUtil.createServiceContext(
-				layout.getGroupId(), contextHttpServletRequest,
-				contextUser.getUserId()));
+				contextCompany.getCompanyId(), layout.getGroupId(),
+				contextHttpServletRequest, contextUser.getUserId()));
 	}
 
 	@Override
@@ -195,8 +195,8 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			LayoutUtil.addDraftToLayout(
 				_cetManager, contentPageSpecification, layout,
 				ServiceContextUtil.createServiceContext(
-					layout.getGroupId(), contextHttpServletRequest,
-					contextUser.getUserId())));
+					contextCompany.getCompanyId(), layout.getGroupId(),
+					contextHttpServletRequest, contextUser.getUserId())));
 	}
 
 	@Override
