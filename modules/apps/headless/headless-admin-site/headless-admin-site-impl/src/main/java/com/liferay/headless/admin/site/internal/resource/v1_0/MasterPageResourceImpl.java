@@ -271,9 +271,9 @@ public class MasterPageResourceImpl
 
 		layout = LayoutUtil.updateContentLayout(
 			_cetManager, layout, layout.getNameMap(), layout.getTitleMap(),
-			layout.getDescriptionMap(), layout.getRobotsMap(),
-			layout.getFriendlyURLMap(), masterPage.getPageSpecifications(),
-			serviceContext);
+			layout.getDescriptionMap(), layout.getKeywordsMap(),
+			layout.getRobotsMap(), layout.getFriendlyURLMap(),
+			masterPage.getPageSpecifications(), serviceContext);
 
 		if (!layoutPageTemplateEntry.isApproved() && layout.isPublished()) {
 			layoutPageTemplateEntry =
@@ -393,7 +393,7 @@ public class MasterPageResourceImpl
 		Layout layout = LayoutUtil.addContentLayout(
 			_cetManager, groupId, masterPage.getPageSpecifications(),
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, true, nameMap, nameMap,
-			nameMap, null, LayoutConstants.TYPE_CONTENT, null, true, true,
+			nameMap, null, null, LayoutConstants.TYPE_CONTENT, null, true, true,
 			Collections.emptyMap(), WorkflowConstants.STATUS_APPROVED,
 			serviceContext);
 

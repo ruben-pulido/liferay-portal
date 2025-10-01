@@ -579,7 +579,8 @@ public class PageTemplateResourceImpl
 			layoutPageTemplateEntry.getPlid());
 
 		LayoutUtil.updatePortletLayout(
-			_cetManager, layout, nameMap, layout.getFriendlyURLMap(),
+			_cetManager, layout, nameMap, null, null, null, null,
+			layout.getFriendlyURLMap(),
 			_getWidgetPageTemplateTypeSettingsUnicodeProperties(
 				layout, widgetPageTemplate.getPageTemplateSettings()),
 			serviceContext, widgetPageSpecification);
@@ -626,7 +627,7 @@ public class PageTemplateResourceImpl
 		Layout layout = LayoutUtil.addContentLayout(
 			_cetManager, groupId, contentPageTemplate.getPageSpecifications(),
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, true, nameMap, nameMap,
-			nameMap, null, LayoutConstants.TYPE_CONTENT, null, true, true,
+			nameMap, null, null, LayoutConstants.TYPE_CONTENT, null, true, true,
 			Collections.emptyMap(), WorkflowConstants.STATUS_APPROVED,
 			serviceContext);
 
@@ -786,8 +787,8 @@ public class PageTemplateResourceImpl
 
 		layout = LayoutUtil.updateContentLayout(
 			_cetManager, layout, layout.getNameMap(), layout.getTitleMap(),
-			layout.getDescriptionMap(), layout.getRobotsMap(),
-			layout.getFriendlyURLMap(),
+			layout.getDescriptionMap(), layout.getKeywordsMap(),
+			layout.getRobotsMap(), layout.getFriendlyURLMap(),
 			contentPageTemplate.getPageSpecifications(), serviceContext);
 
 		if (layout.isPublished() && !layoutPageTemplateEntry.isApproved()) {
@@ -850,7 +851,8 @@ public class PageTemplateResourceImpl
 			layoutPageTemplateEntry.getPlid());
 
 		LayoutUtil.updatePortletLayout(
-			_cetManager, layout, nameMap, layout.getFriendlyURLMap(),
+			_cetManager, layout, nameMap, null, null, null, null,
+			layout.getFriendlyURLMap(),
 			_getWidgetPageTemplateTypeSettingsUnicodeProperties(
 				layout, widgetPageTemplate.getPageTemplateSettings()),
 			serviceContext,

@@ -8,9 +8,12 @@ package com.liferay.headless.admin.site.internal.resource.v1_0;
 import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.headless.admin.site.dto.v1_0.ContentPageSettings;
 import com.liferay.headless.admin.site.dto.v1_0.ContentPageSpecification;
+import com.liferay.headless.admin.site.dto.v1_0.NavigationSettings;
 import com.liferay.headless.admin.site.dto.v1_0.PageSettings;
 import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
+import com.liferay.headless.admin.site.dto.v1_0.SEOSettings;
 import com.liferay.headless.admin.site.dto.v1_0.SitePage;
+import com.liferay.headless.admin.site.dto.v1_0.SitemapSettings;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSettings;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.SitePageTypeUtil;
 import com.liferay.headless.admin.site.internal.odata.entity.v1_0.SitePageEntityModel;
@@ -40,6 +43,7 @@ import com.liferay.portal.kernel.service.LayoutService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
@@ -61,6 +65,7 @@ import jakarta.ws.rs.core.MultivaluedMap;
 
 import java.io.Serializable;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -347,6 +352,28 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 		Map<Locale, String> nameMap = LocalizedMapUtil.getLocalizedMap(
 			sitePage.getName_i18n());
 
+		Map<Locale, String> titleMap = new HashMap<>();
+		Map<Locale, String> descriptionMap = new HashMap<>();
+		Map<Locale, String> keywordsMap = new HashMap<>();
+		Map<Locale, String> robotsMap = new HashMap<>();
+
+		if (sitePage.getPageSettings() != null) {
+			PageSettings pageSettings = sitePage.getPageSettings();
+
+			if (pageSettings.getSeoSettings() != null) {
+				SEOSettings seoSettings = pageSettings.getSeoSettings();
+
+				titleMap = LocalizedMapUtil.getLocalizedMap(
+					seoSettings.getHtmlTitle_i18n());
+				descriptionMap = LocalizedMapUtil.getLocalizedMap(
+					seoSettings.getDescription_i18n());
+				keywordsMap = LocalizedMapUtil.getLocalizedMap(
+					seoSettings.getSeoKeywords_i18n());
+				robotsMap = LocalizedMapUtil.getLocalizedMap(
+					seoSettings.getRobots_i18n());
+			}
+		}
+
 		UnicodeProperties typeSettingsUnicodeProperties =
 			_getTypeSettingsUnicodeProperties(sitePage);
 
@@ -359,8 +386,8 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, groupId,
 					sitePage.getParentSitePageExternalReferenceCode(),
 					serviceContext),
-				false, nameMap, null, null, null,
-				SitePageTypeUtil.toInternalType(sitePage.getType()),
+				false, nameMap, titleMap, descriptionMap, keywordsMap,
+				robotsMap, SitePageTypeUtil.toInternalType(sitePage.getType()),
 				typeSettingsUnicodeProperties,
 				_isHiddenFromNavigation(false, sitePage.getPageSettings()),
 				false,
@@ -375,7 +402,8 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, groupId,
 					sitePage.getParentSitePageExternalReferenceCode(),
 					serviceContext),
-				nameMap, typeSettingsUnicodeProperties,
+				nameMap, titleMap, descriptionMap, keywordsMap, robotsMap,
+				typeSettingsUnicodeProperties,
 				_isHiddenFromNavigation(false, sitePage.getPageSettings()),
 				LocalizedMapUtil.getLocalizedMap(
 					sitePage.getFriendlyUrlPath_i18n()),
@@ -385,6 +413,10 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 		}
 
 		PageSettings pageSettings = sitePage.getPageSettings();
+
+		LayoutUtil.updateSEOEntry(
+			layout.getGroupId(), layout.getLayoutId(), pageSettings,
+			serviceContext);
 
 		if ((pageSettings != null) && (pageSettings.getPriority() != null)) {
 			layout = _layoutService.updatePriority(
@@ -423,31 +455,118 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			return null;
 		}
 
-		if (sitePage.getType() == SitePage.Type.CONTENT_PAGE) {
-			if (!(pageSettings instanceof ContentPageSettings)) {
-				throw new UnsupportedOperationException();
-			}
+		if ((sitePage.getType() == SitePage.Type.CONTENT_PAGE) &&
+			!(pageSettings instanceof ContentPageSettings)) {
 
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
-		if ((sitePage.getType() != SitePage.Type.WIDGET_PAGE) ||
+		if ((sitePage.getType() == SitePage.Type.WIDGET_PAGE) &&
 			!(pageSettings instanceof WidgetPageSettings)) {
 
 			throw new UnsupportedOperationException();
 		}
 
+		UnicodePropertiesBuilder.UnicodePropertiesWrapper
+			unicodePropertiesWrapper = UnicodePropertiesBuilder.create(true);
+
+		NavigationSettings navigationSettings =
+			pageSettings.getNavigationSettings();
+
+		if (navigationSettings != null) {
+			String target = navigationSettings.getTarget();
+			NavigationSettings.TargetType targetType =
+				navigationSettings.getTargetType();
+
+			if (Validator.isNotNull(target)) {
+				unicodePropertiesWrapper.setProperty(
+					com.liferay.layout.admin.kernel.model.
+						LayoutTypePortletConstants.TARGET,
+					target);
+			}
+
+			if (targetType == NavigationSettings.TargetType.NEW_TAB) {
+				unicodePropertiesWrapper.setProperty("targetType", "useNewTab");
+			}
+		}
+
+		String queryString = pageSettings.getQueryString();
+
+		if (Validator.isNotNull(queryString)) {
+			unicodePropertiesWrapper.setProperty(
+				com.liferay.layout.admin.kernel.model.
+					LayoutTypePortletConstants.QUERY_STRING,
+				queryString);
+		}
+
+		SEOSettings seoSettings = pageSettings.getSeoSettings();
+
+		if (seoSettings != null) {
+			SitemapSettings sitemapSettings = seoSettings.getSitemapSettings();
+
+			if (sitemapSettings != null) {
+				SitemapSettings.ChangeFrequency changeFrequency =
+					sitemapSettings.getChangeFrequency();
+
+				if (changeFrequency != null) {
+					unicodePropertiesWrapper.setProperty(
+						com.liferay.layout.admin.kernel.model.
+							LayoutTypePortletConstants.SITEMAP_CHANGEFREQ,
+						StringUtil.toLowerCase(changeFrequency.getValue()));
+				}
+
+				Boolean include = sitemapSettings.getInclude();
+
+				if (include != null) {
+					String siteMapInclude = "0";
+
+					if (include) {
+						siteMapInclude = "1";
+					}
+
+					unicodePropertiesWrapper.setProperty(
+						com.liferay.layout.admin.kernel.model.
+							LayoutTypePortletConstants.SITEMAP_INCLUDE,
+						siteMapInclude);
+				}
+
+				Boolean includeChildSitePages =
+					sitemapSettings.getIncludeChildSitePages();
+
+				if (includeChildSitePages != null) {
+					String siteMapIncludeChildLayouts = "false";
+
+					if (includeChildSitePages) {
+						siteMapIncludeChildLayouts = "true";
+					}
+
+					unicodePropertiesWrapper.setProperty(
+						"sitemap-include-child-layouts",
+						siteMapIncludeChildLayouts);
+				}
+
+				Double pagePriority = sitemapSettings.getPagePriority();
+
+				if (pagePriority != null) {
+					unicodePropertiesWrapper.setProperty(
+						com.liferay.layout.admin.kernel.model.
+							LayoutTypePortletConstants.SITEMAP_PRIORITY,
+						String.valueOf(pagePriority));
+				}
+			}
+		}
+
+		if (sitePage.getType() == SitePage.Type.CONTENT_PAGE) {
+			return unicodePropertiesWrapper.build();
+		}
+
 		WidgetPageSettings widgetPageSettings =
 			(WidgetPageSettings)pageSettings;
 
-		UnicodePropertiesBuilder.UnicodePropertiesWrapper
-			unicodePropertiesWrapper = UnicodePropertiesBuilder.create(
-				true
-			).setProperty(
-				LayoutConstants.CUSTOMIZABLE_LAYOUT,
-				String.valueOf(
-					GetterUtil.getBoolean(widgetPageSettings.getCustomizable()))
-			);
+		unicodePropertiesWrapper.setProperty(
+			LayoutConstants.CUSTOMIZABLE_LAYOUT,
+			String.valueOf(
+				GetterUtil.getBoolean(widgetPageSettings.getCustomizable())));
 
 		if (widgetPageSettings.getLayoutTemplateId() != null) {
 			unicodePropertiesWrapper.setProperty(
@@ -501,6 +620,28 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			nameMap = LocalizedMapUtil.getLocalizedMap(sitePage.getName_i18n());
 		}
 
+		Map<Locale, String> titleMap = new HashMap<>();
+		Map<Locale, String> descriptionMap = new HashMap<>();
+		Map<Locale, String> keywordsMap = new HashMap<>();
+		Map<Locale, String> robotsMap = new HashMap<>();
+
+		if (sitePage.getPageSettings() != null) {
+			PageSettings pageSettings = sitePage.getPageSettings();
+
+			if (pageSettings.getSeoSettings() != null) {
+				SEOSettings seoSettings = pageSettings.getSeoSettings();
+
+				titleMap = LocalizedMapUtil.getLocalizedMap(
+					seoSettings.getHtmlTitle_i18n());
+				descriptionMap = LocalizedMapUtil.getLocalizedMap(
+					seoSettings.getDescription_i18n());
+				keywordsMap = LocalizedMapUtil.getLocalizedMap(
+					seoSettings.getSeoKeywords_i18n());
+				robotsMap = LocalizedMapUtil.getLocalizedMap(
+					seoSettings.getRobots_i18n());
+			}
+		}
+
 		Map<Locale, String> friendlyURLMap = layout.getFriendlyURLMap();
 
 		if (sitePage.getFriendlyUrlPath_i18n() != null) {
@@ -528,23 +669,28 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 				serviceContext));
 
 		if (Objects.equals(sitePage.getType(), SitePage.Type.CONTENT_PAGE)) {
-			layout = LayoutUtil.updateContentLayout(
-				_cetManager, layout, nameMap, layout.getTitleMap(),
-				layout.getDescriptionMap(), layout.getRobotsMap(),
+			layout = LayoutUtil.updateContentLayout(//TODO we need to call _getTypeSettingsUnicodeProperties
+				_cetManager, layout, nameMap, titleMap, descriptionMap,
+				keywordsMap, robotsMap,
 				friendlyURLMap, sitePage.getPageSpecifications(),
 				serviceContext);
 		}
 		else {
 			layout = LayoutUtil.updatePortletLayout(
-				_cetManager, layout, nameMap, friendlyURLMap,
+				_cetManager, layout, nameMap, titleMap, descriptionMap,
+				keywordsMap, robotsMap, friendlyURLMap,
 				_getTypeSettingsUnicodeProperties(sitePage), serviceContext,
 				PageSpecificationUtil.getWidgetPageSpecification(
 					sitePage.getPageSpecifications()));
 		}
 
-		int priority = Integer.MAX_VALUE;
-
 		PageSettings pageSettings = sitePage.getPageSettings();
+
+		LayoutUtil.updateSEOEntry(
+			layout.getGroupId(), layout.getLayoutId(), pageSettings,
+			serviceContext);
+
+		int priority = Integer.MAX_VALUE;
 
 		if ((pageSettings != null) && (pageSettings.getPriority() != null)) {
 			priority = pageSettings.getPriority();

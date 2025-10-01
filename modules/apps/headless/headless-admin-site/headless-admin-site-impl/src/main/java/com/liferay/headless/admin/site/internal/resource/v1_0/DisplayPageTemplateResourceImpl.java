@@ -423,7 +423,7 @@ public class DisplayPageTemplateResourceImpl
 
 		layout = LayoutUtil.updateContentLayout(
 			_cetManager, layout, layout.getNameMap(), layout.getTitleMap(),
-			layout.getDescriptionMap(),
+			layout.getDescriptionMap(), layout.getKeywordsMap(),
 			_getRobotsMap(displayPageTemplate.getDisplayPageTemplateSettings()),
 			LocalizedMapUtil.getLocalizedMap(
 				displayPageTemplate.getFriendlyUrlPath_i18n()),
@@ -534,7 +534,7 @@ public class DisplayPageTemplateResourceImpl
 		Layout layout = LayoutUtil.addContentLayout(
 			_cetManager, groupId, displayPageTemplate.getPageSpecifications(),
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, false, nameMap, nameMap,
-			null, _getRobotsMap(displayPageTemplateSettings),
+			null, null, _getRobotsMap(displayPageTemplateSettings),
 			LayoutConstants.TYPE_ASSET_DISPLAY,
 			_getUnicodeProperties(displayPageTemplateSettings), true, true,
 			LocalizedMapUtil.getLocalizedMap(
