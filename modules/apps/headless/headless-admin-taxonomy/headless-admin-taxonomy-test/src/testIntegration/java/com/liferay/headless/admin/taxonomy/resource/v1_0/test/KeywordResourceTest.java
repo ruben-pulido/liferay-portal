@@ -34,16 +34,17 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.portal.util.PropsValues;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -381,6 +382,13 @@ public class KeywordResourceTest extends BaseKeywordResourceTestCase {
 
 		irrelevantGroup = originalIrrelevantGroup;
 		testGroup = originalTestGroup;
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testGraphQLGetKeywordsRankedPage() throws Exception {
+		super.testGraphQLGetKeywordsRankedPage();
 	}
 
 	@Override

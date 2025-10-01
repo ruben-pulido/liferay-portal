@@ -233,8 +233,19 @@ public abstract class BaseWorkspaceGitRepository
 	public boolean isSnapshot() {
 		String jobName = System.getenv("JOB_NAME");
 
-		if (jobName.equals("publish-testray-report") ||
-			jobName.equals("test-portal-source-format")) {
+		if (jobName.equals("forward-pullrequest") ||
+			jobName.equals("publish-testray-report") ||
+			jobName.equals("test-portal-source-format") ||
+			jobName.contains("validation")) {
+
+			return false;
+		}
+
+		String jobVariant = System.getenv("JOB_VARIANT");
+
+		if (jobName.contains("master") &&
+			!JenkinsResultsParserUtil.isNullOrEmpty(jobVariant) &&
+			jobVariant.contains("modules-unit")) {
 
 			return false;
 		}

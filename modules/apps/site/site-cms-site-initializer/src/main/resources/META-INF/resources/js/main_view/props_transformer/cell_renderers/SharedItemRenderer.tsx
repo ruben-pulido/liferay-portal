@@ -5,6 +5,7 @@
 
 import ClayIcon from '@clayui/icon';
 import ClayLink from '@clayui/link';
+import ClaySticker from '@clayui/sticker';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import {sub} from 'frontend-js-web';
 import React, {useMemo} from 'react';
@@ -30,7 +31,31 @@ export default function SharedItemRenderer({
 	options: {actionId: string};
 	value: string;
 }) {
-	const {fileTypeIcon, fileTypeIconColor, shareable, siteName} = itemData;
+	const {assetType, fileTypeIcon, fileTypeIconColor, siteName} = itemData;
+
+	let icon;
+	let iconColor;
+
+	if (fileTypeIcon && fileTypeIconColor) {
+		icon = fileTypeIcon;
+		iconColor = fileTypeIconColor;
+	}
+	else if (assetType?.includes('Web Content')) {
+		icon = 'forms';
+		iconColor = 'content-icon-basic-content';
+	}
+	else if (assetType?.includes('Blog')) {
+		icon = 'blogs';
+		iconColor = 'content-icon-blog';
+	}
+	else if (assetType?.includes('Knowledge')) {
+		icon = 'wiki';
+		iconColor = 'content-icon-knowledge-base';
+	}
+	else {
+		icon = 'web-content';
+		iconColor = 'content-icon-web-content';
+	}
 
 	const linkHref = useMemo(() => {
 		const {actionId} = options;
@@ -61,11 +86,9 @@ export default function SharedItemRenderer({
 
 	return (
 		<span className="align-items-center c-gap-2 d-flex table-list-title">
-			{itemData.fileTypeIcon && itemData.fileTypeIconColor && (
-				<span className={fileTypeIconColor}>
-					<ClayIcon aria-hidden="true" symbol={fileTypeIcon} />
-				</span>
-			)}
+			<ClaySticker className={`flex-shrink-0 ${iconColor}`}>
+				<ClayIcon aria-hidden="true" symbol={icon} />
+			</ClaySticker>
 
 			{linkHref ? (
 				<ClayLink aria-label={value} data-senna-off href={linkHref}>
@@ -75,17 +98,19 @@ export default function SharedItemRenderer({
 				<span>{value}</span>
 			)}
 
-			{shareable && (
+			{siteName && (
 				<ClayTooltipProvider>
-					<span
+					<ClaySticker
+						className="flex-shrink-0"
 						data-tooltip-align="top"
+						displayType="unstyled"
 						title={sub(
 							Liferay.Language.get('shared-from-x'),
-							siteName
+							`"${siteName}"`
 						)}
 					>
 						<ClayIcon className="text-secondary" symbol="users" />
-					</span>
+					</ClaySticker>
 				</ClayTooltipProvider>
 			)}
 		</span>

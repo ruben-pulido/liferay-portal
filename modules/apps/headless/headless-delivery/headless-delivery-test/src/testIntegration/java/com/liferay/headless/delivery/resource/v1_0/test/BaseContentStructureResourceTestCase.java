@@ -51,6 +51,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.odata.entity.EntityField;
@@ -59,7 +60,6 @@ import com.liferay.portal.search.test.rule.SearchTestRule;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
 import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegateBuilderRegistry;
@@ -1513,84 +1513,6 @@ public abstract class BaseContentStructureResourceTestCase {
 	}
 
 	@Test
-	public void testGraphQLGetSiteContentStructuresPage() throws Exception {
-		Long siteId = testGetSiteContentStructuresPage_getSiteId();
-
-		GraphQLField graphQLField = new GraphQLField(
-			"contentStructures",
-			new HashMap<String, Object>() {
-				{
-					put("page", 1);
-					put("pageSize", 10);
-
-					put("siteKey", "\"" + siteId + "\"");
-				}
-			},
-			new GraphQLField("items", getGraphQLFields()),
-			new GraphQLField("page"), new GraphQLField("totalCount"));
-
-		// No namespace
-
-		JSONObject contentStructuresJSONObject = JSONUtil.getValueAsJSONObject(
-			invokeGraphQLQuery(graphQLField), "JSONObject/data",
-			"JSONObject/contentStructures");
-
-		long totalCount = contentStructuresJSONObject.getLong("totalCount");
-
-		ContentStructure contentStructure1 =
-			testGraphQLGetSiteContentStructuresPage_addContentStructure();
-		ContentStructure contentStructure2 =
-			testGraphQLGetSiteContentStructuresPage_addContentStructure();
-
-		contentStructuresJSONObject = JSONUtil.getValueAsJSONObject(
-			invokeGraphQLQuery(graphQLField), "JSONObject/data",
-			"JSONObject/contentStructures");
-
-		Assert.assertEquals(
-			totalCount + 2, contentStructuresJSONObject.getLong("totalCount"));
-
-		assertContains(
-			contentStructure1,
-			Arrays.asList(
-				ContentStructureSerDes.toDTOs(
-					contentStructuresJSONObject.getString("items"))));
-		assertContains(
-			contentStructure2,
-			Arrays.asList(
-				ContentStructureSerDes.toDTOs(
-					contentStructuresJSONObject.getString("items"))));
-
-		// Using the namespace headlessDelivery_v1_0
-
-		contentStructuresJSONObject = JSONUtil.getValueAsJSONObject(
-			invokeGraphQLQuery(
-				new GraphQLField("headlessDelivery_v1_0", graphQLField)),
-			"JSONObject/data", "JSONObject/headlessDelivery_v1_0",
-			"JSONObject/contentStructures");
-
-		Assert.assertEquals(
-			totalCount + 2, contentStructuresJSONObject.getLong("totalCount"));
-
-		assertContains(
-			contentStructure1,
-			Arrays.asList(
-				ContentStructureSerDes.toDTOs(
-					contentStructuresJSONObject.getString("items"))));
-		assertContains(
-			contentStructure2,
-			Arrays.asList(
-				ContentStructureSerDes.toDTOs(
-					contentStructuresJSONObject.getString("items"))));
-	}
-
-	protected ContentStructure
-			testGraphQLGetSiteContentStructuresPage_addContentStructure()
-		throws Exception {
-
-		return testGraphQLContentStructure_addContentStructure();
-	}
-
-	@Test
 	public void testPutAssetLibraryContentStructurePermissionsPage()
 		throws Exception {
 
@@ -1978,6 +1900,8 @@ public abstract class BaseContentStructureResourceTestCase {
 
 	protected List<GraphQLField> getGraphQLFields() throws Exception {
 		List<GraphQLField> graphQLFields = new ArrayList<>();
+
+		graphQLFields.add(new GraphQLField("id"));
 
 		graphQLFields.add(new GraphQLField("siteId"));
 

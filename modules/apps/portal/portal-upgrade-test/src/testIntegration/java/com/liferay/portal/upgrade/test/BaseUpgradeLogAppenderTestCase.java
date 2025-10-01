@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.util.PropsValuesTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.upgrade.DeleteDuplicateUniqueFinderRowsUpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
@@ -40,6 +41,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -51,7 +53,6 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.tools.DBUpgrader;
 import com.liferay.portal.upgrade.PortalUpgradeProcess;
-import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -542,28 +543,30 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 
 	@Test
 	public void testLongestRunningSQLsThreshold() throws Exception {
-		long originalUpgradeReportSQLStatementThreshold =
-			ReflectionTestUtil.getAndSetFieldValue(
-				UpgradeSQLRecorder.class,
-				"_UPGRADE_REPORT_SQL_STATEMENT_THRESHOLD", 0L);
+		String aboveThresholdSQL = null;
 
-		try {
+		try (SafeCloseable safeCloseable =
+				PropsValuesTestUtil.swapWithSafeCloseable(
+					"UPGRADE_REPORT_SQL_STATEMENT_THRESHOLD", 0L)) {
+
 			_appender.start();
 
-			String aboveThresholdSQL =
+			aboveThresholdSQL =
 				"insert into UpgradeReportTable1 (id_) values (2)";
 
 			UpgradeProcess aboveThresholdUpgradeProcess =
 				UpgradeProcessFactory.runSQL(aboveThresholdSQL);
 
 			aboveThresholdUpgradeProcess.upgrade();
+		}
 
-			ReflectionTestUtil.setFieldValue(
-				UpgradeSQLRecorder.class,
-				"_UPGRADE_REPORT_SQL_STATEMENT_THRESHOLD", 60000L);
+		String belowThresholdSQL = null;
 
-			String belowThresholdSQL =
-				"delete from UpgradeReportTable1 where id_ = 2";
+		try (SafeCloseable safeCloseable =
+				PropsValuesTestUtil.swapWithSafeCloseable(
+					"UPGRADE_REPORT_SQL_STATEMENT_THRESHOLD", 60000L)) {
+
+			belowThresholdSQL = "delete from UpgradeReportTable1 where id_ = 2";
 
 			UpgradeProcess belowThresholdUpgradeProcess =
 				UpgradeProcessFactory.runSQL(belowThresholdSQL);
@@ -571,19 +574,13 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 			belowThresholdUpgradeProcess.upgrade();
 
 			_appender.stop();
-
-			String longestRunningSQLs = _getLogContextValueDiagnostics(
-				"upgrade.report.longest.running.sqls");
-
-			Assert.assertFalse(longestRunningSQLs.contains(belowThresholdSQL));
-			Assert.assertTrue(longestRunningSQLs.contains(aboveThresholdSQL));
 		}
-		finally {
-			ReflectionTestUtil.setFieldValue(
-				UpgradeSQLRecorder.class,
-				"_UPGRADE_REPORT_SQL_STATEMENT_THRESHOLD",
-				originalUpgradeReportSQLStatementThreshold);
-		}
+
+		String longestRunningSQLs = _getLogContextValueDiagnostics(
+			"upgrade.report.longest.running.sqls");
+
+		Assert.assertFalse(longestRunningSQLs.contains(belowThresholdSQL));
+		Assert.assertTrue(longestRunningSQLs.contains(aboveThresholdSQL));
 	}
 
 	@Test
@@ -881,12 +878,10 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 				}
 			});
 
-		long originalUpgradeReportSQLStatementThreshold =
-			ReflectionTestUtil.getAndSetFieldValue(
-				UpgradeSQLRecorder.class,
-				"_UPGRADE_REPORT_SQL_STATEMENT_THRESHOLD", 0L);
+		try (SafeCloseable safeCloseable =
+				PropsValuesTestUtil.swapWithSafeCloseable(
+					"UPGRADE_REPORT_SQL_STATEMENT_THRESHOLD", 0L)) {
 
-		try {
 			_appender.start();
 
 			upgradeProcess1.upgrade();
@@ -935,12 +930,6 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 						"Upgrade Process: %s\nSQL: %s\nDuration: %d ms",
 						upgradeProcessClassName, sql, duration));
 			}
-		}
-		finally {
-			ReflectionTestUtil.setFieldValue(
-				UpgradeSQLRecorder.class,
-				"_UPGRADE_REPORT_SQL_STATEMENT_THRESHOLD",
-				originalUpgradeReportSQLStatementThreshold);
 		}
 	}
 

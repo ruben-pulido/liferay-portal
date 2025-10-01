@@ -35,12 +35,12 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import jakarta.annotation.Generated;
@@ -221,8 +221,7 @@ public abstract class BasePageRuleResourceTestCase {
 	protected String testDeleteSitePageRule_getSiteExternalReferenceCode()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testGroup.getExternalReferenceCode();
 	}
 
 	@Test
@@ -358,8 +357,7 @@ public abstract class BasePageRuleResourceTestCase {
 	protected String testGetSitePageRule_getSiteExternalReferenceCode()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testGroup.getExternalReferenceCode();
 	}
 
 	@Test
@@ -436,8 +434,7 @@ public abstract class BasePageRuleResourceTestCase {
 	protected String testPutSitePageRule_getSiteExternalReferenceCode()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testGroup.getExternalReferenceCode();
 	}
 
 	@Test
@@ -497,8 +494,7 @@ public abstract class BasePageRuleResourceTestCase {
 			testBatchEngineDeleteImportTask_getSiteExternalReferenceCode()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testGroup.getExternalReferenceCode();
 	}
 
 	protected void assertContains(PageRule pageRule, List<PageRule> pageRules) {
@@ -670,6 +666,8 @@ public abstract class BasePageRuleResourceTestCase {
 
 	protected List<GraphQLField> getGraphQLFields() throws Exception {
 		List<GraphQLField> graphQLFields = new ArrayList<>();
+
+		graphQLFields.add(new GraphQLField("externalReferenceCode"));
 
 		for (java.lang.reflect.Field field :
 				getDeclaredFields(

@@ -51,6 +51,7 @@ import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
+import com.liferay.sharing.constants.SharingConfigurationConstants;
 
 import jakarta.ws.rs.core.MultivaluedMap;
 
@@ -609,7 +610,9 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 			GetterUtil.getString(settings.getLogoColor(), "outline-0")
 		).put(
 			"sharingEnabled",
-			GetterUtil.getBoolean(settings.getSharingEnabled())
+			GetterUtil.getBoolean(
+				settings.getSharingEnabled(),
+				SharingConfigurationConstants.SHARING_ENABLED_DEFAULT)
 		).put(
 			"trashEnabled",
 			GetterUtil.getBoolean(settings.getTrashEnabled(), true)
@@ -682,12 +685,12 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 					addAction(
 						ActionKeys.UPDATE, depotEntry, "patchAssetLibrary")
 				).put(
-					"view-members",
+					"view-connected-sites",
 					() -> {
-						if (_groupModelResourcePermission.contains(
+						if (_depotEntryModelResourcePermission.contains(
 								PermissionThreadLocal.getPermissionChecker(),
-								depotEntry.getGroupId(),
-								ActionKeys.ASSIGN_MEMBERS)) {
+								depotEntry.getDepotEntryId(),
+								ActionKeys.UPDATE)) {
 
 							return null;
 						}
@@ -696,12 +699,12 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 							ActionKeys.VIEW, depotEntry, "getAssetLibrary");
 					}
 				).put(
-					"view-sites",
+					"view-members",
 					() -> {
-						if (_depotEntryModelResourcePermission.contains(
+						if (_groupModelResourcePermission.contains(
 								PermissionThreadLocal.getPermissionChecker(),
-								depotEntry.getDepotEntryId(),
-								ActionKeys.UPDATE)) {
+								depotEntry.getGroupId(),
+								ActionKeys.ASSIGN_MEMBERS)) {
 
 							return null;
 						}

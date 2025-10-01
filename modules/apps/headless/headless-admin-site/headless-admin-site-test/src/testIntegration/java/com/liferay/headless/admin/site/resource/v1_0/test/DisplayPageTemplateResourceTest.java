@@ -66,6 +66,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -73,7 +74,6 @@ import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
@@ -227,15 +227,6 @@ public class DisplayPageTemplateResourceTest
 
 		_testGetSiteDisplayPageTemplate(displayPageTemplate);
 		_testGetSiteDisplayPageTemplateWithNestedFields(displayPageTemplate);
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGetSiteDisplayPageTemplatePermissionsPage()
-		throws Exception {
-
-		super.testGetSiteDisplayPageTemplatePermissionsPage();
 	}
 
 	@Override
@@ -491,15 +482,6 @@ public class DisplayPageTemplateResourceTest
 				displayPageTemplate));
 	}
 
-	@Ignore
-	@Override
-	@Test
-	public void testPutSiteDisplayPageTemplatePermissionsPage()
-		throws Exception {
-
-		super.testPutSiteDisplayPageTemplatePermissionsPage();
-	}
-
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {
@@ -565,17 +547,6 @@ public class DisplayPageTemplateResourceTest
 			irrelevantGroup.getGroupId());
 	}
 
-	@Ignore
-	@Override
-	@Test
-	protected DisplayPageTemplate
-			testGetSiteDisplayPageTemplatePermissionsPage_addDisplayPageTemplate()
-		throws Exception {
-
-		return super.
-			testGetSiteDisplayPageTemplatePermissionsPage_addDisplayPageTemplate();
-	}
-
 	@Override
 	protected DisplayPageTemplate
 			testGetSiteDisplayPageTemplatesPage_addDisplayPageTemplate(
@@ -603,17 +574,6 @@ public class DisplayPageTemplateResourceTest
 
 		return testGetSiteDisplayPageTemplatesPage_addDisplayPageTemplate(
 			testGroup.getExternalReferenceCode(), displayPageTemplate);
-	}
-
-	@Ignore
-	@Override
-	@Test
-	protected DisplayPageTemplate
-			testPutSiteDisplayPageTemplatePermissionsPage_addDisplayPageTemplate()
-		throws Exception {
-
-		return super.
-			testPutSiteDisplayPageTemplatePermissionsPage_addDisplayPageTemplate();
 	}
 
 	private static com.liferay.headless.admin.site.dto.v1_0.DisplayPageTemplate

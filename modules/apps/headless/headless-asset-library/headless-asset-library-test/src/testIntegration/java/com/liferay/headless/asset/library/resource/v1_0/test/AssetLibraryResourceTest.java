@@ -7,7 +7,6 @@ package com.liferay.headless.asset.library.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.depot.model.DepotEntry;
-import com.liferay.depot.service.DepotEntryGroupRelLocalService;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.depot.service.DepotEntryPinLocalService;
 import com.liferay.headless.asset.library.client.dto.v1_0.AssetLibrary;
@@ -21,8 +20,6 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.UserGroupLocalService;
-import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -79,7 +76,7 @@ public class AssetLibraryResourceTest extends BaseAssetLibraryResourceTestCase {
 		Page<AssetLibrary> page = assetLibraryResource.getAssetLibrariesPage(
 			null, null, "type eq 'Space'", Pagination.of(1, 10), null);
 
-		Assert.assertEquals(0, page.getTotalCount());
+		long originalTotalCount = page.getTotalCount();
 
 		AssetLibrary randomAssetLibrary = randomAssetLibrary();
 
@@ -91,7 +88,7 @@ public class AssetLibraryResourceTest extends BaseAssetLibraryResourceTestCase {
 		page = assetLibraryResource.getAssetLibrariesPage(
 			null, null, "type eq 'Space'", Pagination.of(1, 10), null);
 
-		Assert.assertEquals(1, page.getTotalCount());
+		Assert.assertEquals(originalTotalCount + 1, page.getTotalCount());
 
 		assetLibraryResource.deleteAssetLibrary(assetLibrary.getId());
 	}
@@ -174,10 +171,17 @@ public class AssetLibraryResourceTest extends BaseAssetLibraryResourceTestCase {
 
 		AssetLibrary randomAssetLibrary = randomAssetLibrary();
 
+		randomAssetLibrary.setSettings(new Settings());
 		randomAssetLibrary.setType(AssetLibrary.Type.SPACE);
 
 		AssetLibrary postedAssetLibrary = assetLibraryResource.postAssetLibrary(
 			randomAssetLibrary);
+
+		Settings settings = postedAssetLibrary.getSettings();
+
+		Assert.assertEquals("outline-0", settings.getLogoColor());
+		Assert.assertTrue(settings.getSharingEnabled());
+		Assert.assertTrue(settings.getTrashEnabled());
 
 		Assert.assertEquals(
 			AssetLibrary.Type.SPACE, postedAssetLibrary.getType());
@@ -274,6 +278,7 @@ public class AssetLibraryResourceTest extends BaseAssetLibraryResourceTestCase {
 		return _addAssetLibrary();
 	}
 
+	@Override
 	protected AssetLibrary
 			testDeleteAssetLibraryByExternalReferenceCode_addAssetLibrary()
 		throws Exception {
@@ -566,12 +571,9 @@ public class AssetLibraryResourceTest extends BaseAssetLibraryResourceTestCase {
 
 		_assertSettings(
 			assetLibrary, autoTaggingEnabled, availableLanguageIds,
-			defaultLanguageId, "outline-0", new MimeTypeLimit[0], false,
+			defaultLanguageId, "outline-0", new MimeTypeLimit[0], true,
 			trashEnabled, trashEntriesMaxAge, useCustomLanguages);
 	}
-
-	@Inject
-	private DepotEntryGroupRelLocalService _depotEntryGroupRelLocalService;
 
 	@Inject
 	private DepotEntryLocalService _depotEntryLocalService;
@@ -584,11 +586,5 @@ public class AssetLibraryResourceTest extends BaseAssetLibraryResourceTestCase {
 
 	@Inject
 	private Language _language;
-
-	@Inject
-	private UserGroupLocalService _userGroupLocalService;
-
-	@Inject
-	private UserLocalService _userLocalService;
 
 }

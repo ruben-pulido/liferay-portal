@@ -109,6 +109,7 @@ public class ObjectEntryLocalServiceTest {
 						bundle.getSymbolicName(),
 						"com.liferay.site.initializer.cms")) {
 
+					_deleteFile(bundle, "00.list.type.definition");
 					_deleteFile(bundle, "01.object.folder");
 					_deleteFile(bundle, "02.object.definition");
 
@@ -134,8 +135,8 @@ public class ObjectEntryLocalServiceTest {
 		ObjectDefinition systemObjectDefinition =
 			ObjectDefinitionLocalServiceUtil.addSystemObjectDefinition(
 				null, TestPropsValues.getUserId(),
-				objectFolder.getObjectFolderId(), null, null, false, false,
-				true, true, false, false, false, false, null,
+				objectFolder.getObjectFolderId(), null, null, false, true,
+				false, true, true, false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				true, "Test", null, null, null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),

@@ -10,8 +10,11 @@ import React from 'react';
 import {START_TASK} from '../../common/utils/events';
 import formatActionURL from '../../common/utils/formatActionURL';
 import {ISearchAssetObjectEntry} from '../../structure_builder/types/AssetType';
+import {defaultPermissionsBulkAction} from '../default_permission/BulkDefaultPermissionModalContent';
+import {permissionsBulkAction} from '../default_permission/BulkPermissionModalContent';
+import DefaultPermissionModalContent from '../default_permission/DefaultPermissionModalContent';
 import AssetTypeInfoPanel from '../info_panel/AssetTypeInfoPanelContent';
-import FilePreviewerModalContent from '../modal/FilePreviewerModalContent';
+import ItemNavigationModalContent from '../modal/item_navigation_view/ItemNavigationModalContent';
 import createAssetAction from './actions/createAssetAction';
 import createFolderAction from './actions/createFolderAction';
 import deleteAssetEntriesBulkAction from './actions/deleteAssetEntriesBulkAction';
@@ -40,6 +43,8 @@ export type AdditionalProps = {
 	baseFolderViewURL: string;
 	cmsGroupId?: number;
 	collaboratorURLs: Record<string, string>;
+	contentViewURL: string;
+	defaultPermissionAdditionalProps?: any;
 	fileMimeTypeCssClasses: Record<string, string>;
 	fileMimeTypeIcons: Record<string, string>;
 	objectDefinitionCssClasses: Record<string, string>;
@@ -112,7 +117,17 @@ export default function AssetsFDSPropsTransformer({
 			/>
 		),
 		itemsActions: itemsActions.map((action) => {
-			if (action?.data?.id === 'download') {
+			if (action?.data?.id === 'default-permissions') {
+				return {
+					...action,
+					isVisible: (item: any) =>
+						Boolean(
+							item?.entryClassName ===
+								OBJECT_ENTRY_FOLDER_CLASS_NAME
+						),
+				};
+			}
+			else if (action?.data?.id === 'download') {
 				return {
 					...action,
 					isVisible: (item: any) =>
@@ -132,6 +147,7 @@ export default function AssetsFDSPropsTransformer({
 			else if (
 				action?.data?.id === 'export-for-translation' ||
 				action?.data?.id === 'import-translation' ||
+				action?.data?.id === 'translate' ||
 				action?.data?.id === 'view-content'
 			) {
 				return {
@@ -162,14 +178,37 @@ export default function AssetsFDSPropsTransformer({
 			action,
 			event,
 			itemData,
+			items,
 			loadData,
 		}: {
 			action: any;
 			event: Event;
 			itemData: ItemData;
+			items: any;
 			loadData: () => {};
 		}) {
-			if (action?.data?.id === 'delete') {
+			if (action?.data?.id === 'default-permissions') {
+				openModal({
+					containerProps: {
+						className: '',
+					},
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						DefaultPermissionModalContent({
+							...(additionalProps.defaultPermissionAdditionalProps ||
+								{}),
+							classExternalReferenceCode:
+								itemData.embedded.externalReferenceCode,
+							className: itemData.entryClassName,
+							closeModal,
+						}),
+					size: 'full-screen',
+				});
+			}
+			else if (action?.data?.id === 'delete') {
 				await deleteItemAction(itemData, loadData);
 			}
 			else if (
@@ -195,24 +234,30 @@ export default function AssetsFDSPropsTransformer({
 					title: itemData.embedded?.title,
 				});
 			}
-			else if (action?.data?.id === 'view-content') {
+			else if (
+				action?.data?.id === 'view-content' ||
+				action?.data?.id === 'view-file'
+			) {
 				event?.preventDefault();
 
-				openModal({
-					size: 'full-screen',
-					title: itemData.embedded.title,
-					url: formatActionURL(itemData, action.href),
-				});
-			}
-			else if (action?.data?.id === 'view-file') {
+				const filteredItems = items.filter(
+					(item: any) =>
+						item?.entryClassName !== OBJECT_ENTRY_FOLDER_CLASS_NAME
+				);
+
+				const currentItemPos = filteredItems.findIndex(
+					(item: any) => item.embedded.id === itemData.embedded.id
+				);
+
 				openModal({
 					containerProps: {
 						className: '',
 					},
 					contentComponent: () =>
-						FilePreviewerModalContent({
-							file: itemData.embedded.file,
-							headerName: itemData.embedded.title,
+						ItemNavigationModalContent({
+							contentViewURL: additionalProps.contentViewURL,
+							currentIndex: currentItemPos,
+							items: filteredItems,
 						}),
 					size: 'full-screen',
 				});
@@ -225,15 +270,30 @@ export default function AssetsFDSPropsTransformer({
 			action: any;
 			selectedData: any;
 		}) => {
-			if (action?.data?.id === 'delete') {
+			if (action?.data?.id === 'default-permissions') {
+				defaultPermissionsBulkAction({
+					className: OBJECT_ENTRY_FOLDER_CLASS_NAME,
+					defaultPermissionAdditionalProps:
+						additionalProps.defaultPermissionAdditionalProps || {},
+					selectedData,
+				});
+			}
+			else if (action?.data?.id === 'delete') {
 				deleteAssetEntriesBulkAction({
-					actionId: action.data.id,
 					selectedData,
 				});
 			}
 			else if (action?.data?.id === 'download') {
 				Liferay.fire(START_TASK, {
 					actionId: action.data.id,
+					selectedData,
+				});
+			}
+			else if (action?.data?.id === 'permissions') {
+				permissionsBulkAction({
+					className: OBJECT_ENTRY_FOLDER_CLASS_NAME,
+					defaultPermissionAdditionalProps:
+						additionalProps.defaultPermissionAdditionalProps || {},
 					selectedData,
 				});
 			}

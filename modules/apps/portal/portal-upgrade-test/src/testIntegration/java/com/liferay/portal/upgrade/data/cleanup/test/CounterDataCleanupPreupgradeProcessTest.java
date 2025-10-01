@@ -17,11 +17,11 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.upgrade.data.cleanup.CounterDataCleanupPreupgradeProcess;
-import com.liferay.portal.util.PropsValues;
 
 import java.util.List;
 
@@ -104,10 +104,12 @@ public class CounterDataCleanupPreupgradeProcessTest
 			(UnsafeConsumer<List<String>, Exception>)messages -> {
 				Assert.assertEquals(messages.toString(), 1, messages.size());
 				Assert.assertTrue(
+					messages.toString(),
 					messages.contains(
 						StringBundler.concat(
 							"Counter ", Counter.class.getName(),
-							" has been reset to value ", fileEntryId)));
+							" has been reset to value ", fileEntryId,
+							" due to table DLFileEntry")));
 			});
 	}
 
@@ -129,6 +131,7 @@ public class CounterDataCleanupPreupgradeProcessTest
 			(UnsafeConsumer<List<String>, Exception>)messages -> {
 				Assert.assertEquals(messages.toString(), 1, messages.size());
 				Assert.assertTrue(
+					messages.toString(),
 					messages.contains(
 						StringBundler.concat(
 							"Counter ", DLFileEntry.class.getName(),
@@ -151,10 +154,12 @@ public class CounterDataCleanupPreupgradeProcessTest
 			(UnsafeConsumer<List<String>, Exception>)messages -> {
 				Assert.assertEquals(messages.toString(), 1, messages.size());
 				Assert.assertTrue(
+					messages.toString(),
 					messages.contains(
 						StringBundler.concat(
 							"Counter ", Counter.class.getName(),
-							" has been reset to value ", roleId)));
+							" has been reset to value ", roleId,
+							" due to table Role_")));
 			});
 	}
 
@@ -171,6 +176,7 @@ public class CounterDataCleanupPreupgradeProcessTest
 					counterName + "', 100 )"),
 			(UnsafeConsumer<List<String>, Exception>)
 				messages -> Assert.assertTrue(
+					messages.toString(),
 					messages.contains(
 						"Deleted counter " + counterName +
 							" because it is unused")));
@@ -203,6 +209,7 @@ public class CounterDataCleanupPreupgradeProcessTest
 			},
 			(UnsafeConsumer<List<String>, Exception>)
 				messages -> Assert.assertTrue(
+					messages.toString(),
 					messages.contains(
 						"Counter " + counterName +
 							" has been reset to value 1000")));
@@ -223,6 +230,7 @@ public class CounterDataCleanupPreupgradeProcessTest
 			(UnsafeConsumer<List<String>, Exception>)messages -> {
 				Assert.assertEquals(messages.toString(), 1, messages.size());
 				Assert.assertTrue(
+					messages.toString(),
 					messages.contains(
 						StringBundler.concat(
 							"Counter ", Region.class.getName(),

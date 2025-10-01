@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayBreadcrumb from '@clayui/breadcrumb';
 import ClayButton from '@clayui/button';
+import ClayLayout from '@clayui/layout';
 import ClayModal from '@clayui/modal';
 import {InternalDispatch} from '@clayui/shared';
 import {
@@ -14,12 +16,41 @@ import classNames from 'classnames';
 import {getObjectValueFromPath, sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
+type IItemSelectorModalFDSProps = Omit<
+	IFrontendDataSetProps,
+	| 'apiURL'
+	| 'selectedItems'
+	| 'selectedItemsKey'
+	| 'onSelectedItemsChange'
+	| 'selectedItems'
+	| 'selectedItemsKey'
+	| 'selectionType'
+	| 'showNavBarWhenSelected'
+	| 'style'
+>;
+
 export interface IItemSelectorModalProps<T> {
+
+	/**
+	 * The URL that will be fetched to return the items.
+	 */
+	apiURL: string;
+
+	/**
+	 * Configuration of @clayui/breadcrumb items to show above the FDS table
+	 */
+	breadcrumbs?: React.ComponentProps<typeof ClayBreadcrumb>['items'];
 
 	/**
 	 * Configuration properties of the Frontend Data Set used to display data.
 	 */
-	fdsProps: Omit<IFrontendDataSetProps, 'selectedItems' | 'selectedItemsKey'>;
+	fdsProps: IItemSelectorModalFDSProps;
+
+	/**
+	 * The displayed label for the type of item being selected. Used in the
+	 * modal title.
+	 */
+	itemTypeLabel: string;
 
 	/**
 	 * Items that are currently selected (controlled).
@@ -60,15 +91,13 @@ export interface IItemSelectorModalProps<T> {
 	 * Expects the 'open' property from the Clay useModal hook.
 	 */
 	open: boolean;
-
-	/**
-	 * Type of item to be selected. Used to display modal title.
-	 */
-	type: string;
 }
 
 function ItemSelectorModal<T extends Record<string, any>>({
+	apiURL,
+	breadcrumbs,
 	fdsProps,
+	itemTypeLabel,
 	items: externalItems,
 	locator = {
 		id: 'id',
@@ -80,7 +109,6 @@ function ItemSelectorModal<T extends Record<string, any>>({
 	onItemsChange,
 	onOpenChange,
 	open,
-	type,
 }: IItemSelectorModalProps<T>) {
 	const [selectedItems, setSelectedItems] = useState(externalItems);
 
@@ -102,12 +130,28 @@ function ItemSelectorModal<T extends Record<string, any>>({
 	return open ? (
 		<ClayModal observer={observer} size="full-screen">
 			<ClayModal.Header>
-				{sub(Liferay.Language.get('select-x'), type)}
+				{sub(Liferay.Language.get('select-x'), itemTypeLabel)}
 			</ClayModal.Header>
 
 			<ClayModal.Body className="p-0">
+				{breadcrumbs && (
+					<ClayLayout.Container fluid>
+						<h2 className="mb-0 mt-2">
+							{breadcrumbs[breadcrumbs.length - 1].label}
+						</h2>
+
+						<ClayBreadcrumb
+							items={breadcrumbs.map((breadcrumb, index) => ({
+								...breadcrumb,
+								active: index === breadcrumbs.length - 1,
+							}))}
+						/>
+					</ClayLayout.Container>
+				)}
+
 				<FrontendDataSet
 					{...fdsProps}
+					apiURL={apiURL}
 					onSelectedItemsChange={setSelectedItems}
 					selectedItems={selectedItems}
 					selectedItemsKey={locator.id}
@@ -167,9 +211,9 @@ function ItemSelectorModal<T extends Record<string, any>>({
 							disabled={!hasSelectedItems}
 							onClick={() => {
 								onItemsChange(
-									fdsProps.selectionType === 'single'
-										? selectedItems.slice(0, 1)
-										: selectedItems
+									multiSelect
+										? selectedItems
+										: selectedItems.slice(0, 1)
 								);
 
 								onOpenChange(false);

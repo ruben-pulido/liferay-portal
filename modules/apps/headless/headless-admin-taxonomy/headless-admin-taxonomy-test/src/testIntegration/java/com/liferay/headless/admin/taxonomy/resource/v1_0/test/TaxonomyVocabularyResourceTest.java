@@ -34,10 +34,10 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.portal.util.PropsValues;
 
 import java.util.List;
 import java.util.Map;
@@ -281,22 +281,6 @@ public class TaxonomyVocabularyResourceTest
 	}
 
 	@Override
-	protected Long
-			testDeleteAssetLibraryTaxonomyVocabularyByExternalReferenceCode_getAssetLibraryId()
-		throws Exception {
-
-		return testDepotEntry.getDepotEntryId();
-	}
-
-	@Override
-	protected Long
-			testGetAssetLibraryTaxonomyVocabularyByExternalReferenceCode_getAssetLibraryId()
-		throws Exception {
-
-		return testDepotEntry.getDepotEntryId();
-	}
-
-	@Override
 	protected Long testGetSiteTaxonomyVocabulariesPage_getIrrelevantSiteId()
 		throws Exception {
 
@@ -313,22 +297,6 @@ public class TaxonomyVocabularyResourceTest
 		throws Exception {
 
 		return testGetAssetLibraryTaxonomyVocabularyByExternalReferenceCode_addTaxonomyVocabulary();
-	}
-
-	@Override
-	protected Long
-			testGraphQLGetAssetLibraryTaxonomyVocabularyByExternalReferenceCode_getAssetLibraryId()
-		throws Exception {
-
-		return testDepotEntry.getDepotEntryId();
-	}
-
-	@Override
-	protected Long
-			testPutAssetLibraryTaxonomyVocabularyByExternalReferenceCode_getAssetLibraryId()
-		throws Exception {
-
-		return testDepotEntry.getDepotEntryId();
 	}
 
 	private void _addCMSGroup() throws Exception {

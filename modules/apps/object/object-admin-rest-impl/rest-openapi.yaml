@@ -86,6 +86,8 @@ components:
                     type: boolean
                 enableComments:
                     type: boolean
+                enableFormContainer:
+                    type: boolean
                 enableFriendlyURLCustomization:
                     type: boolean
                 enableIndexSearch:
@@ -209,7 +211,7 @@ components:
                     readOnly: true
                     type: object
                 businessType:
-                    enum: [Aggregation, Attachment, AutoIncrement, Boolean, Date, DateTime, Decimal, Encrypted, Formula, Integer, LongInteger, LongText, MultiselectPicklist, Picklist, PrecisionDecimal, Relationship, RichText, Text]
+                    enum: [Aggregation, Assignee, Attachment, AutoIncrement, Boolean, Date, DateTime, Decimal, Encrypted, Formula, Integer, LongInteger, LongText, MultiselectPicklist, Picklist, PrecisionDecimal, Relationship, RichText, Text]
                     type: string
                 defaultValue:
                     deprecated: true

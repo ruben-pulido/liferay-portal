@@ -25,9 +25,10 @@ public class AppServerBundleDownstreamBuild extends BaseDownstreamBuild {
 		Map<String, String> startPropertiesTempMap =
 			getStartPropertiesTempMap();
 
+		String filePath = getAxisVariable() + "/" + _FILE_NAME_BUILD_FAILURE;
+
 		String s3ObjectPath =
-			startPropertiesTempMap.get("S3_BUCKET_DIST_PATH") +
-				"/build-failure";
+			startPropertiesTempMap.get("S3_BUCKET_DIST_PATH") + "/" + filePath;
 
 		if (CloudBucketUtil.isS3ObjectRefAvailable(s3ObjectPath)) {
 			return;
@@ -41,9 +42,12 @@ public class AppServerBundleDownstreamBuild extends BaseDownstreamBuild {
 		WorkspaceGitRepository workspaceGitRepository =
 			portalWorkspace.getPrimaryWorkspaceGitRepository();
 
-		File directory = workspaceGitRepository.getDirectory();
+		File directory = new File(
+			workspaceGitRepository.getDirectory(), getAxisVariable());
 
-		File buildFailureFile = new File(directory, "build-failure");
+		directory.mkdirs();
+
+		File buildFailureFile = new File(directory, _FILE_NAME_BUILD_FAILURE);
 
 		buildFailureFile.createNewFile();
 
@@ -60,13 +64,16 @@ public class AppServerBundleDownstreamBuild extends BaseDownstreamBuild {
 		sb.append(workspaceGitRepository.getBaseBranchSHA());
 		sb.append("/");
 		sb.append(workspaceGitRepository.getSenderBranchSHA());
-		sb.append("/build-failure");
+		sb.append("/");
+		sb.append(filePath);
 
 		CloudBucketUtil.createS3ObjectRef(s3ObjectPath, sb.toString());
 
 		NotificationUtil.sendSlackNotification(
 			getBuildURL(), "#ci-aws-notifications", ":ci:",
-			"Bundle Builder Failure", "Liferay CI");
+			"Bundle Builder Failure (" + getAxisVariable() + ")", "Liferay CI");
 	}
+
+	private static final String _FILE_NAME_BUILD_FAILURE = "build-failure";
 
 }

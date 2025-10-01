@@ -13,6 +13,9 @@ import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -81,6 +84,14 @@ public class ViewSharedWithMeSectionDisplayContext {
 
 				return collaboratorURLs;
 			}
+		).put(
+			"contentViewURL",
+			StringBundler.concat(
+				_themeDisplay.getPortalURL(), _themeDisplay.getPathMain(),
+				GroupConstants.CMS_FRIENDLY_URL,
+				"/edit_content_item?&p_l_mode=read&p_p_state=",
+				LiferayWindowState.POP_UP, "&redirect=",
+				_themeDisplay.getURLCurrent(), "&objectEntryId={embedded.id}")
 		).build();
 	}
 
@@ -88,6 +99,18 @@ public class ViewSharedWithMeSectionDisplayContext {
 		return "/o/headless-admin-user/v1.0/my-user-account/shared-assets" +
 			"/shared-with-me?filter=(spaceDepotEntry eq true)" +
 				"&nestedFields=file";
+	}
+
+	public Map<String, Object> getBreadcrumbProps() throws PortalException {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		_addBreadcrumbItem(jsonArray, false, null, _getLayoutName());
+
+		return HashMapBuilder.<String, Object>put(
+			"breadcrumbItems", jsonArray
+		).put(
+			"hideSpace", true
+		).build();
 	}
 
 	public Map<String, Object> getEmptyState() {
@@ -138,7 +161,7 @@ public class ViewSharedWithMeSectionDisplayContext {
 					_themeDisplay.getURLCurrent(), "&objectEntryId={classPK}"),
 				"view", "view-content",
 				LanguageUtil.get(_httpServletRequest, "view"), "get", null,
-				"modal"),
+				null),
 			new FDSActionDropdownItem(
 				StringBundler.concat(
 					_themeDisplay.getPortalURL(), _themeDisplay.getPathMain(),
@@ -185,23 +208,17 @@ public class ViewSharedWithMeSectionDisplayContext {
 				).build()));
 	}
 
-	public Map<String, Object> getToolbarProps() throws PortalException {
-		return HashMapBuilder.<String, Object>put(
-			"title",
-			() -> {
-				Layout layout = _themeDisplay.getLayout();
+	private void _addBreadcrumbItem(
+		JSONArray jsonArray, boolean active, String friendlyURL, String label) {
 
-				if (layout == null) {
-					return null;
-				}
-
-				return layout.getName(_themeDisplay.getLocale(), true);
-			}
-		).put(
-			"toolbarClassName", "section-toolbar tbar-light"
-		).put(
-			"toolbarTitleClassName", "section-toolbar-title"
-		).build();
+		jsonArray.put(
+			JSONUtil.put(
+				"active", active
+			).put(
+				"href", friendlyURL
+			).put(
+				"label", label
+			));
 	}
 
 	private String _getBasicDocumentClassName() {
@@ -222,6 +239,16 @@ public class ViewSharedWithMeSectionDisplayContext {
 		}
 
 		return StringPool.BLANK;
+	}
+
+	private String _getLayoutName() {
+		Layout layout = _themeDisplay.getLayout();
+
+		if (layout == null) {
+			return null;
+		}
+
+		return layout.getName(_themeDisplay.getLocale(), true);
 	}
 
 	private String[] _getObjectFolderExternalReferenceCodes() {

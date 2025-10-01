@@ -21,6 +21,9 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
@@ -69,6 +72,8 @@ public class ViewAllSpacesDisplayContext {
 
 	public Map<String, Object> getAdditionalProps() {
 		return HashMapBuilder.<String, Object>put(
+			"baseSpaceURL", ActionUtil.getBaseSpaceURL(_themeDisplay)
+		).put(
 			"defaultPermissionAdditionalProps",
 			_getDefaultPermissionAdditionalProps()
 		).put(
@@ -83,8 +88,20 @@ public class ViewAllSpacesDisplayContext {
 
 	public String getAPIURL() {
 		return "/o/headless-asset-library/v1.0/asset-libraries?filter=type " +
-			"eq 'Space'&nestedFields=numberOfSites,numberOfUserAccounts," +
-				"numberOfUserGroups";
+			"eq 'Space'&nestedFields=numberOfConnectedSites" +
+				",numberOfUserAccounts,numberOfUserGroups";
+	}
+
+	public Map<String, Object> getBreadcrumbProps() throws PortalException {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		_addBreadcrumbItem(jsonArray, false, null, _getLayoutName());
+
+		return HashMapBuilder.<String, Object>put(
+			"breadcrumbItems", jsonArray
+		).put(
+			"hideSpace", true
+		).build();
 	}
 
 	public List<DropdownItem> getBulkActionDropdownItems() {
@@ -92,7 +109,11 @@ public class ViewAllSpacesDisplayContext {
 			new FDSActionDropdownItem(
 				"#", "document", "sampleBulkAction",
 				LanguageUtil.get(_httpServletRequest, "label"), null, null,
-				null));
+				null),
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "password-policies", "default-permissions",
+				LanguageUtil.get(_httpServletRequest, "default-permissions"),
+				null, null, null));
 	}
 
 	public CreationMenu getCreationMenu() {
@@ -148,13 +169,13 @@ public class ViewAllSpacesDisplayContext {
 				LanguageUtil.get(_httpServletRequest, "view-members"), "get",
 				"view-members", null),
 			new FDSActionDropdownItem(
-				null, "globe", "view-sites",
+				null, "globe", "view-connected-sites",
 				LanguageUtil.get(_httpServletRequest, "view-connected-sites"),
 				"get", "connect-sites", null),
 			new FDSActionDropdownItem(
-				null, "globe", "view-sites",
+				null, "globe", "view-connected-sites",
 				LanguageUtil.get(_httpServletRequest, "view-connected-sites"),
-				"get", "view-sites", null),
+				"get", "view-connected-sites", null),
 			new FDSActionDropdownItem(
 				PortletURLBuilder.create(
 					PortalUtil.getControlPanelPortletURL(
@@ -170,6 +191,8 @@ public class ViewAllSpacesDisplayContext {
 					"modelResource", DepotEntry.class.getName()
 				).setParameter(
 					"modelResourceDescription", "{name}"
+				).setParameter(
+					"resourceGroupId", "{siteId}"
 				).setParameter(
 					"resourcePrimKey", "{id}"
 				).setWindowState(
@@ -188,23 +211,17 @@ public class ViewAllSpacesDisplayContext {
 				"delete", null));
 	}
 
-	public Map<String, Object> getToolbarProps() throws PortalException {
-		return HashMapBuilder.<String, Object>put(
-			"title",
-			() -> {
-				Layout layout = _themeDisplay.getLayout();
+	private void _addBreadcrumbItem(
+		JSONArray jsonArray, boolean active, String friendlyURL, String label) {
 
-				if (layout == null) {
-					return null;
-				}
-
-				return layout.getName(_themeDisplay.getLocale(), true);
-			}
-		).put(
-			"toolbarClassName", "section-toolbar tbar-light"
-		).put(
-			"toolbarTitleClassName", "section-toolbar-title"
-		).build();
+		jsonArray.put(
+			JSONUtil.put(
+				"active", active
+			).put(
+				"href", friendlyURL
+			).put(
+				"label", label
+			));
 	}
 
 	private Map<String, Object> _getDefaultPermissionAdditionalProps() {
@@ -219,10 +236,17 @@ public class ViewAllSpacesDisplayContext {
 								"L_BASIC_WEB_CONTENT",
 								_themeDisplay.getCompanyId());
 
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, objectDefinition.getClassName());
+
 					return TransformUtil.transformToArray(
 						ResourceActionsUtil.getResourceActions(
 							objectDefinition.getClassName()),
-						resourceAction -> HashMapBuilder.put(
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
 							"key", resourceAction
 						).put(
 							"label",
@@ -240,10 +264,17 @@ public class ViewAllSpacesDisplayContext {
 								"L_BASIC_DOCUMENT",
 								_themeDisplay.getCompanyId());
 
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, objectDefinition.getClassName());
+
 					return TransformUtil.transformToArray(
 						ResourceActionsUtil.getResourceActions(
 							objectDefinition.getClassName()),
-						resourceAction -> HashMapBuilder.put(
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
 							"key", resourceAction
 						).put(
 							"label",
@@ -254,17 +285,26 @@ public class ViewAllSpacesDisplayContext {
 				}
 			).put(
 				"OBJECT_ENTRY_FOLDERS",
-				() -> TransformUtil.transformToArray(
-					ResourceActionsUtil.getResourceActions(
-						ObjectEntryFolder.class.getName()),
-					resourceAction -> HashMapBuilder.put(
-						"key", resourceAction
-					).put(
-						"label",
-						ResourceActionsUtil.getAction(
-							_httpServletRequest, resourceAction)
-					).build(),
-					Map.class)
+				() -> {
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, ObjectEntryFolder.class.getName());
+
+					return TransformUtil.transformToArray(
+						ResourceActionsUtil.getResourceActions(
+							ObjectEntryFolder.class.getName()),
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
+							"key", resourceAction
+						).put(
+							"label",
+							ResourceActionsUtil.getAction(
+								_httpServletRequest, resourceAction)
+						).build(),
+						Map.class);
+				}
 			).build()
 		).put(
 			"roles",
@@ -296,6 +336,16 @@ public class ViewAllSpacesDisplayContext {
 					Map.class);
 			}
 		).build();
+	}
+
+	private String _getLayoutName() {
+		Layout layout = _themeDisplay.getLayout();
+
+		if (layout == null) {
+			return null;
+		}
+
+		return layout.getName(_themeDisplay.getLocale(), true);
 	}
 
 	private final DepotEntryPinLocalService _depotEntryPinLocalService;

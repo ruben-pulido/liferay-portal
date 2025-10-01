@@ -40,6 +40,7 @@ ConsumerTypeAnnotationCheck | .java | Performs several checks on classes with @C
 DTOEnumCreationCheck | .java | Checks the creation of DTO enum. |
 DatabaseMetaDataCheck | .java | Checks usages of `java.sql.DatabaseMetaData`. |
 DeprecatedAPICheck | .java | Finds calls to deprecated classes, constructors, fields or methods. |
+DeprecatedClassesCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Replaces deprecated classes. |
 EmptyConstructorCheck | .java | Finds unnecessary empty constructors. |
 [EqualsHashCodeCheck](https://checkstyle.sourceforge.io/checks/coding/equalshashcode.html) | .java | Checks that classes that either override `equals()` or `hashCode()` also overrides the other. |
 ExceptionPrintStackTraceCheck | .java | Avoid using printStackTrace. |
@@ -98,7 +99,6 @@ JavaCompanyScopedIdsCheck | .java | Finds cases where company scoped ids are use
 JavaComponentAnnotationsCheck | .java | Performs several checks on classes with `@Component` annotation. |
 [JavaConfigurationAdminCheck](check/java_configuration_admin_check.md#javaconfigurationadmincheck) | .java | Checks for correct use of `location == ?` when calling `org.osgi.service.cm.ConfigurationAdmin#createFactoryConfiguration`. |
 [JavaConfigurationCategoryCheck](check/java_configuration_category_check.md#javaconfigurationcategorycheck) | .java | Checks that the value of `category` in `@ExtendedObjectClassDefinition` matches the `categoryKey` of the corresponding class that implements `ConfigurationCategory`. |
-JavaDeprecatedKernelClassesCheck | .java | Finds calls to deprecated classes `com.liferay.portal.kernel.util.CharPool` and `com.liferay.portal.kernel.util.StringPool`. |
 JavaFeatureFlagManagerUtilCheck | .java | Finds cases where `FeatureFlagManagerUtil.isEnabled` should be used. |
 [JavaFinderCacheCheck](check/java_finder_cache_check.md#javafindercachecheck) | .java | Checks that the method `BasePersistenceImpl.fetchByPrimaryKey` is overridden, when using `FinderPath`. |
 JavaFinderImplCustomSQLCheck | .java | Checks that hardcoded SQL values in `*FinderImpl` classes match the SQL in the `.xml` file in the `custom-sql` directory. |
@@ -111,6 +111,7 @@ JavaInternalPackageCheck | .java | Performs several checks on class in `internal
 JavaJSImportMapsContributorCheck | .java | Performs several checks on `*JSImportMapsContributor` class. |
 JavaJSPDynamicIncludeCheck | .java | Performs several checks on `*JSPDynamicInclude` class. |
 [JavaLocalSensitiveComparisonCheck](check/java_local_sensitive_comparison_check.md#javalocalsensitivecomparisoncheck) | .java | Checks that `java.text.Collator` is used when comparing localized values. |
+[JavaLocalServiceImplUserIdUsageCheck](check/java_local_service_impl_user_id_usage_check.md#javalocalserviceimpluseridusagecheck) | .java | Finds incorrect use of `GuestOrUserUtil.getUserId()` or `PrincipalThreadLocal.getUserId()`. |
 JavaLogClassNameCheck | .java | Checks the name of the class that is passed in `LogFactoryUtil.getLog`. |
 [JavaLogLevelCheck](check/java_log_level_check.md#javaloglevelcheck) | .java | Checks that the correct log messages are printed. |
 JavaMapBuilderGenericsCheck | .java | Finds missing or unnecessary generics on `*MapBuilder.put` calls. |

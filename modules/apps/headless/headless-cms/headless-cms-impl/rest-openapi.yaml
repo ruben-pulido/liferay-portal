@@ -1,8 +1,17 @@
 components:
     schemas:
+        AssetUsage:
+            properties:
+                name:
+                    type: string
+                type:
+                    type: string
+                url:
+                    type: string
         BulkAction:
             discriminator:
                 mapping:
+                    DefaultPermissionBulkAction: "#/components/schemas/DefaultPermissionBulkAction"
                     DeleteBulkAction: "#/components/schemas/DeleteBulkAction"
                     KeywordBulkAction: "#/components/schemas/KeywordBulkAction"
                     MoveBulkAction: "#/components/schemas/MoveBulkAction"
@@ -16,9 +25,11 @@ components:
                         $ref: "#/components/schemas/BulkActionItem"
                     type: array
                 selectAll:
+                    default: false
                     type: boolean
                 type:
                     enum:
+                        -   DefaultPermissionBulkAction
                         -   DeleteBulkAction
                         -   KeywordBulkAction
                         -   MoveBulkAction
@@ -28,6 +39,10 @@ components:
                     type: string
         BulkActionItem:
             properties:
+                attributes:
+                    additionalProperties:
+                        type: object
+                    type: object
                 classExternalReferenceCode:
                     type: string
                 className:
@@ -60,6 +75,17 @@ components:
                     type: integer
                 type:
                     type: string
+        DefaultPermissionBulkAction:
+            allOf:
+                -   $ref: "#/components/schemas/BulkAction"
+                -   properties:
+                        defaultPermissions:
+                            type: string
+                        depotGroupId:
+                            format: int64
+                            type: integer
+                        treePath:
+                            type: string
         DeleteBulkAction:
             allOf:
                 -   $ref: "#/components/schemas/BulkAction"
@@ -84,6 +110,8 @@ components:
             allOf:
                 -   $ref: "#/components/schemas/BulkAction"
                 -   properties:
+                        configuration:
+                            type: string
                         permissions:
                             items:
                                 type: permission
@@ -112,6 +140,46 @@ info:
     version: v1.0
 openapi: 3.0.1
 paths:
+    "/asset-usages/{assetId}":
+        get:
+            operationId: getAssetUsagesAssetPage
+            parameters:
+                -   in: path
+                    name: assetId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+                -   in: query
+                    name: search
+                    schema:
+                        type: string
+                -   in: query
+                    name: sort
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/AssetUsage"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/AssetUsage"
+                                type: array
+            tags: ["AssetUsage"]
     "/bulk-action":
         post:
             description:
@@ -145,4 +213,58 @@ paths:
                         application/xml:
                             schema:
                                 $ref: "#/components/schemas/BulkActionTask"
+            tags: ["BulkAction"]
+    "/bulk-action-item/preview":
+        post:
+            description:
+                Creates a preview for each item based on the bulk action type
+            operationId: postBulkActionItemPreviewPage
+            parameters:
+                -   in: query
+                    name: fetchChildren
+                    schema:
+                        type: boolean
+                -   in: query
+                    name: filter
+                    schema:
+                        type: string
+                -   in: query
+                    name: page
+                    required: true
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    required: true
+                    schema:
+                        type: integer
+                -   in: query
+                    name: search
+                    schema:
+                        type: string
+                -   in: query
+                    name: sort
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/BulkAction"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/BulkAction"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/BulkActionItem"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/BulkActionItem"
+                                type: array
             tags: ["BulkAction"]

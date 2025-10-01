@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.LayoutJavaScriptException;
 import com.liferay.portal.kernel.exception.LayoutNameException;
+import com.liferay.portal.kernel.exception.LayoutTypeException;
 import com.liferay.portal.kernel.exception.MasterLayoutException;
 import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -113,6 +114,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -123,7 +125,6 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowThreadLocal;
 import com.liferay.portal.service.base.LayoutLocalServiceBaseImpl;
 import com.liferay.portal.util.LayoutTypeControllerTracker;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
 import com.liferay.sites.kernel.util.Sites;
 
@@ -2980,6 +2981,10 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		// Layout
 
+		if (Objects.equals(type, LayoutConstants.TYPE_EMPTY)) {
+			throw new LayoutTypeException(LayoutTypeException.EMPTY);
+		}
+
 		parentLayoutId = layoutLocalServiceHelper.getParentLayoutId(
 			groupId, privateLayout, parentLayoutId);
 
@@ -3088,6 +3093,13 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		}
 
 		layout.setExpandoBridgeAttributes(serviceContext);
+
+		if (layout.getStatus() == WorkflowConstants.STATUS_EMPTY) {
+			layout.setStatus(
+				Objects.equals(type, LayoutConstants.TYPE_CONTENT) ?
+					WorkflowConstants.STATUS_DRAFT :
+						WorkflowConstants.STATUS_APPROVED);
+		}
 
 		layout = layoutLocalService.updateLayout(layout);
 

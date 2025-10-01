@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.odata.entity.EntityField;
@@ -38,7 +39,6 @@ import com.liferay.portal.tools.rest.builder.test.client.http.HttpInvoker;
 import com.liferay.portal.tools.rest.builder.test.client.pagination.Page;
 import com.liferay.portal.tools.rest.builder.test.client.resource.v1_0.TestEntityAddressResource;
 import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0.TestEntityAddressSerDes;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import jakarta.annotation.Generated;
@@ -314,11 +314,11 @@ public abstract class BaseTestEntityAddressResourceTestCase {
 			testGraphQLGetTestEntityTestEntityAddress_addTestEntityAddress()
 		throws Exception {
 
-		return testGraphQLTestEntityAddress_addTestEntityAddress();
+		return testGraphQLTestEntityTestEntityAddress_addTestEntityAddress();
 	}
 
 	protected TestEntityAddress
-			testGraphQLTestEntityAddress_addTestEntityAddress()
+			testGraphQLTestEntityTestEntityAddress_addTestEntityAddress()
 		throws Exception {
 
 		throw new UnsupportedOperationException(
@@ -511,6 +511,8 @@ public abstract class BaseTestEntityAddressResourceTestCase {
 
 	protected List<GraphQLField> getGraphQLFields() throws Exception {
 		List<GraphQLField> graphQLFields = new ArrayList<>();
+
+		graphQLFields.add(new GraphQLField("id"));
 
 		for (java.lang.reflect.Field field :
 				getDeclaredFields(

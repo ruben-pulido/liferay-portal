@@ -1,5 +1,5 @@
 {
-	"@generated": "31f26822c82fd8221761f5bf04dc4da97a68b43a",
+	"@generated": "285a22d55a46f2a2b9b3ee00eea9b5c9278fc78a",
 	"@readonly": "** AUTO-GENERATED: DO NOT EDIT **",
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
@@ -12,10 +12,13 @@
 		"moduleResolution": "node",
 		"paths": {
 			"@liferay/analytics-reports-js-components-web": [
-				"../../../../dxp/apps/analytics/analytics-reports-js-components-web/src/main/resources/META-INF/resources/js/index.ts"
+				"../../../analytics/analytics-reports-js-components-web/src/main/resources/META-INF/resources/js/index.ts"
 			],
 			"@liferay/frontend-data-set-web": [
 				"../../../frontend-data-set/frontend-data-set-web/src/main/resources/META-INF/resources/index.ts"
+			],
+			"@liferay/frontend-js-item-selector-web": [
+				"../../../frontend-js/frontend-js-item-selector-web/src/main/resources/META-INF/resources/index.ts"
 			],
 			"@liferay/frontend-js-react-web": [
 				"../../../frontend-js/frontend-js-react-web/src/main/resources/META-INF/resources/js/index.ts"
@@ -28,6 +31,9 @@
 			],
 			"document-library-preview-image": [
 				"../../../document-library/document-library-preview-image/src/main/resources/META-INF/resources/preview/js/index.tsx"
+			],
+			"document-library-video": [
+				"../../../document-library/document-library-video/src/main/resources/META-INF/resources/js/index.d.ts"
 			],
 			"frontend-editor-ckeditor-web": [
 				"../../../frontend-editor/frontend-editor-ckeditor-web/src/main/resources/META-INF/resources/js/index.ts"
@@ -64,10 +70,13 @@
 	],
 	"references": [
 		{
-			"path": "../../../../dxp/apps/analytics/analytics-reports-js-components-web/src/main/resources/META-INF/resources/tsconfig.json"
+			"path": "../../../analytics/analytics-reports-js-components-web/src/main/resources/META-INF/resources/tsconfig.json"
 		},
 		{
 			"path": "../../../frontend-data-set/frontend-data-set-web/src/main/resources/META-INF/resources/tsconfig.json"
+		},
+		{
+			"path": "../../../frontend-js/frontend-js-item-selector-web/src/main/resources/META-INF/resources/tsconfig.json"
 		},
 		{
 			"path": "../../../frontend-js/frontend-js-react-web/src/main/resources/META-INF/resources/tsconfig.json"
@@ -80,6 +89,9 @@
 		},
 		{
 			"path": "../../../document-library/document-library-preview-image/src/main/resources/META-INF/resources/tsconfig.json"
+		},
+		{
+			"path": "../../../document-library/document-library-video/src/main/resources/META-INF/resources/tsconfig.json"
 		},
 		{
 			"path": "../../../frontend-editor/frontend-editor-ckeditor-web/src/main/resources/META-INF/resources/tsconfig.json"

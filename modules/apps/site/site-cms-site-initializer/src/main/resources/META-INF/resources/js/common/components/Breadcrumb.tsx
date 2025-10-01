@@ -6,7 +6,6 @@
 import ClayBreadcrumb from '@clayui/breadcrumb';
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown, {ClayDropDownWithItems} from '@clayui/drop-down';
-import Nav from '@clayui/nav';
 import ClaySticker from '@clayui/sticker';
 import {openConfirmModal, openModal} from 'frontend-js-components-web';
 import {navigate} from 'frontend-js-web';
@@ -111,13 +110,16 @@ export default function Breadcrumb({
 	hideSpace,
 	size,
 }: Props) {
+	const isTitle = breadcrumbItems.length === 1;
+
 	return (
-		<Nav
+		<div
 			aria-label={Liferay.Language.get('breadcrumb')}
-			className="autofit-row autofit-row-center ml-3 mt-3"
+			className="autofit-row autofit-row-center px-4"
+			style={{height: '72px'}}
 		>
 			{!hideSpace && (
-				<div className="autofit-col mr-1">
+				<div className="autofit-col mr-3">
 					<SpaceSticker
 						displayType={displayType}
 						hideName
@@ -128,11 +130,17 @@ export default function Breadcrumb({
 			)}
 
 			<div className="autofit-col cms-breadcrumb">
-				<ClayBreadcrumb items={breadcrumbItems} />
+				{isTitle ? (
+					<h2 className="font-weight-semi-bold mb-0 text-7 text-dark">
+						{breadcrumbItems[0]?.label}
+					</h2>
+				) : (
+					<ClayBreadcrumb className="p-0" items={breadcrumbItems} />
+				)}
 			</div>
 
 			{actionItems && (
-				<div className="autofit-col">
+				<div className="autofit-col ml-1">
 					<ClayDropDown
 						hasLeftSymbols={actionItems.some(
 							({symbolLeft}) => !!symbolLeft
@@ -146,7 +154,7 @@ export default function Breadcrumb({
 									'more-actions'
 								)}
 								displayType="unstyled"
-								size="xs"
+								size="sm"
 								symbol="ellipsis-v"
 							/>
 						}
@@ -159,6 +167,6 @@ export default function Breadcrumb({
 					</ClayDropDown>
 				</div>
 			)}
-		</Nav>
+		</div>
 	);
 }

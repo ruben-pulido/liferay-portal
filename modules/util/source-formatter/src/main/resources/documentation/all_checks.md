@@ -75,6 +75,7 @@ DTOEnumCreationCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-
 DatabaseMetaDataCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks usages of `java.sql.DatabaseMetaData`. |
 [DefaultComesLastCheck](https://checkstyle.sourceforge.io/checks/coding/defaultcomeslast.html) | [Styling](styling_checks.md#styling-checks) | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks that the `default` is after all the cases in a `switch` statement. |
 DeprecatedAPICheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Finds calls to deprecated classes, constructors, fields or methods. |
+DeprecatedClassesCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Replaces deprecated classes. |
 DockerfileEmptyLinesCheck | [Styling](styling_checks.md#styling-checks) | Dockerfile | Finds missing and unnecessary empty lines. |
 DockerfileInstructionCheck | [Styling](styling_checks.md#styling-checks) | Dockerfile | Performs styling rules on instructions in `Dockerfile` files. |
 EmptyCollectionCheck | [Styling](styling_checks.md#styling-checks) | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks that there are no calls to `Collections.EMPTY_LIST`, `Collections.EMPTY_MAP` or `Collections.EMPTY_SET`. |
@@ -231,7 +232,6 @@ JavaConstantsFileCheck | [Naming Conventions](naming_conventions_checks.md#namin
 [JavaConstructorParametersCheck](check/java_constructor_parameters_check.md#javaconstructorparameterscheck) | [Styling](styling_checks.md#styling-checks) | .java | Checks that the order of variable assignments matches the order of the parameters in the constructor signature. |
 JavaConstructorSuperCallCheck | [Styling](styling_checks.md#styling-checks) | .java | Finds unnecessary call to no-argument constructor of the superclass. |
 JavaDeprecatedJavadocCheck | [Javadoc](javadoc_checks.md#javadoc-checks) | .java | Checks if the `@deprecated` javadoc is pointing to the correct version. |
-JavaDeprecatedKernelClassesCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Finds calls to deprecated classes `com.liferay.portal.kernel.util.CharPool` and `com.liferay.portal.kernel.util.StringPool`. |
 JavaDeserializationSecurityCheck | [Security](security_checks.md#security-checks) | .java | Finds Java serialization vulnerabilities. |
 JavaDiamondOperatorCheck | [Miscellaneous](miscellaneous_checks.md#miscellaneous-checks) | .java | Finds cases where Diamond Operator is not used. |
 JavaDuplicateVariableCheck | [Miscellaneous](miscellaneous_checks.md#miscellaneous-checks) | .java | Finds variables where a variable with the same name already exists in an extended class. |
@@ -261,6 +261,7 @@ JavaJSImportMapsContributorCheck | [Bug Prevention](bug_prevention_checks.md#bug
 JavaJSPDynamicIncludeCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Performs several checks on `*JSPDynamicInclude` class. |
 [JavaLocalSensitiveComparisonCheck](check/java_local_sensitive_comparison_check.md#javalocalsensitivecomparisoncheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks that `java.text.Collator` is used when comparing localized values. |
 JavaLocalServiceImplErcUsageCheck | [Productivity](productivity_checks.md#productivity-checks) | .java | Automatically generates and ensures that `externalReferenceCode` is properly used in local `*ServiceImpl` add method. |
+[JavaLocalServiceImplUserIdUsageCheck](check/java_local_service_impl_user_id_usage_check.md#javalocalserviceimpluseridusagecheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Finds incorrect use of `GuestOrUserUtil.getUserId()` or `PrincipalThreadLocal.getUserId()`. |
 JavaLogClassNameCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks the name of the class that is passed in `LogFactoryUtil.getLog`. |
 [JavaLogLevelCheck](check/java_log_level_check.md#javaloglevelcheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks that the correct log messages are printed. |
 JavaLongLinesCheck | [Styling](styling_checks.md#styling-checks) | .java | Finds lines that are longer than the specified maximum line length. |
@@ -538,8 +539,6 @@ UpgradeJSPFieldSetGroupCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bn
 UpgradeJavaAssetEntryAssetCategoriesCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Replaces methods referring to class `AssetEntryAssetCategory` in class `AssetCategoryLocalService` with equivalent methods in class `AssetEntryAssetCategoryRelLocalService`. |
 UpgradeJavaBaseFragmentCollectionContributorExtendedClassesCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Adds FragmentCollectionKey to Component annotation in classes that extend `BaseFragmentCollectionContributor` |
 UpgradeJavaBaseModelListenerCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Add parameter in the onAfterUpdate and onBeforeUpdate methods of the BaseModelListener class. |
-UpgradeJavaBasePanelAppExtendedClassesCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Replace the setPortlet method with getPortlet. |
-UpgradeJavaCommerceOrderValidatorCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Replace the parameter Int for BigDecimal of method validate of 'CommerceOrderValidator' interface. |
 UpgradeJavaDDMFormValuesSerializerTrackerCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Replaces the references of `DDMFormValuesSerializerTracker` class and also its methods usages. |
 UpgradeJavaDisplayPageInfoItemCapabilityCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Replace all references of DisplayPageInfoItemCapability to InfoItemCapability |
 UpgradeJavaFDSActionProviderCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Reorder parameters in the getDropdownItems method of the FDSDataProvider interface. |

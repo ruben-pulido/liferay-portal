@@ -5,6 +5,7 @@
 
 package com.liferay.site.cms.site.initializer.internal.display.context;
 
+import com.liferay.depot.constants.DepotConstants;
 import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.document.library.configuration.DLConfiguration;
@@ -66,10 +67,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Marco Galluzzi
@@ -166,6 +167,14 @@ public abstract class BaseSectionDisplayContext {
 				return collaboratorURLs;
 			}
 		).put(
+			"contentViewURL",
+			StringBundler.concat(
+				themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+				GroupConstants.CMS_FRIENDLY_URL,
+				"/edit_content_item?&p_l_mode=read&p_p_state=",
+				LiferayWindowState.POP_UP, "&redirect=",
+				themeDisplay.getURLCurrent(), "&objectEntryId={embedded.id}")
+		).put(
 			"defaultPermissionAdditionalProps",
 			_getDefaultPermissionAdditionalProps()
 		).put(
@@ -241,10 +250,22 @@ public abstract class BaseSectionDisplayContext {
 			sb.append(getCMSSectionFilterString());
 		}
 
-		sb.append("&nestedFields=embedded,file.thumbnailURL,");
-		sb.append("systemProperties.objectDefinitionBrief");
+		sb.append("&nestedFields=embedded,file.previewURL,file.");
+		sb.append("thumbnailURL,systemProperties.objectDefinitionBrief");
 
 		return sb.toString();
+	}
+
+	public Map<String, Object> getBreadcrumbProps() throws PortalException {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		addBreadcrumbItem(jsonArray, false, null, _getLayoutName());
+
+		return HashMapBuilder.<String, Object>put(
+			"breadcrumbItems", jsonArray
+		).put(
+			"hideSpace", true
+		).build();
 	}
 
 	public List<DropdownItem> getBulkActionDropdownItems() {
@@ -259,59 +280,28 @@ public abstract class BaseSectionDisplayContext {
 		return new CreationMenu() {
 			{
 				if (_hasAddEntryPermission()) {
-					if (getRootObjectEntryFolderExternalReferenceCode() !=
-							null) {
+					for (DropdownItem dropdownItem :
+							getCreationMenuDropdownItems()) {
 
-						addPrimaryDropdownItem(
-							dropdownItem -> {
-								dropdownItem.putData("action", "createFolder");
-								dropdownItem.putData(
-									"assetLibraries",
-									_getDepotEntriesJSONArray());
-								dropdownItem.putData(
-									"baseAssetLibraryViewURL",
-									ActionUtil.getBaseSpaceURL(themeDisplay));
-								dropdownItem.putData(
-									"baseFolderViewURL",
-									ActionUtil.getBaseViewFolderURL(
-										themeDisplay));
-								dropdownItem.putData(
-									"parentObjectEntryFolderExternalReference" +
-										"Code",
-									_getParentObjectEntryFolderExternalReferenceCode());
-								dropdownItem.setIcon("folder");
-								dropdownItem.setLabel(
-									language.get(httpServletRequest, "folder"));
-							});
+						JSONArray depotEntriesJSONArray =
+							_getDepotEntriesJSONArray(dropdownItem);
+
+						if (depotEntriesJSONArray == null) {
+							continue;
+						}
+
+						dropdownItem.putData(
+							"assetLibraries", depotEntriesJSONArray);
+
+						addPrimaryDropdownItem(dropdownItem);
 					}
-
-					if (!Objects.equals(
-							getRootObjectEntryFolderExternalReferenceCode(),
-							ObjectEntryFolderConstants.
-								EXTERNAL_REFERENCE_CODE_CONTENTS)) {
-
-						addPrimaryDropdownItem(
-							dropdownItem -> {
-								dropdownItem.putData(
-									"action", "uploadMultipleFiles");
-								dropdownItem.putData(
-									"assetLibraries",
-									_getDepotEntriesJSONArray());
-								dropdownItem.putData(
-									"parentObjectEntryFolderExternalReference" +
-										"Code",
-									_getParentObjectEntryFolderExternalReferenceCode());
-								dropdownItem.setIcon("upload-multiple");
-								dropdownItem.setLabel(
-									language.get(
-										httpServletRequest, "multiple-files"));
-							});
-					}
-
-					addStructureContentDropdownItems(this);
 				}
 			}
 		};
+	}
+
+	public List<DropdownItem> getCreationMenuDropdownItems() {
+		return Collections.emptyList();
 	}
 
 	public abstract Map<String, Object> getEmptyState();
@@ -459,25 +449,6 @@ public abstract class BaseSectionDisplayContext {
 				null));
 	}
 
-	public Map<String, Object> getToolbarProps() throws PortalException {
-		return HashMapBuilder.<String, Object>put(
-			"title",
-			() -> {
-				Layout layout = themeDisplay.getLayout();
-
-				if (layout == null) {
-					return null;
-				}
-
-				return layout.getName(themeDisplay.getLocale(), true);
-			}
-		).put(
-			"toolbarClassName", "section-toolbar tbar-light"
-		).put(
-			"toolbarTitleClassName", "section-toolbar-title"
-		).build();
-	}
-
 	protected void addBreadcrumbItem(
 		JSONArray jsonArray, boolean active, String friendlyURL, String label) {
 
@@ -489,48 +460,6 @@ public abstract class BaseSectionDisplayContext {
 			).put(
 				"label", label
 			));
-	}
-
-	protected void addStructureContentDropdownItems(CreationMenu creationMenu) {
-		for (ObjectDefinition objectDefinition :
-				_objectDefinitionService.getCMSObjectDefinitions(
-					themeDisplay.getCompanyId(),
-					getObjectFolderExternalReferenceCodes())) {
-
-			JSONArray depotEntriesJSONArray = _getDepotEntriesJSONArray(
-				objectDefinition);
-
-			if (depotEntriesJSONArray == null) {
-				continue;
-			}
-
-			creationMenu.addPrimaryDropdownItem(
-				dropdownItem -> {
-					dropdownItem.putData("action", "createAsset");
-					dropdownItem.putData(
-						"assetLibraries", depotEntriesJSONArray);
-					dropdownItem.putData(
-						"redirect",
-						StringBundler.concat(
-							themeDisplay.getPortalURL(),
-							themeDisplay.getPathMain(),
-							GroupConstants.CMS_FRIENDLY_URL,
-							"/add_structured_content_item?",
-							"objectDefinitionId=",
-							objectDefinition.getObjectDefinitionId(),
-							"&objectEntryFolderExternalReferenceCode=",
-							_getObjectEntryFolderExternalReferenceCode(
-								objectDefinition),
-							"&plid=", themeDisplay.getPlid(), "&redirect=",
-							themeDisplay.getURLCurrent()));
-					dropdownItem.putData(
-						"title",
-						objectDefinition.getLabel(themeDisplay.getLocale()));
-					dropdownItem.setIcon("forms");
-					dropdownItem.setLabel(
-						objectDefinition.getLabel(themeDisplay.getLocale()));
-				});
-		}
 	}
 
 	protected String appendStatus(String filterString) {
@@ -560,12 +489,12 @@ public abstract class BaseSectionDisplayContext {
 	protected final Portal portal;
 	protected final ThemeDisplay themeDisplay;
 
-	private List<Long> _getAcceptedGroupIds(ObjectDefinition objectDefinition) {
+	private List<Long> _getAcceptedGroupIds(long objectDefinitionId) {
 		List<Long> acceptedGroupIds = new ArrayList<>();
 
 		ObjectDefinitionSetting objectDefinitionSetting =
 			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinition.getObjectDefinitionId(),
+				objectDefinitionId,
 				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS);
 
 		for (String groupId :
@@ -594,10 +523,17 @@ public abstract class BaseSectionDisplayContext {
 								"L_BASIC_WEB_CONTENT",
 								themeDisplay.getCompanyId());
 
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, objectDefinition.getClassName());
+
 					return TransformUtil.transformToArray(
 						ResourceActionsUtil.getResourceActions(
 							objectDefinition.getClassName()),
-						resourceAction -> HashMapBuilder.put(
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
 							"key", resourceAction
 						).put(
 							"label",
@@ -615,10 +551,17 @@ public abstract class BaseSectionDisplayContext {
 								"L_BASIC_DOCUMENT",
 								themeDisplay.getCompanyId());
 
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, objectDefinition.getClassName());
+
 					return TransformUtil.transformToArray(
 						ResourceActionsUtil.getResourceActions(
 							objectDefinition.getClassName()),
-						resourceAction -> HashMapBuilder.put(
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
 							"key", resourceAction
 						).put(
 							"label",
@@ -629,17 +572,26 @@ public abstract class BaseSectionDisplayContext {
 				}
 			).put(
 				"OBJECT_ENTRY_FOLDERS",
-				() -> TransformUtil.transformToArray(
-					ResourceActionsUtil.getResourceActions(
-						ObjectEntryFolder.class.getName()),
-					resourceAction -> HashMapBuilder.put(
-						"key", resourceAction
-					).put(
-						"label",
-						ResourceActionsUtil.getAction(
-							httpServletRequest, resourceAction)
-					).build(),
-					Map.class)
+				() -> {
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, ObjectEntryFolder.class.getName());
+
+					return TransformUtil.transformToArray(
+						ResourceActionsUtil.getResourceActions(
+							ObjectEntryFolder.class.getName()),
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
+							"key", resourceAction
+						).put(
+							"label",
+							ResourceActionsUtil.getAction(
+								httpServletRequest, resourceAction)
+						).build(),
+						Map.class);
+				}
 			).build()
 		).put(
 			"roles",
@@ -675,8 +627,22 @@ public abstract class BaseSectionDisplayContext {
 		return _getDepotEntriesJSONArray(
 			TransformUtil.transform(
 				depotEntryLocalService.getDepotEntries(
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS),
+					themeDisplay.getCompanyId(), DepotConstants.TYPE_SPACE),
 				DepotEntry::getGroupId));
+	}
+
+	private JSONArray _getDepotEntriesJSONArray(DropdownItem dropdownItem) {
+		Map<String, Object> dropdownItemData =
+			(HashMap<String, Object>)dropdownItem.get("data");
+
+		long objectDefinitionId = GetterUtil.getLong(
+			dropdownItemData.get("objectDefinitionId"));
+
+		if (objectDefinitionId != 0) {
+			return _getDepotEntriesJSONArray(objectDefinitionId);
+		}
+
+		return _getDepotEntriesJSONArray();
 	}
 
 	private JSONArray _getDepotEntriesJSONArray(List<Long> groupIds) {
@@ -693,14 +659,12 @@ public abstract class BaseSectionDisplayContext {
 		return jsonArray;
 	}
 
-	private JSONArray _getDepotEntriesJSONArray(
-		ObjectDefinition objectDefinition) {
-
-		if (_isAcceptAllGroups(objectDefinition)) {
+	private JSONArray _getDepotEntriesJSONArray(long objectDefinitionId) {
+		if (_isAcceptAllGroups(objectDefinitionId)) {
 			return _getDepotEntriesJSONArray();
 		}
 
-		List<Long> acceptedGroupIds = _getAcceptedGroupIds(objectDefinition);
+		List<Long> acceptedGroupIds = _getAcceptedGroupIds(objectDefinitionId);
 
 		if (acceptedGroupIds.isEmpty()) {
 			return null;
@@ -828,6 +792,16 @@ public abstract class BaseSectionDisplayContext {
 		);
 	}
 
+	private String _getLayoutName() {
+		Layout layout = themeDisplay.getLayout();
+
+		if (layout == null) {
+			return null;
+		}
+
+		return layout.getName(themeDisplay.getLocale(), true);
+	}
+
 	private ObjectEntryFolder _getObjectEntryFolder(
 		long companyId, Object object) {
 
@@ -846,31 +820,6 @@ public abstract class BaseSectionDisplayContext {
 		return null;
 	}
 
-	private String _getObjectEntryFolderExternalReferenceCode(
-		ObjectDefinition objectDefinition) {
-
-		if (objectEntryFolder != null) {
-			return objectEntryFolder.getExternalReferenceCode();
-		}
-
-		if (Objects.equals(
-				objectDefinition.getObjectFolderExternalReferenceCode(),
-				ObjectFolderConstants.
-					EXTERNAL_REFERENCE_CODE_CONTENT_STRUCTURES)) {
-
-			return ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENTS;
-		}
-
-		if (Objects.equals(
-				objectDefinition.getObjectFolderExternalReferenceCode(),
-				ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_FILE_TYPES)) {
-
-			return ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_FILES;
-		}
-
-		return null;
-	}
-
 	private String _getParentObjectEntryFolderExternalReferenceCode() {
 		if (objectEntryFolder == null) {
 			return getRootObjectEntryFolderExternalReferenceCode();
@@ -883,10 +832,6 @@ public abstract class BaseSectionDisplayContext {
 		if (objectEntryFolder == null) {
 			return true;
 		}
-
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
 
 		try {
 			return _objectEntryFolderModelResourcePermission.contains(
@@ -903,10 +848,10 @@ public abstract class BaseSectionDisplayContext {
 		return false;
 	}
 
-	private boolean _isAcceptAllGroups(ObjectDefinition objectDefinition) {
+	private boolean _isAcceptAllGroups(long objectDefinitionId) {
 		ObjectDefinitionSetting objectDefinitionSetting =
 			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinition.getObjectDefinitionId(),
+				objectDefinitionId,
 				ObjectDefinitionSettingConstants.NAME_ACCEPT_ALL_GROUPS);
 
 		if ((objectDefinitionSetting != null) &&
@@ -917,7 +862,7 @@ public abstract class BaseSectionDisplayContext {
 
 		objectDefinitionSetting =
 			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinition.getObjectDefinitionId(),
+				objectDefinitionId,
 				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS);
 
 		if ((objectDefinitionSetting == null) ||

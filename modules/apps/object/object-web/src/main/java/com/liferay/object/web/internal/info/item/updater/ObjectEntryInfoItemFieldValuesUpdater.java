@@ -80,7 +80,8 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
 
 		Map<String, Object> curProperties = ObjectEntryUtil.toProperties(
-			themeDisplay.getCompanyId(), infoItemFieldValues);
+			themeDisplay.getCompanyId(), infoItemFieldValues,
+			objectEntry.getValues());
 
 		try {
 			String scopeKey = ObjectEntryInfoItemUtil.getScopeKey(
@@ -118,9 +119,20 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 					},
 					scopeKey);
 
-			if (curProperties.containsKey("reviewDate") ||
-				curProperties.containsKey("expirationDate")) {
+			if (curProperties.containsKey("displayDate") ||
+				curProperties.containsKey("expirationDate") ||
+				curProperties.containsKey("reviewDate")) {
 
+				dtoObjectEntry.setDisplayDate(
+					() -> {
+						if (curProperties.containsKey("displayDate")) {
+							return GetterUtil.getDate(
+								curProperties.get("displayDate"),
+								_dateTimeFormatter, null);
+						}
+
+						return objectEntry.getDisplayDate();
+					});
 				dtoObjectEntry.setExpirationDate(
 					() -> {
 						if (curProperties.containsKey("expirationDate")) {
@@ -131,7 +143,6 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 
 						return objectEntry.getExpirationDate();
 					});
-
 				dtoObjectEntry.setReviewDate(
 					() -> {
 						if (curProperties.containsKey("reviewDate")) {
@@ -148,8 +159,8 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 					new DefaultDTOConverterContext(
 						false, null, null, null, null, themeDisplay.getLocale(),
 						null, themeDisplay.getUser()),
-					objectEntry.getExternalReferenceCode(), _objectDefinition,
-					dtoObjectEntry, scopeKey);
+					dtoObjectEntry.getExternalReferenceCode(),
+					_objectDefinition, dtoObjectEntry, scopeKey);
 			}
 
 			return ObjectEntryUtil.toObjectEntry(

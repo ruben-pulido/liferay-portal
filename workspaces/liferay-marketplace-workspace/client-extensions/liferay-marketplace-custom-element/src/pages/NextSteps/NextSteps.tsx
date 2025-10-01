@@ -10,6 +10,7 @@ import useSWR from 'swr';
 
 import checkCircleIcon from '../../assets/icons/check_circle_icon.svg';
 import paymentPendingIcon from '../../assets/icons/payment_pending_icon.svg';
+import timesCircleIcon from '../../assets/icons/times_circle_icon.svg';
 import {AccountAndAppCard} from '../../components/Card/AccountAndAppCard';
 import {Header} from '../../components/Header/Header';
 import {PageRenderer} from '../../components/Page';
@@ -19,7 +20,6 @@ import useGetProductByOrderId from '../../hooks/useGetProductByOrderId';
 import i18n from '../../i18n';
 import {Liferay} from '../../liferay/liferay';
 import HeadlessAdminUser from '../../services/rest/HeadlessAdminUser';
-import {getProductPriceModel} from '../../utils/productUtils';
 import {getSiteURL} from '../../utils/site';
 import {getAccountImage} from '../../utils/util';
 
@@ -46,7 +46,6 @@ export function NextStepsBody(props: NextStepsBodyProps) {
 
 	const isCloudApp =
 		placedOrder?.orderTypeExternalReferenceCode === OrderTypes.CLOUDAPP;
-	const isPaidApp = getProductPriceModel(product as DeliveryProduct);
 
 	const continueButtonKey =
 		paymentStatus === PaymentStatus.PAID
@@ -55,31 +54,35 @@ export function NextStepsBody(props: NextStepsBodyProps) {
 				: 'continue-to-download'
 			: 'go-to-the-catalog';
 
-	const headerTitle = isCloudApp
-		? i18n.translate('continue-to-install')
-		: i18n.translate('continue-to-download');
-
 	const nextStepBody = {
 		[PaymentStatus.FAILED]: (
 			<Header
 				description={
-					<>
-						<p>
-							We were unable to process the payment for{' '}
-							<strong>{productName}</strong>.
+					<span>
+						<p className="text-center">
+							We&apos;re sorry, but your PayPal payment for{' '}
+							<strong>{productName}</strong> could not be
+							processed. Please try again or use a different
+							PayPal account.
 						</p>
-
-						<p>
-							If you need help or believe this is an error,
-							contact our support team.
+						<p className="d-flex justify-content-center m-0 next-step-page-text-bold">
+							Need help?&nbsp;{' '}
+							<a href="mailto:support@liferay.com">
+								support@liferay.com
+							</a>
 						</p>
-
-						<p>
-							Your Order ID is: <strong>{orderId}</strong>
-						</p>
-					</>
+					</span>
 				}
-				title="Payment Failed"
+				icon={
+					<span className="d-flex justify-content-center">
+						<img alt="payment pending icon" src={timesCircleIcon} />
+					</span>
+				}
+				title={
+					<span className="d-flex justify-content-center mb-5 next-step-page-title">
+						{i18n.translate('purchase-failed')}
+					</span>
+				}
 			/>
 		),
 
@@ -88,13 +91,11 @@ export function NextStepsBody(props: NextStepsBodyProps) {
 				description={
 					<span>
 						<p className="mb-4 text-center">
-							Congratulations on the purchase of{' '}
-							<strong>{productName}</strong>.{' '}
-							{isPaidApp &&
-								'Your payment has been successfully processed via PayPal. '}
-							You will now need to install the app by clicking on
-							the &quot;{i18n.translate(continueButtonKey)}&quot;
-							button below.
+							Thank you for choosing{' '}
+							<strong>{productName}</strong>. Your purchase has
+							been successfully processed. To continue, please
+							click the button below to download or install the
+							app.
 						</p>
 
 						<p className="align-items-end d-flex justify-content-center mb-0">
@@ -103,9 +104,9 @@ export function NextStepsBody(props: NextStepsBodyProps) {
 								className="next-step-page-text-bold"
 								href={`${getSiteURL()}/customer-dashboard#/order/${orderId}`}
 							>
-								<h2 className="mb-0 next-step-page-order next-step-page-text-bold">
+								<span className="mb-0 next-step-page-order next-step-page-text-bold span">
 									{orderId}
-								</h2>
+								</span>
 							</a>
 						</p>
 					</span>
@@ -117,7 +118,7 @@ export function NextStepsBody(props: NextStepsBodyProps) {
 				}
 				title={
 					<span className="d-flex justify-content-center mb-5 next-step-page-title">
-						{headerTitle}
+						{i18n.translate('purchase-completed')}
 					</span>
 				}
 			/>
@@ -152,7 +153,7 @@ export function NextStepsBody(props: NextStepsBodyProps) {
 				}
 				title={
 					<span className="d-flex justify-content-center mb-5 next-step-page-title">
-						Order received!
+						{i18n.translate('order-received')}
 					</span>
 				}
 			/>
@@ -219,17 +220,12 @@ export function NextStepsBody(props: NextStepsBodyProps) {
 				</ClayButton>
 			</div>
 
-			{paymentStatus === PaymentStatus.FAILED && (
-				<div className="d-flex justify-content-center">
-					<a href="#">
-						<ins>Contact Support</ins>
-					</a>
-				</div>
-			)}
-
 			{paymentStatus === PaymentStatus.PAID && (
 				<div className="d-flex justify-content-center next-step-page-learn-more">
-					<a href="https://learn.liferay.com/w/dxp/development/marketplace">
+					<a
+						href="https://learn.liferay.com/w/dxp/development/marketplace"
+						target="_blank"
+					>
 						Learn more about App Configuration
 					</a>
 				</div>

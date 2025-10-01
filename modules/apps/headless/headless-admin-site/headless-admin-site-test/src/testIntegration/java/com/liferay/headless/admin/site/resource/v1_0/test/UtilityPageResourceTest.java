@@ -43,12 +43,12 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.util.HashMap;
@@ -173,13 +173,6 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 					testGroup.getExternalReferenceCode(),
 					postUtilityPage.getExternalReferenceCode()));
 		}
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGetSiteUtilityPagePermissionsPage() throws Exception {
-		super.testGetSiteUtilityPagePermissionsPage();
 	}
 
 	@Override
@@ -444,13 +437,6 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		_testPutSiteUtilityPageWithPageSpecifications();
 	}
 
-	@Ignore
-	@Override
-	@Test
-	public void testPutSiteUtilityPagePermissionsPage() throws Exception {
-		super.testPutSiteUtilityPagePermissionsPage();
-	}
-
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {
@@ -499,15 +485,6 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		return utilityPage;
 	}
 
-	@Ignore
-	@Override
-	@Test
-	protected UtilityPage testGetSiteUtilityPagePermissionsPage_addUtilityPage()
-		throws Exception {
-
-		return super.testGetSiteUtilityPagePermissionsPage_addUtilityPage();
-	}
-
 	@Override
 	protected UtilityPage testGetSiteUtilityPagesPage_addUtilityPage(
 			String siteExternalReferenceCode, UtilityPage utilityPage)
@@ -532,15 +509,6 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 
 		return testGetSiteUtilityPagesPage_addUtilityPage(
 			testGroup.getExternalReferenceCode(), utilityPage);
-	}
-
-	@Ignore
-	@Override
-	@Test
-	protected UtilityPage testPutSiteUtilityPagePermissionsPage_addUtilityPage()
-		throws Exception {
-
-		return super.testPutSiteUtilityPagePermissionsPage_addUtilityPage();
 	}
 
 	private FileEntry _addPortletFileEntry(long folderId) throws Exception {

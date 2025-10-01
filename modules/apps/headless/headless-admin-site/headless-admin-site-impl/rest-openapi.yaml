@@ -492,11 +492,6 @@ components:
                         The display page template's creator. It is not returned by default. It can be embedded via
                         nestedFields.
                     readOnly: true
-                creatorExternalReferenceCode:
-                    # @review
-                    description:
-                        The display page template's creator external reference code.
-                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -567,6 +562,10 @@ components:
                     # @review
                     description:
                         The display page template's parent folder.
+                permissions:
+                    items:
+                        type: permission
+                    type: array
                 thumbnail:
                     $ref: "#/components/schemas/ItemExternalReference"
                     # @review
@@ -590,11 +589,6 @@ components:
                         The display page template folder's creator. It is not returned by default. It can be embedded
                         via nestedFields.
                     readOnly: true
-                creatorExternalReferenceCode:
-                    # @review
-                    description:
-                        The display page template folder's creator external reference code.
-                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -637,6 +631,10 @@ components:
                     description:
                         The parent display page template folder's external reference code.
                     type: string
+                permissions:
+                    items:
+                        type: permission
+                    type: array
                 uuid:
                     # @review
                     description:
@@ -968,11 +966,6 @@ components:
                         The fragment composition's creator. It is not returned by default. It can be embedded via
                         nestedFields.
                     readOnly: true
-                creatorExternalReferenceCode:
-                    # @review
-                    description:
-                        The page's creator external reference code.
-                    type: string
                 dateCreated:
                     description:
                         The structured content's creation date.
@@ -1759,11 +1752,6 @@ components:
                     description:
                         The master page's creator. It is not returned by default. It can be embedded via nestedFields.
                     readOnly: true
-                creatorExternalReferenceCode:
-                    # @review
-                    description:
-                        The page's creator external reference code.
-                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -1816,6 +1804,10 @@ components:
                     items:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
+                permissions:
+                    items:
+                        type: permission
+                    type: array
                 taxonomyCategoryItemExternalReferences:
                     # @review
                     description:
@@ -1858,11 +1850,6 @@ components:
             description:
                 Represents settings related with the site navigation of a page.
             properties:
-                queryString:
-                    # @review
-                    description:
-                        The default parameter for a page.
-                    type: string
                 target:
                     # @review
                     description:
@@ -2188,6 +2175,11 @@ components:
                     maximum: 2147483647
                     minimum: 0
                     type: integer
+                queryString:
+                    # @review
+                    description:
+                        The default parameter for a page.
+                    type: string
                 seoSettings:
                     $ref: "#/components/schemas/SEOSettings"
                     # @review
@@ -2260,11 +2252,6 @@ components:
                     description:
                         The page template's creator. It is not returned by default. It can be embedded via nestedFields.
                     readOnly: true
-                creatorExternalReferenceCode:
-                    # @review
-                    description:
-                        The page's creator external reference code.
-                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -2324,6 +2311,10 @@ components:
                     # @review
                     description:
                         The settings of the page template.
+                permissions:
+                    items:
+                        type: permission
+                    type: array
                 taxonomyCategoryItemExternalReferences:
                     # @review
                     description:
@@ -2357,11 +2348,6 @@ components:
                         The page template set's creator. It is not returned by default. It can be embedded via
                         nestedFields.
                     readOnly: true
-                creatorExternalReferenceCode:
-                    # @review
-                    description:
-                        The page template set's creator external reference code.
-                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -2394,6 +2380,10 @@ components:
                     description:
                         The page template set's name.
                     type: string
+                permissions:
+                    items:
+                        type: permission
+                    type: array
                 uuid:
                     description:
                         A valid external identifier to reference this page template set.
@@ -2667,11 +2657,6 @@ components:
                     description:
                         The page's creator. It is not returned by default. It can be embedded via nestedFields.
                     readOnly: true
-                creatorExternalReferenceCode:
-                    # @review
-                    description:
-                        The page's creator external reference code.
-                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -2740,6 +2725,10 @@ components:
                     description:
                         The parent page external reference code or null if it is a top level page.
                     type: string
+                permissions:
+                    items:
+                        type: permission
+                    type: array
                 taxonomyCategoryItemExternalReferences:
                     # @review
                     description:
@@ -2855,11 +2844,6 @@ components:
                     description:
                         The utility page's creator. It is not returned by default. It can be embedded via nestedFields.
                     readOnly: true
-                creatorExternalReferenceCode:
-                    # @review
-                    description:
-                        The utility page's creator external reference code.
-                    type: string
                 dateCreated:
                     # @review
                     description:
@@ -2914,6 +2898,10 @@ components:
                         default. It can be requested via nestedFields.
                     items:
                         $ref: "#/components/schemas/PageSpecification"
+                    type: array
+                permissions:
+                    items:
+                        type: permission
                     type: array
                 thumbnail:
                     $ref: "#/components/schemas/ItemExternalReference"
@@ -3469,22 +3457,10 @@ components:
                                 The identifier of the layout template.
                             type: string
                         navigationSettings:
+                            $ref: "#/components/schemas/NavigationSettings"
                             # @review
                             description:
                                 The widget page template's site navigation settings.
-                            properties:
-                                target:
-                                    # @review
-                                    description:
-                                        The ID of the target specific frame.
-                                    type: string
-                                targetType:
-                                    # @review
-                                    description:
-                                        The target's type (specific frame or new tab).
-                                    enum: [SpecificFrame, NewTab]
-                                    type: string
-                            type: object
             # @review
             description:
                 The settings of a widget page template.
@@ -3526,7 +3502,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.site.client', and version '1.0.15'."
+        'com.liferay.headless.admin.site.client', and version '1.0.16'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

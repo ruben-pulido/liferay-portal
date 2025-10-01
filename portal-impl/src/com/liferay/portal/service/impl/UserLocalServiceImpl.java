@@ -177,6 +177,7 @@ import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -199,7 +200,6 @@ import com.liferay.portal.security.pwd.PwdAuthenticator;
 import com.liferay.portal.security.pwd.PwdToolkitUtil;
 import com.liferay.portal.security.pwd.RegExpToolkit;
 import com.liferay.portal.service.base.UserLocalServiceBaseImpl;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.usersadmin.util.UsersAdminUtil;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
 import com.liferay.social.kernel.model.SocialRelation;
@@ -3672,6 +3672,35 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		catch (Exception exception) {
 			throw new SystemException(exception);
 		}
+	}
+
+	@Override
+	public int searchCountBySocial(
+		long companyId, long[] groupIds, long[] userGroupIds, String keywords) {
+
+		return userFinder.countByKeywords(
+			companyId, keywords, WorkflowConstants.STATUS_APPROVED,
+			LinkedHashMapBuilder.<String, Object>put(
+				"usersGroups",
+				() -> {
+					if (ArrayUtil.isNotEmpty(groupIds)) {
+						return ArrayUtil.toLongArray(groupIds);
+					}
+
+					return null;
+				}
+			).put(
+				"usersUserGroups",
+				() -> {
+					if (ArrayUtil.isNotEmpty(userGroupIds)) {
+						return ArrayUtil.toLongArray(userGroupIds);
+					}
+
+					return null;
+				}
+			).put(
+				"wildcardMode", WildcardMode.TRAILING
+			).build());
 	}
 
 	@Override

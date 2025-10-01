@@ -7,16 +7,20 @@ import {IInternalRenderer} from '@liferay/frontend-data-set-web';
 import {openModal} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
 
+import {defaultPermissionsBulkAction} from '../default_permission/BulkDefaultPermissionModalContent';
 import DefaultPermissionModalContent from '../default_permission/DefaultPermissionModalContent';
 import deleteEntryAction from './actions/deleteEntryAction';
+import manageConnectedSitesAction, {
+	ManageConnectedSitesData,
+} from './actions/manageConnectedSitesAction';
 import manageMembersAction, {
 	ManageMembersData,
 } from './actions/manageMembersAction';
-import manageSitesAction, {ManageSitesData} from './actions/manageSitesAction';
 import SpaceRenderer from './cell_renderers/SpaceRenderer';
 import addOnClickToCreationMenuItems from './utils/addOnClickToCreationMenuItems';
 
 const ACTIONS = {};
+const DEPOT_CLASS_NAME = 'com.liferay.depot.model.DepotEntry';
 
 export default function AllSpacesFDSPropsTransformer({
 	additionalProps,
@@ -41,7 +45,13 @@ export default function AllSpacesFDSPropsTransformer({
 		customRenderers: {
 			tableCell: [
 				{
-					component: SpaceRenderer,
+					component: ({itemData, value}) =>
+						SpaceRenderer({
+							href: additionalProps.baseSpaceURL + itemData.id,
+							itemData,
+							size: 'sm',
+							value,
+						}),
 					name: 'spaceTableCellRenderer',
 					type: 'internal',
 				} as IInternalRenderer,
@@ -108,7 +118,7 @@ export default function AllSpacesFDSPropsTransformer({
 								{}),
 							classExternalReferenceCode:
 								itemData.externalReferenceCode,
-							className: 'com.liferay.depot.model.DepotEntry',
+							className: DEPOT_CLASS_NAME,
 							closeModal,
 						}),
 					size: 'full-screen',
@@ -140,27 +150,43 @@ export default function AllSpacesFDSPropsTransformer({
 				const hasAssignMembersPermission =
 					action.data.permissionKey === 'assign-members';
 				const assetLibraryCreatorUserId = itemData.creatorUserId;
-				const assetLibraryId = itemData.id;
+				const externalReferenceCode = itemData.externalReferenceCode;
 
 				const data: ManageMembersData = {
 					assetLibraryCreatorUserId,
-					assetLibraryId,
+					externalReferenceCode,
 					hasAssignMembersPermission,
 					title: Liferay.Language.get('all-members'),
 				};
 
 				manageMembersAction(data, loadData);
 			}
-			else if (action.data.id === 'view-sites') {
+			else if (action.data.id === 'view-connected-sites') {
 				const hasConnectSitesPermission =
 					action.data.permissionKey === 'connect-sites';
 
-				const data: ManageSitesData = {
-					groupId: itemData.siteId,
+				const data: ManageConnectedSitesData = {
+					externalReferenceCode: itemData.externalReferenceCode,
 					hasConnectSitesPermission,
 				};
 
-				manageSitesAction(data, loadData);
+				manageConnectedSitesAction(data, loadData);
+			}
+		},
+		onBulkActionItemClick: ({
+			action,
+			selectedData,
+		}: {
+			action: any;
+			selectedData: any;
+		}) => {
+			if (action?.data?.id === 'default-permissions') {
+				defaultPermissionsBulkAction({
+					className: DEPOT_CLASS_NAME,
+					defaultPermissionAdditionalProps:
+						additionalProps.defaultPermissionAdditionalProps || {},
+					selectedData,
+				});
 			}
 		},
 	};

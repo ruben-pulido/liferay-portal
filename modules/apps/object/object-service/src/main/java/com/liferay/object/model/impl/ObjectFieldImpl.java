@@ -35,6 +35,18 @@ public class ObjectFieldImpl extends ObjectFieldBaseImpl {
 	}
 
 	@Override
+	public String[] getDBColumnNames() {
+		if (compareBusinessType(ObjectFieldConstants.BUSINESS_TYPE_ASSIGNEE)) {
+			return new String[] {
+				"classNameId_" + getDBColumnName(),
+				"classPK_" + getDBColumnName()
+			};
+		}
+
+		return new String[] {getDBColumnName()};
+	}
+
+	@Override
 	public String getI18nObjectFieldName() {
 		return getName() + "_i18n";
 	}
@@ -60,6 +72,17 @@ public class ObjectFieldImpl extends ObjectFieldBaseImpl {
 	public ObjectRelationship getObjectRelationship() {
 		return ObjectRelationshipLocalServiceUtil.
 			fetchObjectRelationshipByObjectFieldId2(getObjectFieldId());
+	}
+
+	@Override
+	public String getReadOnly() {
+		String readOnly = super.getReadOnly();
+
+		if (Validator.isNull(readOnly)) {
+			return ObjectFieldConstants.READ_ONLY_FALSE;
+		}
+
+		return readOnly;
 	}
 
 	@Override

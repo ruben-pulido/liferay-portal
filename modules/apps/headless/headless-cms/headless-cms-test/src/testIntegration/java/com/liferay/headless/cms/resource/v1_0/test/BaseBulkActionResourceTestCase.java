@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import com.liferay.headless.cms.client.dto.v1_0.BulkAction;
 import com.liferay.headless.cms.client.dto.v1_0.BulkActionTask;
+import com.liferay.headless.cms.client.dto.v1_0.DefaultPermissionBulkAction;
 import com.liferay.headless.cms.client.dto.v1_0.DeleteBulkAction;
 import com.liferay.headless.cms.client.dto.v1_0.KeywordBulkAction;
 import com.liferay.headless.cms.client.dto.v1_0.MoveBulkAction;
@@ -39,12 +40,12 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import jakarta.annotation.Generated;
@@ -181,6 +182,11 @@ public abstract class BaseBulkActionResourceTestCase {
 	}
 
 	@Test
+	public void testPostBulkActionItemPreviewPage() throws Exception {
+		Assert.assertTrue(false);
+	}
+
+	@Test
 	public void testPostBulkAction() throws Exception {
 		Assert.assertTrue(true);
 	}
@@ -290,6 +296,50 @@ public abstract class BaseBulkActionResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"defaultPermissions", additionalAssertFieldName)) {
+
+				if (!(bulkAction instanceof DefaultPermissionBulkAction)) {
+					continue;
+				}
+
+				if (((DefaultPermissionBulkAction)bulkAction).
+						getDefaultPermissions() == null) {
+
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("depotGroupId", additionalAssertFieldName)) {
+				if (!(bulkAction instanceof DefaultPermissionBulkAction)) {
+					continue;
+				}
+
+				if (((DefaultPermissionBulkAction)bulkAction).
+						getDepotGroupId() == null) {
+
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("treePath", additionalAssertFieldName)) {
+				if (!(bulkAction instanceof DefaultPermissionBulkAction)) {
+					continue;
+				}
+
+				if (((DefaultPermissionBulkAction)bulkAction).getTreePath() ==
+						null) {
+
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("keywords", additionalAssertFieldName)) {
 				if (!(bulkAction instanceof KeywordBulkAction)) {
 					continue;
@@ -310,6 +360,20 @@ public abstract class BaseBulkActionResourceTestCase {
 				}
 
 				if (((MoveBulkAction)bulkAction).getObjectEntryFolderId() ==
+						null) {
+
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("configuration", additionalAssertFieldName)) {
+				if (!(bulkAction instanceof PermissionBulkAction)) {
+					continue;
+				}
+
+				if (((PermissionBulkAction)bulkAction).getConfiguration() ==
 						null) {
 
 					valid = false;
@@ -600,6 +664,65 @@ public abstract class BaseBulkActionResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"defaultPermissions", additionalAssertFieldName)) {
+
+				if (!(bulkAction1 instanceof DefaultPermissionBulkAction) ||
+					!(bulkAction2 instanceof DefaultPermissionBulkAction)) {
+
+					continue;
+				}
+
+				if (!Objects.deepEquals(
+						((DefaultPermissionBulkAction)bulkAction1).
+							getDefaultPermissions(),
+						((DefaultPermissionBulkAction)bulkAction2).
+							getDefaultPermissions())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("depotGroupId", additionalAssertFieldName)) {
+				if (!(bulkAction1 instanceof DefaultPermissionBulkAction) ||
+					!(bulkAction2 instanceof DefaultPermissionBulkAction)) {
+
+					continue;
+				}
+
+				if (!Objects.deepEquals(
+						((DefaultPermissionBulkAction)bulkAction1).
+							getDepotGroupId(),
+						((DefaultPermissionBulkAction)bulkAction2).
+							getDepotGroupId())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("treePath", additionalAssertFieldName)) {
+				if (!(bulkAction1 instanceof DefaultPermissionBulkAction) ||
+					!(bulkAction2 instanceof DefaultPermissionBulkAction)) {
+
+					continue;
+				}
+
+				if (!Objects.deepEquals(
+						((DefaultPermissionBulkAction)bulkAction1).
+							getTreePath(),
+						((DefaultPermissionBulkAction)bulkAction2).
+							getTreePath())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("keywords", additionalAssertFieldName)) {
 				if (!(bulkAction1 instanceof KeywordBulkAction) ||
 					!(bulkAction2 instanceof KeywordBulkAction)) {
@@ -630,6 +753,24 @@ public abstract class BaseBulkActionResourceTestCase {
 						((MoveBulkAction)bulkAction1).getObjectEntryFolderId(),
 						((MoveBulkAction)bulkAction2).
 							getObjectEntryFolderId())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("configuration", additionalAssertFieldName)) {
+				if (!(bulkAction1 instanceof PermissionBulkAction) ||
+					!(bulkAction2 instanceof PermissionBulkAction)) {
+
+					continue;
+				}
+
+				if (!Objects.deepEquals(
+						((PermissionBulkAction)bulkAction1).getConfiguration(),
+						((PermissionBulkAction)bulkAction2).
+							getConfiguration())) {
 
 					return false;
 				}
@@ -976,6 +1117,23 @@ public abstract class BaseBulkActionResourceTestCase {
 	protected BulkAction randomBulkAction() throws Exception {
 		List<Supplier<BulkAction>> suppliers = Arrays.asList(
 			() -> {
+				DefaultPermissionBulkAction bulkAction =
+					new DefaultPermissionBulkAction();
+
+				bulkAction.setSelectAll(RandomTestUtil.randomBoolean());
+
+				bulkAction.setDefaultPermissions(
+					StringUtil.toLowerCase(RandomTestUtil.randomString()));
+				bulkAction.setDepotGroupId(RandomTestUtil.randomLong());
+				bulkAction.setTreePath(
+					StringUtil.toLowerCase(RandomTestUtil.randomString()));
+
+				bulkAction.setType(
+					BulkAction.Type.create("DefaultPermissionBulkAction"));
+
+				return bulkAction;
+			},
+			() -> {
 				DeleteBulkAction bulkAction = new DeleteBulkAction();
 
 				bulkAction.setSelectAll(RandomTestUtil.randomBoolean());
@@ -1008,6 +1166,9 @@ public abstract class BaseBulkActionResourceTestCase {
 				PermissionBulkAction bulkAction = new PermissionBulkAction();
 
 				bulkAction.setSelectAll(RandomTestUtil.randomBoolean());
+
+				bulkAction.setConfiguration(
+					StringUtil.toLowerCase(RandomTestUtil.randomString()));
 
 				bulkAction.setType(
 					BulkAction.Type.create("PermissionBulkAction"));

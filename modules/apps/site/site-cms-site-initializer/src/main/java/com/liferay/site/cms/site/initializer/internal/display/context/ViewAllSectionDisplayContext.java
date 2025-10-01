@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -133,8 +134,19 @@ public class ViewAllSectionDisplayContext extends BaseSectionDisplayContext {
 				null, "pencil", "edit-tags",
 				LanguageUtil.get(httpServletRequest, "edit-tags"), "post",
 				"edit-tags", null));
+		fdsBulkActionDropdownItems.add(
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "password-policies", "permissions",
+				LanguageUtil.get(_httpServletRequest, "permissions"), null,
+				null, null));
 
 		return fdsBulkActionDropdownItems;
+	}
+
+	@Override
+	public List<DropdownItem> getCreationMenuDropdownItems() {
+		return ActionUtil.getAllSectionCreationMenuDropdownItems(
+			httpServletRequest);
 	}
 
 	@Override

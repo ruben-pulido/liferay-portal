@@ -66,7 +66,7 @@ public class BreadcrumbDisplayContext {
 					"href",
 					PermissionsURLTag.doTag(
 						StringPool.BLANK, DepotEntry.class.getName(),
-						group.getName(), null,
+						group.getName(), group.getGroupId(),
 						String.valueOf(group.getClassPK()),
 						LiferayWindowState.POP_UP.toString(), null,
 						_httpServletRequest)
@@ -85,8 +85,9 @@ public class BreadcrumbDisplayContext {
 						"are-you-sure-you-want-to-delete-this-entry")
 				).put(
 					"href",
-					"/o/headless-asset-library/v1.0/asset-libraries/" +
-						group.getClassPK()
+					"/o/headless-asset-library/v1.0/asset-libraries" +
+						"/by-external-reference-code/" +
+							group.getExternalReferenceCode()
 				).put(
 					"label", LanguageUtil.get(_httpServletRequest, "delete")
 				).put(

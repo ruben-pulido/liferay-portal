@@ -11,6 +11,7 @@ import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
+import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectDefinitionSettingConstants;
 import com.liferay.object.constants.ObjectEntryFolderConstants;
@@ -26,6 +27,8 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
+import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -35,6 +38,8 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.role.RoleConstants;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
@@ -44,12 +49,14 @@ import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 
@@ -61,12 +68,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * @author Marco Galluzzi
@@ -76,11 +87,17 @@ public abstract class BaseSectionDisplayContextTestCase
 
 	public HashMap<String, Object> getAdditionalProps() throws Exception {
 		return ReflectionTestUtil.invoke(
-			getSectionDisplayContext(getMockHttpServletRequest()),
+			getSectionDisplayContext(mockHttpServletRequest),
 			"getAdditionalProps", new Class<?>[0]);
 	}
 
-	public HashMap<String, Object> getBaseAdditionalProps() {
+	public HashMap<String, Object> getBaseAdditionalProps()
+		throws PortalException {
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)mockHttpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
 		return HashMapBuilder.<String, Object>put(
 			"assetLibraries", _getDepotEntriesJSONArray()
 		).put(
@@ -139,6 +156,56 @@ public abstract class BaseSectionDisplayContextTestCase
 				return collaboratorURL;
 			}
 		).put(
+			"commentsProps",
+			() -> HashMapBuilder.<String, Object>put(
+				"addCommentURL",
+				StringBundler.concat(
+					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+					GroupConstants.CMS_FRIENDLY_URL,
+					"/add_content_item_comment")
+			).put(
+				"deleteCommentURL",
+				StringBundler.concat(
+					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+					GroupConstants.CMS_FRIENDLY_URL,
+					"/delete_content_item_comment")
+			).put(
+				"editCommentURL",
+				StringBundler.concat(
+					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+					GroupConstants.CMS_FRIENDLY_URL,
+					"/edit_content_item_comment")
+			).put(
+				"editorConfig",
+				() -> {
+					EditorConfiguration contentItemCommentEditorConfiguration =
+						EditorConfigurationFactoryUtil.getEditorConfiguration(
+							StringPool.BLANK, "contentItemCommentEditor",
+							StringPool.BLANK, Collections.emptyMap(),
+							themeDisplay,
+							RequestBackedPortletURLFactoryUtil.create(
+								getMockHttpServletRequest()));
+
+					Map<String, Object> data =
+						contentItemCommentEditorConfiguration.getData();
+
+					return data.get("editorConfig");
+				}
+			).put(
+				"getCommentsURL",
+				StringBundler.concat(
+					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+					GroupConstants.CMS_FRIENDLY_URL, "/get_asset_comments")
+			).build()
+		).put(
+			"contentViewURL",
+			StringBundler.concat(
+				themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+				GroupConstants.CMS_FRIENDLY_URL,
+				"/edit_content_item?&p_l_mode=read&p_p_state=",
+				LiferayWindowState.POP_UP, "&redirect=",
+				themeDisplay.getURLCurrent(), "&objectEntryId={embedded.id}")
+		).put(
 			"defaultPermissionAdditionalProps",
 			_getDefaultPermissionAdditionalProps()
 		).put(
@@ -171,22 +238,43 @@ public abstract class BaseSectionDisplayContextTestCase
 		).build();
 	}
 
-	@Test
-	public void getToolbarProps() throws Exception {
-		AssertUtils.assertEquals(
-			HashMapBuilder.<String, Object>put(
-				"title", "test"
-			).put(
-				"toolbarClassName", "section-toolbar tbar-light"
-			).put(
-				"toolbarTitleClassName", "section-toolbar-title"
-			).build(),
-			_getToolbarProps());
+	@After
+	public void tearDown() throws Exception {
+		_mockHttpServletRequest = null;
+		_objectEntryFolder = null;
 	}
 
 	@Test
 	public void testGetAdditionalProps() throws Exception {
 		_assertEquals(getBaseAdditionalProps(), getAdditionalProps());
+	}
+
+	@Test
+	public void testGetBreadcrumbProps() throws Exception {
+		HttpServletRequest httpServletRequest = getMockHttpServletRequest();
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		themeDisplay.setLayout(
+			LayoutTestUtil.addTypeContentLayout(group, "test-name"));
+
+		AssertUtils.assertEquals(
+			HashMapBuilder.<String, Object>put(
+				"breadcrumbItems",
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"active", false
+					).put(
+						"href", (String)null
+					).put(
+						"label", "test-name"
+					))
+			).put(
+				"hideSpace", true
+			).build(),
+			_getBreadcrumbProps(httpServletRequest));
 	}
 
 	@Test
@@ -201,6 +289,8 @@ public abstract class BaseSectionDisplayContextTestCase
 
 		_testGetCreationMenu(getCreationMenu(), expectedCreationMenuItems);
 
+		TreeMap<String, String> expectedCustomCreationMenuItems = new TreeMap<>(
+			String.CASE_INSENSITIVE_ORDER);
 		ObjectFolder objectFolder = null;
 
 		for (String objectFolderExternalReferenceCode :
@@ -216,13 +306,15 @@ public abstract class BaseSectionDisplayContextTestCase
 				ObjectDefinitionConstants.SCOPE_DEPOT,
 				WorkflowConstants.STATUS_APPROVED);
 
-			expectedCreationMenuItems.put(
+			expectedCustomCreationMenuItems.put(
 				objectDefinition.getLabel(LocaleUtil.US),
 				getRedirect(
 					objectDefinition,
 					_getRootObjectEntryFolderExternalReferenceCode(
 						objectFolderExternalReferenceCode)));
 		}
+
+		expectedCreationMenuItems.putAll(expectedCustomCreationMenuItems);
 
 		addCustomObjectDefinition(
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
@@ -260,13 +352,12 @@ public abstract class BaseSectionDisplayContextTestCase
 
 		String name = StringUtil.randomString();
 
-		DepotEntry depotEntry = addDepotEntry(
-			name, DepotConstants.TYPE_ASSET_LIBRARY);
+		DepotEntry depotEntry = addDepotEntry(name, DepotConstants.TYPE_SPACE);
 
 		try {
 			List<DepotEntry> depotEntries =
 				_depotEntryLocalService.getDepotEntries(
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+					group.getCompanyId(), DepotConstants.TYPE_SPACE);
 
 			Assert.assertEquals(
 				depotEntries.toString(), 2, depotEntries.size());
@@ -316,7 +407,7 @@ public abstract class BaseSectionDisplayContextTestCase
 		throws Exception {
 
 		List<DepotEntry> depotEntries = _depotEntryLocalService.getDepotEntries(
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			group.getCompanyId(), DepotConstants.TYPE_SPACE);
 
 		Assert.assertEquals(depotEntries.toString(), 1, depotEntries.size());
 
@@ -419,6 +510,23 @@ public abstract class BaseSectionDisplayContextTestCase
 			"getFDSActionDropdownItems", new Class<?>[0]);
 	}
 
+	@Override
+	protected MockHttpServletRequest getMockHttpServletRequest(
+			ObjectEntryFolder objectEntryFolder)
+		throws Exception {
+
+		if ((_mockHttpServletRequest == null) ||
+			(_objectEntryFolder != objectEntryFolder)) {
+
+			_mockHttpServletRequest = super.getMockHttpServletRequest(
+				objectEntryFolder);
+
+			_objectEntryFolder = objectEntryFolder;
+		}
+
+		return _mockHttpServletRequest;
+	}
+
 	protected abstract String getObjectFolderExternalReferenceCode();
 
 	protected String[] getObjectFolderExternalReferenceCodes() {
@@ -429,8 +537,10 @@ public abstract class BaseSectionDisplayContextTestCase
 		ObjectDefinition objectDefinition,
 		String objectEntryFolderExternalReferenceCode) {
 
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(7);
 
+		sb.append("http://localhost:8080");
+		sb.append(portal.getPathMain());
 		sb.append("/cms/add_structured_content_item?objectDefinitionId=");
 		sb.append(objectDefinition.getObjectDefinitionId());
 		sb.append("&objectEntryFolderExternalReferenceCode=");
@@ -562,6 +672,15 @@ public abstract class BaseSectionDisplayContextTestCase
 			JSONCompareMode.STRICT);
 	}
 
+	private HashMap<String, Object> _getBreadcrumbProps(
+			HttpServletRequest httpServletRequest)
+		throws Exception {
+
+		return ReflectionTestUtil.invoke(
+			getSectionDisplayContext(httpServletRequest), "getBreadcrumbProps",
+			new Class<?>[0]);
+	}
+
 	private Map<String, Object> _getDefaultPermissionAdditionalProps() {
 		return HashMapBuilder.<String, Object>put(
 			"actions",
@@ -574,10 +693,17 @@ public abstract class BaseSectionDisplayContextTestCase
 								"L_BASIC_WEB_CONTENT",
 								TestPropsValues.getCompanyId());
 
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, objectDefinition.getClassName());
+
 					return TransformUtil.transformToArray(
 						ResourceActionsUtil.getResourceActions(
 							objectDefinition.getClassName()),
-						resourceAction -> HashMapBuilder.put(
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
 							"key", resourceAction
 						).put(
 							"label",
@@ -595,10 +721,17 @@ public abstract class BaseSectionDisplayContextTestCase
 								"L_BASIC_DOCUMENT",
 								TestPropsValues.getCompanyId());
 
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, objectDefinition.getClassName());
+
 					return TransformUtil.transformToArray(
 						ResourceActionsUtil.getResourceActions(
 							objectDefinition.getClassName()),
-						resourceAction -> HashMapBuilder.put(
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
 							"key", resourceAction
 						).put(
 							"label",
@@ -609,17 +742,26 @@ public abstract class BaseSectionDisplayContextTestCase
 				}
 			).put(
 				"OBJECT_ENTRY_FOLDERS",
-				() -> TransformUtil.transformToArray(
-					ResourceActionsUtil.getResourceActions(
-						ObjectEntryFolder.class.getName()),
-					resourceAction -> HashMapBuilder.put(
-						"key", resourceAction
-					).put(
-						"label",
-						ResourceActionsUtil.getAction(
-							LocaleUtil.US, resourceAction)
-					).build(),
-					Map.class)
+				() -> {
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, ObjectEntryFolder.class.getName());
+
+					return TransformUtil.transformToArray(
+						ResourceActionsUtil.getResourceActions(
+							ObjectEntryFolder.class.getName()),
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
+							"key", resourceAction
+						).put(
+							"label",
+							ResourceActionsUtil.getAction(
+								LocaleUtil.US, resourceAction)
+						).build(),
+						Map.class);
+				}
 			).build()
 		).put(
 			"roles",
@@ -646,11 +788,11 @@ public abstract class BaseSectionDisplayContextTestCase
 		).build();
 	}
 
-	private JSONArray _getDepotEntriesJSONArray() {
+	private JSONArray _getDepotEntriesJSONArray() throws PortalException {
 		return _getDepotEntriesJSONArray(
 			TransformUtil.transform(
 				_depotEntryLocalService.getDepotEntries(
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS),
+					group.getCompanyId(), DepotConstants.TYPE_SPACE),
 				DepotEntry::getGroupId));
 	}
 
@@ -666,18 +808,6 @@ public abstract class BaseSectionDisplayContextTestCase
 		}
 
 		return jsonArray;
-	}
-
-	private DropdownItem _getDropdownItem(
-		List<DropdownItem> dropdownItems, String label) {
-
-		for (DropdownItem dropdownItem : dropdownItems) {
-			if (label.equals(dropdownItem.get("label"))) {
-				return dropdownItem;
-			}
-		}
-
-		return null;
 	}
 
 	private JSONArray _getJSONArray(List<DepotEntry> depotEntries) {
@@ -738,12 +868,6 @@ public abstract class BaseSectionDisplayContextTestCase
 		return ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_FILES;
 	}
 
-	private HashMap<String, Object> _getToolbarProps() throws Exception {
-		return ReflectionTestUtil.invoke(
-			getSectionDisplayContext(getMockHttpServletRequest()),
-			"getToolbarProps", new Class<?>[0]);
-	}
-
 	private void _testGetCreationMenu(
 		CreationMenu creationMenu,
 		Map<String, String> expectedCreationMenuItems) {
@@ -755,13 +879,14 @@ public abstract class BaseSectionDisplayContextTestCase
 			dropdownItems.toString(), expectedCreationMenuItems.size(),
 			dropdownItems.size());
 
+		int index = 0;
+
 		for (Map.Entry<String, String> entry :
 				expectedCreationMenuItems.entrySet()) {
 
-			DropdownItem dropdownItem = _getDropdownItem(
-				dropdownItems, entry.getKey());
+			DropdownItem dropdownItem = dropdownItems.get(index);
 
-			Assert.assertNotNull(dropdownItem);
+			Assert.assertEquals(entry.getKey(), dropdownItem.get("label"));
 
 			if (Validator.isNull(entry.getValue())) {
 				Assert.assertNull(_getRedirect(dropdownItem));
@@ -770,6 +895,8 @@ public abstract class BaseSectionDisplayContextTestCase
 				Assert.assertEquals(
 					entry.getValue(), _getRedirect(dropdownItem));
 			}
+
+			index++;
 		}
 	}
 
@@ -820,6 +947,9 @@ public abstract class BaseSectionDisplayContextTestCase
 
 	@Inject
 	private JSONFactory _jsonFactory;
+
+	private MockHttpServletRequest _mockHttpServletRequest;
+	private ObjectEntryFolder _objectEntryFolder;
 
 	@Inject
 	private ObjectEntryFolderLocalService _objectEntryFolderLocalService;

@@ -62,7 +62,6 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
@@ -83,10 +82,10 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.layoutconfiguration.util.RuntimePageUtil;
-import com.liferay.portal.util.PropsValues;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -223,7 +222,8 @@ public class LayoutStructureRenderer {
 		return false;
 	}
 
-	private boolean _hasUpdatePermission(
+	private boolean _hasPermission(
+			String actionId,
 			LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider)
 		throws Exception {
 
@@ -240,7 +240,7 @@ public class LayoutStructureRenderer {
 			 infoItemPermissionProvider.hasPermission(
 				 _themeDisplay.getPermissionChecker(),
 				 layoutDisplayPageObjectProvider.getDisplayObject(),
-				 ActionKeys.UPDATE))) {
+				 actionId))) {
 
 			return true;
 		}
@@ -972,31 +972,9 @@ public class LayoutStructureRenderer {
 		_renderReactComponent(
 			"{FormRelationshipAddButton} from layout-taglib/render",
 			HashMapBuilder.<String, Object>put(
-				"addButtonLabel",
-				() -> {
-					JSONObject buttonLabelJSONObject =
-						formRelationshipStyledLayoutStructureItem.
-							getButtonLabelJSONObject();
-
-					String label = StringPool.BLANK;
-
-					if (buttonLabelJSONObject != null) {
-						String siteDefaultLanguageId =
-							LanguageUtil.getLanguageId(
-								PortalUtil.getSiteDefaultLocale(
-									_themeDisplay.getScopeGroupId()));
-
-						label = buttonLabelJSONObject.getString(
-							_themeDisplay.getLanguageId(),
-							siteDefaultLanguageId);
-					}
-
-					if (Validator.isNotNull(label)) {
-						return label;
-					}
-
-					return LanguageUtil.get(_httpServletRequest, "add-new");
-				}
+				"label",
+				formRelationshipStyledLayoutStructureItem.
+					getButtonLabelJSONObject()
 			).build());
 
 		jspWriter.write("</div>");
@@ -1076,10 +1054,35 @@ public class LayoutStructureRenderer {
 
 		String className = formStyledLayoutStructureItem.getClassName();
 
-		if (Validator.isNull(className) || (infoForm == null) ||
+		if (Validator.isNull(className) || (infoForm == null)) {
+			return;
+		}
+
+		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
+			(LayoutDisplayPageObjectProvider<?>)
+				_httpServletRequest.getAttribute(
+					LayoutDisplayPageWebKeys.
+						LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER);
+
+		if ((layoutDisplayPageObjectProvider == null) &&
 			!_hasAddPermission(className)) {
 
 			return;
+		}
+
+		if ((layoutDisplayPageObjectProvider != null) &&
+			!_hasPermission(ActionKeys.VIEW, layoutDisplayPageObjectProvider)) {
+
+			return;
+		}
+
+		boolean readOnly = false;
+
+		if ((layoutDisplayPageObjectProvider != null) &&
+			!_hasPermission(
+				ActionKeys.UPDATE, layoutDisplayPageObjectProvider)) {
+
+			readOnly = true;
 		}
 
 		JspWriter jspWriter = _pageContext.getOut();
@@ -1177,14 +1180,6 @@ public class LayoutStructureRenderer {
 		jspWriter.write(
 			String.valueOf(formStyledLayoutStructureItem.getClassTypeId()));
 
-		boolean readOnly = false;
-
-		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
-			(LayoutDisplayPageObjectProvider<?>)
-				_httpServletRequest.getAttribute(
-					LayoutDisplayPageWebKeys.
-						LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER);
-
 		if ((layoutDisplayPageObjectProvider != null) &&
 			(layoutDisplayPageObjectProvider.getClassNameId() ==
 				formStyledLayoutStructureItem.getClassNameId())) {
@@ -1193,11 +1188,16 @@ public class LayoutStructureRenderer {
 				"\"><input name=\"classPK\" type=\"hidden\" value=\"");
 			jspWriter.write(
 				String.valueOf(layoutDisplayPageObjectProvider.getClassPK()));
-			jspWriter.write(
-				"\"><input name=\"externalReferenceCode\" type=\"hidden\"");
-			jspWriter.write(" value=\"");
-			jspWriter.write(
-				layoutDisplayPageObjectProvider.getExternalReferenceCode());
+
+			String externalReferenceCode =
+				layoutDisplayPageObjectProvider.getExternalReferenceCode();
+
+			if (Validator.isNotNull(externalReferenceCode)) {
+				jspWriter.write(
+					"\"><input name=\"externalReferenceCode\" type=\"hidden\"");
+				jspWriter.write(" value=\"");
+				jspWriter.write(externalReferenceCode);
+			}
 
 			String scopeExternalReferenceCode =
 				layoutDisplayPageObjectProvider.getScopeExternalReferenceCode(
@@ -1208,10 +1208,6 @@ public class LayoutStructureRenderer {
 					"\"><input name=\"scopeExternalReferenceCode\"");
 				jspWriter.write(" type=\"hidden\" value=\"");
 				jspWriter.write(scopeExternalReferenceCode);
-			}
-
-			if (!_hasUpdatePermission(layoutDisplayPageObjectProvider)) {
-				readOnly = true;
 			}
 		}
 
@@ -1376,14 +1372,15 @@ public class LayoutStructureRenderer {
 							ServletContextUtil.
 								getFragmentEntryConfigurationParser();
 
-					String fieldName = GetterUtil.getString(
+					String infoFieldUniqueId = GetterUtil.getString(
 						fragmentEntryConfigurationParser.getFieldValue(
 							fragmentEntryLink.getEditableValuesJSONObject(),
 							new FragmentConfigurationField(
 								"inputFieldId", "string", "", false, "text"),
 							_themeDisplay.getLocale()));
 
-					InfoField<?> infoField = infoForm.getInfoField(fieldName);
+					InfoField<?> infoField = infoForm.getInfoField(
+						infoFieldUniqueId);
 
 					if (infoField != null) {
 						InfoFieldType infoFieldType =
@@ -1394,7 +1391,7 @@ public class LayoutStructureRenderer {
 
 							jspWriter.write("<input name=\"checkboxNames\" ");
 							jspWriter.write("type=\"hidden\" value=\"");
-							jspWriter.write(fieldName);
+							jspWriter.write(infoFieldUniqueId);
 							jspWriter.write("\">");
 						}
 
