@@ -232,6 +232,7 @@ import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
@@ -252,7 +253,6 @@ import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.portal.search.sort.SortOrder;
 import com.liferay.portal.search.sort.Sorts;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistryUtil;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.sharing.service.SharingEntryLocalService;
@@ -4687,6 +4687,24 @@ public class ObjectEntryLocalServiceImpl
 			}
 
 			if (columnName.endsWith(StringPool.UNDERLINE)) {
+				String[] parts = StringUtil.split(
+					columnName, StringPool.UNDERLINE);
+
+				if (parts.length == 2) {
+					ObjectField objectField =
+						_objectFieldPersistence.fetchByODI_N(
+							objectDefinitionId, parts[1]);
+
+					if (objectField != null) {
+						_putValue(
+							javaTypeClass, parts[0], object,
+							(Map<String, Serializable>)values.computeIfAbsent(
+								objectField.getName(), key -> new HashMap<>()));
+
+						continue;
+					}
+				}
+
 				columnName = columnName.substring(0, columnName.length() - 1);
 
 				ObjectField objectField =
@@ -4953,12 +4971,14 @@ public class ObjectEntryLocalServiceImpl
 					dynamicObjectDefinitionTable);
 			}
 
-			columnNames.add(objectField.getDBColumnName());
+			for (String dbColumnName : objectField.getDBColumnNames()) {
+				columnNames.add(dbColumnName);
 
-			count++;
+				count++;
 
-			sb.append(", ");
-			sb.append(objectField.getDBColumnName());
+				sb.append(", ");
+				sb.append(dbColumnName);
+			}
 		}
 
 		sb.append(") values (?");
@@ -5036,11 +5056,12 @@ public class ObjectEntryLocalServiceImpl
 					continue;
 				}
 
-				_setColumn(
-					dynamicObjectDefinitionTable.getColumn(
-						objectField.getDBColumnName()),
-					columnNames, index++, insertedValues, objectField,
-					preparedStatement, values.get(objectField.getName()));
+				for (String dbColumnName : objectField.getDBColumnNames()) {
+					_setColumn(
+						dynamicObjectDefinitionTable.getColumn(dbColumnName),
+						columnNames, index++, insertedValues, objectField,
+						preparedStatement, values.get(objectField.getName()));
+				}
 			}
 
 			preparedStatement.executeUpdate();
@@ -5478,6 +5499,21 @@ public class ObjectEntryLocalServiceImpl
 			_setColumn(
 				columnNames, index, insertedValues, preparedStatement,
 				column.getSQLType(), value);
+		}
+		else if (objectField.compareBusinessType(
+					ObjectFieldConstants.BUSINESS_TYPE_ASSIGNEE)) {
+
+			String columnName = StringUtil.extractFirst(
+				column.getName(), StringPool.UNDERLINE);
+
+			columnNames.set(index - 1, columnName);
+
+			_setColumn(
+				columnNames, index,
+				(Map<String, Serializable>)insertedValues.computeIfAbsent(
+					objectField.getName(), key -> new HashMap<>()),
+				preparedStatement, column.getSQLType(),
+				MapUtil.getLong((Map<String, Serializable>)value, columnName));
 		}
 		else if (objectField.compareBusinessType(
 					ObjectFieldConstants.BUSINESS_TYPE_ENCRYPTED)) {
@@ -6290,16 +6326,18 @@ public class ObjectEntryLocalServiceImpl
 					dynamicObjectDefinitionTable, objectEntryId);
 			}
 
-			columnNames.add(objectField.getDBColumnName());
+			for (String dbColumnName : objectField.getDBColumnNames()) {
+				columnNames.add(dbColumnName);
 
-			count++;
+				count++;
 
-			if (count > 1) {
-				sb.append(", ");
+				if (count > 1) {
+					sb.append(", ");
+				}
+
+				sb.append(dbColumnName);
+				sb.append(" = ?");
 			}
-
-			sb.append(objectField.getDBColumnName());
-			sb.append(" = ?");
 		}
 
 		if (count == 0) {
@@ -6350,11 +6388,12 @@ public class ObjectEntryLocalServiceImpl
 					continue;
 				}
 
-				_setColumn(
-					dynamicObjectDefinitionTable.getColumn(
-						objectField.getDBColumnName()),
-					columnNames, index++, insertedValues, objectField,
-					preparedStatement, values.get(objectField.getName()));
+				for (String dbColumnName : objectField.getDBColumnNames()) {
+					_setColumn(
+						dynamicObjectDefinitionTable.getColumn(dbColumnName),
+						columnNames, index++, insertedValues, objectField,
+						preparedStatement, values.get(objectField.getName()));
+				}
 			}
 
 			_setColumn(
@@ -6931,7 +6970,13 @@ public class ObjectEntryLocalServiceImpl
 
 		if (StringUtil.equals(
 				objectField.getBusinessType(),
-				ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT)) {
+				ObjectFieldConstants.BUSINESS_TYPE_ASSIGNEE)) {
+
+			return;
+		}
+		else if (StringUtil.equals(
+					objectField.getBusinessType(),
+					ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT)) {
 
 			DLFileEntry dlFileEntry = _dlFileEntryLocalService.fetchDLFileEntry(
 				GetterUtil.getLong(value));

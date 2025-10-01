@@ -95,6 +95,7 @@ export default function DefaultPermissionForm({
 								onChange={({target: {value}}) => {
 									setSearch(value);
 								}}
+								placeholder={Liferay.Language.get('search-for')}
 								type="text"
 								value={search}
 							/>
@@ -197,7 +198,12 @@ export default function DefaultPermissionForm({
 																]
 															}
 															data-testid={`row-checkbox-${role.key}_${action.key}`}
-															disabled={disabled}
+															disabled={
+																disabled ||
+																(action.guestUnsupported &&
+																	role.key ===
+																		'Guest')
+															}
 															inline
 															key={`${role.key}_${action.key}`}
 															onChange={

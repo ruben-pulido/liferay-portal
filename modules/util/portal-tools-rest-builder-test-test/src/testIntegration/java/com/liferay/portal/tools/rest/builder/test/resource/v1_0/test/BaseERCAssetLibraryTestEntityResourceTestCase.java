@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.odata.entity.EntityField;
@@ -49,7 +50,6 @@ import com.liferay.portal.tools.rest.builder.test.client.pagination.Page;
 import com.liferay.portal.tools.rest.builder.test.client.permission.Permission;
 import com.liferay.portal.tools.rest.builder.test.client.resource.v1_0.ERCAssetLibraryTestEntityResource;
 import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0.ERCAssetLibraryTestEntitySerDes;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import jakarta.annotation.Generated;
@@ -440,6 +440,17 @@ public abstract class BaseERCAssetLibraryTestEntityResourceTestCase {
 		assertEquals(
 			postERCAssetLibraryTestEntity, getERCAssetLibraryTestEntity);
 		assertValid(getERCAssetLibraryTestEntity);
+
+		Assert.assertNull(getERCAssetLibraryTestEntity.getPermissions());
+
+		getERCAssetLibraryTestEntity =
+			permissionsERCAssetLibraryTestEntityResource.
+				getAssetLibraryERCAssetLibraryTestEntity(
+					postERCAssetLibraryTestEntity.
+						getAssetLibraryExternalReferenceCode(),
+					postERCAssetLibraryTestEntity.getExternalReferenceCode());
+
+		Assert.assertNotNull(getERCAssetLibraryTestEntity.getPermissions());
 	}
 
 	protected ERCAssetLibraryTestEntity
@@ -694,6 +705,8 @@ public abstract class BaseERCAssetLibraryTestEntityResourceTestCase {
 			randomERCAssetLibraryTestEntity, putERCAssetLibraryTestEntity);
 		assertValid(putERCAssetLibraryTestEntity);
 
+		Assert.assertNull(putERCAssetLibraryTestEntity.getPermissions());
+
 		ERCAssetLibraryTestEntity getERCAssetLibraryTestEntity =
 			ercAssetLibraryTestEntityResource.
 				getAssetLibraryERCAssetLibraryTestEntity(
@@ -704,6 +717,34 @@ public abstract class BaseERCAssetLibraryTestEntityResourceTestCase {
 		assertEquals(
 			randomERCAssetLibraryTestEntity, getERCAssetLibraryTestEntity);
 		assertValid(getERCAssetLibraryTestEntity);
+
+		ERCAssetLibraryTestEntity randomPermissionsERCAssetLibraryTestEntity =
+			randomPermissionsERCAssetLibraryTestEntity();
+
+		putERCAssetLibraryTestEntity =
+			ercAssetLibraryTestEntityResource.
+				putAssetLibraryERCAssetLibraryTestEntity(
+					postERCAssetLibraryTestEntity.
+						getAssetLibraryExternalReferenceCode(),
+					postERCAssetLibraryTestEntity.getExternalReferenceCode(),
+					randomPermissionsERCAssetLibraryTestEntity);
+
+		assertEquals(
+			randomPermissionsERCAssetLibraryTestEntity,
+			putERCAssetLibraryTestEntity);
+		assertValid(putERCAssetLibraryTestEntity);
+
+		Assert.assertNull(putERCAssetLibraryTestEntity.getPermissions());
+
+		putERCAssetLibraryTestEntity =
+			permissionsERCAssetLibraryTestEntityResource.
+				putAssetLibraryERCAssetLibraryTestEntity(
+					postERCAssetLibraryTestEntity.
+						getAssetLibraryExternalReferenceCode(),
+					postERCAssetLibraryTestEntity.getExternalReferenceCode(),
+					randomPermissionsERCAssetLibraryTestEntity);
+
+		Assert.assertNotNull(putERCAssetLibraryTestEntity.getPermissions());
 	}
 
 	protected ERCAssetLibraryTestEntity

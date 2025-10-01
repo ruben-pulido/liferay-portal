@@ -99,11 +99,11 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.RobotsUtil;
 import com.liferay.site.display.context.GroupDisplayContextHelper;
 import com.liferay.site.navigation.model.SiteNavigationMenu;
@@ -287,6 +287,21 @@ public class LayoutsAdminDisplayContext {
 				return null;
 			}
 		).buildString();
+	}
+
+	public String getAddModalTitle() {
+		String title = "add-page";
+
+		String initialType = ParamUtil.getString(
+			httpServletRequest, "initialType");
+		boolean editAction = ParamUtil.getBoolean(
+			httpServletRequest, "editAction");
+
+		if (isConvertEmptyPage(initialType, editAction)) {
+			title = "page-name";
+		}
+
+		return LanguageUtil.get(httpServletRequest, title);
 	}
 
 	public List<SiteNavigationMenu> getAutoSiteNavigationMenus() {
@@ -1721,6 +1736,14 @@ public class LayoutsAdminDisplayContext {
 		return false;
 	}
 
+	public boolean isConvertEmptyPage(String type, boolean editAction) {
+		if (!editAction) {
+			return false;
+		}
+
+		return Objects.equals(type, LayoutConstants.TYPE_EMPTY);
+	}
+
 	public boolean isDraft() {
 		Layout layout = getSelLayout();
 
@@ -1999,7 +2022,8 @@ public class LayoutsAdminDisplayContext {
 			availableActions.add("exportTranslation");
 		}
 
-		if (LayoutPermissionUtil.contains(
+		if (!layout.isTypeEmpty() &&
+			LayoutPermissionUtil.contains(
 				themeDisplay.getPermissionChecker(), layout,
 				ActionKeys.PERMISSIONS)) {
 
@@ -2393,7 +2417,7 @@ public class LayoutsAdminDisplayContext {
 
 		_types = new String[] {
 			LayoutConstants.TYPE_CONTENT, LayoutConstants.TYPE_EMBEDDED,
-			LayoutConstants.TYPE_LINK_TO_LAYOUT,
+			LayoutConstants.TYPE_EMPTY, LayoutConstants.TYPE_LINK_TO_LAYOUT,
 			LayoutConstants.TYPE_FULL_PAGE_APPLICATION,
 			LayoutConstants.TYPE_NODE, LayoutConstants.TYPE_PANEL,
 			LayoutConstants.TYPE_PORTLET, LayoutConstants.TYPE_URL

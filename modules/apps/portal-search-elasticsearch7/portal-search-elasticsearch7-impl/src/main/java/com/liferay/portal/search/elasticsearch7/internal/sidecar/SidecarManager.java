@@ -9,6 +9,7 @@ import com.liferay.petra.process.ProcessExecutor;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserver;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionBuilder;
@@ -16,12 +17,14 @@ import com.liferay.portal.search.elasticsearch7.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch7.internal.connection.constants.ConnectionConstants;
 import com.liferay.portal.search.elasticsearch7.internal.sidecar.constants.SidecarConstants;
 import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
-import com.liferay.portal.util.PropsValues;
+
+import java.io.File;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -52,7 +55,9 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 	}
 
 	@Activate
-	protected void activate() {
+	protected void activate(BundleContext bundleContext) {
+		_bundleContext = bundleContext;
+
 		elasticsearchConfigurationWrapper.register(this);
 
 		applyConfigurations();
@@ -138,11 +143,18 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 		ElasticsearchInstancePathsBuilder elasticsearchInstancePathsBuilder =
 			new ElasticsearchInstancePathsBuilder();
 
+		File bundleDataFile = _bundleContext.getDataFile(
+			SidecarManager.class.getName());
+
+		Path bundleDataPath = bundleDataFile.toPath();
+
 		Path workPath = Paths.get(PropsValues.LIFERAY_HOME);
 
 		Path dataPath = workPath.resolve("data/elasticsearch7");
 
-		return elasticsearchInstancePathsBuilder.dataPath(
+		return elasticsearchInstancePathsBuilder.configPath(
+			bundleDataPath.resolve("config")
+		).dataPath(
 			dataPath
 		).homePath(
 			_resolveHomePath(workPath)
@@ -176,6 +188,7 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 
 	private static final Log _log = LogFactoryUtil.getLog(SidecarManager.class);
 
+	private BundleContext _bundleContext;
 	private Sidecar _sidecar;
 	private boolean _startupSuccessful;
 

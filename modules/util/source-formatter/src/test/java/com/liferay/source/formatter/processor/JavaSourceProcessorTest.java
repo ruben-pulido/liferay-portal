@@ -20,6 +20,11 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testAnonymousInnerClass() throws Exception {
+		test("AnonymousInnerClass.testjava");
+	}
+
+	@Test
 	public void testAssertUsage() throws Exception {
 		test(
 			"AssertUsage.testjava",
@@ -661,6 +666,17 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 			).addExpectedMessage(
 				"There should be an empty line after \"registry.register\"", 25
 			));
+	}
+
+	@Test
+	public void testMissingEmptyLinesAfterReferencingVariable()
+		throws Exception {
+
+		test(
+			"MissingEmptyLinesAfterReferencingVariable.testjava",
+			"There should be an empty line before line \"47\", as we " +
+				"finished referencing variable \"group\"",
+			47);
 	}
 
 	@Test

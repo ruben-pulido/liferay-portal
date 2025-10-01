@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.odata.entity.EntityField;
@@ -46,7 +47,6 @@ import com.liferay.portal.tools.rest.builder.test.client.pagination.Page;
 import com.liferay.portal.tools.rest.builder.test.client.permission.Permission;
 import com.liferay.portal.tools.rest.builder.test.client.resource.v1_0.ERCSiteTestEntityResource;
 import com.liferay.portal.tools.rest.builder.test.client.serdes.v1_0.ERCSiteTestEntitySerDes;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import jakarta.annotation.Generated;
@@ -466,6 +466,15 @@ public abstract class BaseERCSiteTestEntityResourceTestCase {
 
 		assertEquals(postERCSiteTestEntity, getERCSiteTestEntity);
 		assertValid(getERCSiteTestEntity);
+
+		Assert.assertNull(getERCSiteTestEntity.getPermissions());
+
+		getERCSiteTestEntity =
+			permissionsERCSiteTestEntityResource.getSiteERCSiteTestEntity(
+				postERCSiteTestEntity.getSiteExternalReferenceCode(),
+				postERCSiteTestEntity.getExternalReferenceCode());
+
+		Assert.assertNotNull(getERCSiteTestEntity.getPermissions());
 	}
 
 	protected ERCSiteTestEntity
@@ -707,6 +716,8 @@ public abstract class BaseERCSiteTestEntityResourceTestCase {
 		assertEquals(randomERCSiteTestEntity, putERCSiteTestEntity);
 		assertValid(putERCSiteTestEntity);
 
+		Assert.assertNull(putERCSiteTestEntity.getPermissions());
+
 		ERCSiteTestEntity getERCSiteTestEntity =
 			ercSiteTestEntityResource.getSiteERCSiteTestEntity(
 				putERCSiteTestEntity.getSiteExternalReferenceCode(),
@@ -714,6 +725,28 @@ public abstract class BaseERCSiteTestEntityResourceTestCase {
 
 		assertEquals(randomERCSiteTestEntity, getERCSiteTestEntity);
 		assertValid(getERCSiteTestEntity);
+
+		ERCSiteTestEntity randomPermissionsERCSiteTestEntity =
+			randomPermissionsERCSiteTestEntity();
+
+		putERCSiteTestEntity =
+			ercSiteTestEntityResource.putSiteERCSiteTestEntity(
+				postERCSiteTestEntity.getSiteExternalReferenceCode(),
+				postERCSiteTestEntity.getExternalReferenceCode(),
+				randomPermissionsERCSiteTestEntity);
+
+		assertEquals(randomPermissionsERCSiteTestEntity, putERCSiteTestEntity);
+		assertValid(putERCSiteTestEntity);
+
+		Assert.assertNull(putERCSiteTestEntity.getPermissions());
+
+		putERCSiteTestEntity =
+			permissionsERCSiteTestEntityResource.putSiteERCSiteTestEntity(
+				postERCSiteTestEntity.getSiteExternalReferenceCode(),
+				postERCSiteTestEntity.getExternalReferenceCode(),
+				randomPermissionsERCSiteTestEntity);
+
+		Assert.assertNotNull(putERCSiteTestEntity.getPermissions());
 	}
 
 	protected ERCSiteTestEntity

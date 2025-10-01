@@ -171,6 +171,7 @@ import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -181,7 +182,6 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.util.PortalImpl;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.criteria.Criteria;
@@ -270,7 +270,7 @@ public class RenderLayoutStructureTagTest {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, true, true, true,
-				false, false, false, false, null,
+				true, false, false, false, false, null,
 				RandomTestUtil.randomLocaleStringMap(),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				RandomTestUtil.randomLocaleStringMap(), true,
@@ -293,7 +293,7 @@ public class RenderLayoutStructureTagTest {
 		ObjectDefinition relationshipObjectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, null, false, true, true, true,
-				false, false, false, false, null,
+				true, false, false, false, false, null,
 				RandomTestUtil.randomLocaleStringMap(),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				RandomTestUtil.randomLocaleStringMap(), true,
@@ -2682,8 +2682,9 @@ public class RenderLayoutStructureTagTest {
 			content.contains(
 				StringBundler.concat(
 					"data-lfr-editable-id=\"element-text\" data-lfr-editable-",
-					"type=\"text\"><a target=\"_blank\" href=\"https://www.",
-					"liferay.com/\">", expectedContent, "</a></h1></div>")));
+					"type=\"text\"><a rel=\"noopener noreferrer\" ",
+					"target=\"_blank\" href=\"https://www.liferay.com/\">",
+					expectedContent, "</a></h1></div>")));
 	}
 
 	@Test

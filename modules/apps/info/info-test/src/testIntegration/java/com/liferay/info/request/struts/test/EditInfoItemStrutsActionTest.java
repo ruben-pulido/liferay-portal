@@ -83,6 +83,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ProgressTracker;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextExtractor;
@@ -98,7 +99,6 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.upload.test.util.UploadTestUtil;
 import com.liferay.portal.util.PortalImpl;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
 
@@ -610,7 +610,8 @@ public class EditInfoItemStrutsActionTest {
 		ObjectEntry objectEntry = objectEntries.get(0);
 
 		regularParameters.put(
-			"checkboxNames", Collections.singletonList("myBoolean"));
+			"checkboxNames",
+			Collections.singletonList("ObjectField_myBoolean"));
 		regularParameters.put(
 			"classNameId", Collections.singletonList(_classNameId));
 		regularParameters.put(
@@ -908,7 +909,7 @@ public class EditInfoItemStrutsActionTest {
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				_user.getUserId(), 0, null, false,
+				_user.getUserId(), 0, null, false, true,
 				enableFriendlyURLCustomization, true,
 				FeatureFlagManagerUtil.isEnabled(
 					TestPropsValues.getCompanyId(), "LPD-21926"),

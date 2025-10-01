@@ -15,7 +15,6 @@ export {default as Spaces} from './content_editor/components/Spaces';
 
 export {default as CategorizationToolbar} from './main_view/categorization/CategorizationToolbar';
 export {default as EditCategoryPage} from './main_view/categorization/categories/EditCategoryPage';
-export {default as CategorizationBreadcrumb} from './main_view/categorization/components/CategorizationBreadcrumb';
 export {default as ViewTags} from './main_view/categorization/tags/ViewTags';
 export {default as EditVocabulary} from './main_view/categorization/vocabularies/EditVocabulary';
 export {default as ViewDashboard} from './main_view/dashboard/ViewDashboard';
@@ -42,6 +41,7 @@ export {default as StructuresFDSPropsTransformer} from './main_view/props_transf
 export {default as TagUsagesFDSPropsTransformer} from './main_view/props_transformer/TagUsagesFDSPropsTransformer';
 export {default as ViewVersionHistoryFDSPropsTransformer} from './main_view/props_transformer/ViewVersionHistoryFDSPropsTransformer';
 export {default as VocabularyFDSPropsTransformer} from './main_view/props_transformer/VocabularyFDSPropsTransformer';
+export {default as RecycleBinToolbar} from './main_view/recycle_bin/RecycleBinToolbar';
 export {default as AddSpaceMembers} from './main_view/spaces/AddSpaceMembers';
 export {default as NewSpace} from './main_view/spaces/NewSpace';
 export {default as SpaceSettings} from './main_view/spaces/SpaceSettings';

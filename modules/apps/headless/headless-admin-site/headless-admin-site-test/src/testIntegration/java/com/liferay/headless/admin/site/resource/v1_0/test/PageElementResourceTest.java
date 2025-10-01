@@ -6,22 +6,10 @@
 package com.liferay.headless.admin.site.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.headless.admin.site.client.dto.v1_0.CollectionItemPageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.CollectionPageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.ColumnPageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.ContainerPageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.DropZonePageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.FormPageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.FormStepContainerPageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.FormStepPageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.FragmentDropZonePageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.FragmentInstancePageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.HtmlProperties;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageElement;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.RowPageElementDefinition;
 import com.liferay.headless.admin.site.client.problem.Problem;
-import com.liferay.headless.admin.site.dto.v1_0.DefaultFragmentReference;
+import com.liferay.headless.admin.site.resource.v1_0.test.util.PageElementsTestUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.test.util.LayoutTestUtil;
@@ -215,92 +203,27 @@ public class PageElementResourceTest extends BasePageElementResourceTestCase {
 		super.testPostSitePageSpecificationPageExperiencePageElement();
 
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new CollectionPageElementDefinition() {
-					{
-						setType(Type.COLLECTION);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.COLLECTION));
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new CollectionItemPageElementDefinition() {
-					{
-						setType(Type.COLLECTION_ITEM);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.COLLECTION_ITEM));
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new ColumnPageElementDefinition() {
-					{
-						setType(Type.COLUMN);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.COLUMN));
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new ContainerPageElementDefinition() {
-					{
-						setContentVisibility(StringPool.BLANK);
-						setHtmlProperties(new HtmlProperties());
-						setIndexed(Boolean.FALSE);
-						setType(Type.CONTAINER);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.CONTAINER));
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new DropZonePageElementDefinition() {
-					{
-						setType(Type.DROP_ZONE);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.DROP_ZONE));
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new FormPageElementDefinition() {
-					{
-						setType(Type.FORM);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.FORM));
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new FormStepPageElementDefinition() {
-					{
-						setType(Type.FORM_STEP);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.FORM_STEP));
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new FormStepContainerPageElementDefinition() {
-					{
-						setType(Type.FORM_STEP_CONTAINER);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.FORM_STEP_CONTAINER));
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new FragmentDropZonePageElementDefinition() {
-					{
-						setType(Type.FRAGMENT_DROP_ZONE);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.FRAGMENT_DROP_ZONE));
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new FragmentInstancePageElementDefinition() {
-					{
-						setFragmentReference(
-							new DefaultFragmentReference() {
-								{
-									setDefaultFragmentKey(
-										() -> "BASIC_COMPONENT-heading");
-								}
-							});
-						setType(Type.FRAGMENT);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.FRAGMENT));
 		_assertPostSitePageSpecificationPageExperiencePageElement(
-			_randomPageElement(
-				new RowPageElementDefinition() {
-					{
-						setType(Type.ROW);
-					}
-				}));
+			_randomPageElement(PageElementDefinition.Type.ROW));
 	}
 
 	@Ignore
@@ -347,15 +270,7 @@ public class PageElementResourceTest extends BasePageElementResourceTestCase {
 
 	@Override
 	protected PageElement randomPageElement() throws Exception {
-		return _randomPageElement(
-			new ContainerPageElementDefinition() {
-				{
-					setContentVisibility(StringPool.BLANK);
-					setHtmlProperties(new HtmlProperties());
-					setIndexed(Boolean.FALSE);
-					setType(Type.CONTAINER);
-				}
-			});
+		return _randomPageElement(PageElementDefinition.Type.CONTAINER);
 	}
 
 	@Override
@@ -500,12 +415,14 @@ public class PageElementResourceTest extends BasePageElementResourceTestCase {
 	}
 
 	private PageElement _randomPageElement(
-			PageElementDefinition pageElementDefinition)
+			PageElementDefinition.Type pageElementDefinitionType)
 		throws Exception {
 
 		PageElement pageElement = super.randomPageElement();
 
-		pageElement.setPageElementDefinition(pageElementDefinition);
+		pageElement.setPageElementDefinition(
+			() -> PageElementsTestUtil.getPageElementDefinition(
+				pageElementDefinitionType));
 		pageElement.setPageElements(new PageElement[0]);
 		pageElement.setParentExternalReferenceCode(StringPool.BLANK);
 		pageElement.setPosition(_position++);

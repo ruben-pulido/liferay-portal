@@ -50,6 +50,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.odata.entity.EntityField;
@@ -58,7 +59,6 @@ import com.liferay.portal.search.test.rule.SearchTestRule;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
 import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegateBuilderRegistry;
@@ -1577,6 +1577,14 @@ public abstract class BaseAssetLibraryResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("connectedSites", additionalAssertFieldName)) {
+				if (assetLibrary.getConnectedSites() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("creatorUserId", additionalAssertFieldName)) {
 				if (assetLibrary.getCreatorUserId() == null) {
 					valid = false;
@@ -1627,8 +1635,10 @@ public abstract class BaseAssetLibraryResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("numberOfSites", additionalAssertFieldName)) {
-				if (assetLibrary.getNumberOfSites() == null) {
+			if (Objects.equals(
+					"numberOfConnectedSites", additionalAssertFieldName)) {
+
+				if (assetLibrary.getNumberOfConnectedSites() == null) {
 					valid = false;
 				}
 
@@ -1657,14 +1667,6 @@ public abstract class BaseAssetLibraryResourceTestCase {
 
 			if (Objects.equals("settings", additionalAssertFieldName)) {
 				if (assetLibrary.getSettings() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("sites", additionalAssertFieldName)) {
-				if (assetLibrary.getSites() == null) {
 					valid = false;
 				}
 
@@ -1827,6 +1829,17 @@ public abstract class BaseAssetLibraryResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("connectedSites", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						assetLibrary1.getConnectedSites(),
+						assetLibrary2.getConnectedSites())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("creatorUserId", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						assetLibrary1.getCreatorUserId(),
@@ -1926,10 +1939,12 @@ public abstract class BaseAssetLibraryResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("numberOfSites", additionalAssertFieldName)) {
+			if (Objects.equals(
+					"numberOfConnectedSites", additionalAssertFieldName)) {
+
 				if (!Objects.deepEquals(
-						assetLibrary1.getNumberOfSites(),
-						assetLibrary2.getNumberOfSites())) {
+						assetLibrary1.getNumberOfConnectedSites(),
+						assetLibrary2.getNumberOfConnectedSites())) {
 
 					return false;
 				}
@@ -1967,16 +1982,6 @@ public abstract class BaseAssetLibraryResourceTestCase {
 				if (!Objects.deepEquals(
 						assetLibrary1.getSettings(),
 						assetLibrary2.getSettings())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("sites", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						assetLibrary1.getSites(), assetLibrary2.getSites())) {
 
 					return false;
 				}
@@ -2172,6 +2177,11 @@ public abstract class BaseAssetLibraryResourceTestCase {
 			}
 
 			return sb.toString();
+		}
+
+		if (entityFieldName.equals("connectedSites")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
 		}
 
 		if (entityFieldName.equals("creatorUserId")) {
@@ -2390,8 +2400,8 @@ public abstract class BaseAssetLibraryResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("numberOfSites")) {
-			sb.append(String.valueOf(assetLibrary.getNumberOfSites()));
+		if (entityFieldName.equals("numberOfConnectedSites")) {
+			sb.append(String.valueOf(assetLibrary.getNumberOfConnectedSites()));
 
 			return sb.toString();
 		}
@@ -2414,11 +2424,6 @@ public abstract class BaseAssetLibraryResourceTestCase {
 		}
 
 		if (entityFieldName.equals("siteId")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
-
-		if (entityFieldName.equals("sites")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
@@ -2494,7 +2499,7 @@ public abstract class BaseAssetLibraryResourceTestCase {
 					RandomTestUtil.randomString());
 				id = RandomTestUtil.randomLong();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
-				numberOfSites = RandomTestUtil.randomInt();
+				numberOfConnectedSites = RandomTestUtil.randomInt();
 				numberOfUserAccounts = RandomTestUtil.randomInt();
 				numberOfUserGroups = RandomTestUtil.randomInt();
 				siteId = testGroup.getGroupId();

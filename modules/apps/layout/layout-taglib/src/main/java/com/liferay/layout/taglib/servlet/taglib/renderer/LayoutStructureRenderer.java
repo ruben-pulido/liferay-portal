@@ -62,7 +62,6 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
@@ -83,10 +82,10 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.layoutconfiguration.util.RuntimePageUtil;
-import com.liferay.portal.util.PropsValues;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -972,31 +971,9 @@ public class LayoutStructureRenderer {
 		_renderReactComponent(
 			"{FormRelationshipAddButton} from layout-taglib/render",
 			HashMapBuilder.<String, Object>put(
-				"addButtonLabel",
-				() -> {
-					JSONObject buttonLabelJSONObject =
-						formRelationshipStyledLayoutStructureItem.
-							getButtonLabelJSONObject();
-
-					String label = StringPool.BLANK;
-
-					if (buttonLabelJSONObject != null) {
-						String siteDefaultLanguageId =
-							LanguageUtil.getLanguageId(
-								PortalUtil.getSiteDefaultLocale(
-									_themeDisplay.getScopeGroupId()));
-
-						label = buttonLabelJSONObject.getString(
-							_themeDisplay.getLanguageId(),
-							siteDefaultLanguageId);
-					}
-
-					if (Validator.isNotNull(label)) {
-						return label;
-					}
-
-					return LanguageUtil.get(_httpServletRequest, "add-new");
-				}
+				"label",
+				formRelationshipStyledLayoutStructureItem.
+					getButtonLabelJSONObject()
 			).build());
 
 		jspWriter.write("</div>");
@@ -1376,14 +1353,15 @@ public class LayoutStructureRenderer {
 							ServletContextUtil.
 								getFragmentEntryConfigurationParser();
 
-					String fieldName = GetterUtil.getString(
+					String infoFieldUniqueId = GetterUtil.getString(
 						fragmentEntryConfigurationParser.getFieldValue(
 							fragmentEntryLink.getEditableValuesJSONObject(),
 							new FragmentConfigurationField(
 								"inputFieldId", "string", "", false, "text"),
 							_themeDisplay.getLocale()));
 
-					InfoField<?> infoField = infoForm.getInfoField(fieldName);
+					InfoField<?> infoField = infoForm.getInfoField(
+						infoFieldUniqueId);
 
 					if (infoField != null) {
 						InfoFieldType infoFieldType =
@@ -1394,7 +1372,7 @@ public class LayoutStructureRenderer {
 
 							jspWriter.write("<input name=\"checkboxNames\" ");
 							jspWriter.write("type=\"hidden\" value=\"");
-							jspWriter.write(fieldName);
+							jspWriter.write(infoFieldUniqueId);
 							jspWriter.write("\">");
 						}
 

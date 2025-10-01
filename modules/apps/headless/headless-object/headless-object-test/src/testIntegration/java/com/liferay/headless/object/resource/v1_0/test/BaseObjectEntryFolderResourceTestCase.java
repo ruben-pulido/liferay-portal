@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.odata.entity.EntityField;
@@ -57,7 +58,6 @@ import com.liferay.portal.search.test.rule.SearchTestRule;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
 import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegateBuilderRegistry;
@@ -2121,6 +2121,14 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("scopeId", additionalAssertFieldName)) {
+				if (objectEntryFolder.getScopeId() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("scopeKey", additionalAssertFieldName)) {
 				if (objectEntryFolder.getScopeKey() == null) {
 					valid = false;
@@ -2462,6 +2470,17 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 				if (!Objects.deepEquals(
 						objectEntryFolder1.getRemovedDate(),
 						objectEntryFolder2.getRemovedDate())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("scopeId", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						objectEntryFolder1.getScopeId(),
+						objectEntryFolder2.getScopeId())) {
 
 					return false;
 				}
@@ -2940,6 +2959,11 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("scopeId")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("scopeKey")) {
 			Object object = objectEntryFolder.getScopeKey();
 
@@ -3096,6 +3120,7 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 					StringUtil.toLowerCase(RandomTestUtil.randomString());
 				parentObjectEntryFolderId = RandomTestUtil.randomLong();
 				removedDate = RandomTestUtil.nextDate();
+				scopeId = RandomTestUtil.randomLong();
 				scopeKey = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				title = StringUtil.toLowerCase(RandomTestUtil.randomString());

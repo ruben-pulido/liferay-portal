@@ -6,7 +6,10 @@
 import '../../../css/components/DefaultPermission.scss';
 
 import ClayButton from '@clayui/button';
+import {ClayCheckbox} from '@clayui/form';
+import ClayIcon from '@clayui/icon';
 import ClayModal from '@clayui/modal';
+import {ClayTooltipProvider} from '@clayui/tooltip';
 import {openToast} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
 import React, {useCallback, useEffect, useState} from 'react';
@@ -31,72 +34,65 @@ export default function DefaultPermissionModalContent({
 	const [currentValues, setCurrentValues] =
 		useState<AssetRoleSelectedActions>({});
 	const [loading, setLoading] = useState(false);
+	const [propagate, setPropagate] = useState(false);
 
 	const saveHandler = useCallback(() => {
 		setLoading(true);
 
-		if (currentObjectEntry) {
-			CMSDefaultPermissionService.updateObjectEntry({
-				defaultPermissions: JSON.stringify(currentValues),
-				externalReferenceCode: currentObjectEntry.externalReferenceCode,
-			})
-				.then(() => {
-					openToast({
-						message: Liferay.Language.get(
-							'your-request-completed-successfully'
-						),
-						type: 'success',
+		return Promise.resolve()
+			.then(() => {
+				if (currentObjectEntry) {
+					return CMSDefaultPermissionService.updateObjectEntry({
+						defaultPermissions: JSON.stringify(currentValues),
+						externalReferenceCode:
+							currentObjectEntry.externalReferenceCode,
 					});
+				}
 
-					closeModal();
-				})
-				.catch(() => {
-					openToast({
-						message: Liferay.Language.get(
-							'an-unexpected-system-error-occurred'
-						),
-						type: 'danger',
-					});
-				})
-				.finally(() => {
-					setLoading(false);
-				});
-		}
-		else {
-			CMSDefaultPermissionService.addObjectEntry({
-				classExternalReferenceCode,
-				className,
-				defaultPermissions: JSON.stringify(currentValues),
+				throw new Error();
 			})
-				.then(() => {
-					openToast({
-						message: Liferay.Language.get(
-							'your-request-completed-successfully'
-						),
-						type: 'success',
-					});
+			.then(({error}) => {
+				if (error) {
+					throw new Error(error);
+				}
 
-					closeModal();
-				})
-				.catch(() => {
-					openToast({
-						message: Liferay.Language.get(
-							'an-unexpected-system-error-occurred'
-						),
-						type: 'danger',
+				if (propagate) {
+					return CMSDefaultPermissionService.batchUpdateObjectEntry({
+						defaultPermissions: JSON.stringify(currentValues),
+						depotGroupId: currentObjectEntry?.depotGroupId || 0,
+						treePath: currentObjectEntry?.treePath || '',
 					});
-				})
-				.finally(() => {
-					setLoading(false);
+				}
+
+				return Promise.resolve({error: ''}) as any;
+			})
+			.then(({error}) => {
+				if (error) {
+					throw new Error(error);
+				}
+			})
+			.then(() => {
+				openToast({
+					message: Liferay.Language.get(
+						'your-request-completed-successfully'
+					),
+					type: 'success',
 				});
-		}
-	}, [
-		classExternalReferenceCode,
-		className,
-		closeModal,
-		currentObjectEntry,
-		currentValues,
-	]);
+
+				closeModal();
+			})
+			.catch(() => {
+				openToast({
+					message: Liferay.Language.get(
+						'an-unexpected-system-error-occurred'
+					),
+					type: 'danger',
+				});
+			})
+			.finally(() => {
+				setLoading(false);
+			});
+	}, [closeModal, currentObjectEntry, currentValues, propagate]);
 
 	const onChangeHandler = useCallback((data: any) => {
 		setCurrentValues(data);
@@ -128,6 +124,18 @@ export default function DefaultPermissionModalContent({
 					Liferay.Language.get('edit-x'),
 					Liferay.Language.get('default-permissions')
 				)}
+
+				<ClayTooltipProvider>
+					<span
+						className="pl-2 text-3"
+						data-tooltip-align="bottom"
+						title={Liferay.Language.get(
+							'setting-default-permissions-for-this-folder-will-automatically-apply-them-to-all-newly-created-items'
+						)}
+					>
+						<ClayIcon aria-label="Info" symbol="info-circle" />
+					</span>
+				</ClayTooltipProvider>
 			</ClayModal.Header>
 
 			<ClayModal.Body className="p-0">
@@ -141,6 +149,37 @@ export default function DefaultPermissionModalContent({
 			</ClayModal.Body>
 
 			<ClayModal.Footer
+				first={
+					<div className="d-flex">
+						<ClayCheckbox
+							checked={propagate}
+							data-testid="checkbox-propagate"
+							disabled={loading}
+							inline
+							label={Liferay.Language.get(
+								'propagate-default-permissions-to-new-and-existing-subfolders'
+							)}
+							onChange={() => {
+								setPropagate(!propagate);
+							}}
+						/>
+
+						<ClayTooltipProvider>
+							<span
+								className="pl-2"
+								data-tooltip-align="top"
+								title={Liferay.Language.get(
+									'enabling-this-setting-will-apply-the-permissions-configuration-to-all-current-subfolders'
+								)}
+							>
+								<ClayIcon
+									aria-label="Info"
+									symbol="info-circle"
+								/>
+							</span>
+						</ClayTooltipProvider>
+					</div>
+				}
 				last={
 					<ClayButton.Group spaced>
 						<ClayButton

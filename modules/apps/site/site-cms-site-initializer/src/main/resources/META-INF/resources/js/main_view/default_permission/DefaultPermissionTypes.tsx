@@ -4,6 +4,7 @@
  */
 
 export interface Action {
+	guestUnsupported?: boolean;
 	key: string;
 	label: string;
 }
@@ -29,8 +30,10 @@ export interface CMSDefaultPermissionObjectEntryDTO {
 	classExternalReferenceCode: string;
 	className: string;
 	defaultPermissions: string;
+	depotGroupId: number;
 	externalReferenceCode: string;
 	id: number;
+	treePath: string;
 }
 
 export enum DefaultAssetTypes {

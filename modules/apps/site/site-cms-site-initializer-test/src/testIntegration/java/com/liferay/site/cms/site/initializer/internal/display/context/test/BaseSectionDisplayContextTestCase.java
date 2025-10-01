@@ -11,6 +11,7 @@ import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
+import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectDefinitionSettingConstants;
 import com.liferay.object.constants.ObjectEntryFolderConstants;
@@ -35,6 +36,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.role.RoleConstants;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
@@ -44,12 +46,14 @@ import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 
@@ -61,6 +65,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -76,11 +81,15 @@ public abstract class BaseSectionDisplayContextTestCase
 
 	public HashMap<String, Object> getAdditionalProps() throws Exception {
 		return ReflectionTestUtil.invoke(
-			getSectionDisplayContext(getMockHttpServletRequest()),
+			getSectionDisplayContext(mockHttpServletRequest),
 			"getAdditionalProps", new Class<?>[0]);
 	}
 
 	public HashMap<String, Object> getBaseAdditionalProps() {
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)mockHttpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
 		return HashMapBuilder.<String, Object>put(
 			"assetLibraries", _getDepotEntriesJSONArray()
 		).put(
@@ -139,6 +148,14 @@ public abstract class BaseSectionDisplayContextTestCase
 				return collaboratorURL;
 			}
 		).put(
+			"contentViewURL",
+			StringBundler.concat(
+				themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+				GroupConstants.CMS_FRIENDLY_URL,
+				"/edit_content_item?&p_l_mode=read&p_p_state=",
+				LiferayWindowState.POP_UP, "&redirect=",
+				themeDisplay.getURLCurrent(), "&objectEntryId={embedded.id}")
+		).put(
 			"defaultPermissionAdditionalProps",
 			_getDefaultPermissionAdditionalProps()
 		).put(
@@ -172,21 +189,36 @@ public abstract class BaseSectionDisplayContextTestCase
 	}
 
 	@Test
-	public void getToolbarProps() throws Exception {
-		AssertUtils.assertEquals(
-			HashMapBuilder.<String, Object>put(
-				"title", "test"
-			).put(
-				"toolbarClassName", "section-toolbar tbar-light"
-			).put(
-				"toolbarTitleClassName", "section-toolbar-title"
-			).build(),
-			_getToolbarProps());
+	public void testGetAdditionalProps() throws Exception {
+		_assertEquals(getBaseAdditionalProps(), getAdditionalProps());
 	}
 
 	@Test
-	public void testGetAdditionalProps() throws Exception {
-		_assertEquals(getBaseAdditionalProps(), getAdditionalProps());
+	public void testGetBreadcrumbProps() throws Exception {
+		HttpServletRequest httpServletRequest = getMockHttpServletRequest();
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		themeDisplay.setLayout(
+			LayoutTestUtil.addTypeContentLayout(group, "test-name"));
+
+		AssertUtils.assertEquals(
+			HashMapBuilder.<String, Object>put(
+				"breadcrumbItems",
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"active", false
+					).put(
+						"href", (String)null
+					).put(
+						"label", "test-name"
+					))
+			).put(
+				"hideSpace", true
+			).build(),
+			_getBreadcrumbProps(httpServletRequest));
 	}
 
 	@Test
@@ -201,6 +233,8 @@ public abstract class BaseSectionDisplayContextTestCase
 
 		_testGetCreationMenu(getCreationMenu(), expectedCreationMenuItems);
 
+		TreeMap<String, String> expectedCustomCreationMenuItems = new TreeMap<>(
+			String.CASE_INSENSITIVE_ORDER);
 		ObjectFolder objectFolder = null;
 
 		for (String objectFolderExternalReferenceCode :
@@ -216,13 +250,15 @@ public abstract class BaseSectionDisplayContextTestCase
 				ObjectDefinitionConstants.SCOPE_DEPOT,
 				WorkflowConstants.STATUS_APPROVED);
 
-			expectedCreationMenuItems.put(
+			expectedCustomCreationMenuItems.put(
 				objectDefinition.getLabel(LocaleUtil.US),
 				getRedirect(
 					objectDefinition,
 					_getRootObjectEntryFolderExternalReferenceCode(
 						objectFolderExternalReferenceCode)));
 		}
+
+		expectedCreationMenuItems.putAll(expectedCustomCreationMenuItems);
 
 		addCustomObjectDefinition(
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
@@ -562,6 +598,15 @@ public abstract class BaseSectionDisplayContextTestCase
 			JSONCompareMode.STRICT);
 	}
 
+	private HashMap<String, Object> _getBreadcrumbProps(
+			HttpServletRequest httpServletRequest)
+		throws Exception {
+
+		return ReflectionTestUtil.invoke(
+			getSectionDisplayContext(httpServletRequest), "getBreadcrumbProps",
+			new Class<?>[0]);
+	}
+
 	private Map<String, Object> _getDefaultPermissionAdditionalProps() {
 		return HashMapBuilder.<String, Object>put(
 			"actions",
@@ -574,10 +619,17 @@ public abstract class BaseSectionDisplayContextTestCase
 								"L_BASIC_WEB_CONTENT",
 								TestPropsValues.getCompanyId());
 
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, objectDefinition.getClassName());
+
 					return TransformUtil.transformToArray(
 						ResourceActionsUtil.getResourceActions(
 							objectDefinition.getClassName()),
-						resourceAction -> HashMapBuilder.put(
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
 							"key", resourceAction
 						).put(
 							"label",
@@ -595,10 +647,17 @@ public abstract class BaseSectionDisplayContextTestCase
 								"L_BASIC_DOCUMENT",
 								TestPropsValues.getCompanyId());
 
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, objectDefinition.getClassName());
+
 					return TransformUtil.transformToArray(
 						ResourceActionsUtil.getResourceActions(
 							objectDefinition.getClassName()),
-						resourceAction -> HashMapBuilder.put(
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
 							"key", resourceAction
 						).put(
 							"label",
@@ -609,17 +668,26 @@ public abstract class BaseSectionDisplayContextTestCase
 				}
 			).put(
 				"OBJECT_ENTRY_FOLDERS",
-				() -> TransformUtil.transformToArray(
-					ResourceActionsUtil.getResourceActions(
-						ObjectEntryFolder.class.getName()),
-					resourceAction -> HashMapBuilder.put(
-						"key", resourceAction
-					).put(
-						"label",
-						ResourceActionsUtil.getAction(
-							LocaleUtil.US, resourceAction)
-					).build(),
-					Map.class)
+				() -> {
+					List<String> guestUnsupportedActions =
+						ResourceActionsUtil.getResourceGuestUnsupportedActions(
+							null, ObjectEntryFolder.class.getName());
+
+					return TransformUtil.transformToArray(
+						ResourceActionsUtil.getResourceActions(
+							ObjectEntryFolder.class.getName()),
+						resourceAction -> HashMapBuilder.<String, Object>put(
+							"guestUnsupported",
+							guestUnsupportedActions.contains(resourceAction)
+						).put(
+							"key", resourceAction
+						).put(
+							"label",
+							ResourceActionsUtil.getAction(
+								LocaleUtil.US, resourceAction)
+						).build(),
+						Map.class);
+				}
 			).build()
 		).put(
 			"roles",
@@ -666,18 +734,6 @@ public abstract class BaseSectionDisplayContextTestCase
 		}
 
 		return jsonArray;
-	}
-
-	private DropdownItem _getDropdownItem(
-		List<DropdownItem> dropdownItems, String label) {
-
-		for (DropdownItem dropdownItem : dropdownItems) {
-			if (label.equals(dropdownItem.get("label"))) {
-				return dropdownItem;
-			}
-		}
-
-		return null;
 	}
 
 	private JSONArray _getJSONArray(List<DepotEntry> depotEntries) {
@@ -738,12 +794,6 @@ public abstract class BaseSectionDisplayContextTestCase
 		return ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_FILES;
 	}
 
-	private HashMap<String, Object> _getToolbarProps() throws Exception {
-		return ReflectionTestUtil.invoke(
-			getSectionDisplayContext(getMockHttpServletRequest()),
-			"getToolbarProps", new Class<?>[0]);
-	}
-
 	private void _testGetCreationMenu(
 		CreationMenu creationMenu,
 		Map<String, String> expectedCreationMenuItems) {
@@ -755,13 +805,14 @@ public abstract class BaseSectionDisplayContextTestCase
 			dropdownItems.toString(), expectedCreationMenuItems.size(),
 			dropdownItems.size());
 
+		int index = 0;
+
 		for (Map.Entry<String, String> entry :
 				expectedCreationMenuItems.entrySet()) {
 
-			DropdownItem dropdownItem = _getDropdownItem(
-				dropdownItems, entry.getKey());
+			DropdownItem dropdownItem = dropdownItems.get(index);
 
-			Assert.assertNotNull(dropdownItem);
+			Assert.assertEquals(entry.getKey(), dropdownItem.get("label"));
 
 			if (Validator.isNull(entry.getValue())) {
 				Assert.assertNull(_getRedirect(dropdownItem));
@@ -770,6 +821,8 @@ public abstract class BaseSectionDisplayContextTestCase
 				Assert.assertEquals(
 					entry.getValue(), _getRedirect(dropdownItem));
 			}
+
+			index++;
 		}
 	}
 

@@ -100,12 +100,12 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.permission.PermissionUtil;
 
 import java.io.InputStream;
@@ -1893,6 +1893,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 				name = accountGroup1.getName();
 			}
 		};
+
 		AccountGroupBrief accountGroupBrief2 = new AccountGroupBrief() {
 			{
 				externalReferenceCode = RandomTestUtil.randomString();
@@ -1952,6 +1953,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 					serviceBuilderRole1.getType());
 			}
 		};
+
 		Permission permission2 = new Permission() {
 			{
 				actionIds = new String[] {ActionKeys.UPDATE};
@@ -1980,6 +1982,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 					siteKey = group.getGroupKey();
 				}
 			};
+
 		TaxonomyCategoryReference taxonomyCategoryReference2 =
 			new TaxonomyCategoryReference() {
 				{
