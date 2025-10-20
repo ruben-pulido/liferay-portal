@@ -298,7 +298,7 @@ public class ContentPageSettingsSerDes {
 
 				if (jsonParserFieldValue != null) {
 					contentPageSettings.setNavigationSettings(
-						NavigationSettingsSerDes.toDTO(
+						SitePageNavigationSettingsSerDes.toDTO(
 							(String)jsonParserFieldValue));
 				}
 			}

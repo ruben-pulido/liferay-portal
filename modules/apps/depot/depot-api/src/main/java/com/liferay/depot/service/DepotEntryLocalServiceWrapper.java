@@ -337,6 +337,11 @@ public class DepotEntryLocalServiceWrapper
 		return _depotEntryLocalService.getDepotEntriesCount();
 	}
 
+	@Override
+	public int getDepotEntriesCount(long companyId, int type) {
+		return _depotEntryLocalService.getDepotEntriesCount(companyId, type);
+	}
+
 	/**
 	 * Returns the depot entry with the primary key.
 	 *
@@ -365,6 +370,13 @@ public class DepotEntryLocalServiceWrapper
 
 		return _depotEntryLocalService.getDepotEntryByUuidAndGroupId(
 			uuid, groupId);
+	}
+
+	@Override
+	public java.util.List<Long> getDepotEntryGroupIds(
+		long companyId, int type) {
+
+		return _depotEntryLocalService.getDepotEntryGroupIds(companyId, type);
 	}
 
 	/**

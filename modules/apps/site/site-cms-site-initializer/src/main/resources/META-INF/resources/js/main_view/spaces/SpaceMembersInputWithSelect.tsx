@@ -5,14 +5,12 @@
 
 import '../../../css/spaces/SpaceMembersInputWithSelect.scss';
 
-import Autocomplete from '@clayui/autocomplete';
-import {FetchPolicy, useResource} from '@clayui/data-provider';
 import ClayForm, {ClayInput, ClaySelectWithOption} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClaySticker from '@clayui/sticker';
+import {ItemSelector} from '@liferay/frontend-js-item-selector-web';
 import classNames from 'classnames';
-import {fetch} from 'frontend-js-web';
-import React, {useId, useState} from 'react';
+import React, {useId, useMemo, useState} from 'react';
 
 import {UserAccount, UserGroup} from '../../common/types/UserAccount';
 
@@ -21,122 +19,132 @@ export enum SelectOptions {
 	GROUPS = 'groups',
 }
 
+interface AdminUserAccount {
+	emailAddress: string;
+	externalReferenceCode: string;
+	id: number;
+	image: string;
+	imageId: number;
+	name: string;
+}
+
+interface AdminUserGroup {
+	externalReferenceCode: string;
+	id: number;
+	name: string;
+	usersCount: number;
+}
+
 export interface SpaceMembersInputWithSelectProps {
 	className?: string;
 	disabled: boolean;
+	excludeMembers?: (UserAccount | UserGroup)[];
 	onAutocompleteItemSelected?: (item: UserAccount | UserGroup) => void;
 	onSelectChange?: (value: SelectOptions) => void;
-	selectValue?: SelectOptions;
+	selectValue: SelectOptions;
 }
+
+const endpoints = {
+	[SelectOptions.USERS]: `${location.origin}/o/headless-admin-user/v1.0/user-accounts`,
+	[SelectOptions.GROUPS]: `${location.origin}/o/headless-admin-user/v1.0/user-groups`,
+} as const;
 
 export function SpaceMembersInputWithSelect({
 	className,
 	disabled,
+	excludeMembers,
 	onAutocompleteItemSelected,
 	onSelectChange,
 	selectValue,
 }: SpaceMembersInputWithSelectProps) {
 	const selectId = useId();
 	const [value, setValue] = useState('');
-	const [networkStatus, setNetworkStatus] = useState(4);
 
-	const endpoint =
-		selectValue === SelectOptions.USERS
-			? '/o/headless-admin-user/v1.0/user-accounts'
-			: '/o/headless-admin-user/v1.0/user-groups';
+	const apiURL = useMemo(() => {
+		const endpoint = endpoints[selectValue as SelectOptions];
+		const filterKey =
+			selectValue === SelectOptions.USERS ? 'id' : 'userGroupId';
 
-	const {refetch, resource} = useResource({
-		fetch: async (link, options) => {
-			const result = await fetch(link, {
-				...options,
-				headers: {
-					...(options?.headers ? options.headers : {}),
-					'x-csrf-token': Liferay.authToken,
-				},
-			});
+		if (excludeMembers?.length) {
+			const excludeIds = excludeMembers.map((member) => `'${member.id}'`);
 
-			const json = await result.json();
-
-			return {
-				cursor: json.next,
-				items: json.items.map((item: any) => {
-					return {...item, numberOfUserAccounts: item.usersCount};
-				}),
-			};
-		},
-		fetchPolicy: 'no-cache' as FetchPolicy.NoCache,
-		link: `${window.location.origin}${endpoint}`,
-		onNetworkStatusChange: setNetworkStatus,
-		variables: {search: value},
-	});
-
-	const renderAutocompleteItem = () => {
-		if (selectValue === SelectOptions.USERS) {
-			return (item: UserAccount) => {
-				return (
-					<Autocomplete.Item
-						className="align-items-center d-flex text-truncate"
-						key={item.id}
-						onClick={() => {
-							onAutocompleteItemSelected?.(item);
-							setTimeout(() => setValue(''), 0);
-						}}
-						textValue={item.name}
-					>
-						<ClaySticker
-							displayType="primary"
-							shape="circle"
-							size="sm"
-						>
-							<img
-								alt={item.name}
-								className="sticker-img"
-								src={item.image || '/image/user_portrait'}
-							/>
-						</ClaySticker>
-
-						<span className="ml-2 text-truncate">
-							{item.name} ({item.emailAddress?.split('@')[0]})
-						</span>
-					</Autocomplete.Item>
-				);
-			};
+			return `${endpoint}?filter=${filterKey} ne ${excludeIds.join(` and ${filterKey} ne `)}`;
 		}
 
-		return (item: UserGroup) => {
-			const groupCount = item.numberOfUserAccounts || 0;
+		return endpoint;
+	}, [excludeMembers, selectValue]);
 
-			return (
-				<Autocomplete.Item
-					className="align-items-center d-flex text-truncate"
-					key={item.id}
-					onClick={() => {
-						onAutocompleteItemSelected?.(item);
-						setTimeout(() => setValue(''), 0);
-					}}
-					textValue={item.name}
-				>
-					<ClaySticker displayType="primary" shape="circle" size="sm">
-						<ClayIcon
-							className="text-secondary"
-							fontSize="24px"
-							symbol="users"
-						/>
-					</ClaySticker>
+	const renderUserAccountItem = (item: AdminUserAccount) => {
+		return (
+			<ItemSelector.Item
+				className="align-items-center d-flex text-truncate"
+				key={item.id}
+				onClick={() => {
+					onAutocompleteItemSelected?.({
+						emailAddress: item.emailAddress,
+						externalReferenceCode: item.externalReferenceCode,
+						id: String(item.id),
+						image: item.image,
+						imageId: String(item.imageId),
+						name: item.name,
+						roles: [],
+					});
+				}}
+				textValue={item.name}
+			>
+				<ClaySticker displayType="primary" shape="circle" size="sm">
+					<img
+						alt={item.name}
+						className="sticker-img"
+						src={item.image || '/image/user_portrait'}
+					/>
+				</ClaySticker>
 
-					<span className="ml-2 text-truncate">{item.name}</span>
+				<span className="ml-2 text-truncate">
+					{item.name} ({item.emailAddress?.split('@')[0]})
+				</span>
+			</ItemSelector.Item>
+		);
+	};
 
-					<span className="ml-1">
-						(
-						{Liferay.Util.sub(
-							Liferay.Language.get('x-members'),
-							groupCount
-						)}
-						)
-					</span>
-				</Autocomplete.Item>
-			);
-		};
+	const renderUserGroupItem = (item: AdminUserGroup) => {
+		const groupCount = item.usersCount || 0;
+
+		return (
+			<ItemSelector.Item
+				className="align-items-center d-flex text-truncate"
+				key={item.id}
+				onClick={() => {
+					onAutocompleteItemSelected?.({
+						externalReferenceCode: item.externalReferenceCode,
+						id: String(item.id),
+						name: item.name,
+						numberOfUserAccounts: String(groupCount),
+						roles: [],
+					});
+				}}
+				textValue={item.name}
+			>
+				<ClaySticker displayType="primary" shape="circle" size="sm">
+					<ClayIcon
+						className="text-secondary"
+						fontSize="24px"
+						symbol="users"
+					/>
+				</ClaySticker>
+
+				<span className="ml-2 text-truncate">{item.name}</span>
+
+				<span className="ml-1">
+					(
+					{Liferay.Util.sub(
+						Liferay.Language.get('x-members'),
+						groupCount
+					)}
+					)
+				</span>
+			</ItemSelector.Item>
+		);
 	};
 
 	return (
@@ -179,27 +187,42 @@ export function SpaceMembersInputWithSelect({
 								'enter-name-or-email'
 							)}
 						/>
-					) : (
-						<Autocomplete
-							allowsCustomValue
+					) : selectValue === SelectOptions.USERS ? (
+						<ItemSelector<AdminUserAccount>
+							apiURL={apiURL}
 							id="autocomplete"
-							items={(resource?.items ?? []) as any}
-							loadingState={networkStatus}
-							menuTrigger="focus"
-							messages={{
-								loading: Liferay.Language.get('loading...'),
-								notFound:
-									Liferay.Language.get('no-results-found'),
+							key={apiURL}
+							locator={{
+								id: 'id',
+								label: 'name',
+								value: 'id',
 							}}
 							onChange={setValue}
-							onFocusCapture={refetch}
 							placeholder={Liferay.Language.get(
 								'enter-name-or-email'
 							)}
 							value={value}
 						>
-							{renderAutocompleteItem()}
-						</Autocomplete>
+							{renderUserAccountItem}
+						</ItemSelector>
+					) : (
+						<ItemSelector<AdminUserGroup>
+							apiURL={apiURL}
+							id="autocomplete"
+							key={apiURL}
+							locator={{
+								id: 'id',
+								label: 'name',
+								value: 'id',
+							}}
+							onChange={setValue}
+							placeholder={Liferay.Language.get(
+								'enter-name-or-email'
+							)}
+							value={value}
+						>
+							{renderUserGroupItem}
+						</ItemSelector>
 					)}
 				</ClayInput.GroupItem>
 			</ClayInput.Group>

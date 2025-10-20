@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.util.PropsValues;
 
 import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
@@ -183,7 +182,7 @@ public class MBMailUtil {
 
 		return StringBundler.concat(
 			MESSAGE_POP_PORTLET_PREFIX, categoryId, StringPool.PERIOD,
-			messageId, StringPool.AT, PropsValues.POP_SERVER_SUBDOMAIN,
+			messageId, StringPool.AT, mailService.getPOPServerSubdomain(),
 			StringPool.PERIOD, mx);
 	}
 
@@ -229,7 +228,7 @@ public class MBMailUtil {
 		}
 
 		for (String messageId : messageIds) {
-			if (messageId.contains(PropsValues.POP_SERVER_SUBDOMAIN)) {
+			if (messageId.contains(mailService.getPOPServerSubdomain())) {
 				return true;
 			}
 		}

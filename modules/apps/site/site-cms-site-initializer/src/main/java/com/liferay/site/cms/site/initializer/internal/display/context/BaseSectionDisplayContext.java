@@ -5,6 +5,7 @@
 
 package com.liferay.site.cms.site.initializer.internal.display.context;
 
+import com.liferay.depot.constants.DepotConstants;
 import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.document.library.configuration.DLConfiguration;
@@ -13,12 +14,10 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.info.constants.InfoDisplayWebKeys;
 import com.liferay.object.constants.ObjectDefinitionSettingConstants;
-import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectDefinitionSetting;
 import com.liferay.object.model.ObjectEntryFolder;
-import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
 import com.liferay.object.service.ObjectEntryFolderLocalServiceUtil;
@@ -26,7 +25,8 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
+import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -39,14 +39,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
-import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
@@ -54,10 +52,13 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
+import com.liferay.site.cms.site.initializer.internal.util.PermissionUtil;
 import com.liferay.translation.constants.TranslationPortletKeys;
 
 import jakarta.portlet.ActionRequest;
@@ -66,10 +67,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Marco Galluzzi
@@ -125,6 +126,10 @@ public abstract class BaseSectionDisplayContext {
 		).put(
 			"baseFolderViewURL", ActionUtil.getBaseViewFolderURL(themeDisplay)
 		).put(
+			"brokenLinksCheckerEnabled",
+			GetterUtil.getBoolean(
+				PropsUtil.get(PropsKeys.CMS_BROKEN_LINKS_CHECKER_ENABLED))
+		).put(
 			"cmsGroupId",
 			() -> {
 				try {
@@ -166,8 +171,59 @@ public abstract class BaseSectionDisplayContext {
 				return collaboratorURLs;
 			}
 		).put(
+			"commentsProps",
+			HashMapBuilder.<String, Object>put(
+				"addCommentURL",
+				StringBundler.concat(
+					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+					GroupConstants.CMS_FRIENDLY_URL,
+					"/add_content_item_comment")
+			).put(
+				"deleteCommentURL",
+				StringBundler.concat(
+					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+					GroupConstants.CMS_FRIENDLY_URL,
+					"/delete_content_item_comment")
+			).put(
+				"editCommentURL",
+				StringBundler.concat(
+					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+					GroupConstants.CMS_FRIENDLY_URL,
+					"/edit_content_item_comment")
+			).put(
+				"editorConfig",
+				() -> {
+					EditorConfiguration contentItemCommentEditorConfiguration =
+						EditorConfigurationFactoryUtil.getEditorConfiguration(
+							StringPool.BLANK, "contentItemCommentEditor",
+							StringPool.BLANK, Collections.emptyMap(),
+							themeDisplay,
+							RequestBackedPortletURLFactoryUtil.create(
+								httpServletRequest));
+
+					Map<String, Object> data =
+						contentItemCommentEditorConfiguration.getData();
+
+					return data.get("editorConfig");
+				}
+			).put(
+				"getCommentsURL",
+				StringBundler.concat(
+					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+					GroupConstants.CMS_FRIENDLY_URL, "/get_asset_comments")
+			).build()
+		).put(
+			"contentViewURL",
+			StringBundler.concat(
+				themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+				GroupConstants.CMS_FRIENDLY_URL,
+				"/edit_content_item?&p_l_mode=read&p_p_state=",
+				LiferayWindowState.POP_UP, "&redirect=",
+				themeDisplay.getURLCurrent(), "&objectEntryId={embedded.id}")
+		).put(
 			"defaultPermissionAdditionalProps",
-			_getDefaultPermissionAdditionalProps()
+			PermissionUtil.getDefaultPermissionAdditionalProps(
+				httpServletRequest, themeDisplay)
 		).put(
 			"fileMimeTypeCssClasses",
 			() -> {
@@ -191,22 +247,18 @@ public abstract class BaseSectionDisplayContext {
 			HashMapBuilder.put(
 				"default", "content-icon-custom-structure"
 			).put(
-				"L_BASIC_WEB_CONTENT", "content-icon-basic-content"
+				"L_CMS_BASIC_WEB_CONTENT", "content-icon-basic-content"
 			).put(
-				"L_BLOG", "content-icon-blog"
-			).put(
-				"L_KNOWLEDGE_BASE", "content-icon-knowledge-base"
+				"L_CMS_BLOG", "content-icon-blog"
 			).build()
 		).put(
 			"objectDefinitionIcons",
 			HashMapBuilder.put(
 				"default", "web-content"
 			).put(
-				"L_BASIC_WEB_CONTENT", "forms"
+				"L_CMS_BASIC_WEB_CONTENT", "forms"
 			).put(
-				"L_BLOG", "blogs"
-			).put(
-				"L_KNOWLEDGE_BASE", "wiki"
+				"L_CMS_BLOG", "blogs"
 			).build()
 		).put(
 			"parentObjectEntryFolderExternalReferenceCode",
@@ -217,7 +269,7 @@ public abstract class BaseSectionDisplayContext {
 	}
 
 	public String getAPIURL() {
-		StringBundler sb = new StringBundler(8);
+		StringBundler sb = new StringBundler(9);
 
 		sb.append("/o/search/v1.0/search?emptySearch=true&filter=");
 
@@ -241,10 +293,23 @@ public abstract class BaseSectionDisplayContext {
 			sb.append(getCMSSectionFilterString());
 		}
 
-		sb.append("&nestedFields=embedded,file.thumbnailURL,");
+		sb.append("&nestedFields=embedded,file.metadata,");
+		sb.append("file.previewURL,file.thumbnailURL,");
 		sb.append("systemProperties.objectDefinitionBrief");
 
 		return sb.toString();
+	}
+
+	public Map<String, Object> getBreadcrumbProps() throws PortalException {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		addBreadcrumbItem(jsonArray, false, null, _getLayoutName());
+
+		return HashMapBuilder.<String, Object>put(
+			"breadcrumbItems", jsonArray
+		).put(
+			"hideSpace", true
+		).build();
 	}
 
 	public List<DropdownItem> getBulkActionDropdownItems() {
@@ -259,59 +324,28 @@ public abstract class BaseSectionDisplayContext {
 		return new CreationMenu() {
 			{
 				if (_hasAddEntryPermission()) {
-					if (getRootObjectEntryFolderExternalReferenceCode() !=
-							null) {
+					for (DropdownItem dropdownItem :
+							getCreationMenuDropdownItems()) {
 
-						addPrimaryDropdownItem(
-							dropdownItem -> {
-								dropdownItem.putData("action", "createFolder");
-								dropdownItem.putData(
-									"assetLibraries",
-									_getDepotEntriesJSONArray());
-								dropdownItem.putData(
-									"baseAssetLibraryViewURL",
-									ActionUtil.getBaseSpaceURL(themeDisplay));
-								dropdownItem.putData(
-									"baseFolderViewURL",
-									ActionUtil.getBaseViewFolderURL(
-										themeDisplay));
-								dropdownItem.putData(
-									"parentObjectEntryFolderExternalReference" +
-										"Code",
-									_getParentObjectEntryFolderExternalReferenceCode());
-								dropdownItem.setIcon("folder");
-								dropdownItem.setLabel(
-									language.get(httpServletRequest, "folder"));
-							});
+						JSONArray depotEntriesJSONArray =
+							_getDepotEntriesJSONArray(dropdownItem);
+
+						if (depotEntriesJSONArray == null) {
+							continue;
+						}
+
+						dropdownItem.putData(
+							"assetLibraries", depotEntriesJSONArray);
+
+						addPrimaryDropdownItem(dropdownItem);
 					}
-
-					if (!Objects.equals(
-							getRootObjectEntryFolderExternalReferenceCode(),
-							ObjectEntryFolderConstants.
-								EXTERNAL_REFERENCE_CODE_CONTENTS)) {
-
-						addPrimaryDropdownItem(
-							dropdownItem -> {
-								dropdownItem.putData(
-									"action", "uploadMultipleFiles");
-								dropdownItem.putData(
-									"assetLibraries",
-									_getDepotEntriesJSONArray());
-								dropdownItem.putData(
-									"parentObjectEntryFolderExternalReference" +
-										"Code",
-									_getParentObjectEntryFolderExternalReferenceCode());
-								dropdownItem.setIcon("upload-multiple");
-								dropdownItem.setLabel(
-									language.get(
-										httpServletRequest, "multiple-files"));
-							});
-					}
-
-					addStructureContentDropdownItems(this);
 				}
 			}
 		};
+	}
+
+	public List<DropdownItem> getCreationMenuDropdownItems() {
+		return Collections.emptyList();
 	}
 
 	public abstract Map<String, Object> getEmptyState();
@@ -447,35 +481,29 @@ public abstract class BaseSectionDisplayContext {
 					LiferayWindowState.POP_UP
 				).buildString(),
 				"password-policies", "permissions",
-				language.get(httpServletRequest, "permissions"), "get", null,
-				"modal-permissions"),
+				language.get(httpServletRequest, "permissions"), "get",
+				"permissions", "modal-permissions"),
 			new FDSActionDropdownItem(
 				StringPool.BLANK, "password-policies", "default-permissions",
 				LanguageUtil.get(httpServletRequest, "default-permissions"),
-				null, null, null),
+				null, "permissions", null),
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "password-policies",
+				"edit-and-propagate-default-permissions",
+				LanguageUtil.get(
+					httpServletRequest,
+					"edit-and-propagate-default-permissions"),
+				null, "permissions", null),
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "password-policies",
+				"reset-to-default-permissions",
+				LanguageUtil.get(
+					httpServletRequest, "reset-to-default-permissions"),
+				null, "permissions", null),
 			new FDSActionDropdownItem(
 				null, "trash", "delete",
 				language.get(httpServletRequest, "delete"), null, "delete",
 				null));
-	}
-
-	public Map<String, Object> getToolbarProps() throws PortalException {
-		return HashMapBuilder.<String, Object>put(
-			"title",
-			() -> {
-				Layout layout = themeDisplay.getLayout();
-
-				if (layout == null) {
-					return null;
-				}
-
-				return layout.getName(themeDisplay.getLocale(), true);
-			}
-		).put(
-			"toolbarClassName", "section-toolbar tbar-light"
-		).put(
-			"toolbarTitleClassName", "section-toolbar-title"
-		).build();
 	}
 
 	protected void addBreadcrumbItem(
@@ -489,48 +517,6 @@ public abstract class BaseSectionDisplayContext {
 			).put(
 				"label", label
 			));
-	}
-
-	protected void addStructureContentDropdownItems(CreationMenu creationMenu) {
-		for (ObjectDefinition objectDefinition :
-				_objectDefinitionService.getCMSObjectDefinitions(
-					themeDisplay.getCompanyId(),
-					getObjectFolderExternalReferenceCodes())) {
-
-			JSONArray depotEntriesJSONArray = _getDepotEntriesJSONArray(
-				objectDefinition);
-
-			if (depotEntriesJSONArray == null) {
-				continue;
-			}
-
-			creationMenu.addPrimaryDropdownItem(
-				dropdownItem -> {
-					dropdownItem.putData("action", "createAsset");
-					dropdownItem.putData(
-						"assetLibraries", depotEntriesJSONArray);
-					dropdownItem.putData(
-						"redirect",
-						StringBundler.concat(
-							themeDisplay.getPortalURL(),
-							themeDisplay.getPathMain(),
-							GroupConstants.CMS_FRIENDLY_URL,
-							"/add_structured_content_item?",
-							"objectDefinitionId=",
-							objectDefinition.getObjectDefinitionId(),
-							"&objectEntryFolderExternalReferenceCode=",
-							_getObjectEntryFolderExternalReferenceCode(
-								objectDefinition),
-							"&plid=", themeDisplay.getPlid(), "&redirect=",
-							themeDisplay.getURLCurrent()));
-					dropdownItem.putData(
-						"title",
-						objectDefinition.getLabel(themeDisplay.getLocale()));
-					dropdownItem.setIcon("forms");
-					dropdownItem.setLabel(
-						objectDefinition.getLabel(themeDisplay.getLocale()));
-				});
-		}
 	}
 
 	protected String appendStatus(String filterString) {
@@ -560,12 +546,12 @@ public abstract class BaseSectionDisplayContext {
 	protected final Portal portal;
 	protected final ThemeDisplay themeDisplay;
 
-	private List<Long> _getAcceptedGroupIds(ObjectDefinition objectDefinition) {
+	private List<Long> _getAcceptedGroupIds(long objectDefinitionId) {
 		List<Long> acceptedGroupIds = new ArrayList<>();
 
 		ObjectDefinitionSetting objectDefinitionSetting =
 			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinition.getObjectDefinitionId(),
+				objectDefinitionId,
 				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS);
 
 		for (String groupId :
@@ -582,90 +568,6 @@ public abstract class BaseSectionDisplayContext {
 		return acceptedGroupIds;
 	}
 
-	private Map<String, Object> _getDefaultPermissionAdditionalProps() {
-		return HashMapBuilder.<String, Object>put(
-			"actions",
-			() -> HashMapBuilder.put(
-				ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENTS,
-				() -> {
-					ObjectDefinition objectDefinition =
-						ObjectDefinitionLocalServiceUtil.
-							getObjectDefinitionByExternalReferenceCode(
-								"L_BASIC_WEB_CONTENT",
-								themeDisplay.getCompanyId());
-
-					return TransformUtil.transformToArray(
-						ResourceActionsUtil.getResourceActions(
-							objectDefinition.getClassName()),
-						resourceAction -> HashMapBuilder.put(
-							"key", resourceAction
-						).put(
-							"label",
-							ResourceActionsUtil.getAction(
-								httpServletRequest, resourceAction)
-						).build(),
-						Map.class);
-				}
-			).put(
-				ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_FILES,
-				() -> {
-					ObjectDefinition objectDefinition =
-						ObjectDefinitionLocalServiceUtil.
-							getObjectDefinitionByExternalReferenceCode(
-								"L_BASIC_DOCUMENT",
-								themeDisplay.getCompanyId());
-
-					return TransformUtil.transformToArray(
-						ResourceActionsUtil.getResourceActions(
-							objectDefinition.getClassName()),
-						resourceAction -> HashMapBuilder.put(
-							"key", resourceAction
-						).put(
-							"label",
-							ResourceActionsUtil.getAction(
-								httpServletRequest, resourceAction)
-						).build(),
-						Map.class);
-				}
-			).put(
-				"OBJECT_ENTRY_FOLDERS",
-				() -> TransformUtil.transformToArray(
-					ResourceActionsUtil.getResourceActions(
-						ObjectEntryFolder.class.getName()),
-					resourceAction -> HashMapBuilder.put(
-						"key", resourceAction
-					).put(
-						"label",
-						ResourceActionsUtil.getAction(
-							httpServletRequest, resourceAction)
-					).build(),
-					Map.class)
-			).build()
-		).put(
-			"roles",
-			() -> TransformUtil.transformToArray(
-				RoleLocalServiceUtil.getGroupRolesAndTeamRoles(
-					themeDisplay.getCompanyId(), null,
-					Arrays.asList(
-						RoleConstants.ADMINISTRATOR,
-						RoleConstants.SITE_ADMINISTRATOR,
-						RoleConstants.SITE_OWNER),
-					null, null,
-					new int[] {
-						RoleConstants.TYPE_REGULAR, RoleConstants.TYPE_SITE
-					},
-					0, 0, QueryUtil.ALL_POS, QueryUtil.ALL_POS),
-				role -> HashMapBuilder.put(
-					"key", role.getName()
-				).put(
-					"name", role.getTitle(themeDisplay.getLocale())
-				).put(
-					"type", String.valueOf(role.getType())
-				).build(),
-				Map.class)
-		).build();
-	}
-
 	private JSONArray _getDepotEntriesJSONArray() {
 		if (objectEntryFolder != null) {
 			return _getDepotEntriesJSONArray(
@@ -675,8 +577,22 @@ public abstract class BaseSectionDisplayContext {
 		return _getDepotEntriesJSONArray(
 			TransformUtil.transform(
 				depotEntryLocalService.getDepotEntries(
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS),
+					themeDisplay.getCompanyId(), DepotConstants.TYPE_SPACE),
 				DepotEntry::getGroupId));
+	}
+
+	private JSONArray _getDepotEntriesJSONArray(DropdownItem dropdownItem) {
+		Map<String, Object> dropdownItemData =
+			(HashMap<String, Object>)dropdownItem.get("data");
+
+		long objectDefinitionId = GetterUtil.getLong(
+			dropdownItemData.get("objectDefinitionId"));
+
+		if (objectDefinitionId != 0) {
+			return _getDepotEntriesJSONArray(objectDefinitionId);
+		}
+
+		return _getDepotEntriesJSONArray();
 	}
 
 	private JSONArray _getDepotEntriesJSONArray(List<Long> groupIds) {
@@ -693,14 +609,12 @@ public abstract class BaseSectionDisplayContext {
 		return jsonArray;
 	}
 
-	private JSONArray _getDepotEntriesJSONArray(
-		ObjectDefinition objectDefinition) {
-
-		if (_isAcceptAllGroups(objectDefinition)) {
+	private JSONArray _getDepotEntriesJSONArray(long objectDefinitionId) {
+		if (_isAcceptAllGroups(objectDefinitionId)) {
 			return _getDepotEntriesJSONArray();
 		}
 
-		List<Long> acceptedGroupIds = _getAcceptedGroupIds(objectDefinition);
+		List<Long> acceptedGroupIds = _getAcceptedGroupIds(objectDefinitionId);
 
 		if (acceptedGroupIds.isEmpty()) {
 			return null;
@@ -822,10 +736,22 @@ public abstract class BaseSectionDisplayContext {
 		}
 
 		return JSONUtil.put(
+			"externalReferenceCode", group.getExternalReferenceCode()
+		).put(
 			"groupId", group.getGroupId()
 		).put(
 			"name", group.getName(themeDisplay.getLocale())
 		);
+	}
+
+	private String _getLayoutName() {
+		Layout layout = themeDisplay.getLayout();
+
+		if (layout == null) {
+			return null;
+		}
+
+		return layout.getName(themeDisplay.getLocale(), true);
 	}
 
 	private ObjectEntryFolder _getObjectEntryFolder(
@@ -846,31 +772,6 @@ public abstract class BaseSectionDisplayContext {
 		return null;
 	}
 
-	private String _getObjectEntryFolderExternalReferenceCode(
-		ObjectDefinition objectDefinition) {
-
-		if (objectEntryFolder != null) {
-			return objectEntryFolder.getExternalReferenceCode();
-		}
-
-		if (Objects.equals(
-				objectDefinition.getObjectFolderExternalReferenceCode(),
-				ObjectFolderConstants.
-					EXTERNAL_REFERENCE_CODE_CONTENT_STRUCTURES)) {
-
-			return ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENTS;
-		}
-
-		if (Objects.equals(
-				objectDefinition.getObjectFolderExternalReferenceCode(),
-				ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_FILE_TYPES)) {
-
-			return ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_FILES;
-		}
-
-		return null;
-	}
-
 	private String _getParentObjectEntryFolderExternalReferenceCode() {
 		if (objectEntryFolder == null) {
 			return getRootObjectEntryFolderExternalReferenceCode();
@@ -883,10 +784,6 @@ public abstract class BaseSectionDisplayContext {
 		if (objectEntryFolder == null) {
 			return true;
 		}
-
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
 
 		try {
 			return _objectEntryFolderModelResourcePermission.contains(
@@ -903,10 +800,10 @@ public abstract class BaseSectionDisplayContext {
 		return false;
 	}
 
-	private boolean _isAcceptAllGroups(ObjectDefinition objectDefinition) {
+	private boolean _isAcceptAllGroups(long objectDefinitionId) {
 		ObjectDefinitionSetting objectDefinitionSetting =
 			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinition.getObjectDefinitionId(),
+				objectDefinitionId,
 				ObjectDefinitionSettingConstants.NAME_ACCEPT_ALL_GROUPS);
 
 		if ((objectDefinitionSetting != null) &&
@@ -917,7 +814,7 @@ public abstract class BaseSectionDisplayContext {
 
 		objectDefinitionSetting =
 			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinition.getObjectDefinitionId(),
+				objectDefinitionId,
 				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS);
 
 		if ((objectDefinitionSetting == null) ||
@@ -934,7 +831,8 @@ public abstract class BaseSectionDisplayContext {
 
 	private static final List<Integer> _statuses = Arrays.asList(
 		WorkflowConstants.STATUS_APPROVED, WorkflowConstants.STATUS_DRAFT,
-		WorkflowConstants.STATUS_EXPIRED);
+		WorkflowConstants.STATUS_EXPIRED, WorkflowConstants.STATUS_PENDING,
+		WorkflowConstants.STATUS_SCHEDULED);
 
 	private final DLConfiguration _dlConfiguration;
 	private final ObjectDefinitionService _objectDefinitionService;

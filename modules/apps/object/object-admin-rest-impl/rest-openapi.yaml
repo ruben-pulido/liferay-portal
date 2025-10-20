@@ -86,6 +86,8 @@ components:
                     type: boolean
                 enableComments:
                     type: boolean
+                enableFormContainer:
+                    type: boolean
                 enableFriendlyURLCustomization:
                     type: boolean
                 enableIndexSearch:
@@ -209,7 +211,7 @@ components:
                     readOnly: true
                     type: object
                 businessType:
-                    enum: [Aggregation, Attachment, AutoIncrement, Boolean, Date, DateTime, Decimal, Encrypted, Formula, Integer, LongInteger, LongText, MultiselectPicklist, Picklist, PrecisionDecimal, Relationship, RichText, Text]
+                    enum: [Aggregation, Assignee, Attachment, AutoIncrement, Boolean, Date, DateTime, Decimal, Encrypted, Formula, Integer, LongInteger, LongText, MultiselectPicklist, Picklist, PrecisionDecimal, Relationship, RichText, Text]
                     type: string
                 defaultValue:
                     deprecated: true
@@ -390,7 +392,7 @@ components:
                     format: int32
                     type: integer
                 type:
-                    enum: [categorization, regular]
+                    enum: [categorization, regular, seo]
                     type: string
             type: object
         ObjectLayoutColumn:
@@ -707,7 +709,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.object.admin.rest.client', and version '1.0.82'."
+        'com.liferay.object.admin.rest.client', and version '1.0.83'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

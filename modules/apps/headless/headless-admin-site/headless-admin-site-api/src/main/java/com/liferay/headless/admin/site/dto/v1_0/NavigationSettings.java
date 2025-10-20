@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  */
 @Generated("")
 @GraphQLName(
-	description = "The widget page template's site navigation settings.",
+	description = "Represents the common navigation settings that can apply to a site page or to a widget page template.",
 	value = "NavigationSettings"
 )
 @JsonFilter("Liferay.Vulcan")

@@ -99,11 +99,11 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.RobotsUtil;
 import com.liferay.site.display.context.GroupDisplayContextHelper;
 import com.liferay.site.navigation.model.SiteNavigationMenu;
@@ -289,6 +289,16 @@ public class LayoutsAdminDisplayContext {
 		).buildString();
 	}
 
+	public String getAddModalTitle() {
+		String title = "add-page";
+
+		if (ParamUtil.getBoolean(httpServletRequest, "emptyLayout")) {
+			title = "page-name";
+		}
+
+		return LanguageUtil.get(httpServletRequest, title);
+	}
+
 	public List<SiteNavigationMenu> getAutoSiteNavigationMenus() {
 		return SiteNavigationMenuLocalServiceUtil.getAutoSiteNavigationMenus(
 			themeDisplay.getScopeGroupId());
@@ -362,6 +372,31 @@ public class LayoutsAdminDisplayContext {
 			"privateLayout", layout.isPrivateLayout()
 		).setParameter(
 			"selPlid", layout.getPlid()
+		).buildString();
+	}
+
+	public String getConvertEmptyLayoutURL() {
+		return PortletURLBuilder.createActionURL(
+			_liferayPortletResponse
+		).setActionName(
+			"/layout_admin/convert_empty_layout"
+		).setParameter(
+			"layoutPageTemplateEntryId",
+			ParamUtil.getLong(httpServletRequest, "layoutPageTemplateEntryId")
+		).setParameter(
+			"masterLayoutPlid",
+			ParamUtil.getLong(httpServletRequest, "masterLayoutPlid")
+		).setParameter(
+			"type",
+			() -> {
+				String type = ParamUtil.getString(httpServletRequest, "type");
+
+				if (Validator.isNotNull(type)) {
+					return type;
+				}
+
+				return null;
+			}
 		).buildString();
 	}
 
@@ -1152,6 +1187,20 @@ public class LayoutsAdminDisplayContext {
 			).setParameter(
 				"selPlid", selPlid
 			).buildPortletURL();
+
+		if (selPlid != LayoutConstants.DEFAULT_PLID) {
+			Layout layout = LayoutLocalServiceUtil.fetchLayout(selPlid);
+
+			if ((layout != null) && layout.isTypeEmpty()) {
+				selectLayoutPageTemplateEntryURL.setParameter(
+					"emptyLayout",
+					String.valueOf(
+						ParamUtil.getBoolean(
+							httpServletRequest, "emptyLayout")));
+				selectLayoutPageTemplateEntryURL.setParameter(
+					"externalReferenceCode", layout.getExternalReferenceCode());
+			}
+		}
 
 		if (layoutPageTemplateCollectionId > 0) {
 			selectLayoutPageTemplateEntryURL.setParameter(
@@ -1999,7 +2048,8 @@ public class LayoutsAdminDisplayContext {
 			availableActions.add("exportTranslation");
 		}
 
-		if (LayoutPermissionUtil.contains(
+		if (!layout.isTypeEmpty() &&
+			LayoutPermissionUtil.contains(
 				themeDisplay.getPermissionChecker(), layout,
 				ActionKeys.PERMISSIONS)) {
 
@@ -2393,7 +2443,7 @@ public class LayoutsAdminDisplayContext {
 
 		_types = new String[] {
 			LayoutConstants.TYPE_CONTENT, LayoutConstants.TYPE_EMBEDDED,
-			LayoutConstants.TYPE_LINK_TO_LAYOUT,
+			LayoutConstants.TYPE_EMPTY, LayoutConstants.TYPE_LINK_TO_LAYOUT,
 			LayoutConstants.TYPE_FULL_PAGE_APPLICATION,
 			LayoutConstants.TYPE_NODE, LayoutConstants.TYPE_PANEL,
 			LayoutConstants.TYPE_PORTLET, LayoutConstants.TYPE_URL

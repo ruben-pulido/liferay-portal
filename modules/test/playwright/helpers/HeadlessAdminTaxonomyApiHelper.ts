@@ -6,9 +6,11 @@
 import {ApiHelpers} from './ApiHelpers';
 
 interface postSiteTaxonomyVocabularyProps {
+	assetLibraries?: AssetLibrary[];
 	assetTypes?: AssetType[];
 	name: string;
 	siteId: string;
+	visibilityType?: string;
 }
 
 export interface postTaxonomyCategoryTaxonomyCategory {
@@ -22,6 +24,7 @@ export interface postTaxonomyVocabularyProps {
 	assetTypes?: AssetType[];
 	name: string;
 	name_i18n?: {['ES-es']: string};
+	visibilityType?: string;
 }
 
 export interface postTaxonomyVocabularyTaxonomyCategoryProps {
@@ -100,13 +103,15 @@ export class HeadlessAdminTaxonomyApiHelper {
 	 */
 
 	async postSiteTaxonomyVocabulary({
+		assetLibraries,
 		assetTypes,
 		name,
 		siteId,
+		visibilityType,
 	}: postSiteTaxonomyVocabularyProps): Promise<{id: number}> {
 		return this.apiHelpers.post(
 			`${this.apiHelpers.baseUrl}${this.basePath}/sites/${siteId}/taxonomy-vocabularies`,
-			{data: {assetTypes, name}}
+			{data: {assetLibraries, assetTypes, name, visibilityType}}
 		);
 	}
 
@@ -139,10 +144,11 @@ export class HeadlessAdminTaxonomyApiHelper {
 		assetLibraries,
 		name,
 		name_i18n,
+		visibilityType,
 	}: postTaxonomyVocabularyProps): Promise<{id: number}> {
 		return this.apiHelpers.post(
 			`${this.apiHelpers.baseUrl}${this.basePath}/taxonomy-vocabularies`,
-			{data: {assetLibraries, name, name_i18n}}
+			{data: {assetLibraries, name, name_i18n, visibilityType}}
 		);
 	}
 

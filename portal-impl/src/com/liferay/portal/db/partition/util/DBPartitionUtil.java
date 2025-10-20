@@ -10,7 +10,6 @@ import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.dao.jdbc.util.DataSourceWrapper;
 import com.liferay.portal.db.partition.db.DBPartitionDB;
 import com.liferay.portal.db.partition.db.DBPartitionMySQLDB;
 import com.liferay.portal.db.partition.db.DBPartitionPostgreSQLDB;
@@ -19,9 +18,9 @@ import com.liferay.portal.kernel.dao.db.DBInspector;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.dao.jdbc.CurrentConnectionUtil;
+import com.liferay.portal.kernel.dao.jdbc.DataSourceWrapper;
 import com.liferay.portal.kernel.dao.jdbc.util.ConnectionWrapper;
 import com.liferay.portal.kernel.dao.jdbc.util.StatementWrapper;
-import com.liferay.portal.kernel.db.partition.DBPartition;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.log.Log;
@@ -41,9 +40,9 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.InfrastructureUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.spring.hibernate.DialectDetector;
-import com.liferay.portal.util.PropsValues;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -71,7 +70,7 @@ public class DBPartitionUtil {
 	public static boolean addDBPartition(long companyId)
 		throws PortalException {
 
-		if (!DBPartition.isPartitionEnabled() ||
+		if (!PropsValues.DATABASE_PARTITION_ENABLED ||
 			(companyId == _defaultCompanyId)) {
 
 			return false;
@@ -90,8 +89,8 @@ public class DBPartitionUtil {
 	public static void checkDatabasePartitionSchemaNamePrefix()
 		throws PortalException {
 
-		if (DBPartition.isPartitionEnabled() &&
-			(_DATABASE_PARTITION_SCHEMA_NAME_PREFIX.length() > 11)) {
+		if (PropsValues.DATABASE_PARTITION_ENABLED &&
+			(PropsValues.DATABASE_PARTITION_SCHEMA_NAME_PREFIX.length() > 11)) {
 
 			throw new PortalException(
 				"The value for property " +
@@ -103,7 +102,7 @@ public class DBPartitionUtil {
 	public static boolean copyDBPartition(long fromCompanyId, long toCompanyId)
 		throws PortalException {
 
-		if (!DBPartition.isPartitionEnabled() ||
+		if (!PropsValues.DATABASE_PARTITION_ENABLED ||
 			(fromCompanyId == _defaultCompanyId)) {
 
 			return false;
@@ -120,7 +119,7 @@ public class DBPartitionUtil {
 	}
 
 	public static boolean exportCompany(long companyId) throws PortalException {
-		if (DBPartition.isPartitionEnabled() ||
+		if (PropsValues.DATABASE_PARTITION_ENABLED ||
 			(companyId == _defaultCompanyId)) {
 
 			return false;
@@ -164,7 +163,7 @@ public class DBPartitionUtil {
 	public static boolean exportDBPartition(long companyId)
 		throws PortalException {
 
-		if (!DBPartition.isPartitionEnabled() ||
+		if (!PropsValues.DATABASE_PARTITION_ENABLED ||
 			(companyId == _defaultCompanyId)) {
 
 			return false;
@@ -184,7 +183,7 @@ public class DBPartitionUtil {
 			UnsafeConsumer<Long, Exception> unsafeConsumer)
 		throws Exception {
 
-		if (!DBPartition.isPartitionEnabled()) {
+		if (!PropsValues.DATABASE_PARTITION_ENABLED) {
 			unsafeConsumer.accept(null);
 
 			return;
@@ -196,7 +195,7 @@ public class DBPartitionUtil {
 			return;
 		}
 
-		if (_DATABASE_PARTITION_THREAD_POOL_ENABLED) {
+		if (PropsValues.DATABASE_PARTITION_THREAD_POOL_ENABLED) {
 			_forEachCompanyIdConcurrently(unsafeConsumer);
 
 			return;
@@ -278,7 +277,7 @@ public class DBPartitionUtil {
 	}
 
 	public static String getPartitionKey(Object key) {
-		if (!DBPartition.isPartitionEnabled()) {
+		if (!PropsValues.DATABASE_PARTITION_ENABLED) {
 			return key.toString();
 		}
 
@@ -288,7 +287,7 @@ public class DBPartitionUtil {
 	public static String getPartitionKey(
 		String key, ShardedModel shardedModel) {
 
-		if (!DBPartition.isPartitionEnabled()) {
+		if (!PropsValues.DATABASE_PARTITION_ENABLED) {
 			return key;
 		}
 
@@ -302,13 +301,13 @@ public class DBPartitionUtil {
 			return _defaultPartitionName;
 		}
 
-		return _DATABASE_PARTITION_SCHEMA_NAME_PREFIX + companyId;
+		return PropsValues.DATABASE_PARTITION_SCHEMA_NAME_PREFIX + companyId;
 	}
 
 	public static boolean importDBPartition(long companyId)
 		throws PortalException {
 
-		if (!DBPartition.isPartitionEnabled()) {
+		if (!PropsValues.DATABASE_PARTITION_ENABLED) {
 			return false;
 		}
 
@@ -325,7 +324,7 @@ public class DBPartitionUtil {
 	public static boolean removeDBPartition(long companyId)
 		throws PortalException {
 
-		if (!DBPartition.isPartitionEnabled() ||
+		if (!PropsValues.DATABASE_PARTITION_ENABLED ||
 			(companyId == _defaultCompanyId)) {
 
 			return false;
@@ -375,7 +374,7 @@ public class DBPartitionUtil {
 	public static void setDefaultCompanyId(Connection connection)
 		throws SQLException {
 
-		if (DBPartition.isPartitionEnabled()) {
+		if (PropsValues.DATABASE_PARTITION_ENABLED) {
 			try (PreparedStatement preparedStatement =
 					connection.prepareStatement(
 						"select companyId from Company where webId = '" +
@@ -390,7 +389,7 @@ public class DBPartitionUtil {
 	}
 
 	public static void setDefaultCompanyId(long companyId) {
-		if (DBPartition.isPartitionEnabled()) {
+		if (PropsValues.DATABASE_PARTITION_ENABLED) {
 			_defaultCompanyId = companyId;
 		}
 	}
@@ -398,7 +397,7 @@ public class DBPartitionUtil {
 	public static DataSource wrapDataSource(DataSource dataSource)
 		throws SQLException {
 
-		if (!DBPartition.isPartitionEnabled()) {
+		if (!PropsValues.DATABASE_PARTITION_ENABLED) {
 			return dataSource;
 		}
 
@@ -1612,7 +1611,8 @@ public class DBPartitionUtil {
 
 				if (!defaultCompany) {
 					int count = StringUtil.count(
-						lowerCaseSQL, _DATABASE_PARTITION_SCHEMA_NAME_PREFIX);
+						lowerCaseSQL,
+						PropsValues.DATABASE_PARTITION_SCHEMA_NAME_PREFIX);
 
 					if (count == 0) {
 						count = StringUtil.count(
@@ -1705,15 +1705,6 @@ public class DBPartitionUtil {
 
 	private static final String
 		_DATABASE_EXPORTED_PARTITION_SCHEMA_NAME_PREFIX = "lexported_";
-
-	private static final String _DATABASE_PARTITION_SCHEMA_NAME_PREFIX =
-		GetterUtil.get(
-			PropsUtil.get("database.partition.schema.name.prefix"),
-			"lpartition_");
-
-	private static final boolean _DATABASE_PARTITION_THREAD_POOL_ENABLED =
-		GetterUtil.getBoolean(
-			PropsUtil.get("database.partition.thread.pool.enabled"), true);
 
 	private static final String _QUARTZ_TABLE_NAME_PREFIX = GetterUtil.get(
 		PropsUtil.get("persisted.scheduler.org.quartz.jobStore.tablePrefix"),

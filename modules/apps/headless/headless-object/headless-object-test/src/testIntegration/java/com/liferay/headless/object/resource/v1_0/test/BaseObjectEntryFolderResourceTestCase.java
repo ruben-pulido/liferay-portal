@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.odata.entity.EntityField;
@@ -57,7 +58,6 @@ import com.liferay.portal.search.test.rule.SearchTestRule;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
 import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegateBuilderRegistry;
@@ -313,7 +313,7 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 								objectEntryFolder1.getId());
 						}
 					},
-					new GraphQLField("id"))),
+					getGraphQLFields())),
 			"JSONArray/errors");
 
 		Assert.assertTrue(errorsJSONArray1.length() > 0);
@@ -353,7 +353,7 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 									objectEntryFolder2.getId());
 							}
 						},
-						new GraphQLField("id")))),
+						getGraphQLFields()))),
 			"JSONArray/errors");
 
 		Assert.assertTrue(errorsJSONArray2.length() > 0);
@@ -455,6 +455,132 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode()
+		throws Exception {
+
+		// No namespace
+
+		ObjectEntryFolder objectEntryFolder1 =
+			testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode_addObjectEntryFolder();
+
+		Assert.assertTrue(
+			JSONUtil.getValueAsBoolean(
+				invokeGraphQLMutation(
+					new GraphQLField(
+						"deleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode",
+						new HashMap<String, Object>() {
+							{
+								put(
+									"scopeKey",
+									"\"" +
+										testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
+											objectEntryFolder1) + "\"");
+								put(
+									"externalReferenceCode",
+									"\"" +
+										objectEntryFolder1.
+											getExternalReferenceCode() + "\"");
+							}
+						})),
+				"JSONObject/data",
+				"Object/deleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode"));
+
+		JSONArray errorsJSONArray1 = JSONUtil.getValueAsJSONArray(
+			invokeGraphQLQuery(
+				new GraphQLField(
+					"scopeScopeKeyObjectEntryFolderByExternalReferenceCode",
+					new HashMap<String, Object>() {
+						{
+							put(
+								"scopeKey",
+								"\"" +
+									testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
+										objectEntryFolder1) + "\"");
+							put(
+								"externalReferenceCode",
+								"\"" +
+									objectEntryFolder1.
+										getExternalReferenceCode() + "\"");
+						}
+					},
+					getGraphQLFields())),
+			"JSONArray/errors");
+
+		Assert.assertTrue(errorsJSONArray1.length() > 0);
+
+		// Using the namespace headlessObject_v1_0
+
+		ObjectEntryFolder objectEntryFolder2 =
+			testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode_addObjectEntryFolder();
+
+		Assert.assertTrue(
+			JSONUtil.getValueAsBoolean(
+				invokeGraphQLMutation(
+					new GraphQLField(
+						"headlessObject_v1_0",
+						new GraphQLField(
+							"deleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode",
+							new HashMap<String, Object>() {
+								{
+									put(
+										"scopeKey",
+										"\"" +
+											testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
+												objectEntryFolder2) + "\"");
+									put(
+										"externalReferenceCode",
+										"\"" +
+											objectEntryFolder2.
+												getExternalReferenceCode() +
+													"\"");
+								}
+							}))),
+				"JSONObject/data", "JSONObject/headlessObject_v1_0",
+				"Object/deleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode"));
+
+		JSONArray errorsJSONArray2 = JSONUtil.getValueAsJSONArray(
+			invokeGraphQLQuery(
+				new GraphQLField(
+					"headlessObject_v1_0",
+					new GraphQLField(
+						"scopeScopeKeyObjectEntryFolderByExternalReferenceCode",
+						new HashMap<String, Object>() {
+							{
+								put(
+									"scopeKey",
+									"\"" +
+										testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
+											objectEntryFolder2) + "\"");
+								put(
+									"externalReferenceCode",
+									"\"" +
+										objectEntryFolder2.
+											getExternalReferenceCode() + "\"");
+							}
+						},
+						getGraphQLFields()))),
+			"JSONArray/errors");
+
+		Assert.assertTrue(errorsJSONArray2.length() > 0);
+	}
+
+	protected String
+			testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode_getScopeKey(
+				ObjectEntryFolder objectEntryFolder)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected ObjectEntryFolder
+			testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCode_addObjectEntryFolder()
+		throws Exception {
+
+		return testGraphQLObjectEntryFolder_addObjectEntryFolder();
 	}
 
 	@Test
@@ -2121,8 +2247,24 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("scopeId", additionalAssertFieldName)) {
+				if (objectEntryFolder.getScopeId() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("scopeKey", additionalAssertFieldName)) {
 				if (objectEntryFolder.getScopeKey() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("status", additionalAssertFieldName)) {
+				if (objectEntryFolder.getStatus() == null) {
 					valid = false;
 				}
 
@@ -2203,6 +2345,10 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 
 	protected List<GraphQLField> getGraphQLFields() throws Exception {
 		List<GraphQLField> graphQLFields = new ArrayList<>();
+
+		graphQLFields.add(new GraphQLField("externalReferenceCode"));
+
+		graphQLFields.add(new GraphQLField("id"));
 
 		for (java.lang.reflect.Field field :
 				getDeclaredFields(
@@ -2469,10 +2615,32 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("scopeId", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						objectEntryFolder1.getScopeId(),
+						objectEntryFolder2.getScopeId())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("scopeKey", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						objectEntryFolder1.getScopeKey(),
 						objectEntryFolder2.getScopeKey())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("status", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						objectEntryFolder1.getStatus(),
+						objectEntryFolder2.getStatus())) {
 
 					return false;
 				}
@@ -2940,6 +3108,11 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("scopeId")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("scopeKey")) {
 			Object object = objectEntryFolder.getScopeKey();
 
@@ -2984,6 +3157,11 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 			}
 
 			return sb.toString();
+		}
+
+		if (entityFieldName.equals("status")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
 		}
 
 		if (entityFieldName.equals("title")) {
@@ -3096,6 +3274,7 @@ public abstract class BaseObjectEntryFolderResourceTestCase {
 					StringUtil.toLowerCase(RandomTestUtil.randomString());
 				parentObjectEntryFolderId = RandomTestUtil.randomLong();
 				removedDate = RandomTestUtil.nextDate();
+				scopeId = RandomTestUtil.randomLong();
 				scopeKey = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				title = StringUtil.toLowerCase(RandomTestUtil.randomString());

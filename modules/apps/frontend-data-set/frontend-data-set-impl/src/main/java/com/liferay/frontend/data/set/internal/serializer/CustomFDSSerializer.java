@@ -50,10 +50,10 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
@@ -109,7 +109,8 @@ public class CustomFDSSerializer
 
 	@Override
 	public String serializeAdditionalAPIURLParameters(
-		String fdsName, HttpServletRequest httpServletRequest) {
+		String fdsName, HttpServletRequest httpServletRequest,
+		boolean interpolate, JSONObject tokenResolutionsJSONObject) {
 
 		Map<String, Object> properties = getDataSetObjectEntryProperties(
 			fdsName, httpServletRequest);
@@ -121,12 +122,17 @@ public class CustomFDSSerializer
 			String.valueOf(properties.get("restSchema"))
 		).addQueryString(
 			String.valueOf(properties.get("additionalAPIURLParameters"))
-		).buildQueryString();
+		).setTokenResolutions(
+			tokenResolutionsJSONObject
+		).buildQueryString(
+			interpolate
+		);
 	}
 
 	@Override
 	public String serializeAPIURL(
-		String fdsName, HttpServletRequest httpServletRequest) {
+		String fdsName, HttpServletRequest httpServletRequest,
+		boolean interpolate, JSONObject tokenResolutionsJSONObject) {
 
 		Map<String, Object> properties = getDataSetObjectEntryProperties(
 			fdsName, httpServletRequest);
@@ -135,14 +141,17 @@ public class CustomFDSSerializer
 			httpServletRequest,
 			String.valueOf(properties.get("restApplication")),
 			String.valueOf(properties.get("restEndpoint")),
-			String.valueOf(properties.get("restSchema")));
+			String.valueOf(properties.get("restSchema"))
+		).setTokenResolutions(
+			tokenResolutionsJSONObject
+		);
 
 		List<ObjectEntry> objectEntries = getSortedRelatedObjectEntries(
 			fdsName, httpServletRequest, (Predicate)null, "tableSectionsOrder",
 			"dataSetToDataSetTableSections");
 
 		if (objectEntries == null) {
-			return fdsAPIURLBuilder.build();
+			return fdsAPIURLBuilder.build(interpolate);
 		}
 
 		String nestedFields = StringPool.BLANK;
@@ -170,7 +179,7 @@ public class CustomFDSSerializer
 		}
 
 		if (nestedFields.equals(StringPool.BLANK)) {
-			return fdsAPIURLBuilder.build();
+			return fdsAPIURLBuilder.build(interpolate);
 		}
 
 		fdsAPIURLBuilder.addParameter(
@@ -183,7 +192,7 @@ public class CustomFDSSerializer
 				"nestedFieldsDepth", String.valueOf(nestedFieldsDepth));
 		}
 
-		return fdsAPIURLBuilder.build();
+		return fdsAPIURLBuilder.build(interpolate);
 	}
 
 	@Override

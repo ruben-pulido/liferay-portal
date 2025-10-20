@@ -282,6 +282,9 @@ public interface DepotEntryLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getDepotEntriesCount();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDepotEntriesCount(long companyId, int type);
+
 	/**
 	 * Returns the depot entry with the primary key.
 	 *
@@ -303,6 +306,9 @@ public interface DepotEntryLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DepotEntry getDepotEntryByUuidAndGroupId(String uuid, long groupId)
 		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Long> getDepotEntryGroupIds(long companyId, int type);
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x)

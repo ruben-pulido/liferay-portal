@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.odata.entity.EntityField;
@@ -52,7 +53,6 @@ import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.portal.util.PropsValues;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -63,6 +63,7 @@ import java.util.Objects;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,7 +71,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Javier Gamarra
  */
-@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 public class TaxonomyCategoryResourceTest
 	extends BaseTaxonomyCategoryResourceTestCase {
@@ -203,6 +203,42 @@ public class TaxonomyCategoryResourceTest
 		}
 	}
 
+	@Ignore
+	@Override
+	@Test
+	public void testGraphQLDeleteTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode()
+		throws Exception {
+
+		super.
+			testGraphQLDeleteTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode();
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testGraphQLGetTaxonomyCategoriesRankedPage() throws Exception {
+		super.testGraphQLGetTaxonomyCategoriesRankedPage();
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testGraphQLGetTaxonomyCategoryTaxonomyCategoriesPage()
+		throws Exception {
+
+		super.testGraphQLGetTaxonomyCategoryTaxonomyCategoriesPage();
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testGraphQLGetTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode()
+		throws Exception {
+
+		super.
+			testGraphQLGetTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode();
+	}
+
 	@Override
 	@Test
 	public void testGraphQLPostSiteTaxonomyCategory() throws Exception {
@@ -230,10 +266,19 @@ public class TaxonomyCategoryResourceTest
 			});
 
 		TaxonomyCategory taxonomyCategory =
-			testGraphQLTaxonomyCategory_addTaxonomyCategory(
-				randomTaxonomyCategory);
+			testGraphQLSiteTaxonomyCategory_addTaxonomyCategory(
+				testGroup.getGroupId(), randomTaxonomyCategory);
 
 		Assert.assertTrue(equals(randomTaxonomyCategory, taxonomyCategory));
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testGraphQLPostTaxonomyVocabularyTaxonomyCategory()
+		throws Exception {
+
+		super.testGraphQLPostTaxonomyVocabularyTaxonomyCategory();
 	}
 
 	@Override
@@ -259,7 +304,7 @@ public class TaxonomyCategoryResourceTest
 			_addTaxonomyCategoryWithParentAssetVocabulary(assetVocabulary2));
 	}
 
-	@FeatureFlag("LPD-47858")
+	@FeatureFlag("LPD-35914")
 	@LazyReferencing
 	@Override
 	@Test
@@ -270,7 +315,7 @@ public class TaxonomyCategoryResourceTest
 		_testPostAssetLibraryTaxonomyCategoryBatch("UPSERT");
 	}
 
-	@FeatureFlag("LPD-47858")
+	@FeatureFlag("LPD-35914")
 	@LazyReferencing
 	@Override
 	@Test
@@ -279,6 +324,32 @@ public class TaxonomyCategoryResourceTest
 
 		_testPostSiteTaxonomyCategoryBatch("INSERT");
 		_testPostSiteTaxonomyCategoryBatch("UPSERT");
+	}
+
+	@Override
+	@Test
+	public void testPostTaxonomyVocabularyTaxonomyCategory() throws Exception {
+		super.testPostTaxonomyVocabularyTaxonomyCategory();
+
+		TaxonomyCategory randomTaxonomyCategory = randomTaxonomyCategory();
+
+		TaxonomyCategory parentTaxonomyCategory =
+			testGetSiteTaxonomyCategoryByExternalReferenceCode_addTaxonomyCategory();
+
+		randomTaxonomyCategory.setParentTaxonomyCategory(
+			new ParentTaxonomyCategory() {
+				{
+					externalReferenceCode =
+						parentTaxonomyCategory.getExternalReferenceCode();
+					id = Long.valueOf(parentTaxonomyCategory.getId());
+				}
+			});
+
+		TaxonomyCategory postTaxonomyCategory =
+			testPostTaxonomyVocabularyTaxonomyCategory_addTaxonomyCategory(
+				randomTaxonomyCategory);
+
+		Assert.assertTrue(equals(randomTaxonomyCategory, postTaxonomyCategory));
 	}
 
 	@Override
@@ -421,15 +492,6 @@ public class TaxonomyCategoryResourceTest
 		testGraphQLGetAssetLibraryTaxonomyCategoryByExternalReferenceCode_getAssetLibraryId() {
 
 		return testDepotEntry.getGroupId();
-	}
-
-	@Override
-	protected Long
-			testGraphQLGetTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_getTaxonomyVocabularyId(
-				TaxonomyCategory taxonomyCategory)
-		throws Exception {
-
-		return taxonomyCategory.getTaxonomyVocabularyId();
 	}
 
 	@Override
@@ -1005,6 +1067,19 @@ public class TaxonomyCategoryResourceTest
 				TaxonomyCategory taxonomyCategory,
 				TaxonomyVocabulary randomTaxonomyVocabulary)
 		throws Exception {
+
+		assertHttpResponseStatusCode(
+			200,
+			taxonomyCategoryResource.patchTaxonomyCategoryHttpResponse(
+				taxonomyCategory.getId(),
+				new TaxonomyCategory() {
+					{
+						taxonomyVocabularyId = randomTaxonomyVocabulary.getId();
+					}
+				}));
+
+		taxonomyCategoryResource.deleteTaxonomyCategory(
+			taxonomyCategory.getId());
 
 		assertHttpResponseStatusCode(
 			404,

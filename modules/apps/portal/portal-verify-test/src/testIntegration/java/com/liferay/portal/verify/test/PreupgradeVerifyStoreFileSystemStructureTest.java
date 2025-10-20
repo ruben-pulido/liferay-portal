@@ -6,6 +6,7 @@
 package com.liferay.portal.verify.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -21,12 +22,12 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LogEntry;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.verify.PreupgradeVerifyStoreFileSystemStructure;
 import com.liferay.portal.verify.VerifyProcess;
 import com.liferay.portal.verify.test.util.BaseVerifyProcessTestCase;
@@ -37,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -216,6 +218,14 @@ public class PreupgradeVerifyStoreFileSystemStructureTest
 		_mkdirs(
 			_ROOT_DIR_FILE_SYSTEM_STORE, _companyId, _repositoryId, "100",
 			"1.0");
+
+		_testVerify(false, null, null);
+
+		_touch(
+			_mkdirs(
+				_ROOT_DIR_FILE_SYSTEM_STORE, _companyId, _repositoryId, "100"),
+			DLFileEntryConstants.PRIVATE_WORKING_COPY_VERSION +
+				StringPool.TILDE + String.valueOf(UUID.randomUUID()));
 
 		_testVerify(false, null, null);
 	}

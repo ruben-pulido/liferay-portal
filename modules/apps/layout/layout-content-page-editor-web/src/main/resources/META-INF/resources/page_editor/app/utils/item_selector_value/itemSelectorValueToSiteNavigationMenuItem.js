@@ -11,7 +11,9 @@ export default function itemSelectorValueToSiteNavigationMenuItem(
 		parentSiteNavigationMenuItemId,
 		privateLayout,
 		returnType,
+		siteNavigationMenuExternalReferenceCode,
 		siteNavigationMenuId,
+		siteNavigationMenuScopeExternalReferenceCode,
 		title,
 	} = siteNavigationMenuItem;
 
@@ -19,7 +21,9 @@ export default function itemSelectorValueToSiteNavigationMenuItem(
 		contextualMenu,
 		parentSiteNavigationMenuItemId,
 		privateLayout,
+		siteNavigationMenuExternalReferenceCode,
 		siteNavigationMenuId,
+		siteNavigationMenuScopeExternalReferenceCode,
 		title,
 		type: returnType,
 	};

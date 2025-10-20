@@ -66,14 +66,17 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
@@ -227,15 +230,6 @@ public class DisplayPageTemplateResourceTest
 
 		_testGetSiteDisplayPageTemplate(displayPageTemplate);
 		_testGetSiteDisplayPageTemplateWithNestedFields(displayPageTemplate);
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGetSiteDisplayPageTemplatePermissionsPage()
-		throws Exception {
-
-		super.testGetSiteDisplayPageTemplatePermissionsPage();
 	}
 
 	@Override
@@ -491,15 +485,6 @@ public class DisplayPageTemplateResourceTest
 				displayPageTemplate));
 	}
 
-	@Ignore
-	@Override
-	@Test
-	public void testPutSiteDisplayPageTemplatePermissionsPage()
-		throws Exception {
-
-		super.testPutSiteDisplayPageTemplatePermissionsPage();
-	}
-
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {
@@ -565,17 +550,6 @@ public class DisplayPageTemplateResourceTest
 			irrelevantGroup.getGroupId());
 	}
 
-	@Ignore
-	@Override
-	@Test
-	protected DisplayPageTemplate
-			testGetSiteDisplayPageTemplatePermissionsPage_addDisplayPageTemplate()
-		throws Exception {
-
-		return super.
-			testGetSiteDisplayPageTemplatePermissionsPage_addDisplayPageTemplate();
-	}
-
 	@Override
 	protected DisplayPageTemplate
 			testGetSiteDisplayPageTemplatesPage_addDisplayPageTemplate(
@@ -603,17 +577,6 @@ public class DisplayPageTemplateResourceTest
 
 		return testGetSiteDisplayPageTemplatesPage_addDisplayPageTemplate(
 			testGroup.getExternalReferenceCode(), displayPageTemplate);
-	}
-
-	@Ignore
-	@Override
-	@Test
-	protected DisplayPageTemplate
-			testPutSiteDisplayPageTemplatePermissionsPage_addDisplayPageTemplate()
-		throws Exception {
-
-		return super.
-			testPutSiteDisplayPageTemplatePermissionsPage_addDisplayPageTemplate();
 	}
 
 	private static com.liferay.headless.admin.site.dto.v1_0.DisplayPageTemplate
@@ -1336,10 +1299,33 @@ public class DisplayPageTemplateResourceTest
 		DisplayPageTemplateResource displayPageTemplateResource =
 			_getDisplayPageTemplateResource();
 
-		_assertPageSpecifications(
-			displayPageTemplateResource.postSiteDisplayPageTemplate(
-				testGroup.getExternalReferenceCode(), displayPageTemplate),
-			draftContentPageSpecification, publishedContentPageSpecification);
+		try (LogCapture logCapture1 = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.client.extension.type.internal.manager." +
+					"CETManagerImpl",
+				LoggerTestUtil.WARN);
+			LogCapture logCapture2 = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.headless.admin.site.internal.util.LogUtil",
+				LoggerTestUtil.WARN)) {
+
+			_assertPageSpecifications(
+				displayPageTemplateResource.postSiteDisplayPageTemplate(
+					testGroup.getExternalReferenceCode(), displayPageTemplate),
+				draftContentPageSpecification,
+				publishedContentPageSpecification);
+
+			List<LogEntry> logEntries = logCapture2.getLogEntries();
+
+			Assert.assertEquals(logEntries.toString(), 4, logEntries.size());
+
+			for (LogEntry logEntry : logEntries) {
+				String message = logEntry.getMessage();
+
+				Assert.assertTrue(
+					message,
+					message.startsWith(
+						"Optional reference generated for missing"));
+			}
+		}
 	}
 
 	private void _testPostSiteDisplayPageTemplateWithParentFolder()

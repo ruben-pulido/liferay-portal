@@ -6,6 +6,7 @@
 package com.liferay.portlet.tck.bridge;
 
 import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.cookies.CookiesManager;
 import com.liferay.portal.kernel.cookies.constants.CookiesConstants;
@@ -26,11 +27,11 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.InitialRequestSyncUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.tck.bridge.configuration.PortletTCKBridgeConfiguration;
 
 import java.io.File;
@@ -124,9 +125,9 @@ public class PortletTCKBridge {
 			LocaleUtil.US, _TCK_SITE_GROUP_NAME);
 
 		Group group = _groupLocalService.addGroup(
-			userId, GroupConstants.DEFAULT_PARENT_GROUP_ID, null, 0L,
-			GroupConstants.DEFAULT_LIVE_GROUP_ID, nameMap, nameMap,
-			GroupConstants.TYPE_SITE_OPEN, false,
+			StringPool.BLANK, userId, GroupConstants.DEFAULT_PARENT_GROUP_ID,
+			null, 0L, GroupConstants.DEFAULT_LIVE_GROUP_ID, nameMap, nameMap,
+			GroupConstants.TYPE_SITE_OPEN, null, false,
 			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, "/portlet-tck", true,
 			false, true, new ServiceContext());
 

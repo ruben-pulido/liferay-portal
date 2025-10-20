@@ -18,6 +18,7 @@ import com.liferay.object.model.ObjectFolder;
 import com.liferay.object.rest.filter.factory.FilterFactory;
 import com.liferay.object.service.ObjectFolderLocalService;
 import com.liferay.petra.sql.dsl.expression.Predicate;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -104,6 +105,7 @@ public class CMSDefaultPermissionUtilTest {
 				continue;
 			}
 
+			_deleteFile(bundle, "00.list.type.definition");
 			_deleteFile(bundle, "01.object.folder");
 			_deleteFile(bundle, "02.object.definition");
 
@@ -126,14 +128,17 @@ public class CMSDefaultPermissionUtilTest {
 				TestPropsValues.getUserId(), externalReferenceCode,
 				_depotEntry.getModelClassName(),
 				JSONUtil.put(
-					"L_BASIC_WEB_CONTENT", JSONUtil.putAll(ActionKeys.VIEW)));
+					"L_CMS_BASIC_WEB_CONTENT",
+					JSONUtil.putAll(ActionKeys.VIEW)),
+				group.getGroupId(), StringPool.BLANK);
 
 		Map<String, Serializable> values = objectEntry1.getValues();
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			String.valueOf(values.getOrDefault("defaultPermissions", "{}")));
 
-		JSONArray jsonArray = jsonObject.getJSONArray("L_BASIC_WEB_CONTENT");
+		JSONArray jsonArray = jsonObject.getJSONArray(
+			"L_CMS_BASIC_WEB_CONTENT");
 
 		Assert.assertEquals(ActionKeys.VIEW, jsonArray.getString(0));
 		Assert.assertEquals(1, jsonArray.length());
@@ -144,8 +149,9 @@ public class CMSDefaultPermissionUtilTest {
 				TestPropsValues.getUserId(), externalReferenceCode,
 				_depotEntry.getModelClassName(),
 				JSONUtil.put(
-					"L_BASIC_WEB_CONTENT",
-					JSONUtil.putAll(ActionKeys.UPDATE, ActionKeys.VIEW)));
+					"L_CMS_BASIC_WEB_CONTENT",
+					JSONUtil.putAll(ActionKeys.UPDATE, ActionKeys.VIEW)),
+				group.getGroupId(), StringPool.BLANK);
 
 		Assert.assertEquals(
 			objectEntry1.getObjectEntryId(), objectEntry2.getObjectEntryId());
@@ -155,7 +161,7 @@ public class CMSDefaultPermissionUtilTest {
 		jsonObject = JSONFactoryUtil.createJSONObject(
 			String.valueOf(values.getOrDefault("defaultPermissions", "{}")));
 
-		jsonArray = jsonObject.getJSONArray("L_BASIC_WEB_CONTENT");
+		jsonArray = jsonObject.getJSONArray("L_CMS_BASIC_WEB_CONTENT");
 
 		Assert.assertEquals(ActionKeys.UPDATE, jsonArray.getString(0));
 		Assert.assertEquals(ActionKeys.VIEW, jsonArray.getString(1));
@@ -180,8 +186,9 @@ public class CMSDefaultPermissionUtilTest {
 			TestPropsValues.getUserId(), externalReferenceCode,
 			_depotEntry.getModelClassName(),
 			JSONUtil.put(
-				"L_BASIC_WEB_CONTENT",
-				JSONUtil.putAll(ActionKeys.UPDATE, ActionKeys.VIEW)));
+				"L_CMS_BASIC_WEB_CONTENT",
+				JSONUtil.putAll(ActionKeys.UPDATE, ActionKeys.VIEW)),
+			group.getGroupId(), StringPool.BLANK);
 
 		Assert.assertNotNull(
 			CMSDefaultPermissionUtil.fetchObjectEntry(
@@ -200,15 +207,17 @@ public class CMSDefaultPermissionUtilTest {
 			TestPropsValues.getUserId(), externalReferenceCode,
 			_depotEntry.getModelClassName(),
 			JSONUtil.put(
-				"L_BASIC_WEB_CONTENT",
-				JSONUtil.putAll(ActionKeys.UPDATE, ActionKeys.VIEW)));
+				"L_CMS_BASIC_WEB_CONTENT",
+				JSONUtil.putAll(ActionKeys.UPDATE, ActionKeys.VIEW)),
+			group.getGroupId(), StringPool.BLANK);
 
 		JSONObject jsonObject = CMSDefaultPermissionUtil.getJSONObject(
 			group.getCompanyId(), TestPropsValues.getUserId(),
 			externalReferenceCode, _depotEntry.getModelClassName(),
 			_filterFactory);
 
-		JSONArray jsonArray = jsonObject.getJSONArray("L_BASIC_WEB_CONTENT");
+		JSONArray jsonArray = jsonObject.getJSONArray(
+			"L_CMS_BASIC_WEB_CONTENT");
 
 		Assert.assertEquals(ActionKeys.UPDATE, jsonArray.getString(0));
 		Assert.assertEquals(ActionKeys.VIEW, jsonArray.getString(1));

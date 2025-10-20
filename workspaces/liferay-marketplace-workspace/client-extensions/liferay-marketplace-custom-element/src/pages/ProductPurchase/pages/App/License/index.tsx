@@ -5,8 +5,7 @@
 
 import ClayIcon from '@clayui/icon';
 import {useSelector} from '@xstate/store/react';
-import {useEffect, useMemo} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useMemo} from 'react';
 
 import CardButton from '../../../../../components/CardButton/CardButton';
 import ProductPurchase from '../../../../../components/ProductPurchase';
@@ -23,15 +22,21 @@ import PaidLicense from './PaidLicense';
 import TrialLicense from './TrialLicense';
 
 import '../../../../GetApp/styles/index.scss';
+import {cartStore} from '../../../store/CartStore';
 
 const isContinueButtonDisabled = () => {
 	const snapshot = productPurchaseStore.getSnapshot();
+	const cartSnaptshot = cartStore.getSnapshot();
 
 	if (snapshot.context.licenseType === null) {
 		return true;
 	}
 
-	if (snapshot.context.licenseType === 'PAID') {
+	if (
+		cartSnaptshot.context.cart.id &&
+		cartSnaptshot.context.cartItems.length &&
+		snapshot.context.licenseType === 'PAID'
+	) {
 		return false;
 	}
 
@@ -39,9 +44,7 @@ const isContinueButtonDisabled = () => {
 };
 
 const License = () => {
-	const {product, selectedAccount} = useProductPurchaseOutletContext();
-
-	const navigate = useNavigate();
+	const {product, productPurchaseCart} = useProductPurchaseOutletContext();
 
 	const {
 		actions: {nextStep, previousStep},
@@ -72,14 +75,6 @@ const License = () => {
 	);
 
 	const Component = licenseType === 'PAID' ? PaidLicense : TrialLicense;
-
-	useEffect(() => {
-		if (!selectedAccount) {
-			navigate('/', {replace: true});
-		}
-	}, [navigate, selectedAccount]);
-
-	const {productPurchaseCart} = useProductPurchaseOutletContext();
 
 	return (
 		<ProductPurchase.Shell

@@ -4,6 +4,7 @@
  */
 
 export interface Action {
+	guestUnsupported?: boolean;
 	key: string;
 	label: string;
 }
@@ -21,6 +22,22 @@ export interface AssetType {
 	label: string;
 }
 
+export interface BulkDefaultPermissionModalContentProps {
+	actions: ActionsMap;
+	className: string;
+	closeModal: () => void;
+	roles: Role[];
+	selectedData: any;
+}
+
+export interface BulkPermissionModalContentProps {
+	actions: ActionsMap;
+	className: string;
+	closeModal: () => void;
+	roles: Role[];
+	selectedData: any;
+}
+
 export interface CheckedRoleActions {
 	[key: string]: boolean;
 }
@@ -29,8 +46,10 @@ export interface CMSDefaultPermissionObjectEntryDTO {
 	classExternalReferenceCode: string;
 	className: string;
 	defaultPermissions: string;
+	depotGroupId: number;
 	externalReferenceCode: string;
 	id: number;
+	treePath: string;
 }
 
 export enum DefaultAssetTypes {
@@ -42,6 +61,7 @@ export enum DefaultAssetTypes {
 export interface DefaultPermissionFormContainerProps {
 	actions: ActionsMap;
 	disabled?: boolean;
+	infoBoxMessage?: string;
 	onChange?: (data: AssetRoleSelectedActions) => void;
 	roles: Role[];
 	types?: AssetType[];
@@ -51,6 +71,7 @@ export interface DefaultPermissionFormContainerProps {
 export interface DefaultPermissionFormProps {
 	actions: Action[];
 	disabled?: boolean;
+	infoBoxMessage?: string;
 	onChange?: (data: CheckedRoleActions) => void;
 	roles: Role[];
 	values?: RoleSelectedActions;
@@ -58,6 +79,7 @@ export interface DefaultPermissionFormProps {
 
 export interface DefaultPermissionModalContentProps {
 	actions: ActionsMap;
+	allowPropagate?: boolean;
 	classExternalReferenceCode: string;
 	className: string;
 	closeModal: () => void;
@@ -65,6 +87,7 @@ export interface DefaultPermissionModalContentProps {
 }
 
 export interface Role {
+	actions?: string[];
 	key: string;
 	name: string;
 	type: string;
@@ -72,4 +95,12 @@ export interface Role {
 
 export interface RoleSelectedActions {
 	[key: string]: string[];
+}
+
+export interface SpacesBulkPermissionModalContentProps {
+	actions: Action[];
+	className: string;
+	closeModal: () => void;
+	roles: Role[];
+	selectedData: any;
 }

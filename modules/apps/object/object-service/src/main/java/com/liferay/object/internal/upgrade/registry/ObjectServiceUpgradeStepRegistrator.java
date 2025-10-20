@@ -38,7 +38,6 @@ import com.liferay.object.internal.upgrade.v3_27_0.ObjectActionUpgradeProcess;
 import com.liferay.object.internal.upgrade.v3_3_0.util.ObjectViewFilterColumnTable;
 import com.liferay.object.internal.upgrade.v3_9_0.ObjectLayoutBoxUpgradeProcess;
 import com.liferay.object.internal.upgrade.v6_0_0.util.ObjectValidationRuleSettingTable;
-import com.liferay.object.internal.upgrade.v8_8_2.SchemaUpgradeProcess;
 import com.liferay.object.internal.upgrade.v9_0_1.ObjectFolderUpgradeProcess;
 import com.liferay.object.model.impl.ObjectFieldSettingModelImpl;
 import com.liferay.object.system.SystemObjectDefinitionManagerRegistry;
@@ -167,11 +166,8 @@ public class ObjectServiceUpgradeStepRegistrator
 			new BaseExternalReferenceCodeUpgradeProcess() {
 
 				@Override
-				protected String[][] getTableAndPrimaryKeyColumnNames() {
-					return new String[][] {
-						{"ObjectEntry", "objectEntryId"},
-						{"ObjectField", "objectFieldId"}
-					};
+				protected String[] getTableNames() {
+					return new String[] {"ObjectEntry", "ObjectField"};
 				}
 
 			});
@@ -231,10 +227,8 @@ public class ObjectServiceUpgradeStepRegistrator
 			new BaseExternalReferenceCodeUpgradeProcess() {
 
 				@Override
-				protected String[][] getTableAndPrimaryKeyColumnNames() {
-					return new String[][] {
-						{"ObjectDefinition", "objectDefinitionId"}
-					};
+				protected String[] getTableNames() {
+					return new String[] {"ObjectDefinition"};
 				}
 
 			});
@@ -281,8 +275,8 @@ public class ObjectServiceUpgradeStepRegistrator
 			new BaseExternalReferenceCodeUpgradeProcess() {
 
 				@Override
-				protected String[][] getTableAndPrimaryKeyColumnNames() {
-					return new String[][] {{"ObjectAction", "objectActionId"}};
+				protected String[] getTableNames() {
+					return new String[] {"ObjectAction"};
 				}
 
 			});
@@ -395,10 +389,8 @@ public class ObjectServiceUpgradeStepRegistrator
 			new BaseExternalReferenceCodeUpgradeProcess() {
 
 				@Override
-				protected String[][] getTableAndPrimaryKeyColumnNames() {
-					return new String[][] {
-						{"ObjectValidationRule", "objectValidationRuleId"}
-					};
+				protected String[] getTableNames() {
+					return new String[] {"ObjectValidationRule"};
 				}
 
 			});
@@ -426,10 +418,8 @@ public class ObjectServiceUpgradeStepRegistrator
 			new BaseExternalReferenceCodeUpgradeProcess() {
 
 				@Override
-				protected String[][] getTableAndPrimaryKeyColumnNames() {
-					return new String[][] {
-						{"ObjectRelationship", "objectRelationshipId"}
-					};
+				protected String[] getTableNames() {
+					return new String[] {"ObjectRelationship"};
 				}
 
 			});
@@ -443,7 +433,10 @@ public class ObjectServiceUpgradeStepRegistrator
 						NAME_OBJECT_DEFINITION_1_SHORT_NAME,
 					"' where name = 'ObjectDefinition1ShortName'")));
 
-		registry.register("8.8.1", "8.8.2", new SchemaUpgradeProcess());
+		registry.register(
+			"8.8.1", "8.8.2",
+			new com.liferay.object.internal.upgrade.v8_8_2.
+				SchemaUpgradeProcess());
 
 		registry.register("8.8.2", "8.8.3", new DummyUpgradeStep());
 
@@ -658,6 +651,16 @@ public class ObjectServiceUpgradeStepRegistrator
 			"10.22.1", "10.23.0",
 			new ObjectEntryFolderPermissionUpgradeProcess(
 				_resourceActionLocalService, _resourcePermissionLocalService));
+
+		registry.register(
+			"10.23.0", "10.24.0",
+			new com.liferay.object.internal.upgrade.v10_24_0.
+				ObjectDefinitionUpgradeProcess());
+
+		registry.register(
+			"10.24.0", "10.25.0",
+			new com.liferay.object.internal.upgrade.v10_25_0.
+				SchemaUpgradeProcess());
 	}
 
 	@Reference

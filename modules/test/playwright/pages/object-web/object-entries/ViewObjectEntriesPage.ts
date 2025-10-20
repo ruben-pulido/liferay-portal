@@ -13,7 +13,6 @@ import {PORTLET_URLS} from '../../../utils/portletUrls';
 import type {SupportedBusinessType} from '../../../tests/object-web/main/utils/generateObjectEntry';
 
 export class ViewObjectEntriesPage {
-	readonly addObjectEntryButton: Locator;
 	readonly backButton: Locator;
 	readonly cancelObjectEntryButton: Locator;
 	readonly dateTimeInput: Locator;
@@ -23,6 +22,7 @@ export class ViewObjectEntriesPage {
 	readonly editObjectEntryForm: Locator;
 	readonly expirationDateInput: Locator;
 	readonly frameSelect: FrameLocator;
+	readonly friendlyUrlInput: Locator;
 	readonly frontendDatasetActions: Locator;
 	readonly frontendDatasetDeleteAction: Locator;
 	readonly frontendDatasetItems: Locator;
@@ -52,9 +52,6 @@ export class ViewObjectEntriesPage {
 	readonly successMessageArabic: Locator;
 
 	constructor(page: Page) {
-		this.addObjectEntryButton = page
-			.getByTestId('fdsCreationActionButton')
-			.first();
 		this.backButton = page.getByTitle('Back');
 		this.cancelObjectEntryButton = page.getByRole('button', {
 			name: 'Cancel',
@@ -77,6 +74,7 @@ export class ViewObjectEntriesPage {
 		this.frameSelect = page
 			.locator('iframe[title="Select"]')
 			.contentFrame();
+		this.friendlyUrlInput = page.locator('[name$="friendlyURL"]');
 		this.frontendDatasetActions = page.getByRole('button', {
 			name: 'Actions',
 		});
@@ -105,7 +103,7 @@ export class ViewObjectEntriesPage {
 		this.schedulePublicationButton = page
 			.getByLabel('Schedule Publication')
 			.getByRole('button', {name: 'Schedule'});
-		this.schedulePublicationCloseButton = page.getByLabel('close');
+		this.schedulePublicationCloseButton = page.getByLabel('Close');
 		this.schedulePublicationOption = page.getByRole('menuitem', {
 			name: 'Schedule Publication',
 		});
@@ -152,10 +150,11 @@ export class ViewObjectEntriesPage {
 		}
 	}
 
-	async clickAddObjectEntry(objectName?: string) {
-		objectName
-			? await this.page.getByLabel('Add ' + objectName).click()
-			: await this.addObjectEntryButton.click();
+	async clickAddObjectEntry(objectDefinitionLabel: string) {
+		await this.page
+			.getByLabel('Add ' + objectDefinitionLabel)
+			.first()
+			.click();
 
 		await this.editObjectEntryForm.waitFor({state: 'visible'});
 	}
@@ -313,7 +312,11 @@ export class ViewObjectEntriesPage {
 		);
 	}
 
-	async fillObjectFields({attachmentFileName, objectEntry, objectFields}) {
+	async fillObjectFields({
+		attachmentFileName = '',
+		objectEntry,
+		objectFields,
+	}) {
 		const objectEntries: {
 			businessType: SupportedBusinessType;
 			entry: string;
@@ -322,6 +325,20 @@ export class ViewObjectEntriesPage {
 
 		for (const objectField of objectFields) {
 			switch (objectField.businessType) {
+				case 'Assignee': {
+					await this.selectDropdownItem(
+						objectField.label['en_US'],
+						objectEntry[objectField.name]
+					);
+
+					objectEntries.push({
+						businessType: objectField.businessType,
+						entry: objectEntry[objectField.name],
+						name: objectField.name,
+					});
+
+					break;
+				}
 				case 'Attachment': {
 					await this.selectFileButton.click();
 

@@ -10,6 +10,8 @@ import com.liferay.exportimport.kernel.lar.PortletDataHandler;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
+import com.liferay.osgi.service.tracker.collections.map.ScopedServiceTrackerMap;
+import com.liferay.osgi.service.tracker.collections.map.ScopedServiceTrackerMapFactory;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
@@ -18,7 +20,6 @@ import com.liferay.portal.kernel.notifications.UserNotificationHandler;
 import com.liferay.portal.kernel.pop.MessageListener;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.ControlPanelEntry;
-import com.liferay.portal.kernel.portlet.FriendlyURLMapperTracker;
 import com.liferay.portal.kernel.portlet.PortletBag;
 import com.liferay.portal.kernel.portlet.PortletConfigurationListener;
 import com.liferay.portal.kernel.portlet.PortletLayoutListener;
@@ -64,14 +65,12 @@ public class PortletBagImpl implements PortletBag {
 	public PortletBagImpl(
 		String portletName, ServletContext servletContext,
 		Portlet portletInstance, String resourceBundleBaseName,
-		FriendlyURLMapperTracker friendlyURLMapperTracker,
 		List<ServiceRegistration<?>> serviceRegistrations) {
 
 		_portletName = portletName;
 		_servletContext = servletContext;
 		_portletInstance = portletInstance;
 		_resourceBundleBaseName = resourceBundleBaseName;
-		_friendlyURLMapperTracker = friendlyURLMapperTracker;
 		_serviceRegistrations = serviceRegistrations;
 
 		_filterString =
@@ -102,9 +101,6 @@ public class PortletBagImpl implements PortletBag {
 		_portletConfigurationListenerSnapshot = new Snapshot<>(
 			PortletBagImpl.class, PortletConfigurationListener.class,
 			_filterString, true);
-		_portletDataHandlerSnapshot = new Snapshot<>(
-			PortletBagImpl.class, PortletDataHandler.class, _filterString,
-			true);
 		_portletLayoutListenerSnapshot = new Snapshot<>(
 			PortletBagImpl.class, PortletLayoutListener.class, _filterString,
 			true);
@@ -126,7 +122,7 @@ public class PortletBagImpl implements PortletBag {
 	public Object clone() {
 		return new PortletBagImpl(
 			getPortletName(), getServletContext(), getPortletInstance(),
-			getResourceBundleBaseName(), getFriendlyURLMapperTracker(), null);
+			getResourceBundleBaseName(), null);
 	}
 
 	@Override
@@ -134,8 +130,6 @@ public class PortletBagImpl implements PortletBag {
 		if (_serviceRegistrations == null) {
 			return;
 		}
-
-		_friendlyURLMapperTracker.close();
 
 		for (ServiceRegistration<?> serviceRegistration :
 				_serviceRegistrations) {
@@ -185,11 +179,6 @@ public class PortletBagImpl implements PortletBag {
 	@Override
 	public List<CustomAttributesDisplay> getCustomAttributesDisplayInstances() {
 		return _getList(CustomAttributesDisplay.class);
-	}
-
-	@Override
-	public FriendlyURLMapperTracker getFriendlyURLMapperTracker() {
-		return _friendlyURLMapperTracker;
 	}
 
 	@Override
@@ -262,8 +251,15 @@ public class PortletBagImpl implements PortletBag {
 	}
 
 	@Override
-	public PortletDataHandler getPortletDataHandlerInstance() {
-		return _portletDataHandlerSnapshot.get();
+	public PortletDataHandler getPortletDataHandlerInstance(long companyId) {
+		PortletDataHandler portletDataHandler = _serviceTrackerMap.getService(
+			companyId, getPortletName());
+
+		if (portletDataHandler != null) {
+			return portletDataHandler;
+		}
+
+		return _serviceTrackerMap.getService(companyId, "ALL");
 	}
 
 	/**
@@ -486,18 +482,18 @@ public class PortletBagImpl implements PortletBag {
 
 	private static final BundleContext _bundleContext =
 		SystemBundleUtil.getBundleContext();
+	private static final ScopedServiceTrackerMap<PortletDataHandler>
+		_serviceTrackerMap;
 
 	private final Snapshot<ConfigurationAction> _configurationActionSnapshot;
 	private final Snapshot<ControlPanelEntry> _controlPanelEntrySnapshot;
 	private final String _filterString;
-	private final FriendlyURLMapperTracker _friendlyURLMapperTracker;
 	private final Snapshot<MessageListener> _messageListenerSnapshot;
 	private final Snapshot<Method> _methodSnapshot;
 	private final Snapshot<OpenSearch> _openSearchSnapshot;
 	private final Snapshot<PermissionPropagator> _permissionPropagatorSnapshot;
 	private final Snapshot<PortletConfigurationListener>
 		_portletConfigurationListenerSnapshot;
-	private final Snapshot<PortletDataHandler> _portletDataHandlerSnapshot;
 	private Portlet _portletInstance;
 	private final Snapshot<PortletLayoutListener>
 		_portletLayoutListenerSnapshot;
@@ -579,6 +575,10 @@ public class PortletBagImpl implements PortletBag {
 			new PermissionPropagatorServiceTrackerCustomizer());
 
 		serviceTracker.open();
+
+		_serviceTrackerMap = ScopedServiceTrackerMapFactory.create(
+			_bundleContext, PortletDataHandler.class, "jakarta.portlet.name",
+			"", () -> null);
 	}
 
 }

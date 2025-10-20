@@ -58,18 +58,6 @@ const test = mergeTests(
 	structureBuilderPagesTest
 );
 
-let structureIds = [];
-
-test.beforeEach(() => {
-	structureIds = [];
-});
-
-test.afterEach(async ({structureBuilderPage}) => {
-	for (const id of structureIds) {
-		await structureBuilderPage.deleteStructure(Number(id));
-	}
-});
-
 test(
 	'Can translate text form fields',
 	{tag: '@LPD-37927'},
@@ -629,7 +617,7 @@ test(
 			trigger: input,
 		});
 
-		const valueInput = page.locator('[name="selectCountry"]');
+		const valueInput = page.locator('[name="ObjectField_selectCountry"]');
 
 		await expect(valueInput).toHaveValue('italy');
 
@@ -663,13 +651,23 @@ test(
 			trigger: page.getByLabel('Select a language, current language:'),
 		});
 
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: page.getByRole('option', {
-				name: 'Germany',
-			}),
-			trigger: page.getByPlaceholder('Choose an Option'),
-		});
+		await expect(async () => {
+			await page
+				.getByPlaceholder('Choose an Option')
+				.click({timeout: 1000});
+
+			await expect(
+				page.getByRole('option', {
+					name: 'Germany',
+				})
+			).toBeVisible({timeout: 1000});
+
+			await page
+				.getByRole('option', {
+					name: 'Germany',
+				})
+				.click({timeout: 1000});
+		}).toPass();
 
 		// Check the translation in the localization select
 
@@ -1040,7 +1038,6 @@ test(
 			name: 'Bananza',
 			page: structureBuilderPage,
 			publish: false,
-			structureIds,
 		});
 
 		// Add two fields of type select and configure one of them to select files from document library
@@ -1082,6 +1079,8 @@ test(
 		const contentTitle = getRandomString();
 
 		await contentsPage.createContent(structureLabel);
+
+		await contentsPage.publishButton.waitFor();
 
 		await contentsPage.fillData([{label: 'Title', value: contentTitle}]);
 
@@ -1175,7 +1174,13 @@ test(
 test(
 	'Can remove a translation and keep its value in the attachment form field',
 	{tag: '@LPD-46482'},
-	async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+	async ({
+		apiHelpers,
+		localizationSelectPage,
+		page,
+		pageEditorPage,
+		pageManagementSite,
+	}) => {
 
 		// Create object definition
 
@@ -1326,15 +1331,7 @@ test(
 
 		// Change the translation to spanish and remove the files
 
-		const trigger = page.getByLabel('Select a language, current language:');
-
-		await trigger.waitFor();
-
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: page.getByRole('option').filter({hasText: 'es-ES'}),
-			trigger,
-		});
+		await localizationSelectPage.switchLanguage('es-ES');
 
 		await firstFileUploadFragment.getByTitle('Remove Item').click();
 
@@ -1350,13 +1347,7 @@ test(
 
 		// Check that the translations are kept properly
 
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: page.getByRole('option', {
-				name: 'English (United States) Language',
-			}),
-			trigger,
-		});
+		await localizationSelectPage.switchLanguage('en-US');
 
 		await expect(
 			firstFileUploadFragment.getByText('file_upload_image_1.jpg')
@@ -1366,11 +1357,7 @@ test(
 			secondFileUploadFragment.getByText('balinese.jpg')
 		).toBeVisible();
 
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: page.getByRole('option').filter({hasText: 'es-ES'}),
-			trigger,
-		});
+		await localizationSelectPage.switchLanguage('es-ES');
 
 		await expect(
 			firstFileUploadFragment.getByText('file_upload_image_1.jpg')
@@ -1380,11 +1367,7 @@ test(
 			secondFileUploadFragment.getByText('balinese.jpg')
 		).not.toBeVisible();
 
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: page.getByRole('option').filter({hasText: 'ca-ES'}),
-			trigger,
-		});
+		await localizationSelectPage.switchLanguage('ca-ES');
 
 		await expect(
 			firstFileUploadFragment.getByText('file_upload_image_1.jpg')
@@ -1399,7 +1382,13 @@ test(
 test(
 	'Translate an upload field to a language and check that the default language is empty',
 	{tag: '@LPD-46482'},
-	async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+	async ({
+		apiHelpers,
+		localizationSelectPage,
+		page,
+		pageEditorPage,
+		pageManagementSite,
+	}) => {
 
 		// Create object definition
 
@@ -1518,15 +1507,7 @@ test(
 
 		// Change the translation to spanish
 
-		const trigger = page.getByLabel('Select a language, current language:');
-
-		await trigger.waitFor();
-
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: page.getByRole('option').filter({hasText: 'es-ES'}),
-			trigger,
-		});
+		await localizationSelectPage.switchLanguage('es-ES');
 
 		// Select file from computer in spanish
 
@@ -1570,13 +1551,7 @@ test(
 
 		// Check that the translations in the default language are empty
 
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: page.getByRole('option', {
-				name: 'English (United States) Language',
-			}),
-			trigger,
-		});
+		await localizationSelectPage.switchLanguage('en-US');
 
 		await expect(
 			firstFileUploadFragment.getByText('file_upload_image_1.jpg')

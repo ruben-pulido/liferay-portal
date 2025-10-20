@@ -15,17 +15,26 @@ export class AssetsPage {
 	readonly page: Page;
 
 	readonly dataSetFragmentPage: DataSetPage;
+	readonly modalDeleteButton: Locator;
 	readonly newButton: Locator;
+	readonly processingTasksButton: Locator;
 	readonly table: {
 		bodyRows: Locator;
 		container: Locator;
+
 		headRow: Locator;
 	};
+	readonly taskStatusButton: (buttonName: string) => Locator;
+	readonly taskStatusDropdownItemButton: (taskName: string) => Locator;
+	readonly taskStatusDropdownList: Locator;
+	readonly taskStatusFormsButton: Locator;
+	readonly viewAllTasksLink: Locator;
 
 	readonly modalContainer: Locator;
 	readonly modal: {
 		body: Locator;
 		container: Locator;
+		footer: Locator;
 		title: Locator;
 	};
 
@@ -33,7 +42,24 @@ export class AssetsPage {
 		this.page = page;
 
 		this.dataSetFragmentPage = new DataSetPage(page);
-		this.newButton = page.getByLabel('New');
+		this.newButton = page.getByTestId('fdsCreationActionButton').first();
+		this.processingTasksButton = page.getByRole('button', {
+			name: /Processing Tasks?/,
+		}) as Locator;
+		this.taskStatusButton = (buttonName: string) => {
+			return page.getByRole('button', {exact: true, name: buttonName});
+		};
+		this.taskStatusDropdownItemButton = (taskName: string) => {
+			return page.getByRole('button', {name: taskName});
+		};
+		this.taskStatusDropdownList = page.locator('ul.task-status');
+		this.taskStatusFormsButton = page
+			.locator('li.tbar-item')
+			.locator('svg.lexicon-icon-forms');
+		this.viewAllTasksLink = page.getByRole('link', {
+			exact: true,
+			name: 'View All Tasks',
+		});
 
 		this.table = this.dataSetFragmentPage.table;
 
@@ -42,14 +68,27 @@ export class AssetsPage {
 		this.modal = {
 			body: modalContainer.locator('.modal-body'),
 			container: modalContainer,
+			footer: modalContainer.locator('.modal-footer'),
 			title: modalContainer.locator('.modal-title'),
 		};
+
+		this.modalDeleteButton = this.modal.footer.getByRole('button', {
+			exact: true,
+			name: 'Delete',
+		});
 	}
 
 	async gotoAll() {
 		await this.page.goto(PORTLET_URLS.cmsAll);
 		await this.page
 			.getByRole('heading', {name: 'All Restricted Page'})
+			.waitFor();
+	}
+
+	async gotoContents() {
+		await this.page.goto(PORTLET_URLS.cmsContents);
+		await this.page
+			.getByRole('heading', {name: 'Contents Restricted Page'})
 			.waitFor();
 	}
 
@@ -80,7 +119,13 @@ export class AssetsPage {
 		action,
 		filter,
 	}: {
-		action: 'Download' | 'Share' | 'Show Details' | 'View';
+		action:
+			| 'Delete'
+			| 'Download'
+			| 'Share'
+			| 'Show Details'
+			| 'View'
+			| 'View History';
 		filter: string;
 	}) {
 		await this.dataSetFragmentPage.execItemAction({
@@ -93,5 +138,15 @@ export class AssetsPage {
 		...args: Parameters<DataSetPage['changeVisualizationMode']>
 	) {
 		await this.dataSetFragmentPage.changeVisualizationMode(...args);
+	}
+
+	async selectItems(titles: string[]) {
+		for (const title of titles) {
+			const card = this.page
+				.locator('tr', {hasText: title})
+				.or(this.page.locator('.card-row', {hasText: title}));
+
+			await card.getByRole('checkbox').check();
+		}
 	}
 }

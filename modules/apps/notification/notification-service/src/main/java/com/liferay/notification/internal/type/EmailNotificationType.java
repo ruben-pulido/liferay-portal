@@ -26,6 +26,7 @@ import com.liferay.notification.internal.type.email.provider.DefaultEmailProvide
 import com.liferay.notification.internal.type.email.provider.EmailProvider;
 import com.liferay.notification.internal.type.email.provider.RoleEmailProvider;
 import com.liferay.notification.internal.type.email.provider.SubscribersEmailProvider;
+import com.liferay.notification.internal.type.email.provider.TermEmailProvider;
 import com.liferay.notification.internal.type.email.provider.UserGroupEmailProvider;
 import com.liferay.notification.model.NotificationQueueEntry;
 import com.liferay.notification.model.NotificationQueueEntryAttachment;
@@ -82,12 +83,12 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.auth.EmailAddressValidatorFactory;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistryUtil;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.display.template.PortletDisplayTemplate;
 import com.liferay.subscription.service.SubscriptionLocalService;
 import com.liferay.template.transformer.TemplateNodeFactory;
@@ -237,14 +238,6 @@ public class EmailNotificationType extends BaseNotificationType {
 
 		NotificationTemplate notificationTemplate =
 			notificationContext.getNotificationTemplate();
-
-		if (Objects.equals(
-				notificationTemplate.getRecipientType(),
-				NotificationRecipientConstants.TYPE_USER_GROUP) &&
-			!FeatureFlagManagerUtil.isEnabled("LPD-50091")) {
-
-			return;
-		}
 
 		long groupId = 0;
 
@@ -507,21 +500,28 @@ public class EmailNotificationType extends BaseNotificationType {
 		_emailProviders.put(
 			NotificationRecipientConstants.TYPE_EMAIL,
 			new DefaultEmailProvider(notificationTermEvaluatorTracker));
+
+		RoleEmailProvider roleEmailProvider = new RoleEmailProvider(
+			_accountEntryLocalService, _accountEntryOrganizationRelLocalService,
+			_accountEntryUserRelLocalService, _groupLocalService,
+			_objectDefinitionLocalService, _objectFieldLocalService,
+			_organizationLocalService, _permissionCheckerFactory,
+			_resourcePermissionLocalService, _roleLocalService,
+			_userGroupRoleLocalService, _userLocalService);
+
 		_emailProviders.put(
-			NotificationRecipientConstants.TYPE_ROLE,
-			new RoleEmailProvider(
-				_accountEntryLocalService,
-				_accountEntryOrganizationRelLocalService,
-				_accountEntryUserRelLocalService, _groupLocalService,
-				_objectDefinitionLocalService, _objectFieldLocalService,
-				_organizationLocalService, _permissionCheckerFactory,
-				_resourcePermissionLocalService, _roleLocalService,
-				_userGroupRoleLocalService, _userLocalService));
+			NotificationRecipientConstants.TYPE_ROLE, roleEmailProvider);
+
 		_emailProviders.put(
 			NotificationRecipientConstants.TYPE_SUBSCRIBERS,
 			new SubscribersEmailProvider(
 				_objectEntryFolderLocalService, _objectEntryLocalService,
 				_subscriptionLocalService, _userLocalService));
+		_emailProviders.put(
+			NotificationRecipientConstants.TYPE_TERM,
+			new TermEmailProvider(
+				notificationTermEvaluatorTracker, _permissionCheckerFactory,
+				roleEmailProvider, _roleLocalService, _userLocalService));
 		_emailProviders.put(
 			NotificationRecipientConstants.TYPE_USER_GROUP,
 			new UserGroupEmailProvider(

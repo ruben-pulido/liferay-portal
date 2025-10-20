@@ -30,8 +30,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "AuditEvent"
 				}
@@ -54,8 +54,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "AuditFieldChange"
 				}
@@ -128,8 +128,8 @@
 					"type"
 				],
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "Collaborator"
 				}
@@ -196,8 +196,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "Creator"
 				}
@@ -215,8 +215,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				]
+				"x-filterable": {
+				}
 			},
 			"FacetValue": {
 				"properties": {
@@ -229,11 +229,15 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				]
+				"x-filterable": {
+				}
 			},
 			"FileEntry": {
 				"properties": {
+					"alternativeText": {
+						"readOnly": true,
+						"type": "string"
+					},
 					"externalReferenceCode": {
 						"type": "string"
 					},
@@ -254,6 +258,15 @@
 					},
 					"link": {
 						"$ref": "#/components/schemas/Link"
+					},
+					"metadata": {
+						"additionalProperties": {
+							"description": "optional field that specifies the metadata of the file, can be embedded with nestedFields (the format of the nested field must be `<attachment field name>.metadata`)",
+							"type": "object"
+						},
+						"description": "optional field that specifies the metadata of the file, can be embedded with nestedFields (the format of the nested field must be `<attachment field name>.metadata`)",
+						"readOnly": true,
+						"type": "object"
 					},
 					"mimeType": {
 						"readOnly": true,
@@ -282,8 +295,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "FileEntry"
 				}
@@ -304,8 +317,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "Folder"
 				}
@@ -325,8 +338,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "Link"
 				}
@@ -567,19 +580,43 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-					"creator",
-					"creatorId",
-					"dateCreated",
-					"dateModified",
-					"externalReferenceCode",
-					"field2",
-					"id",
-					"keywords",
-					"status",
-					"taxonomyCategoryIds",
-					"userId"
-				],
+				"x-filterable": {
+					"creator": {
+						"type": "string"
+					},
+					"creatorId": {
+						"type": "integer"
+					},
+					"dateCreated": {
+						"type": "date_time"
+					},
+					"dateModified": {
+						"type": "date_time"
+					},
+					"externalReferenceCode": {
+						"type": "string"
+					},
+					"field2": {
+						"type": "string"
+					},
+					"id": {
+						"type": "id"
+					},
+					"keywords": {
+						"items": "string",
+						"type": "array"
+					},
+					"status": {
+						"type": "integer"
+					},
+					"taxonomyCategoryIds": {
+						"items": "integer",
+						"type": "array"
+					},
+					"userId": {
+						"type": "integer"
+					}
+				},
 				"xml": {
 					"name": "ObjectEntry"
 				}
@@ -608,8 +645,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "ObjectDefinitionBrief"
 				}
@@ -655,8 +692,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				]
+				"x-filterable": {
+				}
 			},
 			"PageObject1": {
 				"properties": {
@@ -748,8 +785,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				]
+				"x-filterable": {
+				}
 			},
 			"PagePermission": {
 				"properties": {
@@ -860,8 +897,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				]
+				"x-filterable": {
+				}
 			},
 			"ParentTaxonomyCategory": {
 				"properties": {
@@ -876,8 +913,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "ParentTaxonomyCategory"
 				}
@@ -895,8 +932,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "ParentTaxonomyVocabulary"
 				}
@@ -920,8 +957,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "Permission"
 				}
@@ -946,8 +983,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "Scope"
 				}
@@ -974,8 +1011,8 @@
 					"code"
 				],
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "Status"
 				}
@@ -1028,8 +1065,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "TaxonomyCategoryBrief"
 				}
@@ -1055,8 +1092,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "UserGroupBrief"
 				}
@@ -1079,8 +1116,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "ValidationError"
 				}
@@ -1103,8 +1140,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "ValidationRequest"
 				}
@@ -1124,8 +1161,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "ValidationResponse"
 				}
@@ -1144,8 +1181,8 @@
 					}
 				},
 				"type": "object",
-				"x-filterable": [
-				],
+				"x-filterable": {
+				},
 				"xml": {
 					"name": "Version"
 				}
@@ -1263,6 +1300,152 @@
 						}
 					}
 				},
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Object1"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/Object1"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Object1"
+				]
+			}
+		},
+		"/approved": {
+			"get": {
+				"operationId": "getApprovedPage",
+				"parameters": [
+					{
+						"in": "query",
+						"name": "aggregationTerms",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "fields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "filter",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "nestedFields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "pageSize",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "restrictFields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PageObject1"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/PageObject1"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Object1"
+				]
+			}
+		},
+		"/approved/by-external-reference-code/{externalReferenceCode}": {
+			"get": {
+				"operationId": "getApprovedByExternalReferenceCode",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "externalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "fields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "nestedFields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "restrictFields",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"responses": {
 					"default": {
 						"content": {

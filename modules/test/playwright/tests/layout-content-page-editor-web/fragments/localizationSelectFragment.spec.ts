@@ -32,18 +32,6 @@ const test = mergeTests(
 	systemSettingsPageTest
 );
 
-let structureIds = [];
-
-test.beforeEach(() => {
-	structureIds = [];
-});
-
-test.afterEach(async ({structureBuilderPage}) => {
-	for (const id of structureIds) {
-		await structureBuilderPage.deleteStructure(Number(id));
-	}
-});
-
 test(
 	'Can mark a language as translated',
 	{
@@ -66,7 +54,6 @@ test(
 			erc: structureERC,
 			label: structureLabel,
 			page: structureBuilderPage,
-			structureIds,
 		});
 
 		// Add all supported type of fields (Text is already added for Title)
@@ -106,34 +93,15 @@ test(
 			{label: 'Numeric', value: '3'},
 		]);
 
-		// Check localization actions are not present by default
-
-		await localizationSelectPage.switchLanguage('es-ES');
-
-		await expect(page.getByLabel('Localization Actions')).not.toBeVisible();
-
 		// Save the content
 
 		await contentsPage.saveContent();
 
-		// Edit the experience for the structure and enable localization management
+		// Edit the experience for the structure and remove Friendly URL input
 
 		await structureBuilderPage.editStructure(structureERC);
 
 		await structureBuilderPage.customizeExperience();
-
-		const localizationSelectId = await pageEditorPage.getFragmentId(
-			'Localization Select'
-		);
-
-		await pageEditorPage.changeFragmentConfiguration({
-			fieldLabel: 'Allow Localization Management',
-			fragmentId: localizationSelectId,
-			tab: 'General',
-			value: true,
-		});
-
-		// Also remove Friendly URL input
 
 		await pageEditorPage.deleteFragment(
 			await pageEditorPage.getFragmentId('Friendly URL')
@@ -210,7 +178,6 @@ test(
 			erc: structureERC,
 			label: structureLabel,
 			page: structureBuilderPage,
-			structureIds,
 		});
 
 		// Add all supported type of fields (Text is already added for Title)
@@ -383,7 +350,6 @@ test(
 			erc: structureERC,
 			label: structureLabel,
 			page: structureBuilderPage,
-			structureIds,
 		});
 
 		// Add a Long Text field
@@ -471,8 +437,8 @@ test(
 			await route.fulfill({
 				body: JSON.stringify({
 					fields: {
-						longtext: 'Naranja',
-						title: 'Naranja',
+						ObjectField_longtext: 'Naranja',
+						ObjectField_title: 'Naranja',
 					},
 				}),
 				contentType: 'application/json',

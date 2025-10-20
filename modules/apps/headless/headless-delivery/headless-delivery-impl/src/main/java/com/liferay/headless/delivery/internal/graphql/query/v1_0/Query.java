@@ -64,6 +64,8 @@ import com.liferay.headless.delivery.resource.v1_0.WikiPageResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
@@ -1211,7 +1213,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {assetLibraryDocumentByExternalReferenceCode(assetLibraryId: ___, externalReferenceCode: ___){actions, adaptedImages, aggregateRating, assetLibraryKey, contentUrl, contentValue, creator, customFields, dateCreated, dateExpired, dateModified, datePublished, description, documentFolderExternalReferenceCode, documentFolderId, documentType, encodingFormat, externalReferenceCode, fileExtension, fileName, friendlyUrlPath, id, keywords, numberOfComments, relatedContents, renderedContents, siteId, sizeInBytes, taxonomyCategoryBriefs, taxonomyCategoryIds, title, viewableBy}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {assetLibraryDocumentByExternalReferenceCode(assetLibraryId: ___, externalReferenceCode: ___){actions, adaptedImages, aggregateRating, assetLibraryKey, contentUrl, contentValue, creator, customFields, dateCreated, dateExpired, dateModified, datePublished, description, documentFolderExternalReferenceCode, documentFolderId, documentType, encodingFormat, externalReferenceCode, fileExtension, fileName, friendlyUrlPath, id, keywords, numberOfComments, permissions, relatedContents, renderedContents, siteId, sizeInBytes, taxonomyCategoryBriefs, taxonomyCategoryIds, title, viewableBy}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(
 		description = "Retrieves the asset library's document by external reference code."
@@ -1302,7 +1304,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {document(documentId: ___){actions, adaptedImages, aggregateRating, assetLibraryKey, contentUrl, contentValue, creator, customFields, dateCreated, dateExpired, dateModified, datePublished, description, documentFolderExternalReferenceCode, documentFolderId, documentType, encodingFormat, externalReferenceCode, fileExtension, fileName, friendlyUrlPath, id, keywords, numberOfComments, relatedContents, renderedContents, siteId, sizeInBytes, taxonomyCategoryBriefs, taxonomyCategoryIds, title, viewableBy}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {document(documentId: ___){actions, adaptedImages, aggregateRating, assetLibraryKey, contentUrl, contentValue, creator, customFields, dateCreated, dateExpired, dateModified, datePublished, description, documentFolderExternalReferenceCode, documentFolderId, documentType, encodingFormat, externalReferenceCode, fileExtension, fileName, friendlyUrlPath, id, keywords, numberOfComments, permissions, relatedContents, renderedContents, siteId, sizeInBytes, taxonomyCategoryBriefs, taxonomyCategoryIds, title, viewableBy}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(description = "Retrieves the document.")
 	public Document document(@GraphQLName("documentId") Long documentId)
@@ -1406,7 +1408,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {documentByExternalReferenceCode(externalReferenceCode: ___, siteKey: ___){actions, adaptedImages, aggregateRating, assetLibraryKey, contentUrl, contentValue, creator, customFields, dateCreated, dateExpired, dateModified, datePublished, description, documentFolderExternalReferenceCode, documentFolderId, documentType, encodingFormat, externalReferenceCode, fileExtension, fileName, friendlyUrlPath, id, keywords, numberOfComments, relatedContents, renderedContents, siteId, sizeInBytes, taxonomyCategoryBriefs, taxonomyCategoryIds, title, viewableBy}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {documentByExternalReferenceCode(externalReferenceCode: ___, siteKey: ___){actions, adaptedImages, aggregateRating, assetLibraryKey, contentUrl, contentValue, creator, customFields, dateCreated, dateExpired, dateModified, datePublished, description, documentFolderExternalReferenceCode, documentFolderId, documentType, encodingFormat, externalReferenceCode, fileExtension, fileName, friendlyUrlPath, id, keywords, numberOfComments, permissions, relatedContents, renderedContents, siteId, sizeInBytes, taxonomyCategoryBriefs, taxonomyCategoryIds, title, viewableBy}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(
 		description = "Retrieves the site's document by external reference code."
@@ -1667,7 +1669,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {documentFolder(documentFolderId: ___){actions, assetLibraryKey, creator, customFields, dateCreated, dateModified, description, externalReferenceCode, id, name, numberOfDocumentFolders, numberOfDocuments, parentDocumentFolderId, siteId, subscribed, viewableBy}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {documentFolder(documentFolderId: ___){actions, assetLibraryKey, creator, customFields, dateCreated, dateModified, description, externalReferenceCode, id, name, numberOfDocumentFolders, numberOfDocuments, parentDocumentFolderId, permissions, siteId, subscribed, viewableBy}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(description = "Retrieves the document folder.")
 	public DocumentFolder documentFolder(
@@ -1830,7 +1832,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {documentsFolderByExternalReferenceCode(externalReferenceCode: ___, siteKey: ___){actions, assetLibraryKey, creator, customFields, dateCreated, dateModified, description, externalReferenceCode, id, name, numberOfDocumentFolders, numberOfDocuments, parentDocumentFolderId, siteId, subscribed, viewableBy}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {documentsFolderByExternalReferenceCode(externalReferenceCode: ___, siteKey: ___){actions, assetLibraryKey, creator, customFields, dateCreated, dateModified, description, externalReferenceCode, id, name, numberOfDocumentFolders, numberOfDocuments, parentDocumentFolderId, permissions, siteId, subscribed, viewableBy}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(
 		description = "Retrieves the site's document folder by external reference code."
@@ -4898,32 +4900,6 @@ public class Query {
 
 	}
 
-	@GraphQLTypeExtension(DocumentFolder.class)
-	public class GetDocumentFolderPermissionsPageTypeExtension {
-
-		public GetDocumentFolderPermissionsPageTypeExtension(
-			DocumentFolder documentFolder) {
-
-			_documentFolder = documentFolder;
-		}
-
-		@GraphQLField
-		public DocumentFolderPage permissions(
-				@GraphQLName("roleNames") String roleNames)
-			throws Exception {
-
-			return _applyComponentServiceObjects(
-				_documentFolderResourceComponentServiceObjects,
-				Query.this::_populateResourceContext,
-				documentFolderResource -> new DocumentFolderPage(
-					documentFolderResource.getDocumentFolderPermissionsPage(
-						_documentFolder.getId(), roleNames)));
-		}
-
-		private DocumentFolder _documentFolder;
-
-	}
-
 	@GraphQLTypeExtension(KnowledgeBaseFolder.class)
 	public class GetKnowledgeBaseFolderPermissionsPageTypeExtension {
 
@@ -5719,30 +5695,6 @@ public class Query {
 		}
 
 		private MessageBoardThread _messageBoardThread;
-
-	}
-
-	@GraphQLTypeExtension(Document.class)
-	public class GetDocumentPermissionsPageTypeExtension {
-
-		public GetDocumentPermissionsPageTypeExtension(Document document) {
-			_document = document;
-		}
-
-		@GraphQLField
-		public DocumentPage permissions(
-				@GraphQLName("roleNames") String roleNames)
-			throws Exception {
-
-			return _applyComponentServiceObjects(
-				_documentResourceComponentServiceObjects,
-				Query.this::_populateResourceContext,
-				documentResource -> new DocumentPage(
-					documentResource.getDocumentPermissionsPage(
-						_document.getId(), roleNames)));
-		}
-
-		private Document _document;
 
 	}
 
@@ -7070,6 +7022,10 @@ public class Query {
 		blogPostingResource.setContextUriInfo(_uriInfo);
 		blogPostingResource.setContextUser(_user);
 		blogPostingResource.setGroupLocalService(_groupLocalService);
+		blogPostingResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		blogPostingResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		blogPostingResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7086,6 +7042,10 @@ public class Query {
 		blogPostingImageResource.setContextUriInfo(_uriInfo);
 		blogPostingImageResource.setContextUser(_user);
 		blogPostingImageResource.setGroupLocalService(_groupLocalService);
+		blogPostingImageResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		blogPostingImageResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		blogPostingImageResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7099,6 +7059,10 @@ public class Query {
 		commentResource.setContextUriInfo(_uriInfo);
 		commentResource.setContextUser(_user);
 		commentResource.setGroupLocalService(_groupLocalService);
+		commentResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		commentResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		commentResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7115,6 +7079,10 @@ public class Query {
 		contentElementResource.setContextUriInfo(_uriInfo);
 		contentElementResource.setContextUser(_user);
 		contentElementResource.setGroupLocalService(_groupLocalService);
+		contentElementResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		contentElementResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		contentElementResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7131,6 +7099,10 @@ public class Query {
 		contentSetElementResource.setContextUriInfo(_uriInfo);
 		contentSetElementResource.setContextUser(_user);
 		contentSetElementResource.setGroupLocalService(_groupLocalService);
+		contentSetElementResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		contentSetElementResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		contentSetElementResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7147,6 +7119,10 @@ public class Query {
 		contentStructureResource.setContextUriInfo(_uriInfo);
 		contentStructureResource.setContextUser(_user);
 		contentStructureResource.setGroupLocalService(_groupLocalService);
+		contentStructureResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		contentStructureResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		contentStructureResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7163,6 +7139,10 @@ public class Query {
 		contentTemplateResource.setContextUriInfo(_uriInfo);
 		contentTemplateResource.setContextUser(_user);
 		contentTemplateResource.setGroupLocalService(_groupLocalService);
+		contentTemplateResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		contentTemplateResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		contentTemplateResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7176,6 +7156,10 @@ public class Query {
 		documentResource.setContextUriInfo(_uriInfo);
 		documentResource.setContextUser(_user);
 		documentResource.setGroupLocalService(_groupLocalService);
+		documentResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		documentResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		documentResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7195,6 +7179,10 @@ public class Query {
 		documentDataDefinitionTypeResource.setContextUser(_user);
 		documentDataDefinitionTypeResource.setGroupLocalService(
 			_groupLocalService);
+		documentDataDefinitionTypeResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		documentDataDefinitionTypeResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		documentDataDefinitionTypeResource.setRoleLocalService(
 			_roleLocalService);
 	}
@@ -7212,6 +7200,10 @@ public class Query {
 		documentFolderResource.setContextUriInfo(_uriInfo);
 		documentFolderResource.setContextUser(_user);
 		documentFolderResource.setGroupLocalService(_groupLocalService);
+		documentFolderResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		documentFolderResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		documentFolderResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7228,6 +7220,10 @@ public class Query {
 		documentMetadataSetResource.setContextUriInfo(_uriInfo);
 		documentMetadataSetResource.setContextUser(_user);
 		documentMetadataSetResource.setGroupLocalService(_groupLocalService);
+		documentMetadataSetResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		documentMetadataSetResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		documentMetadataSetResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7244,6 +7240,10 @@ public class Query {
 		documentShortcutResource.setContextUriInfo(_uriInfo);
 		documentShortcutResource.setContextUser(_user);
 		documentShortcutResource.setGroupLocalService(_groupLocalService);
+		documentShortcutResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		documentShortcutResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		documentShortcutResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7260,6 +7260,10 @@ public class Query {
 		knowledgeBaseArticleResource.setContextUriInfo(_uriInfo);
 		knowledgeBaseArticleResource.setContextUser(_user);
 		knowledgeBaseArticleResource.setGroupLocalService(_groupLocalService);
+		knowledgeBaseArticleResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		knowledgeBaseArticleResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		knowledgeBaseArticleResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7278,6 +7282,10 @@ public class Query {
 		knowledgeBaseAttachmentResource.setContextUser(_user);
 		knowledgeBaseAttachmentResource.setGroupLocalService(
 			_groupLocalService);
+		knowledgeBaseAttachmentResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		knowledgeBaseAttachmentResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		knowledgeBaseAttachmentResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7294,6 +7302,10 @@ public class Query {
 		knowledgeBaseFolderResource.setContextUriInfo(_uriInfo);
 		knowledgeBaseFolderResource.setContextUser(_user);
 		knowledgeBaseFolderResource.setGroupLocalService(_groupLocalService);
+		knowledgeBaseFolderResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		knowledgeBaseFolderResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		knowledgeBaseFolderResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7307,6 +7319,10 @@ public class Query {
 		languageResource.setContextUriInfo(_uriInfo);
 		languageResource.setContextUser(_user);
 		languageResource.setGroupLocalService(_groupLocalService);
+		languageResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		languageResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		languageResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7324,6 +7340,10 @@ public class Query {
 		messageBoardAttachmentResource.setContextUriInfo(_uriInfo);
 		messageBoardAttachmentResource.setContextUser(_user);
 		messageBoardAttachmentResource.setGroupLocalService(_groupLocalService);
+		messageBoardAttachmentResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		messageBoardAttachmentResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		messageBoardAttachmentResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7340,6 +7360,10 @@ public class Query {
 		messageBoardMessageResource.setContextUriInfo(_uriInfo);
 		messageBoardMessageResource.setContextUser(_user);
 		messageBoardMessageResource.setGroupLocalService(_groupLocalService);
+		messageBoardMessageResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		messageBoardMessageResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		messageBoardMessageResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7356,6 +7380,10 @@ public class Query {
 		messageBoardSectionResource.setContextUriInfo(_uriInfo);
 		messageBoardSectionResource.setContextUser(_user);
 		messageBoardSectionResource.setGroupLocalService(_groupLocalService);
+		messageBoardSectionResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		messageBoardSectionResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		messageBoardSectionResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7372,6 +7400,10 @@ public class Query {
 		messageBoardThreadResource.setContextUriInfo(_uriInfo);
 		messageBoardThreadResource.setContextUser(_user);
 		messageBoardThreadResource.setGroupLocalService(_groupLocalService);
+		messageBoardThreadResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		messageBoardThreadResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		messageBoardThreadResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7388,6 +7420,10 @@ public class Query {
 		navigationMenuResource.setContextUriInfo(_uriInfo);
 		navigationMenuResource.setContextUser(_user);
 		navigationMenuResource.setGroupLocalService(_groupLocalService);
+		navigationMenuResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		navigationMenuResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		navigationMenuResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7401,6 +7437,10 @@ public class Query {
 		sitePageResource.setContextUriInfo(_uriInfo);
 		sitePageResource.setContextUser(_user);
 		sitePageResource.setGroupLocalService(_groupLocalService);
+		sitePageResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		sitePageResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		sitePageResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7417,6 +7457,10 @@ public class Query {
 		structuredContentResource.setContextUriInfo(_uriInfo);
 		structuredContentResource.setContextUser(_user);
 		structuredContentResource.setGroupLocalService(_groupLocalService);
+		structuredContentResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		structuredContentResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		structuredContentResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7435,6 +7479,10 @@ public class Query {
 		structuredContentFolderResource.setContextUser(_user);
 		structuredContentFolderResource.setGroupLocalService(
 			_groupLocalService);
+		structuredContentFolderResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		structuredContentFolderResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		structuredContentFolderResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7448,6 +7496,10 @@ public class Query {
 		wikiNodeResource.setContextUriInfo(_uriInfo);
 		wikiNodeResource.setContextUser(_user);
 		wikiNodeResource.setGroupLocalService(_groupLocalService);
+		wikiNodeResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		wikiNodeResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		wikiNodeResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7461,6 +7513,10 @@ public class Query {
 		wikiPageResource.setContextUriInfo(_uriInfo);
 		wikiPageResource.setContextUser(_user);
 		wikiPageResource.setGroupLocalService(_groupLocalService);
+		wikiPageResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		wikiPageResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		wikiPageResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7477,6 +7533,10 @@ public class Query {
 		wikiPageAttachmentResource.setContextUriInfo(_uriInfo);
 		wikiPageAttachmentResource.setContextUser(_user);
 		wikiPageAttachmentResource.setGroupLocalService(_groupLocalService);
+		wikiPageAttachmentResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		wikiPageAttachmentResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
 		wikiPageAttachmentResource.setRoleLocalService(_roleLocalService);
 	}
 
@@ -7545,6 +7605,8 @@ public class Query {
 	private GroupLocalService _groupLocalService;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
+	private ResourceActionLocalService _resourceActionLocalService;
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
 	private RoleLocalService _roleLocalService;
 	private BiFunction<Object, String, com.liferay.portal.kernel.search.Sort[]>
 		_sortsBiFunction;

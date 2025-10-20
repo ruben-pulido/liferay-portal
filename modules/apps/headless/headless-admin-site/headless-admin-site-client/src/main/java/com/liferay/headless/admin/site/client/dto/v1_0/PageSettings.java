@@ -68,16 +68,18 @@ public abstract class PageSettings implements Cloneable, Serializable {
 
 	protected Boolean hiddenFromNavigation;
 
-	public NavigationSettings getNavigationSettings() {
+	public SitePageNavigationSettings getNavigationSettings() {
 		return navigationSettings;
 	}
 
-	public void setNavigationSettings(NavigationSettings navigationSettings) {
+	public void setNavigationSettings(
+		SitePageNavigationSettings navigationSettings) {
+
 		this.navigationSettings = navigationSettings;
 	}
 
 	public void setNavigationSettings(
-		UnsafeSupplier<NavigationSettings, Exception>
+		UnsafeSupplier<SitePageNavigationSettings, Exception>
 			navigationSettingsUnsafeSupplier) {
 
 		try {
@@ -88,7 +90,7 @@ public abstract class PageSettings implements Cloneable, Serializable {
 		}
 	}
 
-	protected NavigationSettings navigationSettings;
+	protected SitePageNavigationSettings navigationSettings;
 
 	public OpenGraphSettings getOpenGraphSettings() {
 		return openGraphSettings;

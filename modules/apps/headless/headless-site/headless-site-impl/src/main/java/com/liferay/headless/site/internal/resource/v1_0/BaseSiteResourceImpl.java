@@ -32,6 +32,7 @@ import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.batch.engine.VulcanBatchEngineTaskItemDelegate;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineExportTaskResource;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineImportTaskResource;
+import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -67,14 +68,17 @@ import java.util.Set;
 @jakarta.ws.rs.Path("/v1.0")
 public abstract class BaseSiteResourceImpl
 	implements EntityModelResource, SiteResource,
-			   VulcanBatchEngineTaskItemDelegate<Site> {
+			   VulcanBatchEngineTaskItemDelegate<Site>,
+			   VulcanCRUDItemDelegate<Site> {
 
 	/**
 	 * Invoke this method with the command line:
 	 *
 	 * curl -X 'DELETE' 'http://localhost:8080/o/headless-site/v1.0/sites/{siteId}'  -u 'test@liferay.com:test'
 	 */
+	@Deprecated
 	@io.swagger.v3.oas.annotations.Operation(
+		deprecated = true,
 		description = "Deletes a site and all of its associated content."
 	)
 	@io.swagger.v3.oas.annotations.Parameters(
@@ -105,6 +109,8 @@ public abstract class BaseSiteResourceImpl
 	 *
 	 * curl -X 'DELETE' 'http://localhost:8080/o/headless-site/v1.0/sites/batch'  -u 'test@liferay.com:test'
 	 */
+	@Deprecated
+	@io.swagger.v3.oas.annotations.Operation(deprecated = true)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
@@ -149,7 +155,9 @@ public abstract class BaseSiteResourceImpl
 	 *
 	 * curl -X 'DELETE' 'http://localhost:8080/o/headless-site/v1.0/sites/by-external-reference-code/{externalReferenceCode}'  -u 'test@liferay.com:test'
 	 */
+	@Deprecated
 	@io.swagger.v3.oas.annotations.Operation(
+		deprecated = true,
 		description = "Deletes a site and all of its associated content."
 	)
 	@io.swagger.v3.oas.annotations.Parameters(
@@ -180,8 +188,42 @@ public abstract class BaseSiteResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -X 'GET' 'http://localhost:8080/o/headless-site/v1.0/sites/{siteId}'  -u 'test@liferay.com:test'
+	 */
+	@Deprecated
+	@io.swagger.v3.oas.annotations.Operation(deprecated = true)
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "siteId"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Site")}
+	)
+	@jakarta.ws.rs.GET
+	@jakarta.ws.rs.Path("/sites/{siteId}")
+	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public Site getSite(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("siteId")
+			Long siteId)
+		throws Exception {
+
+		return new Site();
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -X 'GET' 'http://localhost:8080/o/headless-site/v1.0/sites/by-external-reference-code/{externalReferenceCode}'  -u 'test@liferay.com:test'
 	 */
+	@Deprecated
+	@io.swagger.v3.oas.annotations.Operation(deprecated = true)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
@@ -214,6 +256,8 @@ public abstract class BaseSiteResourceImpl
 	 *
 	 * curl -X 'GET' 'http://localhost:8080/o/headless-site/v1.0/sites/by-external-reference-code/{externalReferenceCode}/site-initializer'  -u 'test@liferay.com:test'
 	 */
+	@Deprecated
+	@io.swagger.v3.oas.annotations.Operation(deprecated = true)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
@@ -248,7 +292,9 @@ public abstract class BaseSiteResourceImpl
 	 *
 	 * curl -X 'GET' 'http://localhost:8080/o/headless-site/v1.0/sites'  -u 'test@liferay.com:test'
 	 */
+	@Deprecated
 	@io.swagger.v3.oas.annotations.Operation(
+		deprecated = true,
 		description = "Retrieves the sites. Results can be paginated, filtered, searched, and sorted."
 	)
 	@io.swagger.v3.oas.annotations.Parameters(
@@ -294,9 +340,12 @@ public abstract class BaseSiteResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/headless-site/v1.0/sites' -d $'{"active": ___, "externalReferenceCode": ___, "friendlyUrlPath": ___, "manualMembership": ___, "membershipRestriction": ___, "membershipType": ___, "name": ___, "parentSiteKey": ___, "templateKey": ___, "templateType": ___, "typeSettings": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-site/v1.0/sites' -d $'{"active": ___, "description": ___, "externalReferenceCode": ___, "friendlyUrlPath": ___, "manualMembership": ___, "membershipRestriction": ___, "membershipType": ___, "name": ___, "name_i18n": ___, "parentSiteExternalReferenceCode": ___, "parentSiteKey": ___, "templateKey": ___, "templateType": ___, "typeSettings": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
-	@io.swagger.v3.oas.annotations.Operation(description = "Adds a new site")
+	@Deprecated
+	@io.swagger.v3.oas.annotations.Operation(
+		deprecated = true, description = "Adds a new site"
+	)
 	@io.swagger.v3.oas.annotations.tags.Tags(
 		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Site")}
 	)
@@ -314,6 +363,8 @@ public abstract class BaseSiteResourceImpl
 	 *
 	 * curl -X 'POST' 'http://localhost:8080/o/headless-site/v1.0/sites/batch'  -u 'test@liferay.com:test'
 	 */
+	@Deprecated
+	@io.swagger.v3.oas.annotations.Operation(deprecated = true)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
@@ -358,7 +409,9 @@ public abstract class BaseSiteResourceImpl
 	 *
 	 * curl -X 'POST' 'http://localhost:8080/o/headless-site/v1.0/sites/site-initializer'  -u 'test@liferay.com:test'
 	 */
+	@Deprecated
 	@io.swagger.v3.oas.annotations.Operation(
+		deprecated = true,
 		description = "Adds a new site based on a multipart/form-data",
 		requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "multipart/form-data", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PostSiteSiteInitializerRequestBody.class)))
 	)
@@ -381,6 +434,8 @@ public abstract class BaseSiteResourceImpl
 	 *
 	 * curl -X 'POST' 'http://localhost:8080/o/headless-site/v1.0/sites/export-batch'  -u 'test@liferay.com:test'
 	 */
+	@Deprecated
+	@io.swagger.v3.oas.annotations.Operation(deprecated = true)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
@@ -453,10 +508,79 @@ public abstract class BaseSiteResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -X 'PUT' 'http://localhost:8080/o/headless-site/v1.0/sites' -d $'{"active": ___, "description": ___, "externalReferenceCode": ___, "friendlyUrlPath": ___, "manualMembership": ___, "membershipRestriction": ___, "membershipType": ___, "name": ___, "name_i18n": ___, "parentSiteExternalReferenceCode": ___, "parentSiteKey": ___, "templateKey": ___, "templateType": ___, "typeSettings": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 */
+	@Deprecated
+	@io.swagger.v3.oas.annotations.Operation(
+		deprecated = true,
+		description = "Updates a site and all of its associated content."
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Site")}
+	)
+	@jakarta.ws.rs.Consumes({"application/json", "application/xml"})
+	@jakarta.ws.rs.Path("/sites")
+	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
+	@jakarta.ws.rs.PUT
+	@Override
+	public Site putSite(Site site) throws Exception {
+		return new Site();
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -X 'PUT' 'http://localhost:8080/o/headless-site/v1.0/sites/batch'  -u 'test@liferay.com:test'
+	 */
+	@Deprecated
+	@io.swagger.v3.oas.annotations.Operation(deprecated = true)
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "callbackURL"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Site")}
+	)
+	@jakarta.ws.rs.Consumes("application/json")
+	@jakarta.ws.rs.Path("/sites/batch")
+	@jakarta.ws.rs.Produces("application/json")
+	@jakarta.ws.rs.PUT
+	@Override
+	public Response putSiteBatch(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.ws.rs.QueryParam("callbackURL")
+			String callbackURL,
+			Object object)
+		throws Exception {
+
+		vulcanBatchEngineImportTaskResource.setContextAcceptLanguage(
+			contextAcceptLanguage);
+		vulcanBatchEngineImportTaskResource.setContextCompany(contextCompany);
+		vulcanBatchEngineImportTaskResource.setContextHttpServletRequest(
+			contextHttpServletRequest);
+		vulcanBatchEngineImportTaskResource.setContextUriInfo(contextUriInfo);
+		vulcanBatchEngineImportTaskResource.setContextUser(contextUser);
+
+		Response.ResponseBuilder responseBuilder = Response.accepted();
+
+		return responseBuilder.entity(
+			vulcanBatchEngineImportTaskResource.putImportTask(
+				Site.class.getName(), callbackURL, object)
+		).build();
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -X 'PUT' 'http://localhost:8080/o/headless-site/v1.0/sites/by-external-reference-code/{externalReferenceCode}'  -u 'test@liferay.com:test'
 	 */
+	@Deprecated
 	@io.swagger.v3.oas.annotations.Operation(
-		description = "Adds or update a new site",
+		deprecated = true, description = "Adds or update a new site",
 		requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "multipart/form-data", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PutSiteByExternalReferenceCodeRequestBody.class)))
 	)
 	@io.swagger.v3.oas.annotations.Parameters(
@@ -588,7 +712,7 @@ public abstract class BaseSiteResourceImpl
 	}
 
 	public Set<String> getAvailableUpdateStrategies() {
-		return SetUtil.fromArray();
+		return SetUtil.fromArray("UPDATE");
 	}
 
 	@Override
@@ -647,8 +771,32 @@ public abstract class BaseSiteResourceImpl
 			Collection<Site> sites, Map<String, Serializable> parameters)
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		UnsafeFunction<Site, Site, Exception> siteUnsafeFunction = null;
+
+		String updateStrategy = (String)parameters.getOrDefault(
+			"updateStrategy", "UPDATE");
+
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
+			siteUnsafeFunction = site -> putSite(site);
+		}
+
+		if (siteUnsafeFunction == null) {
+			throw new NotSupportedException(
+				"Update strategy \"" + updateStrategy +
+					"\" is not supported for Site");
+		}
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(sites, siteUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(sites, siteUnsafeFunction::apply);
+		}
+		else {
+			for (Site site : sites) {
+				siteUnsafeFunction.apply(site);
+			}
+		}
 	}
 
 	private Boolean _parseBoolean(String value) {
@@ -664,6 +812,11 @@ public abstract class BaseSiteResourceImpl
 		throws Exception {
 
 		return null;
+	}
+
+	@Override
+	public Site getItem(Long id) throws Exception {
+		return getSite(id);
 	}
 
 	public void setContextAcceptLanguage(AcceptLanguage contextAcceptLanguage) {

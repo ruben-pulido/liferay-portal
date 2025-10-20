@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
@@ -54,12 +55,12 @@ import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.permission.PermissionUtil;
 
 import java.text.DateFormat;
@@ -133,7 +134,7 @@ public class AccountGroupResourceTest extends BaseAccountGroupResourceTestCase {
 		_testPatchAccountGroupByExternalReferenceCodeWithoutName();
 	}
 
-	@FeatureFlag("LPD-47858")
+	@FeatureFlag("LPD-35914")
 	@LazyReferencing
 	@Override
 	@Test
@@ -289,6 +290,14 @@ public class AccountGroupResourceTest extends BaseAccountGroupResourceTestCase {
 		throws Exception {
 
 		return _postAccountGroup(randomAccountGroup());
+	}
+
+	@Override
+	protected String
+			testGraphQLDeleteAccountGroupByExternalReferenceCodeAccountByExternalReferenceCode_getAccountExternalReferenceCode()
+		throws Exception {
+
+		return _accountEntry.getExternalReferenceCode();
 	}
 
 	@Override
@@ -544,6 +553,13 @@ public class AccountGroupResourceTest extends BaseAccountGroupResourceTestCase {
 
 		Assert.assertTrue(creator.getId() == TestPropsValues.getUserId());
 
+		User user = TestPropsValues.getUser();
+
+		Assert.assertTrue(
+			Objects.equals(
+				creator.getExternalReferenceCode(),
+				user.getExternalReferenceCode()));
+
 		Assert.assertTrue(
 			ArrayUtil.exists(
 				getAccountGroup.getPermissions(),
@@ -624,6 +640,7 @@ public class AccountGroupResourceTest extends BaseAccountGroupResourceTestCase {
 				type = serviceBuilderAccountEntry1.getType();
 			}
 		};
+
 		AccountBrief accountBrief2 = new AccountBrief() {
 			{
 				externalReferenceCode = RandomTestUtil.randomString();
@@ -648,6 +665,7 @@ public class AccountGroupResourceTest extends BaseAccountGroupResourceTestCase {
 					serviceBuilderRole1.getType());
 			}
 		};
+
 		Permission permission2 = new Permission() {
 			{
 				actionIds = new String[] {ActionKeys.UPDATE};

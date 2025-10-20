@@ -5,10 +5,11 @@
 
 package com.liferay.source.formatter.checkstyle.check;
 
-import com.liferay.portal.kernel.util.ArrayUtil;
-
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
+import com.puppycrawl.tools.checkstyle.utils.AnnotationUtil;
+
+import java.util.List;
 
 /**
  * @author Kevin Lee
@@ -30,20 +31,61 @@ public class ResourceImplCheck extends BaseCheck {
 
 		String className = getName(detailAST);
 
-		if (!className.endsWith("ResourceImpl") ||
-			className.startsWith("Base")) {
-
+		if (!className.endsWith("ResourceImpl")) {
 			return;
 		}
 
-		_checkMethodDefinitions(detailAST);
+		DetailAST parentDetailAST = detailAST.getParent();
+
+		if (parentDetailAST != null) {
+			return;
+		}
+
+		DetailAST objBlockDetailAST = detailAST.findFirstToken(
+			TokenTypes.OBJBLOCK);
+
+		List<DetailAST> methodDefinitionDetailASTs = getAllChildTokens(
+			objBlockDetailAST, false, TokenTypes.METHOD_DEF);
+
+		_checkDoGetMethodModifier(methodDefinitionDetailASTs);
+
+		if (!className.startsWith("Base")) {
+			_checkMethodParameterAnnotations(methodDefinitionDetailASTs);
+		}
 	}
 
-	private void _checkMethodDefinitions(DetailAST classDefinitionDetailAST) {
-		for (DetailAST methodDefinitionDetailAST :
-				getAllChildTokens(
-					classDefinitionDetailAST, true, TokenTypes.METHOD_DEF)) {
+	private void _checkDoGetMethodModifier(
+		List<DetailAST> methodDefinitionDetailASTs) {
 
+		for (DetailAST methodDefinitionDetailAST : methodDefinitionDetailASTs) {
+			String methodName = getName(methodDefinitionDetailAST);
+
+			if (!methodName.startsWith("doGet")) {
+				continue;
+			}
+
+			DetailAST modifiersDetailAST =
+				methodDefinitionDetailAST.findFirstToken(TokenTypes.MODIFIERS);
+
+			if (!AnnotationUtil.containsAnnotation(
+					methodDefinitionDetailAST, "Override") ||
+				modifiersDetailAST.branchContains(
+					TokenTypes.LITERAL_PROTECTED)) {
+
+				continue;
+			}
+
+			log(modifiersDetailAST, _MSG_INCORRECT_ACCESS_MODIFIER, methodName);
+		}
+	}
+
+	private void _checkMethodParameterAnnotations(
+		List<DetailAST> methodDefinitionDetailASTs) {
+
+		List<String> allowedParameterAnnotationNames = getAttributeValues(
+			_ALLOWED_PARAMETER_ANNOTATION_NAMES_KEY);
+
+		for (DetailAST methodDefinitionDetailAST : methodDefinitionDetailASTs) {
 			String methodName = getName(methodDefinitionDetailAST);
 
 			for (DetailAST parameterDefinitionDetailAST :
@@ -61,8 +103,8 @@ public class ResourceImplCheck extends BaseCheck {
 
 					String annotationName = getName(annotationDetailAST);
 
-					if (ArrayUtil.contains(
-							_ALLOWED_ANNOTATIONS, annotationName)) {
+					if (allowedParameterAnnotationNames.contains(
+							annotationName)) {
 
 						continue;
 					}
@@ -76,11 +118,13 @@ public class ResourceImplCheck extends BaseCheck {
 		}
 	}
 
-	private static final String[] _ALLOWED_ANNOTATIONS = {
-		"NestedFieldId", "PathParam"
-	};
+	private static final String _ALLOWED_PARAMETER_ANNOTATION_NAMES_KEY =
+		"allowedParameterAnnotationNames";
+
+	private static final String _MSG_INCORRECT_ACCESS_MODIFIER =
+		"access.modifier.incorrect";
 
 	private static final String _MSG_INVALID_METHOD_PARAMETER_ANNOTATION =
-		"invalid.method.parameter.annotation";
+		"method.parameter.annotation.invalid";
 
 }

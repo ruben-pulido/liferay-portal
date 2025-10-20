@@ -156,12 +156,21 @@ components:
                     format: date
                     readOnly: true
                     type: string
+                scopeId:
+                    # @review
+                    description:
+                        The scope id of the object entry folder.
+                    format: int64
+                    readOnly: true
+                    type: integer
                 scopeKey:
                     # @review
                     description:
                         The scope key of the object entry folder.
                     readOnly: true
                     type: string
+                status:
+                    $ref: "#/components/schemas/Status"
                 title:
                     description:
                         The object entry folder's main title/name.
@@ -203,6 +212,18 @@ components:
                     description:
                         The parent object entry folder's main title/name.
                     type: string
+            type: object
+        Status:
+            properties:
+                code:
+                    format: int32
+                    type: integer
+                label:
+                    type: string
+                label_i18n:
+                    type: string
+            required:
+                -   code
             type: object
 info:
     license:

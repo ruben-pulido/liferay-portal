@@ -41,11 +41,13 @@ import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
 import com.liferay.layout.helper.structure.LayoutStructureRulesHelper;
 import com.liferay.layout.list.retriever.ListObjectReference;
 import com.liferay.layout.responsive.ResponsiveLayoutStructureUtil;
+import com.liferay.layout.taglib.constants.LayoutStructureRendererConstants;
 import com.liferay.layout.taglib.internal.display.context.RenderCollectionLayoutStructureItemDisplayContext;
 import com.liferay.layout.taglib.internal.display.context.RenderLayoutStructureDisplayContext;
 import com.liferay.layout.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.layout.taglib.internal.util.SegmentsExperienceUtil;
 import com.liferay.layout.util.CollectionPaginationUtil;
+import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.ColumnLayoutStructureItem;
 import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
@@ -56,13 +58,13 @@ import com.liferay.layout.util.structure.FormStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
+import com.liferay.layout.util.structure.LayoutStructureItemUtil;
 import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.collection.EmptyCollectionOptions;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
@@ -79,14 +81,16 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.layoutconfiguration.util.RuntimePageUtil;
-import com.liferay.portal.util.PropsValues;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -131,8 +135,7 @@ public class LayoutStructureRenderer {
 	}
 
 	public void render() throws Exception {
-		_renderLayoutStructure(
-			_renderLayoutStructureDisplayContext.getMainChildrenItemIds());
+		_renderLayoutStructure();
 
 		if (_renderActionHandler) {
 			_renderComponent(
@@ -203,6 +206,22 @@ public class LayoutStructureRenderer {
 		return layoutTypePortlet;
 	}
 
+	private String _getRowCssClass(
+		CollectionStyledLayoutStructureItem
+			collectionStyledLayoutStructureItem) {
+
+		StringBundler sb = new StringBundler(3);
+
+		sb.append("align-items-");
+		sb.append(collectionStyledLayoutStructureItem.getVerticalAlignment());
+
+		if (!collectionStyledLayoutStructureItem.isGutters()) {
+			sb.append(" no-gutters");
+		}
+
+		return sb.toString();
+	}
+
 	private boolean _hasAddPermission(String className) {
 		InfoItemServiceRegistry infoItemServiceRegistry =
 			ServletContextUtil.getInfoItemServiceRegistry();
@@ -223,7 +242,8 @@ public class LayoutStructureRenderer {
 		return false;
 	}
 
-	private boolean _hasUpdatePermission(
+	private boolean _hasPermission(
+			String actionId,
 			LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider)
 		throws Exception {
 
@@ -240,12 +260,37 @@ public class LayoutStructureRenderer {
 			 infoItemPermissionProvider.hasPermission(
 				 _themeDisplay.getPermissionChecker(),
 				 layoutDisplayPageObjectProvider.getDisplayObject(),
-				 ActionKeys.UPDATE))) {
+				 actionId))) {
 
 			return true;
 		}
 
 		return false;
+	}
+
+	private void _renderCol(
+			CollectionStyledLayoutStructureItem
+				collectionStyledLayoutStructureItem,
+			int index, InfoForm infoForm, InfoItemDetails infoItemDetails)
+		throws Exception {
+
+		_httpServletRequest.setAttribute(
+			InfoDisplayWebKeys.INFO_ITEM_REFERENCE,
+			infoItemDetails.getInfoItemReference());
+
+		ColTag colTag = new ColTag();
+
+		colTag.setCssClass(
+			ResponsiveLayoutStructureUtil.getColumnCssClass(
+				collectionStyledLayoutStructureItem, index));
+		colTag.setPageContext(_pageContext);
+
+		colTag.doStartTag();
+
+		_renderLayoutStructure(
+			collectionStyledLayoutStructureItem.getChildrenItemIds(), infoForm);
+
+		colTag.doEndTag();
 	}
 
 	private void _renderCollectionStyledLayoutStructureItem(
@@ -549,68 +594,68 @@ public class LayoutStructureRenderer {
 
 			containerTag.doStartTag();
 
-			RowTag rowTag = new RowTag();
-
-			sb.setIndex(0);
-
-			sb.append("align-items-");
-			sb.append(
-				collectionStyledLayoutStructureItem.getVerticalAlignment());
-
-			if (!collectionStyledLayoutStructureItem.isGutters()) {
-				sb.append(" no-gutters");
-			}
-
-			rowTag.setCssClass(sb.toString());
-
-			rowTag.setPageContext(_pageContext);
-
-			rowTag.doStartTag();
-
+			int numberOfColumns =
+				collectionStyledLayoutStructureItem.getNumberOfColumns();
 			int numberOfItemsToDisplay =
 				renderCollectionLayoutStructureItemDisplayContext.
 					getNumberOfItemsToDisplay();
 
-			for (int i = 0; i < numberOfItemsToDisplay; i++) {
-				if (i >= collection.size()) {
-					break;
+			if (Validator.isNull(
+					collectionStyledLayoutStructureItem.getListStyle())) {
+
+				RowTag rowTag = new RowTag();
+
+				rowTag.setCssClass(
+					_getRowCssClass(collectionStyledLayoutStructureItem));
+				rowTag.setPageContext(_pageContext);
+
+				rowTag.doStartTag();
+
+				for (int i = 0;
+					 (i < numberOfItemsToDisplay) && (i < collection.size());
+					 i++) {
+
+					_renderCol(
+						collectionStyledLayoutStructureItem,
+						i % numberOfColumns, infoForm,
+						infoItemDetailsProvider.getInfoItemDetails(
+							collection.get(i)));
 				}
 
-				InfoItemDetails infoItemDetails =
-					infoItemDetailsProvider.getInfoItemDetails(
-						collection.get(i));
-
-				_httpServletRequest.setAttribute(
-					InfoDisplayWebKeys.INFO_ITEM_REFERENCE,
-					infoItemDetails.getInfoItemReference());
-
-				ColTag colTag = new ColTag();
-
-				if (Validator.isNull(
-						collectionStyledLayoutStructureItem.getListStyle())) {
-
-					int numberOfColumns =
-						collectionStyledLayoutStructureItem.
-							getNumberOfColumns();
-
-					colTag.setCssClass(
-						ResponsiveLayoutStructureUtil.getColumnCssClass(
-							collectionStyledLayoutStructureItem,
-							i % numberOfColumns));
-				}
-
-				colTag.setPageContext(_pageContext);
-
-				colTag.doStartTag();
-
-				_renderLayoutStructure(
-					collectionStyledLayoutStructureItem.getChildrenItemIds(),
-					infoForm);
-
-				colTag.doEndTag();
+				rowTag.doEndTag();
 			}
+			else {
+				int numberOfRows =
+					renderCollectionLayoutStructureItemDisplayContext.
+						getNumberOfRows();
 
-			rowTag.doEndTag();
+				for (int i = 0; i < numberOfRows; i++) {
+					RowTag rowTag = new RowTag();
+
+					rowTag.setCssClass(
+						_getRowCssClass(collectionStyledLayoutStructureItem));
+					rowTag.setPageContext(_pageContext);
+
+					rowTag.doStartTag();
+
+					for (int j = 0; j < numberOfColumns; j++) {
+						int index = (i * numberOfColumns) + j;
+
+						if ((index >= numberOfItemsToDisplay) ||
+							(index >= collection.size())) {
+
+							break;
+						}
+
+						_renderCol(
+							collectionStyledLayoutStructureItem, j, infoForm,
+							infoItemDetailsProvider.getInfoItemDetails(
+								collection.get(index)));
+					}
+
+					rowTag.doEndTag();
+				}
+			}
 
 			containerTag.doEndTag();
 		}
@@ -952,7 +997,11 @@ public class LayoutStructureRenderer {
 		jspWriter.write(
 			formRelationshipStyledLayoutStructureItem.getCssClass());
 		jspWriter.write("\" data-layout-structure-item-id=\"");
-		jspWriter.write(formRelationshipStyledLayoutStructureItem.getItemId());
+
+		String itemId = formRelationshipStyledLayoutStructureItem.getItemId();
+
+		jspWriter.write(itemId);
+
 		jspWriter.write("\"");
 
 		String style = _renderLayoutStructureDisplayContext.getStyle(
@@ -965,39 +1014,219 @@ public class LayoutStructureRenderer {
 
 		jspWriter.write("\">");
 
+		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
+			(LayoutDisplayPageObjectProvider<?>)
+				_httpServletRequest.getAttribute(
+					LayoutDisplayPageWebKeys.
+						LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER);
+
+		LayoutDisplayPageObjectProvider<?>
+			currentRelatedLayoutDisplayPageObjectProvider =
+				(LayoutDisplayPageObjectProvider<?>)
+					_httpServletRequest.getAttribute(
+						LayoutStructureRendererConstants.
+							LAYOUT_RELATED_ITEM_DISPLAY_PAGE_OBJECT_PROVIDER);
+
+		String currentParentItemExternalReferenceCode =
+			(String)_httpServletRequest.getAttribute(
+				LayoutStructureRendererConstants.
+					LAYOUT_PARENT_ITEM_EXTERNAL_REFERENCE_CODE);
+		String currentRelatedItemExternalReferenceCode =
+			(String)_httpServletRequest.getAttribute(
+				LayoutStructureRendererConstants.
+					LAYOUT_RELATED_ITEM_EXTERNAL_REFERENCE_CODE);
+
+		try {
+			String parentItemExternalReferenceCode = GetterUtil.getString(
+				GetterUtil.getString(
+					_httpServletRequest.getAttribute(
+						LayoutStructureRendererConstants.
+							LAYOUT_PARENT_ITEM_EXTERNAL_REFERENCE_CODE +
+								itemId),
+					currentRelatedItemExternalReferenceCode),
+				LayoutStructureRendererConstants.
+					LAYOUT_DEFAULT_EXTERNAL_REFERENCE_CODE + 0);
+			String relatedItemExternalReferenceCode = GetterUtil.getString(
+				_httpServletRequest.getAttribute(
+					LayoutStructureRendererConstants.
+						LAYOUT_RELATED_ITEM_EXTERNAL_REFERENCE_CODE + itemId),
+				LayoutStructureRendererConstants.
+					LAYOUT_DEFAULT_EXTERNAL_REFERENCE_CODE + 0);
+
+			_httpServletRequest.setAttribute(
+				LayoutStructureRendererConstants.
+					LAYOUT_PARENT_ITEM_EXTERNAL_REFERENCE_CODE,
+				parentItemExternalReferenceCode);
+			_httpServletRequest.setAttribute(
+				LayoutStructureRendererConstants.
+					LAYOUT_RELATED_ITEM_EXTERNAL_REFERENCE_CODE,
+				relatedItemExternalReferenceCode);
+
+			String formRelationshipStyledLayoutStructureItemContentId =
+				PortalUUIDUtil.generate();
+
+			if (layoutDisplayPageObjectProvider == null) {
+				_renderFormRelationshipStyledLayoutStructureItemContent(
+					formRelationshipStyledLayoutStructureItem,
+					formRelationshipStyledLayoutStructureItemContentId,
+					infoForm, null);
+			}
+			else {
+				List<? extends LayoutDisplayPageObjectProvider<?>>
+					relatedLayoutDisplayPageObjectProviders = null;
+
+				if (currentRelatedLayoutDisplayPageObjectProvider != null) {
+					relatedLayoutDisplayPageObjectProviders =
+						currentRelatedLayoutDisplayPageObjectProvider.
+							getRelatedLayoutDisplayPageObjectProviders(
+								formRelationshipStyledLayoutStructureItem.
+									getContentType());
+				}
+				else {
+					relatedLayoutDisplayPageObjectProviders =
+						layoutDisplayPageObjectProvider.
+							getRelatedLayoutDisplayPageObjectProviders(
+								formRelationshipStyledLayoutStructureItem.
+									getContentType());
+				}
+
+				if (ListUtil.isEmpty(relatedLayoutDisplayPageObjectProviders)) {
+					_renderFormRelationshipStyledLayoutStructureItemContent(
+						formRelationshipStyledLayoutStructureItem,
+						formRelationshipStyledLayoutStructureItemContentId,
+						infoForm, null);
+				}
+				else {
+					for (LayoutDisplayPageObjectProvider<?>
+							relatedLayoutDisplayPageObjectProvider :
+								relatedLayoutDisplayPageObjectProviders) {
+
+						_httpServletRequest.setAttribute(
+							LayoutStructureRendererConstants.
+								LAYOUT_PARENT_ITEM_EXTERNAL_REFERENCE_CODE,
+							relatedLayoutDisplayPageObjectProvider.
+								getParentExternalReferenceCode());
+						_httpServletRequest.setAttribute(
+							LayoutStructureRendererConstants.
+								LAYOUT_RELATED_ITEM_DISPLAY_PAGE_OBJECT_PROVIDER,
+							relatedLayoutDisplayPageObjectProvider);
+						_httpServletRequest.setAttribute(
+							LayoutStructureRendererConstants.
+								LAYOUT_RELATED_ITEM_EXTERNAL_REFERENCE_CODE,
+							relatedLayoutDisplayPageObjectProvider.
+								getExternalReferenceCode());
+
+						_renderFormRelationshipStyledLayoutStructureItemContent(
+							formRelationshipStyledLayoutStructureItem,
+							formRelationshipStyledLayoutStructureItemContentId,
+							infoForm, relatedLayoutDisplayPageObjectProvider);
+					}
+				}
+			}
+
+			if (formRelationshipStyledLayoutStructureItem.isRepeatable() &&
+				!Objects.equals(
+					_renderLayoutStructureDisplayContext.getLayoutMode(),
+					Constants.READ)) {
+
+				_renderReactComponent(
+					"{FormRelationshipAddButton} from layout-taglib/render",
+					HashMapBuilder.<String, Object>put(
+						"contentId",
+						formRelationshipStyledLayoutStructureItemContentId
+					).put(
+						"itemId",
+						formRelationshipStyledLayoutStructureItem.getItemId()
+					).put(
+						"label",
+						formRelationshipStyledLayoutStructureItem.
+							getButtonLabelJSONObject()
+					).put(
+						"renderURL",
+						HttpComponentsUtil.addParameters(
+							StringBundler.concat(
+								_themeDisplay.getPortalURL(),
+								_themeDisplay.getPathMain(), "/portal",
+								"/render_form_relationship_layout_structure_",
+								"item"),
+							"formRelationshipLayoutStructureItemId",
+							formRelationshipStyledLayoutStructureItem.
+								getItemId(),
+							"p_l_id", _themeDisplay.getPlid(),
+							"parentItemExternalReferenceCode",
+							parentItemExternalReferenceCode,
+							"segmentsExperienceId",
+							SegmentsExperienceUtil.getSegmentsExperienceId(
+								_httpServletRequest))
+					).build());
+			}
+		}
+		finally {
+			_httpServletRequest.setAttribute(
+				LayoutStructureRendererConstants.
+					LAYOUT_PARENT_ITEM_EXTERNAL_REFERENCE_CODE,
+				currentParentItemExternalReferenceCode);
+			_httpServletRequest.setAttribute(
+				LayoutStructureRendererConstants.
+					LAYOUT_RELATED_ITEM_DISPLAY_PAGE_OBJECT_PROVIDER,
+				currentRelatedLayoutDisplayPageObjectProvider);
+			_httpServletRequest.setAttribute(
+				LayoutStructureRendererConstants.
+					LAYOUT_RELATED_ITEM_EXTERNAL_REFERENCE_CODE,
+				currentRelatedItemExternalReferenceCode);
+		}
+
+		jspWriter.write("</div>");
+	}
+
+	private void _renderFormRelationshipStyledLayoutStructureItemContent(
+			FormRelationshipStyledLayoutStructureItem
+				formRelationshipStyledLayoutStructureItem,
+			String formRelationshipStyledLayoutStructureItemContentId,
+			InfoForm infoForm,
+			LayoutDisplayPageObjectProvider<?>
+				relatedLayoutDisplayPageObjectProvider)
+		throws Exception {
+
+		JspWriter jspWriter = _pageContext.getOut();
+
+		jspWriter.write("<div data-form-relationship-");
+		jspWriter.write("structure-item-content-id=\"");
+		jspWriter.write(formRelationshipStyledLayoutStructureItemContentId);
+		jspWriter.write("\"><div class=\"d-flex justify-content-end ");
+		jspWriter.write("lfr-form-relationship-remove-button \">");
+
+		ButtonTag removeButtonTag = new ButtonTag();
+
+		removeButtonTag.setBorderless(true);
+		removeButtonTag.setCssClass("d-none lfr-portal-tooltip mt-2");
+		removeButtonTag.setDisplayType("secondary");
+
+		if (relatedLayoutDisplayPageObjectProvider != null) {
+			removeButtonTag.setDynamicAttribute(
+				StringPool.BLANK, "data-classname",
+				relatedLayoutDisplayPageObjectProvider.getClassName());
+
+			removeButtonTag.setDynamicAttribute(
+				StringPool.BLANK, "data-external-reference-code",
+				relatedLayoutDisplayPageObjectProvider.
+					getExternalReferenceCode());
+		}
+
+		removeButtonTag.setDynamicAttribute(
+			StringPool.BLANK, "title",
+			LanguageUtil.get(_httpServletRequest, "remove"));
+
+		removeButtonTag.setIcon("times-circle");
+		removeButtonTag.setSmall(true);
+
+		removeButtonTag.doTag(_pageContext);
+
+		jspWriter.write("</div>");
+
 		_renderLayoutStructure(
 			formRelationshipStyledLayoutStructureItem.getChildrenItemIds(),
 			infoForm);
-
-		_renderReactComponent(
-			"{FormRelationshipAddButton} from layout-taglib/render",
-			HashMapBuilder.<String, Object>put(
-				"addButtonLabel",
-				() -> {
-					JSONObject buttonLabelJSONObject =
-						formRelationshipStyledLayoutStructureItem.
-							getButtonLabelJSONObject();
-
-					String label = StringPool.BLANK;
-
-					if (buttonLabelJSONObject != null) {
-						String siteDefaultLanguageId =
-							LanguageUtil.getLanguageId(
-								PortalUtil.getSiteDefaultLocale(
-									_themeDisplay.getScopeGroupId()));
-
-						label = buttonLabelJSONObject.getString(
-							_themeDisplay.getLanguageId(),
-							siteDefaultLanguageId);
-					}
-
-					if (Validator.isNotNull(label)) {
-						return label;
-					}
-
-					return LanguageUtil.get(_httpServletRequest, "add-new");
-				}
-			).build());
 
 		jspWriter.write("</div>");
 	}
@@ -1076,10 +1305,35 @@ public class LayoutStructureRenderer {
 
 		String className = formStyledLayoutStructureItem.getClassName();
 
-		if (Validator.isNull(className) || (infoForm == null) ||
+		if (Validator.isNull(className) || (infoForm == null)) {
+			return;
+		}
+
+		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
+			(LayoutDisplayPageObjectProvider<?>)
+				_httpServletRequest.getAttribute(
+					LayoutDisplayPageWebKeys.
+						LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER);
+
+		if ((layoutDisplayPageObjectProvider == null) &&
 			!_hasAddPermission(className)) {
 
 			return;
+		}
+
+		if ((layoutDisplayPageObjectProvider != null) &&
+			!_hasPermission(ActionKeys.VIEW, layoutDisplayPageObjectProvider)) {
+
+			return;
+		}
+
+		boolean readOnly = false;
+
+		if ((layoutDisplayPageObjectProvider != null) &&
+			!_hasPermission(
+				ActionKeys.UPDATE, layoutDisplayPageObjectProvider)) {
+
+			readOnly = true;
 		}
 
 		JspWriter jspWriter = _pageContext.getOut();
@@ -1177,14 +1431,6 @@ public class LayoutStructureRenderer {
 		jspWriter.write(
 			String.valueOf(formStyledLayoutStructureItem.getClassTypeId()));
 
-		boolean readOnly = false;
-
-		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
-			(LayoutDisplayPageObjectProvider<?>)
-				_httpServletRequest.getAttribute(
-					LayoutDisplayPageWebKeys.
-						LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER);
-
 		if ((layoutDisplayPageObjectProvider != null) &&
 			(layoutDisplayPageObjectProvider.getClassNameId() ==
 				formStyledLayoutStructureItem.getClassNameId())) {
@@ -1193,11 +1439,16 @@ public class LayoutStructureRenderer {
 				"\"><input name=\"classPK\" type=\"hidden\" value=\"");
 			jspWriter.write(
 				String.valueOf(layoutDisplayPageObjectProvider.getClassPK()));
-			jspWriter.write(
-				"\"><input name=\"externalReferenceCode\" type=\"hidden\"");
-			jspWriter.write(" value=\"");
-			jspWriter.write(
-				layoutDisplayPageObjectProvider.getExternalReferenceCode());
+
+			String externalReferenceCode =
+				layoutDisplayPageObjectProvider.getExternalReferenceCode();
+
+			if (Validator.isNotNull(externalReferenceCode)) {
+				jspWriter.write(
+					"\"><input name=\"externalReferenceCode\" type=\"hidden\"");
+				jspWriter.write(" value=\"");
+				jspWriter.write(externalReferenceCode);
+			}
 
 			String scopeExternalReferenceCode =
 				layoutDisplayPageObjectProvider.getScopeExternalReferenceCode(
@@ -1208,10 +1459,6 @@ public class LayoutStructureRenderer {
 					"\"><input name=\"scopeExternalReferenceCode\"");
 				jspWriter.write(" type=\"hidden\" value=\"");
 				jspWriter.write(scopeExternalReferenceCode);
-			}
-
-			if (!_hasUpdatePermission(layoutDisplayPageObjectProvider)) {
-				readOnly = true;
 			}
 		}
 
@@ -1376,14 +1623,15 @@ public class LayoutStructureRenderer {
 							ServletContextUtil.
 								getFragmentEntryConfigurationParser();
 
-					String fieldName = GetterUtil.getString(
+					String infoFieldUniqueId = GetterUtil.getString(
 						fragmentEntryConfigurationParser.getFieldValue(
 							fragmentEntryLink.getEditableValuesJSONObject(),
 							new FragmentConfigurationField(
 								"inputFieldId", "string", "", false, "text"),
 							_themeDisplay.getLocale()));
 
-					InfoField<?> infoField = infoForm.getInfoField(fieldName);
+					InfoField<?> infoField = infoForm.getInfoField(
+						infoFieldUniqueId);
 
 					if (infoField != null) {
 						InfoFieldType infoFieldType =
@@ -1394,7 +1642,7 @@ public class LayoutStructureRenderer {
 
 							jspWriter.write("<input name=\"checkboxNames\" ");
 							jspWriter.write("type=\"hidden\" value=\"");
-							jspWriter.write(fieldName);
+							jspWriter.write(infoFieldUniqueId);
 							jspWriter.write("\">");
 						}
 
@@ -1433,13 +1681,33 @@ public class LayoutStructureRenderer {
 		}
 	}
 
-	private void _renderLayoutStructure(List<String> childrenItemIds)
-		throws Exception {
-
+	private void _renderLayoutStructure() throws Exception {
 		_httpServletRequest.setAttribute(
 			LayoutWebKeys.LAYOUT_STRUCTURE, _layoutStructure);
 
-		_renderLayoutStructure(childrenItemIds, null);
+		LayoutStructureItem layoutStructureItem =
+			_layoutStructure.getLayoutStructureItem(
+				_renderLayoutStructureDisplayContext.getMainItemId());
+
+		if (layoutStructureItem == null) {
+			return;
+		}
+
+		FormStyledLayoutStructureItem formStyledLayoutStructureItem =
+			(FormStyledLayoutStructureItem)LayoutStructureItemUtil.getAncestor(
+				layoutStructureItem.getItemId(),
+				LayoutDataItemTypeConstants.TYPE_FORM, _layoutStructure);
+
+		if (formStyledLayoutStructureItem != null) {
+			_renderLayoutStructure(
+				layoutStructureItem.getChildrenItemIds(),
+				_renderLayoutStructureDisplayContext.getInfoForm(
+					formStyledLayoutStructureItem));
+		}
+		else {
+			_renderLayoutStructure(
+				layoutStructureItem.getChildrenItemIds(), null);
+		}
 	}
 
 	private void _renderLayoutStructure(

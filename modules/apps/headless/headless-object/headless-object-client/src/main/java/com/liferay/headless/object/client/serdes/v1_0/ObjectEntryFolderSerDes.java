@@ -275,6 +275,16 @@ public class ObjectEntryFolderSerDes {
 			sb.append("\"");
 		}
 
+		if (objectEntryFolder.getScopeId() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"scopeId\": ");
+
+			sb.append(objectEntryFolder.getScopeId());
+		}
+
 		if (objectEntryFolder.getScopeKey() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -287,6 +297,16 @@ public class ObjectEntryFolderSerDes {
 			sb.append(_escape(objectEntryFolder.getScopeKey()));
 
 			sb.append("\"");
+		}
+
+		if (objectEntryFolder.getStatus() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"status\": ");
+
+			sb.append(String.valueOf(objectEntryFolder.getStatus()));
 		}
 
 		if (objectEntryFolder.getTitle() != null) {
@@ -495,12 +515,26 @@ public class ObjectEntryFolderSerDes {
 					objectEntryFolder.getRemovedDate()));
 		}
 
+		if (objectEntryFolder.getScopeId() == null) {
+			map.put("scopeId", null);
+		}
+		else {
+			map.put("scopeId", String.valueOf(objectEntryFolder.getScopeId()));
+		}
+
 		if (objectEntryFolder.getScopeKey() == null) {
 			map.put("scopeKey", null);
 		}
 		else {
 			map.put(
 				"scopeKey", String.valueOf(objectEntryFolder.getScopeKey()));
+		}
+
+		if (objectEntryFolder.getStatus() == null) {
+			map.put("status", null);
+		}
+		else {
+			map.put("status", String.valueOf(objectEntryFolder.getStatus()));
 		}
 
 		if (objectEntryFolder.getTitle() == null) {
@@ -601,7 +635,13 @@ public class ObjectEntryFolderSerDes {
 			else if (Objects.equals(jsonParserFieldName, "removedDate")) {
 				return false;
 			}
+			else if (Objects.equals(jsonParserFieldName, "scopeId")) {
+				return false;
+			}
 			else if (Objects.equals(jsonParserFieldName, "scopeKey")) {
+				return false;
+			}
+			else if (Objects.equals(jsonParserFieldName, "status")) {
 				return false;
 			}
 			else if (Objects.equals(jsonParserFieldName, "title")) {
@@ -749,9 +789,21 @@ public class ObjectEntryFolderSerDes {
 						toDate((String)jsonParserFieldValue));
 				}
 			}
+			else if (Objects.equals(jsonParserFieldName, "scopeId")) {
+				if (jsonParserFieldValue != null) {
+					objectEntryFolder.setScopeId(
+						Long.valueOf((String)jsonParserFieldValue));
+				}
+			}
 			else if (Objects.equals(jsonParserFieldName, "scopeKey")) {
 				if (jsonParserFieldValue != null) {
 					objectEntryFolder.setScopeKey((String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "status")) {
+				if (jsonParserFieldValue != null) {
+					objectEntryFolder.setStatus(
+						StatusSerDes.toDTO((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "title")) {

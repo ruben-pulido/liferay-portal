@@ -11,23 +11,25 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.constants.ObjectPortletKeys;
+import com.liferay.object.model.ObjectDefinition;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
-import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
 
+import jakarta.portlet.ActionRequest;
 import jakarta.portlet.PortletRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,6 +59,18 @@ public class ViewStructuresDisplayContext {
 			ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_FILE_TYPES, "')");
 	}
 
+	public Map<String, Object> getBreadcrumbProps() throws PortalException {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		_addBreadcrumbItem(jsonArray, false, null, _getLayoutName());
+
+		return HashMapBuilder.<String, Object>put(
+			"breadcrumbItems", jsonArray
+		).put(
+			"hideSpace", true
+		).build();
+	}
+
 	public List<DropdownItem> getBulkActionDropdownItems() {
 		return Collections.emptyList();
 	}
@@ -65,18 +79,20 @@ public class ViewStructuresDisplayContext {
 		return CreationMenuBuilder.addPrimaryDropdownItem(
 			dropdownItem -> {
 				dropdownItem.setHref(
-					_getHref(
-						ObjectFolderConstants.
-							EXTERNAL_REFERENCE_CODE_CONTENT_STRUCTURES));
+					ActionUtil.getBaseStructureBuilderURL(_themeDisplay) +
+						"?objectFolderExternalReferenceCode=" +
+							ObjectFolderConstants.
+								EXTERNAL_REFERENCE_CODE_CONTENT_STRUCTURES);
 				dropdownItem.setLabel(
 					LanguageUtil.get(_httpServletRequest, "content"));
 			}
 		).addPrimaryDropdownItem(
 			dropdownItem -> {
 				dropdownItem.setHref(
-					_getHref(
-						ObjectFolderConstants.
-							EXTERNAL_REFERENCE_CODE_FILE_TYPES));
+					ActionUtil.getBaseStructureBuilderURL(_themeDisplay) +
+						"?objectFolderExternalReferenceCode=" +
+							ObjectFolderConstants.
+								EXTERNAL_REFERENCE_CODE_FILE_TYPES);
 				dropdownItem.setLabel(
 					LanguageUtil.get(_httpServletRequest, "file"));
 			}
@@ -88,24 +104,13 @@ public class ViewStructuresDisplayContext {
 
 		return List.of(
 			new FDSActionDropdownItem(
-				HttpComponentsUtil.addParameters(
-					PortalUtil.getLayoutFullURL(
-						LayoutLocalServiceUtil.getLayoutByFriendlyURL(
-							_themeDisplay.getScopeGroupId(), false,
-							"/structure-builder"),
-						_themeDisplay),
-					"objectDefinitionExternalReferenceCode",
-					"{externalReferenceCode}"),
+				ActionUtil.getBaseStructureBuilderURL(_themeDisplay) +
+					"?objectDefinitionExternalReferenceCode=" +
+						"{externalReferenceCode}",
 				"pencil", "edit", LanguageUtil.get(_httpServletRequest, "edit"),
-				"get", "update", null),
+				"get", "update", null, Map.of("system", false)),
 			new FDSActionDropdownItem(
-				HttpComponentsUtil.addParameters(
-					PortalUtil.getLayoutFullURL(
-						LayoutLocalServiceUtil.getLayoutByFriendlyURL(
-							_themeDisplay.getScopeGroupId(), false,
-							"/structure-usages"),
-						_themeDisplay),
-					"objectDefinitionId", "{id}"),
+				ActionUtil.getBaseStructureUsagesURL(_themeDisplay) + "{id}",
 				"list-ul", "viewUsages",
 				LanguageUtil.get(_httpServletRequest, "view-usages"), "get",
 				null, null),
@@ -126,7 +131,7 @@ public class ViewStructuresDisplayContext {
 				).buildString(),
 				"export", "export",
 				LanguageUtil.get(_httpServletRequest, "export-as-json"), "get",
-				"exportObjectDefinition", null),
+				"exportObjectDefinition", null, Map.of("system", false)),
 			new FDSActionDropdownItem(
 				PortletURLBuilder.create(
 					PortletURLFactoryUtil.create(
@@ -140,9 +145,28 @@ public class ViewStructuresDisplayContext {
 				).buildString(),
 				"import", "import",
 				LanguageUtil.get(_httpServletRequest, "import-and-override"),
-				"get", "update", null),
+				"get", "update", null, Map.of("system", false)),
 			new FDSActionDropdownItem(
-				"", "password-policies", "permissions",
+				PortletURLBuilder.create(
+					PortalUtil.getControlPanelPortletURL(
+						_httpServletRequest,
+						"com_liferay_portlet_configuration_web_portlet_" +
+							"PortletConfigurationPortlet",
+						ActionRequest.RENDER_PHASE)
+				).setMVCPath(
+					"/edit_permissions.jsp"
+				).setRedirect(
+					_themeDisplay.getURLCurrent()
+				).setParameter(
+					"modelResource", ObjectDefinition.class.getName()
+				).setParameter(
+					"modelResourceDescription", "{name}"
+				).setParameter(
+					"resourcePrimKey", "{id}"
+				).setWindowState(
+					LiferayWindowState.POP_UP
+				).buildString(),
+				"password-policies", "permissions",
 				LanguageUtil.get(_httpServletRequest, "permissions"), "get",
 				"permissions", "modal-permissions"),
 			new FDSActionDropdownItem(
@@ -158,48 +182,31 @@ public class ViewStructuresDisplayContext {
 				).buildString(),
 				"trash", "delete",
 				LanguageUtil.get(_httpServletRequest, "delete"), "delete",
-				"delete", null));
+				"delete", null, Map.of("system", false)));
 	}
 
-	public Map<String, Object> getToolbarProps() throws PortalException {
-		return HashMapBuilder.<String, Object>put(
-			"title",
-			() -> {
-				Layout layout = _themeDisplay.getLayout();
+	private void _addBreadcrumbItem(
+		JSONArray jsonArray, boolean active, String friendlyURL, String label) {
 
-				if (layout == null) {
-					return null;
-				}
-
-				return layout.getName(_themeDisplay.getLocale(), true);
-			}
-		).put(
-			"toolbarClassName", "section-toolbar tbar-light"
-		).put(
-			"toolbarTitleClassName", "section-toolbar-title"
-		).build();
+		jsonArray.put(
+			JSONUtil.put(
+				"active", active
+			).put(
+				"href", friendlyURL
+			).put(
+				"label", label
+			));
 	}
 
-	private String _getHref(String objectFolderExternalReferenceCode) {
-		try {
-			return HttpComponentsUtil.addParameters(
-				PortalUtil.getLayoutFullURL(
-					LayoutLocalServiceUtil.getLayoutByFriendlyURL(
-						_themeDisplay.getScopeGroupId(), false,
-						"/structure-builder"),
-					_themeDisplay),
-				"objectFolderExternalReferenceCode",
-				objectFolderExternalReferenceCode);
-		}
-		catch (PortalException portalException) {
-			_log.error(portalException);
+	private String _getLayoutName() {
+		Layout layout = _themeDisplay.getLayout();
+
+		if (layout == null) {
+			return null;
 		}
 
-		return StringPool.BLANK;
+		return layout.getName(_themeDisplay.getLocale(), true);
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ViewStructuresDisplayContext.class);
 
 	private final HttpServletRequest _httpServletRequest;
 	private final ThemeDisplay _themeDisplay;

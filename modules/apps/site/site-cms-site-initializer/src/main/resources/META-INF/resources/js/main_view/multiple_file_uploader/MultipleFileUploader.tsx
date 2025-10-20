@@ -162,11 +162,7 @@ export default function MultipleFileUploader({
 					<FailedFiles failedFiles={failedFiles} />
 				) : (
 					<>
-						{isLoading && (
-							<div className="loading-message">
-								<LoadingMessage />
-							</div>
-						)}
+						{isLoading && <LoadingMessage />}
 
 						<div
 							{...getRootProps({
@@ -218,9 +214,9 @@ export default function MultipleFileUploader({
 									invisible: isLoading,
 								})}
 							>
-								<p className="text-3 text-secondary text-uppercase">
+								<h2 className="font-weight-semi-bold mb-3 text-3 text-secondary text-uppercase">
 									{Liferay.Language.get('files-to-upload')}
-								</p>
+								</h2>
 
 								{filesToUpload.map((fileData, index) => (
 									<>
@@ -239,7 +235,7 @@ export default function MultipleFileUploader({
 										>
 											<ClayLayout.ContentCol>
 												<ClaySticker
-													className="sticker-border-secondary"
+													className="border border-secondary"
 													displayType="secondary"
 													size="lg"
 												>

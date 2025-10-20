@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermi
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -63,21 +64,22 @@ public abstract class BaseFilesSectionDisplayContext
 				null));
 		fdsBulkActionDropdownItems.add(
 			new FDSActionDropdownItem(
-				null, "pencil", "edit-categories",
-				LanguageUtil.get(httpServletRequest, "edit-categories"), "post",
-				"edit-categories", null));
-		fdsBulkActionDropdownItems.add(
-			new FDSActionDropdownItem(
-				null, "pencil", "edit-tags",
-				LanguageUtil.get(httpServletRequest, "edit-tags"), "post",
-				"edit-tags", null));
-		fdsBulkActionDropdownItems.add(
-			new FDSActionDropdownItem(
 				"#", "password-policies", "permissions",
 				LanguageUtil.get(httpServletRequest, "permissions"), null, null,
 				null));
+		fdsBulkActionDropdownItems.add(
+			new FDSActionDropdownItem(
+				"#", "password-policies", "default-permissions",
+				LanguageUtil.get(httpServletRequest, "default-permissions"),
+				null, null, null));
 
 		return fdsBulkActionDropdownItems;
+	}
+
+	@Override
+	public List<DropdownItem> getCreationMenuDropdownItems() {
+		return ActionUtil.getFilesSectionCreationMenuDropdownItems(
+			httpServletRequest, null);
 	}
 
 	@Override

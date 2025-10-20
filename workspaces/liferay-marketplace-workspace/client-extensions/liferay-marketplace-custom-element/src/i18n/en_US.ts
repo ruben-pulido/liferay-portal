@@ -75,6 +75,7 @@ export default {
 	'approve-request': 'Approve Request',
 	'approved': 'Approved',
 	'apps': 'Apps',
+	'apps-sold': 'Apps Sold',
 	'are-you-sure-you-want-to-expire-this-trial-this-action-implies-the-permanent-end-of-the-test-environment':
 		'Are you sure you want to expire this trial? This action implies the permanent end of the test environment.',
 	'area': 'Area',
@@ -98,6 +99,8 @@ export default {
 	'billing-email': 'Billing Email',
 	'blank-site': 'Blank Site',
 	'build': 'Build',
+	'business': 'Business',
+	'business-account': 'Business Account',
 	'business-address': 'Business Address',
 	'by-requesting-a-publisher-account-you-agree-to-the':
 		'By requesting a Publisher account, you agree to the',
@@ -199,6 +202,8 @@ export default {
 		'Design the storefront for your solution. This will set the information displayed on the solution’s page. This section is dedicated to creating the solution’s detail content.',
 	'design-the-storefront-for-your-solution-this-will-set-the-information-displayed-on-the-solutions-page-this-section-is-dedicated-to-creating-the-solutions-header':
 		'Design the storefront for your solution. This will set the information displayed on the solution’s page. This section is dedicated to creating the solution’s header.',
+	'designed-for-companies-with-a-tax-vat-number-this-account-type-also-lets-you-manage-multiple-users-under-one-profile-click-the-button-below-to-create-your-first-business-account-today':
+		'Designed for companies with a Tax/VAT number, this account type also lets you manage multiple users under one profile. Click the button below to create your first Business Account today!',
 	'details': 'Details',
 	'developer-license-prices': 'Developer License Prices',
 	'developer-licenses-are-limited-to-5-unique-addresses-and-should-not-be-used-for-full-scale-production-deployments':
@@ -245,6 +250,7 @@ export default {
 	'environment-type': 'Environment Type',
 	'environments': 'Environments',
 	'error-details': 'Error Details',
+	'excluding-vat': 'Excluding VAT',
 	'exit': 'Exit',
 	'exit-from-providing-app-build': 'Exit from providing app build',
 	'exp-date': 'Exp. Date',
@@ -269,6 +275,10 @@ export default {
 	'file-not-available-for-download': 'File not available for download.',
 	'filter': 'Filter',
 	'first-name': 'First Name',
+	'for-businesses-with-a-vat-tax-number-this-account-type-support-multiple-users-it-also-possible-to-join-an-already-existing-business-account':
+		'For businesses with a VAT/Tax number; this account type support multiple users. It also possible to join an already existing business account',
+	'for-individuals-without-a-vat-tax-number-this-account-support-single-user-only':
+		'For individuals without a VAT/Tax number; this account support single user only.',
 	'form': 'Form',
 	'fragment': 'Fragment',
 	'fragment-collection-of-fragments': 'Fragment/Collection of Fragments',
@@ -346,7 +356,6 @@ export default {
 	'liferay-s': 'Liferay’s',
 	'liferay-saas': 'Liferay SaaS',
 	'liferay-self-hosted': 'Liferay Self-Hosted',
-	'liferay-user-email': 'Liferay User Email',
 	'liferay-version': 'Liferay Version',
 	'limit-reached': 'Limit Reached',
 	'list-with-latest-published-apps': 'List with latest published apps',
@@ -367,6 +376,7 @@ export default {
 	'manage-your-current-trials': 'Manage your current trials',
 	'manage-your-teams-trial': "Manage your team's trial",
 	'mark-as-paid': 'Mark as Paid',
+	'marked-as-paid': 'Marked as paid.',
 	'maximum-number-of-uploads-reached': 'Maximum Number of Uploads Reached',
 	'modified-date': 'Modified Date',
 	'modular-components-built-with-html-css-and-javascript-offer-extensible-and-reusable-elements-or-collections-of-elements-for-constructing-content-pages-and-templates':
@@ -381,11 +391,14 @@ export default {
 	'move-to-bottom': 'Move to Bottom',
 	'move-to-top': 'Move to Top',
 	'move-up': 'Move Up',
+	'mp-commission': 'MP Commission',
 	'my-apps': 'My Apps',
 	'my-solutions': 'My Solutions',
 	'name': 'Name',
 	'net-price': 'Net Price',
 	'never-expires': 'Never Expires',
+	'new-account': 'New Account',
+	'new-address': 'New Address',
 	'new-app': 'New App',
 	'new-potential-expiration-date': 'New Potential Expiration Date',
 	'new-trial': 'New Trial',
@@ -406,6 +419,7 @@ export default {
 	'object-action': 'Object Action',
 	'objective': 'Objective',
 	'of-target': 'of target',
+	'offline-payments-using-the-invoice': 'Offline payments using the invoice',
 	'on-hold': 'On Hold',
 	'only-gif-jpg-jpeg-png-are-allowed-max-file-size-is-5mb':
 		'Only GIF, JPG, JPEG, and PNG are allowed. Max file size is 5MB.',
@@ -419,17 +433,24 @@ export default {
 	'order-id': 'Order ID',
 	'order-info': 'Order Info',
 	'order-marked-as-paid': 'Order marked as paid.',
+	'order-received': 'Order Received',
 	'order-status': 'Order Status',
 	'orders': 'Orders',
 	'other': 'Other',
 	'package': 'Package',
 	'paid': 'Paid',
+	'paid-by': 'Paid By',
 	'paid-date': 'Paid Date',
+	'pay-with-card': 'Pay with card',
+	'pay-with-invoice': 'Pay with invoice',
 	'payment': 'Payment',
 	'payment-method': 'Payment Method',
 	'payment-status': 'Payment Status',
+	'payment-summary': 'Payment Summary',
 	'paypal-account': 'PayPal Account',
 	'pending': 'Pending',
+	'personal': 'Personal',
+	'personal-account': 'Personal Account',
 	'phone': 'Phone',
 	'phone-number': 'Phone Number',
 	'please-be-aware-that-since-you-are-adding-a-new-version-of-the-app-the-only-section-visible-is-the-build':
@@ -475,19 +496,25 @@ export default {
 	'publisher': 'Publisher',
 	'publisher-account-request': 'Publisher Account Request',
 	'publisher-dashboard': 'Publisher Dashboard',
+	'publisher-details': 'Publisher Details',
 	'publisher-id': 'Publisher ID',
 	'publisher-name': 'Publisher Name',
+	'publisher-payout': 'Publisher Payout',
 	'publisher-requests': 'Publisher Requests',
 	'publisher-type': 'Publisher Type',
 	'publisher-website-url': 'Publisher Website URL',
 	'publishers': 'Publishers',
 	'purchase-and-install-new-apps-and-they-will-show-up-here':
 		'Purchase and install new apps and they will show up here.',
+	'purchase-app': 'Purchase App',
+	'purchase-completed': 'Purchase Completed',
 	'purchase-date': 'Purchase Date',
+	'purchase-failed': 'Purchase Failed',
 	'purchase-order-number': 'Purchase Order Number',
 	'purchased-by': 'Purchased by',
 	'qty': 'Qty',
 	'quantity': 'Quantity',
+	'quarter': 'Quarter',
 	'ram': 'RAM',
 	'ram-in-gbs': 'RAM in GBs',
 	'reason': 'Reason',
@@ -513,6 +540,7 @@ export default {
 	'review-and-submit-solution': 'Review and Submit Solution',
 	'review-the-new-publisher-info-and-the-liferay-marketplace-terms-before-proceeding':
 		'Review the new publisher info and the Liferay Marketplace terms before proceeding.',
+	'save': 'Save',
 	'save-as-a-draft-exit': 'Save as a Draft & Exit',
 	'save-as-draft': 'Save as Draft',
 	'save-this-address-for-future-orders':
@@ -520,6 +548,7 @@ export default {
 	'search': 'Search',
 	'section-that-shows-the-latest-sales-made':
 		'Section that shows the latest sales made',
+	'section-that-shows-the-payments': 'Section that shows the payments.',
 	'select-a-file': 'Select a File',
 	'select-a-local-file-to-upload': 'Select a Local File to Upload',
 	'select-an-option': 'Select an Option',
@@ -579,12 +608,18 @@ export default {
 	'tax-id': 'Tax ID',
 	'tax-vat': 'Tax/VAT',
 	'terms-of-service': 'Terms of Service',
+	'terms-privacy-returns-or-contact-support-all-costs-are-in-us-dollars':
+		'Terms, privacy, returns, or contact support. All costs are in US Dollars',
 	'text-block': 'Text Block',
 	'text-images-block': 'Text Images Block',
 	'text-video-block': 'Text Video Block',
 	'thank-you-for-your': 'Thank you for your',
 	'the-app-and-all-its-client-extensions-services-will-be-deleted-and-uninstalled-from-liferay-dxp':
 		'The app and all its client extensions (services) will be deleted and uninstalled from Liferay DXP.',
+	'the-app-submission-is-compatible-with-liferay-experience-cloud-and':
+		'The app submission is compatible with Liferay SaaS and ',
+	'the-app-submission-is-integrates-with-liferay-dxp-version-7-4-or-later':
+		'The app submission is integrates with Liferay DXP version 7.4 or later.',
 	'the-cloud-app-is-client-extension-based-and-compatible-with-liferay-saas-it-fully-supports-and-deploys-on-extension-environments':
 		'The cloud app is client extension based and compatible with Liferay SaaS. It fully supports and deploys on extension environments.',
 	'the-cloud-app-is-client-extension-based-and-is-compatible-with-a-customer’s-self-hosted-environment':
@@ -653,6 +688,8 @@ export default {
 		'Unable to download your license file.  Please try again and/or contact support via the manage menu on the dashboard.',
 	'under-review': 'Under Review',
 	'uninstall': 'Uninstall',
+	'unlock-exclusive-benefits-with-a-business-account':
+		'Unlock exclusive benefits with a Business Account!',
 	'unpaid': 'Unpaid',
 	'upload-at-least-one-image-or-add-a-video-url':
 		'Upload at least one image, or add a video URL',
@@ -668,10 +705,12 @@ export default {
 	'use-one-of-the-following-methods-to-provide-your-app-builds':
 		'Use one of the following methods to provide your app builds.',
 	'user-account': 'User Account',
+	'user-email': 'User Email',
 	'users-requests-to-become-a-publisher':
 		'Users requests to become a publisher',
 	'value-between-1-and-60': 'Value between 1 and 60.',
 	'vat': 'VAT',
+	'vat-id': 'VAT ID',
 	'vat-number': 'VAT Number',
 	'version': 'Version',
 	'via-github-repo': 'Via GitHub Repo',
@@ -721,6 +760,10 @@ export default {
 		'You do not have access to a cloud project.',
 	'you-have-reached-the-maximum-number-of-active-trials-allowed-to-start-a-new-trial-please-end-one-of-your-existing-trials-first':
 		'You have reached the maximum number of active trials allowed. To start a new trial, please end one of your existing trials first.',
+	'you-ll-be-redirected-to-paypal-to-complete-your-purchase-securely-after-your-payment-you-are-able-to-activate-the-license-on-customer-dashboard-right-away':
+		"You'll be redirected to PayPal to complete your purchase securely. After your payment you are able to activate the license on customer dashboard right away",
+	'you-will-receive-an-invoice-via-email-with-all-the-details-needed-to-complete-your-payment-after-you-complete-the-payment-you-can-activate-your-license-from-the-customer-dashboard':
+		'You will receive an invoice via email with all the details needed to complete your payment. After you complete the payment, you can activate your license from the customer dashboard.',
 	'your-request-completed-successfully':
 		'Your request completed successfully',
 	'zip-files-must-be-in-universal-file-format-archive-uffa-the-specially-structured-zip-encoded-archive-used-to-package-client-extension-project-outputs-this-format-must-support-the-following-use-cases-deliver-batch-engine-data-files-compatible-with-all-deployment-targets-deliver-dxp-configuration-resource-compatible-with-all-deployment-targets-deliver-static-resources-compatible-with-all-deployment-targets-deliver-the-infrastructure-metadata-necessary-to-deploy-to-lxc-sm-for-more-information-see':

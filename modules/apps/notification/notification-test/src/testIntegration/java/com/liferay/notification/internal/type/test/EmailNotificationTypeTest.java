@@ -50,6 +50,7 @@ import com.liferay.object.constants.ObjectActionKeys;
 import com.liferay.object.constants.ObjectActionTriggerConstants;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
+import com.liferay.object.field.builder.AssigneeObjectFieldBuilder;
 import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
@@ -984,6 +985,102 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 			accountEntryRestrictedObjectDefinition);
 	}
 
+	@FeatureFlag("LPD-6233")
+	@Test
+	public void testSendNotificationToAssignee() throws Exception {
+		ObjectDefinition objectDefinition =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				Collections.singletonList(
+					new AssigneeObjectFieldBuilder(
+					).labelMap(
+						RandomTestUtil.randomLocaleStringMap()
+					).name(
+						"assignee"
+					).build()));
+
+		addNotificationTemplateObjectAction(
+			Arrays.asList(
+				NotificationRecipientSettingUtil.
+					createNotificationRecipientSetting(
+						NotificationRecipientSettingConstants.NAME_FROM,
+						"test@liferay.com"),
+				NotificationRecipientSettingUtil.
+					createNotificationRecipientSetting(
+						NotificationRecipientSettingConstants.NAME_FROM_NAME,
+						Collections.singletonMap(LocaleUtil.US, "Test")),
+				NotificationRecipientSettingUtil.
+					createNotificationRecipientSetting(
+						NotificationRecipientSettingConstants.
+							NAME_SINGLE_RECIPIENT,
+						Boolean.FALSE.toString()),
+				NotificationRecipientSettingUtil.
+					createNotificationRecipientSetting(
+						NotificationRecipientSettingConstants.NAME_TO,
+						getObjectFieldTermName(objectDefinition, "assignee")),
+				NotificationRecipientSettingUtil.
+					createNotificationRecipientSetting(
+						NotificationRecipientSettingConstants.NAME_TO_TYPE,
+						NotificationRecipientConstants.TYPE_TERM)),
+			objectDefinition,
+			getObjectFieldTermName(objectDefinition, "assignee"),
+			NotificationConstants.TYPE_EMAIL);
+
+		Role role = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
+
+		addViewResourcePermission(objectDefinition, role);
+
+		User user1 = UserTestUtil.addUser();
+
+		_roleLocalService.addUserRole(user1.getUserId(), role.getRoleId());
+
+		objectEntryManager.addObjectEntry(
+			dtoConverterContext, objectDefinition,
+			new ObjectEntry() {
+				{
+					properties = HashMapBuilder.<String, Object>put(
+						"assignee",
+						HashMapBuilder.put(
+							"externalReferenceCode",
+							user1.getExternalReferenceCode()
+						).put(
+							"type", "User"
+						).build()
+					).build();
+				}
+			},
+			null);
+
+		_assertMailMessage(new String[] {user1.getEmailAddress()});
+		assertNotificationQueueEntrySubject(user1.getFullName());
+
+		User user2 = UserTestUtil.addUser();
+
+		_roleLocalService.addUserRole(user2.getUserId(), role.getRoleId());
+
+		objectEntryManager.addObjectEntry(
+			dtoConverterContext, objectDefinition,
+			new ObjectEntry() {
+				{
+					properties = HashMapBuilder.<String, Object>put(
+						"assignee",
+						HashMapBuilder.put(
+							"externalReferenceCode",
+							role.getExternalReferenceCode()
+						).put(
+							"type", "Role"
+						).build()
+					).build();
+				}
+			},
+			null);
+
+		_assertMailMessage(
+			new String[] {user1.getEmailAddress(), user2.getEmailAddress()});
+		assertNotificationQueueEntrySubject(role.getName());
+
+		objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
+	}
+
 	@Test
 	public void testSendNotificationToCurrentUser() throws Exception {
 		NotificationTemplate notificationTemplate =
@@ -1017,8 +1114,8 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 
 		ObjectDefinition objectDefinition =
 			objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), 0, null, false, false, true, false,
-				false, false, false, false, null,
+				TestPropsValues.getUserId(), 0, null, false, true, false, true,
+				false, false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -1233,7 +1330,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 	public void testSendNotificationToSubscribers() throws Exception {
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.publishObjectDefinition(
-				true, true,
+				false, true, true,
 				Collections.singletonList(
 					new TextObjectFieldBuilder(
 					).labelMap(
@@ -1279,7 +1376,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 			},
 			group.getGroupKey());
 
-		_assertMailMessage(user);
+		_assertMailMessage(new String[] {user.getEmailAddress()});
 		_assertNotificationQueueEntryBody(
 			String.format(
 				"<p>Dear %s,</p>\n\n<p>This is an autogenerated email for %s." +
@@ -1307,7 +1404,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 			},
 			group.getGroupKey());
 
-		_assertMailMessage(user);
+		_assertMailMessage(new String[] {user.getEmailAddress()});
 		_assertNotificationQueueEntryBody(
 			String.format(
 				"<p>Dear %s,</p>\n\n<p>This is an autogenerated email for %s." +
@@ -1344,7 +1441,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 				}
 			});
 
-		_assertMailMessage(user);
+		_assertMailMessage(new String[] {user.getEmailAddress()});
 		_assertNotificationQueueEntryBody(
 			String.format(
 				"<p>Dear %s,</p>\n\n<p>This is an autogenerated email for %s." +
@@ -1356,7 +1453,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 		defaultObjectEntryManager.expireObjectEntry(
 			dtoConverterContext, objectEntry.getId());
 
-		_assertMailMessage(user);
+		_assertMailMessage(new String[] {user.getEmailAddress()});
 		_assertNotificationQueueEntryBody(
 			String.format(
 				"<p>Dear %s,</p>\n\n<p>This is an autogenerated email for %s." +
@@ -1373,7 +1470,6 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 			objectEntryFolder1.getObjectEntryFolderId());
 	}
 
-	@FeatureFlag("LPD-50091")
 	@Test
 	public void testSendNotificationToUserGroups() throws Exception {
 		UserGroup userGroup1 = UserGroupTestUtil.addUserGroup();
@@ -1484,8 +1580,8 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 
 		ObjectDefinition objectDefinition =
 			objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), 0, null, false, false, true, false,
-				false, false, false, false, null,
+				TestPropsValues.getUserId(), 0, null, false, true, false, true,
+				false, false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -1722,10 +1818,9 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 			RandomTestUtil.randomString(), null, null, type, null, null);
 	}
 
-	private void _assertMailMessage(User user) {
+	private void _assertMailMessage(String[] emailAddresses) {
 		Assert.assertNotNull(
-			MailServiceTestUtil.getMailMessage(
-				"To", new String[] {user.getEmailAddress()}));
+			MailServiceTestUtil.getMailMessage("To", emailAddresses));
 
 		MailServiceTestUtil.clearMessages();
 	}

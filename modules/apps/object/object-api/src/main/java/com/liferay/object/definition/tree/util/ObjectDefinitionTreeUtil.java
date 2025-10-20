@@ -80,7 +80,7 @@ public class ObjectDefinitionTreeUtil {
 			objectDefinitionPersistence.findByPrimaryKey(
 				objectRelationship.getObjectDefinitionId1());
 
-		if (objectDefinition1.getRootObjectDefinitionId() == 0) {
+		if (ArrayUtil.isEmpty(objectDefinition1.getRootObjectDefinitionIds())) {
 			_setRootObjectDefinitionIds(
 				new long[] {objectDefinition1.getObjectDefinitionId()},
 				objectDefinition1, objectDefinitionSettingLocalService,
@@ -153,13 +153,17 @@ public class ObjectDefinitionTreeUtil {
 			}
 		}
 
-		ObjectDefinition rootObjectDefinition =
-			objectDefinitionPersistence.findByPrimaryKey(
-				objectDefinition1.getRootObjectDefinitionId());
+		for (long rootObjectDefinitionId :
+				objectDefinition1.getRootObjectDefinitionIds()) {
 
-		if (rootObjectDefinition.isApproved()) {
-			objectDefinitionLocalService.deployObjectDefinition(
-				rootObjectDefinition);
+			ObjectDefinition rootObjectDefinition =
+				objectDefinitionPersistence.findByPrimaryKey(
+					rootObjectDefinitionId);
+
+			if (rootObjectDefinition.isApproved()) {
+				objectDefinitionLocalService.deployObjectDefinition(
+					rootObjectDefinition);
+			}
 		}
 	}
 
@@ -376,18 +380,46 @@ public class ObjectDefinitionTreeUtil {
 	}
 
 	private static void _performActions(
-			long objectDefinitionId,
+			boolean addRootObjectEntryIdRestrictions,
+			ObjectDefinition objectDefinition,
 			ObjectEntryLocalService objectEntryLocalService, boolean parallel,
-			ActionableDynamicQuery.PerformActionMethod<?> performActionMethod)
+			ActionableDynamicQuery.PerformActionMethod<ObjectEntry>
+				performActionMethod)
 		throws PortalException {
 
 		ActionableDynamicQuery actionableDynamicQuery =
 			objectEntryLocalService.getActionableDynamicQuery();
 
 		actionableDynamicQuery.setAddCriteriaMethod(
-			dynamicQuery -> dynamicQuery.add(
-				RestrictionsFactoryUtil.eq(
-					"objectDefinitionId", objectDefinitionId)));
+			dynamicQuery -> {
+				dynamicQuery.add(
+					RestrictionsFactoryUtil.eq(
+						"objectDefinitionId",
+						objectDefinition.getObjectDefinitionId()));
+
+				if (!addRootObjectEntryIdRestrictions) {
+					return;
+				}
+
+				dynamicQuery.add(
+					RestrictionsFactoryUtil.ne("rootObjectEntryId", 0L));
+
+				if (ArrayUtil.isEmpty(
+						objectDefinition.getRootObjectDefinitionIds())) {
+
+					return;
+				}
+
+				dynamicQuery.add(
+					RestrictionsFactoryUtil.sqlRestriction(
+						StringBundler.concat(
+							"not exists (select 1 from ObjectEntry where ",
+							"objectEntryId = this_.rootObjectEntryId and ",
+							"objectDefinitionId in (",
+							StringUtil.merge(
+								objectDefinition.getRootObjectDefinitionIds()),
+							"))")));
+			});
 		actionableDynamicQuery.setParallel(parallel);
 		actionableDynamicQuery.setPerformActionMethod(performActionMethod);
 
@@ -580,9 +612,8 @@ public class ObjectDefinitionTreeUtil {
 						objectRelationship.getObjectFieldId2());
 
 				_performActions(
-					objectDefinition1.getObjectDefinitionId(),
-					objectEntryLocalService, true,
-					(ObjectEntry objectEntry) -> _runSQL(
+					false, objectDefinition1, objectEntryLocalService, true,
+					objectEntry -> _runSQL(
 						objectRelationshipPersistence,
 						StringBundler.concat(
 							"update ObjectEntry set rootObjectEntryId = ",
@@ -599,10 +630,8 @@ public class ObjectDefinitionTreeUtil {
 							objectDefinition2.getClassName());
 
 					_performActions(
-						objectDefinition2.getObjectDefinitionId(),
-						objectEntryLocalService, true,
-						(ObjectEntry objectEntry) -> indexer.reindex(
-							objectEntry));
+						false, objectDefinition2, objectEntryLocalService, true,
+						indexer::reindex);
 				}
 			}
 
@@ -630,17 +659,17 @@ public class ObjectDefinitionTreeUtil {
 		}
 
 		_performActions(
-			objectDefinition.getObjectDefinitionId(), objectEntryLocalService,
-			false,
-			(ObjectEntry objectEntry) -> {
-				if (ArrayUtil.isEmpty(
+			true, objectDefinition, objectEntryLocalService, false,
+			objectEntry -> {
+				if (Arrays.equals(
+						new long[] {objectEntry.getObjectDefinitionId()},
 						objectDefinition.getRootObjectDefinitionIds())) {
 
-					objectEntry.setRootObjectEntryId(0);
-				}
-				else {
 					objectEntry.setRootObjectEntryId(
 						objectEntry.getObjectEntryId());
+				}
+				else {
+					objectEntry.setRootObjectEntryId(0);
 				}
 
 				objectEntryLocalService.updateObjectEntry(objectEntry);

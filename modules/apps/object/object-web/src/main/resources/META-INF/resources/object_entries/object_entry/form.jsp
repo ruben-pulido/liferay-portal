@@ -16,8 +16,10 @@ ObjectDefinition objectDefinition = objectEntryDisplayContext.getObjectDefinitio
 ObjectEntry objectEntry = objectEntryDisplayContext.getObjectEntry();
 String portletNamespace = portletDisplay.getNamespace();
 
-portletDisplay.setShowBackIcon(true);
-portletDisplay.setURLBack(backURL);
+if (ParamUtil.getBoolean(request, "showHeader", true)) {
+	portletDisplay.setShowBackIcon(true);
+	portletDisplay.setURLBack(backURL);
+}
 %>
 
 <portlet:actionURL name="/object_entries/edit_object_entry" var="editObjectEntryURL" />
@@ -41,10 +43,35 @@ portletDisplay.setURLBack(backURL);
 				</clay:col>
 			</clay:row>
 
-			<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPD-21926") && objectDefinition.isEnableFriendlyURLCustomization() && defaultObjectLayout %>'>
+			<%@ include file="/object_entries/object_entry/categorization.jspf" %>
+
+			<c:if test="<%= objectDefinition.isEnableObjectEntrySchedule() && defaultObjectLayout %>">
+				<div>
+					<react:component
+						module="{ScheduleContainer} from object-web"
+						props='<%=
+							HashMapBuilder.<String, Object>put(
+								"portletNamespace", portletNamespace
+							).put(
+								"scheduleProperties", objectEntryDisplayContext.getScheduleProperties()
+							).put(
+								"submitRef", portletNamespace + "submitObjectEntry"
+							).build()
+						%>'
+					/>
+				</div>
+			</c:if>
+
+			<%
+			boolean showFriendlyURL = FeatureFlagManagerUtil.isEnabled("LPD-21926") && objectDefinition.isEnableFriendlyURLCustomization();
+
+			ObjectLayoutBox seoObjectLayoutBox = objectEntryDisplayContext.getObjectLayoutBox(ObjectLayoutBoxConstants.TYPE_SEO);
+			%>
+
+			<c:if test="<%= showFriendlyURL && ((seoObjectLayoutBox != null) || defaultObjectLayout) %>">
 				<clay:panel-group>
 					<clay:panel
-						collapsable="<%= true %>"
+						collapsable="<%= (seoObjectLayoutBox == null) ? true : seoObjectLayoutBox.isCollapsable() %>"
 						displayTitle='<%= LanguageUtil.get(request, "seo") %>'
 						displayType="default"
 						expanded="<%= true %>"
@@ -66,26 +93,7 @@ portletDisplay.setURLBack(backURL);
 					</clay:panel>
 				</clay:panel-group>
 			</c:if>
-
-			<c:if test="<%= objectDefinition.isEnableObjectEntrySchedule() && defaultObjectLayout %>">
-				<div>
-					<react:component
-						module="{ScheduleContainer} from object-web"
-						props='<%=
-							HashMapBuilder.<String, Object>put(
-								"portletNamespace", portletNamespace
-							).put(
-								"scheduleProperties", objectEntryDisplayContext.getScheduleProperties()
-							).put(
-								"submitRef", portletNamespace + "submitObjectEntry"
-							).build()
-						%>'
-					/>
-				</div>
-			</c:if>
 		</clay:sheet-section>
-
-		<%@ include file="/object_entries/object_entry/categorization.jspf" %>
 	</liferay-frontend:edit-form-body>
 
 	<c:if test="<%= !objectEntryDisplayContext.isReadOnly() %>">

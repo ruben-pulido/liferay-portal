@@ -14,6 +14,7 @@ import {pageViewModePagesTest} from '../../../fixtures/pageViewModePagesTest';
 import {pagesAdminPagesTest} from '../../../fixtures/pagesAdminPagesTest';
 import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
 import {workflowPagesTest} from '../../../fixtures/workflowPagesTest';
+import {createCategories} from '../../../helpers/CreateCategories';
 import {SystemSettingsPage} from '../../../pages/configuration-admin-web/SystemSettingsPage';
 import {checkAccessibility} from '../../../utils/checkAccessibility';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
@@ -101,6 +102,51 @@ const translationAndAutosaveTest = mergeTests(
 );
 
 const privateContentIconTest = mergeTests(baseTest);
+
+baseTest(
+	'Check permissions when only Owner was given permissions',
+	{
+		tag: '@LPD-68086',
+	},
+	async ({journalEditArticlePage, journalPage, page, site}) => {
+		await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
+
+		const title = getRandomString();
+
+		await journalEditArticlePage.fillTitle(title);
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByRole('menuitem', {
+				name: /publish with permissions/i,
+			}),
+			trigger: journalEditArticlePage.publishDropdown,
+		});
+
+		await journalEditArticlePage.inputPermissionsViewRole.selectOption(
+			'Owner'
+		);
+
+		await page
+			.locator(
+				'#_com_liferay_journal_web_portlet_JournalPortlet_guestPermissions_ADD_DISCUSSION'
+			)
+			.uncheck();
+
+		await page
+			.locator(
+				'#_com_liferay_journal_web_portlet_JournalPortlet_groupPermissions_ADD_DISCUSSION'
+			)
+			.uncheck();
+
+		await page.getByRole('button', {exact: true, name: 'Publish'}).click();
+
+		await journalPage.assertJournalArticlePermissions(title, [
+			{enabled: false, locator: '#guest_ACTION_ADD_DISCUSSION'},
+			{enabled: false, locator: '#site-member_ACTION_ADD_DISCUSSION'},
+		]);
+	}
+);
 
 baseTest(
 	'Check alert message of duplicated friendly URL in french',
@@ -201,6 +247,71 @@ baseTest(
 			page,
 			`Success:${title} was successfully saved as a draft.`
 		);
+	}
+);
+
+baseTest(
+	'Check that upload field is marked as translated',
+	{
+		tag: '@LPD-66008',
+	},
+
+	async ({apiHelpers, journalEditArticlePage, page, site}) => {
+		const structureName = 'Test Structure';
+
+		const dataDefinition = getDataStructureDefinition({
+			defaultLanguageId: 'en_US',
+			fields: [
+				{
+					fieldType: 'document_library',
+					name: 'Upload',
+				},
+			],
+			name: structureName,
+		});
+
+		await apiHelpers.dataEngine.createStructure(site.id, dataDefinition);
+
+		await journalEditArticlePage.goto({
+			siteUrl: site.friendlyUrlPath,
+			structureName,
+		});
+
+		const title = getRandomString();
+
+		await journalEditArticlePage.fillTitle(title);
+
+		await journalEditArticlePage.selectFileFromDocumentsAndMedia(
+			'astronaut.png'
+		);
+
+		const translationButton = page.getByLabel('Select a language, current');
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByRole('option', {
+				name: 'Catalan Language: Not Translated',
+			}),
+			trigger: translationButton,
+		});
+
+		await journalEditArticlePage.selectFileFromDocumentsAndMedia(
+			'planet.png'
+		);
+
+		await translateNameAndMetadataFields(page, structureName);
+
+		await journalEditArticlePage.publishArticle();
+
+		await journalEditArticlePage.editArticle(title);
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByRole('option', {
+				name: 'Catalan Language: Translated',
+			}),
+			trigger: translationButton,
+		});
 	}
 );
 
@@ -1128,6 +1239,7 @@ bulkTest(
 		});
 
 		await journalPage.goto(site.friendlyUrlPath);
+		await journalPage.changeView('list');
 
 		const article1 = page
 			.locator(
@@ -1782,7 +1894,10 @@ assetPublisherDeprecationTest(
 			.getByRole('option', {name: 'Full Content'})
 			.click();
 		await configurationFrame.getByRole('button', {name: 'Save'}).click();
-		await page.getByLabel('close', {exact: true}).click();
+		await page
+			.locator('.modal-header')
+			.getByLabel('Close', {exact: true})
+			.click();
 
 		await widgetPagePage.goto(widgetLayout, site.friendlyUrlPath);
 
@@ -1800,17 +1915,24 @@ ckeditor4Test(
 			await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
 		});
 
-		await ckeditor4Page.insertHTML(
-			'<img src="/documents/d/guest/moon-png" />'
-		);
+		await ckeditor4Page.page.getByLabel('Image', {exact: true}).click();
+
+		await ckeditor4Page.selectImageWithItemSelector({
+			cardTitle: 'moon.png',
+		});
 
 		const editableFrame = journalEditArticlePage.page
 			.locator('.edit-article-panel')
 			.frameLocator('iframe[title="editor"]');
 
-		await editableFrame
-			.locator('img[src="/documents/d/guest/moon-png"]')
-			.dblclick();
+		const moonImage = editableFrame.locator(
+			'img[src="/documents/d/guest/moon-png"]'
+		);
+
+		await expect(moonImage).toBeVisible();
+		await expect(moonImage).toHaveAttribute('data-fileentryid');
+
+		await moonImage.dblclick();
 
 		await ckeditor4Page.contextMenu.getByText('Browse Server').click();
 
@@ -1824,9 +1946,12 @@ ckeditor4Test(
 
 		await ckeditor4Page.contextMenu.getByText('OK').click();
 
-		await expect(
-			editableFrame.locator('img[src="/documents/d/guest/satellite-png"]')
-		).toBeVisible();
+		const satelliteImage = editableFrame.locator(
+			'img[src="/documents/d/guest/satellite-png"]'
+		);
+
+		await expect(satelliteImage).toBeVisible();
+		await expect(satelliteImage).toHaveAttribute('data-fileentryid');
 	}
 );
 
@@ -2083,5 +2208,48 @@ baseTest(
 		const displayDateText = await spanInsideTd.textContent();
 
 		expect(displayDateText).not.toBe('1 Minute ago');
+	}
+);
+
+baseTest(
+	'Can add and remove all categories from a Web Content',
+	{
+		tag: '@LPD-67395',
+	},
+	async ({apiHelpers, journalEditArticlePage, page, site}) => {
+		const category1 = getRandomString();
+		const vocabularyName = getRandomString();
+
+		await baseTest.step('create vocabulary and category', async () => {
+			await createCategories({
+				apiHelpers,
+				categoryNames: [{name: category1}],
+				siteId: site.id,
+				vocabularyName,
+			});
+		});
+
+		await baseTest.step('select category in web content', async () => {
+			await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
+
+			await journalEditArticlePage.selectCategories(vocabularyName, [
+				category1,
+			]);
+
+			await expect(
+				page.getByRole('gridcell', {exact: true, name: category1})
+			).toBeVisible();
+		});
+
+		await baseTest.step(
+			'can remove categories via Clear All button',
+			async () => {
+				await journalEditArticlePage.clearAllCategories(vocabularyName);
+
+				await expect(
+					page.getByRole('gridcell', {exact: true, name: category1})
+				).not.toBeVisible();
+			}
+		);
 	}
 );

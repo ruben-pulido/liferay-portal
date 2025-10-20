@@ -834,6 +834,49 @@ public class ObjectEntryFolder implements Serializable {
 	private Supplier<Date> _removedDateSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "The scope id of the object entry folder."
+	)
+	public Long getScopeId() {
+		if (_scopeIdSupplier != null) {
+			scopeId = _scopeIdSupplier.get();
+
+			_scopeIdSupplier = null;
+		}
+
+		return scopeId;
+	}
+
+	public void setScopeId(Long scopeId) {
+		this.scopeId = scopeId;
+
+		_scopeIdSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setScopeId(
+		UnsafeSupplier<Long, Exception> scopeIdUnsafeSupplier) {
+
+		_scopeIdSupplier = () -> {
+			try {
+				return scopeIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(description = "The scope id of the object entry folder.")
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Long scopeId;
+
+	@JsonIgnore
+	private Supplier<Long> _scopeIdSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The scope key of the object entry folder."
 	)
 	public String getScopeKey() {
@@ -875,6 +918,48 @@ public class ObjectEntryFolder implements Serializable {
 
 	@JsonIgnore
 	private Supplier<String> _scopeKeySupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema
+	@Valid
+	public Status getStatus() {
+		if (_statusSupplier != null) {
+			status = _statusSupplier.get();
+
+			_statusSupplier = null;
+		}
+
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+
+		_statusSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setStatus(
+		UnsafeSupplier<Status, Exception> statusUnsafeSupplier) {
+
+		_statusSupplier = () -> {
+			try {
+				return statusUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Status status;
+
+	@JsonIgnore
+	private Supplier<Status> _statusSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The object entry folder's main title/name."
@@ -1253,6 +1338,18 @@ public class ObjectEntryFolder implements Serializable {
 			sb.append("\"");
 		}
 
+		Long scopeId = getScopeId();
+
+		if (scopeId != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"scopeId\": ");
+
+			sb.append(scopeId);
+		}
+
 		String scopeKey = getScopeKey();
 
 		if (scopeKey != null) {
@@ -1267,6 +1364,18 @@ public class ObjectEntryFolder implements Serializable {
 			sb.append(_escape(scopeKey));
 
 			sb.append("\"");
+		}
+
+		Status status = getStatus();
+
+		if (status != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"status\": ");
+
+			sb.append(String.valueOf(status));
 		}
 
 		String title = getTitle();

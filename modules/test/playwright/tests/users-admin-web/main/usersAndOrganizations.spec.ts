@@ -31,7 +31,7 @@ export const test = mergeTests(
 	apiHelpersTest,
 	dataApiHelpersTest,
 	featureFlagsTest({
-		'LPD-47858': {enabled: true},
+		'LPD-35914': {enabled: true},
 	}),
 	loginTest(),
 	usersAndOrganizationsPagesTest
@@ -1682,6 +1682,7 @@ test(
 		await vocabulariesEditPage.toggleRequired();
 
 		await usersAndOrganizationsPage.goToUsers();
+		await usersAndOrganizationsPage.usersDataTable.changeView('table');
 		await (
 			await usersAndOrganizationsPage.usersTableRowLink(
 				userAccount.alternateName

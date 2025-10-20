@@ -169,6 +169,9 @@ components:
                 advanceStatus:
                     example: trasmitted
                     type: string
+                author:
+                    readOnly: true
+                    type: string
                 billingAddress:
                     $ref: "#/components/schemas/BillingAddress"
                 billingAddressExternalReferenceCode:
@@ -721,6 +724,10 @@ components:
                 printedNote:
                     example: Order item printed note
                     type: string
+                productId:
+                    format: int64
+                    readOnly: true
+                    type: integer
                 promoPrice:
                     example: 101
                     format: bigdecimal
@@ -1390,7 +1397,7 @@ info:
         name: Commerce Team
     description:
         "Liferay Commerce Admin Order API. A Java client JAR is available for use with the group ID 'com.liferay',
-        artifact ID 'com.liferay.headless.commerce.admin.order.client', and version '4.0.51'."
+        artifact ID 'com.liferay.headless.commerce.admin.order.client', and version '4.0.52'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

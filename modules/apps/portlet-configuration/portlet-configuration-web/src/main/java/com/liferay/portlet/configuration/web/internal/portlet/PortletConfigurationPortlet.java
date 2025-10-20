@@ -65,12 +65,12 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.configuration.kernel.util.PortletConfigurationUtil;
 import com.liferay.portlet.configuration.web.internal.constants.PortletConfigurationPortletKeys;
 import com.liferay.portlet.configuration.web.internal.constants.PortletConfigurationWebKeys;
@@ -855,7 +855,7 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 
 			if (!scopeLayout.hasScopeGroup()) {
 				_groupLocalService.addGroup(
-					themeDisplay.getUserId(),
+					StringPool.BLANK, themeDisplay.getUserId(),
 					GroupConstants.DEFAULT_PARENT_GROUP_ID,
 					Layout.class.getName(), scopeLayout.getPlid(),
 					GroupConstants.DEFAULT_LIVE_GROUP_ID,
@@ -863,9 +863,9 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 						LocaleUtil.getDefault(),
 						String.valueOf(scopeLayout.getPlid())
 					).build(),
-					null, 0, true,
+					null, 0, null, true,
 					GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, null, false,
-					true, null);
+					false, true, null);
 			}
 
 			scopeGroupId = scopeLayout.getGroupId();

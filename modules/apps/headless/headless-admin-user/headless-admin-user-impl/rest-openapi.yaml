@@ -382,6 +382,12 @@ components:
                         The type of the content.
                     readOnly: true
                     type: string
+                externalReferenceCode:
+                    description:
+                        The user's external reference code.
+                    example: AB-34098-789-N
+                    readOnly: true
+                    type: string
                 familyName:
                     description:
                         The user's surname (last name).
@@ -1748,7 +1754,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.user.client', and version '4.0.79'."
+        'com.liferay.headless.admin.user.client', and version '4.0.80'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

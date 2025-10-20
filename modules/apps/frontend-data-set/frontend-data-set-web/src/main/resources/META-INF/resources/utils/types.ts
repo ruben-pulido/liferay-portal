@@ -4,8 +4,7 @@
  */
 
 import {ModalStatus} from 'frontend-js-components-web';
-
-import {TRenderer} from '../FrontendDataSetContext';
+import React from 'react';
 
 export declare function FrontendDataSet({
 	actionParameterName,
@@ -78,6 +77,12 @@ export interface IEmptyStateConfiguration extends IEmptyState {
 	};
 }
 
+export enum EConfigInURLBehavior {
+	OFF = 'off',
+	PUSH = 'push',
+	REPLACE = 'replace',
+}
+
 export interface IInlineEditingSettings {
 	alwaysOn: boolean;
 	defaultBodyContent: object;
@@ -120,6 +125,11 @@ export interface ICreationActionItem {
 		| string;
 }
 
+export enum EItemActionsType {
+	GROUP = 'group',
+	ITEM = 'item',
+}
+
 export interface IItemsActions {
 	className?: string;
 	data?: IItemActionsData;
@@ -145,7 +155,7 @@ export interface IItemsActions {
 		| 'modal-permissions'
 		| 'sidePanel'
 		| 'event';
-	type?: string;
+	type?: EItemActionsType | `${EItemActionsType}`;
 }
 
 export interface IItemActionsData {
@@ -271,6 +281,7 @@ export interface IFrontendDataSetProps {
 	apiURL?: string;
 	appURL?: string;
 	bulkActions?: any[];
+	configInURLBehavior?: EConfigInURLBehavior;
 	creationMenu?: {
 		loadData?: Function;
 		primaryItems: Array<ICreationActionItem>;
@@ -284,6 +295,7 @@ export interface IFrontendDataSetProps {
 	};
 	customViews?: string;
 	customViewsEnabled?: boolean;
+	defaultSelectedItems?: any[];
 	emptyState?: IEmptyStateConfiguration;
 	enableInlineAddModeSetting?: {
 		defaultBodyContent?: object;
@@ -322,6 +334,7 @@ export interface IFrontendDataSetProps {
 	showBulkActionsManagementBar?: boolean;
 	showBulkActionsManagementBarActions?: boolean;
 	showManagementBar?: boolean;
+	showManagementBarInEmptyState?: boolean;
 	showNavBarWhenSelected?: boolean;
 	showPagination?: boolean;
 	showSearch?: boolean;
@@ -356,11 +369,39 @@ export interface ISuccessNotification {
 	showSuccessNotification?: boolean;
 }
 
-export {
-	IClientExtensionRenderer,
-	IInternalRenderer,
-} from '../FrontendDataSetContext';
-export {INTERNAL_CELL_RENDERERS as FDS_INTERNAL_CELL_RENDERERS} from '../cell_renderers/InternalCellRenderer';
+export interface IDataSetData {
+	items: Array<any>;
+	lastPage: number;
+	page: number;
+	pageSize?: number;
+	totalCount: number;
+}
+
+export interface IHTMLElementBuilder {
+	(args: any): HTMLElement;
+}
+
+export interface IClientExtensionRenderer {
+	externalReferenceCode?: string;
+	htmlElementBuilder?: IHTMLElementBuilder;
+	name?: string;
+	type: 'clientExtension';
+	url?: string;
+}
+
+export interface IInternalRenderer {
+	component: React.ComponentType<any>;
+	default?: boolean;
+	label?: string;
+	name?: string;
+	schema?: ISchema;
+	symbol?: string;
+	type: 'internal';
+	url?: string;
+}
+
+export type TRenderer = IClientExtensionRenderer | IInternalRenderer;
+
 export {
 	DEFAULT_FETCH_HEADERS,
 	FDS_ARRAY_FIELD_NAME_DELIMITER,
@@ -369,4 +410,42 @@ export {
 	FDS_NESTED_FIELD_NAME_PARENT_SUFFIX,
 } from '../constants';
 
-export {Card} from '../views/cards/Cards';
+export enum EConfigInURLKeys {
+	ACTIVE_FILTERS = 'filters',
+	ACTIVE_SORTS = 'sorts',
+	DELTA = 'delta',
+	PAGE_NUMBER = 'page',
+	SEARCH_PARAM = 'q',
+	VIEW_NAME = 'view',
+	VISIBLE_FIELDS = 'vf',
+}
+
+export interface IConfigInURL {
+	[EConfigInURLKeys.ACTIVE_FILTERS]: Array<any>;
+	[EConfigInURLKeys.ACTIVE_SORTS]: Array<TSort>;
+	[EConfigInURLKeys.DELTA]: number;
+	[EConfigInURLKeys.PAGE_NUMBER]: number;
+	[EConfigInURLKeys.SEARCH_PARAM]: string;
+	[EConfigInURLKeys.VIEW_NAME]: string;
+	[EConfigInURLKeys.VISIBLE_FIELDS]: VisibleFieldNames;
+}
+
+export type IConfigInURLUpdaterThunk<K extends keyof IConfigInURL> = (
+	value: IConfigInURL[K]
+) => (viewsDispatch: Function) => void;
+
+export type IConfigInURLGetter<K extends keyof IConfigInURL> = () =>
+	| IConfigInURL[K]
+	| undefined;
+
+export type IConfigReader<K extends keyof IConfigInURL> = (
+	value: IConfigInURL[K] | undefined
+) => IConfigInURL[K] | undefined;
+
+export type IConfigWriter<K extends keyof IConfigInURL> = (
+	value: IConfigInURL[K]
+) => IConfigInURL[K] | undefined;
+
+export type VisibleFieldNames = {
+	[fieldName: string]: boolean;
+};

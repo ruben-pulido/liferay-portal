@@ -109,6 +109,7 @@ import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.utility.page.converter.LayoutUtilityPageEntryTypeConverter;
 import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
 import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
+import com.liferay.list.type.exception.NoSuchListTypeDefinitionException;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.message.boards.model.MBMessage;
 import com.liferay.notification.rest.dto.v1_0.NotificationTemplate;
@@ -2692,7 +2693,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					pageJSONObject.getString("robots_i18n")),
 				type, pageJSONObject.getBoolean("hidden"),
 				layout.getFriendlyURLMap(), layout.getIconImage(), null,
-				layout.getStyleBookEntryId(),
+				layout.getStyleBookEntryERC(),
 				pageJSONObject.getLong("faviconFileEntryId"),
 				layout.getMasterLayoutPlid(), serviceContext);
 			_layoutLocalService.updateLayout(
@@ -2988,20 +2989,22 @@ public class BundleSiteInitializer implements SiteInitializer {
 				continue;
 			}
 
-			ListTypeDefinition existingListTypeDefinition =
-				listTypeDefinitionResource.
-					getListTypeDefinitionByExternalReferenceCode(
-						listTypeDefinition.getExternalReferenceCode());
+			try {
+				ListTypeDefinition existingListTypeDefinition =
+					listTypeDefinitionResource.
+						getListTypeDefinitionByExternalReferenceCode(
+							listTypeDefinition.getExternalReferenceCode());
 
-			if (existingListTypeDefinition == null) {
-				listTypeDefinition =
-					listTypeDefinitionResource.postListTypeDefinition(
-						listTypeDefinition);
-			}
-			else {
 				listTypeDefinition =
 					listTypeDefinitionResource.patchListTypeDefinition(
 						existingListTypeDefinition.getId(), listTypeDefinition);
+			}
+			catch (NoSuchListTypeDefinitionException
+						noSuchListTypeDefinitionException) {
+
+				listTypeDefinition =
+					listTypeDefinitionResource.postListTypeDefinition(
+						listTypeDefinition);
 			}
 
 			stringUtilReplaceValues.put(
@@ -3472,9 +3475,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 			com.liferay.object.model.ObjectRelationship
 				existingObjectRelationship =
 					_objectRelationshipLocalService.
-						fetchObjectRelationshipByObjectDefinitionId1(
-							objectRelationship.getObjectDefinitionId1(),
-							objectRelationship.getName());
+						fetchObjectRelationshipByExternalReferenceCode(
+							objectRelationship.getExternalReferenceCode(),
+							objectRelationship.getObjectDefinitionId1());
 
 			if (existingObjectRelationship == null) {
 				objectRelationshipResource.
@@ -4009,6 +4012,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 					"title", siteNavigationMenuItemSetting.title
 				).put(
 					"type", siteNavigationMenuItemSetting.type
+				).buildString();
+			}
+
+			String displayIcon = menuItemJSONObject.getString("displayIcon");
+
+			if (Validator.isNotNull(displayIcon)) {
+				typeSettings = UnicodePropertiesBuilder.load(
+					typeSettings
+				).put(
+					"displayIcon", displayIcon
 				).buildString();
 			}
 

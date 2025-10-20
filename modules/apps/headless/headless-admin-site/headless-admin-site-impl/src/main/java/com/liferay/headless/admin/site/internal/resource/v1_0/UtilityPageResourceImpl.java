@@ -6,6 +6,8 @@
 package com.liferay.headless.admin.site.internal.resource.v1_0;
 
 import com.liferay.client.extension.type.manager.CETManager;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.headless.admin.site.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.UtilityPage;
@@ -17,6 +19,8 @@ import com.liferay.headless.admin.site.internal.resource.v1_0.util.GroupUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.ServiceContextUtil;
 import com.liferay.headless.admin.site.resource.v1_0.UtilityPageResource;
+import com.liferay.info.item.InfoItemServiceRegistry;
+import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.utility.page.kernel.constants.LayoutUtilityPageEntryConstants;
 import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
 import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryService;
@@ -44,6 +48,7 @@ import com.liferay.portal.vulcan.util.SearchUtil;
 import jakarta.ws.rs.core.MultivaluedMap;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -56,9 +61,12 @@ import org.osgi.service.component.annotations.ServiceScope;
  */
 @Component(
 	properties = "OSGI-INF/liferay/rest/v1_0/utility-page.properties",
+	property = "export.import.vulcan.batch.engine.task.item.delegate=true",
 	scope = ServiceScope.PROTOTYPE, service = UtilityPageResource.class
 )
-public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
+public class UtilityPageResourceImpl
+	extends BaseUtilityPageResourceImpl
+	implements ExportImportVulcanBatchEngineTaskItemDelegate<UtilityPage> {
 
 	@Override
 	public void deleteSiteUtilityPage(
@@ -83,7 +91,72 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 	}
 
 	@Override
-	public UtilityPage getSiteUtilityPage(
+	public ExportImportDescriptor getExportImportDescriptor() {
+		return new ExportImportDescriptor() {
+
+			@Override
+			public String getItemClassName() {
+				return LayoutUtilityPageEntry.class.getName();
+			}
+
+			@Override
+			public String getLabel() {
+				return "utility-pages";
+			}
+
+			@Override
+			public List<String> getNestedFields() {
+				return List.of("friendlyUrlHistory", "pageSpecifications");
+			}
+
+			@Override
+			public String getPortletId() {
+				return LayoutAdminPortletKeys.GROUP_PAGES;
+			}
+
+			@Override
+			public Scope getScope() {
+				return Scope.SITE;
+			}
+
+			@Override
+			public boolean isActive(PortletDataContext portletDataContext) {
+				return FeatureFlagManagerUtil.isEnabled("LPD-35443");
+			}
+
+		};
+	}
+
+	@Override
+	public ContentPageSpecification postSiteUtilityPagePageSpecification(
+			String siteExternalReferenceCode,
+			String utilityPageExternalReferenceCode,
+			ContentPageSpecification contentPageSpecification)
+		throws Exception {
+
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+			throw new UnsupportedOperationException();
+		}
+
+		LayoutUtilityPageEntry layoutUtilityPageEntry =
+			_layoutUtilityPageEntryService.
+				getLayoutUtilityPageEntryByExternalReferenceCode(
+					utilityPageExternalReferenceCode,
+					GroupUtil.getGroupId(
+						false, contextCompany.getCompanyId(),
+						siteExternalReferenceCode));
+
+		return (ContentPageSpecification)_pageSpecificationDTOConverter.toDTO(
+			LayoutUtil.addDraftToLayout(
+				_cetManager, contentPageSpecification, _infoItemServiceRegistry,
+				_layoutLocalService.getLayout(layoutUtilityPageEntry.getPlid()),
+				ServiceContextUtil.createServiceContext(
+					layoutUtilityPageEntry.getGroupId(),
+					contextHttpServletRequest, contextUser.getUserId())));
+	}
+
+	@Override
+	protected UtilityPage doGetSiteUtilityPage(
 			String siteExternalReferenceCode,
 			String utilityPageExternalReferenceCode)
 		throws Exception {
@@ -102,7 +175,7 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 	}
 
 	@Override
-	public Page<UtilityPage> getSiteUtilityPagesPage(
+	protected Page<UtilityPage> doGetSiteUtilityPagesPage(
 			String siteExternalReferenceCode, String search,
 			Aggregation aggregation, Filter filter, Pagination pagination,
 			Sort[] sorts)
@@ -133,7 +206,7 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 	}
 
 	@Override
-	public UtilityPage postSiteUtilityPage(
+	protected UtilityPage doPostSiteUtilityPage(
 			String siteExternalReferenceCode, UtilityPage utilityPage)
 		throws Exception {
 
@@ -149,35 +222,7 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 	}
 
 	@Override
-	public ContentPageSpecification postSiteUtilityPagePageSpecification(
-			String siteExternalReferenceCode,
-			String utilityPageExternalReferenceCode,
-			ContentPageSpecification contentPageSpecification)
-		throws Exception {
-
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
-			throw new UnsupportedOperationException();
-		}
-
-		LayoutUtilityPageEntry layoutUtilityPageEntry =
-			_layoutUtilityPageEntryService.
-				getLayoutUtilityPageEntryByExternalReferenceCode(
-					utilityPageExternalReferenceCode,
-					GroupUtil.getGroupId(
-						false, contextCompany.getCompanyId(),
-						siteExternalReferenceCode));
-
-		return (ContentPageSpecification)_pageSpecificationDTOConverter.toDTO(
-			LayoutUtil.addDraftToLayout(
-				_cetManager, contentPageSpecification,
-				_layoutLocalService.getLayout(layoutUtilityPageEntry.getPlid()),
-				ServiceContextUtil.createServiceContext(
-					layoutUtilityPageEntry.getGroupId(),
-					contextHttpServletRequest, contextUser.getUserId())));
-	}
-
-	@Override
-	public UtilityPage putSiteUtilityPage(
+	protected UtilityPage doPutSiteUtilityPage(
 			String siteExternalReferenceCode,
 			String utilityPageExternalReferenceCode, UtilityPage utilityPage)
 		throws Exception {
@@ -223,10 +268,12 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 		}
 
 		LayoutUtil.updateContentLayout(
-			_cetManager, layout, layout.getNameMap(), titleMap, descriptionMap,
+			_cetManager, _infoItemServiceRegistry, layout, layout.getNameMap(),
+			titleMap, descriptionMap, layout.getKeywordsMap(),
 			layout.getRobotsMap(),
 			LocalizedMapUtil.getLocalizedMap(
 				utilityPage.getFriendlyUrlPath_i18n()),
+			layout.getTypeSettingsProperties(),
 			utilityPage.getPageSpecifications(),
 			_getServiceContext(groupId, utilityPage));
 
@@ -262,6 +309,28 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 			_layoutUtilityPageEntryService.updateLayoutUtilityPageEntry(
 				layoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
 				utilityPage.getName()));
+	}
+
+	@Override
+	protected Long getPermissionCheckerResourceId(
+			String groupExternalReferenceCode, String externalReferenceCode)
+		throws Exception {
+
+		LayoutUtilityPageEntry layoutUtilityPageEntry =
+			_layoutUtilityPageEntryService.
+				getLayoutUtilityPageEntryByExternalReferenceCode(
+					externalReferenceCode,
+					getPermissionCheckerGroupId(groupExternalReferenceCode));
+
+		return layoutUtilityPageEntry.getPrimaryKey();
+	}
+
+	@Override
+	protected String getPermissionCheckerResourceName(
+			String groupExternalReferenceCode, String externalReferenceCode)
+		throws Exception {
+
+		return LayoutUtilityPageEntry.class.getName();
 	}
 
 	@Override
@@ -333,10 +402,11 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 			"layout.instanceable.allowed", Boolean.TRUE);
 
 		Layout layout = LayoutUtil.addContentLayout(
-			_cetManager, groupId, utilityPage.getPageSpecifications(),
+			_cetManager, groupId, _infoItemServiceRegistry,
+			utilityPage.getPageSpecifications(),
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, false, nameMap, titleMap,
-			descriptionMap, null, LayoutConstants.TYPE_UTILITY, null, true,
-			true,
+			descriptionMap, null, null, LayoutConstants.TYPE_UTILITY, null,
+			true, true,
 			LocalizedMapUtil.getLocalizedMap(
 				utilityPage.getFriendlyUrlPath_i18n()),
 			WorkflowConstants.STATUS_DRAFT, serviceContext);
@@ -408,6 +478,9 @@ public class UtilityPageResourceImpl extends BaseUtilityPageResourceImpl {
 
 	@Reference
 	private CETManager _cetManager;
+
+	@Reference
+	private InfoItemServiceRegistry _infoItemServiceRegistry;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

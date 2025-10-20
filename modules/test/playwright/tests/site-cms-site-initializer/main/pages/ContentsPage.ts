@@ -42,8 +42,10 @@ export class ContentsPage {
 		this.page = page;
 
 		this.apiHelpers = new ApiHelpers(page);
-		this.newButton = page.locator('.nav-item').getByLabel('New');
-		this.publishButton = page.getByText('Publish', {exact: true});
+		this.newButton = page.getByTestId('fdsCreationActionButton').first();
+		this.publishButton = page
+			.getByText('Publish', {exact: true})
+			.or(page.getByText('Submit for Workflow', {exact: true}));
 	}
 
 	async goto() {
@@ -68,20 +70,28 @@ export class ContentsPage {
 	}
 
 	async createContent(type: string, space: string = 'Default') {
-		const assetLibraries =
-			await this.apiHelpers.headlessAssetLibrary.getAssetLibrariesPage(
-				encodeURIComponent("type eq 'Space'")
-			);
-
 		await clickAndExpectToBeVisible({
 			autoClick: true,
 			target: this.page.getByRole('menuitem', {name: type}),
 			trigger: this.newButton,
 		});
 
-		if (assetLibraries.length > 1) {
-			await this.page.getByRole('dialog').waitFor();
+		// Wait for first of Content Editor Sidebar and Space Selector
 
+		const first = await Promise.race([
+			this.page
+				.getByRole('tab', {name: 'General'})
+				.waitFor({state: 'visible'})
+				.then(() => 'content-editor-sidebar'),
+			this.page
+				.getByRole('dialog')
+				.waitFor({state: 'visible'})
+				.then(() => 'space-selector'),
+		]);
+
+		// If Space Selector is shown, select space
+
+		if (first === 'space-selector') {
 			await clickAndExpectToBeVisible({
 				autoClick: true,
 				target: this.page.getByRole('option', {name: space}),
@@ -90,11 +100,9 @@ export class ContentsPage {
 
 			await this.page.getByRole('button', {name: 'Save'}).click();
 		}
-
-		await this.page.getByRole('tab', {name: 'General'}).waitFor();
 	}
 
-	async createFolder(folderName: string) {
+	async createFolder(folderName: string, spaceName?: string) {
 		await clickAndExpectToBeVisible({
 			autoClick: true,
 			target: this.page.getByRole('menuitem', {name: 'Folder'}),
@@ -105,10 +113,17 @@ export class ContentsPage {
 
 		await this.page.getByLabel('NameRequired').fill(folderName);
 
+		if (spaceName) {
+			await this.page.getByLabel('SpaceRequired').click();
+			await this.page.getByRole('option', {name: spaceName}).click();
+		}
+
 		await this.page.getByRole('button', {name: 'Save'}).click();
+
+		await waitForAlert(this.page, `Success:${folderName} was created`);
 	}
 
-	async deleteContent(title: string, recycleBinEnabled: boolean = false) {
+	async deleteContent(title: string, recycleBinEnabled: boolean = true) {
 		const card = this.page
 			.locator('tr', {hasText: title})
 			.or(this.page.locator('.card-row', {hasText: title}));
@@ -196,6 +211,17 @@ export class ContentsPage {
 		});
 	}
 
+	async saveContentAsDraft() {
+		await clickAndExpectToBeVisible({
+			target: this.newButton,
+			timeout: 5000,
+			trigger: this.page.getByRole('button', {
+				exact: true,
+				name: 'Save as Draft',
+			}),
+		});
+	}
+
 	async translateContent(title: string) {
 		const card = this.page
 			.locator('tr', {hasText: title})
@@ -209,6 +235,25 @@ export class ContentsPage {
 
 		await expect(
 			this.page.locator('.management-bar').getByText('Publish')
+		).toBeVisible();
+	}
+
+	async viewContent(title: string) {
+		const card = this.page
+			.locator('tr', {hasText: title})
+			.or(this.page.locator('.card-row', {hasText: title}));
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {
+				exact: true,
+				name: 'View',
+			}),
+			trigger: card.locator('button'),
+		});
+
+		await expect(
+			this.page.getByRole('dialog', {name: title})
 		).toBeVisible();
 	}
 }

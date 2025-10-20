@@ -8,9 +8,11 @@ import path from 'path';
 
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
+import {fragmentsPagesTest} from '../../../fixtures/fragmentPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {createCategories} from '../../../helpers/CreateCategories';
+import {clickAndExpectToBeHidden} from '../../../utils/clickAndExpectToBeHidden';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import fillAndClickOutside from '../../../utils/fillAndClickOutside';
 import {getRandomInt} from '../../../utils/getRandomInt';
@@ -28,6 +30,7 @@ const test = mergeTests(
 		'LPD-17564': {enabled: true},
 		'LPS-179669': {enabled: true},
 	}),
+	fragmentsPagesTest,
 	loginTest(),
 	pageEditorPagesTest,
 	structureBuilderPagesTest
@@ -73,7 +76,7 @@ test(
 test(
 	'Default structures take Content Editor Master and fragments work',
 	{tag: '@LPD-50371'},
-	async ({contentsPage, page}) => {
+	async ({contentsPage, localizationSelectPage, page}) => {
 
 		// Go to CMS Contents
 
@@ -81,7 +84,7 @@ test(
 
 		// Create new Knowledge Base content
 
-		await contentsPage.createContent('Knowledge Base');
+		await contentsPage.createContent('Basic Content');
 
 		// Fill data
 
@@ -99,10 +102,22 @@ test(
 			friendlyUrl
 		);
 
+		await localizationSelectPage.switchLanguage('es-ES');
+
+		// Check localization management is activated by default
+
 		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: page.getByRole('option').filter({hasText: 'es-ES'}),
-			trigger: page.getByLabel('Select a language, current language:'),
+			target: page.getByRole('menuitem', {
+				name: 'Mark as Translated',
+			}),
+			trigger: localizationSelectPage.actionsDropdownTrigger,
+		});
+
+		await clickAndExpectToBeHidden({
+			target: page.getByRole('menuitem', {
+				name: 'Mark as Translated',
+			}),
+			trigger: localizationSelectPage.actionsDropdownTrigger,
 		});
 
 		await fillAndClickOutside(page, page.getByLabel('Title'), titleSpanish);
@@ -122,11 +137,7 @@ test(
 		await expect(page.getByLabel('Title')).toHaveValue(titleEnglish);
 		await expect(page.getByLabel('Friendly URL')).toHaveValue(friendlyUrl);
 
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: page.getByRole('option').filter({hasText: 'es-ES'}),
-			trigger: page.getByLabel('Select a language, current language:'),
-		});
+		await localizationSelectPage.switchLanguage('es-ES');
 
 		await expect(page.getByLabel('Title')).toHaveValue(titleSpanish);
 
@@ -158,7 +169,7 @@ test(
 
 		// Publish the structure
 
-		const {id} = await structureBuilderPage.saveStructure();
+		await structureBuilderPage.saveStructure();
 
 		await structureBuilderPage.publishStructure();
 
@@ -183,10 +194,6 @@ test(
 		).toBeVisible();
 
 		await expect(fragment.filter({hasText: 'Default'})).toBeVisible();
-
-		// Delete structure
-
-		await structureBuilderPage.deleteStructure(id);
 	}
 );
 
@@ -518,7 +525,7 @@ test.describe('Schedule Panel', () => {
 
 			await contentsPage.goto();
 
-			await contentsPage.createContent('Basic Web Content');
+			await contentsPage.createContent('Basic Content');
 
 			await contentsPage.openSidePanel('Schedule');
 
@@ -609,7 +616,7 @@ test.describe('Categorization Panel', () => {
 
 			await contentsPage.goto();
 
-			await contentsPage.createContent('Basic Web Content');
+			await contentsPage.createContent('Basic Content');
 
 			await contentsPage.openSidePanel('Categorization');
 
@@ -682,37 +689,289 @@ test.describe('Categorization Panel', () => {
 });
 
 test(
-	'Check that the content shifts when the side panel opens',
-	{tag: '@LPD-62067'},
+	'Can save content as draft',
+	{tag: '@LPD-66942'},
 	async ({contentsPage, page}) => {
-		const getContainerRightPadding = async () =>
-			page
-				.locator('#content')
-				.evaluate(
-					(element: HTMLDivElement) =>
-						window.getComputedStyle(element).paddingRight
-				);
 
-		// Create new Knowledge Base content
+		// Create a content
 
 		await contentsPage.goto();
 
-		await contentsPage.createContent('Knowledge Base');
+		await contentsPage.createContent('Basic Content');
 
-		// Compare the container padding when the side panel is closed and opened
+		const title = getRandomString();
 
-		let containerWidth = await getContainerRightPadding();
+		await page.getByPlaceholder(`New Basic Web Content`).fill(title);
 
-		await contentsPage.openSidePanel();
+		// Save as draft
+
+		await contentsPage.saveContentAsDraft();
+
+		// Check that the content is saved as draft
+
+		expect(
+			page
+				.locator('tr', {hasText: title})
+				.or(page.locator('.card-row', {hasText: title}))
+				.locator('.cell-embedded-status')
+		).toHaveText('Draft');
+
+		// Delete content
+
+		await contentsPage.deleteContent(title);
+	}
+);
+
+const testWithRepeatableFF = mergeTests(
+	test,
+	featureFlagsTest({
+		'LPD-50377': {enabled: true},
+		'LPS-179669': {enabled: true},
+	})
+);
+
+testWithRepeatableFF(
+	'Create item with repeatable groups',
+	{
+		tag: ['@LPD-50378', '@LPD-68645'],
+	},
+	async ({contentsPage, page, structureBuilderPage}) => {
+
+		// Create structure
+
+		const structureLabel = `StructureName${getRandomInt()}`;
+
+		await structureBuilderPage.createStructureFromData({
+			label: structureLabel,
+			name: `StructureName${getRandomInt()}`,
+			page: structureBuilderPage,
+			publish: false,
+		});
+
+		// Add fields
+
+		await structureBuilderPage.addField('Text');
+		await structureBuilderPage.addField('Long Text');
+
+		// Create repeatable group with two of them
+
+		await structureBuilderPage.createRepeatableGroup({
+			fields: [{label: 'Text'}],
+			label: 'Repeatable Group 1',
+		});
+
+		// Create another group inside the first one
+
+		await structureBuilderPage.createRepeatableGroup({
+			fields: [{label: 'Long Text'}],
+			label: 'Repeatable Group 2',
+		});
+
+		await structureBuilderPage.publishStructure();
+
+		// Go to CMS Contents
+
+		await contentsPage.goto();
+
+		// Create new content
+
+		await contentsPage.createContent(structureLabel);
+
+		const title = getRandomString();
+
+		await page.getByPlaceholder(`New ${structureLabel}`).fill(title);
+
+		// Add Repeatable Groups
+
+		await page.getByRole('button', {name: 'Add New'}).first().click();
+
+		await page.getByRole('button', {name: 'Add New'}).last().click();
+
+		// Fill the fields
+
+		const firstText = page
+			.getByRole('textbox', {exact: true, name: 'Text'})
+			.first();
+
+		await firstText.fill('First Text');
+
+		const secondText = page
+			.getByRole('textbox', {exact: true, name: 'Text'})
+			.last();
+
+		await secondText.fill('Second Text');
+
+		const firstLongText = page
+			.getByRole('textbox', {exact: true, name: 'Long Text'})
+			.first();
+
+		await firstLongText.fill('First Long Text');
+
+		const secondLongText = page
+			.getByRole('textbox', {exact: true, name: 'Long Text'})
+			.last();
+
+		await secondLongText.fill('Second Long Text');
+
+		// Save content
+
+		await contentsPage.saveContent();
+
+		// View content and check that the repeatable buttons are not showed
+
+		await contentsPage.viewContent(title);
+
+		expect(
+			page
+				.getByRole('dialog', {name: title})
+				.frameLocator('iframe')
+				.getByLabel('Add new')
+		).not.toBeVisible();
 
 		await page
-			.locator(
-				'.content-editor__side-panel .sidebar:not(.c-slideout-transition)'
-			)
-			.waitFor();
+			.getByRole('dialog', {name: title})
+			.getByRole('button', {name: 'close'})
+			.click();
 
-		containerWidth = await getContainerRightPadding();
+		// Edit the content again and check values
 
-		expect(containerWidth).toBe('280px');
+		await contentsPage.editContent(title);
+
+		await expect(firstText).toHaveValue('First Text');
+		await expect(secondText).toHaveValue('Second Text');
+		await expect(firstLongText).toHaveValue('First Long Text');
+		await expect(secondLongText).toHaveValue('Second Long Text');
+
+		// Delete content
+
+		await contentsPage.goto();
+
+		const card = page
+			.locator('tr', {hasText: title})
+			.or(page.locator('.card-row', {hasText: title}));
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByRole('menuitem', {name: 'Delete'}),
+			trigger: card.locator('button'),
+		});
+
+		page.getByRole('dialog')
+			.getByRole('button', {name: 'Delete Entry'})
+			.click();
+
+		await waitForAlert(page, `Success:${title} was moved`, {
+			autoClose: false,
+		});
+	}
+);
+
+testWithRepeatableFF(
+	'Create item with referenced structure',
+	{
+		tag: '@LPD-50378',
+	},
+	async ({contentsPage, page, structureBuilderPage}) => {
+
+		// Create referenced structure
+
+		const referencedStructureLabel = `ReferencedStructureName${getRandomInt()}`;
+
+		await structureBuilderPage.createStructureFromData({
+			label: referencedStructureLabel,
+			name: referencedStructureLabel,
+			page: structureBuilderPage,
+			publish: true,
+		});
+
+		// Create main structure
+
+		const structureLabel = `StructureName${getRandomInt()}`;
+
+		await structureBuilderPage.createStructureFromData({
+			label: structureLabel,
+			name: structureLabel,
+			page: structureBuilderPage,
+			publish: false,
+		});
+
+		// Add fields and publish structure
+
+		await structureBuilderPage.addReferencedStructures([
+			referencedStructureLabel,
+		]);
+
+		await structureBuilderPage.publishStructure();
+
+		// Go to CMS Contents
+
+		await contentsPage.goto();
+
+		// Create new content
+
+		await contentsPage.createContent(structureLabel);
+
+		const title = getRandomString();
+
+		await page.getByPlaceholder(`New ${structureLabel}`).fill(title);
+
+		// Check that we are adding the accordion fragment
+
+		await expect(
+			page.locator('.lfr-layout-structure-item-basic-component-accordion')
+		).toBeVisible();
+
+		// Add Repeatable Groups
+
+		await page.getByRole('button', {name: 'Add New'}).first().click();
+
+		// Fill the fields
+
+		const firstText = page
+			.locator('.lfr-layout-structure-item-form-relationship')
+			.getByRole('textbox', {exact: true, name: 'Title'})
+			.first();
+
+		await firstText.fill('First Text');
+
+		const secondText = page
+			.locator('.lfr-layout-structure-item-form-relationship')
+			.getByRole('textbox', {exact: true, name: 'Title'})
+			.last();
+
+		await secondText.fill('Second Text');
+
+		// Save content
+
+		await contentsPage.saveContent();
+
+		// Edit the content again and check values
+
+		await contentsPage.editContent(title);
+
+		await expect(firstText).toHaveValue('First Text');
+		await expect(secondText).toHaveValue('Second Text');
+
+		// Delete content
+
+		await contentsPage.goto();
+
+		const card = page
+			.locator('tr', {hasText: title})
+			.or(page.locator('.card-row', {hasText: title}));
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByRole('menuitem', {name: 'Delete'}),
+			trigger: card.locator('button'),
+		});
+
+		page.getByRole('dialog')
+			.getByRole('button', {name: 'Delete Entry'})
+			.click();
+
+		await waitForAlert(page, `Success:${title} was moved`, {
+			autoClose: false,
+		});
 	}
 );

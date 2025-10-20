@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.dao.jdbc.CurrentConnection;
 import com.liferay.portal.kernel.dao.jdbc.CurrentConnectionUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
-import com.liferay.portal.kernel.db.partition.DBPartition;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.model.Company;
@@ -33,6 +32,7 @@ import com.liferay.portal.kernel.test.rule.AssumeTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.InfrastructureUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.impl.CompanyImpl;
 import com.liferay.portal.model.impl.VirtualHostImpl;
@@ -65,7 +65,7 @@ public abstract class BaseDBPartitionTestCase {
 			PermissionCheckerMethodTestRule.INSTANCE);
 
 	public static void assume() {
-		Assume.assumeTrue(DBPartition.isPartitionEnabled());
+		Assume.assumeTrue(PropsValues.DATABASE_PARTITION_ENABLED);
 
 		if (db == null) {
 			db = DBManagerUtil.getDB();
@@ -230,12 +230,7 @@ public abstract class BaseDBPartitionTestCase {
 			return defaultPartitionName;
 		}
 
-		String databasePartitionSchemaNamePrefix =
-			ReflectionTestUtil.getFieldValue(
-				DBPartitionUtil.class,
-				"_DATABASE_PARTITION_SCHEMA_NAME_PREFIX");
-
-		return databasePartitionSchemaNamePrefix + companyId;
+		return PropsValues.DATABASE_PARTITION_SCHEMA_NAME_PREFIX + companyId;
 	}
 
 	protected static void importDBPartitions() throws Exception {

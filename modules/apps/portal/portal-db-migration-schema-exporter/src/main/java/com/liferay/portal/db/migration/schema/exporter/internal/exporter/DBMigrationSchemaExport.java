@@ -12,7 +12,6 @@ import com.liferay.portal.db.migration.schema.exporter.internal.configuration.DB
 import com.liferay.portal.db.migration.schema.exporter.internal.sql.writer.SQLWriter;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.db.DBType;
-import com.liferay.portal.kernel.db.partition.DBPartition;
 import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -24,10 +23,10 @@ import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.InfrastructureUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
-import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
 
@@ -245,7 +244,7 @@ public class DBMigrationSchemaExport {
 	}
 
 	private String _getTablesInfo(String dirName) throws Exception {
-		if (!DBPartition.isPartitionEnabled()) {
+		if (!PropsValues.DATABASE_PARTITION_ENABLED) {
 			return _getTablesInfo(
 				PortalInstancePool.getDefaultCompanyId(), dirName,
 				"Portal ? tables: ", "TABLE");

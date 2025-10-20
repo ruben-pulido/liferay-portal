@@ -149,6 +149,7 @@ public class InventoryAnalysisResourceTest
 					bundle.getSymbolicName(),
 					"com.liferay.site.initializer.cms")) {
 
+				_deleteFile(bundle, "00.list.type.definition");
 				_deleteFile(bundle, "01.object.folder");
 				_deleteFile(bundle, "02.object.definition");
 
@@ -175,7 +176,7 @@ public class InventoryAnalysisResourceTest
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.
 				getObjectDefinitionByExternalReferenceCode(
-					"L_BASIC_WEB_CONTENT", testCompany.getCompanyId());
+					"L_CMS_BASIC_WEB_CONTENT", testCompany.getCompanyId());
 
 		_objectEntries.add(
 			ObjectEntryTestUtil.addObjectEntry(

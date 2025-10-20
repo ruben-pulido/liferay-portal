@@ -14,7 +14,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
-import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -55,7 +55,7 @@ public class ViewContentsSectionDisplayContextTest
 			getFDSActionDropdownItems();
 
 		Assert.assertEquals(
-			fdsActionDropdownItems.toString(), 15,
+			fdsActionDropdownItems.toString(), 17,
 			fdsActionDropdownItems.size());
 
 		assertFDSActionDropdownItem(
@@ -101,7 +101,15 @@ public class ViewContentsSectionDisplayContextTest
 			fdsActionDropdownItems.get(13), "password-policies",
 			"default-permissions", "default-permissions", null, "item");
 		assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(14), "trash", "delete", "delete", null,
+			fdsActionDropdownItems.get(14), "password-policies",
+			"edit-and-propagate-default-permissions",
+			"edit-and-propagate-default-permissions", null, "item");
+		assertFDSActionDropdownItem(
+			fdsActionDropdownItems.get(15), "password-policies",
+			"reset-to-default-permissions", "reset-to-default-permissions",
+			null, "item");
+		assertFDSActionDropdownItem(
+			fdsActionDropdownItems.get(16), "trash", "delete", "delete", null,
 			"item");
 	}
 
@@ -109,14 +117,12 @@ public class ViewContentsSectionDisplayContextTest
 	protected Map<String, String> getExpectedCreationMenuItems()
 		throws PortalException {
 
-		return HashMapBuilder.put(
-			"Basic Web Content", getRedirect("L_BASIC_WEB_CONTENT")
-		).put(
-			"Blog", getRedirect("L_BLOG")
-		).put(
+		return LinkedHashMapBuilder.put(
 			"folder", StringPool.BLANK
 		).put(
-			"Knowledge Base", getRedirect("L_KNOWLEDGE_BASE")
+			"basic-content", getRedirect("L_CMS_BASIC_WEB_CONTENT")
+		).put(
+			"blog", getRedirect("L_CMS_BLOG")
 		).build();
 	}
 

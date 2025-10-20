@@ -44,7 +44,7 @@ SearchContainer<Role> roleSearchContainer = selectRoleManagementToolbarDisplayCo
 				value="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
 			/>
 
-			<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPD-47858") %>'>
+			<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPD-35914") %>'>
 				<liferay-ui:search-container-column-text
 					cssClass="table-cell-expand table-cell-minw-200"
 					name="status"
@@ -68,13 +68,13 @@ SearchContainer<Role> roleSearchContainer = selectRoleManagementToolbarDisplayCo
 					%>
 
 					<aui:button
-						aria-label='<%= LanguageUtil.format(request, "choose-x", role.getTitle(locale)) %>'
+						aria-label='<%= LanguageUtil.format(request, "choose-x", HtmlUtil.escape(role.getTitle(locale))) %>'
 						cssClass="selector-button"
 						data='<%=
 							HashMapBuilder.<String, Object>put(
 								"entityid", role.getRoleId()
 							).put(
-								"entityname", role.getTitle(locale)
+								"entityname", HtmlUtil.escape(role.getTitle(locale))
 							).put(
 								"iconcssclass", role.getIconCssClass()
 							).put(

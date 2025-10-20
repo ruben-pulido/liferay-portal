@@ -99,7 +99,7 @@ Checks are configured in the following files:
    - [Upgrade](src/main/resources/documentation/upgrade_checks.md#upgrade-checks)
 
 - ### By File Extensions:
-   - [.action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd](src/main/resources/documentation/xml_source_processor_checks.md#checks-for-action-function-jelly-jrxml-macro-pom-project-properties-svg-testcase-toggle-tpl-wsdl-xml-or-xsd)
+   - [.action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd](src/main/resources/documentation/xml_source_processor_checks.md#checks-for-action-function-jelly-jrxml-macro-pom-project-properties-qti-svg-testcase-toggle-tpl-wsdl-xml-or-xsd)
    - [.bnd](src/main/resources/documentation/bnd_source_processor_checks.md#checks-for-bnd)
    - [.bnd, .ftl, .gradle, .html, .java, .js, .jsp, .jspf, .jspx, .jsx, .properties, .tld, .ts, .tsx, or .xml](src/main/resources/documentation/jakarta_transform_source_processor_checks.md#checks-for-bnd-ftl-gradle-html-java-js-jsp-jspf-jspx-jsx-properties-tld-ts-tsx-or-xml)
    - [.bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm](src/main/resources/documentation/upgrade_source_processor_checks.md#checks-for-bnd-ftl-gradle-java-json-jsp-jspf-scss-or-vm)
@@ -109,7 +109,7 @@ Checks are configured in the following files:
    - [.css or .scss](src/main/resources/documentation/css_source_processor_checks.md#checks-for-css-or-scss)
    - [.dtd](src/main/resources/documentation/dtd_source_processor_checks.md#checks-for-dtd)
    - [.eslintignore, .prettierignore, or .properties](src/main/resources/documentation/properties_source_processor_checks.md#checks-for-eslintignore-prettierignore-or-properties)
-   - [.expect or .sh](src/main/resources/documentation/sh_source_processor_checks.md#checks-for-expect-or-sh)
+   - [.expect, .sh, or .tpl](src/main/resources/documentation/sh_source_processor_checks.md#checks-for-expect-sh-or-tpl)
    - [.ftl](src/main/resources/documentation/ftl_source_processor_checks.md#checks-for-ftl)
    - [.ftl, .html, .jsp, .jspf, .jspx, or .vm](src/main/resources/documentation/csp_source_processor_checks.md#checks-for-ftl-html-jsp-jspf-jspx-or-vm)
    - [.function, .jar, .lar, .macro, .path, .testcase, .war, or .zip](src/main/resources/documentation/poshi_source_processor_checks.md#checks-for-function-jar-lar-macro-path-testcase-war-or-zip)

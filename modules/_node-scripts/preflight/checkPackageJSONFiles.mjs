@@ -274,7 +274,6 @@ const ALLOWED_NAMED_SCOPE_EXCEPTIONS = [
 	'frontend-js-aui-web',
 	'frontend-js-clay-sample-web',
 	'frontend-js-components-web',
-	'frontend-js-item-selector-web',
 	'frontend-js-jquery-web',
 	'frontend-js-loader-modules-extender',
 	'frontend-js-lodash-web',
@@ -442,6 +441,7 @@ const ALLOWED_NAMED_SCOPE_EXCEPTIONS = [
 ];
 
 const ALLOWED_NON_GLOBAL_DEPENDENCIES = [
+	'@ckeditor/ckeditor5-react',
 	'@clayui/css',
 	'@liferay/amd-loader',
 	'@types/request',
@@ -455,6 +455,7 @@ const ALLOWED_NON_GLOBAL_DEPENDENCIES = [
 	'browser-tabs-lock',
 	'ckeditor4-react',
 	'ckeditor4',
+	'ckeditor5',
 	'codemirror',
 	'core-js',
 	'd3',

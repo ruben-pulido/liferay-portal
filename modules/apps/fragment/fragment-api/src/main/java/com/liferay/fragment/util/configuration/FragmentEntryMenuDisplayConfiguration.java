@@ -5,14 +5,22 @@
 
 package com.liferay.fragment.util.configuration;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.site.navigation.model.SiteNavigationMenu;
+import com.liferay.site.navigation.model.SiteNavigationMenuItem;
+import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalServiceUtil;
+import com.liferay.site.navigation.service.SiteNavigationMenuLocalServiceUtil;
 import com.liferay.site.navigation.taglib.servlet.taglib.NavigationMenuMode;
 
 import java.util.Objects;
@@ -22,25 +30,66 @@ import java.util.Objects;
  */
 public class FragmentEntryMenuDisplayConfiguration {
 
-	public FragmentEntryMenuDisplayConfiguration(String json) {
-		Source source = _DEFAULT_SOURCE;
+	public FragmentEntryMenuDisplayConfiguration(
+		long companyId, String json, long scopeGroupId) {
 
-		if (JSONUtil.isJSONObject(json)) {
-			JSONObject jsonObject = _createJSONObject(json);
+		if (!JSONUtil.isJSONObject(json)) {
+			_source = _DEFAULT_SOURCE;
 
-			if (jsonObject.has("contextualMenu")) {
-				source = ContextualMenu.parse(
-					jsonObject.getString("contextualMenu"));
-			}
-			else if (jsonObject.has("siteNavigationMenuId")) {
-				source = new SiteNavigationMenuSource(
-					jsonObject.getLong("parentSiteNavigationMenuItemId"),
-					jsonObject.getBoolean("privateLayout"),
-					jsonObject.getLong("siteNavigationMenuId"));
-			}
+			return;
 		}
 
-		_source = source;
+		JSONObject jsonObject = _createJSONObject(json);
+
+		if (jsonObject.has("contextualMenu")) {
+			_source = ContextualMenu.parse(
+				jsonObject.getString("contextualMenu"));
+
+			return;
+		}
+
+		String parentSiteNavigationMenuItemExternalReferenceCode =
+			jsonObject.getString(
+				"parentSiteNavigationMenuItemExternalReferenceCode");
+		long parentSiteNavigationMenuItemId = jsonObject.getLong(
+			"parentSiteNavigationMenuItemId");
+		String siteNavigationMenuExternalReferenceCode = jsonObject.getString(
+			"siteNavigationMenuExternalReferenceCode");
+		long siteNavigationMenuId = jsonObject.getLong("siteNavigationMenuId");
+
+		if (Validator.isNull(
+				parentSiteNavigationMenuItemExternalReferenceCode) &&
+			(parentSiteNavigationMenuItemId <= 0) &&
+			Validator.isNull(siteNavigationMenuExternalReferenceCode) &&
+			(siteNavigationMenuId <= 0)) {
+
+			if (jsonObject.has("privateLayout")) {
+				_source = new SiteNavigationMenuSource(
+					jsonObject.getBoolean("privateLayout"), StringPool.BLANK,
+					siteNavigationMenuId);
+			}
+			else {
+				_source = _DEFAULT_SOURCE;
+			}
+
+			return;
+		}
+
+		long groupId = _getGroupId(
+			companyId, scopeGroupId,
+			jsonObject.getString(
+				"siteNavigationMenuScopeExternalReferenceCode"));
+
+		siteNavigationMenuId = _getSiteNavigationMenuId(
+			groupId, siteNavigationMenuExternalReferenceCode,
+			siteNavigationMenuId);
+
+		_source = new SiteNavigationMenuSource(
+			jsonObject.getBoolean("privateLayout"),
+			_getRootItemId(
+				parentSiteNavigationMenuItemExternalReferenceCode, groupId,
+				parentSiteNavigationMenuItemId, siteNavigationMenuId),
+			siteNavigationMenuId);
 	}
 
 	public NavigationMenuMode getNavigationMenuMode() {
@@ -66,21 +115,7 @@ public class FragmentEntryMenuDisplayConfiguration {
 		SiteNavigationMenuSource siteNavigationMenuSource =
 			(SiteNavigationMenuSource)_source;
 
-		long parentSiteNavigationMenuItemId =
-			siteNavigationMenuSource.getParentSiteNavigationMenuItemId();
-
-		if (parentSiteNavigationMenuItemId <= 0) {
-			return null;
-		}
-
-		if (siteNavigationMenuSource.getSiteNavigationMenuId() == 0) {
-			Layout layout = LayoutLocalServiceUtil.fetchLayout(
-				parentSiteNavigationMenuItemId);
-
-			return layout.getUuid();
-		}
-
-		return String.valueOf(parentSiteNavigationMenuItemId);
+		return siteNavigationMenuSource.getRootItemId();
 	}
 
 	public int getRootItemLevel() {
@@ -110,9 +145,8 @@ public class FragmentEntryMenuDisplayConfiguration {
 	}
 
 	public long getSiteNavigationMenuId() {
-		if (_source instanceof SiteNavigationMenuSource) {
-			SiteNavigationMenuSource siteNavigationMenuSource =
-				(SiteNavigationMenuSource)_source;
+		if (_source instanceof
+				SiteNavigationMenuSource siteNavigationMenuSource) {
 
 			return siteNavigationMenuSource.getSiteNavigationMenuId();
 		}
@@ -133,6 +167,82 @@ public class FragmentEntryMenuDisplayConfiguration {
 		}
 	}
 
+	private long _getGroupId(
+		long companyId, long scopeGroupId, String externalReferenceCode) {
+
+		if (Validator.isNull(externalReferenceCode)) {
+			return scopeGroupId;
+		}
+
+		Group group = GroupLocalServiceUtil.fetchGroupByExternalReferenceCode(
+			externalReferenceCode, companyId);
+
+		if (group == null) {
+			return scopeGroupId;
+		}
+
+		return group.getGroupId();
+	}
+
+	private String _getRootItemId(
+		String externalReferenceCode, long groupId, long itemId,
+		long siteNavigationMenuId) {
+
+		if (Validator.isNull(externalReferenceCode) && (itemId <= 0)) {
+			return null;
+		}
+
+		if (siteNavigationMenuId == 0) {
+			Layout layout = LayoutLocalServiceUtil.fetchLayout(itemId);
+
+			if (layout == null) {
+				return null;
+			}
+
+			return layout.getUuid();
+		}
+
+		if (itemId > 0) {
+			return String.valueOf(itemId);
+		}
+
+		SiteNavigationMenuItem siteNavigationMenuItem =
+			SiteNavigationMenuItemLocalServiceUtil.
+				fetchSiteNavigationMenuItemByExternalReferenceCode(
+					externalReferenceCode, groupId);
+
+		if (siteNavigationMenuItem == null) {
+			return null;
+		}
+
+		return String.valueOf(
+			siteNavigationMenuItem.getSiteNavigationMenuItemId());
+	}
+
+	private long _getSiteNavigationMenuId(
+		long groupId, String siteNavigationMenuExternalReferenceCode,
+		long siteNavigationMenuId) {
+
+		if (siteNavigationMenuId > 0) {
+			return siteNavigationMenuId;
+		}
+
+		if (Validator.isNull(siteNavigationMenuExternalReferenceCode)) {
+			return 0;
+		}
+
+		SiteNavigationMenu siteNavigationMenu =
+			SiteNavigationMenuLocalServiceUtil.
+				fetchSiteNavigationMenuByExternalReferenceCode(
+					siteNavigationMenuExternalReferenceCode, groupId);
+
+		if (siteNavigationMenu == null) {
+			return 0;
+		}
+
+		return siteNavigationMenu.getSiteNavigationMenuId();
+	}
+
 	private static final Source _DEFAULT_SOURCE = new DefaultSource();
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -146,16 +256,16 @@ public class FragmentEntryMenuDisplayConfiguration {
 	private static class SiteNavigationMenuSource implements Source {
 
 		public SiteNavigationMenuSource(
-			long parentSiteNavigationMenuItemId, boolean privateLayout,
+			boolean privateLayout, String rootItemId,
 			long siteNavigationMenuId) {
 
-			_parentSiteNavigationMenuItemId = parentSiteNavigationMenuItemId;
 			_privateLayout = privateLayout;
+			_rootItemId = rootItemId;
 			_siteNavigationMenuId = siteNavigationMenuId;
 		}
 
-		public long getParentSiteNavigationMenuItemId() {
-			return _parentSiteNavigationMenuItemId;
+		public String getRootItemId() {
+			return _rootItemId;
 		}
 
 		public long getSiteNavigationMenuId() {
@@ -166,8 +276,8 @@ public class FragmentEntryMenuDisplayConfiguration {
 			return _privateLayout;
 		}
 
-		private final long _parentSiteNavigationMenuItemId;
 		private final boolean _privateLayout;
+		private final String _rootItemId;
 		private final long _siteNavigationMenuId;
 
 	}

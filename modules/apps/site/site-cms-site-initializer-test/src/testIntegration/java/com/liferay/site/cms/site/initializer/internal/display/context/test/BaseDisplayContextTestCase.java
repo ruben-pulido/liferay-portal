@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
@@ -62,6 +63,10 @@ public abstract class BaseDisplayContextTestCase {
 	public void setUp() throws Exception {
 		group = GroupTestUtil.addGroup();
 
+		mockHttpServletRequest = getMockHttpServletRequest();
+
+		themeDisplay = getThemeDisplay(mockHttpServletRequest);
+
 		if (_isCMSSiteInitialized()) {
 			return;
 		}
@@ -93,6 +98,7 @@ public abstract class BaseDisplayContextTestCase {
 						bundle.getSymbolicName(),
 						"com.liferay.site.initializer.cms")) {
 
+					_deleteFile(bundle, "00.list.type.definition");
 					_deleteFile(bundle, "01.object.folder");
 					_deleteFile(bundle, "02.object.definition");
 
@@ -117,8 +123,9 @@ public abstract class BaseDisplayContextTestCase {
 
 		ObjectDefinition objectDefinition =
 			objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), objectFolderId, null, false, false,
-				true, true, enableObjectEntryDraft, false, false, false, null,
+				TestPropsValues.getUserId(), objectFolderId, null, false, true,
+				false, true, true, enableObjectEntryDraft, false, false, false,
+				null,
 				Collections.singletonMap(
 					LocaleUtil.getDefault(), RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
@@ -152,6 +159,7 @@ public abstract class BaseDisplayContextTestCase {
 			objectDefinition.getClassName(),
 			objectDefinition.isEnableCategorization(),
 			objectDefinition.isEnableComments(),
+			objectDefinition.isEnableFormContainer(),
 			objectDefinition.isEnableFriendlyURLCustomization(),
 			objectDefinition.isEnableIndexSearch(),
 			objectDefinition.isEnableLocalization(),
@@ -215,8 +223,10 @@ public abstract class BaseDisplayContextTestCase {
 		themeDisplay.setLanguageId(group.getDefaultLanguageId());
 		themeDisplay.setLayout(
 			LayoutTestUtil.addTypeContentLayout(group, "test"));
+		themeDisplay.setPathMain(portal.getPathMain());
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());
+		themeDisplay.setPortalURL("http://localhost:8080");
 		themeDisplay.setRealUser(TestPropsValues.getUser());
 		themeDisplay.setRequest(httpServletRequest);
 		themeDisplay.setScopeGroupId(group.getGroupId());
@@ -233,11 +243,18 @@ public abstract class BaseDisplayContextTestCase {
 	@DeleteAfterTestRun
 	protected Group group;
 
+	protected MockHttpServletRequest mockHttpServletRequest;
+
 	@Inject
 	protected ObjectDefinitionLocalService objectDefinitionLocalService;
 
 	@Inject
 	protected ObjectFolderLocalService objectFolderLocalService;
+
+	@Inject
+	protected Portal portal;
+
+	protected ThemeDisplay themeDisplay;
 
 	private void _deleteFile(Bundle bundle, String fileName) {
 		File file = bundle.getDataFile(

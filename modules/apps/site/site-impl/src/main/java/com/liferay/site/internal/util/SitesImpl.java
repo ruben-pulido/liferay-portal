@@ -72,13 +72,13 @@ import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortletKeys;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.PortletPreferencesImpl;
 import com.liferay.sites.kernel.util.Sites;
 
@@ -163,7 +163,7 @@ public class SitesImpl implements Sites {
 				targetLayout.getDescriptionMap(), targetLayout.getKeywordsMap(),
 				targetLayout.getRobotsMap(), layoutPrototypeLayout.getType(),
 				targetLayout.isHidden(), targetLayout.getFriendlyURLMap(),
-				layoutPrototypeLayout.isIconImage(), iconBytes, 0, 0,
+				layoutPrototypeLayout.isIconImage(), iconBytes, null, 0,
 				layoutPrototypeLayout.getMasterLayoutPlid(), serviceContext);
 		}
 		finally {
@@ -1348,11 +1348,12 @@ public class SitesImpl implements Sites {
 
 		if (!targetScopeLayout.hasScopeGroup()) {
 			_groupLocalService.addGroup(
-				userId, GroupConstants.DEFAULT_PARENT_GROUP_ID,
-				Layout.class.getName(), targetLayout.getPlid(),
-				GroupConstants.DEFAULT_LIVE_GROUP_ID, targetLayout.getNameMap(),
-				null, 0, true, GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
-				null, false, true, null);
+				StringPool.BLANK, userId,
+				GroupConstants.DEFAULT_PARENT_GROUP_ID, Layout.class.getName(),
+				targetLayout.getPlid(), GroupConstants.DEFAULT_LIVE_GROUP_ID,
+				targetLayout.getNameMap(), null, 0, null, true,
+				GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, null, false,
+				false, true, null);
 		}
 
 		String newPortletTitle = _portal.getNewPortletTitle(

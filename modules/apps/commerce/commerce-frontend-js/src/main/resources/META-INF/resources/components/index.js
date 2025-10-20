@@ -8,6 +8,8 @@
  */
 
 export {default as accountSelector} from './account_selector/entry';
+export {default as AccountCreationModal} from './account_selector/views/AccountCreationModal';
+export {default as AccountSelectionModal} from './account_selector/views/AccountSelectionModal';
 export {default as AddToCartComponent} from './add_to_cart/AddToCart';
 export {default as AddToCartButtonComponent} from './add_to_cart/AddToCartButton';
 export {default as AddToCart} from './add_to_cart/entry';

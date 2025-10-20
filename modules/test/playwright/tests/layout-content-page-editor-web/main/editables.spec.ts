@@ -13,7 +13,6 @@ import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {pageManagementSiteTest} from '../../../fixtures/pageManagementSiteTest';
 import {clickAndExpectToBeHidden} from '../../../utils/clickAndExpectToBeHidden';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
-import dragAndDropElement from '../../../utils/dragAndDropElement';
 import getRandomString from '../../../utils/getRandomString';
 import getBasicWebContentStructureId from '../../../utils/structured-content/getBasicWebContentStructureId';
 import chooseFileFromDocumentLibrary from './utils/chooseFileFromDocumentLibrary';
@@ -117,6 +116,76 @@ testWithCKEditor4(
 		await editButton.click();
 
 		await expect(page.getByText('Papa')).toBeVisible();
+	}
+);
+
+testWithCKEditor4(
+	'Checks the functionality of splitting table cells in CKEditor 4',
+	{tag: ['@LPD-65783']},
+	async ({apiHelpers, page, pageEditorPage, site}) => {
+
+		// Create a page with a Paragraph fragment containing a 1-cell table and go to edit mode
+
+		const paragraphId = getRandomString();
+		const paragraphDefinition = getFragmentDefinition({
+			fragmentFields: [
+				{
+					id: 'element-text',
+					value: {
+						fragmentLink: {},
+						text: {
+							value_i18n: {
+								en_US: '<table border="1" style="width: 100%;"><tbody><tr><td><br></td></tr></tbody></table>',
+							},
+						},
+					},
+				},
+			],
+			id: paragraphId,
+			key: 'BASIC_COMPONENT-paragraph',
+		});
+
+		const layout = await apiHelpers.headlessDelivery.createSitePage({
+			pageDefinition: getPageDefinition([paragraphDefinition]),
+			siteId: site.id,
+			title: getRandomString(),
+		});
+
+		await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`);
+
+		await page
+			.getByLabel('Control Menu')
+			.getByTitle('Edit', {exact: true})
+			.click();
+
+		await page.locator('.page-editor').waitFor();
+
+		// Edit the table and split the cell horizontally
+
+		await pageEditorPage.selectFragment(paragraphId);
+
+		await pageEditorPage.selectEditable(paragraphId, 'element-text');
+
+		const editable = pageEditorPage.getEditable({
+			editableId: 'element-text',
+			fragmentId: paragraphId,
+		});
+
+		await editable.click();
+
+		await editable.locator('.cke_editable_inline').waitFor();
+
+		await editable.locator('.cke_editable_inline').click();
+
+		await page.getByLabel('Cell').click();
+
+		await page.getByLabel('Split Cell Horizontally').click();
+
+		const html = await page.locator('.cke_editable table').innerHTML();
+
+		expect(html).toContain(
+			'<tbody><tr><td><br></td><td><br></td></tr></tbody>'
+		);
 	}
 );
 
@@ -561,45 +630,64 @@ test(
 
 		await pageEditorPage.goto(layout, site.friendlyUrlPath);
 
-		await pageEditorPage.selectEditable(paragraphId, 'element-text');
-
 		const editable = pageEditorPage.getEditable({
 			editableId: 'element-text',
 			fragmentId: paragraphId,
 		});
 
-		// Edit the editable
+		await editable.waitFor();
 
-		await editable.click();
+		const sidebarHeader = page
+			.getByLabel('Components Panel')
+			.locator('header');
 
-		const editor = editable.locator('[contenteditable="true"]');
+		await expect(async () => {
+			await page.keyboard.press('Escape');
+			await page.mouse.up();
+			await sidebarHeader.click({timeout: 1000});
 
-		await editor.waitFor();
+			// Edit the editable
 
-		await editor.click();
+			await pageEditorPage.selectEditable(paragraphId, 'element-text');
 
-		const paragraphFragment = page.locator('.component-paragraph');
+			await editable.click({timeout: 1000});
 
-		await expect(paragraphFragment).toHaveText(
-			'List:option1option2option3'
-		);
+			const editor = editable.locator('[contenteditable="true"]');
 
-		// Drag the selected text
+			await editor.waitFor({timeout: 2000});
 
-		await page.getByText('option1').selectText();
+			await editor.click({timeout: 1000});
 
-		await dragAndDropElement({
-			dragTarget: page.getByText('option1'),
-			dropTarget: page.getByText('option3'),
-			onDragging: () =>
-				expect(page.locator('.drag-preview')).not.toBeAttached(),
-			page,
-		});
+			const paragraphFragment = page.locator('.component-paragraph');
 
-		// Check that the text has been dragged
+			await expect(paragraphFragment).toHaveText(
+				'List:option1option2option3',
+				{timeout: 1000}
+			);
 
-		await expect(paragraphFragment).toHaveText(
-			'List:option2option1⁠⁠⁠⁠⁠⁠⁠option3'
-		);
+			// Drag the selected text
+
+			const option3 = page.getByText('option3');
+
+			await option3.selectText({timeout: 1000});
+
+			await expect(
+				page.getByLabel('Editor contextual toolbar')
+			).toBeVisible({
+				timeout: 2000,
+			});
+
+			await option3.hover({timeout: 1000});
+
+			await page.mouse.down();
+
+			await sidebarHeader.hover({timeout: 1000});
+
+			await page.waitForTimeout(3000);
+
+			await expect(page.locator('.drag-preview')).not.toBeAttached({
+				timeout: 1000,
+			});
+		}).toPass();
 	}
 );

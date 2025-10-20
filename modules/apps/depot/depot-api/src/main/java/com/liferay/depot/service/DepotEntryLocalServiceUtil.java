@@ -305,6 +305,10 @@ public class DepotEntryLocalServiceUtil {
 		return getService().getDepotEntriesCount();
 	}
 
+	public static int getDepotEntriesCount(long companyId, int type) {
+		return getService().getDepotEntriesCount(companyId, type);
+	}
+
 	/**
 	 * Returns the depot entry with the primary key.
 	 *
@@ -331,6 +335,10 @@ public class DepotEntryLocalServiceUtil {
 		throws PortalException {
 
 		return getService().getDepotEntryByUuidAndGroupId(uuid, groupId);
+	}
+
+	public static List<Long> getDepotEntryGroupIds(long companyId, int type) {
+		return getService().getDepotEntryGroupIds(companyId, type);
 	}
 
 	/**

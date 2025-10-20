@@ -10,14 +10,18 @@ import React from 'react';
 import ApiHelper from '../../../../src/main/resources/META-INF/resources/js/common/services/ApiHelper';
 import DefaultPermissionModalContent from '../../../../src/main/resources/META-INF/resources/js/main_view/default_permission/DefaultPermissionModalContent';
 import {DefaultPermissionModalContentProps} from '../../../../src/main/resources/META-INF/resources/js/main_view/default_permission/DefaultPermissionTypes';
+import * as BulkActionTrigger from '../../../../src/main/resources/META-INF/resources/js/main_view/props_transformer/actions/triggerAssetBulkAction';
 
-const renderComponent = async (props: DefaultPermissionModalContentProps) => {
+const renderComponent = async (
+	props: DefaultPermissionModalContentProps & {apiURL?: string}
+) => {
 	return render(<DefaultPermissionModalContent {...props} />);
 };
 
 describe('DefaultPermissionModalContent', () => {
 	let apiGetSpy: jest.SpyInstance;
 	let apiPatchSpy: jest.SpyInstance;
+	let apiPostSpy: jest.SpyInstance;
 
 	beforeEach(() => {
 		jest.useFakeTimers();
@@ -40,20 +44,24 @@ describe('DefaultPermissionModalContent', () => {
 								guest: ['VIEW3'],
 							},
 						}),
+						depotGroupId: 100,
 						externalReferenceCode:
 							'fa9f1559-8256-4313-8868-6668c8b421c0',
 						id: 34794,
+						treePath: '/100/101',
 					},
 				],
 			},
 			error: null,
 		});
 		apiPatchSpy = jest.spyOn(ApiHelper, 'patch');
+		apiPostSpy = jest.spyOn(BulkActionTrigger, 'triggerAssetBulkAction');
 	});
 
 	afterEach(() => {
 		apiGetSpy.mockRestore();
 		apiPatchSpy.mockRestore();
+		apiPostSpy.mockRestore();
 
 		jest.useRealTimers();
 	});
@@ -90,6 +98,9 @@ describe('DefaultPermissionModalContent', () => {
 		expect(screen.getByRole('tab', {name: /file/i})).toBeInTheDocument();
 		expect(screen.getByTestId('button-cancel')).toBeInTheDocument();
 		expect(screen.getByTestId('button-save')).toBeInTheDocument();
+		expect(
+			screen.queryByTestId('checkbox-propagate')
+		).not.toBeInTheDocument();
 		expect(
 			screen.getByTestId(`row-checkbox-admin_UPDATE3`)
 		).toBeInTheDocument();
@@ -284,7 +295,107 @@ describe('DefaultPermissionModalContent', () => {
 				},
 				'/o/cms/default-permissions/by-external-reference-code/fa9f1559-8256-4313-8868-6668c8b421c0'
 			);
+			expect(apiPostSpy).not.toHaveBeenCalled();
 			expect(closeModalFn).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	it('Handle propagate on save', async () => {
+		const closeModalFn = jest.fn(() => {});
+
+		const props = {
+			actions: {
+				L_CONTENTS: [
+					{key: 'UPDATE1', label: 'Update1'},
+					{key: 'VIEW1', label: 'View1'},
+				],
+				L_FILES: [
+					{key: 'UPDATE2', label: 'Update2'},
+					{key: 'VIEW2', label: 'View2'},
+				],
+				OBJECT_ENTRY_FOLDERS: [
+					{key: 'UPDATE3', label: 'Update3'},
+					{key: 'VIEW3', label: 'View3'},
+				],
+			},
+			allowPropagate: true,
+			apiURL: '',
+			classExternalReferenceCode: 'ERC1',
+			className: 'com.liferay.depot.model.DepotEntry',
+			closeModal: closeModalFn,
+			roles: [
+				{key: 'admin', name: 'Administrator', type: '1'},
+				{key: 'guest', name: 'Guest', type: '2'},
+			],
+		};
+
+		renderComponent(props);
+
+		await waitFor(() => {
+			expect(apiGetSpy).toHaveBeenCalledTimes(1);
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId(`row-checkbox-admin_UPDATE3`)
+			).toBeChecked();
+			expect(
+				screen.getByTestId(`row-checkbox-admin_VIEW3`)
+			).toBeChecked();
+			expect(
+				screen.getByTestId(`row-checkbox-guest_UPDATE3`)
+			).not.toBeChecked();
+			expect(
+				screen.getByTestId(`row-checkbox-guest_VIEW3`)
+			).toBeChecked();
+		});
+
+		screen.getByTestId(`row-checkbox-admin_UPDATE3`).click();
+
+		expect(
+			screen.getByTestId(`row-checkbox-admin_UPDATE3`)
+		).not.toBeChecked();
+
+		await waitFor(async () => {
+			screen.getByTestId(`row-checkbox-guest_UPDATE3`).click();
+		});
+
+		expect(screen.getByTestId(`row-checkbox-guest_UPDATE3`)).toBeChecked();
+		expect(screen.getByTestId('button-save')).toBeDisabled();
+
+		await waitFor(() => {
+			screen.getByTestId('checkbox-propagate').click();
+
+			screen.getByTestId('button-save').click();
+		});
+
+		await waitFor(() => {
+			expect(apiPatchSpy).toHaveBeenCalledTimes(1);
+			expect(apiPatchSpy).toHaveBeenCalledWith(
+				{
+					defaultPermissions:
+						'{"L_CONTENTS":{"admin":["VIEW1"]},"L_FILES":{"admin":["VIEW2"]},"OBJECT_ENTRY_FOLDERS":{"admin":["VIEW3"],"guest":["VIEW3","UPDATE3"]}}',
+				},
+				'/o/cms/default-permissions/by-external-reference-code/fa9f1559-8256-4313-8868-6668c8b421c0'
+			);
+
+			expect(apiPostSpy).toHaveBeenCalledTimes(1);
+			expect(apiPostSpy).toHaveBeenCalledWith({
+				apiURL: props.apiURL,
+				keyValues: {
+					defaultPermissions:
+						'{"L_CONTENTS":{"admin":["VIEW1"]},"L_FILES":{"admin":["VIEW2"]},"OBJECT_ENTRY_FOLDERS":{"admin":["VIEW3"],"guest":["VIEW3","UPDATE3"]}}',
+					depotGroupId: 100,
+					treePath: '/100/101',
+				},
+				onCreateError: expect.any(Function),
+				onCreateSuccess: expect.any(Function),
+				overrideDefaultErrorToast: true,
+				selectedData: {
+					selectAll: true,
+				},
+				type: 'DefaultPermissionBulkAction',
+			});
 		});
 	});
 });

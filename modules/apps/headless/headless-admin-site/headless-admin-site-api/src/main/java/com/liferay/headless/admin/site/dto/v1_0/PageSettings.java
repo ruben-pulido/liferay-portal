@@ -160,10 +160,10 @@ public abstract class PageSettings implements Serializable {
 	private Supplier<Boolean> _hiddenFromNavigationSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The page's site navigation settings."
+		description = "The page's navigation settings."
 	)
 	@Valid
-	public NavigationSettings getNavigationSettings() {
+	public SitePageNavigationSettings getNavigationSettings() {
 		if (_navigationSettingsSupplier != null) {
 			navigationSettings = _navigationSettingsSupplier.get();
 
@@ -173,7 +173,9 @@ public abstract class PageSettings implements Serializable {
 		return navigationSettings;
 	}
 
-	public void setNavigationSettings(NavigationSettings navigationSettings) {
+	public void setNavigationSettings(
+		SitePageNavigationSettings navigationSettings) {
+
 		this.navigationSettings = navigationSettings;
 
 		_navigationSettingsSupplier = null;
@@ -181,7 +183,7 @@ public abstract class PageSettings implements Serializable {
 
 	@JsonIgnore
 	public void setNavigationSettings(
-		UnsafeSupplier<NavigationSettings, Exception>
+		UnsafeSupplier<SitePageNavigationSettings, Exception>
 			navigationSettingsUnsafeSupplier) {
 
 		_navigationSettingsSupplier = () -> {
@@ -197,12 +199,12 @@ public abstract class PageSettings implements Serializable {
 		};
 	}
 
-	@GraphQLField(description = "The page's site navigation settings.")
+	@GraphQLField(description = "The page's navigation settings.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected NavigationSettings navigationSettings;
+	protected SitePageNavigationSettings navigationSettings;
 
 	@JsonIgnore
-	private Supplier<NavigationSettings> _navigationSettingsSupplier;
+	private Supplier<SitePageNavigationSettings> _navigationSettingsSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The page's Open Graph settings."
@@ -453,7 +455,7 @@ public abstract class PageSettings implements Serializable {
 			sb.append(hiddenFromNavigation);
 		}
 
-		NavigationSettings navigationSettings = getNavigationSettings();
+		SitePageNavigationSettings navigationSettings = getNavigationSettings();
 
 		if (navigationSettings != null) {
 			if (sb.length() > 1) {

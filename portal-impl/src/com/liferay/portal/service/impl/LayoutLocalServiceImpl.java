@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.LayoutJavaScriptException;
 import com.liferay.portal.kernel.exception.LayoutNameException;
+import com.liferay.portal.kernel.exception.LayoutTypeException;
 import com.liferay.portal.kernel.exception.MasterLayoutException;
 import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -113,6 +114,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -123,7 +125,6 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowThreadLocal;
 import com.liferay.portal.service.base.LayoutLocalServiceBaseImpl;
 import com.liferay.portal.util.LayoutTypeControllerTracker;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
 import com.liferay.sites.kernel.util.Sites;
 
@@ -2951,7 +2952,8 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 	 *         String)}.
 	 * @param  hasIconImage whether the icon image will be updated
 	 * @param  iconBytes the byte array of the layout's new icon image
-	 * @param  styleBookEntryId the primary key of the style book entrys
+	 * @param  styleBookEntryERC the external reference code of the style book
+	 *         entry
 	 * @param  faviconFileEntryId the file entry ID of the layout's new favicon
 	 * @param  masterLayoutPlid the primary key of the master layout
 	 * @param  serviceContext the service context to be applied. Can set the
@@ -2973,12 +2975,16 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 			Map<Locale, String> keywordsMap, Map<Locale, String> robotsMap,
 			String type, boolean hidden, Map<Locale, String> friendlyURLMap,
-			boolean hasIconImage, byte[] iconBytes, long styleBookEntryId,
+			boolean hasIconImage, byte[] iconBytes, String styleBookEntryERC,
 			long faviconFileEntryId, long masterLayoutPlid,
 			ServiceContext serviceContext)
 		throws PortalException {
 
 		// Layout
+
+		if (Objects.equals(type, LayoutConstants.TYPE_EMPTY)) {
+			throw new LayoutTypeException(LayoutTypeException.EMPTY);
+		}
 
 		parentLayoutId = layoutLocalServiceHelper.getParentLayoutId(
 			groupId, privateLayout, parentLayoutId);
@@ -3037,7 +3043,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		PortalUtil.updateImageId(
 			layout, hasIconImage, iconBytes, "iconImageId", 0, 0, 0);
 
-		layout.setStyleBookEntryId(styleBookEntryId);
+		layout.setStyleBookEntryERC(styleBookEntryERC);
 		layout.setFaviconFileEntryId(faviconFileEntryId);
 		layout.setMasterLayoutPlid(masterLayoutPlid);
 
@@ -3088,6 +3094,13 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		}
 
 		layout.setExpandoBridgeAttributes(serviceContext);
+
+		if (layout.getStatus() == WorkflowConstants.STATUS_EMPTY) {
+			layout.setStatus(
+				Objects.equals(type, LayoutConstants.TYPE_CONTENT) ?
+					WorkflowConstants.STATUS_DRAFT :
+						WorkflowConstants.STATUS_APPROVED);
+		}
 
 		layout = layoutLocalService.updateLayout(layout);
 
@@ -3151,7 +3164,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 	public Layout updateLayout(
 			long groupId, boolean privateLayout, long layoutId,
 			String typeSettings, byte[] iconBytes, String themeId,
-			String colorSchemeId, long styleBookEntryId, String css,
+			String colorSchemeId, String styleBookEntryERC, String css,
 			long faviconFileEntryId, long masterLayoutPlid)
 		throws PortalException {
 
@@ -3171,7 +3184,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		layout.setTypeSettings(typeSettingsUnicodeProperties.toString());
 		layout.setThemeId(themeId);
 		layout.setColorSchemeId(colorSchemeId);
-		layout.setStyleBookEntryId(styleBookEntryId);
+		layout.setStyleBookEntryERC(styleBookEntryERC);
 		layout.setCss(css);
 		layout.setFaviconFileEntryId(faviconFileEntryId);
 		layout.setMasterLayoutPlid(masterLayoutPlid);
@@ -3750,20 +3763,21 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 	 * @param  groupId the primary key of the group
 	 * @param  privateLayout whether the layout is private to the group
 	 * @param  layoutId the layout ID of the layout
-	 * @param  styleBookEntryId the primary key of the style book entry
+	 * @param  styleBookEntryERC the external reference code of the style book
+	 *         entry
 	 * @return the updated layout
 	 * @throws PortalException if a portal exception occurred
 	 */
 	@Override
-	public Layout updateStyleBookEntryId(
+	public Layout updateStyleBookEntryERC(
 			long groupId, boolean privateLayout, long layoutId,
-			long styleBookEntryId)
+			String styleBookEntryERC)
 		throws PortalException {
 
 		Layout layout = layoutPersistence.findByG_P_L(
 			groupId, privateLayout, layoutId);
 
-		layout.setStyleBookEntryId(styleBookEntryId);
+		layout.setStyleBookEntryERC(styleBookEntryERC);
 
 		return layoutPersistence.update(layout);
 	}

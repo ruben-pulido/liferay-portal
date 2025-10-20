@@ -67,6 +67,18 @@ public class FreeMarkerTool {
 		return _freeMarkerTool;
 	}
 
+	public static String getPropertyType(
+		ConfigYAML configYAML, OpenAPIYAML openAPIYAML, Schema propertySchema,
+		String propertySchemaName) {
+
+		Map<String, String> javaDataTypeMap =
+			OpenAPIParserUtil.getJavaDataTypeMap(configYAML, openAPIYAML);
+
+		return DTOOpenAPIParser.getPropertyType(
+			configYAML, javaDataTypeMap, openAPIYAML, propertySchema,
+			propertySchemaName);
+	}
+
 	public boolean containsJavaMethodSignature(
 		List<JavaMethodSignature> javaMethodSignatures, String text) {
 
@@ -1058,16 +1070,8 @@ public class FreeMarkerTool {
 	public boolean hasPathParameter(
 		JavaMethodSignature javaMethodSignature, String parameterName) {
 
-		List<JavaMethodParameter> javaMethodParameters =
-			javaMethodSignature.getPathJavaMethodParameters();
-
-		for (JavaMethodParameter javaMethodParameter : javaMethodParameters) {
-			if (parameterName.equals(javaMethodParameter.getParameterName())) {
-				return true;
-			}
-		}
-
-		return false;
+		return ResourceOpenAPIParser.hasPathParameter(
+			javaMethodSignature, parameterName);
 	}
 
 	public boolean hasPostSchemaJavaMethodSignature(
@@ -1158,6 +1162,13 @@ public class FreeMarkerTool {
 
 		return DTOOpenAPIParser.isSchemaProperty(
 			configYAML, propertyName, schema, schemas);
+	}
+
+	public boolean isExternalReferenceCodeMethod(
+		String httpMethod, JavaMethodSignature javaMethodSignature) {
+
+		return ResourceOpenAPIParser.isExternalReferenceCodeMethod(
+			httpMethod, javaMethodSignature);
 	}
 
 	public boolean isExternalReferenceCodeParameter(

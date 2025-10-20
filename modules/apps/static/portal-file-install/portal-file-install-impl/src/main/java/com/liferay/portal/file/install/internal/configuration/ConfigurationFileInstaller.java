@@ -15,15 +15,14 @@ import com.liferay.portal.file.install.constants.FileInstallConstants;
 import com.liferay.portal.file.install.internal.Util;
 import com.liferay.portal.file.install.properties.ConfigurationProperties;
 import com.liferay.portal.file.install.properties.ConfigurationPropertiesFactory;
-import com.liferay.portal.kernel.db.partition.DBPartition;
 import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
 
@@ -287,7 +286,7 @@ public class ConfigurationFileInstaller implements FileInstaller {
 		ExtendedObjectClassDefinition.Scope scope,
 		Dictionary<String, Object> dictionary, String fileName) {
 
-		if (!DBPartition.isPartitionEnabled() ||
+		if (!PropsValues.DATABASE_PARTITION_ENABLED ||
 			(scope != ExtendedObjectClassDefinition.Scope.COMPANY) ||
 			(dictionary == null)) {
 
@@ -349,7 +348,7 @@ public class ConfigurationFileInstaller implements FileInstaller {
 	private ExtendedObjectClassDefinition.Scope _getScope(
 		Dictionary<String, Object> dictionary) {
 
-		if (!DBPartition.isPartitionEnabled()) {
+		if (!PropsValues.DATABASE_PARTITION_ENABLED) {
 			return null;
 		}
 

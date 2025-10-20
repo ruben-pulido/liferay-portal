@@ -59,6 +59,9 @@ describe('DefaultPermissionForm', () => {
 		});
 
 		expect(
+			screen.queryByTestId(`info-box-message`)
+		).not.toBeInTheDocument();
+		expect(
 			screen.getByRole(`textbox`, {name: /search/i})
 		).toBeInTheDocument();
 		expect(
@@ -285,5 +288,55 @@ describe('DefaultPermissionForm', () => {
 		});
 
 		expect(screen.getByRole(`textbox`, {name: /search/i})).toBeDisabled();
+	});
+
+	it('Disable guest unsupported checkboxes', async () => {
+		const props = {
+			actions: [
+				{guestUnsupported: true, key: 'DELETE', label: 'View'},
+				{guestUnsupported: true, key: 'UPDATE', label: 'Update'},
+				{key: 'VIEW', label: 'View'},
+			],
+			roles: [
+				{key: 'Admin', name: 'Administrator', type: '1'},
+				{key: 'Guest', name: 'Guest', type: '2'},
+			],
+		};
+
+		renderComponent(props);
+
+		expect(screen.getByTestId(`row-checkbox-Guest_DELETE`)).toBeDisabled();
+		expect(screen.getByTestId(`row-checkbox-Guest_UPDATE`)).toBeDisabled();
+		expect(
+			screen.getByTestId(`row-checkbox-Guest_VIEW`)
+		).not.toBeDisabled();
+		expect(
+			screen.getByTestId(`row-checkbox-Admin_DELETE`)
+		).not.toBeDisabled();
+		expect(
+			screen.getByTestId(`row-checkbox-Admin_UPDATE`)
+		).not.toBeDisabled();
+		expect(
+			screen.getByTestId(`row-checkbox-Admin_VIEW`)
+		).not.toBeDisabled();
+	});
+
+	it('Display info message', async () => {
+		const props = {
+			actions: [
+				{guestUnsupported: true, key: 'DELETE', label: 'View'},
+				{guestUnsupported: true, key: 'UPDATE', label: 'Update'},
+				{key: 'VIEW', label: 'View'},
+			],
+			infoBoxMessage: 'test',
+			roles: [
+				{key: 'Admin', name: 'Administrator', type: '1'},
+				{key: 'Guest', name: 'Guest', type: '2'},
+			],
+		};
+
+		renderComponent(props);
+
+		expect(screen.getByTestId(`info-box-message`)).toBeVisible();
 	});
 });

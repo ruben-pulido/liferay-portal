@@ -19,7 +19,6 @@ const test = mergeTests(
 	featureFlagsTest({
 		'LPD-17564': {enabled: true},
 		'LPD-34594': {enabled: true},
-		'LPD-53981': {enabled: true},
 		'LPS-179669': {enabled: true},
 	}),
 	loginTest()
@@ -76,6 +75,169 @@ test(
 				page,
 				`Success:${contentName} has been permanently deleted.`
 			);
+		});
+	}
+);
+
+test(
+	'Can delete permanently multiple contents from Recycle Bin',
+	{tag: '@LPD-62787'},
+	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
+		const contentName1 = getRandomString();
+		const contentName2 = getRandomString();
+		const spaceName = `Space ${getRandomString()}`;
+
+		const applicationName = 'cms/basic-web-contents';
+
+		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+			name: spaceName,
+			settings: {
+				logoColor: 'outline-3',
+				sharingEnabled: true,
+				trashEnabled: true,
+			},
+			type: 'Space',
+		});
+
+		await apiHelpers.objectEntry.postObjectEntry(
+			{
+				objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+				title: contentName1,
+			},
+			applicationName,
+			spaceName
+		);
+
+		await apiHelpers.objectEntry.postObjectEntry(
+			{
+				objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+				title: contentName2,
+			},
+			applicationName,
+			spaceName
+		);
+
+		await test.step('Delete the contents so they can go into the Recycle Bin', async () => {
+			await contentsPage.goto();
+
+			await contentsPage.deleteContent(contentName1, recycleBinEnabled);
+
+			await contentsPage.deleteContent(contentName2, recycleBinEnabled);
+		});
+
+		await test.step('Go to the Recycle Bin and delete the contents permanently', async () => {
+			await recycleBinPage.goto();
+
+			await recycleBinPage.selectItems([contentName1, contentName2]);
+
+			await page
+				.getByTestId('visualization-mode-table')
+				.getByLabel('Actions')
+				.click();
+
+			await page.getByRole('menuitem', {name: 'Delete'}).click();
+
+			await expect(
+				page.getByText('You are about to permanently delete 2 entries.')
+			).toBeVisible();
+
+			await checkAccessibility({
+				page,
+				selectors: ['.modal-content'],
+			});
+
+			await page.getByRole('button', {name: 'Delete'}).click();
+
+			await page.reload();
+
+			await expect(
+				page.getByRole('cell', {name: contentName1})
+			).toBeHidden();
+			await expect(
+				page.getByRole('cell', {name: contentName2})
+			).toBeHidden();
+		});
+	}
+);
+
+test(
+	'Can empty the Recycle Bin',
+	{tag: '@LPD-62787'},
+	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
+		const contentName1 = getRandomString();
+		const contentName2 = getRandomString();
+		const spaceName = `Space ${getRandomString()}`;
+
+		const applicationName = 'cms/basic-web-contents';
+
+		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+			name: spaceName,
+			settings: {
+				logoColor: 'outline-3',
+				sharingEnabled: true,
+				trashEnabled: true,
+			},
+			type: 'Space',
+		});
+
+		await apiHelpers.objectEntry.postObjectEntry(
+			{
+				objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+				title: contentName1,
+			},
+			applicationName,
+			spaceName
+		);
+
+		await apiHelpers.objectEntry.postObjectEntry(
+			{
+				objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+				title: contentName2,
+			},
+			applicationName,
+			spaceName
+		);
+
+		await test.step('Delete the contents so they can go into the Recycle Bin', async () => {
+			await contentsPage.goto();
+
+			await contentsPage.deleteContent(contentName1, recycleBinEnabled);
+
+			await contentsPage.deleteContent(contentName2, recycleBinEnabled);
+		});
+
+		await test.step('Go to the Recycle Bin and empty it', async () => {
+			await recycleBinPage.goto();
+
+			await page.getByLabel('More Actions').click();
+
+			await recycleBinPage.emptyRecycleBinButton.waitFor({
+				state: 'visible',
+			});
+
+			await recycleBinPage.emptyRecycleBinButton.click();
+
+			await expect(
+				page.getByText(
+					'This will permanently delete all items in the recycle bin.'
+				)
+			).toBeVisible();
+
+			await checkAccessibility({
+				page,
+				selectors: ['.modal-content'],
+			});
+
+			await page.getByRole('button', {name: 'Empty Bin'}).click();
+
+			await page.reload();
+
+			await expect(
+				page.getByRole('cell', {name: contentName1})
+			).toBeHidden();
+			await expect(
+				page.getByRole('cell', {name: contentName2})
+			).toBeHidden();
 		});
 	}
 );
@@ -334,6 +496,10 @@ test(
 				page,
 				`Success:${contentName} has been permanently deleted.`
 			);
+
+			await expect(
+				page.getByText(`Success:${contentName} was moved to the`)
+			).toBeHidden();
 		});
 	}
 );

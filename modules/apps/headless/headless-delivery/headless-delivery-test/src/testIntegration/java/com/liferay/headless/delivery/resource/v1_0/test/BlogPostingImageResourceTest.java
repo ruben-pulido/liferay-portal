@@ -21,9 +21,9 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.constants.TestDataConstants;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
 
@@ -115,6 +115,16 @@ public class BlogPostingImageResourceTest
 		throws Exception {
 
 		return testGroup.getGroupId();
+	}
+
+	@Override
+	protected BlogPostingImage
+			testGraphQLSiteBlogPostingImage_addBlogPostingImage(
+				Long siteId, BlogPostingImage blogPostingImage)
+		throws Exception {
+
+		return blogPostingImageResource.postSiteBlogPostingImage(
+			siteId, blogPostingImage, getMultipartFiles());
 	}
 
 	private String _read(String url) throws Exception {

@@ -6,19 +6,37 @@
 package com.liferay.object.web.internal.object.entries.display.context.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.model.Value;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.constants.ObjectLayoutBoxConstants;
 import com.liferay.object.constants.ObjectWebKeys;
 import com.liferay.object.display.context.ObjectEntryDisplayContext;
 import com.liferay.object.display.context.ObjectEntryDisplayContextFactory;
 import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectLayoutBox;
+import com.liferay.object.model.ObjectLayoutColumn;
+import com.liferay.object.model.ObjectLayoutRow;
+import com.liferay.object.model.ObjectLayoutTab;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.service.ObjectLayoutLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.service.persistence.ObjectLayoutBoxPersistence;
+import com.liferay.object.service.persistence.ObjectLayoutColumnPersistence;
+import com.liferay.object.service.persistence.ObjectLayoutRowPersistence;
+import com.liferay.object.service.persistence.ObjectLayoutTabPersistence;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
+import com.liferay.object.test.util.ObjectEntryTestUtil;
 import com.liferay.object.test.util.TreeTestUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.Group;
@@ -27,15 +45,18 @@ import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletActionResponse;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
@@ -48,10 +69,13 @@ import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import jakarta.portlet.PortletRequest;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -61,6 +85,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockPageContext;
 
 /**
  * @author Pedro Leite
@@ -225,13 +250,68 @@ public class ObjectEntryDisplayContextTest {
 			_getBackURL(mockHttpServletRequest));
 	}
 
+	@Test
+	public void testIsShowScreenNavigation() throws Exception {
+		com.liferay.object.model.ObjectEntry objectEntry =
+			ObjectEntryTestUtil.addObjectEntry(_companyObjectDefinitionAA);
+
+		ObjectEntryDisplayContext objectEntryDisplayContext =
+			_objectEntryDisplayContextFactory.create(
+				_getMockHttpServletRequest(
+					objectEntry.getExternalReferenceCode(),
+					_companyObjectDefinitionAA, 0L, null));
+
+		Assert.assertFalse(objectEntryDisplayContext.isShowScreenNavigation());
+	}
+
+	@Test
+	public void testIsShowScreenNavigationWithRootDescendantObjectEntry()
+		throws Exception {
+
+		ObjectEntryDisplayContext objectEntryDisplayContext =
+			_objectEntryDisplayContextFactory.create(
+				_getMockHttpServletRequest(
+					_companyObjectEntryAA.getExternalReferenceCode(),
+					_companyObjectDefinitionAA,
+					_companyObjectRelationshipA_AA.getObjectRelationshipId(),
+					_companyObjectEntryA.getExternalReferenceCode()));
+
+		Assert.assertTrue(objectEntryDisplayContext.isShowScreenNavigation());
+	}
+
+	@Test
+	public void testIsShowScreenNavigationWithRootObjectEntry()
+		throws Exception {
+
+		ObjectEntryDisplayContext objectEntryDisplayContext =
+			_objectEntryDisplayContextFactory.create(
+				_getMockHttpServletRequest(
+					_companyObjectEntryA.getExternalReferenceCode(),
+					_companyObjectDefinitionA, 0L, null));
+
+		Assert.assertTrue(objectEntryDisplayContext.isShowScreenNavigation());
+	}
+
+	@Test
+	public void testRenderDDMForm() throws Exception {
+		_objectLayoutLocalService.addObjectLayout(
+			TestPropsValues.getUserId(),
+			_companyObjectDefinitionA.getObjectDefinitionId(), true,
+			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+			Collections.singletonList(_addObjectLayoutTab()));
+
+		_testRenderDDMForm("Aprovado", LocaleUtil.BRAZIL);
+		_testRenderDDMForm("承認済み", LocaleUtil.JAPAN);
+		_testRenderDDMForm("Approved", LocaleUtil.US);
+	}
+
 	private static ObjectDefinition _addObjectDefinition(String scope)
 		throws Exception {
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), 0, null, false, false, true, true,
-				false, false, false, false, null,
+				TestPropsValues.getUserId(), 0, null, false, true, false, true,
+				true, false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -282,6 +362,54 @@ public class ObjectEntryDisplayContextTest {
 			objectRelationship, scopeKey);
 	}
 
+	private ObjectLayoutBox _addObjectLayoutBox() throws Exception {
+		ObjectLayoutBox objectLayoutBox = _objectLayoutBoxPersistence.create(0);
+
+		objectLayoutBox.setNameMap(RandomTestUtil.randomLocaleStringMap());
+		objectLayoutBox.setType(ObjectLayoutBoxConstants.TYPE_REGULAR);
+		objectLayoutBox.setObjectLayoutRows(
+			Arrays.asList(
+				_addObjectLayoutRow("status"),
+				_addObjectLayoutRow("textObjectFieldName")));
+
+		return objectLayoutBox;
+	}
+
+	private ObjectLayoutColumn _addObjectLayoutColumn(String objectFieldName)
+		throws Exception {
+
+		ObjectLayoutColumn objectLayoutColumn =
+			_objectLayoutColumnPersistence.create(0);
+
+		ObjectField objectField = _objectFieldLocalService.getObjectField(
+			_companyObjectDefinitionA.getObjectDefinitionId(), objectFieldName);
+
+		objectLayoutColumn.setObjectFieldId(objectField.getObjectFieldId());
+
+		return objectLayoutColumn;
+	}
+
+	private ObjectLayoutRow _addObjectLayoutRow(String objectFieldName)
+		throws Exception {
+
+		ObjectLayoutRow objectLayoutRow = _objectLayoutRowPersistence.create(0);
+
+		objectLayoutRow.setObjectLayoutColumns(
+			Collections.singletonList(_addObjectLayoutColumn(objectFieldName)));
+
+		return objectLayoutRow;
+	}
+
+	private ObjectLayoutTab _addObjectLayoutTab() throws Exception {
+		ObjectLayoutTab objectLayoutTab = _objectLayoutTabPersistence.create(0);
+
+		objectLayoutTab.setNameMap(RandomTestUtil.randomLocaleStringMap());
+		objectLayoutTab.setObjectLayoutBoxes(
+			Collections.singletonList(_addObjectLayoutBox()));
+
+		return objectLayoutTab;
+	}
+
 	private String _getAPIURL(MockHttpServletRequest mockHttpServletRequest)
 		throws Exception {
 
@@ -301,8 +429,9 @@ public class ObjectEntryDisplayContextTest {
 	}
 
 	private MockHttpServletRequest _getMockHttpServletRequest(
-			String externalReferenceCode, ObjectDefinition objectDefinition,
-			long objectRelationshipId, String parentObjectEntryERC)
+			String externalReferenceCode, Locale locale,
+			ObjectDefinition objectDefinition, long objectRelationshipId,
+			String parentObjectEntryERC)
 		throws Exception {
 
 		MockHttpServletRequest mockHttpServletRequest =
@@ -322,7 +451,7 @@ public class ObjectEntryDisplayContextTest {
 
 		themeDisplay.setCompany(
 			_companyLocalService.getCompany(TestPropsValues.getCompanyId()));
-		themeDisplay.setLocale(LocaleUtil.getDefault());
+		themeDisplay.setLocale(locale);
 		themeDisplay.setScopeGroupId(_group.getGroupId());
 		themeDisplay.setSiteGroupId(_group.getGroupId());
 		themeDisplay.setUser(TestPropsValues.getUser());
@@ -340,6 +469,16 @@ public class ObjectEntryDisplayContextTest {
 			"parentObjectEntryERC", parentObjectEntryERC);
 
 		return mockHttpServletRequest;
+	}
+
+	private MockHttpServletRequest _getMockHttpServletRequest(
+			String externalReferenceCode, ObjectDefinition objectDefinition,
+			long objectRelationshipId, String parentObjectEntryERC)
+		throws Exception {
+
+		return _getMockHttpServletRequest(
+			externalReferenceCode, LocaleUtil.getDefault(), objectDefinition,
+			objectRelationshipId, parentObjectEntryERC);
 	}
 
 	private void _testGetAPIURL(
@@ -377,6 +516,89 @@ public class ObjectEntryDisplayContextTest {
 						objectRelationship.getObjectDefinitionId2()),
 					objectRelationship.getObjectRelationshipId(),
 					parentObjectEntry.getExternalReferenceCode())));
+	}
+
+	private void _testRenderDDMForm(String expectedStatusLabel, Locale locale)
+		throws Exception {
+
+		AtomicReference<DDMFormRenderingContext> atomicReference =
+			new AtomicReference<>();
+
+		String textObjectFieldValue = RandomTestUtil.randomString();
+
+		ObjectEntry objectEntry = _defaultObjectEntryManager.addObjectEntry(
+			_dtoConverterContext, _companyObjectDefinitionA,
+			new ObjectEntry() {
+				{
+					properties = HashMapBuilder.<String, Object>put(
+						"textObjectFieldName", textObjectFieldValue
+					).build();
+				}
+			},
+			null);
+
+		ObjectEntryDisplayContext objectEntryDisplayContext =
+			_objectEntryDisplayContextFactory.create(
+				_getMockHttpServletRequest(
+					objectEntry.getExternalReferenceCode(), locale,
+					_companyObjectDefinitionA, 0L, null));
+
+		try (AutoCloseable autoCloseable =
+				ReflectionTestUtil.setFieldValueWithAutoCloseable(
+					objectEntryDisplayContext, "_ddmFormRenderer",
+					ProxyUtil.newProxyInstance(
+						DDMFormRenderer.class.getClassLoader(),
+						new Class<?>[] {DDMFormRenderer.class},
+						(proxy, method, arguments) -> {
+							if (Objects.equals(method.getName(), "render")) {
+								atomicReference.set(
+									(DDMFormRenderingContext)arguments[2]);
+							}
+
+							return method.invoke(_ddmFormRenderer, arguments);
+						}))) {
+
+			objectEntryDisplayContext.renderDDMForm(new MockPageContext());
+		}
+
+		DDMFormRenderingContext ddmFormRenderingContext = atomicReference.get();
+
+		DDMFormValues ddmFormValues =
+			ddmFormRenderingContext.getDDMFormValues();
+
+		List<DDMFormFieldValue> ddmFormFieldValues =
+			ddmFormValues.getDDMFormFieldValues();
+
+		Assert.assertEquals(
+			ddmFormValues.toString(), 1, ddmFormFieldValues.size());
+
+		DDMFormFieldValue ddmFormFieldValue = ddmFormFieldValues.get(0);
+
+		List<DDMFormFieldValue> nestedDDMFormFieldValues =
+			ddmFormFieldValue.getNestedDDMFormFieldValues();
+
+		Assert.assertEquals(
+			nestedDDMFormFieldValues.toString(), 2,
+			nestedDDMFormFieldValues.size());
+
+		DDMFormFieldValue nestedDDMFormFieldValue1 =
+			nestedDDMFormFieldValues.get(0);
+
+		Assert.assertEquals("status", nestedDDMFormFieldValue1.getName());
+
+		Value value1 = nestedDDMFormFieldValue1.getValue();
+
+		Assert.assertEquals(expectedStatusLabel, value1.getString(locale));
+
+		DDMFormFieldValue nestedDDMFormFieldValue2 =
+			nestedDDMFormFieldValues.get(1);
+
+		Assert.assertEquals(
+			"textObjectFieldName", nestedDDMFormFieldValue2.getName());
+
+		Value value2 = nestedDDMFormFieldValue2.getValue();
+
+		Assert.assertEquals(textObjectFieldValue, value2.getString(locale));
 	}
 
 	private static ObjectDefinition _companyObjectDefinitionA;
@@ -420,6 +642,27 @@ public class ObjectEntryDisplayContextTest {
 	private CompanyLocalService _companyLocalService;
 
 	@Inject
+	private DDMFormRenderer _ddmFormRenderer;
+
+	@Inject
 	private ObjectEntryDisplayContextFactory _objectEntryDisplayContextFactory;
+
+	@Inject
+	private ObjectFieldLocalService _objectFieldLocalService;
+
+	@Inject
+	private ObjectLayoutBoxPersistence _objectLayoutBoxPersistence;
+
+	@Inject
+	private ObjectLayoutColumnPersistence _objectLayoutColumnPersistence;
+
+	@Inject
+	private ObjectLayoutLocalService _objectLayoutLocalService;
+
+	@Inject
+	private ObjectLayoutRowPersistence _objectLayoutRowPersistence;
+
+	@Inject
+	private ObjectLayoutTabPersistence _objectLayoutTabPersistence;
 
 }

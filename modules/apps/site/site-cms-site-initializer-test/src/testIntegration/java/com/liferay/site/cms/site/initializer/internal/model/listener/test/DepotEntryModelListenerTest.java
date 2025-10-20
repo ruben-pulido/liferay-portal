@@ -70,6 +70,7 @@ public class DepotEntryModelListenerTest {
 					bundle.getSymbolicName(),
 					"com.liferay.site.initializer.cms")) {
 
+				_deleteFile(bundle, "00.list.type.definition");
 				_deleteFile(bundle, "01.object.folder");
 				_deleteFile(bundle, "02.object.definition");
 
@@ -97,7 +98,7 @@ public class DepotEntryModelListenerTest {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.
 				getObjectDefinitionByExternalReferenceCode(
-					"L_BASIC_DOCUMENT", group.getCompanyId());
+					"L_CMS_BASIC_DOCUMENT", group.getCompanyId());
 
 		Repository repository = _portletFileRepository.getPortletRepository(
 			group.getGroupId(), objectDefinition.getPortletId());

@@ -89,15 +89,11 @@ export class PageEditorPage {
 		this.undoHistory = page.locator('.page-editor__undo-history');
 	}
 
-	async goto(
-		layout: Layout,
-		siteUrl?: Site['friendlyUrlPath'],
-		doAsUserId?: string
-	) {
+	async goto(layout: Layout, siteUrl?: Site['friendlyUrlPath']) {
 		await this.page.goto('/');
 
 		await this.page.goto(
-			`/web${siteUrl || '/guest'}${layout.friendlyUrlPath || layout.friendlyURL}?p_l_mode=edit${doAsUserId ? '&doAsUserId=' + doAsUserId : ''}`
+			`/web${siteUrl || '/guest'}${layout.friendlyUrlPath || layout.friendlyURL}?p_l_mode=edit`
 		);
 	}
 
@@ -130,7 +126,7 @@ export class PageEditorPage {
 		}
 
 		if (name !== 'Stepper') {
-			await this.waitForChangesSaved();
+			await this.waitForChangesSaved({timeout: 2000});
 		}
 	}
 
@@ -1068,9 +1064,28 @@ export class PageEditorPage {
 			.check({trial: true});
 
 		if (!fields || fields === 'all') {
+
+			// Select all fields and then deselect metadata fields
+
 			await fieldsModal
 				.getByLabel('Select All Items on the Page')
 				.check();
+
+			const basicInfoHeader = fieldsModal.locator('.table-divider', {
+				hasText: 'Basic Information',
+			});
+
+			let current = basicInfoHeader.locator(
+				'xpath=./following-sibling::*[1]'
+			);
+
+			while (
+				!(await current.getAttribute('class')).includes('table-divider')
+			) {
+				await current.getByRole('checkbox').uncheck();
+
+				current = current.locator('xpath=./following-sibling::*[1]');
+			}
 		}
 		else {
 			for (const field of fields) {
@@ -1110,6 +1125,14 @@ export class PageEditorPage {
 			'Success:Your form has been successfully loaded.',
 			{autoClose: true}
 		);
+	}
+
+	async mapFormRelationshipFragment(fragmentId: string, type: string) {
+		const fragment = this.getFragment(fragmentId);
+
+		await fragment.getByLabel('Select a content type').selectOption(type);
+
+		await this.waitForChangesSaved();
 	}
 
 	async mapEditableLink({
@@ -1200,6 +1223,18 @@ export class PageEditorPage {
 				.locator('.page-editor__toolbar')
 				.getByRole('button', {name: 'Actions'}),
 		});
+	}
+
+	async removeMapping() {
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {name: 'Remove Item'}),
+			trigger: this.page.getByLabel('View Item Options'),
+		});
+
+		await expect(
+			this.page.getByPlaceholder('No Item Selected')
+		).toBeVisible();
 	}
 
 	async removeFragment(fragmentId: string) {
@@ -1535,7 +1570,7 @@ export class PageEditorPage {
 
 		if (source === 'relationship') {
 			await this.page
-				.getByLabel('Relationship')
+				.getByLabel('Relationship', {exact: true})
 				.selectOption(mappingConfiguration.relationship);
 		}
 
@@ -1593,14 +1628,14 @@ export class PageEditorPage {
 		await this.waitForChangesSaved();
 	}
 
-	async waitForChangesSaved() {
-		await this.page.getByLabel('Saved', {exact: true}).waitFor();
+	async waitForChangesSaved({timeout}: {timeout?: number} = {}) {
+		await this.page.getByLabel('Saved', {exact: true}).waitFor({timeout});
 
 		await this.page
 			.getByText(
 				'Changes have been saved. Page editor will autosave new changes.'
 			)
-			.waitFor();
+			.waitFor({timeout});
 	}
 
 	getEditable({

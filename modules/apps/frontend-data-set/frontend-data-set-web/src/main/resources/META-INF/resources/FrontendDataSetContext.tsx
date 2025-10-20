@@ -5,7 +5,14 @@
 
 import React from 'react';
 
-import {IInlineEditingSettings, IItemsActions, ISchema} from './utils/types';
+import {
+	EConfigInURLKeys,
+	IConfigInURLUpdaterThunk,
+	IDataSetData,
+	IInlineEditingSettings,
+	IItemsActions,
+	TRenderer,
+} from './utils/types';
 
 export interface IFrontendDataSetContext {
 	actionParameterName?: string | null;
@@ -27,8 +34,8 @@ export interface IFrontendDataSetContext {
 		successMessage,
 		url,
 	}: {
-		errorMessage: string;
-		method: string;
+		errorMessage?: string;
+		method?: string;
 		requestBody?: string;
 		setActionItemLoading?: (loading: boolean) => void;
 		successMessage?: string;
@@ -38,7 +45,7 @@ export interface IFrontendDataSetContext {
 	formName?: string;
 	highlightItems: Function;
 	highlightedItemsValue?: Array<string>;
-	id?: string;
+	id: string;
 	infoPanelId?: string;
 	infoPanelOpen?: boolean;
 	inlineAddingSettings?: {
@@ -72,11 +79,13 @@ export interface IFrontendDataSetContext {
 	showBulkActionsManagementBar: boolean;
 	showBulkActionsManagementBarActions: boolean;
 	showInfoPanel: boolean;
+	showManagementBarInEmptyState?: boolean;
 	sidePanelId?: string;
 	sorts?: Array<TRenderer>;
 	style?: string;
 	toggleItemInlineEdit: Function;
 	uniformActionsDisplay?: boolean;
+	updateActiveSorts: IConfigInURLUpdaterThunk<EConfigInURLKeys.ACTIVE_SORTS>;
 	updateDataSetItems: ({
 		items,
 		lastPage,
@@ -84,41 +93,11 @@ export interface IFrontendDataSetContext {
 		pageSize,
 		totalCount,
 	}: IDataSetData) => void;
+	updateFilters: IConfigInURLUpdaterThunk<EConfigInURLKeys.ACTIVE_FILTERS>;
 	updateItem: Function;
+	updateView: IConfigInURLUpdaterThunk<EConfigInURLKeys.VIEW_NAME>;
+	updateVisibleFields: IConfigInURLUpdaterThunk<EConfigInURLKeys.VISIBLE_FIELDS>;
 }
-
-export interface IDataSetData {
-	items: Array<any>;
-	lastPage: number;
-	page: number;
-	pageSize?: number;
-	totalCount: number;
-}
-
-export interface IHTMLElementBuilder {
-	(args: any): HTMLElement;
-}
-
-export interface IClientExtensionRenderer {
-	externalReferenceCode?: string;
-	htmlElementBuilder?: IHTMLElementBuilder;
-	name?: string;
-	type: 'clientExtension';
-	url?: string;
-}
-
-export interface IInternalRenderer {
-	component: React.ComponentType<any>;
-	default?: boolean;
-	label?: string;
-	name?: string;
-	schema?: ISchema;
-	symbol?: string;
-	type: 'internal';
-	url?: string;
-}
-
-export type TRenderer = IClientExtensionRenderer | IInternalRenderer;
 
 const FrontendDataSetContext = React.createContext({
 	allItemsSelectedActive: false,
@@ -126,6 +105,7 @@ const FrontendDataSetContext = React.createContext({
 	createInlineItem: () => {},
 	executeAsyncItemAction: () => {},
 	highlightItems: () => {},
+	id: '',
 	loadData: () => {},
 	onActionDropdownItemClick: () => {},
 	onBulkActionItemClick: () => {},
@@ -138,6 +118,7 @@ const FrontendDataSetContext = React.createContext({
 	selectedItems: [],
 	selectedItemsValue: [],
 	setSearching: () => {},
+	showManagementBarInEmptyState: true,
 	toggleItemInlineEdit: () => {},
 	updateDataSetItems: () => {},
 	updateItem: () => {},

@@ -13,6 +13,7 @@ import com.liferay.exportimport.kernel.service.StagingLocalService;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageTemplate;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageTemplateSettings;
+import com.liferay.headless.admin.site.client.dto.v1_0.Creator;
 import com.liferay.headless.admin.site.client.dto.v1_0.FavIcon;
 import com.liferay.headless.admin.site.client.dto.v1_0.NavigationSettings;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageSpecification;
@@ -51,6 +52,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -59,6 +61,7 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -66,7 +69,6 @@ import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 
 import java.util.Arrays;
@@ -200,13 +202,6 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 				() -> pageTemplateResource.getSitePageTemplate(
 					group.getExternalReferenceCode(),
 					RandomTestUtil.randomString())));
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGetSitePageTemplatePermissionsPage() throws Exception {
-		super.testGetSitePageTemplatePermissionsPage();
 	}
 
 	@Override
@@ -577,13 +572,6 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 				}));
 	}
 
-	@Ignore
-	@Override
-	@Test
-	public void testPutSitePageTemplatePermissionsPage() throws Exception {
-		super.testPutSitePageTemplatePermissionsPage();
-	}
-
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {
@@ -601,16 +589,6 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 	@Override
 	protected PageTemplate randomPageTemplate() throws Exception {
 		return _getPageTemplate(testGroup);
-	}
-
-	@Ignore
-	@Override
-	@Test
-	protected PageTemplate
-			testGetSitePageTemplatePermissionsPage_addPageTemplate()
-		throws Exception {
-
-		return super.testGetSitePageTemplatePermissionsPage_addPageTemplate();
 	}
 
 	@Override
@@ -685,16 +663,6 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 		return pageTemplateResource.postSitePageTemplateSetPageTemplate(
 			testGroup.getExternalReferenceCode(),
 			pageTemplateSet.getExternalReferenceCode(), pageTemplate);
-	}
-
-	@Ignore
-	@Override
-	@Test
-	protected PageTemplate
-			testPutSitePageTemplatePermissionsPage_addPageTemplate()
-		throws Exception {
-
-		return super.testPutSitePageTemplatePermissionsPage_addPageTemplate();
 	}
 
 	private static com.liferay.headless.admin.site.dto.v1_0.PageTemplate
@@ -801,8 +769,6 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 
 		return new ContentPageTemplate() {
 			{
-				creatorExternalReferenceCode = StringUtil.toLowerCase(
-					RandomTestUtil.randomString());
 				dateCreated = RandomTestUtil.nextDate();
 				dateModified = RandomTestUtil.nextDate();
 				datePublished = RandomTestUtil.nextDate();
@@ -880,6 +846,22 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 
 		return new PageTemplateSet() {
 			{
+				setCreator(
+					() -> {
+						User user = _userLocalService.fetchUser(
+							layoutPageTemplateCollection.getUserId());
+
+						if (user == null) {
+							return null;
+						}
+
+						return new Creator() {
+							{
+								setExternalReferenceCode(
+									user::getExternalReferenceCode);
+							}
+						};
+					});
 				setDateCreated(layoutPageTemplateCollection::getCreateDate);
 				setDateModified(layoutPageTemplateCollection::getModifiedDate);
 				setDescription(layoutPageTemplateCollection::getDescription);
@@ -962,8 +944,6 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 		return new WidgetPageTemplate() {
 			{
 				active = RandomTestUtil.randomBoolean();
-				creatorExternalReferenceCode = StringUtil.toLowerCase(
-					RandomTestUtil.randomString());
 				dateCreated = RandomTestUtil.nextDate();
 				dateModified = RandomTestUtil.nextDate();
 				datePublished = RandomTestUtil.nextDate();
@@ -1843,5 +1823,8 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 
 	@Inject
 	private StagingLocalService _stagingLocalService;
+
+	@Inject
+	private UserLocalService _userLocalService;
 
 }

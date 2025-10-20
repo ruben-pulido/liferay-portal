@@ -6,12 +6,16 @@
 import '../../../css/components/DefaultPermission.scss';
 
 import ClayButton from '@clayui/button';
+import {ClayCheckbox} from '@clayui/form';
+import ClayIcon from '@clayui/icon';
 import ClayModal from '@clayui/modal';
+import {ClayTooltipProvider} from '@clayui/tooltip';
 import {openToast} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
 import React, {useCallback, useEffect, useState} from 'react';
 
 import CMSDefaultPermissionService from '../../common/services/CMSDefaultPermissionService';
+import {triggerAssetBulkAction} from '../props_transformer/actions/triggerAssetBulkAction';
 import DefaultPermissionFormContainer from './DefaultPermissionFormContainer';
 import {
 	AssetRoleSelectedActions,
@@ -21,26 +25,69 @@ import {
 
 export default function DefaultPermissionModalContent({
 	actions,
+	allowPropagate = false,
+	apiURL,
 	classExternalReferenceCode,
 	className,
 	closeModal,
 	roles,
-}: DefaultPermissionModalContentProps) {
+}: DefaultPermissionModalContentProps & {apiURL?: string}) {
 	const [currentObjectEntry, setCurrentObjectEntry] =
 		useState<CMSDefaultPermissionObjectEntryDTO | null>(null);
 	const [currentValues, setCurrentValues] =
 		useState<AssetRoleSelectedActions>({});
 	const [loading, setLoading] = useState(false);
+	const [propagate, setPropagate] = useState(false);
+	const saveActive = !allowPropagate || propagate;
 
-	const saveHandler = useCallback(() => {
-		setLoading(true);
+	const saveHandler = useCallback(
+		async (event: any) => {
+			event.preventDefault();
 
-		if (currentObjectEntry) {
-			CMSDefaultPermissionService.updateObjectEntry({
-				defaultPermissions: JSON.stringify(currentValues),
-				externalReferenceCode: currentObjectEntry.externalReferenceCode,
-			})
-				.then(() => {
+			setLoading(true);
+
+			try {
+				if (!currentObjectEntry) {
+					throw new Error();
+				}
+
+				const response =
+					await CMSDefaultPermissionService.updateObjectEntry({
+						defaultPermissions: JSON.stringify(currentValues),
+						externalReferenceCode:
+							currentObjectEntry.externalReferenceCode,
+					});
+
+				if (response.error) {
+					throw new Error();
+				}
+
+				if (propagate) {
+					triggerAssetBulkAction({
+						apiURL,
+						keyValues: {
+							defaultPermissions: JSON.stringify(currentValues),
+							depotGroupId: currentObjectEntry?.depotGroupId || 0,
+							treePath: currentObjectEntry?.treePath || '',
+						},
+						onCreateError: ({error}) => {
+							setLoading(false);
+
+							throw new Error(error as unknown as any);
+						},
+						onCreateSuccess: () => {
+							closeModal();
+
+							setLoading(false);
+						},
+						overrideDefaultErrorToast: true,
+						selectedData: {
+							selectAll: true,
+						},
+						type: 'DefaultPermissionBulkAction',
+					});
+				}
+				else {
 					openToast({
 						message: Liferay.Language.get(
 							'your-request-completed-successfully'
@@ -49,54 +96,23 @@ export default function DefaultPermissionModalContent({
 					});
 
 					closeModal();
-				})
-				.catch(() => {
-					openToast({
-						message: Liferay.Language.get(
-							'an-unexpected-system-error-occurred'
-						),
-						type: 'danger',
-					});
-				})
-				.finally(() => {
-					setLoading(false);
-				});
-		}
-		else {
-			CMSDefaultPermissionService.addObjectEntry({
-				classExternalReferenceCode,
-				className,
-				defaultPermissions: JSON.stringify(currentValues),
-			})
-				.then(() => {
-					openToast({
-						message: Liferay.Language.get(
-							'your-request-completed-successfully'
-						),
-						type: 'success',
-					});
 
-					closeModal();
-				})
-				.catch(() => {
-					openToast({
-						message: Liferay.Language.get(
-							'an-unexpected-system-error-occurred'
-						),
-						type: 'danger',
-					});
-				})
-				.finally(() => {
 					setLoading(false);
+				}
+			}
+			catch (_error) {
+				openToast({
+					message: Liferay.Language.get(
+						'an-unexpected-system-error-occurred'
+					),
+					type: 'danger',
 				});
-		}
-	}, [
-		classExternalReferenceCode,
-		className,
-		closeModal,
-		currentObjectEntry,
-		currentValues,
-	]);
+
+				setLoading(false);
+			}
+		},
+		[apiURL, closeModal, currentObjectEntry, currentValues, propagate]
+	);
 
 	const onChangeHandler = useCallback((data: any) => {
 		setCurrentValues(data);
@@ -128,6 +144,18 @@ export default function DefaultPermissionModalContent({
 					Liferay.Language.get('edit-x'),
 					Liferay.Language.get('default-permissions')
 				)}
+
+				<ClayTooltipProvider>
+					<span
+						className="pl-2 text-3"
+						data-tooltip-align="bottom"
+						title={Liferay.Language.get(
+							'setting-default-permissions-for-this-folder-will-automatically-apply-them-to-all-newly-created-items'
+						)}
+					>
+						<ClayIcon aria-label="Info" symbol="info-circle" />
+					</span>
+				</ClayTooltipProvider>
 			</ClayModal.Header>
 
 			<ClayModal.Body className="p-0">
@@ -141,6 +169,41 @@ export default function DefaultPermissionModalContent({
 			</ClayModal.Body>
 
 			<ClayModal.Footer
+				first={
+					allowPropagate ? (
+						<div className="d-flex">
+							<ClayCheckbox
+								checked={propagate}
+								data-testid="checkbox-propagate"
+								disabled={loading}
+								inline
+								label={Liferay.Language.get(
+									'i-understand-that-these-changes-will-also-affect-existing-entities'
+								)}
+								onChange={() => {
+									setPropagate(!propagate);
+								}}
+							/>
+
+							<ClayTooltipProvider>
+								<span
+									className="pl-2"
+									data-tooltip-align="top"
+									title={Liferay.Language.get(
+										'enabling-this-setting-will-apply-the-permissions-configuration-to-all-current-subfolders'
+									)}
+								>
+									<ClayIcon
+										aria-label="Info"
+										symbol="question-circle-full"
+									/>
+								</span>
+							</ClayTooltipProvider>
+						</div>
+					) : (
+						<></>
+					)
+				}
 				last={
 					<ClayButton.Group spaced>
 						<ClayButton
@@ -154,10 +217,12 @@ export default function DefaultPermissionModalContent({
 
 						<ClayButton
 							data-testid="button-save"
-							disabled={loading}
+							disabled={loading || !saveActive}
 							onClick={saveHandler}
 						>
-							{Liferay.Language.get('save')}
+							{allowPropagate
+								? Liferay.Language.get('save-and-propagate')
+								: Liferay.Language.get('save')}
 						</ClayButton>
 					</ClayButton.Group>
 				}

@@ -81,7 +81,6 @@ export function Recipient({
 			type: 'role',
 		},
 		{
-			featureFlag: 'LPD-50091',
 			label: Liferay.Language.get('user-group'),
 			name: 'userGroupName',
 			options: userGroupsList,
@@ -155,6 +154,27 @@ export function Recipient({
 			</div>
 
 			<div className={classNames({'col-lg-6': displayType === 'row'})}>
+				{recipientType === 'term' && (
+					<div className="lfr__notification-template-email-notification-settings-input-not-localized">
+						<Input
+							disabled={disabled}
+							error={error}
+							feedbackMessage={Liferay.Util.sub(
+								Liferay.Language.get(
+									'use-terms-to-configure-recipients-x'
+								),
+								'[%CURRENT_USER_EMAIL_ADDRESS%]'
+							)}
+							id={id}
+							label={label}
+							name={id}
+							onChange={({target}) => onChange(id, target.value)}
+							required={required}
+							value={recipient[id] as string}
+						/>
+					</div>
+				)}
+
 				{recipientType === 'email' && userEmailAddressLocalized && (
 					<InputLocalized
 						disabled={disabled}
@@ -191,11 +211,11 @@ export function Recipient({
 				)}
 
 				{recipientType === 'subscribers' && (
-					<div className="lfr__notification-template-email-notification-settings-primary-recipient-input-not-localized">
+					<div className="lfr__notification-template-email-notification-settings-input-not-localized">
 						<Input
 							disabled
 							id="subscribersRecipients"
-							label={Liferay.Language.get('recipients')}
+							label={label}
 							name="recipients"
 							required={required}
 							value="[%EMAIL_RECIPIENT_ADDRESS%]"
@@ -205,7 +225,6 @@ export function Recipient({
 
 				{RECIPIENT_TYPE_DETAILS.map(
 					({
-						featureFlag,
 						name,
 						options,
 						placeholder,
@@ -213,8 +232,7 @@ export function Recipient({
 						setOptions,
 						type,
 					}) =>
-						recipientType === type &&
-						(!featureFlag || Liferay.FeatureFlags[featureFlag]) && (
+						recipientType === type && (
 							<RecipientMultipleSelect
 								disabled={disabled}
 								error={error}

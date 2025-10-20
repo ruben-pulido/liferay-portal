@@ -17,6 +17,7 @@ import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.field.type.DateInfoFieldType;
 import com.liferay.info.field.type.FileInfoFieldType;
 import com.liferay.info.field.type.ImageInfoFieldType;
+import com.liferay.info.field.type.LongTextInfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
 import com.liferay.info.field.type.URLInfoFieldType;
 import com.liferay.info.formatter.InfoCollectionTextFormatter;
@@ -204,7 +205,9 @@ public class FragmentEntryProcessorHelperImpl
 			return 0;
 		}
 
-		return _getFileEntryId(className, object, fieldName, locale);
+		return _getFileEntryId(
+			className, infoItemObjectProvider.getInfoItem(infoItemIdentifier),
+			fieldName, locale);
 	}
 
 	@Override
@@ -587,7 +590,9 @@ public class FragmentEntryProcessorHelperImpl
 				}
 			}
 			else if (infoField.getInfoFieldType() instanceof
-						TextInfoFieldType) {
+						LongTextInfoFieldType ||
+					 infoField.getInfoFieldType() instanceof
+						 TextInfoFieldType) {
 
 				URI uri = null;
 
@@ -793,6 +798,10 @@ public class FragmentEntryProcessorHelperImpl
 	private long _getFileEntryId(
 		String className, Object displayObject, String fieldName,
 		Locale locale) {
+
+		if (displayObject == null) {
+			return 0;
+		}
 
 		InfoItemFieldValuesProvider<Object> infoItemFieldValuesProvider =
 			_infoItemServiceRegistry.getFirstInfoItemService(

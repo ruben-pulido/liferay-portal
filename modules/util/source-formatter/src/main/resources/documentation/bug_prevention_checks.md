@@ -2,7 +2,6 @@
 
 Check | File Extensions | Description
 ----- | --------------- | -----------
-AccessModifierCheck | .java | Checks for cases where visibility of methods can be decreased. |
 [AnonymousClassCheck](check/anonymous_class_check.md#anonymousclasscheck) | .java | Checks for serialization issue when using anonymous class. |
 ArquillianCheck | .java | Checks for correct use of `com.liferay.arquillian.extension.junit.bridge.junit.Arquillian`. |
 AssertFailCheck | .java | Checks that calls to `Assert.fail` can be only used inside a try block as the last statement. |
@@ -40,6 +39,7 @@ ConsumerTypeAnnotationCheck | .java | Performs several checks on classes with @C
 DTOEnumCreationCheck | .java | Checks the creation of DTO enum. |
 DatabaseMetaDataCheck | .java | Checks usages of `java.sql.DatabaseMetaData`. |
 DeprecatedAPICheck | .java | Finds calls to deprecated classes, constructors, fields or methods. |
+DeprecatedClassesCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Replaces deprecated classes. |
 EmptyConstructorCheck | .java | Finds unnecessary empty constructors. |
 [EqualsHashCodeCheck](https://checkstyle.sourceforge.io/checks/coding/equalshashcode.html) | .java | Checks that classes that either override `equals()` or `hashCode()` also overrides the other. |
 ExceptionPrintStackTraceCheck | .java | Avoid using printStackTrace. |
@@ -98,8 +98,8 @@ JavaCompanyScopedIdsCheck | .java | Finds cases where company scoped ids are use
 JavaComponentAnnotationsCheck | .java | Performs several checks on classes with `@Component` annotation. |
 [JavaConfigurationAdminCheck](check/java_configuration_admin_check.md#javaconfigurationadmincheck) | .java | Checks for correct use of `location == ?` when calling `org.osgi.service.cm.ConfigurationAdmin#createFactoryConfiguration`. |
 [JavaConfigurationCategoryCheck](check/java_configuration_category_check.md#javaconfigurationcategorycheck) | .java | Checks that the value of `category` in `@ExtendedObjectClassDefinition` matches the `categoryKey` of the corresponding class that implements `ConfigurationCategory`. |
-JavaDeprecatedKernelClassesCheck | .java | Finds calls to deprecated classes `com.liferay.portal.kernel.util.CharPool` and `com.liferay.portal.kernel.util.StringPool`. |
-JavaFeatureFlagManagerUtilCheck | .java | Finds cases where `FeatureFlagManagerUtil.isEnabled` should be used. |
+JavaDefaultAdminScreenNameCheck | .java | Checks that we do not use `PropsKeys.DEFAULT_ADMIN_SCREEN_NAME` or `PropsValues.DEFAULT_ADMIN_SCREEN_NAME`. |
+JavaFeatureFlagManagerUtilCheck | .java | Finds cases where `FeatureFlagManagerUtil.isEnabled` should be used and incorrect use of it. |
 [JavaFinderCacheCheck](check/java_finder_cache_check.md#javafindercachecheck) | .java | Checks that the method `BasePersistenceImpl.fetchByPrimaryKey` is overridden, when using `FinderPath`. |
 JavaFinderImplCustomSQLCheck | .java | Checks that hardcoded SQL values in `*FinderImpl` classes match the SQL in the `.xml` file in the `custom-sql` directory. |
 JavaIgnoreAnnotationCheck | .java | Finds methods with `@Ignore` annotation in test classes. |
@@ -111,6 +111,7 @@ JavaInternalPackageCheck | .java | Performs several checks on class in `internal
 JavaJSImportMapsContributorCheck | .java | Performs several checks on `*JSImportMapsContributor` class. |
 JavaJSPDynamicIncludeCheck | .java | Performs several checks on `*JSPDynamicInclude` class. |
 [JavaLocalSensitiveComparisonCheck](check/java_local_sensitive_comparison_check.md#javalocalsensitivecomparisoncheck) | .java | Checks that `java.text.Collator` is used when comparing localized values. |
+[JavaLocalServiceImplUserIdUsageCheck](check/java_local_service_impl_user_id_usage_check.md#javalocalserviceimpluseridusagecheck) | .java | Finds incorrect use of `GuestOrUserUtil.getUserId()` or `PrincipalThreadLocal.getUserId()`. |
 JavaLogClassNameCheck | .java | Checks the name of the class that is passed in `LogFactoryUtil.getLog`. |
 [JavaLogLevelCheck](check/java_log_level_check.md#javaloglevelcheck) | .java | Checks that the correct log messages are printed. |
 JavaMapBuilderGenericsCheck | .java | Finds missing or unnecessary generics on `*MapBuilder.put` calls. |
@@ -188,6 +189,7 @@ PrimitiveWrapperInstantiationCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .
 PrincipalExceptionCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Finds calls to `PrincipalException.class.getName()` (use `PrincipalException.getNestedClasses()` instead). |
 PropertiesArchivedModulesCheck | .eslintignore, .prettierignore, or .properties | Finds `test.batch.class.names.includes` property value pointing to archived modules in `test.properties`. |
 PropertiesBuildIncludeDirsCheck | .eslintignore, .prettierignore, or .properties | Verifies property value of `build.include.dirs` in `build.properties`. |
+PropertiesDefaultAdminScreenNameCheck | .eslintignore, .prettierignore, or .properties | Checks that we do not use `default.admin.screen.name`. |
 PropertiesFeatureFlagsCheck | .eslintignore, .prettierignore, or .properties | Generate feature flags in `portal.properties` file. |
 PropertiesImportedFilesContentCheck | .eslintignore, .prettierignore, or .properties | Performs several checks on `imported-files.properties` file. |
 [PropertiesLanguageKeysCheck](check/properties_language_keys_check.md#propertieslanguagekeyscheck) | .eslintignore, .prettierignore, or .properties | Checks that there is no HTML markup in language keys. |
@@ -205,11 +207,14 @@ PropertiesVerifyPropertiesCheck | .eslintignore, .prettierignore, or .properties
 ReferenceAnnotationCheck | .java | Performs several checks on classes with @Reference annotation. |
 [RequireThisCheck](https://checkstyle.sourceforge.io/checks/coding/requirethis.html) | .java | Checks that references to instance variables and methods of the present object are explicitly of the form 'this.varName' or 'this.methodName(args)' and that those references don't rely on the default behavior when 'this.' is absent. |
 [ResourceBundleCheck](check/resource_bundle_check.md#resourcebundlecheck) | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks that there are no calls to `java.util.ResourceBundle.getBundle`. |
-ResourceImplCheck | .java | Performs several checks on `*ResourceImpl` classes (except `Base*ResourceImpl` classes). |
+ResourceImplCheck | .java | Performs several checks on `*ResourceImpl` classes. |
 ResourcePermissionCheck | .java | Performs several checks on `*ResourcePermission` classes. |
+ResourceTestInjectionCheck | .java | Checks that if any `*ResourceTest` class injects another resource that is not a `client`. |
+ResultSetGetCallCheck | .java | Finds incorrect use of `ResultSet.get*` calls. |
 [SQLLongNamesCheck](check/sql_long_names_check.md#sqllongnamescheck) | .sql | Checks for table and column names that exceed 30 characters. |
 SelfReferenceCheck | .java | Finds cases of unnecessary reference to its own class. |
 [ServiceComponentRuntimeCheck](check/service_component_runtime_check.md#servicecomponentruntimecheck) | .java | Checks `ServiceComponentRuntime` usage in test classes. |
+ServiceImplAccessModifierCheck | .java | Checks for cases where visibility of methods can be decreased. |
 [ServiceProxyFactoryCheck](check/service_proxy_factory_check.md#serviceproxyfactorycheck) | .java | Finds incorrect parameter in method call. |
 ServiceUpdateCheck | .java | Checks that there are no stale references in service code from service updates. |
 [StaticBlockCheck](check/static_block_check.md#staticblockcheck) | .java | Performs several checks on static blocks. |
@@ -224,20 +229,20 @@ URLInputStreamCheck | .java | Checks usages of `URL.openStream()`. |
 UnparameterizedClassCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Finds `Class` instantiation without generic type. |
 UnwrappedVariableInfoCheck | .java | Finds cases where the variable should be wrapped into an inner class in order to defer array elements initialization. |
 ValidatorIsNullCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Ensures that only variable of type `Long`, `Serializable` or `String` is passed to method `com.liferay.portal.kernel.util.Validator.isNull`. |
-XMLBuildFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `build.xml`. |
-XMLCDATACheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `CDATA` inside `xml`. |
-XMLCheckstyleFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `checkstyle.xml` file. |
-XMLLookAndFeelCompatibilityVersionCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Finds missing attribute `version` in `compatibility` element in `*--look-and-feel.xml` file. |
-XMLPortletFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `portlet.xml` file. |
-XMLPoshiFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on poshi files. |
-XMLProjectElementCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Checks the project name in `.pom` file. |
-XMLServiceAutoImportDefaultReferencesCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Checks that the `auto-import-default-references` in `service.xml` does not equal `false`. |
-[XMLServiceEntityNameCheck](check/xml_service_entity_name_check.md#xmlserviceentitynamecheck) | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Checks that the `entity name` in `service.xml` does not equal the `package name`. |
-XMLServiceFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `service.xml` file. |
-[XMLServiceFinderNameCheck](check/xml_service_finder_name_check.md#xmlservicefindernamecheck) | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Checks that the `finder name` in `service.xml`. |
-XMLServiceReferenceCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Checks for unused references in `service.xml` file. |
-XMLSourcechecksFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `sourcechecks.xml` file. |
-XMLSuppressionsFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `source-formatter-suppressions.xml` file. |
-XMLTagAttributesCheck | .action, .function, .html, .jelly, .jrxml, .macro, .path, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on tag attributes. |
-XMLWebFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `web.xml` file. |
+XMLBuildFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `build.xml`. |
+XMLCDATACheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `CDATA` inside `xml`. |
+XMLCheckstyleFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `checkstyle.xml` file. |
+XMLLookAndFeelCompatibilityVersionCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Finds missing attribute `version` in `compatibility` element in `*--look-and-feel.xml` file. |
+XMLPortletFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `portlet.xml` file. |
+XMLPoshiFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on poshi files. |
+XMLProjectElementCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Checks the project name in `.pom` file. |
+XMLServiceAutoImportDefaultReferencesCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Checks that the `auto-import-default-references` in `service.xml` does not equal `false`. |
+[XMLServiceEntityNameCheck](check/xml_service_entity_name_check.md#xmlserviceentitynamecheck) | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Checks that the `entity name` in `service.xml` does not equal the `package name`. |
+XMLServiceFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `service.xml` file. |
+[XMLServiceFinderNameCheck](check/xml_service_finder_name_check.md#xmlservicefindernamecheck) | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Checks that the `finder name` in `service.xml`. |
+XMLServiceReferenceCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Checks for unused references in `service.xml` file. |
+XMLSourcechecksFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `sourcechecks.xml` file. |
+XMLSuppressionsFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `source-formatter-suppressions.xml` file. |
+XMLTagAttributesCheck | .action, .function, .html, .jelly, .jrxml, .macro, .path, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on tag attributes. |
+XMLWebFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `web.xml` file. |
 YMLRESTConfigFileBreakingChangeCommitMessageCheck | .tpl, .yaml, or .yml | Checks that commit message should contain the schematized breaking changes. |

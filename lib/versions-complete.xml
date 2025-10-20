@@ -231,7 +231,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.commerce.payment.method.authorize.net.jar!httpclient5.jar</file-name>
-				<version>5.4.1</version>
+				<version>5.4.4</version>
 				<project-name>Apache HttpClient</project-name>
 				<licenses>
 					<license>
@@ -242,7 +242,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.commerce.payment.method.authorize.net.jar!httpcore5-h2.jar</file-name>
-				<version>5.3.2</version>
+				<version>5.3.4</version>
 				<project-name>Apache HttpComponents Core HTTP/2</project-name>
 				<licenses>
 					<license>
@@ -431,56 +431,56 @@
 			</library>
 			<library>
 				<file-name>com.liferay.commerce.report.impl.jar!lucene-analyzers-common.jar</file-name>
-				<version>7.1.0</version>
+				<version>8.10.0</version>
 				<project-name>Lucene Common Analyzers</project-name>
 				<licenses>
 					<license>
-						<license-name>The Apache Software License, Version 2.0</license-name>
-						<license-url>http://www.apache.org/licenses/LICENSE-2.0.txt</license-url>
+						<license-name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</license-name>
+						<license-url>https://opensource.org/licenses/CDDL-1.0</license-url>
 					</license>
 				</licenses>
 			</library>
 			<library>
 				<file-name>com.liferay.commerce.report.impl.jar!lucene-core.jar</file-name>
-				<version>7.1.0</version>
+				<version>8.10.0</version>
 				<project-name>Lucene Core</project-name>
 				<licenses>
 					<license>
-						<license-name>The Apache Software License, Version 2.0</license-name>
-						<license-url>http://www.apache.org/licenses/LICENSE-2.0.txt</license-url>
+						<license-name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</license-name>
+						<license-url>https://opensource.org/licenses/CDDL-1.0</license-url>
 					</license>
 				</licenses>
 			</library>
 			<library>
 				<file-name>com.liferay.commerce.report.impl.jar!lucene-queries.jar</file-name>
-				<version>7.1.0</version>
+				<version>8.10.0</version>
 				<project-name>Lucene Queries</project-name>
 				<licenses>
 					<license>
-						<license-name>The Apache Software License, Version 2.0</license-name>
-						<license-url>http://www.apache.org/licenses/LICENSE-2.0.txt</license-url>
+						<license-name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</license-name>
+						<license-url>https://opensource.org/licenses/CDDL-1.0</license-url>
 					</license>
 				</licenses>
 			</library>
 			<library>
 				<file-name>com.liferay.commerce.report.impl.jar!lucene-queryparser.jar</file-name>
-				<version>7.1.0</version>
+				<version>8.10.0</version>
 				<project-name>Lucene QueryParsers</project-name>
 				<licenses>
 					<license>
-						<license-name>The Apache Software License, Version 2.0</license-name>
-						<license-url>http://www.apache.org/licenses/LICENSE-2.0.txt</license-url>
+						<license-name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</license-name>
+						<license-url>https://opensource.org/licenses/CDDL-1.0</license-url>
 					</license>
 				</licenses>
 			</library>
 			<library>
 				<file-name>com.liferay.commerce.report.impl.jar!lucene-sandbox.jar</file-name>
-				<version>7.1.0</version>
+				<version>8.10.0</version>
 				<project-name>Lucene Sandbox</project-name>
 				<licenses>
 					<license>
-						<license-name>The Apache Software License, Version 2.0</license-name>
-						<license-url>http://www.apache.org/licenses/LICENSE-2.0.txt</license-url>
+						<license-name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</license-name>
+						<license-url>https://opensource.org/licenses/CDDL-1.0</license-url>
 					</license>
 				</licenses>
 			</library>
@@ -1561,6 +1561,78 @@
 				</licenses>
 			</library>
 			<library>
+				<file-name>com.liferay.mcp.server.jar!jackson-dataformat-yaml.jar</file-name>
+				<version>2.18.2</version>
+				<project-name>Jackson-dataformat-YAML</project-name>
+				<project-url>https://github.com/FasterXML/jackson-dataformats-text</project-url>
+				<licenses>
+					<license>
+						<license-name>The Apache Software License, Version 2.0</license-name>
+						<license-url>https://www.apache.org/licenses/LICENSE-2.0.txt</license-url>
+					</license>
+				</licenses>
+			</library>
+			<library>
+				<file-name>com.liferay.mcp.server.jar!json-schema-validator.jar</file-name>
+				<version>1.5.5</version>
+				<project-name>JsonSchemaValidator</project-name>
+				<project-url>https://github.com/networknt/json-schema-validator</project-url>
+				<licenses>
+					<license>
+						<license-name>Apache License Version 2.0</license-name>
+						<license-url>https://www.apache.org/licenses/LICENSE-2.0</license-url>
+					</license>
+				</licenses>
+			</library>
+			<library>
+				<file-name>com.liferay.mcp.server.jar!mcp-core.jar</file-name>
+				<version>0.13.1</version>
+				<project-name>Bundle io.modelcontextprotocol.sdk : mcp-core</project-name>
+				<project-url>https://github.com/modelcontextprotocol/java-sdk</project-url>
+				<licenses>
+					<license>
+						<license-name>MIT License</license-name>
+						<license-url>http://www.opensource.org/licenses/mit-license.php</license-url>
+					</license>
+				</licenses>
+			</library>
+			<library>
+				<file-name>com.liferay.mcp.server.jar!mcp-json-jackson2.jar</file-name>
+				<version>0.13.1</version>
+				<project-name>Java MCP SDK JSON Jackson</project-name>
+				<project-url>https://github.com/modelcontextprotocol/java-sdk</project-url>
+				<licenses>
+					<license>
+						<license-name>MIT License</license-name>
+						<license-url>http://www.opensource.org/licenses/mit-license.php</license-url>
+					</license>
+				</licenses>
+			</library>
+			<library>
+				<file-name>com.liferay.mcp.server.jar!reactor-core.jar</file-name>
+				<version>3.6.5</version>
+				<project-name>Non-Blocking Reactive Foundation for the JVM</project-name>
+				<project-url>https://github.com/reactor/reactor-core</project-url>
+				<licenses>
+					<license>
+						<license-name>Apache License, Version 2.0</license-name>
+						<license-url>https://www.apache.org/licenses/LICENSE-2.0.txt</license-url>
+					</license>
+				</licenses>
+			</library>
+			<library>
+				<file-name>com.liferay.mcp.server.jar!snakeyaml.jar</file-name>
+				<version>2.3</version>
+				<project-name>SnakeYAML</project-name>
+				<project-url>https://bitbucket.org/snakeyaml/snakeyaml</project-url>
+				<licenses>
+					<license>
+						<license-name>Apache License, Version 2.0</license-name>
+						<license-url>http://www.apache.org/licenses/LICENSE-2.0.txt</license-url>
+					</license>
+				</licenses>
+			</library>
+			<library>
 				<file-name>com.liferay.oauth.client.persistence.service.jar!jakarta.mail-api.jar</file-name>
 				<version>2.1.3</version>
 				<project-name>Jakarta Mail API</project-name>
@@ -2188,17 +2260,6 @@
 				</licenses>
 			</library>
 			<library>
-				<file-name>com.liferay.portal.osgi.web.http.servlet.impl.jar!org.eclipse.equinox.http.servlet.jar</file-name>
-				<version>1.2.2.v20211118-0920.LIFERAY-PATCHED-4.JAKARTA-LIFERAY-PATCHED-1</version>
-				<project-name>com.liferay:org.eclipse.equinox.http.servlet</project-name>
-				<licenses>
-					<license>
-						<license-name>LGPL 2.1</license-name>
-						<license-url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</license-url>
-					</license>
-				</licenses>
-			</library>
-			<library>
 				<file-name>com.liferay.portal.remote.jaxrs.whiteboard.jar!wsdl4j.jar</file-name>
 				<version>1.6.3</version>
 				<project-name>WSDL4J</project-name>
@@ -2679,7 +2740,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.portal.security.antisamy.jar!httpclient5.jar</file-name>
-				<version>5.2</version>
+				<version>5.4.4</version>
 				<project-name>Apache HttpClient</project-name>
 				<licenses>
 					<license>
@@ -2690,7 +2751,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.portal.security.antisamy.jar!httpcore5-h2.jar</file-name>
-				<version>5.2</version>
+				<version>5.3.4</version>
 				<project-name>Apache HttpComponents Core HTTP/2</project-name>
 				<licenses>
 					<license>
@@ -2701,7 +2762,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.portal.security.antisamy.jar!httpcore5.jar</file-name>
-				<version>5.2</version>
+				<version>5.3.2</version>
 				<project-name>Apache HttpComponents Core HTTP/1.1</project-name>
 				<licenses>
 					<license>
@@ -2951,7 +3012,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.portal.store.azure.jar!reactor-netty-core.jar</file-name>
-				<version>1.0.45</version>
+				<version>1.2.10</version>
 				<project-name>Core functionality for the Reactor Netty library</project-name>
 				<project-url>https://github.com/reactor/reactor-netty</project-url>
 				<licenses>
@@ -2963,7 +3024,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.portal.store.azure.jar!reactor-netty-http.jar</file-name>
-				<version>1.0.45</version>
+				<version>1.2.10</version>
 				<project-name>HTTP functionality for the Reactor Netty library</project-name>
 				<project-url>https://github.com/reactor/reactor-netty</project-url>
 				<licenses>
@@ -3909,18 +3970,6 @@
 					<license>
 						<license-name>LGPL 2.1</license-name>
 						<license-url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</license-url>
-					</license>
-				</licenses>
-			</library>
-			<library>
-				<file-name>com.liferay.portal.vulcan.impl.jar!reflections.jar</file-name>
-				<version>0.10.2</version>
-				<project-name>Reflections</project-name>
-				<project-url>http://github.com/ronmamo/reflections</project-url>
-				<licenses>
-					<license>
-						<license-name>WTFPL</license-name>
-						<license-url>http://www.wtfpl.net/</license-url>
 					</license>
 				</licenses>
 			</library>
@@ -5093,7 +5142,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-buffer.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Buffer</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5105,7 +5154,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-codec-dns.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Codec/DNS</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5117,7 +5166,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-codec-http.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Codec/HTTP</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5129,7 +5178,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-codec-http2.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Codec/HTTP2</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5141,7 +5190,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-codec-socks.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Codec/Socks</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5153,7 +5202,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-codec.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Codec</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5165,7 +5214,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-common.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Common</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5177,7 +5226,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-handler-proxy.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Handler/Proxy</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5189,7 +5238,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-handler.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Handler</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5201,7 +5250,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-resolver-dns-classes-macos.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Resolver/DNS/Classes/MacOS</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5213,7 +5262,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-resolver-dns-native-macos.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Resolver/DNS/Native/MacOS</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5225,7 +5274,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-resolver-dns.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Resolver/DNS</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5237,7 +5286,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-resolver.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Resolver</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5273,7 +5322,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-transport-classes-epoll.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Transport/Classes/Epoll</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5285,7 +5334,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-transport-classes-kqueue.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Transport/Classes/KQueue</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5297,7 +5346,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-transport-native-epoll.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Transport/Native/Epoll</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5309,7 +5358,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-transport-native-kqueue.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Transport/Native/KQueue</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5321,7 +5370,7 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-transport-native-unix-common.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Transport/Native/Unix/Common</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
@@ -5333,25 +5382,13 @@
 			</library>
 			<library>
 				<file-name>com.liferay.shared.dependencies.netty.jar!netty-transport.jar</file-name>
-				<version>4.1.119.Final</version>
+				<version>4.1.125.Final</version>
 				<project-name>Netty/Transport</project-name>
 				<project-url>https://netty.io/</project-url>
 				<licenses>
 					<license>
 						<license-name>Apache License, Version 2.0</license-name>
 						<license-url>https://www.apache.org/licenses/LICENSE-2.0</license-url>
-					</license>
-				</licenses>
-			</library>
-			<library>
-				<file-name>com.liferay.shared.dependencies.netty.jar!nimbus-jose-jwt.jar</file-name>
-				<version>10.4</version>
-				<project-name>Nimbus JOSE+JWT</project-name>
-				<project-url>https://connect2id.com</project-url>
-				<licenses>
-					<license>
-						<license-name>The Apache Software License, Version 2.0</license-name>
-						<license-url>https://www.apache.org/licenses/LICENSE-2.0.txt</license-url>
 					</license>
 				</licenses>
 			</library>
@@ -5494,6 +5531,18 @@
 					<license>
 						<license-name>Apache License, Version 2.0</license-name>
 						<license-url>https://www.apache.org/licenses/LICENSE-2.0.txt</license-url>
+					</license>
+				</licenses>
+			</library>
+			<library>
+				<file-name>com.liferay.shared.dependencies.poi.jar!curvesapi.jar</file-name>
+				<version>1.08</version>
+				<project-name>curvesapi</project-name>
+				<project-url>https://github.com/virtuald/curvesapi</project-url>
+				<licenses>
+					<license>
+						<license-name>BSD License</license-name>
+						<license-url>http://opensource.org/licenses/BSD-3-Clause</license-url>
 					</license>
 				</licenses>
 			</library>

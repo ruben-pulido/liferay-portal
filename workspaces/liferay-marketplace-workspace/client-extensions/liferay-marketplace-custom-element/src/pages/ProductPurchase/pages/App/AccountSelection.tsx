@@ -3,28 +3,21 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useSelector} from '@xstate/store/react';
+import {useNavigate} from 'react-router-dom';
 
 import i18n from '../../../../i18n';
 import {getProductPriceModel} from '../../../../utils/productUtils';
 import {useProductPurchaseOutletContext} from '../../ProductPurchaseOutlet';
-import ProductPurchaseApp from '../../services/ProductPurchaseApp';
-import {productPurchaseStore} from '../../store/AppPurchaseStore';
 import ProductPurchaseAccountSelection from '../AccountSelection';
-import LicenseTermsCheckbox from './License/LicenseTermsCheckbox';
 
 const AccountSelection = () => {
 	const {
 		actions: {nextStep},
-		handlePurchase,
 		product,
 		selectedAccount,
 	} = useProductPurchaseOutletContext();
 
-	const eulaAgreement = useSelector(
-		productPurchaseStore,
-		(state) => state.context.payment.eulaAgreement
-	);
+	const navigate = useNavigate();
 
 	const {isFreeApp} = getProductPriceModel(product);
 
@@ -32,24 +25,18 @@ const AccountSelection = () => {
 		<ProductPurchaseAccountSelection
 			footerProps={{
 				continueButtonProps: {
-					children: i18n.translate(
-						isFreeApp ? 'get-app' : 'continue'
-					),
-					disabled:
-						!selectedAccount ||
-						(isFreeApp ? !eulaAgreement : false),
+					children: i18n.translate('continue'),
+					disabled: !selectedAccount,
 					onClick: () => {
 						if (isFreeApp) {
-							return handlePurchase(ProductPurchaseApp);
+							return navigate('summary', {replace: true});
 						}
 
 						nextStep();
 					},
 				},
 			}}
-		>
-			{isFreeApp && <LicenseTermsCheckbox />}
-		</ProductPurchaseAccountSelection>
+		/>
 	);
 };
 

@@ -17,7 +17,6 @@ import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.workflow.kaleo.KaleoWorkflowModelConverter;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstance;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken;
@@ -83,7 +82,7 @@ public class TemplateNotificationMessageGenerator
 
 	@Override
 	public String[] getTemplateLanguages() {
-		return new String[] {"freemarker", "soy", "velocity"};
+		return new String[] {"freemarker", "soy"};
 	}
 
 	@Activate
@@ -91,7 +90,6 @@ public class TemplateNotificationMessageGenerator
 		_templateManagerNames.put(
 			"freemarker", TemplateConstants.LANG_TYPE_FTL);
 		_templateManagerNames.put("soy", TemplateConstants.LANG_TYPE_SOY);
-		_templateManagerNames.put("velocity", TemplateConstants.LANG_TYPE_VM);
 	}
 
 	private Template _getTemplate(
@@ -112,8 +110,7 @@ public class TemplateNotificationMessageGenerator
 
 		return TemplateManagerUtil.getTemplate(
 			templateManagerName,
-			new StringTemplateResource(templateId, notificationTemplate),
-			!PropsValues.NOTIFICATION_EMAIL_TEMPLATE_ENABLED);
+			new StringTemplateResource(templateId, notificationTemplate), true);
 	}
 
 	private void _populateContextVariables(

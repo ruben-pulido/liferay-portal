@@ -50,9 +50,9 @@ export class PagesAdminPage {
 		this.searchInput = this.page.getByPlaceholder('Search for');
 	}
 
-	async goto(siteUrl?: Site['friendlyUrlPath'], doAsUserId?: string) {
+	async goto(siteUrl?: Site['friendlyUrlPath']) {
 		await this.page.goto(
-			`/group${siteUrl || '/guest'}${PORTLET_URLS.pages}${doAsUserId ? '&doAsUserId=' + doAsUserId : ''}`
+			`/group${siteUrl || '/guest'}${PORTLET_URLS.pages}`
 		);
 	}
 
@@ -573,7 +573,7 @@ export class PagesAdminPage {
 
 		await waitForAlert(permissionsFrame, successMessage);
 
-		await this.page.getByLabel('close', {exact: true}).click();
+		await this.page.getByLabel('Close', {exact: true}).click();
 
 		await this.page.getByLabel('Clear selection').click();
 

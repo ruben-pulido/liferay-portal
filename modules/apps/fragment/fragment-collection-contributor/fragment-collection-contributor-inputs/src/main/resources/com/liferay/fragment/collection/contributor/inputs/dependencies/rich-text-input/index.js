@@ -1,8 +1,14 @@
-const editorClass = '.ck-editor';
-const editorName = `${fragmentEntryLinkNamespace}-${input.name}`;
-const wrapper = document.getElementById(
-	`${fragmentEntryLinkNamespace}-wrapper`
+const CKEditorRequiredInput = document.getElementById(
+	`${fragmentElementId}-ckeditor-required`
 );
+const editorClass = '.ck-editor';
+const editorName = `${fragmentElementId}-${input.name}`;
+const errorMessage = document.getElementById(
+	`${fragmentElementId}-error-message`
+);
+const errorMessageTextId = `${fragmentElementId}-error-message-text`;
+const errorMessageText = document.getElementById(errorMessageTextId);
+const wrapper = document.getElementById(`${fragmentElementId}-wrapper`);
 
 if (layoutMode === 'edit') {
 	if (Liferay.FeatureFlags['LPD-11235']) {
@@ -33,6 +39,37 @@ else {
 		}
 	});
 
+	// Whenever the field is required, we validate if the CKEditorRequiredInput
+	// is valid on submit. If it is not valid, the error message will be shown
+	// and the field will be focused.
+
+	if (input.required) {
+		CKEditorRequiredInput.addEventListener('invalid', (event) => {
+			event.preventDefault();
+
+			errorMessage.classList.remove('d-none');
+			errorMessageText.textContent =
+				errorMessageText.dataset.requiredError;
+
+			editorPromise.then((editor) => {
+				if (Liferay.FeatureFlags['LPD-11235']) {
+					editor.editing.view.focus();
+
+					editor.ui.view.editable.element.setAttribute(
+						'aria-describedby',
+						errorMessageTextId
+					);
+				}
+				else {
+					document
+						.getElementById(`cke_${editorName}`)
+						.querySelector('iframe')
+						.contentDocument.body.focus();
+				}
+			});
+		});
+	}
+
 	if (input.readOnly || input.attributes?.disabled) {
 		editorPromise.then((editor) => {
 			if (Liferay.FeatureFlags['LPD-11235']) {
@@ -45,7 +82,7 @@ else {
 	}
 
 	const inputContainer = document.getElementById(
-		`${fragmentEntryLinkNamespace}-rich-text-input`
+		`${fragmentElementId}-rich-text-input`
 	);
 
 	const defaultLanguageId = themeDisplay.getDefaultLanguageId();
@@ -68,7 +105,7 @@ else {
 					inputElement: wrapper,
 					inputName: input.name,
 					localizationInputsContainer: inputContainer,
-					namespace: fragmentNamespace,
+					namespace: fragmentElementId,
 					onAutoTranslate: ({languageId, value}) => {
 						editorPromise.then((editor) => {
 							changeLanguageDirection(editor, languageId);
@@ -81,7 +118,7 @@ else {
 							inputName: input.name,
 							languageId,
 							localizationInputsContainer: wrapper.parentNode,
-							namespace: fragmentNamespace,
+							namespace: fragmentElementId,
 						});
 
 						translationInput.value = value;
@@ -101,7 +138,7 @@ else {
 							inputName: input.name,
 							languageId: defaultLanguageId,
 							localizationInputsContainer: wrapper.parentNode,
-							namespace: fragmentNamespace,
+							namespace: fragmentElementId,
 						});
 
 						editorPromise.then((editor) =>
@@ -113,7 +150,7 @@ else {
 							inputName: input.name,
 							languageId: currentLanguageId,
 							localizationInputsContainer: wrapper.parentNode,
-							namespace: fragmentNamespace,
+							namespace: fragmentElementId,
 						});
 
 						translationInput.value = defaultLanguageInput.value;
@@ -124,7 +161,7 @@ else {
 							inputName: input.name,
 							languageId: defaultLanguageId,
 							localizationInputsContainer: wrapper.parentNode,
-							namespace: fragmentNamespace,
+							namespace: fragmentElementId,
 						});
 
 						editorPromise.then((editor) =>
@@ -136,7 +173,7 @@ else {
 							inputName: input.name,
 							languageId: currentLanguageId,
 							localizationInputsContainer: wrapper.parentNode,
-							namespace: fragmentNamespace,
+							namespace: fragmentElementId,
 						});
 
 						translationInput.removeAttribute('value');
@@ -150,6 +187,13 @@ else {
 						const value = editor.getData();
 
 						onChange(value);
+
+						if (
+							input.required &&
+							currentLanguageId === defaultLanguageId
+						) {
+							updateCKEditorRequired(value);
+						}
 					};
 
 					if (Liferay.FeatureFlags['LPD-11235']) {
@@ -263,7 +307,7 @@ else {
 					unlocalizedFieldsState:
 						input.attributes.unlocalizedFieldsState,
 					unlocalizedMessageContainer: document.getElementById(
-						`${fragmentNamespace}-unlocalized-info`
+						`${fragmentElementId}-unlocalized-info`
 					),
 				});
 
@@ -286,10 +330,21 @@ else {
 							'change:data',
 							(event, source) => {
 								if (source?.isTyping || source?.isUndoable) {
-									hiddenInput.value = editor.getData();
+									const value = editor.getData();
+
+									hiddenInput.value = value;
+
+									if (input.required) {
+										updateCKEditorRequired(value);
+									}
 								}
 							}
 						);
+					}
+					else if (input.required) {
+						editor.on('change', () => {
+							updateCKEditorRequired(editor.getData());
+						});
 					}
 				});
 			}
@@ -325,4 +380,13 @@ function initEditorWhenReady(onReady) {
 			onReady(editor);
 		}
 	});
+}
+
+function updateCKEditorRequired(value) {
+	CKEditorRequiredInput.value = value;
+
+	if (value) {
+		errorMessage.classList.add('d-none');
+		errorMessageText.textContent = '';
+	}
 }

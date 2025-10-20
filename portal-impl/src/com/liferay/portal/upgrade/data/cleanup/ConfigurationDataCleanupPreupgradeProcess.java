@@ -6,14 +6,17 @@
 package com.liferay.portal.upgrade.data.cleanup;
 
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.db.DBInspector;
 import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.upgrade.data.cleanup.DataCleanupPreupgradeProcess;
 import com.liferay.portal.kernel.upgrade.data.cleanup.util.DataCleanupLoggingUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -60,10 +63,13 @@ public class ConfigurationDataCleanupPreupgradeProcess
 				String configurationId = resultSet.getString("configurationId");
 
 				if (companyId > 0) {
-					if (!ArrayUtil.contains(companyIds, companyId)) {
+					if (!ArrayUtil.contains(companyIds, companyId) ||
+						(PropsValues.DATABASE_PARTITION_ENABLED &&
+						 (CompanyThreadLocal.getCompanyId() != companyId))) {
+
 						_deleteConfiguration(
-							configurationId, "companyId", "Company", companyId,
-							preparedStatement2);
+							configurationId, dbInspector, "companyId",
+							"Company", companyId, preparedStatement2);
 					}
 
 					continue;
@@ -73,8 +79,8 @@ public class ConfigurationDataCleanupPreupgradeProcess
 
 				if ((groupId != -1) && !ArrayUtil.contains(groupIds, groupId)) {
 					_deleteConfiguration(
-						configurationId, "groupId", "Group_", groupId,
-						preparedStatement2);
+						configurationId, dbInspector, "groupId", "Group_",
+						groupId, preparedStatement2);
 				}
 			}
 
@@ -98,8 +104,8 @@ public class ConfigurationDataCleanupPreupgradeProcess
 	}
 
 	private void _deleteConfiguration(
-			String configurationId, String primaryKeyColumnName,
-			String tableName, long primaryKey,
+			String configurationId, DBInspector dbInspector,
+			String primaryKeyColumnName, String tableName, long primaryKey,
 			PreparedStatement preparedStatement)
 		throws Exception {
 
@@ -109,8 +115,10 @@ public class ConfigurationDataCleanupPreupgradeProcess
 		DataCleanupLoggingUtil.logDelete(
 			_log, 1, "Configuration_",
 			StringBundler.concat(
-				configurationId, " has ", primaryKey, " that was not found in ",
-				tableName, ".", primaryKeyColumnName));
+				configurationId, " has scope ", primaryKeyColumnName,
+				StringPool.SPACE, primaryKey, " that was not found in ",
+				dbInspector.normalizeName(tableName), ".",
+				dbInspector.normalizeName(primaryKeyColumnName)));
 	}
 
 	private long _getPrimaryKey(String dictionary, Pattern pattern) {

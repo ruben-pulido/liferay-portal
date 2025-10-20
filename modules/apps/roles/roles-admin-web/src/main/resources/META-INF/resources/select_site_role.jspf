@@ -208,7 +208,7 @@ SearchContainer<Role> roleSearchContainer = selectRoleManagementToolbarDisplayCo
 						value="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
 					/>
 
-					<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPD-47858") %>'>
+					<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPD-35914") %>'>
 						<liferay-ui:search-container-column-text
 							cssClass="table-cell-expand table-cell-minw-200"
 							name="status"
@@ -254,7 +254,7 @@ SearchContainer<Role> roleSearchContainer = selectRoleManagementToolbarDisplayCo
 									HashMapBuilder.<String, Object>put(
 										"entityid", role.getRoleId()
 									).put(
-										"entityname", role.getTitle(locale)
+										"entityname", HtmlUtil.escape(role.getTitle(locale))
 									).put(
 										"groupdescriptivename", group.getDescriptiveName(locale)
 									).put(

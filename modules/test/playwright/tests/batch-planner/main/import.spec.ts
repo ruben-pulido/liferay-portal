@@ -578,7 +578,10 @@ test('can handle OnlyAddNewRecords and UpdateChangedRecordFields import strategi
 		page.getByText('The import process completed successfully.')
 	).toBeVisible();
 
-	await page.getByRole('button', {exact: true, name: 'Close'}).click();
+	await page
+		.locator('.modal-header')
+		.getByRole('button', {exact: true, name: 'Close'})
+		.click();
 
 	await dataMigrationCenterPage.importFile(
 		OBJECT_ENTRY_ENTITY_TYPE,
@@ -816,7 +819,7 @@ test('can import CSV file with new and existing site scoped object entries', asy
 		'UPDATE'
 	);
 
-	await page.getByRole('button', {exact: true, name: 'Close'}).click();
+	await page.getByText('Close', {exact: true}).click();
 
 	await dataMigrationCenterPage.importFile(
 		OBJECT_ENTRY_ENTITY_TYPE,
@@ -1360,7 +1363,7 @@ test('can show duplicate error message with CSV import existing entry and only a
 		'UPDATE'
 	);
 
-	await page.getByRole('button', {exact: true, name: 'Close'}).click();
+	await page.getByText('Close', {exact: true}).click();
 
 	await dataMigrationCenterPage.importFile(
 		OBJECT_ENTRY_ENTITY_TYPE,
@@ -1401,7 +1404,7 @@ test('can show unique contraint error message with CSV import existing entry and
 		'UPDATE'
 	);
 
-	await page.getByRole('button', {exact: true, name: 'Close'}).click();
+	await page.getByText('Close', {exact: true}).click();
 
 	await dataMigrationCenterPage.importFile(
 		OBJECT_ENTRY_ENTITY_TYPE,
@@ -1476,7 +1479,7 @@ test('cannot import CSV file with empty headers row', async ({
 	).toBeVisible();
 });
 
-test('cannot import CSV file with object entry with UPSERT strategy', async ({
+test('can import CSV file with object entry with UPSERT strategy', async ({
 	apiHelpers,
 	dataMigrationCenterPage,
 	page,
@@ -1502,9 +1505,7 @@ test('cannot import CSV file with object entry with UPSERT strategy', async ({
 	);
 
 	await expect(
-		page.getByText(
-			'jakarta.ws.rs.NotSupportedException: Create strategy "UPSERT" is not supported for'
-		)
+		page.getByText('The import process completed successfully')
 	).toBeVisible();
 });
 

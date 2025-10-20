@@ -161,16 +161,12 @@ public class SettingsTestUtil {
 		ItemExternalReference styleBookItemExternalReference =
 			settings.getStyleBookItemExternalReference();
 
-		if (layout.getStyleBookEntryId() == 0) {
+		if (Validator.isNull(layout.getStyleBookEntryERC())) {
 			Assert.assertNull(styleBookItemExternalReference);
 		}
 		else {
-			StyleBookEntry styleBookEntry =
-				StyleBookEntryLocalServiceUtil.getStyleBookEntry(
-					layout.getStyleBookEntryId());
-
 			Assert.assertEquals(
-				styleBookEntry.getExternalReferenceCode(),
+				layout.getStyleBookEntryERC(),
 				styleBookItemExternalReference.getExternalReferenceCode());
 		}
 
@@ -305,14 +301,14 @@ public class SettingsTestUtil {
 						_getClientExtension(
 							ClientExtensionEntryConstants.TYPE_GLOBAL_CSS),
 						_getClientExtension(
-							ClientExtensionEntryConstants.TYPE_GLOBAL_CSS)
+							true, ClientExtensionEntryConstants.TYPE_GLOBAL_CSS)
 					});
 				setGlobalJSClientExtensions(
 					() -> new ClientExtension[] {
 						_getClientExtension(
 							ClientExtensionEntryConstants.TYPE_GLOBAL_JS),
 						_getClientExtension(
-							ClientExtensionEntryConstants.TYPE_GLOBAL_JS)
+							true, ClientExtensionEntryConstants.TYPE_GLOBAL_JS)
 					});
 				setJavascript(RandomTestUtil::randomString);
 				setMasterPageItemExternalReference(
@@ -572,7 +568,8 @@ public class SettingsTestUtil {
 		}
 	}
 
-	private static ClientExtension _getClientExtension(String type)
+	private static ClientExtension _getClientExtension(
+			boolean optionalReference, String type)
 		throws Exception {
 
 		ClientExtension clientExtension = new ClientExtension() {
@@ -585,17 +582,25 @@ public class SettingsTestUtil {
 			}
 		};
 
-		ClientExtensionEntryLocalServiceUtil.addClientExtensionEntry(
-			clientExtension.getExternalReferenceCode(),
-			TestPropsValues.getUserId(), StringPool.BLANK,
-			Collections.singletonMap(
-				LocaleUtil.getDefault(), RandomTestUtil.randomString()),
-			StringPool.BLANK, StringPool.BLANK, type,
-			UnicodePropertiesBuilder.create(
-				clientExtension.getClientExtensionConfig(), true
-			).buildString());
+		if (!optionalReference) {
+			ClientExtensionEntryLocalServiceUtil.addClientExtensionEntry(
+				clientExtension.getExternalReferenceCode(),
+				TestPropsValues.getUserId(), StringPool.BLANK,
+				Collections.singletonMap(
+					LocaleUtil.getDefault(), RandomTestUtil.randomString()),
+				StringPool.BLANK, StringPool.BLANK, type,
+				UnicodePropertiesBuilder.create(
+					clientExtension.getClientExtensionConfig(), true
+				).buildString());
+		}
 
 		return clientExtension;
+	}
+
+	private static ClientExtension _getClientExtension(String type)
+		throws Exception {
+
+		return _getClientExtension(false, type);
 	}
 
 	private static FavIcon _getFavIcon(FavIcon.FavIconType favIconType)

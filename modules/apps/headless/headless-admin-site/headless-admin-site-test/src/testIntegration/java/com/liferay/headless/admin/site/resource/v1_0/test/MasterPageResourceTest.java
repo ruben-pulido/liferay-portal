@@ -41,6 +41,7 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -48,7 +49,6 @@ import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.sites.kernel.util.Sites;
 
 import java.util.HashMap;
@@ -141,13 +141,6 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 		_enableLocalStaging();
 
 		_testGetSiteMasterPage(masterPage);
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGetSiteMasterPagePermissionsPage() throws Exception {
-		super.testGetSiteMasterPagePermissionsPage();
 	}
 
 	@Ignore
@@ -359,13 +352,6 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 					null, masterPage.getExternalReferenceCode(), null)));
 	}
 
-	@Ignore
-	@Override
-	@Test
-	public void testPutSiteMasterPagePermissionsPage() throws Exception {
-		super.testPutSiteMasterPagePermissionsPage();
-	}
-
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {
@@ -401,15 +387,6 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 		return masterPage;
 	}
 
-	@Ignore
-	@Override
-	@Test
-	protected MasterPage testGetSiteMasterPagePermissionsPage_addMasterPage()
-		throws Exception {
-
-		return super.testGetSiteMasterPagePermissionsPage_addMasterPage();
-	}
-
 	@Override
 	protected MasterPage testGetSiteMasterPagesPage_addMasterPage(
 			String siteExternalReferenceCode, MasterPage masterPage)
@@ -434,15 +411,6 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 
 		return testGetSiteMasterPagesPage_addMasterPage(
 			testGroup.getExternalReferenceCode(), masterPage);
-	}
-
-	@Ignore
-	@Override
-	@Test
-	protected MasterPage testPutSiteMasterPagePermissionsPage_addMasterPage()
-		throws Exception {
-
-		return super.testPutSiteMasterPagePermissionsPage_addMasterPage();
 	}
 
 	private FileEntry _addPortletFileEntry(long folderId) throws Exception {

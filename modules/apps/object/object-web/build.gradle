@@ -40,6 +40,7 @@ dependencies {
 	compileOnly project(":apps:item-selector:item-selector-criteria-api")
 	compileOnly project(":apps:layout:layout-display-page-api")
 	compileOnly project(":apps:layout:layout-page-template-api")
+	compileOnly project(":apps:layout:layout-taglib")
 	compileOnly project(":apps:learn:learn-api")
 	compileOnly project(":apps:list-type:list-type-api")
 	compileOnly project(":apps:notification:notification-api")
@@ -48,6 +49,7 @@ dependencies {
 	compileOnly project(":apps:object:object-info-api")
 	compileOnly project(":apps:object:object-rest-api")
 	compileOnly project(":apps:portal-configuration:portal-configuration-module-configuration-api")
+	compileOnly project(":apps:portal-search:portal-search-api")
 	compileOnly project(":apps:portal-security:portal-security-script-management-api")
 	compileOnly project(":apps:portal-vulcan:portal-vulcan-api")
 	compileOnly project(":apps:static:portal-configuration:portal-configuration-metatype-api")
@@ -61,4 +63,5 @@ dependencies {
 	compileOnly project(":core:petra:petra-sql-dsl-api")
 	compileOnly project(":core:petra:petra-sql-dsl-spi")
 	compileOnly project(":core:petra:petra-string")
+	testImplementation project(":apps:dynamic-data-mapping:dynamic-data-mapping-test-util")
 }

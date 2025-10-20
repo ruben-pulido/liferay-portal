@@ -7,19 +7,27 @@ import {IInternalRenderer, IView} from '@liferay/frontend-data-set-web';
 import {openModal} from 'frontend-js-components-web';
 import React from 'react';
 
-import {START_TASK} from '../../common/utils/events';
+import StatusLabel from '../../common/components/StatusLabel';
+import {openAssetUsageListModal} from '../../common/components/asset_usage/utils';
+import {ISearchAssetObjectEntry} from '../../common/types/AssetType';
 import formatActionURL from '../../common/utils/formatActionURL';
-import {ISearchAssetObjectEntry} from '../../structure_builder/types/AssetType';
+import CategoriesAndTagsModalContent from '../categorization/modal/CategoriesAndTagsModalContent';
+import {defaultPermissionsBulkAction} from '../default_permission/BulkDefaultPermissionModalContent';
+import {permissionsBulkAction} from '../default_permission/BulkPermissionModalContent';
+import DefaultPermissionModalContent from '../default_permission/DefaultPermissionModalContent';
+import openResetAssetPermissionModal from '../default_permission/ResetPermissionModalContent';
 import AssetTypeInfoPanel from '../info_panel/AssetTypeInfoPanelContent';
-import FilePreviewerModalContent from '../modal/FilePreviewerModalContent';
+import AssetNavigationModalContent from '../modal/asset_navigation_view/AssetNavigationModalContent';
 import createAssetAction from './actions/createAssetAction';
 import createFolderAction from './actions/createFolderAction';
-import deleteAssetEntriesBulkAction from './actions/deleteAssetEntriesBulkAction';
+import deleteAssetEntriesBulkAction, {
+	executeBulkDeleteAction,
+} from './actions/deleteAssetEntriesBulkAction';
 import deleteItemAction from './actions/deleteItemAction';
 import multipleFilesUploadAction from './actions/multipleFilesUploadAction';
 import shareAction from './actions/shareAction';
+import {triggerAssetBulkAction} from './actions/triggerAssetBulkAction';
 import AuthorRenderer from './cell_renderers/AuthorRenderer';
-import NameRenderer from './cell_renderers/NameRenderer';
 import SimpleActionLinkRenderer from './cell_renderers/SimpleActionLinkRenderer';
 import SpaceRenderer from './cell_renderers/SpaceRenderer';
 import TypeRenderer from './cell_renderers/TypeRenderer';
@@ -38,8 +46,11 @@ const ACTIONS = {
 export type AdditionalProps = {
 	autocompleteURL: string;
 	baseFolderViewURL: string;
+	brokenLinksCheckerEnabled: boolean;
 	cmsGroupId?: number;
 	collaboratorURLs: Record<string, string>;
+	contentViewURL: string;
+	defaultPermissionAdditionalProps?: any;
 	fileMimeTypeCssClasses: Record<string, string>;
 	fileMimeTypeIcons: Record<string, string>;
 	objectDefinitionCssClasses: Record<string, string>;
@@ -55,9 +66,9 @@ export default function AssetsFDSPropsTransformer({
 	...otherProps
 }: {
 	additionalProps: AdditionalProps;
+	apiURL?: string;
 	creationMenu: any;
 	itemsActions?: any[];
-	otherProps: any;
 	views: IView[];
 }) {
 	return {
@@ -74,11 +85,6 @@ export default function AssetsFDSPropsTransformer({
 				{
 					component: AuthorRenderer,
 					name: 'authorTableCellRenderer',
-					type: 'internal',
-				} as IInternalRenderer,
-				{
-					component: NameRenderer,
-					name: 'nameTableCellRenderer',
 					type: 'internal',
 				} as IInternalRenderer,
 				{
@@ -103,6 +109,11 @@ export default function AssetsFDSPropsTransformer({
 					name: 'typeTableCellRenderer',
 					type: 'internal',
 				} as IInternalRenderer,
+				{
+					component: ({value}) => StatusLabel(value),
+					name: 'statusTableCellRenderer',
+					type: 'internal',
+				} as IInternalRenderer,
 			],
 		},
 		infoPanelComponent: (items: {items: ISearchAssetObjectEntry[]}) => (
@@ -112,7 +123,20 @@ export default function AssetsFDSPropsTransformer({
 			/>
 		),
 		itemsActions: itemsActions.map((action) => {
-			if (action?.data?.id === 'download') {
+			if (
+				action?.data?.id === 'default-permissions' ||
+				action?.data?.id === 'edit-and-propagate-default-permissions'
+			) {
+				return {
+					...action,
+					isVisible: (item: any) =>
+						Boolean(
+							item?.entryClassName ===
+								OBJECT_ENTRY_FOLDER_CLASS_NAME
+						),
+				};
+			}
+			else if (action?.data?.id === 'download') {
 				return {
 					...action,
 					isVisible: (item: any) =>
@@ -132,6 +156,7 @@ export default function AssetsFDSPropsTransformer({
 			else if (
 				action?.data?.id === 'export-for-translation' ||
 				action?.data?.id === 'import-translation' ||
+				action?.data?.id === 'translate' ||
 				action?.data?.id === 'view-content'
 			) {
 				return {
@@ -162,15 +187,56 @@ export default function AssetsFDSPropsTransformer({
 			action,
 			event,
 			itemData,
+			items,
 			loadData,
 		}: {
 			action: any;
 			event: Event;
 			itemData: ItemData;
+			items: any;
 			loadData: () => {};
 		}) {
-			if (action?.data?.id === 'delete') {
-				await deleteItemAction(itemData, loadData);
+			if (
+				action?.data?.id === 'default-permissions' ||
+				action?.data?.id === 'edit-and-propagate-default-permissions'
+			) {
+				openModal({
+					containerProps: {
+						className: '',
+					},
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						DefaultPermissionModalContent({
+							...(additionalProps.defaultPermissionAdditionalProps ||
+								{}),
+							allowPropagate:
+								action.data.id ===
+								'edit-and-propagate-default-permissions',
+							apiURL: otherProps.apiURL,
+							classExternalReferenceCode:
+								itemData.embedded.externalReferenceCode,
+							className: itemData.entryClassName,
+							closeModal,
+						}),
+					size: 'full-screen',
+				});
+			}
+			else if (action?.data?.id === 'delete') {
+				if (additionalProps.brokenLinksCheckerEnabled) {
+					openAssetUsageListModal({
+						itemsData: [itemData],
+						onDelete: async () => {
+							await deleteItemAction(itemData, loadData);
+						},
+						selectAll: false,
+					});
+				}
+				else {
+					await deleteItemAction(itemData, loadData);
+				}
 			}
 			else if (
 				action?.data?.id === 'export-for-translation' ||
@@ -184,6 +250,13 @@ export default function AssetsFDSPropsTransformer({
 					url: formatActionURL(itemData, action.href),
 				});
 			}
+			else if (action?.data?.id === 'reset-to-default-permissions') {
+				openResetAssetPermissionModal({
+					className: itemData.entryClassName,
+					classPK: itemData.embedded.id,
+					loadData,
+				});
+			}
 			else if (action?.data?.id === 'share') {
 				const {autocompleteURL, collaboratorURLs} = additionalProps;
 
@@ -195,45 +268,118 @@ export default function AssetsFDSPropsTransformer({
 					title: itemData.embedded?.title,
 				});
 			}
-			else if (action?.data?.id === 'view-content') {
+			else if (
+				action?.data?.id === 'view-content' ||
+				action?.data?.id === 'view-file'
+			) {
 				event?.preventDefault();
 
-				openModal({
-					size: 'full-screen',
-					title: itemData.embedded.title,
-					url: formatActionURL(itemData, action.href),
-				});
-			}
-			else if (action?.data?.id === 'view-file') {
+				const filteredItems = items.filter(
+					(item: any) =>
+						item?.entryClassName !== OBJECT_ENTRY_FOLDER_CLASS_NAME
+				);
+
+				const currentItemPos = filteredItems.findIndex(
+					(item: any) => item.embedded.id === itemData.embedded.id
+				);
+
 				openModal({
 					containerProps: {
 						className: '',
 					},
 					contentComponent: () =>
-						FilePreviewerModalContent({
-							file: itemData.embedded.file,
-							headerName: itemData.embedded.title,
+						AssetNavigationModalContent({
+							additionalProps,
+							contentViewURL: additionalProps.contentViewURL,
+							currentIndex: currentItemPos,
+							items: filteredItems,
 						}),
 					size: 'full-screen',
 				});
 			}
 		},
-		onBulkActionItemClick: ({
+		onBulkActionItemClick: async ({
 			action,
 			selectedData,
 		}: {
 			action: any;
 			selectedData: any;
 		}) => {
-			if (action?.data?.id === 'delete') {
-				deleteAssetEntriesBulkAction({
-					actionId: action.data.id,
+			if (action?.data?.id === 'categoriesAndTags') {
+				openModal({
+					center: true,
+					containerProps: {
+						className: 'modal-height-lg',
+					},
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						CategoriesAndTagsModalContent({
+							apiURL: otherProps.apiURL,
+							closeModal,
+							cmsGroupId: additionalProps.cmsGroupId as number,
+							selectedData,
+						}),
+					size: 'md',
+				});
+			}
+			else if (action?.data?.id === 'default-permissions') {
+				defaultPermissionsBulkAction({
+					apiURL: otherProps.apiURL,
+					className: OBJECT_ENTRY_FOLDER_CLASS_NAME,
+					defaultPermissionAdditionalProps:
+						additionalProps.defaultPermissionAdditionalProps || {},
 					selectedData,
 				});
 			}
+			else if (action?.data?.id === 'delete') {
+				if (additionalProps.brokenLinksCheckerEnabled) {
+					openAssetUsageListModal({
+						apiURL: otherProps.apiURL,
+						itemsData: selectedData.items,
+						onDelete: async () => {
+							executeBulkDeleteAction(
+								otherProps.apiURL as string,
+								selectedData
+							);
+						},
+
+						// Callback triggered after the request returns all assets
+						// with no usages, will skip the asset usage list modal.
+						// Instead, the default delete asset entries bulk action modal
+						// will be displayed.
+
+						onSkip: async () => {
+							deleteAssetEntriesBulkAction({
+								apiURL: otherProps.apiURL,
+								selectedData,
+							});
+						},
+						selectAll: selectedData.selectAll,
+					});
+				}
+				else {
+					deleteAssetEntriesBulkAction({
+						apiURL: otherProps.apiURL,
+						selectedData,
+					});
+				}
+			}
 			else if (action?.data?.id === 'download') {
-				Liferay.fire(START_TASK, {
-					actionId: action.data.id,
+				triggerAssetBulkAction({
+					apiURL: otherProps.apiURL,
+					selectedData,
+					type: 'DownloadBulkAction',
+				});
+			}
+			else if (action?.data?.id === 'permissions') {
+				permissionsBulkAction({
+					apiURL: otherProps.apiURL,
+					className: OBJECT_ENTRY_FOLDER_CLASS_NAME,
+					defaultPermissionAdditionalProps:
+						additionalProps.defaultPermissionAdditionalProps || {},
 					selectedData,
 				});
 			}

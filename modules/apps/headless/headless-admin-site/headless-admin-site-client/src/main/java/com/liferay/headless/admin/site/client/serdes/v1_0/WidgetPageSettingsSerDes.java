@@ -470,7 +470,7 @@ public class WidgetPageSettingsSerDes {
 
 				if (jsonParserFieldValue != null) {
 					widgetPageSettings.setNavigationSettings(
-						NavigationSettingsSerDes.toDTO(
+						SitePageNavigationSettingsSerDes.toDTO(
 							(String)jsonParserFieldValue));
 				}
 			}

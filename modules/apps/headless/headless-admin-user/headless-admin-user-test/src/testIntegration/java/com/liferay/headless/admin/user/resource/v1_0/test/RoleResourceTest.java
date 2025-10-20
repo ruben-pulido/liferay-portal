@@ -44,6 +44,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.log.LogCapture;
@@ -51,7 +52,6 @@ import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.SynchronousMailTestRule;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.permission.PermissionUtil;
 
 import java.text.DateFormat;
@@ -265,7 +265,7 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 		}
 	}
 
-	@FeatureFlag("LPD-47858")
+	@FeatureFlag("LPD-35914")
 	@LazyReferencing
 	@Override
 	@Test
@@ -551,14 +551,6 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 
 	@Override
 	protected Long
-			testDeleteSiteRoleByExternalReferenceCodeUserAccountAssociation_getSiteId()
-		throws Exception {
-
-		return testGroup.getGroupId();
-	}
-
-	@Override
-	protected Long
 			testDeleteSiteRoleByExternalReferenceCodeUserAccountAssociation_getUserAccountId()
 		throws Exception {
 
@@ -570,13 +562,6 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 		throws Exception {
 
 		return _addRole(true, RoleConstants.TYPE_SITE);
-	}
-
-	@Override
-	protected Long testDeleteSiteRoleUserAccountAssociation_getSiteId()
-		throws Exception {
-
-		return testGroup.getGroupId();
 	}
 
 	@Override
@@ -604,8 +589,86 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 	}
 
 	@Override
+	protected Long
+			testGraphQLDeleteOrganizationRoleByExternalReferenceCodeUserAccountAssociation_getOrganizationId()
+		throws Exception {
+
+		return _organization.getOrganizationId();
+	}
+
+	@Override
+	protected Long
+			testGraphQLDeleteOrganizationRoleByExternalReferenceCodeUserAccountAssociation_getUserAccountId()
+		throws Exception {
+
+		return _user.getUserId();
+	}
+
+	@Override
+	protected Long
+			testGraphQLDeleteOrganizationRoleUserAccountAssociation_getOrganizationId()
+		throws Exception {
+
+		return _organization.getOrganizationId();
+	}
+
+	@Override
+	protected Long
+			testGraphQLDeleteOrganizationRoleUserAccountAssociation_getUserAccountId()
+		throws Exception {
+
+		return _user.getUserId();
+	}
+
+	@Override
+	protected Long
+		testGraphQLDeleteRoleByExternalReferenceCodeUserAccountAssociation_getUserAccountId() {
+
+		return _user.getUserId();
+	}
+
+	@Override
+	protected Long
+			testGraphQLDeleteRoleUserAccountAssociation_getUserAccountId()
+		throws Exception {
+
+		return _user.getUserId();
+	}
+
+	@Override
+	protected Role
+			testGraphQLDeleteSiteRoleByExternalReferenceCodeUserAccountAssociation_addRole()
+		throws Exception {
+
+		return _addRole(true, RoleConstants.TYPE_SITE);
+	}
+
+	@Override
+	protected Long
+			testGraphQLDeleteSiteRoleByExternalReferenceCodeUserAccountAssociation_getUserAccountId()
+		throws Exception {
+
+		return _user.getUserId();
+	}
+
+	@Override
+	protected Role testGraphQLDeleteSiteRoleUserAccountAssociation_addRole()
+		throws Exception {
+
+		return _addRole(true, RoleConstants.TYPE_SITE);
+	}
+
+	@Override
+	protected Long
+			testGraphQLDeleteSiteRoleUserAccountAssociation_getUserAccountId()
+		throws Exception {
+
+		return _user.getUserId();
+	}
+
+	@Override
 	protected Role testGraphQLRole_addRole() throws Exception {
-		return testGetRole_addRole();
+		return _addRole(true, RoleConstants.TYPE_ORGANIZATION);
 	}
 
 	@Override
@@ -910,6 +973,7 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 					serviceBuilderRole1.getType());
 			}
 		};
+
 		Permission permission2 = new Permission() {
 			{
 				actionIds = new String[] {ActionKeys.UPDATE};

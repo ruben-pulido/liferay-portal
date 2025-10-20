@@ -29,6 +29,7 @@ import selectStructureLocalizedLabel from '../selectors/selectStructureLocalized
 import selectStructureName from '../selectors/selectStructureName';
 import selectStructureSpaces from '../selectors/selectStructureSpaces';
 import selectStructureStatus from '../selectors/selectStructureStatus';
+import selectStructureWorkflows from '../selectors/selectStructureWorkflows';
 import selectUnsavedChanges from '../selectors/selectUnsavedChanges';
 import DisplayPageService from '../services/DisplayPageService';
 import StructureService from '../services/StructureService';
@@ -45,15 +46,11 @@ export default function StructureBuilderToolbar() {
 			title={
 				status === 'published'
 					? label
-					: Liferay.Language.get('new-structure')
+					: Liferay.Language.get('new-content-structure')
 			}
 		>
-			<Toolbar.Item>
+			<Toolbar.Item className="nav-divider-end">
 				<CustomizeExperienceButton />
-			</Toolbar.Item>
-
-			<Toolbar.Item>
-				<div className="vertical-divider" />
 			</Toolbar.Item>
 
 			<Toolbar.Item>
@@ -93,7 +90,7 @@ function CustomizeExperienceButton() {
 	return (
 		<ClayButton
 			borderless
-			className="font-weight-semi-bold"
+			className="font-weight-semi-bold mr-2"
 			displayType="primary"
 			onClick={() => {
 				if (status === 'published' && history.deletedChildren) {
@@ -112,7 +109,7 @@ function CustomizeExperienceButton() {
 						},
 						status: 'danger',
 						text: Liferay.Language.get(
-							'to-customize-the-experience-you-need-to-publish-the-structure-first.-you-removed-one-or-more-fields-from-the-structure'
+							'to-customize-the-experience-you-need-to-publish-the-content-structure-first.-you-removed-one-or-more-fields-from-the-content-structure'
 						),
 						title: Liferay.Language.get(
 							'publish-to-customize-experience'
@@ -134,7 +131,7 @@ function CustomizeExperienceButton() {
 						},
 						status: 'warning',
 						text: Liferay.Language.get(
-							'to-customize-the-experience-you-need-to-publish-the-structure-first'
+							'to-customize-the-experience-you-need-to-publish-the-content-structure-first'
 						),
 						title: Liferay.Language.get(
 							'publish-to-customize-experience'
@@ -179,13 +176,14 @@ function SaveButton() {
 	const name = useSelector(selectStructureName);
 	const spaces = useSelector(selectStructureSpaces);
 	const status = useSelector(selectStructureStatus);
+	const workflows = useSelector(selectStructureWorkflows);
 
 	const onError = (error: string) =>
 		dispatch({
 			error:
 				error ||
 				Liferay.Language.get(
-					'an-unexpected-error-occurred-while-saving-or-publishing-the-structure'
+					'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
 				),
 			type: 'set-error',
 		});
@@ -205,6 +203,7 @@ function SaveButton() {
 				name,
 				spaces,
 				status: 'draft',
+				workflows,
 			});
 
 			if (error) {
@@ -224,6 +223,7 @@ function SaveButton() {
 				name,
 				spaces,
 				status: 'draft',
+				workflows,
 			});
 
 			if (error) {
@@ -312,9 +312,11 @@ async function publishStructure({
 				center: true,
 				status: 'warning',
 				text: Liferay.Language.get(
-					'this-structure-is-being-used-in-other-existing-structures'
+					'this-content-structure-is-being-used-in-other-existing-content-structures'
 				),
-				title: Liferay.Language.get('publish-structure-changes'),
+				title: Liferay.Language.get(
+					'publish-content-structure-changes'
+				),
 			}))
 		) {
 			return;
@@ -328,9 +330,11 @@ async function publishStructure({
 				center: true,
 				status: 'danger',
 				text: Liferay.Language.get(
-					'you-removed-one-or-more-fields-from-the-structure'
+					'you-removed-one-or-more-fields-from-the-content-structure'
 				),
-				title: Liferay.Language.get('publish-structure-changes'),
+				title: Liferay.Language.get(
+					'publish-content-structure-changes'
+				),
 			}))
 		) {
 			return;
@@ -344,9 +348,11 @@ async function publishStructure({
 				center: true,
 				status: 'danger',
 				text: Liferay.Language.get(
-					'you-removed-one-or-more-fields-from-the-structure-and-this-structure-is-being-used'
+					'you-removed-one-or-more-fields-from-the-content-structure-and-this-content-structure-is-being-used'
 				),
-				title: Liferay.Language.get('publish-structure-changes'),
+				title: Liferay.Language.get(
+					'publish-content-structure-changes'
+				),
 			}))
 		) {
 			return;
@@ -362,6 +368,7 @@ async function publishStructure({
 	const spaces = selectStructureSpaces(state);
 	const status = selectStructureStatus(state);
 	const structureERC = selectStructureERC(state);
+	const workflows = selectStructureWorkflows(state);
 
 	const onSuccess = async () => {
 		staleCache('object-definitions');
@@ -423,7 +430,7 @@ async function publishStructure({
 			error:
 				error ||
 				Liferay.Language.get(
-					'an-unexpected-error-occurred-while-saving-or-publishing-the-structure'
+					'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
 				),
 			type: 'set-error',
 		});
@@ -436,6 +443,7 @@ async function publishStructure({
 			name,
 			spaces,
 			status: 'published',
+			workflows,
 		});
 
 		if (error) {
@@ -455,6 +463,7 @@ async function publishStructure({
 			name,
 			spaces,
 			status: 'published',
+			workflows,
 		});
 
 		if (error) {
@@ -474,6 +483,7 @@ async function publishStructure({
 			name,
 			spaces,
 			status: 'published',
+			workflows,
 		});
 
 		if (error) {

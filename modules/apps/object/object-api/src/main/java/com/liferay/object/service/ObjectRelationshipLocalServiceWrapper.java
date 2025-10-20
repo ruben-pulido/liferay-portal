@@ -214,13 +214,6 @@ public class ObjectRelationshipLocalServiceWrapper
 	}
 
 	@Override
-	public void disableEdge(long objectDefinitionId2)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		_objectRelationshipLocalService.disableEdge(objectDefinitionId2);
-	}
-
-	@Override
 	public <T> T dslQuery(com.liferay.petra.sql.dsl.query.DSLQuery dslQuery) {
 		return _objectRelationshipLocalService.dslQuery(dslQuery);
 	}
@@ -329,6 +322,15 @@ public class ObjectRelationshipLocalServiceWrapper
 
 		return _objectRelationshipLocalService.fetchObjectRelationship(
 			objectRelationshipId);
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectRelationship fetchObjectRelationship(
+			long objectDefinitionId1, String name)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectRelationshipLocalService.fetchObjectRelationship(
+			objectDefinitionId1, name);
 	}
 
 	@Override

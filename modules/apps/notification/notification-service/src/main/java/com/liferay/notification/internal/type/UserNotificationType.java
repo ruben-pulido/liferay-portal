@@ -18,13 +18,14 @@ import com.liferay.notification.internal.type.users.provider.UsersProvider;
 import com.liferay.notification.model.NotificationQueueEntry;
 import com.liferay.notification.model.NotificationRecipient;
 import com.liferay.notification.model.NotificationRecipientSetting;
+import com.liferay.notification.model.NotificationRecipientSettingModel;
 import com.liferay.notification.model.NotificationTemplate;
 import com.liferay.notification.type.BaseNotificationType;
 import com.liferay.notification.type.NotificationType;
 import com.liferay.object.service.ObjectEntryService;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserNotificationDeliveryConstants;
@@ -45,7 +46,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.osgi.framework.BundleContext;
@@ -119,14 +119,6 @@ public class UserNotificationType extends BaseNotificationType {
 		NotificationTemplate notificationTemplate =
 			notificationContext.getNotificationTemplate();
 
-		if (Objects.equals(
-				notificationTemplate.getRecipientType(),
-				NotificationRecipientConstants.TYPE_USER_GROUP) &&
-			!FeatureFlagManagerUtil.isEnabled("LPD-50091")) {
-
-			return;
-		}
-
 		boolean enqueue = false;
 		List<Map<String, String>> notificationRecipientSettings =
 			new ArrayList<>();
@@ -134,7 +126,17 @@ public class UserNotificationType extends BaseNotificationType {
 		UsersProvider usersProvider = _usersProviders.get(
 			notificationTemplate.getRecipientType());
 
-		for (User user : usersProvider.provide(notificationContext)) {
+		NotificationRecipient notificationRecipient =
+			notificationTemplate.getNotificationRecipient();
+
+		for (User user :
+				usersProvider.provide(
+					notificationContext,
+					TransformUtil.unsafeTransform(
+						notificationRecipient.
+							getNotificationRecipientSettings(),
+						NotificationRecipientSettingModel::getValue))) {
+
 			boolean deliver = UserNotificationManagerUtil.isDeliver(
 				user.getUserId(), notificationContext.getPortletId(),
 				_classNameLocalService.getClassNameId(
@@ -197,16 +199,18 @@ public class UserNotificationType extends BaseNotificationType {
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
+		RoleUsersProvider roleUsersProvider = new RoleUsersProvider(
+			_permissionCheckerFactory, _roleLocalService,
+			_userGroupRoleLocalService, userLocalService);
+
 		_usersProviders.put(
-			NotificationRecipientConstants.TYPE_ROLE,
-			new RoleUsersProvider(
-				_permissionCheckerFactory, _roleLocalService,
-				_userGroupRoleLocalService, userLocalService));
+			NotificationRecipientConstants.TYPE_ROLE, roleUsersProvider);
 		_usersProviders.put(
 			NotificationRecipientConstants.TYPE_TERM,
 			new TermUsersProvider(
-				_permissionCheckerFactory, notificationTermEvaluatorTracker,
-				userLocalService));
+				notificationTermEvaluatorTracker, _permissionCheckerFactory,
+				_roleLocalService, roleUsersProvider, userLocalService));
+
 		_usersProviders.put(
 			NotificationRecipientConstants.TYPE_USER,
 			new DefaultUsersProvider(

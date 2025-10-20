@@ -40,7 +40,6 @@ import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortlet
 import com.liferay.layout.content.page.editor.sidebar.panel.ContentPageEditorSidebarPanel;
 import com.liferay.layout.content.page.editor.web.internal.configuration.PageEditorConfiguration;
 import com.liferay.layout.content.page.editor.web.internal.constants.ContentPageEditorActionKeys;
-import com.liferay.layout.content.page.editor.web.internal.manager.ContentManager;
 import com.liferay.layout.content.page.editor.web.internal.manager.FragmentCollectionManager;
 import com.liferay.layout.content.page.editor.web.internal.manager.FragmentEntryLinkManager;
 import com.liferay.layout.content.page.editor.web.internal.util.MappingContentUtil;
@@ -50,6 +49,7 @@ import com.liferay.layout.content.page.editor.web.internal.util.layout.structure
 import com.liferay.layout.converter.PaddingConverter;
 import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.item.selector.LayoutItemSelectorCriterion;
+import com.liferay.layout.manager.ContentManager;
 import com.liferay.layout.manager.LayoutLockManager;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.info.item.capability.EditPageInfoItemCapability;
@@ -109,13 +109,13 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.language.LanguageResources;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.segments.configuration.provider.SegmentsConfigurationProvider;
 import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
@@ -695,27 +695,31 @@ public class ContentPageEditorDisplayContext {
 						theme.getThemeId(), layoutSet.getThemeId());
 				}
 			).put(
-				"styleBookEntryId",
+				"styleBookEntryERC",
 				() -> {
 					Layout layout = themeDisplay.getLayout();
+
+					String styleBookEntryERC = GetterUtil.getString(
+						layout.getStyleBookEntryERC());
 
 					if (!FeatureFlagManagerUtil.isEnabled(
 							layout.getCompanyId(), "LPD-30204")) {
 
-						return layout.getStyleBookEntryId();
+						return styleBookEntryERC;
 					}
 
-					if (layout.getStyleBookEntryId() > 0) {
+					if (Validator.isNull(styleBookEntryERC)) {
 						StyleBookEntry defaultStyleBookEntry =
 							DefaultStyleBookEntryUtil.getDefaultStyleBookEntry(
 								layout);
 
 						if (defaultStyleBookEntry != null) {
-							return defaultStyleBookEntry.getStyleBookEntryId();
+							return defaultStyleBookEntry.
+								getExternalReferenceCode();
 						}
 					}
 
-					return "0";
+					return styleBookEntryERC;
 				}
 			).put(
 				"styleBooks", _getStyleBooks()
@@ -2004,7 +2008,7 @@ public class ContentPageEditorDisplayContext {
 						StyleBookUtil.getStyleFromThemeStyleBookEntry(
 							themeDisplay.getLayout(), themeDisplay.getLocale()))
 				).put(
-					"styleBookEntryId", "0"
+					"styleBookEntryERC", StringPool.BLANK
 				).put(
 					"subtitle",
 					() -> {
@@ -2028,7 +2032,8 @@ public class ContentPageEditorDisplayContext {
 				).put(
 					"name", styleBookEntry.getName()
 				).put(
-					"styleBookEntryId", styleBookEntry.getStyleBookEntryId()
+					"styleBookEntryERC",
+					styleBookEntry.getExternalReferenceCode()
 				).build());
 		}
 

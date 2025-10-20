@@ -190,6 +190,7 @@ modules/apps/login/    @liferay-appsec
 modules/apps/mail/
 modules/apps/map    @liferay-frontend
 modules/apps/marketplace/    @liferay-commerce
+modules/apps/mcp/    @liferay-headless
 modules/apps/mentions/    @liferay-content-management
 modules/apps/message-boards/    @liferay-content-management
 modules/apps/microblogs/    @liferay-content-management
@@ -410,7 +411,7 @@ modules/dxp/apps/commerce-punchout/    @liferay-commerce
 modules/dxp/apps/document-library-opener/    @liferay-content-management
 modules/dxp/apps/enterprise-product-notification/
 modules/dxp/apps/frontend-theme/    @liferay-platform-experience
-modules/dxp/apps/multi-factor-authentication/
+modules/dxp/apps/multi-factor-authentication/    @liferay-appsec
 modules/dxp/apps/osb/osb-faro/    @liferay-ac
 modules/dxp/apps/osb/osb-site-initializer/    @liferay-site-management
 modules/dxp/apps/osb/osb-spring-boot/

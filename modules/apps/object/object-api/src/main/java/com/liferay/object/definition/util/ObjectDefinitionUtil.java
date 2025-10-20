@@ -64,7 +64,8 @@ public class ObjectDefinitionUtil {
 	}
 
 	public static boolean isInvokerBundleAllowed() {
-		if (PortalInstances.isCurrentCompanyInDeletionProcess() ||
+		if (ObjectDefinitionThreadLocal.isSkipBundleAllowedCheck() ||
+			PortalInstances.isCurrentCompanyInDeletionProcess() ||
 			PortalRunMode.isTestMode() || StartupHelperUtil.isUpgrading()) {
 
 			return true;
@@ -100,8 +101,8 @@ public class ObjectDefinitionUtil {
 		"com.liferay.frontend.data.set.admin.web",
 		"com.liferay.frontend.data.set.impl",
 		"com.liferay.headless.builder.impl", "com.liferay.list.type.service",
-		"com.liferay.notification.service", "com.liferay.object.service",
-		"com.liferay.site.initializer.cms"
+		"com.liferay.mcp.server", "com.liferay.notification.service",
+		"com.liferay.object.service", "com.liferay.site.initializer.cms"
 	};
 
 	private static final Map<String, String>
@@ -118,19 +119,21 @@ public class ObjectDefinitionUtil {
 		).put(
 			"APISort", "/headless-builder/sorts"
 		).put(
-			"BasicDocument", "/cms/basic-documents"
-		).put(
-			"BasicWebContent", "/cms/basic-web-contents"
-		).put(
-			"Blog", "/cms/blogs"
-		).put(
 			"Bookmark", "/bookmarks"
 		).put(
-			"BulkActionTask", "/cms/bulk-action-tasks"
+			"CMSBasicDocument", "/cms/basic-documents"
 		).put(
-			"BulkActionTaskItem", "/cms/bulk-action-task-items"
+			"CMSBasicWebContent", "/cms/basic-web-contents"
+		).put(
+			"CMSBlog", "/cms/blogs"
+		).put(
+			"CMSBulkActionTask", "/cms/bulk-action-tasks"
+		).put(
+			"CMSBulkActionTaskItem", "/cms/bulk-action-task-items"
 		).put(
 			"CMSDefaultPermission", "/cms/default-permissions"
+		).put(
+			"CMSExternalVideo", "/cms/external-videos"
 		).put(
 			"CommerceReturn", "/commerce/returns"
 		).put(
@@ -154,8 +157,6 @@ public class ObjectDefinitionUtil {
 			"DataSetSort", "/data-set-admin/sorts"
 		).put(
 			"DataSetTableSection", "/data-set-admin/table-sections"
-		).put(
-			"ExternalVideo", "/cms/external-videos"
 		).put(
 			"FDSAction", "/data-set-manager/actions"
 		).put(
@@ -181,6 +182,8 @@ public class ObjectDefinitionUtil {
 			"FunctionalCookieEntry", "/functional-cookies-entries"
 		).put(
 			"KnowledgeBase", "/cms/knowledge-bases"
+		).put(
+			"MCPServerPrompt", "/mcp/server-prompts"
 		).put(
 			"NecessaryCookieEntry", "/necessary-cookies-entries"
 		).put(

@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.change.tracking.CTAware;
 import com.liferay.portal.kernel.cluster.Clusterable;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
-import com.liferay.portal.kernel.db.partition.DBPartition;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.PortletIdException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -87,6 +86,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -104,7 +104,6 @@ import com.liferay.portal.model.impl.PortletURLListenerImpl;
 import com.liferay.portal.model.impl.PublicRenderParameterImpl;
 import com.liferay.portal.service.base.PortletLocalServiceBaseImpl;
 import com.liferay.portal.servlet.ComboServlet;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.WebAppPool;
 import com.liferay.portlet.PortletBagFactory;
 import com.liferay.portlet.PortletContextFactoryUtil;
@@ -3066,7 +3065,7 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 		public Portlet get(Object key) {
 			Portlet portlet = super.get(key);
 
-			if (!DBPartition.isPartitionEnabled() ||
+			if (!PropsValues.DATABASE_PARTITION_ENABLED ||
 				((portlet != null) &&
 				 (portlet.getCompanyId() == CompanyConstants.SYSTEM))) {
 
@@ -3088,7 +3087,7 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 
 		@Override
 		public Portlet remove(Object key) {
-			if (DBPartition.isPartitionEnabled()) {
+			if (PropsValues.DATABASE_PARTITION_ENABLED) {
 				Portlet portlet = super.remove(
 					DBPartitionUtil.getPartitionKey(key));
 

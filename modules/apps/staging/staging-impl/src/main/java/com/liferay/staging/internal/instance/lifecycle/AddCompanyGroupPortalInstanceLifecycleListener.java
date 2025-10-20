@@ -5,6 +5,7 @@
 
 package com.liferay.staging.internal.instance.lifecycle;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
 import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -17,7 +18,6 @@ import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
-import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -59,8 +59,7 @@ public class AddCompanyGroupPortalInstanceLifecycleListener
 			FeatureFlagListener.class,
 			(companyId, featureFlagKey, enabled) -> {
 				if (enabled) {
-					_companyLocalService.forEachCompanyId(
-						this::_addCompanyGroup);
+					_addCompanyGroup(companyId);
 				}
 			},
 			MapUtil.singletonDictionary("feature.flag.key", "LPD-35914"));
@@ -83,13 +82,13 @@ public class AddCompanyGroupPortalInstanceLifecycleListener
 			}
 
 			_groupLocalService.addGroup(
-				_userLocalService.getGuestUserId(companyId),
+				StringPool.BLANK, _userLocalService.getGuestUserId(companyId),
 				GroupConstants.DEFAULT_PARENT_GROUP_ID,
 				StagingGroupHelper.class.getName(), CompanyConstants.SYSTEM,
 				GroupConstants.DEFAULT_LIVE_GROUP_ID, null, null,
-				GroupConstants.TYPE_SITE_RESTRICTED, true,
+				GroupConstants.TYPE_SITE_RESTRICTED, null, true,
 				GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
-				CompanyGroupConstants.FRIENDLY_URL, false, true, null);
+				CompanyGroupConstants.FRIENDLY_URL, false, false, true, null);
 		}
 		catch (PortalException portalException) {
 			_log.error(portalException);
@@ -112,9 +111,6 @@ public class AddCompanyGroupPortalInstanceLifecycleListener
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		AddCompanyGroupPortalInstanceLifecycleListener.class);
-
-	@Reference
-	private CompanyLocalService _companyLocalService;
 
 	@Reference
 	private GroupLocalService _groupLocalService;

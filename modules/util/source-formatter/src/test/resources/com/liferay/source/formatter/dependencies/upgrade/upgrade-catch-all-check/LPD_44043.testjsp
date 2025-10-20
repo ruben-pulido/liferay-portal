@@ -6,20 +6,9 @@
 --%>
 
 <%@ page import="com.liferay.portal.kernel.util.SetUtil" %><%@
-page import="com.liferay.portal.util.PropsValues" %>
+page import="com.liferay.portal.kernel.util.PropsValues" %>
 
 <%
-new Liferay.Notification({
-    closeable: true,
-    delay: {
-        hide: 5000,
-        show: 0,
-    },
-    duration: 500,
-    message: message,
-    title: Liferay.Language.get('warning'),
-    type: 'warning',
-});
 new Liferay.Notification({
     closeable: true,
     delay: {

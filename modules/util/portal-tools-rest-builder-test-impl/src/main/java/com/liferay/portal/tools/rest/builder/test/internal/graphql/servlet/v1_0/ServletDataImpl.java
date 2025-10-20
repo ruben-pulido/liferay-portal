@@ -295,6 +295,11 @@ public class ServletDataImpl implements ServletData {
 							ERCScopedTestEntityResourceImpl.class,
 							"postAssetLibraryERCScopedTestEntityBatch"));
 					put(
+						"mutation#createERCScopedTestEntitiesPageExportBatch",
+						new ObjectValuePair<>(
+							ERCScopedTestEntityResourceImpl.class,
+							"postERCScopedTestEntitiesPageExportBatch"));
+					put(
 						"mutation#createSiteERCScopedTestEntitiesPageExportBatch",
 						new ObjectValuePair<>(
 							ERCScopedTestEntityResourceImpl.class,
@@ -315,10 +320,25 @@ public class ServletDataImpl implements ServletData {
 							ERCScopedTestEntityResourceImpl.class,
 							"putAssetLibraryERCScopedTestEntity"));
 					put(
+						"mutation#updateAssetLibraryERCScopedTestEntityPermissionsPage",
+						new ObjectValuePair<>(
+							ERCScopedTestEntityResourceImpl.class,
+							"putAssetLibraryERCScopedTestEntityPermissionsPage"));
+					put(
+						"mutation#updateERCScopedTestEntityPermissionsPage",
+						new ObjectValuePair<>(
+							ERCScopedTestEntityResourceImpl.class,
+							"putERCScopedTestEntityPermissionsPage"));
+					put(
 						"mutation#updateSiteERCScopedTestEntity",
 						new ObjectValuePair<>(
 							ERCScopedTestEntityResourceImpl.class,
 							"putSiteERCScopedTestEntity"));
+					put(
+						"mutation#updateSiteERCScopedTestEntityPermissionsPage",
+						new ObjectValuePair<>(
+							ERCScopedTestEntityResourceImpl.class,
+							"putSiteERCScopedTestEntityPermissionsPage"));
 					put(
 						"mutation#deleteSiteERCSiteTestEntity",
 						new ObjectValuePair<>(
@@ -395,11 +415,6 @@ public class ServletDataImpl implements ServletData {
 							ScopedTestEntityResourceImpl.class,
 							"deleteAssetLibraryScopedTestEntityByExternalReferenceCode"));
 					put(
-						"mutation#deleteScopedTestEntityByExternalReferenceCode",
-						new ObjectValuePair<>(
-							ScopedTestEntityResourceImpl.class,
-							"deleteScopedTestEntityByExternalReferenceCode"));
-					put(
 						"mutation#deleteSiteScopedTestEntityByExternalReferenceCode",
 						new ObjectValuePair<>(
 							ScopedTestEntityResourceImpl.class,
@@ -409,16 +424,6 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							ScopedTestEntityResourceImpl.class,
 							"patchAssetLibraryScopedTestEntityByExternalReferenceCode"));
-					put(
-						"mutation#patchScopedTestEntity",
-						new ObjectValuePair<>(
-							ScopedTestEntityResourceImpl.class,
-							"patchScopedTestEntity"));
-					put(
-						"mutation#patchScopedTestEntityByExternalReferenceCode",
-						new ObjectValuePair<>(
-							ScopedTestEntityResourceImpl.class,
-							"patchScopedTestEntityByExternalReferenceCode"));
 					put(
 						"mutation#patchSiteScopedTestEntityByExternalReferenceCode",
 						new ObjectValuePair<>(
@@ -430,40 +435,35 @@ public class ServletDataImpl implements ServletData {
 							ScopedTestEntityResourceImpl.class,
 							"postAssetLibraryScopedTestEntitiesPageExportBatch"));
 					put(
-						"mutation#createAssetLibraryScopedTestEntityByExternalReferenceCode",
+						"mutation#createAssetLibraryScopedTestEntity",
 						new ObjectValuePair<>(
 							ScopedTestEntityResourceImpl.class,
-							"postAssetLibraryScopedTestEntityByExternalReferenceCode"));
+							"postAssetLibraryScopedTestEntity"));
 					put(
-						"mutation#createScopedTestEntitiesPageExportBatch",
+						"mutation#createAssetLibraryScopedTestEntityBatch",
 						new ObjectValuePair<>(
 							ScopedTestEntityResourceImpl.class,
-							"postScopedTestEntitiesPageExportBatch"));
-					put(
-						"mutation#createScopedTestEntityByExternalReferenceCode",
-						new ObjectValuePair<>(
-							ScopedTestEntityResourceImpl.class,
-							"postScopedTestEntityByExternalReferenceCode"));
+							"postAssetLibraryScopedTestEntityBatch"));
 					put(
 						"mutation#createSiteScopedTestEntitiesPageExportBatch",
 						new ObjectValuePair<>(
 							ScopedTestEntityResourceImpl.class,
 							"postSiteScopedTestEntitiesPageExportBatch"));
 					put(
-						"mutation#createSiteScopedTestEntityByExternalReferenceCode",
+						"mutation#createSiteScopedTestEntity",
 						new ObjectValuePair<>(
 							ScopedTestEntityResourceImpl.class,
-							"postSiteScopedTestEntityByExternalReferenceCode"));
+							"postSiteScopedTestEntity"));
+					put(
+						"mutation#createSiteScopedTestEntityBatch",
+						new ObjectValuePair<>(
+							ScopedTestEntityResourceImpl.class,
+							"postSiteScopedTestEntityBatch"));
 					put(
 						"mutation#updateAssetLibraryScopedTestEntityByExternalReferenceCode",
 						new ObjectValuePair<>(
 							ScopedTestEntityResourceImpl.class,
 							"putAssetLibraryScopedTestEntityByExternalReferenceCode"));
-					put(
-						"mutation#updateScopedTestEntityByExternalReferenceCode",
-						new ObjectValuePair<>(
-							ScopedTestEntityResourceImpl.class,
-							"putScopedTestEntityByExternalReferenceCode"));
 					put(
 						"mutation#updateSiteScopedTestEntityByExternalReferenceCode",
 						new ObjectValuePair<>(
@@ -556,6 +556,11 @@ public class ServletDataImpl implements ServletData {
 							TestEntityResourceImpl.class,
 							"postTestEntityMultipartBulk"));
 					put(
+						"mutation#createTestEntityMultipartImage",
+						new ObjectValuePair<>(
+							TestEntityResourceImpl.class,
+							"postTestEntityMultipartImage"));
+					put(
 						"mutation#updateTestEntity",
 						new ObjectValuePair<>(
 							TestEntityResourceImpl.class, "putTestEntity"));
@@ -636,7 +641,22 @@ public class ServletDataImpl implements ServletData {
 							ERCScopedTestEntityResourceImpl.class,
 							"getAssetLibraryERCScopedTestEntity"));
 					put(
+						"query#assetLibraryERCScopedTestEntityPermissions",
+						new ObjectValuePair<>(
+							ERCScopedTestEntityResourceImpl.class,
+							"getAssetLibraryERCScopedTestEntityPermissionsPage"));
+					put(
 						"query#eRCScopedTestEntities",
+						new ObjectValuePair<>(
+							ERCScopedTestEntityResourceImpl.class,
+							"getERCScopedTestEntitiesPage"));
+					put(
+						"query#eRCScopedTestEntityPermissions",
+						new ObjectValuePair<>(
+							ERCScopedTestEntityResourceImpl.class,
+							"getERCScopedTestEntityPermissionsPage"));
+					put(
+						"query#siteERCScopedTestEntities",
 						new ObjectValuePair<>(
 							ERCScopedTestEntityResourceImpl.class,
 							"getSiteERCScopedTestEntitiesPage"));
@@ -645,6 +665,11 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							ERCScopedTestEntityResourceImpl.class,
 							"getSiteERCScopedTestEntity"));
+					put(
+						"query#siteERCScopedTestEntityPermissions",
+						new ObjectValuePair<>(
+							ERCScopedTestEntityResourceImpl.class,
+							"getSiteERCScopedTestEntityPermissionsPage"));
 					put(
 						"query#eRCSiteTestEntities",
 						new ObjectValuePair<>(
@@ -697,19 +722,9 @@ public class ServletDataImpl implements ServletData {
 						"query#scopedTestEntities",
 						new ObjectValuePair<>(
 							ScopedTestEntityResourceImpl.class,
-							"getScopedTestEntitiesPage"));
-					put(
-						"query#scopedTestEntityByExternalReferenceCode",
-						new ObjectValuePair<>(
-							ScopedTestEntityResourceImpl.class,
-							"getScopedTestEntityByExternalReferenceCode"));
-					put(
-						"query#siteScopedTestEntities",
-						new ObjectValuePair<>(
-							ScopedTestEntityResourceImpl.class,
 							"getSiteScopedTestEntitiesPage"));
 					put(
-						"query#siteScopedTestEntityByExternalReferenceCode",
+						"query#scopedTestEntityByExternalReferenceCode",
 						new ObjectValuePair<>(
 							ScopedTestEntityResourceImpl.class,
 							"getSiteScopedTestEntityByExternalReferenceCode"));
@@ -767,11 +782,6 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							TestEntityAddressResourceImpl.class,
 							"getTestEntityTestEntityAddress"));
-					put(
-						"query#BatchTestEntity.scopedTestEntityByExternalReferenceCode",
-						new ObjectValuePair<>(
-							ScopedTestEntityResourceImpl.class,
-							"getScopedTestEntityByExternalReferenceCode"));
 					put(
 						"query#CompanyTestEntity.batchTestEntityByExternalReferenceCode",
 						new ObjectValuePair<>(
