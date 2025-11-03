@@ -1,11 +1,11 @@
 /**
- * SPDX-FileCopyrightText: (c) 2024 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
 package com.liferay.headless.admin.site.client.serdes.v1_0;
 
-import com.liferay.headless.admin.site.client.dto.v1_0.FragmentFieldText;
+import com.liferay.headless.admin.site.client.dto.v1_0.FragmentElement;
 import com.liferay.headless.admin.site.client.json.BaseJSONParser;
 
 import jakarta.annotation.Generated;
@@ -21,24 +21,24 @@ import java.util.TreeMap;
  * @generated
  */
 @Generated("")
-public class FragmentFieldTextSerDes {
+public class FragmentElementSerDes {
 
-	public static FragmentFieldText toDTO(String json) {
-		FragmentFieldTextJSONParser fragmentFieldTextJSONParser =
-			new FragmentFieldTextJSONParser();
+	public static FragmentElement toDTO(String json) {
+		FragmentElementJSONParser fragmentElementJSONParser =
+			new FragmentElementJSONParser();
 
-		return fragmentFieldTextJSONParser.parseToDTO(json);
+		return fragmentElementJSONParser.parseToDTO(json);
 	}
 
-	public static FragmentFieldText[] toDTOs(String json) {
-		FragmentFieldTextJSONParser fragmentFieldTextJSONParser =
-			new FragmentFieldTextJSONParser();
+	public static FragmentElement[] toDTOs(String json) {
+		FragmentElementJSONParser fragmentElementJSONParser =
+			new FragmentElementJSONParser();
 
-		return fragmentFieldTextJSONParser.parseToDTOs(json);
+		return fragmentElementJSONParser.parseToDTOs(json);
 	}
 
-	public static String toJSON(FragmentFieldText fragmentFieldText) {
-		if (fragmentFieldText == null) {
+	public static String toJSON(FragmentElement fragmentElement) {
+		if (fragmentElement == null) {
 			return "null";
 		}
 
@@ -46,31 +46,28 @@ public class FragmentFieldTextSerDes {
 
 		sb.append("{");
 
-		if (fragmentFieldText.getFragmentLink() != null) {
+		if (fragmentElement.getId() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"fragmentLink\": ");
+			sb.append("\"id\": ");
 
-			sb.append(String.valueOf(fragmentFieldText.getFragmentLink()));
+			sb.append("\"");
+
+			sb.append(_escape(fragmentElement.getId()));
+
+			sb.append("\"");
 		}
 
-		if (fragmentFieldText.getText() != null) {
+		if (fragmentElement.getValue() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"text\": ");
+			sb.append("\"value\": ");
 
-			if (fragmentFieldText.getText() instanceof String) {
-				sb.append("\"");
-				sb.append((String)fragmentFieldText.getText());
-				sb.append("\"");
-			}
-			else {
-				sb.append(fragmentFieldText.getText());
-			}
+			sb.append(String.valueOf(fragmentElement.getValue()));
 		}
 
 		sb.append("}");
@@ -79,59 +76,55 @@ public class FragmentFieldTextSerDes {
 	}
 
 	public static Map<String, Object> toMap(String json) {
-		FragmentFieldTextJSONParser fragmentFieldTextJSONParser =
-			new FragmentFieldTextJSONParser();
+		FragmentElementJSONParser fragmentElementJSONParser =
+			new FragmentElementJSONParser();
 
-		return fragmentFieldTextJSONParser.parseToMap(json);
+		return fragmentElementJSONParser.parseToMap(json);
 	}
 
-	public static Map<String, String> toMap(
-		FragmentFieldText fragmentFieldText) {
-
-		if (fragmentFieldText == null) {
+	public static Map<String, String> toMap(FragmentElement fragmentElement) {
+		if (fragmentElement == null) {
 			return null;
 		}
 
 		Map<String, String> map = new TreeMap<>();
 
-		if (fragmentFieldText.getFragmentLink() == null) {
-			map.put("fragmentLink", null);
+		if (fragmentElement.getId() == null) {
+			map.put("id", null);
 		}
 		else {
-			map.put(
-				"fragmentLink",
-				String.valueOf(fragmentFieldText.getFragmentLink()));
+			map.put("id", String.valueOf(fragmentElement.getId()));
 		}
 
-		if (fragmentFieldText.getText() == null) {
-			map.put("text", null);
+		if (fragmentElement.getValue() == null) {
+			map.put("value", null);
 		}
 		else {
-			map.put("text", String.valueOf(fragmentFieldText.getText()));
+			map.put("value", String.valueOf(fragmentElement.getValue()));
 		}
 
 		return map;
 	}
 
-	public static class FragmentFieldTextJSONParser
-		extends BaseJSONParser<FragmentFieldText> {
+	public static class FragmentElementJSONParser
+		extends BaseJSONParser<FragmentElement> {
 
 		@Override
-		protected FragmentFieldText createDTO() {
-			return new FragmentFieldText();
+		protected FragmentElement createDTO() {
+			return new FragmentElement();
 		}
 
 		@Override
-		protected FragmentFieldText[] createDTOArray(int size) {
-			return new FragmentFieldText[size];
+		protected FragmentElement[] createDTOArray(int size) {
+			return new FragmentElement[size];
 		}
 
 		@Override
 		protected boolean parseMaps(String jsonParserFieldName) {
-			if (Objects.equals(jsonParserFieldName, "fragmentLink")) {
+			if (Objects.equals(jsonParserFieldName, "id")) {
 				return false;
 			}
-			else if (Objects.equals(jsonParserFieldName, "text")) {
+			else if (Objects.equals(jsonParserFieldName, "value")) {
 				return false;
 			}
 
@@ -140,18 +133,19 @@ public class FragmentFieldTextSerDes {
 
 		@Override
 		protected void setField(
-			FragmentFieldText fragmentFieldText, String jsonParserFieldName,
+			FragmentElement fragmentElement, String jsonParserFieldName,
 			Object jsonParserFieldValue) {
 
-			if (Objects.equals(jsonParserFieldName, "fragmentLink")) {
+			if (Objects.equals(jsonParserFieldName, "id")) {
 				if (jsonParserFieldValue != null) {
-					fragmentFieldText.setFragmentLink(
-						FragmentLinkSerDes.toDTO((String)jsonParserFieldValue));
+					fragmentElement.setId((String)jsonParserFieldValue);
 				}
 			}
-			else if (Objects.equals(jsonParserFieldName, "text")) {
+			else if (Objects.equals(jsonParserFieldName, "value")) {
 				if (jsonParserFieldValue != null) {
-					fragmentFieldText.setText((Object)jsonParserFieldValue);
+					fragmentElement.setValue(
+						FragmentElementValueSerDes.toDTO(
+							(String)jsonParserFieldValue));
 				}
 			}
 		}

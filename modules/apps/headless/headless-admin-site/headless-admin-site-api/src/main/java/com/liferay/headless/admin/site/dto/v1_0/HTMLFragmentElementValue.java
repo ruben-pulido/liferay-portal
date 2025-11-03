@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: (c) 2024 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
@@ -37,47 +37,48 @@ import java.util.function.Supplier;
  */
 @Generated("")
 @GraphQLName(
-	description = "A fragment field with text.", value = "FragmentFieldText"
+	description = "A fragment element value of type HTML.",
+	value = "HTMLFragmentElementValue"
 )
 @JsonFilter("Liferay.Vulcan")
-@XmlRootElement(name = "FragmentFieldText")
-public class FragmentFieldText implements Serializable {
+@XmlRootElement(name = "HTMLFragmentElementValue")
+public class HTMLFragmentElementValue
+	extends FragmentElementValue implements Serializable {
 
-	public static FragmentFieldText toDTO(String json) {
-		return ObjectMapperUtil.readValue(FragmentFieldText.class, json);
+	public static HTMLFragmentElementValue toDTO(String json) {
+		return ObjectMapperUtil.readValue(HTMLFragmentElementValue.class, json);
 	}
 
-	public static FragmentFieldText unsafeToDTO(String json) {
-		return ObjectMapperUtil.unsafeReadValue(FragmentFieldText.class, json);
+	public static HTMLFragmentElementValue unsafeToDTO(String json) {
+		return ObjectMapperUtil.unsafeReadValue(
+			HTMLFragmentElementValue.class, json);
 	}
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "A link to a fragment."
+		description = "The fragment element's HTML. Can be inline or mapped to an external value."
 	)
 	@Valid
-	public FragmentLink getFragmentLink() {
-		if (_fragmentLinkSupplier != null) {
-			fragmentLink = _fragmentLinkSupplier.get();
+	public Object getHtml() {
+		if (_htmlSupplier != null) {
+			html = _htmlSupplier.get();
 
-			_fragmentLinkSupplier = null;
+			_htmlSupplier = null;
 		}
 
-		return fragmentLink;
+		return html;
 	}
 
-	public void setFragmentLink(FragmentLink fragmentLink) {
-		this.fragmentLink = fragmentLink;
+	public void setHtml(Object html) {
+		this.html = html;
 
-		_fragmentLinkSupplier = null;
+		_htmlSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setFragmentLink(
-		UnsafeSupplier<FragmentLink, Exception> fragmentLinkUnsafeSupplier) {
-
-		_fragmentLinkSupplier = () -> {
+	public void setHtml(UnsafeSupplier<Object, Exception> htmlUnsafeSupplier) {
+		_htmlSupplier = () -> {
 			try {
-				return fragmentLinkUnsafeSupplier.get();
+				return htmlUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -88,54 +89,14 @@ public class FragmentFieldText implements Serializable {
 		};
 	}
 
-	@GraphQLField(description = "A link to a fragment.")
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected FragmentLink fragmentLink;
-
-	@JsonIgnore
-	private Supplier<FragmentLink> _fragmentLinkSupplier;
-
-	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The fragment field's text."
+	@GraphQLField(
+		description = "The fragment element's HTML. Can be inline or mapped to an external value."
 	)
-	@Valid
-	public Object getText() {
-		if (_textSupplier != null) {
-			text = _textSupplier.get();
-
-			_textSupplier = null;
-		}
-
-		return text;
-	}
-
-	public void setText(Object text) {
-		this.text = text;
-
-		_textSupplier = null;
-	}
-
-	@JsonIgnore
-	public void setText(UnsafeSupplier<Object, Exception> textUnsafeSupplier) {
-		_textSupplier = () -> {
-			try {
-				return textUnsafeSupplier.get();
-			}
-			catch (RuntimeException runtimeException) {
-				throw runtimeException;
-			}
-			catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-		};
-	}
-
-	@GraphQLField(description = "The fragment field's text.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Object text;
+	protected Object html;
 
 	@JsonIgnore
-	private Supplier<Object> _textSupplier;
+	private Supplier<Object> _htmlSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -143,13 +104,14 @@ public class FragmentFieldText implements Serializable {
 			return true;
 		}
 
-		if (!(object instanceof FragmentFieldText)) {
+		if (!(object instanceof HTMLFragmentElementValue)) {
 			return false;
 		}
 
-		FragmentFieldText fragmentFieldText = (FragmentFieldText)object;
+		HTMLFragmentElementValue htmlFragmentElementValue =
+			(HTMLFragmentElementValue)object;
 
-		return Objects.equals(toString(), fragmentFieldText.toString());
+		return Objects.equals(toString(), htmlFragmentElementValue.toString());
 	}
 
 	@Override
@@ -164,38 +126,42 @@ public class FragmentFieldText implements Serializable {
 
 		sb.append("{");
 
-		FragmentLink fragmentLink = getFragmentLink();
+		Object html = getHtml();
 
-		if (fragmentLink != null) {
+		if (html != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"fragmentLink\": ");
+			sb.append("\"html\": ");
 
-			sb.append(String.valueOf(fragmentLink));
-		}
-
-		Object text = getText();
-
-		if (text != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
+			if (html instanceof Map) {
+				sb.append(JSONFactoryUtil.createJSONObject((Map<?, ?>)html));
 			}
-
-			sb.append("\"text\": ");
-
-			if (text instanceof Map) {
-				sb.append(JSONFactoryUtil.createJSONObject((Map<?, ?>)text));
-			}
-			else if (text instanceof String) {
+			else if (html instanceof String) {
 				sb.append("\"");
-				sb.append(_escape((String)text));
+				sb.append(_escape((String)html));
 				sb.append("\"");
 			}
 			else {
-				sb.append(text);
+				sb.append(html);
 			}
+		}
+
+		Type type = getType();
+
+		if (type != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"type\": ");
+
+			sb.append("\"");
+
+			sb.append(type);
+
+			sb.append("\"");
 		}
 
 		sb.append("}");
@@ -205,7 +171,7 @@ public class FragmentFieldText implements Serializable {
 
 	@io.swagger.v3.oas.annotations.media.Schema(
 		accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY,
-		defaultValue = "com.liferay.headless.admin.site.dto.v1_0.FragmentFieldText",
+		defaultValue = "com.liferay.headless.admin.site.dto.v1_0.HTMLFragmentElementValue",
 		name = "x-class-name"
 	)
 	public String xClassName;

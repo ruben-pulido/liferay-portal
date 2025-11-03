@@ -1,11 +1,11 @@
 /**
- * SPDX-FileCopyrightText: (c) 2024 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
 package com.liferay.headless.admin.site.client.serdes.v1_0;
 
-import com.liferay.headless.admin.site.client.dto.v1_0.FragmentField;
+import com.liferay.headless.admin.site.client.dto.v1_0.TextDefaultValue;
 import com.liferay.headless.admin.site.client.json.BaseJSONParser;
 
 import jakarta.annotation.Generated;
@@ -21,24 +21,24 @@ import java.util.TreeMap;
  * @generated
  */
 @Generated("")
-public class FragmentFieldSerDes {
+public class TextDefaultValueSerDes {
 
-	public static FragmentField toDTO(String json) {
-		FragmentFieldJSONParser fragmentFieldJSONParser =
-			new FragmentFieldJSONParser();
+	public static TextDefaultValue toDTO(String json) {
+		TextDefaultValueJSONParser textDefaultValueJSONParser =
+			new TextDefaultValueJSONParser();
 
-		return fragmentFieldJSONParser.parseToDTO(json);
+		return textDefaultValueJSONParser.parseToDTO(json);
 	}
 
-	public static FragmentField[] toDTOs(String json) {
-		FragmentFieldJSONParser fragmentFieldJSONParser =
-			new FragmentFieldJSONParser();
+	public static TextDefaultValue[] toDTOs(String json) {
+		TextDefaultValueJSONParser textDefaultValueJSONParser =
+			new TextDefaultValueJSONParser();
 
-		return fragmentFieldJSONParser.parseToDTOs(json);
+		return textDefaultValueJSONParser.parseToDTOs(json);
 	}
 
-	public static String toJSON(FragmentField fragmentField) {
-		if (fragmentField == null) {
+	public static String toJSON(TextDefaultValue textDefaultValue) {
+		if (textDefaultValue == null) {
 			return "null";
 		}
 
@@ -46,35 +46,18 @@ public class FragmentFieldSerDes {
 
 		sb.append("{");
 
-		if (fragmentField.getId() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"id\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(fragmentField.getId()));
-
-			sb.append("\"");
-		}
-
-		if (fragmentField.getValue() != null) {
+		if (textDefaultValue.getValue() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
 			sb.append("\"value\": ");
 
-			if (fragmentField.getValue() instanceof String) {
-				sb.append("\"");
-				sb.append((String)fragmentField.getValue());
-				sb.append("\"");
-			}
-			else {
-				sb.append(fragmentField.getValue());
-			}
+			sb.append("\"");
+
+			sb.append(_escape(textDefaultValue.getValue()));
+
+			sb.append("\"");
 		}
 
 		sb.append("}");
@@ -83,55 +66,45 @@ public class FragmentFieldSerDes {
 	}
 
 	public static Map<String, Object> toMap(String json) {
-		FragmentFieldJSONParser fragmentFieldJSONParser =
-			new FragmentFieldJSONParser();
+		TextDefaultValueJSONParser textDefaultValueJSONParser =
+			new TextDefaultValueJSONParser();
 
-		return fragmentFieldJSONParser.parseToMap(json);
+		return textDefaultValueJSONParser.parseToMap(json);
 	}
 
-	public static Map<String, String> toMap(FragmentField fragmentField) {
-		if (fragmentField == null) {
+	public static Map<String, String> toMap(TextDefaultValue textDefaultValue) {
+		if (textDefaultValue == null) {
 			return null;
 		}
 
 		Map<String, String> map = new TreeMap<>();
 
-		if (fragmentField.getId() == null) {
-			map.put("id", null);
-		}
-		else {
-			map.put("id", String.valueOf(fragmentField.getId()));
-		}
-
-		if (fragmentField.getValue() == null) {
+		if (textDefaultValue.getValue() == null) {
 			map.put("value", null);
 		}
 		else {
-			map.put("value", String.valueOf(fragmentField.getValue()));
+			map.put("value", String.valueOf(textDefaultValue.getValue()));
 		}
 
 		return map;
 	}
 
-	public static class FragmentFieldJSONParser
-		extends BaseJSONParser<FragmentField> {
+	public static class TextDefaultValueJSONParser
+		extends BaseJSONParser<TextDefaultValue> {
 
 		@Override
-		protected FragmentField createDTO() {
-			return new FragmentField();
+		protected TextDefaultValue createDTO() {
+			return new TextDefaultValue();
 		}
 
 		@Override
-		protected FragmentField[] createDTOArray(int size) {
-			return new FragmentField[size];
+		protected TextDefaultValue[] createDTOArray(int size) {
+			return new TextDefaultValue[size];
 		}
 
 		@Override
 		protected boolean parseMaps(String jsonParserFieldName) {
-			if (Objects.equals(jsonParserFieldName, "id")) {
-				return false;
-			}
-			else if (Objects.equals(jsonParserFieldName, "value")) {
+			if (Objects.equals(jsonParserFieldName, "value")) {
 				return false;
 			}
 
@@ -140,17 +113,12 @@ public class FragmentFieldSerDes {
 
 		@Override
 		protected void setField(
-			FragmentField fragmentField, String jsonParserFieldName,
+			TextDefaultValue textDefaultValue, String jsonParserFieldName,
 			Object jsonParserFieldValue) {
 
-			if (Objects.equals(jsonParserFieldName, "id")) {
+			if (Objects.equals(jsonParserFieldName, "value")) {
 				if (jsonParserFieldValue != null) {
-					fragmentField.setId((String)jsonParserFieldValue);
-				}
-			}
-			else if (Objects.equals(jsonParserFieldName, "value")) {
-				if (jsonParserFieldValue != null) {
-					fragmentField.setValue((Object)jsonParserFieldValue);
+					textDefaultValue.setValue((String)jsonParserFieldValue);
 				}
 			}
 		}

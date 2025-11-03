@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: (c) 2024 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
@@ -36,48 +36,54 @@ import java.util.function.Supplier;
  */
 @Generated("")
 @GraphQLName(
-	description = "A fragment field with an image.",
-	value = "FragmentFieldImage"
+	description = "A fragment element value of type background image.",
+	value = "BackgroundImageFragmentElementValue"
 )
 @JsonFilter("Liferay.Vulcan")
-@XmlRootElement(name = "FragmentFieldImage")
-public class FragmentFieldImage implements Serializable {
+@XmlRootElement(name = "BackgroundImageFragmentElementValue")
+public class BackgroundImageFragmentElementValue
+	extends FragmentElementValue implements Serializable {
 
-	public static FragmentFieldImage toDTO(String json) {
-		return ObjectMapperUtil.readValue(FragmentFieldImage.class, json);
+	public static BackgroundImageFragmentElementValue toDTO(String json) {
+		return ObjectMapperUtil.readValue(
+			BackgroundImageFragmentElementValue.class, json);
 	}
 
-	public static FragmentFieldImage unsafeToDTO(String json) {
-		return ObjectMapperUtil.unsafeReadValue(FragmentFieldImage.class, json);
+	public static BackgroundImageFragmentElementValue unsafeToDTO(String json) {
+		return ObjectMapperUtil.unsafeReadValue(
+			BackgroundImageFragmentElementValue.class, json);
 	}
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The fragment field's image."
+		description = "The fragment element's background image."
 	)
 	@Valid
-	public FragmentImage getFragmentImage() {
-		if (_fragmentImageSupplier != null) {
-			fragmentImage = _fragmentImageSupplier.get();
+	public FragmentImage getBackgroundFragmentImage() {
+		if (_backgroundFragmentImageSupplier != null) {
+			backgroundFragmentImage = _backgroundFragmentImageSupplier.get();
 
-			_fragmentImageSupplier = null;
+			_backgroundFragmentImageSupplier = null;
 		}
 
-		return fragmentImage;
+		return backgroundFragmentImage;
 	}
 
-	public void setFragmentImage(FragmentImage fragmentImage) {
-		this.fragmentImage = fragmentImage;
+	public void setBackgroundFragmentImage(
+		FragmentImage backgroundFragmentImage) {
 
-		_fragmentImageSupplier = null;
+		this.backgroundFragmentImage = backgroundFragmentImage;
+
+		_backgroundFragmentImageSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setFragmentImage(
-		UnsafeSupplier<FragmentImage, Exception> fragmentImageUnsafeSupplier) {
+	public void setBackgroundFragmentImage(
+		UnsafeSupplier<FragmentImage, Exception>
+			backgroundFragmentImageUnsafeSupplier) {
 
-		_fragmentImageSupplier = () -> {
+		_backgroundFragmentImageSupplier = () -> {
 			try {
-				return fragmentImageUnsafeSupplier.get();
+				return backgroundFragmentImageUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -88,56 +94,12 @@ public class FragmentFieldImage implements Serializable {
 		};
 	}
 
-	@GraphQLField(description = "The fragment field's image.")
+	@GraphQLField(description = "The fragment element's background image.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected FragmentImage fragmentImage;
+	protected FragmentImage backgroundFragmentImage;
 
 	@JsonIgnore
-	private Supplier<FragmentImage> _fragmentImageSupplier;
-
-	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "A link to a fragment."
-	)
-	@Valid
-	public FragmentLink getFragmentLink() {
-		if (_fragmentLinkSupplier != null) {
-			fragmentLink = _fragmentLinkSupplier.get();
-
-			_fragmentLinkSupplier = null;
-		}
-
-		return fragmentLink;
-	}
-
-	public void setFragmentLink(FragmentLink fragmentLink) {
-		this.fragmentLink = fragmentLink;
-
-		_fragmentLinkSupplier = null;
-	}
-
-	@JsonIgnore
-	public void setFragmentLink(
-		UnsafeSupplier<FragmentLink, Exception> fragmentLinkUnsafeSupplier) {
-
-		_fragmentLinkSupplier = () -> {
-			try {
-				return fragmentLinkUnsafeSupplier.get();
-			}
-			catch (RuntimeException runtimeException) {
-				throw runtimeException;
-			}
-			catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-		};
-	}
-
-	@GraphQLField(description = "A link to a fragment.")
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected FragmentLink fragmentLink;
-
-	@JsonIgnore
-	private Supplier<FragmentLink> _fragmentLinkSupplier;
+	private Supplier<FragmentImage> _backgroundFragmentImageSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -145,13 +107,16 @@ public class FragmentFieldImage implements Serializable {
 			return true;
 		}
 
-		if (!(object instanceof FragmentFieldImage)) {
+		if (!(object instanceof BackgroundImageFragmentElementValue)) {
 			return false;
 		}
 
-		FragmentFieldImage fragmentFieldImage = (FragmentFieldImage)object;
+		BackgroundImageFragmentElementValue
+			backgroundImageFragmentElementValue =
+				(BackgroundImageFragmentElementValue)object;
 
-		return Objects.equals(toString(), fragmentFieldImage.toString());
+		return Objects.equals(
+			toString(), backgroundImageFragmentElementValue.toString());
 	}
 
 	@Override
@@ -166,28 +131,32 @@ public class FragmentFieldImage implements Serializable {
 
 		sb.append("{");
 
-		FragmentImage fragmentImage = getFragmentImage();
+		FragmentImage backgroundFragmentImage = getBackgroundFragmentImage();
 
-		if (fragmentImage != null) {
+		if (backgroundFragmentImage != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"fragmentImage\": ");
+			sb.append("\"backgroundFragmentImage\": ");
 
-			sb.append(String.valueOf(fragmentImage));
+			sb.append(String.valueOf(backgroundFragmentImage));
 		}
 
-		FragmentLink fragmentLink = getFragmentLink();
+		Type type = getType();
 
-		if (fragmentLink != null) {
+		if (type != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"fragmentLink\": ");
+			sb.append("\"type\": ");
 
-			sb.append(String.valueOf(fragmentLink));
+			sb.append("\"");
+
+			sb.append(type);
+
+			sb.append("\"");
 		}
 
 		sb.append("}");
@@ -197,7 +166,7 @@ public class FragmentFieldImage implements Serializable {
 
 	@io.swagger.v3.oas.annotations.media.Schema(
 		accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY,
-		defaultValue = "com.liferay.headless.admin.site.dto.v1_0.FragmentFieldImage",
+		defaultValue = "com.liferay.headless.admin.site.dto.v1_0.BackgroundImageFragmentElementValue",
 		name = "x-class-name"
 	)
 	public String xClassName;

@@ -1,11 +1,11 @@
 /**
- * SPDX-FileCopyrightText: (c) 2024 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
 package com.liferay.headless.admin.site.client.serdes.v1_0;
 
-import com.liferay.headless.admin.site.client.dto.v1_0.FragmentFieldImage;
+import com.liferay.headless.admin.site.client.dto.v1_0.TextMappedFragmentValue;
 import com.liferay.headless.admin.site.client.json.BaseJSONParser;
 
 import jakarta.annotation.Generated;
@@ -21,24 +21,26 @@ import java.util.TreeMap;
  * @generated
  */
 @Generated("")
-public class FragmentFieldImageSerDes {
+public class TextMappedFragmentValueSerDes {
 
-	public static FragmentFieldImage toDTO(String json) {
-		FragmentFieldImageJSONParser fragmentFieldImageJSONParser =
-			new FragmentFieldImageJSONParser();
+	public static TextMappedFragmentValue toDTO(String json) {
+		TextMappedFragmentValueJSONParser textMappedFragmentValueJSONParser =
+			new TextMappedFragmentValueJSONParser();
 
-		return fragmentFieldImageJSONParser.parseToDTO(json);
+		return textMappedFragmentValueJSONParser.parseToDTO(json);
 	}
 
-	public static FragmentFieldImage[] toDTOs(String json) {
-		FragmentFieldImageJSONParser fragmentFieldImageJSONParser =
-			new FragmentFieldImageJSONParser();
+	public static TextMappedFragmentValue[] toDTOs(String json) {
+		TextMappedFragmentValueJSONParser textMappedFragmentValueJSONParser =
+			new TextMappedFragmentValueJSONParser();
 
-		return fragmentFieldImageJSONParser.parseToDTOs(json);
+		return textMappedFragmentValueJSONParser.parseToDTOs(json);
 	}
 
-	public static String toJSON(FragmentFieldImage fragmentFieldImage) {
-		if (fragmentFieldImage == null) {
+	public static String toJSON(
+		TextMappedFragmentValue textMappedFragmentValue) {
+
+		if (textMappedFragmentValue == null) {
 			return "null";
 		}
 
@@ -46,24 +48,28 @@ public class FragmentFieldImageSerDes {
 
 		sb.append("{");
 
-		if (fragmentFieldImage.getFragmentImage() != null) {
+		if (textMappedFragmentValue.getMappedValue() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"fragmentImage\": ");
+			sb.append("\"mappedValue\": ");
 
-			sb.append(String.valueOf(fragmentFieldImage.getFragmentImage()));
+			sb.append(String.valueOf(textMappedFragmentValue.getMappedValue()));
 		}
 
-		if (fragmentFieldImage.getFragmentLink() != null) {
+		if (textMappedFragmentValue.getType() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"fragmentLink\": ");
+			sb.append("\"type\": ");
 
-			sb.append(String.valueOf(fragmentFieldImage.getFragmentLink()));
+			sb.append("\"");
+
+			sb.append(textMappedFragmentValue.getType());
+
+			sb.append("\"");
 		}
 
 		sb.append("}");
@@ -72,61 +78,59 @@ public class FragmentFieldImageSerDes {
 	}
 
 	public static Map<String, Object> toMap(String json) {
-		FragmentFieldImageJSONParser fragmentFieldImageJSONParser =
-			new FragmentFieldImageJSONParser();
+		TextMappedFragmentValueJSONParser textMappedFragmentValueJSONParser =
+			new TextMappedFragmentValueJSONParser();
 
-		return fragmentFieldImageJSONParser.parseToMap(json);
+		return textMappedFragmentValueJSONParser.parseToMap(json);
 	}
 
 	public static Map<String, String> toMap(
-		FragmentFieldImage fragmentFieldImage) {
+		TextMappedFragmentValue textMappedFragmentValue) {
 
-		if (fragmentFieldImage == null) {
+		if (textMappedFragmentValue == null) {
 			return null;
 		}
 
 		Map<String, String> map = new TreeMap<>();
 
-		if (fragmentFieldImage.getFragmentImage() == null) {
-			map.put("fragmentImage", null);
+		if (textMappedFragmentValue.getMappedValue() == null) {
+			map.put("mappedValue", null);
 		}
 		else {
 			map.put(
-				"fragmentImage",
-				String.valueOf(fragmentFieldImage.getFragmentImage()));
+				"mappedValue",
+				String.valueOf(textMappedFragmentValue.getMappedValue()));
 		}
 
-		if (fragmentFieldImage.getFragmentLink() == null) {
-			map.put("fragmentLink", null);
+		if (textMappedFragmentValue.getType() == null) {
+			map.put("type", null);
 		}
 		else {
-			map.put(
-				"fragmentLink",
-				String.valueOf(fragmentFieldImage.getFragmentLink()));
+			map.put("type", String.valueOf(textMappedFragmentValue.getType()));
 		}
 
 		return map;
 	}
 
-	public static class FragmentFieldImageJSONParser
-		extends BaseJSONParser<FragmentFieldImage> {
+	public static class TextMappedFragmentValueJSONParser
+		extends BaseJSONParser<TextMappedFragmentValue> {
 
 		@Override
-		protected FragmentFieldImage createDTO() {
-			return new FragmentFieldImage();
+		protected TextMappedFragmentValue createDTO() {
+			return new TextMappedFragmentValue();
 		}
 
 		@Override
-		protected FragmentFieldImage[] createDTOArray(int size) {
-			return new FragmentFieldImage[size];
+		protected TextMappedFragmentValue[] createDTOArray(int size) {
+			return new TextMappedFragmentValue[size];
 		}
 
 		@Override
 		protected boolean parseMaps(String jsonParserFieldName) {
-			if (Objects.equals(jsonParserFieldName, "fragmentImage")) {
+			if (Objects.equals(jsonParserFieldName, "mappedValue")) {
 				return false;
 			}
-			else if (Objects.equals(jsonParserFieldName, "fragmentLink")) {
+			else if (Objects.equals(jsonParserFieldName, "type")) {
 				return false;
 			}
 
@@ -135,20 +139,21 @@ public class FragmentFieldImageSerDes {
 
 		@Override
 		protected void setField(
-			FragmentFieldImage fragmentFieldImage, String jsonParserFieldName,
-			Object jsonParserFieldValue) {
+			TextMappedFragmentValue textMappedFragmentValue,
+			String jsonParserFieldName, Object jsonParserFieldValue) {
 
-			if (Objects.equals(jsonParserFieldName, "fragmentImage")) {
+			if (Objects.equals(jsonParserFieldName, "mappedValue")) {
 				if (jsonParserFieldValue != null) {
-					fragmentFieldImage.setFragmentImage(
-						FragmentImageSerDes.toDTO(
+					textMappedFragmentValue.setMappedValue(
+						FragmentMappedValueSerDes.toDTO(
 							(String)jsonParserFieldValue));
 				}
 			}
-			else if (Objects.equals(jsonParserFieldName, "fragmentLink")) {
+			else if (Objects.equals(jsonParserFieldName, "type")) {
 				if (jsonParserFieldValue != null) {
-					fragmentFieldImage.setFragmentLink(
-						FragmentLinkSerDes.toDTO((String)jsonParserFieldValue));
+					textMappedFragmentValue.setType(
+						TextMappedFragmentValue.Type.create(
+							(String)jsonParserFieldValue));
 				}
 			}
 		}
