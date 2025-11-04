@@ -1223,6 +1223,14 @@ components:
                             # @review
                             description:
                                 A link to a fragment.
+                        textDefaultValue:
+                            properties:
+                                value:
+                                    # @review
+                                    description:
+                                        The text fragment element's default value.
+                                    type: string
+                            type: object
                         textFragmentValue:
                             $ref: "#/components/schemas/TextFragmentValue"
                             # @review
