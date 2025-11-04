@@ -210,7 +210,7 @@ public class PageElementDTOConverter
 			}
 
 			return _fragmentInstancePageElementDefinitionDTOConverter.toDTO(
-				fragmentStyledLayoutStructureItem);
+				dtoConverterContext, fragmentStyledLayoutStructureItem);
 		}
 
 		if (Objects.equals(
