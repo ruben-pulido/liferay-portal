@@ -49,12 +49,12 @@ public class TextFragmentValueSerDes {
 		if (type != null) {
 			String typeString = type.toString();
 
-			if (typeString.equals("InlineFragmentValue")) {
+			if (typeString.equals("Inline")) {
 				return TextInlineFragmentValueSerDes.toJSON(
 					(TextInlineFragmentValue)textFragmentValue);
 			}
 
-			if (typeString.equals("MappedFragmentValue")) {
+			if (typeString.equals("Mapped")) {
 				return TextMappedFragmentValueSerDes.toJSON(
 					(TextMappedFragmentValue)textFragmentValue);
 			}
@@ -123,11 +123,11 @@ public class TextFragmentValueSerDes {
 			if (type != null) {
 				String typeString = type.toString();
 
-				if (typeString.equals("InlineFragmentValue")) {
+				if (typeString.equals("Inline")) {
 					return TextInlineFragmentValue.toDTO(json);
 				}
 
-				if (typeString.equals("MappedFragmentValue")) {
+				if (typeString.equals("Mapped")) {
 					return TextMappedFragmentValue.toDTO(json);
 				}
 

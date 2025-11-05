@@ -54,7 +54,7 @@ public class TextFragmentElementValue
 	}
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "A link to a fragment."
+		description = "The fragment link of a text fragment element."
 	)
 	@Valid
 	public FragmentLink getFragmentLink() {
@@ -90,7 +90,7 @@ public class TextFragmentElementValue
 		};
 	}
 
-	@GraphQLField(description = "A link to a fragment.")
+	@GraphQLField(description = "The fragment link of a text fragment element.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected FragmentLink fragmentLink;
 
