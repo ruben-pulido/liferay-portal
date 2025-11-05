@@ -3526,8 +3526,8 @@ components:
                 The value of a fragment text element.
             discriminator:
                 mapping:
-                    InlineFragmentValue: "#/components/schemas/TextInlineFragmentValue"
-                    MappedFragmentValue: "#/components/schemas/TextMappedFragmentValue"
+                    Inline: "#/components/schemas/TextInlineFragmentValue"
+                    Mapped: "#/components/schemas/TextMappedFragmentValue"
                 propertyName: type
             properties:
                 type:
