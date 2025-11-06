@@ -5,10 +5,12 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {applicationsMenuPageTest} from '../../../fixtures/applicationsMenuPageTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
+import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
+import {masterPagesPagesTest} from '../../../fixtures/masterPagesPagesTest';
+import {pageTemplatesPagesTest} from '../../../fixtures/pageTemplatesPagesTest';
 import {productMenuPageTest} from '../../../fixtures/productMenuPageTest';
 import {uiElementsPageTest} from '../../../fixtures/uiElementsTest';
 import getRandomString from '../../../utils/getRandomString';
@@ -16,9 +18,8 @@ import {getTempDir} from '../../../utils/temp';
 import {exportImportPagesTest} from './fixtures/exportImportPagesTest';
 
 export const test = mergeTests(
-	applicationsMenuPageTest,
-	exportImportPagesTest,
 	dataApiHelpersTest,
+	exportImportPagesTest,
 	featureFlagsTest({
 		'LPD-35914': {enabled: false},
 	}),
@@ -28,13 +29,22 @@ export const test = mergeTests(
 );
 
 export const testWithExportImportAtInstanceLevelFF = mergeTests(
-	applicationsMenuPageTest,
-	exportImportPagesTest,
-	dataApiHelpersTest,
+	test,
 	featureFlagsTest({
 		'LPD-35914': {enabled: true},
+	})
+);
+
+export const testWithHeadlessContentPagesFF = mergeTests(
+	testWithExportImportAtInstanceLevelFF,
+	featureFlagsTest({
+		'LPD-35443': {enabled: true},
 	}),
-	loginTest()
+	isolatedSiteTest,
+	masterPagesPagesTest,
+	pageTemplatesPagesTest,
+	productMenuPageTest,
+	uiElementsPageTest
 );
 
 async function expectExportName(exportImportPage, taskName: string) {
@@ -127,5 +137,45 @@ test(
 		expect(deletionsLabelText?.replace(/\s+/g, ' ').trim()).toBe(
 			'Export Individual Deletions: If this is checked, the delete operations performed will be exported in the LAR file.'
 		);
+	}
+);
+
+testWithHeadlessContentPagesFF(
+	'can see the correct counts of master page templates at site level',
+	{tag: ['@LPD-67433']},
+	async ({
+		exportImportPage,
+		masterPagesPage,
+		pageTemplatesPage,
+		productMenuPage,
+		site,
+		uiElementsPage,
+	}) => {
+		await masterPagesPage.goto(site.friendlyUrlPath);
+		await masterPagesPage.createNewMaster(getRandomString());
+		await masterPagesPage.createNewMaster(getRandomString());
+
+		await pageTemplatesPage.goto(site.friendlyUrlPath);
+		await pageTemplatesPage.addPageTemplateCollection(getRandomString());
+		await pageTemplatesPage.addWidgetPageTemplate(getRandomString());
+
+		await pageTemplatesPage.goto(site.friendlyUrlPath);
+		await pageTemplatesPage.addWidgetPageTemplate(getRandomString());
+
+		await pageTemplatesPage.goto(site.friendlyUrlPath);
+
+		await productMenuPage.openProductMenuIfClosed();
+		await productMenuPage.goToPublishingExport();
+
+		uiElementsPage.clickNewButton();
+
+		await exportImportPage.page.getByLabel(/Pages\s+\d+\s+Items/i).check();
+		await exportImportPage.page
+			.locator('button.content-link[data-portlettitle="Pages"]')
+			.click();
+
+		expect(
+			exportImportPage.page.getByText('Master Pages (2)', {exact: true})
+		).toBeVisible();
 	}
 );

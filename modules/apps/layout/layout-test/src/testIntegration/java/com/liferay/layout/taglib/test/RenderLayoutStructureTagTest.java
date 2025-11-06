@@ -109,6 +109,7 @@ import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.object.test.util.ObjectRelationshipTestUtil;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cache.MultiVMPool;
@@ -263,7 +264,6 @@ public class RenderLayoutStructureTagTest {
 		ServiceContextThreadLocal.popServiceContext();
 	}
 
-	@FeatureFlag("LPD-21926")
 	@Test
 	@TestInfo({"LPD-50584", "LPD-52416"})
 	public void testDisplayPageTemplateWithMappedFriendlyURLInfoField()
@@ -271,8 +271,8 @@ public class RenderLayoutStructureTagTest {
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), 0, null, false, true, true, true,
-				true, false, false, false, false, null,
+				null, TestPropsValues.getUserId(), 0, null, false, true, true,
+				true, true, false, false, false, false, null,
 				RandomTestUtil.randomLocaleStringMap(),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				RandomTestUtil.randomLocaleStringMap(), true,
@@ -294,8 +294,8 @@ public class RenderLayoutStructureTagTest {
 
 		ObjectDefinition relationshipObjectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), 0, null, false, true, true, true,
-				true, false, false, false, false, null,
+				null, TestPropsValues.getUserId(), 0, null, false, true, true,
+				true, true, false, false, false, false, null,
 				RandomTestUtil.randomLocaleStringMap(),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				RandomTestUtil.randomLocaleStringMap(), true,
@@ -715,6 +715,111 @@ public class RenderLayoutStructureTagTest {
 	}
 
 	@Test
+	@TestInfo("LPD-69237")
+	public void testEscapeFormInputValues() throws Exception {
+		String name = CharPool.LOWER_CASE_A + RandomTestUtil.randomString();
+
+		ObjectDefinition objectDefinition =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				ListUtil.fromArray(
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING,
+						RandomTestUtil.randomString(), name)),
+				ObjectDefinitionConstants.SCOPE_SITE);
+
+		String xssScript = "\"><script>alert('xss')</script>";
+
+		ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
+			_group.getGroupId(), TestPropsValues.getUserId(),
+			objectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			"en_US",
+			HashMapBuilder.<String, Serializable>put(
+				name, xssScript
+			).build(),
+			ServiceContextTestUtil.getServiceContext());
+
+		long classNameId = _portal.getClassNameId(
+			objectDefinition.getClassName());
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
+				_group.getGroupId(), classNameId, 0, true,
+				WorkflowConstants.STATUS_APPROVED);
+
+		Layout layout = _layoutLocalService.getLayout(
+			layoutPageTemplateEntry.getPlid());
+
+		Layout draftLayout = layout.fetchDraftLayout();
+
+		InfoItemFormProvider<?> infoItemFormProvider =
+			_infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemFormProvider.class, objectDefinition.getClassName());
+
+		InfoForm infoForm = infoItemFormProvider.getInfoForm(
+			StringPool.BLANK, _group.getGroupId());
+
+		List<InfoField<?>> allInfoFields = ListUtil.filter(
+			infoForm.getAllInfoFields(), InfoField::isEditable);
+
+		ContentLayoutTestUtil.addFormToLayout(
+			false, String.valueOf(classNameId), "0", draftLayout,
+			_layoutStructureProvider,
+			_segmentsExperienceLocalService.fetchDefaultSegmentsExperienceId(
+				draftLayout.getPlid()),
+			allInfoFields.toArray(new InfoField<?>[0]));
+
+		ContentLayoutTestUtil.publishLayout(draftLayout, layout);
+
+		LayoutDisplayPageProvider<?> layoutDisplayPageProvider =
+			_layoutDisplayPageProviderRegistry.
+				getLayoutDisplayPageProviderByClassName(
+					objectDefinition.getClassName());
+
+		MockHttpServletRequest mockHttpServletRequest =
+			_getMockHttpServletRequest(
+				layout,
+				layoutDisplayPageProvider.getLayoutDisplayPageObjectProvider(
+					new InfoItemReference(
+						objectDefinition.getClassName(),
+						objectEntry.getObjectEntryId())),
+				Collections.emptyMap(), null);
+
+		mockHttpServletRequest.setAttribute(
+			InfoDisplayWebKeys.INFO_ITEM, objectEntry);
+
+		InfoItemDetailsProvider<ObjectEntry> infoItemDetailsProvider =
+			(InfoItemDetailsProvider<ObjectEntry>)
+				_infoItemServiceRegistry.getFirstInfoItemService(
+					InfoItemDetailsProvider.class,
+					objectDefinition.getClassName());
+
+		mockHttpServletRequest.setAttribute(
+			InfoDisplayWebKeys.INFO_ITEM_DETAILS,
+			infoItemDetailsProvider.getInfoItemDetails(objectEntry));
+
+		_serviceContext.setRequest(mockHttpServletRequest);
+
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
+
+		try {
+			MockHttpServletResponse mockHttpServletResponse = _renderLayout(
+				layout, mockHttpServletRequest);
+
+			String content = mockHttpServletResponse.getContentAsString();
+
+			Assert.assertFalse(
+				StringBundler.concat(
+					"Content contains: '", xssScript, "', value: ", content),
+				content.contains(xssScript));
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
+	}
+
+	@Test
 	public void testLayoutStructureRules() throws Exception {
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.publishObjectDefinition(
@@ -780,9 +885,8 @@ public class RenderLayoutStructureTagTest {
 			LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID,
 			"removed-template-id");
 
-		layout = LayoutLocalServiceUtil.updateLayout(
-			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
-			typeSettingsUnicodeProperties.toString());
+		layout = LayoutLocalServiceUtil.updateTypeSettings(
+			layout, typeSettingsUnicodeProperties.toString());
 
 		LayoutTypePortlet layoutTypePortlet =
 			(LayoutTypePortlet)layout.getLayoutType();
@@ -1242,8 +1346,8 @@ public class RenderLayoutStructureTagTest {
 		_addCollectionStyledLayoutStructureItem(
 			assetListEntry, layout, 10, "none", segmentsExperienceId,
 			_fragmentEntryLinkLocalService.addFragmentEntryLink(
-				null, TestPropsValues.getUserId(), _group.getGroupId(), 0, 0,
-				segmentsExperienceId, draftLayout.getPlid(),
+				null, TestPropsValues.getUserId(), _group.getGroupId(), null,
+				null, null, segmentsExperienceId, draftLayout.getPlid(),
 				fragmentEntry.getCss(), fragmentEntry.getHtml(),
 				fragmentEntry.getJs(), fragmentEntry.getConfiguration(),
 				JSONUtil.put(
@@ -1388,8 +1492,8 @@ public class RenderLayoutStructureTagTest {
 			),
 			layout, null, segmentsExperienceId,
 			_fragmentEntryLinkLocalService.addFragmentEntryLink(
-				null, TestPropsValues.getUserId(), _group.getGroupId(), 0, 0,
-				segmentsExperienceId, draftLayout.getPlid(),
+				null, TestPropsValues.getUserId(), _group.getGroupId(), null,
+				null, null, segmentsExperienceId, draftLayout.getPlid(),
 				fragmentEntry.getCss(), fragmentEntry.getHtml(),
 				fragmentEntry.getJs(), fragmentEntry.getConfiguration(),
 				JSONUtil.put(
@@ -1466,10 +1570,11 @@ public class RenderLayoutStructureTagTest {
 				),
 				layout, null, segmentsExperienceId,
 				_fragmentEntryLinkLocalService.addFragmentEntryLink(
-					null, TestPropsValues.getUserId(), _group.getGroupId(), 0,
-					0, segmentsExperienceId, draftLayout.getPlid(),
-					fragmentEntry.getCss(), fragmentEntry.getHtml(),
-					fragmentEntry.getJs(), fragmentEntry.getConfiguration(),
+					null, TestPropsValues.getUserId(), _group.getGroupId(),
+					null, null, null, segmentsExperienceId,
+					draftLayout.getPlid(), fragmentEntry.getCss(),
+					fragmentEntry.getHtml(), fragmentEntry.getJs(),
+					fragmentEntry.getConfiguration(),
 					JSONUtil.put(
 						FragmentEntryProcessorConstants.
 							KEY_EDITABLE_FRAGMENT_ENTRY_PROCESSOR,
@@ -2427,6 +2532,127 @@ public class RenderLayoutStructureTagTest {
 	}
 
 	@Test
+	@TestInfo("LPD-67912")
+	public void testRenderEditionFormWithSuccessMessageWithMappedLayout()
+		throws Exception {
+
+		MockObject mockObject = new MockObject(RandomTestUtil.randomLong());
+
+		InfoField<TextInfoFieldType> infoField1 = _getInfoField(false);
+		String infoField1Value = RandomTestUtil.randomString();
+
+		mockObject.addInfoField(infoField1, infoField1Value);
+
+		InfoField<TextInfoFieldType> infoField2 = _getInfoField(false);
+		String infoField2Value = RandomTestUtil.randomString();
+
+		mockObject.addInfoField(infoField2, infoField2Value);
+
+		try (MockInfoServiceRegistrationHolder
+				mockInfoServiceRegistrationHolder =
+					new MockInfoServiceRegistrationHolder(
+						InfoFieldSet.builder(
+						).infoFieldSetEntries(
+							ListUtil.fromArray(infoField1, infoField2)
+						).build(),
+						mockObject, _portal, _displayPageInfoItemCapability,
+						_editPageInfoItemCapability)) {
+
+			Layout layout1 = _addDisplayPageWithFormAndGetLayout(
+				infoField1, infoField2);
+
+			long segmentsExperienceId =
+				_segmentsExperienceLocalService.
+					fetchDefaultSegmentsExperienceId(layout1.getPlid());
+
+			LayoutStructure layoutStructure =
+				_layoutStructureProvider.getLayoutStructure(
+					layout1.getPlid(), segmentsExperienceId);
+
+			Layout layout2 = LayoutTestUtil.addTypeContentLayout(_group);
+
+			List<FormStyledLayoutStructureItem> formStyledLayoutStructureItems =
+				layoutStructure.getFormStyledLayoutStructureItems();
+
+			FormStyledLayoutStructureItem formStyledLayoutStructureItem =
+				formStyledLayoutStructureItems.get(0);
+
+			formStyledLayoutStructureItem.setSuccessMessageJSONObject(
+				JSONUtil.put(
+					"layout",
+					JSONUtil.put(
+						"externalReferenceCode",
+						layout2.getExternalReferenceCode())));
+
+			_layoutPageTemplateStructureLocalService.
+				updateLayoutPageTemplateStructureData(
+					TestPropsValues.getUserId(), _group.getGroupId(),
+					layout1.getPlid(), segmentsExperienceId,
+					layoutStructure.toString());
+
+			MockHttpServletRequest mockHttpServletRequest =
+				_getMockHttpServletRequest(
+					layout1,
+					mockInfoServiceRegistrationHolder.
+						getMockObjectLayoutDisplayPageObjectProvider());
+
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)mockHttpServletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
+			themeDisplay.setRequest(mockHttpServletRequest);
+
+			MockHttpServletResponse mockHttpServletResponse = _renderLayout(
+				layout1, mockHttpServletRequest);
+
+			String content = mockHttpServletResponse.getContentAsString();
+
+			Assert.assertTrue(
+				content.contains(
+					"<input name=\"redirect\" type=\"hidden\" value=\"" +
+						_portal.getLayoutURL(layout2, themeDisplay)));
+
+			Group group = _groupLocalService.getGroup(
+				TestPropsValues.getGroupId());
+
+			Layout layout3 = _layoutLocalService.addLayout(
+				layout2.getExternalReferenceCode(), TestPropsValues.getUserId(),
+				group.getGroupId(), false,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
+				RandomTestUtil.randomString(), StringPool.BLANK,
+				StringPool.BLANK, LayoutConstants.TYPE_CONTENT, false,
+				StringPool.BLANK, _serviceContext);
+
+			formStyledLayoutStructureItem.setSuccessMessageJSONObject(
+				JSONUtil.put(
+					"layout",
+					JSONUtil.put(
+						"externalReferenceCode",
+						layout2.getExternalReferenceCode()
+					).put(
+						"scopeExternalReferenceCode",
+						group.getExternalReferenceCode()
+					)));
+
+			_layoutPageTemplateStructureLocalService.
+				updateLayoutPageTemplateStructureData(
+					TestPropsValues.getUserId(), _group.getGroupId(),
+					layout1.getPlid(), segmentsExperienceId,
+					layoutStructure.toString());
+
+			mockHttpServletResponse = _renderLayout(
+				layout1, mockHttpServletRequest);
+
+			content = mockHttpServletResponse.getContentAsString();
+
+			Assert.assertTrue(
+				content.contains(
+					"<input name=\"redirect\" type=\"hidden\" value=\"" +
+						_portal.getLayoutURL(layout3, themeDisplay)));
+		}
+	}
+
+	@Test
 	public void testRenderFormWithInfoFormException() throws Exception {
 		InfoField<TextInfoFieldType> infoField = _getInfoField(false);
 
@@ -3093,7 +3319,8 @@ public class RenderLayoutStructureTagTest {
 						JSONUtil.put("inputFieldId", infoField.getUniqueId())
 					).toString(),
 					fragmentEntry.getCss(), fragmentEntry.getConfiguration(),
-					fragmentEntry.getFragmentEntryId(), fragmentEntry.getHtml(),
+					fragmentEntry.getExternalReferenceCode(),
+					fragmentEntry.getScopeERC(), fragmentEntry.getHtml(),
 					fragmentEntry.getJs(), layout,
 					fragmentEntry.getFragmentEntryKey(),
 					fragmentEntry.getType(), parentItemId, position,
@@ -3115,7 +3342,8 @@ public class RenderLayoutStructureTagTest {
 		FragmentEntryLink fragmentEntryLink =
 			ContentLayoutTestUtil.addFragmentEntryLinkToLayout(
 				"{}", fragmentEntry.getCss(), fragmentEntry.getConfiguration(),
-				fragmentEntry.getFragmentEntryId(), fragmentEntry.getHtml(),
+				fragmentEntry.getExternalReferenceCode(),
+				fragmentEntry.getScopeERC(), fragmentEntry.getHtml(),
 				fragmentEntry.getJs(), layout,
 				fragmentEntry.getFragmentEntryKey(), fragmentEntry.getType(),
 				parentItemId, position, segmentsExperienceId);
@@ -3178,8 +3406,8 @@ public class RenderLayoutStructureTagTest {
 		for (int i = 0; i < count; i++) {
 			fragmentEntryLinks[i] =
 				_fragmentEntryLinkLocalService.addFragmentEntryLink(
-					null, TestPropsValues.getUserId(), _group.getGroupId(), 0,
-					0, segmentsExperienceId, layout.getPlid(),
+					null, TestPropsValues.getUserId(), _group.getGroupId(),
+					null, null, null, segmentsExperienceId, layout.getPlid(),
 					fragmentEntry.getCss(), fragmentEntry.getHtml(),
 					fragmentEntry.getJs(), fragmentEntry.getConfiguration(),
 					JSONUtil.put(
@@ -3207,7 +3435,8 @@ public class RenderLayoutStructureTagTest {
 				editableFragmentEntryProcessorJSONObject
 			).toString(),
 			fragmentEntry.getCss(), fragmentEntry.getConfiguration(),
-			fragmentEntry.getFragmentEntryId(), fragmentEntry.getHtml(),
+			fragmentEntry.getExternalReferenceCode(),
+			fragmentEntry.getScopeERC(), fragmentEntry.getHtml(),
 			fragmentEntry.getJs(), layout, fragmentEntry.getFragmentEntryKey(),
 			fragmentEntry.getType(), parentItemId, position,
 			segmentsExperienceId);
@@ -3241,7 +3470,8 @@ public class RenderLayoutStructureTagTest {
 				editableFragmentEntryProcessorJSONObject
 			).toString(),
 			fragmentEntry.getCss(), fragmentEntry.getConfiguration(),
-			fragmentEntry.getFragmentEntryId(), fragmentEntry.getHtml(),
+			fragmentEntry.getExternalReferenceCode(),
+			fragmentEntry.getScopeERC(), fragmentEntry.getHtml(),
 			fragmentEntry.getJs(), layout, fragmentEntry.getFragmentEntryKey(),
 			fragmentEntry.getType(), null, 0, segmentsExperienceId);
 	}

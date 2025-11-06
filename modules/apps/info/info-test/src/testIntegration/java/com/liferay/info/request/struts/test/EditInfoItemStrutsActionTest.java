@@ -162,7 +162,6 @@ public class EditInfoItemStrutsActionTest {
 		_layout = _addLayout();
 	}
 
-	@FeatureFlag("LPD-21926")
 	@Test
 	@TestInfo("LPD-50584")
 	public void testAddAndUpdateInfoItemFriendlyURL() throws Exception {
@@ -1014,7 +1013,7 @@ public class EditInfoItemStrutsActionTest {
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				_user.getUserId(), 0, null, false, true,
+				null, _user.getUserId(), 0, null, false, true,
 				enableFriendlyURLCustomization, true,
 				FeatureFlagManagerUtil.isEnabled(
 					TestPropsValues.getCompanyId(), "LPD-32050"),

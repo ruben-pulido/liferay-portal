@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom';
 import {render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -53,7 +53,7 @@ describe('ScheduleField', () => {
 	});
 
 	it('renders ScheduleField with Never Expire checkbox', async () => {
-		renderComponent({neverExpire: true});
+		renderComponent({neverCheckbox: {label: 'never-expire', value: true}});
 
 		const input = screen.getByPlaceholderText('MM/DD/YYYY --:-- --');
 		const neverExpire = screen.getByLabelText('never-expire');

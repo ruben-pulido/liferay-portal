@@ -47,8 +47,37 @@ public class HashedFilesRegistryImplTest {
 
 	@Test
 	public void testGetResource() throws Exception {
+
+		// Nonroot context plus proxy setup
+
 		ReflectionTestUtil.setFieldValue(
-			_hashedFilesRegistryImpl, "_portal", _mockPortal(StringPool.BLANK));
+			_hashedFilesRegistryImpl, "_portal", _mockPortal("dxp", "liferay"));
+		ReflectionTestUtil.setFieldValue(
+			_hashedFilesRegistryImpl, "_serviceTrackerMap",
+			_mockServiceTrackerMap("/main.css", "/dxp/o/frontend-js-web"));
+
+		Assert.assertNotNull(
+			_hashedFilesRegistryImpl.getResource(
+				"/dxp/o/frontend-js-web/main.css"));
+
+		// Nonroot context setup
+
+		ReflectionTestUtil.setFieldValue(
+			_hashedFilesRegistryImpl, "_portal",
+			_mockPortal("dxp", StringPool.BLANK));
+		ReflectionTestUtil.setFieldValue(
+			_hashedFilesRegistryImpl, "_serviceTrackerMap",
+			_mockServiceTrackerMap("/main.css", "/dxp/o/frontend-js-web"));
+
+		Assert.assertNotNull(
+			_hashedFilesRegistryImpl.getResource(
+				"/dxp/o/frontend-js-web/main.css"));
+
+		// Proxy setup
+
+		ReflectionTestUtil.setFieldValue(
+			_hashedFilesRegistryImpl, "_portal",
+			_mockPortal(StringPool.BLANK, "liferay"));
 		ReflectionTestUtil.setFieldValue(
 			_hashedFilesRegistryImpl, "_serviceTrackerMap",
 			_mockServiceTrackerMap("/main.css", "/o/frontend-js-web"));
@@ -57,24 +86,33 @@ public class HashedFilesRegistryImplTest {
 			_hashedFilesRegistryImpl.getResource(
 				"/o/frontend-js-web/main.css"));
 
+		// Vanilla setup
+
 		ReflectionTestUtil.setFieldValue(
-			_hashedFilesRegistryImpl, "_portal", _mockPortal("liferay"));
+			_hashedFilesRegistryImpl, "_portal",
+			_mockPortal(StringPool.BLANK, StringPool.BLANK));
 		ReflectionTestUtil.setFieldValue(
 			_hashedFilesRegistryImpl, "_serviceTrackerMap",
-			_mockServiceTrackerMap("/main.css", "/liferay/o/frontend-js-web"));
+			_mockServiceTrackerMap("/main.css", "/o/frontend-js-web"));
 
 		Assert.assertNotNull(
 			_hashedFilesRegistryImpl.getResource(
-				"/liferay/o/frontend-js-web/main.css"));
+				"/o/frontend-js-web/main.css"));
 	}
 
-	private Portal _mockPortal(String pathContext) {
+	private Portal _mockPortal(String contextPath, String proxyPath) {
 		Portal portal = Mockito.mock(Portal.class);
 
 		Mockito.when(
 			portal.getPathContext()
 		).thenReturn(
-			pathContext
+			proxyPath + contextPath
+		);
+
+		Mockito.when(
+			portal.getPathProxy()
+		).thenReturn(
+			proxyPath
 		);
 
 		return portal;

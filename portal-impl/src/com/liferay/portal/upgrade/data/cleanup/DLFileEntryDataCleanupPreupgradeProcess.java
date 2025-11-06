@@ -78,9 +78,8 @@ public class DLFileEntryDataCleanupPreupgradeProcess
 		return new DataCleanupPreupgradeProcess(
 			new FilterableAllTablesOrphanReferencesDataCleanupPreupgradeProcess(
 				StringBundler.concat(
-					"[$SOURCE_TABLE_ALIAS$].classNameId in (select ",
-					"classNameId from ClassName_ where value in ('",
-					FileEntry.class.getName(), "', '",
+					"classNameId in (select classNameId from ClassName_ where ",
+					"value in ('", FileEntry.class.getName(), "', '",
 					DLFileEntry.class.getName(), "'))"),
 				new String[] {"classNameId"}, "classPK",
 				new String[] {"fileEntryId"}, "DLFileEntry"),
@@ -97,11 +96,8 @@ public class DLFileEntryDataCleanupPreupgradeProcess
 				null, "toFileEntryId", "DLFileShortcut", "fileEntryId",
 				"DLFileEntry"),
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
-				StringBundler.concat(
-					"[$SOURCE_TABLE_ALIAS$].name = '",
-					DLFileEntry.class.getName(), "'"),
-				"primKeyId", "ResourcePermission", "fileEntryId",
-				"DLFileEntry"));
+				"name = '" + DLFileEntry.class.getName() + "'", "primKeyId",
+				"ResourcePermission", "fileEntryId", "DLFileEntry"));
 	}
 
 	private DataCleanupPreupgradeProcess
@@ -154,9 +150,9 @@ public class DLFileEntryDataCleanupPreupgradeProcess
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
 				StringBundler.concat(
 					"exists (select 1 from DDMStructure where ",
-					"[$SOURCE_TABLE_ALIAS$].structureId = DDMStructure.",
-					"structureId and DDMStructure.classNameId in (select ",
-					"classNameId from ClassName_ where value in ('",
+					"DDMStorageLink.structureId = DDMStructure.structureId ",
+					"and DDMStructure.classNameId in (select classNameId from ",
+					"ClassName_ where value in ('",
 					DLFileEntryMetadata.class.getName(), "', '",
 					RawMetadataProcessor.class.getName(), "')))"),
 				"classPK", "DDMStorageLink", "DDMStorageId",
@@ -169,17 +165,13 @@ public class DLFileEntryDataCleanupPreupgradeProcess
 		return new DataCleanupPreupgradeProcess(
 			new FilterableAllTablesOrphanReferencesDataCleanupPreupgradeProcess(
 				StringBundler.concat(
-					"[$SOURCE_TABLE_ALIAS$].classNameId = (select classNameId ",
-					"from ClassName_ where value = '",
-					DLFileShortcut.class.getName(), "')"),
+					"classNameId = (select classNameId from ClassName_ where ",
+					"value = '", DLFileShortcut.class.getName(), "')"),
 				new String[] {"classNameId"}, "classPK",
 				new String[] {"fileShortcutId"}, "DLFileShortcut"),
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
-				StringBundler.concat(
-					"[$SOURCE_TABLE_ALIAS$].name = '",
-					DLFileShortcut.class.getName(), "'"),
-				"primKeyId", "ResourcePermission", "fileShortcutId",
-				"DLFileShortcut"));
+				"name = '" + DLFileShortcut.class.getName() + "'", "primKeyId",
+				"ResourcePermission", "fileShortcutId", "DLFileShortcut"));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

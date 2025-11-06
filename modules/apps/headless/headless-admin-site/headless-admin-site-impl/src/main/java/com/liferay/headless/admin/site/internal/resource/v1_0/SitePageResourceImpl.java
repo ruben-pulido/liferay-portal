@@ -137,7 +137,7 @@ public class SitePageResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
-			public String getItemClassName() {
+			public String getModelClassName() {
 				return Layout.class.getName();
 			}
 
@@ -202,6 +202,11 @@ public class SitePageResourceImpl
 			@Override
 			public String getPortletId() {
 				return LayoutAdminPortletKeys.LAYOUT_SET_LAYOUTS;
+			}
+
+			@Override
+			public String getResourceClassName() {
+				return SitePageResourceImpl.class.getName();
 			}
 
 			@Override

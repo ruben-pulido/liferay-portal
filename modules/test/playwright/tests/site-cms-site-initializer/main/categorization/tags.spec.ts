@@ -17,7 +17,6 @@ const test = mergeTests(
 	cmsPagesTest,
 	featureFlagsTest({
 		'LPD-17564': {enabled: true},
-		'LPS-179669': {enabled: true},
 	}),
 	loginTest()
 );
@@ -154,7 +153,7 @@ test(
 
 		await page.getByLabel('Space Selector').click();
 
-		await page.getByLabel('Default').last().click();
+		await page.getByRole('option', {name: 'D Default'}).click();
 
 		await clickAndExpectToBeVisible({
 			target: page.getByText(`Success:${name} was created successfully.`),
@@ -244,7 +243,7 @@ test('Bulk Merge tags', {tag: '@LPD-43388'}, async ({page, tagsPage}) => {
 		trigger: tagsPage.saveButton,
 	});
 
-	await page.getByRole('button', {name: 'OK'}).click();
+	await page.getByRole('button', {name: 'Save'}).click();
 
 	await expect(tag1).toBeVisible();
 	await expect(tag2).not.toBeVisible();
@@ -301,7 +300,7 @@ test('Merge tags', {tag: '@LPD-43388'}, async ({page, tagsPage}) => {
 		target: page.getByText(
 			`Success:${tagName2} and ${tagName1} have been successfully merged.`
 		),
-		trigger: page.getByRole('button', {name: 'OK'}),
+		trigger: page.getByRole('button', {name: 'Save'}),
 	});
 
 	await expect(tag1).toBeVisible();
@@ -377,5 +376,35 @@ test(
 		await tagsPage.deleteTag(name1);
 
 		await tagsPage.deleteTag(name2);
+	}
+);
+
+test(
+	'UI error appears when attempting to create a tag with an invalid character',
+	{tag: '@LPD-69332'},
+	async ({page, tagsPage}) => {
+		await tagsPage.goto();
+
+		await tagsPage.newTagButton.click();
+
+		await page.getByLabel('NameRequired').fill('<Tag>');
+
+		await clickAndExpectToBeVisible({
+			target: page.getByText(
+				'Name cannot contain the following invalid characters:'
+			),
+			trigger: tagsPage.saveButton,
+		});
+
+		await clickAndExpectToBeHidden({
+			target: page
+				.locator('.modal-body')
+				.getByText(
+					'Name cannot contain the following invalid characters:'
+				),
+			trigger: page.getByText('Cancel'),
+		});
+
+		await expect(tagsPage.getItem('<Tag>')).not.toBeVisible();
 	}
 );

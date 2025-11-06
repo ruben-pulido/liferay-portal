@@ -130,7 +130,10 @@ public class ObjectEntryModelResourcePermission
 
 		if ((objectEntry.getRootObjectEntryId() != 0) &&
 			!_isObjectActionName(
-				actionId, objectEntry.getObjectDefinitionId())) {
+				actionId, objectEntry.getObjectDefinitionId()) &&
+			!_isObjectFieldName(
+				actionId, objectEntry.getCompanyId(),
+				objectEntry.getObjectDefinitionId())) {
 
 			ObjectEntry rootObjectEntry =
 				_objectEntryLocalService.fetchObjectEntry(
@@ -244,10 +247,7 @@ public class ObjectEntryModelResourcePermission
 			ObjectEntry objectEntry, User user)
 		throws PortalException {
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				objectDefinition.getCompanyId(), "LPD-6233") ||
-			!actionId.equals(ActionKeys.UPDATE)) {
-
+		if (!actionId.equals(ActionKeys.UPDATE)) {
 			return false;
 		}
 
@@ -300,6 +300,28 @@ public class ObjectEntryModelResourcePermission
 					ObjectActionTriggerConstants.KEY_STANDALONE)) {
 
 			if (Objects.equals(objectAction.getName(), actionId)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean _isObjectFieldName(
+		String actionId, long companyId, long objectDefinitionId) {
+
+		if (!FeatureFlagManagerUtil.isEnabled(companyId, "LPD-17564")) {
+			return false;
+		}
+
+		for (ObjectField objectField :
+				_objectFieldLocalService.getObjectFieldsByBusinessType(
+					objectDefinitionId,
+					ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT)) {
+
+			if (Objects.equals(
+					objectField.getAttachmentDownloadActionKey(), actionId)) {
+
 				return true;
 			}
 		}

@@ -21,7 +21,6 @@ const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-17564': {enabled: true},
-		'LPS-179669': {enabled: true},
 	}),
 	loginTest()
 );
@@ -171,27 +170,27 @@ test(
 			.click();
 
 		expect(
+			page.getByRole('menuitem', {exact: true, name: 'Edit'})
+		).toBeVisible();
+		expect(
 			page.getByRole('menuitem', {exact: true, name: 'View Usages'})
 		).toBeVisible();
 		expect(
 			page.getByRole('menuitem', {exact: true, name: 'Make a Copy'})
 		).toBeVisible();
 		expect(
-			page.getByRole('menuitem', {exact: true, name: 'Permissions'})
-		).toBeVisible();
-
-		expect(
-			page.getByRole('menuitem', {exact: true, name: 'Edit'})
-		).toBeHidden();
-		expect(
 			page.getByRole('menuitem', {exact: true, name: 'Export as JSON'})
-		).toBeHidden();
+		).toBeVisible();
 		expect(
 			page.getByRole('menuitem', {
 				exact: true,
 				name: 'Import and Override',
 			})
-		).toBeHidden();
+		).toBeVisible();
+		expect(
+			page.getByRole('menuitem', {exact: true, name: 'Permissions'})
+		).toBeVisible();
+
 		expect(
 			page.getByRole('menuitem', {exact: true, name: 'Delete'})
 		).toBeHidden();
@@ -233,5 +232,15 @@ test(
 		expect(
 			page.getByRole('menuitem', {exact: true, name: 'Delete'})
 		).toBeVisible();
+	}
+);
+
+test(
+	'There is no checkbox to select structures',
+	{tag: '@LPD-69431'},
+	async ({page, structuresPage}) => {
+		await structuresPage.goto();
+
+		await expect(page.getByRole('checkbox')).toHaveCount(0);
 	}
 );

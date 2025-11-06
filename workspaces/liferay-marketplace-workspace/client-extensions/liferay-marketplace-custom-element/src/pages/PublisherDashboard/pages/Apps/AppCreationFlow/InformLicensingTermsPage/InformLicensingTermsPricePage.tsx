@@ -27,7 +27,7 @@ import {
 	useAppContext,
 } from '../AppContext/AppManageState';
 import {ActionTypes} from '../AppContext/actionTypes';
-import IconButton from './components/IconButton/IconButton';
+import ButtonWithIcon from './../../../../../../components/ButtonWithIcon';
 import LicensePriceCard from './components/LicensePriceCard';
 
 import './InformLicensingTermsPage.scss';
@@ -213,14 +213,15 @@ export function InformLicensingTermsPricePage({
 							}
 						/>
 					) : (
-						<IconButton
+						<ButtonWithIcon
 							className="icon-button py-3 w-100"
 							onClick={() =>
 								handleAddPriceTier(ProductLicenseTier.DEVELOPER)
 							}
+							symbol="plus"
 						>
 							{i18n.translate('add-developer-licenses')}
-						</IconButton>
+						</ButtonWithIcon>
 					)}
 				</Section>
 			)}

@@ -94,13 +94,13 @@ public class MasterPageResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
-			public String getItemClassName() {
-				return LayoutPageTemplateEntry.class.getName();
+			public String getLabelLanguageKey() {
+				return "master-pages";
 			}
 
 			@Override
-			public String getLabel() {
-				return "master-pages";
+			public String getModelClassName() {
+				return LayoutPageTemplateEntry.class.getName();
 			}
 
 			@Override
@@ -111,6 +111,11 @@ public class MasterPageResourceImpl
 			@Override
 			public String getPortletId() {
 				return LayoutAdminPortletKeys.GROUP_PAGES;
+			}
+
+			@Override
+			public String getResourceClassName() {
+				return MasterPageResourceImpl.class.getName();
 			}
 
 			@Override

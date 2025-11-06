@@ -43,35 +43,18 @@ public class OrphanReferencesDataCleanupUtil {
 			return;
 		}
 
-		boolean aliasNeeded = false;
-
-		DB db = DBManagerUtil.getDB();
-
-		DBType dbType = db.getDBType();
-
-		if ((dbType == DBType.MYSQL) || (dbType == DBType.SQLSERVER) ||
-			(dbType == DBType.MARIADB)) {
-
-			aliasNeeded = true;
-		}
-
 		try (PreparedStatement preparedStatement1 = connection.prepareStatement(
 				StringBundler.concat(
-					"select ", _SOURCE_TABLE_ALIAS, StringPool.PERIOD,
-					sourceColumnName, ", count(1) from ", sourceTableName,
-					StringPool.SPACE, _SOURCE_TABLE_ALIAS,
+					"select ", sourceColumnName, ", count(1) from ",
+					sourceTableName,
 					getWhereClause(
 						connection, sourceAdditionalWhereClause,
 						sourceColumnName, sourceTableName, targetColumnNames,
 						targetTableName),
-					" group by ", _SOURCE_TABLE_ALIAS, StringPool.PERIOD,
-					sourceColumnName));
+					" group by ", sourceColumnName));
 			PreparedStatement preparedStatement2 = connection.prepareStatement(
 				StringBundler.concat(
-					"delete ",
-					aliasNeeded ? (_SOURCE_TABLE_ALIAS + StringPool.SPACE) : "",
-					"from ", sourceTableName, StringPool.SPACE,
-					_SOURCE_TABLE_ALIAS,
+					"delete from ", sourceTableName,
 					getWhereClause(
 						connection, sourceAdditionalWhereClause,
 						sourceColumnName, sourceTableName, targetColumnNames,
@@ -113,10 +96,6 @@ public class OrphanReferencesDataCleanupUtil {
 		return _normalizedExcludedTableNames;
 	}
 
-	public static String getSourceTableAlias() {
-		return _SOURCE_TABLE_ALIAS;
-	}
-
 	public static String getWhereClause(
 			Connection connection, String sourceAdditionalWhereClause,
 			String sourceColumnName, String sourceTableName,
@@ -129,106 +108,16 @@ public class OrphanReferencesDataCleanupUtil {
 		DBInspector dbInspector = new DBInspector(connection);
 
 		if (dbInspector.isNumeric(sourceTableName, sourceColumnName)) {
-			additionalNullCheck = StringBundler.concat(
-				" and ", _SOURCE_TABLE_ALIAS, StringPool.PERIOD,
-				sourceColumnName, " != 0");
+			additionalNullCheck = " and " + sourceColumnName + " != 0";
 		}
 		else if (db.getDBType() != DBType.ORACLE) {
-			additionalNullCheck = StringBundler.concat(
-				" and ", _SOURCE_TABLE_ALIAS, StringPool.PERIOD,
-				sourceColumnName, " != ''");
+			additionalNullCheck = " and " + sourceColumnName + " != ''";
 		}
-
-		String whereClause = null;
-
-		if (db.getDBType() == DBType.MYSQL) {
-			whereClause = _getMySQLWhereClause(
-				dbInspector, sourceColumnName, sourceTableName,
-				targetColumnNames, targetTableName);
-		}
-		else {
-			whereClause = _getOtherDBsWhereClause(
-				dbInspector, sourceColumnName, sourceTableName,
-				targetColumnNames, targetTableName);
-		}
-
-		sourceAdditionalWhereClause = StringUtil.replace(
-			sourceAdditionalWhereClause, "[$SOURCE_TABLE_ALIAS$]",
-			_SOURCE_TABLE_ALIAS);
-
-		return StringBundler.concat(
-			whereClause, " and ",
-			_SOURCE_TABLE_ALIAS + StringPool.PERIOD + sourceColumnName,
-			" is not null", additionalNullCheck,
-			(sourceAdditionalWhereClause != null) ?
-				" and " + sourceAdditionalWhereClause : "");
-	}
-
-	private static String _getMySQLWhereClause(
-		DBInspector dbInspector, String sourceColumnName,
-		String sourceTableName, String[] targetColumnNames,
-		String targetTableName) {
-
-		StringBundler sb = new StringBundler(
-			(15 * targetColumnNames.length) + 1);
-
-		for (String targetColumnName : targetColumnNames) {
-			String aliasTableName =
-				targetTableName + StringPool.UNDERLINE + targetColumnName;
-
-			sb.append(" left join ");
-			sb.append(targetTableName);
-			sb.append(StringPool.SPACE);
-			sb.append(aliasTableName);
-			sb.append(StringPool.SPACE);
-			sb.append(" on ");
-			sb.append(aliasTableName);
-			sb.append(StringPool.PERIOD);
-			sb.append(targetColumnName);
-			sb.append(" = ");
-			sb.append(_SOURCE_TABLE_ALIAS);
-			sb.append(StringPool.PERIOD);
-			sb.append(sourceColumnName);
-
-			if (StringUtil.equalsIgnoreCase("Company", targetTableName) &&
-				PropsValues.DATABASE_PARTITION_ENABLED &&
-				!dbInspector.isControlTable(sourceTableName)) {
-
-				sb.append(" and ");
-				sb.append(aliasTableName);
-				sb.append(".companyId = ");
-				sb.append(CompanyThreadLocal.getCompanyId());
-			}
-		}
-
-		sb.append(" where ");
-
-		for (String targetColumnName : targetColumnNames) {
-			String aliasTableName =
-				targetTableName + StringPool.UNDERLINE + targetColumnName;
-
-			sb.append(aliasTableName);
-
-			sb.append(StringPool.PERIOD);
-			sb.append(targetColumnName);
-			sb.append(" is null");
-			sb.append(" and ");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		return sb.toString();
-	}
-
-	private static String _getOtherDBsWhereClause(
-		DBInspector dbInspector, String sourceColumnName,
-		String sourceTableName, String[] targetColumnNames,
-		String targetTableName) {
 
 		StringBundler sb = new StringBundler(
 			(8 * targetColumnNames.length) + 5);
 
-		sb.append(" where not exists (select 1 from ");
+		sb.append("not exists (select 1 from ");
 		sb.append(targetTableName);
 		sb.append(" where (");
 
@@ -237,7 +126,7 @@ public class OrphanReferencesDataCleanupUtil {
 			sb.append(StringPool.PERIOD);
 			sb.append(targetColumnName);
 			sb.append(" = ");
-			sb.append(_SOURCE_TABLE_ALIAS);
+			sb.append(sourceTableName);
 			sb.append(StringPool.PERIOD);
 			sb.append(sourceColumnName);
 			sb.append(" or ");
@@ -256,10 +145,12 @@ public class OrphanReferencesDataCleanupUtil {
 
 		sb.append(")");
 
-		return sb.toString();
+		return StringBundler.concat(
+			" where ", sb, " and ", sourceColumnName, " is not null",
+			additionalNullCheck,
+			(sourceAdditionalWhereClause != null) ?
+				" and " + sourceAdditionalWhereClause : "");
 	}
-
-	private static final String _SOURCE_TABLE_ALIAS = "s";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		OrphanReferencesDataCleanupUtil.class);

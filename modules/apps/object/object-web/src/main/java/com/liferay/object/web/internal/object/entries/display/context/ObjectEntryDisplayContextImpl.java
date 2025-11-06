@@ -1495,6 +1495,17 @@ public class ObjectEntryDisplayContextImpl
 				ObjectWebKeys.OBJECT_ENTRY_EXTERNAL_REFERENCE_CODE);
 		}
 
+		HttpServletRequest httpServletRequest =
+			_objectRequestHelper.getRequest();
+
+		long groupId = GetterUtil.getLong(
+			httpServletRequest.getAttribute(
+				ObjectWebKeys.OBJECT_ENTRY_GROUP_ID));
+
+		if (groupId == 0) {
+			groupId = _getGroupId();
+		}
+
 		ObjectRelationship objectRelationship =
 			_objectRelationshipLocalService.fetchObjectRelationship(
 				ParamUtil.getLong(
@@ -1508,13 +1519,13 @@ public class ObjectEntryDisplayContextImpl
 				_objectEntry = defaultObjectEntryManager.getRelatedObjectEntry(
 					_getDTOConverterContext(), externalReferenceCode,
 					objectRelationship, getParentObjectEntryERC(),
-					String.valueOf(_getGroupId()));
+					String.valueOf(groupId));
 			}
 			else {
 				_objectEntry = objectEntryManager.getObjectEntry(
 					_objectRequestHelper.getCompanyId(),
 					_getDTOConverterContext(), externalReferenceCode,
-					objectDefinition, String.valueOf(_getGroupId()));
+					objectDefinition, String.valueOf(groupId));
 			}
 		}
 		catch (Exception exception) {

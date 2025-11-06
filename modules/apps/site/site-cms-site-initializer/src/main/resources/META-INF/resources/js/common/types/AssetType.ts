@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {SharingPermission} from './SharingPermission';
+
 export interface IAssetFile {
 	alternativeText?: string;
 	externalReferenceCode: string;
@@ -30,10 +32,14 @@ export interface IAssetObjectEntry {
 	file?: IAssetFile;
 	friendlyUrlPath: string;
 	id: number;
-	keywords?: string[];
+	keywords: string[];
 	objectEntryFolderExternalReferenceCode: string;
 	objectEntryFolderId: number;
 	reviewDate: string;
+	scope?: {
+		externalReferenceCode: string;
+		type: string;
+	};
 	scopeId: number;
 	scopeKey: string;
 	status: {
@@ -42,19 +48,24 @@ export interface IAssetObjectEntry {
 		label_i18n: string;
 	};
 	systemProperties: IAssetVersion;
-	taxonomyCategoryBriefs?: any[];
+	taxonomyCategoryBriefs: any[];
 	taxonomyCategoryIds?: number[];
 	title: string;
 	title_i18n: any;
 }
 
 export interface IAssetVersion {
+	scope?: {
+		externalReferenceCode: string;
+		type: string;
+	};
 	version: {
 		number: number;
 	};
 }
 
 export interface ISearchAssetObjectEntry {
+	actionIds?: SharingPermission[];
 	actions: any;
 	dateCreated: string;
 	dateModified: string;

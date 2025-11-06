@@ -5,9 +5,11 @@
 
 interface ItemData {
 	actions: {
+		copy: Action;
 		delete: Action;
 		expire: Action;
 		get: Action;
+		move: Action;
 		replace: Action;
 		restore: Action;
 		update: Action;

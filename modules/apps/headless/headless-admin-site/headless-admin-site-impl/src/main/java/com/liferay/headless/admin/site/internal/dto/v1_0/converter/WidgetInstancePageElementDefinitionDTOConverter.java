@@ -101,8 +101,11 @@ public class WidgetInstancePageElementDefinitionDTOConverter
 			setDraftWidgetInstanceExternalReferenceCode(
 				() -> {
 					FragmentEntryLink originalFragmentEntryLink =
-						_fragmentEntryLinkLocalService.fetchFragmentEntryLink(
-							fragmentEntryLink.getOriginalFragmentEntryLinkId());
+						_fragmentEntryLinkLocalService.
+							fetchFragmentEntryLinkByExternalReferenceCode(
+								fragmentEntryLink.
+									getOriginalFragmentEntryLinkERC(),
+								fragmentEntryLink.getGroupId());
 
 					if (originalFragmentEntryLink == null) {
 						return null;
@@ -160,17 +163,15 @@ public class WidgetInstancePageElementDefinitionDTOConverter
 
 			String[] values = entrySet.getValue();
 
-			if (ArrayUtil.isNotEmpty(values)) {
-				if (values.length > 1) {
-					portletConfigurationMap.put(entrySet.getKey(), values);
-				}
-				else {
-					portletConfigurationMap.put(entrySet.getKey(), values[0]);
-				}
-			}
-			else {
+			if (values == null) {
 				portletConfigurationMap.put(
 					entrySet.getKey(), StringPool.BLANK);
+			}
+			else if (values.length == 1) {
+				portletConfigurationMap.put(entrySet.getKey(), values[0]);
+			}
+			else {
+				portletConfigurationMap.put(entrySet.getKey(), values);
 			}
 		}
 
@@ -218,11 +219,17 @@ public class WidgetInstancePageElementDefinitionDTOConverter
 
 		return TransformUtil.transformToArray(
 			permissionsMap.entrySet(),
-			entry -> new WidgetPermission() {
-				{
-					setActionIds(entry::getValue);
-					setRoleName(entry::getKey);
+			entry -> {
+				if (ArrayUtil.isEmpty(entry.getValue())) {
+					return null;
 				}
+
+				return new WidgetPermission() {
+					{
+						setActionIds(entry::getValue);
+						setRoleName(entry::getKey);
+					}
+				};
 			},
 			WidgetPermission.class);
 	}

@@ -1418,7 +1418,6 @@ public class ObjectEntryLocalServiceTest {
 		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
 	}
 
-	@FeatureFlag("LPD-6233")
 	@Test
 	public void testAddObjectEntryWithAssigneeObjectField() throws Exception {
 		ObjectDefinition objectDefinition =
@@ -1670,13 +1669,16 @@ public class ObjectEntryLocalServiceTest {
 				StringBundler.concat(
 					"select ", objectField.getSortableDBColumnName(), " from ",
 					objectField.getDBTableName(), " where ",
-					_objectDefinition.getPKObjectFieldDBColumnName(), " = ",
-					objectEntry1.getObjectEntryId()));
-			ResultSet resultSet = preparedStatement.executeQuery()) {
+					_objectDefinition.getPKObjectFieldDBColumnName(),
+					" = ?"))) {
 
-			resultSet.next();
+			preparedStatement.setLong(1, objectEntry1.getObjectEntryId());
 
-			Assert.assertEquals(200, resultSet.getLong(1));
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				resultSet.next();
+
+				Assert.assertEquals(200, resultSet.getLong(1));
+			}
 		}
 
 		// Auto increment object field value must always be unique
@@ -1914,16 +1916,19 @@ public class ObjectEntryLocalServiceTest {
 				StringBundler.concat(
 					"select ", objectField.getDBColumnName(), " from ",
 					_objectDefinition.getExtensionDBTableName(), " where ",
-					_objectDefinition.getPKObjectFieldDBColumnName(), " = ",
-					objectEntry.getObjectEntryId()));
-			ResultSet resultSet = preparedStatement.executeQuery()) {
+					_objectDefinition.getPKObjectFieldDBColumnName(),
+					" = ?"))) {
 
-			resultSet.next();
+			preparedStatement.setLong(1, objectEntry.getObjectEntryId());
 
-			Assert.assertEquals(
-				_encryptor.encrypt(
-					new SecretKeySpec(Base64.decode(key), "AES"), "test"),
-				resultSet.getString(1));
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				resultSet.next();
+
+				Assert.assertEquals(
+					_encryptor.encrypt(
+						new SecretKeySpec(Base64.decode(key), "AES"), "test"),
+					resultSet.getString(1));
+			}
 		}
 
 		_objectFieldLocalService.deleteObjectField(objectField);
@@ -3539,7 +3544,6 @@ public class ObjectEntryLocalServiceTest {
 				tempFileEntry2.getFileEntryId()));
 	}
 
-	@FeatureFlag("LPD-21926")
 	@Test
 	public void testAddOrUpdateObjectEntryWithFriendlyURL() throws Exception {
 
@@ -4010,7 +4014,7 @@ public class ObjectEntryLocalServiceTest {
 			_objectDefinition.isPortlet(),
 			_objectDefinition.getPluralLabelMap(), _objectDefinition.getScope(),
 			_objectDefinition.getStatus(), Collections.emptyList(),
-			Collections.emptyList());
+			Collections.emptyList(), Collections.emptyList());
 
 		_objectEntryLocalService.deleteObjectEntry(objectEntry4);
 
@@ -5079,6 +5083,12 @@ public class ObjectEntryLocalServiceTest {
 	@Test
 	public void testMoveObjectEntryToTrashWithOngoingWorkflowInstances()
 		throws Exception {
+
+		_siteObjectDefinition.setEnableObjectEntryVersioning(true);
+
+		_siteObjectDefinition =
+			_objectDefinitionLocalService.updateObjectDefinition(
+				_siteObjectDefinition);
 
 		_workflowDefinitionLinkLocalService.updateWorkflowDefinitionLink(
 			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(), 0,

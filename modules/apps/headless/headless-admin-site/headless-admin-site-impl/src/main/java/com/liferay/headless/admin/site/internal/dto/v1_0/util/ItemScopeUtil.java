@@ -37,6 +37,23 @@ public class ItemScopeUtil {
 		return group.getGroupId();
 	}
 
+	public static Long getItemGroupId(
+		long companyId, Scope scope, long scopeGroupId) {
+
+		if ((scope == null) || (scope.getExternalReferenceCode() == null)) {
+			return scopeGroupId;
+		}
+
+		Group group = GroupLocalServiceUtil.fetchGroupByExternalReferenceCode(
+			scope.getExternalReferenceCode(), companyId);
+
+		if (group == null) {
+			return null;
+		}
+
+		return group.getGroupId();
+	}
+
 	public static Scope getItemScope(long itemScopeGroupId, long scopeGroupId)
 		throws Exception {
 
@@ -48,16 +65,25 @@ public class ItemScopeUtil {
 	}
 
 	public static Scope getItemScope(
-			long companyId, String itemGroupExternalReferenceCode,
-			long scopeGroupId)
-		throws PortalException {
+		long companyId, String itemGroupExternalReferenceCode,
+		long scopeGroupId) {
 
 		if (Validator.isNull(itemGroupExternalReferenceCode)) {
 			return null;
 		}
 
-		Group group = GroupLocalServiceUtil.getGroupByExternalReferenceCode(
+		Group group = GroupLocalServiceUtil.fetchGroupByExternalReferenceCode(
 			itemGroupExternalReferenceCode, companyId);
+
+		if (group == null) {
+			return new Scope() {
+				{
+					setExternalReferenceCode(
+						() -> itemGroupExternalReferenceCode);
+					setType(() -> Type.SITE);
+				}
+			};
+		}
 
 		if (group.getGroupId() == scopeGroupId) {
 			return null;

@@ -7,7 +7,6 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 
 import i18n from '../i18n';
-import {Liferay} from '../liferay/liferay';
 import {removeHTMLTags} from '../utils/string';
 
 const domainRegex = /^(?!:\/\/)([a-zA-Z0-9-_]+?\.)+[a-zA-Z]{2,}$/;
@@ -143,12 +142,9 @@ const zodSchema = {
 		dataCenterLocation: z.string(),
 		friendlyWorkspaceURL: z.string().optional(),
 		incidentReportContacts: z.array(z.string().email()).min(1),
-		region: z.string(),
-		timezone: z.string(),
+		subscriptionType: z.string(),
 		workspaceName: z.string().min(3),
-		workspaceOwnerEmail: z
-			.string()
-			.default(Liferay.ThemeDisplay.getUserEmailAddress()),
+		workspaceOwnerEmail: z.string().email(),
 	}),
 	appPublishing: {
 		build: z.object({
@@ -334,8 +330,8 @@ const zodSchema = {
 		projectId: z
 			.string()
 			.min(3, {message: 'Project ID must have at least 3 characters'})
-			.regex(/^[a-zA-Z0-9-]*$/, {
-				message: 'Only letters, numbers, and hyphens are allowed',
+			.regex(/^[a-zA-Z0-9]+$/, {
+				message: 'Only alphanumeric characters are allowed',
 			}),
 		siteInitializerKey: z.string(),
 	}),

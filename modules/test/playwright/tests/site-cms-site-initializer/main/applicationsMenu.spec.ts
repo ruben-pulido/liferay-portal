@@ -21,7 +21,6 @@ const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-17564': {enabled: true},
-		'LPS-179669': {enabled: true},
 	}),
 	loginTest()
 );
@@ -68,7 +67,7 @@ test(
 );
 
 test(
-	'Cannot access the Control Menu as a non admin user on the CMS site',
+	'Cannot access the Control Menu as an admin or non admin user on the CMS site',
 	{tag: '@LPD-68992'},
 	async ({apiHelpers, page, spaceSummaryPage}) => {
 		const user = await apiHelpers.headlessAdminUser.postUserAccount();
@@ -85,7 +84,7 @@ test(
 
 		await expect(
 			page.getByLabel('Control Menu', {exact: true})
-		).toBeVisible();
+		).not.toBeVisible();
 
 		await spaceSummaryPage.addUserOrUserGroup(user.name, 'users');
 

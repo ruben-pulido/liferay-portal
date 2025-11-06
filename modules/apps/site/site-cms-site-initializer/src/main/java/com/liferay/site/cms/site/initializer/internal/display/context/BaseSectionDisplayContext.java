@@ -261,6 +261,15 @@ public abstract class BaseSectionDisplayContext {
 				"L_CMS_BLOG", "blogs"
 			).build()
 		).put(
+			"objectEntryFolderExternalReferenceCode",
+			() -> {
+				if (objectEntryFolder == null) {
+					return null;
+				}
+
+				return objectEntryFolder.getExternalReferenceCode();
+			}
+		).put(
 			"parentObjectEntryFolderExternalReferenceCode",
 			_getParentObjectEntryFolderExternalReferenceCode()
 		).put(
@@ -368,7 +377,7 @@ public abstract class BaseSectionDisplayContext {
 					"/{embedded.id}?redirect=", themeDisplay.getURLCurrent()),
 				"pencil", "editFolder",
 				LanguageUtil.get(httpServletRequest, "edit"), "get", "update",
-				null,
+				"update",
 				HashMapBuilder.<String, Object>put(
 					"entryClassName", ObjectEntryFolder.class.getName()
 				).build()),
@@ -407,10 +416,12 @@ public abstract class BaseSectionDisplayContext {
 					themeDisplay.getURLCurrent(),
 					"&objectEntryId={embedded.id}"),
 				"view", "view-content",
-				LanguageUtil.get(httpServletRequest, "view"), null, null, null),
+				LanguageUtil.get(httpServletRequest, "view"), null, "get",
+				null),
 			new FDSActionDropdownItem(
 				StringPool.BLANK, "view", "view-file",
-				LanguageUtil.get(httpServletRequest, "view"), null, null, null),
+				LanguageUtil.get(httpServletRequest, "view"), null, "get",
+				null),
 			new FDSActionDropdownItem(
 				StringBundler.concat(
 					themeDisplay.getPathFriendlyURLPublic(),
@@ -438,7 +449,7 @@ public abstract class BaseSectionDisplayContext {
 				).buildString(),
 				"upload", "export-for-translation",
 				LanguageUtil.get(httpServletRequest, "export-for-translation"),
-				null, null, null),
+				null, "get", null),
 			new FDSActionDropdownItem(
 				PortletURLBuilder.create(
 					portal.getControlPanelPortletURL(
@@ -457,6 +468,12 @@ public abstract class BaseSectionDisplayContext {
 				).buildString(),
 				"download", "import-translation",
 				LanguageUtil.get(httpServletRequest, "import-translation"),
+				null, "update", null),
+			new FDSActionDropdownItem(
+				null, "copy", "copy",
+				language.get(httpServletRequest, "copy-to"), null, null, null),
+			new FDSActionDropdownItem(
+				null, "move", "move", language.get(httpServletRequest, "move"),
 				null, null, null),
 			new FDSActionDropdownItem(
 				PortletURLBuilder.create(

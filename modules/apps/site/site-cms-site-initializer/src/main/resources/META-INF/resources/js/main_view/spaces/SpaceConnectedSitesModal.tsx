@@ -60,7 +60,7 @@ const ConnectedSiteActions = ({
 				Liferay.Language.get(
 					'site-x-was-successfully-disconnected-from-the-space'
 				),
-				`<strong>${site.name}</strong>`
+				`<strong>${Liferay.Util.escapeHTML(site.descriptiveName)}</strong>`
 			)
 		);
 	};
@@ -141,7 +141,7 @@ const SitesSelector = ({
 						Liferay.Language.get(
 							'site-x-was-successfully-connected-to-the-space'
 						),
-						`<strong>${site.name}</strong>`
+						`<strong>${Liferay.Util.escapeHTML(site.descriptiveName)}</strong>`
 					)
 				);
 			}
@@ -179,9 +179,11 @@ const SitesSelector = ({
 						{(item: Site) => (
 							<ItemSelector.Item
 								key={item.id}
-								textValue={item.name}
+								textValue={Liferay.Util.escapeHTML(
+									item.descriptiveName
+								)}
 							>
-								{item.name}
+								{Liferay.Util.escapeHTML(item.descriptiveName)}
 							</ItemSelector.Item>
 						)}
 					</ItemSelector>
@@ -318,7 +320,7 @@ export default function SpaceConnectedSitesModal({
 												/>
 											</ClaySticker>
 
-											{site.name}
+											{site.descriptiveName}
 										</div>
 
 										{hasConnectSitesPermission && (

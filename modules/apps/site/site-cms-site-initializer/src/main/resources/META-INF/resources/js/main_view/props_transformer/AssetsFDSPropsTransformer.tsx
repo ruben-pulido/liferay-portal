@@ -9,8 +9,13 @@ import React from 'react';
 
 import StatusLabel from '../../common/components/StatusLabel';
 import {openAssetUsageListModal} from '../../common/components/asset_usage/utils';
+import {AssetLibrary} from '../../common/types/AssetLibrary';
 import {ISearchAssetObjectEntry} from '../../common/types/AssetType';
 import formatActionURL from '../../common/utils/formatActionURL';
+import {
+	OBJECT_ENTRY_FOLDER_CLASS_NAME,
+	getScopeExternalReferenceCode,
+} from '../../common/utils/getScopeExternalReferenceCode';
 import CategoriesAndTagsModalContent from '../categorization/modal/CategoriesAndTagsModalContent';
 import {defaultPermissionsBulkAction} from '../default_permission/BulkDefaultPermissionModalContent';
 import {permissionsBulkAction} from '../default_permission/BulkPermissionModalContent';
@@ -25,6 +30,7 @@ import deleteAssetEntriesBulkAction, {
 } from './actions/deleteAssetEntriesBulkAction';
 import deleteItemAction from './actions/deleteItemAction';
 import multipleFilesUploadAction from './actions/multipleFilesUploadAction';
+import openFolderItemSelectorAction from './actions/openFolderItemSelectorAction';
 import shareAction from './actions/shareAction';
 import {triggerAssetBulkAction} from './actions/triggerAssetBulkAction';
 import AuthorRenderer from './cell_renderers/AuthorRenderer';
@@ -34,9 +40,6 @@ import TypeRenderer from './cell_renderers/TypeRenderer';
 import addOnClickToCreationMenuItems from './utils/addOnClickToCreationMenuItems';
 import transformViewsItemsProps from './utils/transformViewsItemProps';
 
-const OBJECT_ENTRY_FOLDER_CLASS_NAME =
-	'com.liferay.object.model.ObjectEntryFolder';
-
 const ACTIONS = {
 	createAsset: createAssetAction,
 	createFolder: createFolderAction,
@@ -44,6 +47,7 @@ const ACTIONS = {
 };
 
 export type AdditionalProps = {
+	assetLibraries: AssetLibrary[];
 	autocompleteURL: string;
 	baseFolderViewURL: string;
 	brokenLinksCheckerEnabled: boolean;
@@ -55,6 +59,7 @@ export type AdditionalProps = {
 	fileMimeTypeIcons: Record<string, string>;
 	objectDefinitionCssClasses: Record<string, string>;
 	objectDefinitionIcons: Record<string, string>;
+	objectEntryFolderExternalReferenceCode: string;
 	parentObjectEntryFolderExternalReferenceCode: string;
 	redirect: string;
 	rootObjectEntryFolderExternalReferenceCode: string;
@@ -104,7 +109,9 @@ export default function AssetsFDSPropsTransformer({
 				{
 					component: ({itemData}) => (
 						<SpaceRendererWithCache
-							spaceId={itemData.embedded.scopeId}
+							spaceExternalReferenceCode={getScopeExternalReferenceCode(
+								itemData
+							)}
 						/>
 					),
 					name: 'spaceTableCellRenderer',
@@ -129,7 +136,13 @@ export default function AssetsFDSPropsTransformer({
 			/>
 		),
 		itemsActions: itemsActions.map((action) => {
-			if (
+			if (action?.data?.id === 'copy' || action?.data?.id === 'move') {
+				return {
+					...action,
+					isVisible: () => true,
+				};
+			}
+			else if (
 				action?.data?.id === 'default-permissions' ||
 				action?.data?.id === 'edit-and-propagate-default-permissions'
 			) {
@@ -202,7 +215,15 @@ export default function AssetsFDSPropsTransformer({
 			items: any;
 			loadData: () => {};
 		}) {
-			if (
+			if (action?.data?.id === 'copy' || action?.data?.id === 'move') {
+				openFolderItemSelectorAction(
+					action?.data?.id,
+					additionalProps.assetLibraries,
+					itemData,
+					additionalProps.objectEntryFolderExternalReferenceCode
+				);
+			}
+			else if (
 				action?.data?.id === 'default-permissions' ||
 				action?.data?.id === 'edit-and-propagate-default-permissions'
 			) {

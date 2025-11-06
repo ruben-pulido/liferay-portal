@@ -7,6 +7,7 @@ package com.liferay.fragment.internal.util.configuration;
 
 import com.liferay.fragment.constants.FragmentConfigurationFieldDataType;
 import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
+import com.liferay.fragment.entry.processor.helper.LayoutReferenceResolver;
 import com.liferay.fragment.util.configuration.FragmentConfigurationField;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.fragment.util.configuration.FragmentEntryMenuDisplayConfiguration;
@@ -37,7 +38,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -780,8 +780,21 @@ public class FragmentEntryConfigurationParserImpl
 	}
 
 	private Object _getURLValue(String value) {
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		if ((serviceContext == null) || Validator.isNull(value) ||
+			(serviceContext.getThemeDisplay() == null)) {
+
+			return StringPool.POUND;
+		}
+
 		JSONObject jsonObject = (JSONObject)_getFieldValue(
 			FragmentConfigurationFieldDataType.OBJECT, value);
+
+		if (jsonObject == null) {
+			return StringPool.POUND;
+		}
 
 		JSONObject layoutJSONObject = jsonObject.getJSONObject("layout");
 
@@ -789,23 +802,18 @@ public class FragmentEntryConfigurationParserImpl
 			return jsonObject.getString("href");
 		}
 
-		long groupId = layoutJSONObject.getLong("groupId");
-		boolean privateLayout = layoutJSONObject.getBoolean("privateLayout");
-		long layoutId = layoutJSONObject.getLong("layoutId");
+		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
 
-		Layout layout = _layoutLocalService.fetchLayout(
-			groupId, privateLayout, layoutId);
+		Layout layout = _layoutReferenceResolver.resolve(
+			themeDisplay.getCompanyId(), layoutJSONObject,
+			themeDisplay.getScopeGroupId());
 
 		if (layout == null) {
 			return StringPool.POUND;
 		}
 
-		ServiceContext serviceContext =
-			ServiceContextThreadLocal.getServiceContext();
-
 		try {
-			return _portal.getLayoutFullURL(
-				layout, serviceContext.getThemeDisplay());
+			return _portal.getLayoutFullURL(layout, themeDisplay);
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
@@ -909,7 +917,7 @@ public class FragmentEntryConfigurationParserImpl
 	private LayoutListRetrieverRegistry _layoutListRetrieverRegistry;
 
 	@Reference
-	private LayoutLocalService _layoutLocalService;
+	private LayoutReferenceResolver _layoutReferenceResolver;
 
 	@Reference
 	private LayoutSetLocalService _layoutSetLocalService;

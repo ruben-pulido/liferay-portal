@@ -140,25 +140,27 @@ public class TaxonomyVocabularyResourceImpl
 	}
 
 	@Override
-	public ExportImportVulcanBatchEngineTaskItemDelegate.ExportImportDescriptor
-		getExportImportDescriptor() {
-
-		return new ExportImportVulcanBatchEngineTaskItemDelegate.
-			ExportImportDescriptor() {
+	public ExportImportDescriptor getExportImportDescriptor() {
+		return new ExportImportDescriptor() {
 
 			@Override
-			public String getItemClassName() {
-				return AssetVocabulary.class.getName();
+			public String getLabelLanguageKey() {
+				return "vocabularies";
 			}
 
 			@Override
-			public String getLabel() {
-				return "vocabularies";
+			public String getModelClassName() {
+				return AssetVocabulary.class.getName();
 			}
 
 			@Override
 			public String getPortletId() {
 				return AssetCategoriesAdminPortletKeys.ASSET_CATEGORIES_ADMIN;
+			}
+
+			@Override
+			public String getResourceClassName() {
+				return TaxonomyCategoryResourceImpl.class.getName();
 			}
 
 			@Override

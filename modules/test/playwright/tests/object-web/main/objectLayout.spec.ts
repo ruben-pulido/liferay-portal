@@ -13,7 +13,6 @@ import {expect, mergeTests} from '@playwright/test';
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {editObjectDefinitionPagesTest} from '../../../fixtures/editObjectDefinitionPagesTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {objectPagesTest} from '../../../fixtures/objectPagesTest';
 import {getRandomInt} from '../../../utils/getRandomInt';
@@ -27,9 +26,6 @@ export const test = mergeTests(
 	apiHelpersTest,
 	dataApiHelpersTest,
 	editObjectDefinitionPagesTest,
-	featureFlagsTest({
-		'LPD-21926': {enabled: true},
-	}),
 	loginTest(),
 	objectPagesTest
 );
@@ -399,11 +395,11 @@ test.describe('manage Object Layouts through the Object Layout tab', () => {
 
 		await page.getByRole('menuitem', {name: 'Create New'}).click();
 
-		const objectChildEnty = 'ChildEntry' + getRandomInt();
+		const objectChildEntry = 'ChildEntry' + getRandomInt();
 
 		await page
 			.getByLabel(objectFields2[0].label.en_US)
-			.fill(objectChildEnty);
+			.fill(objectChildEntry);
 
 		await page.getByRole('button', {name: 'Save'}).click();
 
@@ -418,7 +414,7 @@ test.describe('manage Object Layouts through the Object Layout tab', () => {
 			.waitFor({state: 'visible'});
 
 		await expect(page.getByRole('textbox').last()).toHaveValue(
-			objectChildEnty
+			objectChildEntry
 		);
 	});
 

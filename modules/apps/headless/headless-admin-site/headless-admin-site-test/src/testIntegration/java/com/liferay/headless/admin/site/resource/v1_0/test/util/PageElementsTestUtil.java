@@ -7,8 +7,8 @@ package com.liferay.headless.admin.site.resource.v1_0.test.util;
 
 import com.liferay.fragment.contributor.util.FragmentCollectionContributorRegistryUtil;
 import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.headless.admin.site.client.dto.v1_0.CollectionDisplayPageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.CollectionItemPageElementDefinition;
-import com.liferay.headless.admin.site.client.dto.v1_0.CollectionPageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContainerPageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.DefaultFragmentReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.DropZonePageElementDefinition;
@@ -36,17 +36,18 @@ public class PageElementsTestUtil {
 	public static PageElementDefinition getPageElementDefinition(
 		PageElementDefinition.Type type) {
 
-		if (Objects.equals(type, PageElementDefinition.Type.COLLECTION)) {
-			return new CollectionPageElementDefinition() {
+		if (Objects.equals(
+				type, PageElementDefinition.Type.COLLECTION_DISPLAY)) {
+
+			return new CollectionDisplayPageElementDefinition() {
 				{
 					setDisplayAllItems(Boolean.FALSE);
 					setDisplayAllPages(Boolean.TRUE);
-					setNumberOfColumns(1);
 					setNumberOfItems(5);
 					setNumberOfItemsPerPage(5);
 					setNumberOfPages(20);
 					setPaginationType(PaginationType.NONE);
-					setType(Type.COLLECTION);
+					setType(Type.COLLECTION_DISPLAY);
 				}
 			};
 		}

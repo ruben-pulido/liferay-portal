@@ -95,13 +95,13 @@ public class UtilityPageResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
-			public String getItemClassName() {
-				return LayoutUtilityPageEntry.class.getName();
+			public String getLabelLanguageKey() {
+				return "utility-pages";
 			}
 
 			@Override
-			public String getLabel() {
-				return "utility-pages";
+			public String getModelClassName() {
+				return LayoutUtilityPageEntry.class.getName();
 			}
 
 			@Override
@@ -112,6 +112,11 @@ public class UtilityPageResourceImpl
 			@Override
 			public String getPortletId() {
 				return LayoutAdminPortletKeys.GROUP_PAGES;
+			}
+
+			@Override
+			public String getResourceClassName() {
+				return UtilityPageResourceImpl.class.getName();
 			}
 
 			@Override

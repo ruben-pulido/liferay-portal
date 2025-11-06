@@ -27,8 +27,8 @@ const test = mergeTests(
 	cmsPagesTest,
 	dataApiHelpersTest,
 	featureFlagsTest({
+		'LPD-11235': {enabled: true},
 		'LPD-17564': {enabled: true},
-		'LPS-179669': {enabled: true},
 	}),
 	fragmentsPagesTest,
 	loginTest(),
@@ -541,7 +541,7 @@ test.describe('Schedule Panel', () => {
 
 			// Fill the input with an error
 
-			const expireCheckbox = page.getByLabel('Never Expire').first();
+			const expireCheckbox = page.getByLabel('Never Expire');
 
 			await expireCheckbox.uncheck();
 
@@ -597,7 +597,7 @@ test.describe('Schedule Panel', () => {
 test.describe('Categorization Panel', () => {
 	test(
 		'Add categories and tags to the content',
-		{tag: '@LPD-62047'},
+		{tag: ['@LPD-62047', '@LPD-69196']},
 		async ({
 			apiHelpers,
 			contentsPage,
@@ -605,6 +605,30 @@ test.describe('Categorization Panel', () => {
 			tagsPage,
 			vocabulariesPage,
 		}) => {
+			const selectCategory = async (categoryName: string) => {
+				const categoriesAutocomplete =
+					page.getByPlaceholder('Add category');
+
+				await categoriesAutocomplete.fill(categoryName);
+
+				const option = page.getByRole('option', {name: categoryName});
+
+				await option.waitFor();
+				await option.click();
+			};
+
+			const selectTag = async (tagName: string) => {
+				const tagsAutocomplete = page.getByPlaceholder('Add tag');
+
+				await tagsAutocomplete.fill(tagName);
+
+				const newTagOption = page.getByRole('option', {
+					name: 'Create New Tag:',
+				});
+
+				await newTagOption.waitFor();
+				await newTagOption.click();
+			};
 
 			// Create category
 
@@ -622,48 +646,32 @@ test.describe('Categorization Panel', () => {
 				vocabularyName,
 			});
 
-			// Create a content
+			// Create a content and publish it
 
 			await contentsPage.goto();
 
 			await contentsPage.createContent('Basic Content');
 
-			await contentsPage.openSidePanel('Categorization');
-
 			const title = getRandomString();
 
 			await page.getByPlaceholder('New Basic Web Content').fill(title);
 
-			// Add a new tag to the content
+			await contentsPage.publishButton.click();
 
-			const tagsAutocomplete = page.getByPlaceholder('Add tag');
+			// Edit the content to set a categorization
 
-			const tagName = getRandomString();
-
-			await tagsAutocomplete.fill(tagName);
-
-			const newTagOption = page.getByRole('option', {
-				name: 'Create New Tag:',
+			const content = page.locator('.table-list-title a', {
+				hasText: title,
 			});
 
-			await newTagOption.waitFor();
-			await newTagOption.click();
+			await content.waitFor();
+			await content.click();
 
-			const tagLabel = page.locator('.label-item', {hasText: tagName});
+			await contentsPage.openSidePanel('Categorization');
 
-			await expect(tagLabel).toBeAttached();
+			// Add a category to the content
 
-			// Add a new category to the content
-
-			const categoriesAutocomplete =
-				page.getByPlaceholder('Add category');
-
-			await categoriesAutocomplete.fill(categoryName);
-
-			const option = page.getByRole('option', {name: categoryName});
-
-			option.waitFor();
-			option.click();
+			await selectCategory(categoryName);
 
 			const categoryLabel = page.locator('.label-item', {
 				hasText: categoryName,
@@ -671,17 +679,43 @@ test.describe('Categorization Panel', () => {
 
 			await expect(categoryLabel).toBeAttached();
 
-			// Publish the content
+			// Add a tag to the content
+
+			let tagName = getRandomString();
+
+			await selectTag(tagName);
+
+			let tagLabel = page.locator('.label-item', {hasText: tagName});
+
+			await expect(tagLabel).toBeAttached();
+
+			// Cancel the content and edit it again to check that nothing has been saved
+
+			await page.getByLabel('Cancel', {exact: true}).click();
+
+			await content.waitFor();
+			await content.click();
+
+			await contentsPage.openSidePanel('Categorization');
+
+			await expect(categoryLabel).not.toBeAttached();
+			await expect(tagLabel).not.toBeAttached();
+
+			// Select again the category and the tag and publish it
+
+			await selectCategory(categoryName);
+
+			tagName = getRandomString();
+			tagLabel = page.locator('.label-item', {hasText: tagName});
+
+			await selectTag(tagName);
+
+			await expect(categoryLabel).toBeAttached();
+			await expect(tagLabel).toBeAttached();
 
 			await contentsPage.publishButton.click();
 
-			const content = page.locator('.table-list-title a', {
-				hasText: title,
-			});
-
-			await content.waitFor();
-
-			// Edit content and check that the tag and category are still there
+			// Edit the content and check that the categorization is still there
 
 			await content.click();
 
@@ -843,7 +877,7 @@ test.describe('Schedule Publication', () => {
 
 			// Fill the expiration date input with an error
 
-			const expireCheckbox = page.getByLabel('Never Expire').first();
+			const expireCheckbox = page.getByLabel('Never Expire');
 
 			await expireCheckbox.uncheck();
 
@@ -896,11 +930,76 @@ test.describe('Schedule Publication', () => {
 	);
 });
 
+test(
+	'The Rich Text required error only occurs when the field has no value',
+	{tag: '@LPD-69695'},
+	async ({contentsPage, page, structureBuilderPage}) => {
+
+		// Create a structure with a required Rich Text field
+
+		await structureBuilderPage.goToCreateStructure();
+
+		const structureLabel = `Structure${getRandomInt()}`;
+
+		await structureBuilderPage.changeStructureSettings({
+			label: structureLabel,
+			name: structureLabel,
+		});
+
+		await structureBuilderPage.addField('Rich Text');
+
+		await structureBuilderPage.changeFieldSettings({mandatory: true});
+
+		await structureBuilderPage.publishStructure();
+
+		// Create a content of the new structure
+
+		await contentsPage.goto();
+
+		await contentsPage.createContent(structureLabel);
+
+		const contentTitle = getRandomString();
+
+		await page.getByLabel('Title').fill(contentTitle);
+
+		// Try to publish with the empty Rich Text and check the error
+
+		await contentsPage.publishButton.click();
+
+		await expect(
+			page.locator('.rich-text-input [data-required-error]')
+		).toHaveText('This field is required.');
+
+		// Fill the Rich Text field and publish the content
+
+		const richTextField = page.locator('.ck-editor__editable');
+
+		await richTextField.fill('This is very cool content');
+
+		await contentsPage.publishButton.click();
+
+		// Edit the content, publish it and check that there is no required error in the Rich Text field
+
+		await contentsPage.editContent(contentTitle);
+
+		await richTextField.waitFor();
+
+		await contentsPage.publishButton.click();
+
+		await expect(
+			page.locator('.table-list-title a', {hasText: contentTitle})
+		).toBeAttached();
+
+		// Delete content
+
+		await contentsPage.deleteContent(contentTitle);
+	}
+);
+
 const testWithRepeatableFF = mergeTests(
 	test,
 	featureFlagsTest({
 		'LPD-50377': {enabled: true},
-		'LPS-179669': {enabled: true},
 	})
 );
 
@@ -1030,7 +1129,8 @@ testWithRepeatableFF(
 			trigger: card.locator('button'),
 		});
 
-		page.getByRole('dialog')
+		await page
+			.getByRole('dialog')
 			.getByRole('button', {name: 'Delete Entry'})
 			.click();
 
@@ -1140,9 +1240,101 @@ testWithRepeatableFF(
 			trigger: card.locator('button'),
 		});
 
-		page.getByRole('dialog')
+		await page
+			.getByRole('dialog')
 			.getByRole('button', {name: 'Delete Entry'})
 			.click();
+
+		await waitForAlert(page, `Success:${title} was moved`, {
+			autoClose: false,
+		});
+	}
+);
+
+testWithRepeatableFF(
+	'Repetable text input is validated correctly',
+	{
+		tag: '@LPD-69446',
+	},
+	async ({contentsPage, page, structureBuilderPage}) => {
+
+		// Create structure
+
+		const structureLabel = `StructureName${getRandomInt()}`;
+
+		await structureBuilderPage.createStructureFromData({
+			label: structureLabel,
+			name: `StructureName${getRandomInt()}`,
+			page: structureBuilderPage,
+			publish: false,
+		});
+
+		// Add fields
+
+		await structureBuilderPage.addField('Text');
+
+		await page.getByLabel('Limit Characters').click();
+
+		const maximumNumberOfCharactersInput = page.getByLabel(
+			'Maximum Number of Characters'
+		);
+
+		maximumNumberOfCharactersInput.fill('5');
+
+		await maximumNumberOfCharactersInput.blur();
+
+		// Create repeatable group with two of them
+
+		await structureBuilderPage.createRepeatableGroup({
+			fields: [{label: 'Text'}],
+			label: 'Repeatable Group 1',
+		});
+
+		await structureBuilderPage.publishStructure();
+
+		// Go to CMS Contents
+
+		await contentsPage.goto();
+
+		// Create new content
+
+		await contentsPage.createContent(structureLabel);
+
+		const title = getRandomString();
+
+		await page.getByPlaceholder(`New ${structureLabel}`).fill(title);
+
+		// Fill the fields
+
+		const firstText = page.getByRole('textbox', {name: 'Text'}).first();
+
+		await firstText.fill('MoreThan5Characters');
+
+		// Save content
+
+		await contentsPage.publishButton.click();
+
+		// Check that the alert is displayed
+
+		await expect(
+			page.getByText('Value exceeds maximum length of 5 for field Text.')
+		).toBeVisible();
+
+		await expect(firstText).toHaveValue('MoreThan5Characters');
+
+		// Delete content
+
+		await contentsPage.goto();
+
+		const card = page
+			.locator('tr', {hasText: title})
+			.or(page.locator('.card-row', {hasText: title}));
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByRole('menuitem', {name: 'Delete'}),
+			trigger: card.locator('button'),
+		});
 
 		await waitForAlert(page, `Success:${title} was moved`, {
 			autoClose: false,

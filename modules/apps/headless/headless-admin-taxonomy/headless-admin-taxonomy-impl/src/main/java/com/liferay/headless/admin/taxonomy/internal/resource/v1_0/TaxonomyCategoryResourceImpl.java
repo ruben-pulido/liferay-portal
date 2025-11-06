@@ -140,18 +140,23 @@ public class TaxonomyCategoryResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
-			public String getItemClassName() {
-				return AssetCategory.class.getName();
+			public String getLabelLanguageKey() {
+				return "categories";
 			}
 
 			@Override
-			public String getLabel() {
-				return "categories";
+			public String getModelClassName() {
+				return AssetCategory.class.getName();
 			}
 
 			@Override
 			public String getPortletId() {
 				return AssetCategoriesAdminPortletKeys.ASSET_CATEGORIES_ADMIN;
+			}
+
+			@Override
+			public String getResourceClassName() {
+				return TaxonomyCategoryResourceImpl.class.getName();
 			}
 
 			@Override

@@ -61,6 +61,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
+import com.liferay.portal.props.test.util.PropsTemporarySwapper;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
@@ -88,11 +89,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 /**
  * @author Jürgen Kappler
  */
-@FeatureFlags(
-	featureFlags = {
-		@FeatureFlag(value = "LPD-17564"), @FeatureFlag(value = "LPD-50377")
-	}
-)
+@FeatureFlags(featureFlags = @FeatureFlag(value = "LPD-17564"))
 @RunWith(Arquillian.class)
 public class ObjectEntryInfoItemFormProviderTest {
 
@@ -127,6 +124,8 @@ public class ObjectEntryInfoItemFormProviderTest {
 					_createObjectFieldSetting(
 						"fileSource", "documentsAndMedia"),
 					_createObjectFieldSetting("maximumFileSize", "100"))
+			).system(
+				true
 			).build(),
 			new PicklistObjectFieldBuilder(
 			).labelMap(
@@ -233,8 +232,8 @@ public class ObjectEntryInfoItemFormProviderTest {
 		throws Exception {
 
 		return _objectDefinitionLocalService.addCustomObjectDefinition(
-			TestPropsValues.getUserId(), 0, null, false, true, false, true,
-			false, false, false, false, false, null,
+			null, TestPropsValues.getUserId(), 0, null, false, true, false,
+			true, false, false, false, false, false, null,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			ObjectDefinitionTestUtil.getRandomName(), null, null,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -385,7 +384,13 @@ public class ObjectEntryInfoItemFormProviderTest {
 			_childObjectDefinition);
 
 		_childInfoForm = _getInfoForm(_childObjectDefinition);
-		_parentInfoForm = _getInfoForm(_parentObjectDefinition);
+
+		try (PropsTemporarySwapper propsTemporarySwapper =
+				new PropsTemporarySwapper(
+					"feature.flag.LPD-60546", Boolean.FALSE.toString())) {
+
+			_parentInfoForm = _getInfoForm(_parentObjectDefinition);
+		}
 
 		_assertInfoField("parentTextObjectFieldName", _childInfoForm);
 		_assertInfoField("parentTextObjectFieldName", _parentInfoForm);

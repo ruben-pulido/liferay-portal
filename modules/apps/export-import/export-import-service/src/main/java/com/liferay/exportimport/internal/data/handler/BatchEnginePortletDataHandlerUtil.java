@@ -99,9 +99,9 @@ public class BatchEnginePortletDataHandlerUtil {
 				return sb.toString();
 			}
 		).put(
-			"itemClassName", exportImportDescriptor.getItemClassName()
+			"modelClassName", exportImportDescriptor.getModelClassName()
 		).put(
-			"itemModelName", exportImportDescriptor.getItemModelName()
+			"modelName", exportImportDescriptor.getModelName()
 		).put(
 			"siteExternalReferenceCode",
 			() -> {
@@ -166,9 +166,9 @@ public class BatchEnginePortletDataHandlerUtil {
 					IMPORT_CREATOR_STRATEGY_KEEP_CREATOR;
 			}
 		).put(
-			"itemClassName", exportImportDescriptor.getItemClassName()
+			"modelClassName", exportImportDescriptor.getModelClassName()
 		).put(
-			"itemModelName", exportImportDescriptor.getItemModelName()
+			"modelName", exportImportDescriptor.getModelName()
 		).put(
 			"siteExternalReferenceCode",
 			() -> {

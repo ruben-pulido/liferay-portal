@@ -19,6 +19,7 @@ import com.liferay.object.rest.dto.v1_0.TaxonomyCategoryBrief;
 import com.liferay.object.rest.dto.v1_0.util.ScopeUtil;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
+import com.liferay.object.rest.manager.v1_0.util.ObjectEntryManagerUtil;
 import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
 import com.liferay.object.web.internal.info.item.handler.ObjectEntryInfoItemExceptionRequestHandler;
@@ -26,7 +27,6 @@ import com.liferay.object.web.internal.util.ObjectEntryUtil;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.InfoFormException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -86,7 +86,7 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
 
 		Map<String, Object> curProperties = _getProperties(
-			objectEntry, infoItemFieldValues, themeDisplay);
+			objectEntry, infoItemFieldValues);
 
 		try {
 			String scopeKey = ObjectEntryInfoItemUtil.getScopeKey(
@@ -101,12 +101,16 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 				infoItemFieldValues, scopeKey);
 
 			com.liferay.object.rest.dto.v1_0.ObjectEntry dtoObjectEntry =
-				objectEntryManager.partialUpdateObjectEntry(
-					objectEntry.getCompanyId(),
-					new DefaultDTOConverterContext(
-						false, null, null, null, null, themeDisplay.getLocale(),
-						null, themeDisplay.getUser()),
-					objectEntry.getExternalReferenceCode(), _objectDefinition,
+				ObjectEntryManagerUtil.partialUpdateObjectEntry(
+					objectEntryManager.getObjectEntry(
+						objectEntry.getCompanyId(),
+						new DefaultDTOConverterContext(
+							false, null, null, null, null,
+							themeDisplay.getLocale(), null,
+							themeDisplay.getUser()),
+						objectEntry.getExternalReferenceCode(),
+						_objectDefinition, scopeKey),
+					_objectDefinition.getObjectDefinitionId(),
 					new com.liferay.object.rest.dto.v1_0.ObjectEntry() {
 						{
 							setFriendlyUrlPath(
@@ -128,8 +132,7 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 								() -> _toTaxonomyCategoryBriefs(
 									serviceContext.getAssetCategoryIds()));
 						}
-					},
-					scopeKey);
+					});
 
 			if (curProperties.containsKey("displayDate") ||
 				curProperties.containsKey("expirationDate") ||
@@ -165,18 +168,17 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 
 						return objectEntry.getReviewDate();
 					});
+			}
 
-				dtoObjectEntry = objectEntryManager.updateObjectEntry(
+			return ObjectEntryUtil.toObjectEntry(
+				_objectDefinition,
+				objectEntryManager.updateObjectEntry(
 					objectEntry.getCompanyId(),
 					new DefaultDTOConverterContext(
 						false, null, null, null, null, themeDisplay.getLocale(),
 						null, themeDisplay.getUser()),
 					dtoObjectEntry.getExternalReferenceCode(),
-					_objectDefinition, dtoObjectEntry, scopeKey);
-			}
-
-			return ObjectEntryUtil.toObjectEntry(
-				_objectDefinition, dtoObjectEntry);
+					_objectDefinition, dtoObjectEntry, scopeKey));
 		}
 		catch (Exception exception) {
 			ObjectEntryInfoItemExceptionRequestHandler.handleInfoFormException(
@@ -233,20 +235,10 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 	}
 
 	private Map<String, Object> _getProperties(
-		ObjectEntry objectEntry, InfoItemFieldValues infoItemFieldValues,
-		ThemeDisplay themeDisplay) {
-
-		if (FeatureFlagManagerUtil.isEnabled(
-				themeDisplay.getCompanyId(), "LPD-50377")) {
-
-			return ObjectEntryUtil.toProperties(
-				infoItemFieldValues, _objectDefinition,
-				objectEntry.getValues());
-		}
+		ObjectEntry objectEntry, InfoItemFieldValues infoItemFieldValues) {
 
 		return ObjectEntryUtil.toProperties(
-			themeDisplay.getCompanyId(), infoItemFieldValues,
-			objectEntry.getValues());
+			infoItemFieldValues, _objectDefinition, objectEntry.getValues());
 	}
 
 	private TaxonomyCategoryBrief[] _toTaxonomyCategoryBriefs(
@@ -263,6 +255,8 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 						setScope(
 							() -> ScopeUtil.toScope(
 								assetCategory.getGroupId()));
+						setTaxonomyCategoryExternalReferenceCode(
+							assetCategory::getExternalReferenceCode);
 						setTaxonomyCategoryId(() -> assetCategoryId);
 					}
 				};

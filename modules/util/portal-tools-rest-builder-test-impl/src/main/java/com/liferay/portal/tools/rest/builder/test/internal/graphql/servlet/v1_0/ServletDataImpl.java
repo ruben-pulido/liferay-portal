@@ -20,6 +20,7 @@ import com.liferay.portal.tools.rest.builder.test.internal.resource.v1_0.FilterR
 import com.liferay.portal.tools.rest.builder.test.internal.resource.v1_0.MultipartTestEntityResourceImpl;
 import com.liferay.portal.tools.rest.builder.test.internal.resource.v1_0.SchemaResourceImpl;
 import com.liferay.portal.tools.rest.builder.test.internal.resource.v1_0.ScopedTestEntityResourceImpl;
+import com.liferay.portal.tools.rest.builder.test.internal.resource.v1_0.SharedInternalModelBatchTestEntityResourceImpl;
 import com.liferay.portal.tools.rest.builder.test.internal.resource.v1_0.SiteTestEntityResourceImpl;
 import com.liferay.portal.tools.rest.builder.test.internal.resource.v1_0.SortResourceImpl;
 import com.liferay.portal.tools.rest.builder.test.internal.resource.v1_0.TestEntityAddressResourceImpl;
@@ -36,6 +37,7 @@ import com.liferay.portal.tools.rest.builder.test.resource.v1_0.FilterResource;
 import com.liferay.portal.tools.rest.builder.test.resource.v1_0.MultipartTestEntityResource;
 import com.liferay.portal.tools.rest.builder.test.resource.v1_0.SchemaResource;
 import com.liferay.portal.tools.rest.builder.test.resource.v1_0.ScopedTestEntityResource;
+import com.liferay.portal.tools.rest.builder.test.resource.v1_0.SharedInternalModelBatchTestEntityResource;
 import com.liferay.portal.tools.rest.builder.test.resource.v1_0.SiteTestEntityResource;
 import com.liferay.portal.tools.rest.builder.test.resource.v1_0.SortResource;
 import com.liferay.portal.tools.rest.builder.test.resource.v1_0.TestEntityAddressResource;
@@ -84,6 +86,9 @@ public class ServletDataImpl implements ServletData {
 			_schemaResourceComponentServiceObjects);
 		Mutation.setScopedTestEntityResourceComponentServiceObjects(
 			_scopedTestEntityResourceComponentServiceObjects);
+		Mutation.
+			setSharedInternalModelBatchTestEntityResourceComponentServiceObjects(
+				_sharedInternalModelBatchTestEntityResourceComponentServiceObjects);
 		Mutation.setSiteTestEntityResourceComponentServiceObjects(
 			_siteTestEntityResourceComponentServiceObjects);
 		Mutation.setSortResourceComponentServiceObjects(
@@ -115,6 +120,9 @@ public class ServletDataImpl implements ServletData {
 			_schemaResourceComponentServiceObjects);
 		Query.setScopedTestEntityResourceComponentServiceObjects(
 			_scopedTestEntityResourceComponentServiceObjects);
+		Query.
+			setSharedInternalModelBatchTestEntityResourceComponentServiceObjects(
+				_sharedInternalModelBatchTestEntityResourceComponentServiceObjects);
 		Query.setSiteTestEntityResourceComponentServiceObjects(
 			_siteTestEntityResourceComponentServiceObjects);
 		Query.setSortResourceComponentServiceObjects(
@@ -274,6 +282,16 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							ERCScopedTestEntityResourceImpl.class,
 							"deleteAssetLibraryERCScopedTestEntity"));
+					put(
+						"mutation#deleteERCScopedTestEntity",
+						new ObjectValuePair<>(
+							ERCScopedTestEntityResourceImpl.class,
+							"deleteERCScopedTestEntity"));
+					put(
+						"mutation#deleteERCScopedTestEntityBatch",
+						new ObjectValuePair<>(
+							ERCScopedTestEntityResourceImpl.class,
+							"deleteERCScopedTestEntityBatch"));
 					put(
 						"mutation#deleteSiteERCScopedTestEntity",
 						new ObjectValuePair<>(
@@ -469,6 +487,36 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							ScopedTestEntityResourceImpl.class,
 							"putSiteScopedTestEntityByExternalReferenceCode"));
+					put(
+						"mutation#deleteSharedInternalModelBatchTestEntityByExternalReferenceCode",
+						new ObjectValuePair<>(
+							SharedInternalModelBatchTestEntityResourceImpl.
+								class,
+							"deleteSharedInternalModelBatchTestEntityByExternalReferenceCode"));
+					put(
+						"mutation#createSharedInternalModelBatchTestEntitiesPageExportBatch",
+						new ObjectValuePair<>(
+							SharedInternalModelBatchTestEntityResourceImpl.
+								class,
+							"postSharedInternalModelBatchTestEntitiesPageExportBatch"));
+					put(
+						"mutation#createSharedInternalModelBatchTestEntity",
+						new ObjectValuePair<>(
+							SharedInternalModelBatchTestEntityResourceImpl.
+								class,
+							"postSharedInternalModelBatchTestEntity"));
+					put(
+						"mutation#createSharedInternalModelBatchTestEntityBatch",
+						new ObjectValuePair<>(
+							SharedInternalModelBatchTestEntityResourceImpl.
+								class,
+							"postSharedInternalModelBatchTestEntityBatch"));
+					put(
+						"mutation#updateSharedInternalModelBatchTestEntityByExternalReferenceCode",
+						new ObjectValuePair<>(
+							SharedInternalModelBatchTestEntityResourceImpl.
+								class,
+							"putSharedInternalModelBatchTestEntityByExternalReferenceCode"));
 					put(
 						"mutation#deleteSiteSiteTestEntityByExternalReferenceCode",
 						new ObjectValuePair<>(
@@ -729,6 +777,18 @@ public class ServletDataImpl implements ServletData {
 							ScopedTestEntityResourceImpl.class,
 							"getSiteScopedTestEntityByExternalReferenceCode"));
 					put(
+						"query#sharedInternalModelBatchTestEntities",
+						new ObjectValuePair<>(
+							SharedInternalModelBatchTestEntityResourceImpl.
+								class,
+							"getSharedInternalModelBatchTestEntitiesPage"));
+					put(
+						"query#sharedInternalModelBatchTestEntityByExternalReferenceCode",
+						new ObjectValuePair<>(
+							SharedInternalModelBatchTestEntityResourceImpl.
+								class,
+							"getSharedInternalModelBatchTestEntityByExternalReferenceCode"));
+					put(
 						"query#siteTestEntities",
 						new ObjectValuePair<>(
 							SiteTestEntityResourceImpl.class,
@@ -792,6 +852,12 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							CompanyTestEntityResourceImpl.class,
 							"getCompanyTestEntityByExternalReferenceCode"));
+					put(
+						"query#BatchTestEntity.sharedInternalModelBatchTestEntityByExternalReferenceCode",
+						new ObjectValuePair<>(
+							SharedInternalModelBatchTestEntityResourceImpl.
+								class,
+							"getSharedInternalModelBatchTestEntityByExternalReferenceCode"));
 				}
 			};
 
@@ -834,6 +900,10 @@ public class ServletDataImpl implements ServletData {
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<ScopedTestEntityResource>
 		_scopedTestEntityResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<SharedInternalModelBatchTestEntityResource>
+		_sharedInternalModelBatchTestEntityResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<SiteTestEntityResource>

@@ -8,6 +8,7 @@ import ClayModal from '@clayui/modal';
 import {addParams, sub} from 'frontend-js-web';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 
+import {SharingPermission} from '../../../common/types/SharingPermission';
 import CommentsPanel from '../../../content_editor/components/panels/CommentsPanel';
 import AssetTypeInfoPanel from '../../info_panel/AssetTypeInfoPanelContent';
 import Carousel from './Carousel';
@@ -152,6 +153,9 @@ export default function AssetNavigationModalContent({
 
 	const activePanel = openSidePanel ? currentPanel : null;
 
+	const showCommentsPanel =
+		currentItem.actionIds?.includes(SharingPermission.Comment) ?? true;
+
 	return (
 		<>
 			<ClayModal.Header
@@ -162,6 +166,7 @@ export default function AssetNavigationModalContent({
 					handleClickComments={handleClickComments}
 					handleClickInfo={handleClickInfo}
 					item={currentItem}
+					showCommentsPanel={showCommentsPanel}
 					showInfoPanel={showInfoPanel}
 				/>
 			</ClayModal.Header>
@@ -184,7 +189,8 @@ export default function AssetNavigationModalContent({
 						onOpenChange={setOpenSidePanel}
 						open={openSidePanel}
 					>
-						{currentPanel === PANELS.commentPanel ? (
+						{currentPanel === PANELS.commentPanel &&
+						showCommentsPanel ? (
 							<AssetNavigationCommentsPanel
 								additionalProps={additionalProps as any}
 								item={currentItem}

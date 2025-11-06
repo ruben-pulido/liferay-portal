@@ -23,14 +23,14 @@ public interface ExportImportVulcanBatchEngineTaskItemDelegate<T>
 
 	public interface ExportImportDescriptor {
 
-		public String getItemClassName();
-
-		public default String getItemModelName() {
-			return getItemClassName();
+		public default String getLabelLanguageKey() {
+			return null;
 		}
 
-		public default String getLabel() {
-			return null;
+		public String getModelClassName();
+
+		public default String getModelName() {
+			return getModelClassName();
 		}
 
 		public default List<String> getNestedFields() {
@@ -45,9 +45,17 @@ public interface ExportImportVulcanBatchEngineTaskItemDelegate<T>
 
 		public String getPortletId();
 
+		public String getResourceClassName();
+
 		public Scope getScope();
 
 		public default boolean isActive(PortletDataContext portletDataContext) {
+			return true;
+		}
+
+		public default boolean isApplicableExternalReferenceCode(
+			String externalReferenceCode) {
+
 			return true;
 		}
 

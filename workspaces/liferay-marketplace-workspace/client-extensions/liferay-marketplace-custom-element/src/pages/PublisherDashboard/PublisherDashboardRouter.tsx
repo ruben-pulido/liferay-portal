@@ -44,6 +44,8 @@ import {
 	Submit,
 } from './pages/Solutions/SolutionForm/pages';
 
+import './PublisherDashboard.scss';
+
 const PublisherDashboardRouter = () => {
 	const {accountId} = Liferay.CommerceContext.account || {};
 	const {data, isValidating} = useAccount();

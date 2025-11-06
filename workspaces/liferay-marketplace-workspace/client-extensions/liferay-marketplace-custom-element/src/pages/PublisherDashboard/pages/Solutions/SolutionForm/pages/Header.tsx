@@ -365,9 +365,7 @@ const Header = () => {
 					size={'md' as any}
 					status="info"
 				>
-					<ClayModal.Header
-						closeButtonAriaLabel={Liferay.Language.get('close')}
-					>
+					<ClayModal.Header>
 						{i18n.translate('maximum-number-of-uploads-reached')}
 					</ClayModal.Header>
 					<ClayModal.Body className="pb-8">

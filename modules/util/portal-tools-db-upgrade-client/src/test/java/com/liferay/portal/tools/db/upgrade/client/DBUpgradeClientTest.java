@@ -16,8 +16,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import java.util.ArrayList;
 
@@ -31,6 +33,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import org.mockito.Mockito;
 
 /**
  * @author István András Dézsi
@@ -69,14 +73,26 @@ public class DBUpgradeClientTest {
 
 		portalDir.mkdirs();
 
+		_shieldedContainerLib = new File(
+			portalDir, "WEB-INF/shielded-container-lib");
+
+		Mockito.when(
+			_appServer.getPortalShieldedContainerLibDir()
+		).thenReturn(
+			_shieldedContainerLib
+		);
+
 		ReflectionTestUtil.setFieldValue(
 			DBUpgradeClient.class, "_jarDir", _rootDir);
 	}
 
 	@Before
 	public void setUp() throws Exception {
-		System.setErr(new PrintStream(_errorOutputStream));
-		System.setOut(new PrintStream(new ByteArrayOutputStream()));
+		_consoleByteArrayOutputStream.reset();
+		_errorByteArrayOutputStream.reset();
+
+		System.setErr(new PrintStream(_errorByteArrayOutputStream));
+		System.setOut(new PrintStream(_consoleByteArrayOutputStream));
 	}
 
 	@After
@@ -117,7 +133,7 @@ public class DBUpgradeClientTest {
 		ReflectionTestUtil.invoke(
 			_dbUpgradeClient, "_verifyAppServerProperties", new Class<?>[0]);
 
-		String errorOutput = _errorOutputStream.toString();
+		String errorOutput = _errorByteArrayOutputStream.toString();
 
 		Assert.assertTrue(
 			errorOutput.contains("does not exist or is not a directory"));
@@ -163,19 +179,28 @@ public class DBUpgradeClientTest {
 
 	@Test
 	public void testVerifyPortalUpgradeDatabaseProperties() throws Exception {
+		_createPortalUpgradeExtPropertiesFile();
+
 		String[] answers = {
 			StringPool.BLANK, StringPool.BLANK, StringPool.BLANK, "invalidHost",
 			"localhost", "abc", "99999", StringPool.BLANK, StringPool.BLANK,
-			StringPool.BLANK, StringPool.BLANK, StringPool.BLANK
+			StringPool.BLANK, StringPool.BLANK
 		};
 
 		_dbUpgradeClient = _createDBUpgradeClient(answers);
+
+		ReflectionTestUtil.setFieldValue(
+			_dbUpgradeClient, "_appServer", _appServer);
 
 		ReflectionTestUtil.invoke(
 			_dbUpgradeClient, "_verifyPortalUpgradeDatabaseProperties",
 			new Class<?>[0]);
 
-		String errorOutput = _errorOutputStream.toString();
+		String consoleString = _consoleByteArrayOutputStream.toString();
+
+		Assert.assertTrue(consoleString.contains("mariadb mysql postgresql"));
+
+		String errorOutput = _errorByteArrayOutputStream.toString();
 
 		Assert.assertTrue(errorOutput.contains("Unable to resolve host"));
 		Assert.assertTrue(errorOutput.contains("is not a valid port number"));
@@ -207,6 +232,8 @@ public class DBUpgradeClientTest {
 	public void testVerifyPortalUpgradeDatabasePropertiesWithEmptyAnswers()
 		throws Exception {
 
+		_createPortalUpgradeExtPropertiesFile();
+
 		String[] answers = {
 			StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
 			StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
@@ -215,9 +242,16 @@ public class DBUpgradeClientTest {
 
 		_dbUpgradeClient = _createDBUpgradeClient(answers);
 
+		ReflectionTestUtil.setFieldValue(
+			_dbUpgradeClient, "_appServer", _appServer);
+
 		ReflectionTestUtil.invoke(
 			_dbUpgradeClient, "_verifyPortalUpgradeDatabaseProperties",
 			new Class<?>[0]);
+
+		String consoleString = _consoleByteArrayOutputStream.toString();
+
+		Assert.assertTrue(consoleString.contains("mariadb mysql postgresql"));
 
 		Properties properties = ReflectionTestUtil.getFieldValue(
 			_dbUpgradeClient, "_portalUpgradeDatabaseProperties");
@@ -241,6 +275,69 @@ public class DBUpgradeClientTest {
 	}
 
 	@Test
+	public void testVerifyPortalUpgradeDatabasePropertiesWithEmptyAnswersOnDXP()
+		throws Exception {
+
+		_createPortalUpgradeExtPropertiesFile();
+
+		String[] answers = {
+			StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
+			StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
+			StringPool.BLANK, StringPool.BLANK
+		};
+
+		_dbUpgradeClient = _createDBUpgradeClient(answers);
+
+		ReflectionTestUtil.setFieldValue(
+			_dbUpgradeClient, "_appServer", _appServer);
+
+		Path path = _shieldedContainerLib.toPath();
+
+		path = path.resolve("com.liferay.portal.dao.db.jar");
+
+		Files.createDirectories(_shieldedContainerLib.toPath());
+
+		try {
+			Files.createFile(path);
+
+			ReflectionTestUtil.invoke(
+				_dbUpgradeClient, "_verifyPortalUpgradeDatabaseProperties",
+				new Class<?>[0]);
+
+			String consoleString = _consoleByteArrayOutputStream.toString();
+
+			Assert.assertTrue(
+				consoleString.contains(
+					"db2 mariadb mysql oracle postgresql sqlserver"));
+
+			Properties properties = ReflectionTestUtil.getFieldValue(
+				_dbUpgradeClient, "_portalUpgradeDatabaseProperties");
+
+			Assert.assertNotNull(properties);
+			Assert.assertEquals(
+				"com.mysql.cj.jdbc.Driver",
+				properties.getProperty("jdbc.default.driverClassName"));
+			Assert.assertEquals(
+				StringBundler.concat(
+					"jdbc:mysql://localhost/lportal?characterEncoding=UTF-8",
+					"&dontTrackOpenResources=true",
+					"&holdResultsOpenOverStatementClose=true",
+					"&serverTimezone=GMT&useFastDateParsing=false",
+					"&useUnicode=true"),
+				properties.getProperty("jdbc.default.url"));
+			Assert.assertEquals(
+				StringPool.BLANK,
+				properties.getProperty("jdbc.default.username"));
+			Assert.assertEquals(
+				StringPool.BLANK,
+				properties.getProperty("jdbc.default.password"));
+		}
+		finally {
+			Files.deleteIfExists(path);
+		}
+	}
+
+	@Test
 	public void testVerifyPortalUpgradeExtProperties() throws Exception {
 		File liferayHomeDir = new File(_rootDir, "custom-liferay-home");
 
@@ -256,7 +353,7 @@ public class DBUpgradeClientTest {
 			_dbUpgradeClient, "_verifyPortalUpgradeExtProperties",
 			new Class<?>[0]);
 
-		String errorOutput = _errorOutputStream.toString();
+		String errorOutput = _errorByteArrayOutputStream.toString();
 
 		Assert.assertTrue(
 			errorOutput.contains("does not exist or is not a directory"));
@@ -340,12 +437,17 @@ public class DBUpgradeClientTest {
 		portalUpgradeExtProperties.store(portalUpgradeExtPropertiesFile);
 	}
 
+	private static final AppServer _appServer = Mockito.mock(AppServer.class);
 	private static File _liferayHomeDir;
 	private static File _rootDir;
+	private static File _shieldedContainerLib;
 	private static File _tomcatDir;
 
+	private final ByteArrayOutputStream _consoleByteArrayOutputStream =
+		new ByteArrayOutputStream();
 	private DBUpgradeClient _dbUpgradeClient;
-	private final OutputStream _errorOutputStream = new ByteArrayOutputStream();
+	private final ByteArrayOutputStream _errorByteArrayOutputStream =
+		new ByteArrayOutputStream();
 	private final PrintStream _originalErrorOutputStream = System.err;
 	private final PrintStream _originalOutputStream = System.out;
 

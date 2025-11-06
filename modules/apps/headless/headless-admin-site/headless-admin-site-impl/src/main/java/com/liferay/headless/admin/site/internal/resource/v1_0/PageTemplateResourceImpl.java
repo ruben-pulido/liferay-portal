@@ -114,13 +114,13 @@ public class PageTemplateResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
-			public String getItemClassName() {
-				return LayoutPageTemplateEntry.class.getName();
+			public String getLabelLanguageKey() {
+				return "page-templates";
 			}
 
 			@Override
-			public String getLabel() {
-				return "page-templates";
+			public String getModelClassName() {
+				return LayoutPageTemplateEntry.class.getName();
 			}
 
 			@Override
@@ -131,6 +131,11 @@ public class PageTemplateResourceImpl
 			@Override
 			public String getPortletId() {
 				return LayoutAdminPortletKeys.GROUP_PAGES;
+			}
+
+			@Override
+			public String getResourceClassName() {
+				return PageTemplateResourceImpl.class.getName();
 			}
 
 			@Override

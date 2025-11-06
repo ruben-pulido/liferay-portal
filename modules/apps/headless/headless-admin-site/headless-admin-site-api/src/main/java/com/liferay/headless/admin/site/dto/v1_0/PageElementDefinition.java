@@ -48,7 +48,8 @@ import java.util.function.Supplier;
 @JsonSubTypes(
 	{
 		@JsonSubTypes.Type(
-			name = "Collection", value = CollectionPageElementDefinition.class
+			name = "CollectionDisplay",
+			value = CollectionDisplayPageElementDefinition.class
 		),
 		@JsonSubTypes.Type(
 			name = "CollectionItem",
@@ -110,7 +111,7 @@ public abstract class PageElementDefinition implements Serializable {
 	}
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The page element definition's type (collection, collection item, container, drop zone, form, form step, form step container, fragment, fragment composition, fragment drop zone, grid, module or widget)."
+		description = "The page element definition's type (collection display, collection item, container, drop zone, form, form step, form step container, fragment, fragment composition, fragment drop zone, grid, module or widget)."
 	)
 	@JsonGetter("type")
 	@Valid
@@ -157,7 +158,7 @@ public abstract class PageElementDefinition implements Serializable {
 	}
 
 	@GraphQLField(
-		description = "The page element definition's type (collection, collection item, container, drop zone, form, form step, form step container, fragment, fragment composition, fragment drop zone, grid, module or widget)."
+		description = "The page element definition's type (collection display, collection item, container, drop zone, form, form step, form step container, fragment, fragment composition, fragment drop zone, grid, module or widget)."
 	)
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Type type;
@@ -224,10 +225,11 @@ public abstract class PageElementDefinition implements Serializable {
 	@GraphQLName("Type")
 	public static enum Type {
 
-		COLLECTION("Collection"), COLLECTION_ITEM("CollectionItem"),
-		CONTAINER("Container"), DROP_ZONE("DropZone"), FORM("Form"),
-		FORM_STEP("FormStep"), FORM_STEP_CONTAINER("FormStepContainer"),
-		FRAGMENT("Fragment"), FRAGMENT_COMPOSITION("FragmentComposition"),
+		COLLECTION_DISPLAY("CollectionDisplay"),
+		COLLECTION_ITEM("CollectionItem"), CONTAINER("Container"),
+		DROP_ZONE("DropZone"), FORM("Form"), FORM_STEP("FormStep"),
+		FORM_STEP_CONTAINER("FormStepContainer"), FRAGMENT("Fragment"),
+		FRAGMENT_COMPOSITION("FragmentComposition"),
 		FRAGMENT_DROP_ZONE("FragmentDropZone"), GRID("Grid"), MODULE("Module"),
 		WIDGET("Widget");
 

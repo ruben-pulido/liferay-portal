@@ -18,7 +18,6 @@ const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-17564': {enabled: true},
-		'LPS-179669': {enabled: true},
 	}),
 	loginTest()
 );
@@ -155,7 +154,7 @@ test(
 		await test.step('Check the Space selector dialog', async () => {
 			await page.getByRole('dialog').waitFor();
 
-			await page.getByLabel('SpaceRequired').click();
+			await page.getByLabel('SpaceMandatory').click();
 
 			await page.getByRole('option', {name: assetLibraryName}).click();
 

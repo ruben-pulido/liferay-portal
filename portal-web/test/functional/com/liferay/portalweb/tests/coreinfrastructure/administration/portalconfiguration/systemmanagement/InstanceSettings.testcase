@@ -430,162 +430,37 @@ definition {
 		Page.viewDefaultLogoPG();
 	}
 
-	@description = "This test asserts that the use of Instance OSGi configurations does not affect other systems."
+	@description = "This test asserts that a user can disable site admin to use their own logo."
 	@priority = 3
-	test CanNotAffectOtherSystemsDueToUseOfInstanceOSGiConfigurations {
-		property custom.properties = "feature.flag.LPS-155284=true";
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
+	test CanDisableSiteAdminToUseTheirOwnLogo {
+		PortalSettings.gotoConfiguration(
+			configurationCategory = "Instance Configuration",
+			configurationName = "Appearance",
+			configurationScope = "Virtual Instance Scope");
 
-		task ("Given change the Instance OSGi configurations to export") {
-			PortalSettings.openInstanceSettingsAdmin();
+		FormFields.disableCheckbox(fieldName = "logo");
 
-			SystemSettings.gotoConfiguration(
-				configurationCategory = "Web Content",
-				configurationName = "Web Content",
-				configurationScope = "Virtual Instance Scope");
+		PortletEntry.save();
 
-			SystemSettings.viewTextareaValue(
-				fieldName = "charactersblacklist",
-				fieldValue = "'",
-				repeatableFieldNumber = 2);
+		HeadlessSite.addSite(siteName = "Site Name");
 
-			Click(locator1 = "Button#REMOVE_BUTTON");
+		JSONLayout.addPublicLayout(
+			groupName = "Site Name",
+			layoutName = "Test Page");
 
-			Click(locator1 = "Button#SAVE");
+		Navigator.openSiteURL(siteName = "Site Name");
 
-			LexiconEntry.gotoEllipsisMenuItem(menuItem = "Export");
-		}
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
 
-		task ("And two new Virtual Instance are created") {
-			PortalInstances.openVirtualInstancesAdmin();
+		Click(locator1 = "Icon#HEADER_VERTICAL_ELLIPSIS");
 
-			PortalInstances.addCP(
-				mailDomain = "www.able.com",
-				virtualHost = "www.able.com",
-				webId = "www.able.com");
+		MenuItem.click(menuItem = "Configuration");
 
-			PortalInstances.addCP(
-				mailDomain = "www.baker.com",
-				virtualHost = "www.baker.com",
-				webId = "www.baker.com");
-		}
-
-		task ("When change companyWebId to www.baker.com and copy it to the configs folder") {
-			var exportConfigFileName = TestCase.getDownloadedTempFileName(fileNamePattern = "com.liferay.journal.configuration.JournalServiceConfiguration.scoped*.config");
-			var exportFileDirectory = selenium.getOutputDirName();
-
-			OSGiConfig.editOSGiConfigFileFromTempFolder(
-				newValue = "www.baker.com",
-				oldValue = "liferay.com",
-				osgiConfigFileName = ${exportConfigFileName});
-
-			OSGiConfig.copyOSGiConfigFile(
-				osgiConfigFileBaseDir = ${exportFileDirectory},
-				osgiConfigFileName = ${exportConfigFileName});
-		}
-
-		task ("And login to www.able.com and go to Web Content in the instance settings") {
-			User.firstLoginUI(
-				password = PropsUtil.get("default.admin.password"),
-				specificURL = "http://www.able.com:8080",
-				userEmailAddress = "test@www.able.com");
-
-			PortalSettings.openInstanceSettingsAdmin(baseURL = "http://www.able.com:8080");
-
-			SystemSettings.gotoConfiguration(
-				configurationCategory = "Web Content",
-				configurationName = "Web Content",
-				configurationScope = "Virtual Instance Scope");
-		}
-
-		task ("Then the instance config is the default settings") {
-			SystemSettings.viewTextareaValue(
-				fieldName = "charactersblacklist",
-				fieldValue = "'",
-				repeatableFieldNumber = 2);
-		}
-	}
-
-	@description = "This test asserts that Instance OSGi configurations can be used across different systems."
-	@priority = 3
-	test CanUseInstanceConfigurationAcrossDifferentSystems {
-		property custom.properties = "feature.flag.LPS-155284=true";
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
-
-		task ("Given change the Instance OSGi configurations to export") {
-			PortalSettings.openInstanceSettingsAdmin();
-
-			SystemSettings.gotoConfiguration(
-				configurationCategory = "Web Content",
-				configurationName = "Web Content",
-				configurationScope = "Virtual Instance Scope");
-
-			SystemSettings.viewTextareaValue(
-				fieldName = "charactersblacklist",
-				fieldValue = "'",
-				repeatableFieldNumber = 2);
-
-			Click(locator1 = "Button#REMOVE_BUTTON");
-
-			Click(locator1 = "Button#SAVE");
-
-			LexiconEntry.gotoEllipsisMenuItem(menuItem = "Export");
-		}
-
-		task ("And a new Virtual Instance is created") {
-			PortalInstances.openVirtualInstancesAdmin();
-
-			PortalInstances.addCP(
-				mailDomain = "www.able.com",
-				virtualHost = "www.able.com",
-				webId = "www.able.com");
-		}
-
-		task ("When change companyWebId to new instance and copy it to the configs folder") {
-			var exportConfigFileName = TestCase.getDownloadedTempFileName(fileNamePattern = "com.liferay.journal.configuration.JournalServiceConfiguration.scoped*.config");
-			var exportFileDirectory = selenium.getOutputDirName();
-
-			OSGiConfig.editOSGiConfigFileFromTempFolder(
-				newValue = "www.able.com",
-				oldValue = "liferay.com",
-				osgiConfigFileName = ${exportConfigFileName});
-
-			OSGiConfig.copyOSGiConfigFile(
-				osgiConfigFileBaseDir = ${exportFileDirectory},
-				osgiConfigFileName = ${exportConfigFileName});
-		}
-
-		task ("And login to the new instance and go to Web Content in the instance settings") {
-			User.firstLoginUI(
-				password = PropsUtil.get("default.admin.password"),
-				specificURL = "http://www.able.com:8080",
-				userEmailAddress = "test@www.able.com");
-
-			PortalSettings.openInstanceSettingsAdmin(baseURL = "http://www.able.com:8080");
-
-			SystemSettings.gotoConfiguration(
-				configurationCategory = "Web Content",
-				configurationName = "Web Content",
-				configurationScope = "Virtual Instance Scope");
-		}
-
-		task ("Then new instance config is changed and companyWebId is changed to companyId in config file") {
-			AssertTextNotEquals.assertNotValue(
-				key_fieldName = "charactersblacklist",
-				key_repeatableFieldNumber = 2,
-				locator1 = "FormFields#REPEATABLE_TEXT_MULTILINE_FIELD",
-				value1 = "'");
-
-			OSGiConfig.assertTextNotInOSGiConfig(
-				osgiConfigFileName = ${exportConfigFileName},
-				text = "companyWebId");
-
-			OSGiConfig.assertTextInOSGiConfig(
-				osgiConfigFileName = ${exportConfigFileName},
-				text = "companyId");
-		}
+		AssertElementNotPresent(
+			key_panel = "Logo",
+			locator1 = "Panel#PANEL");
 	}
 
 	@priority = 4

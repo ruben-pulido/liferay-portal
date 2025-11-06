@@ -93,46 +93,6 @@
 
 <article class="learn-article">
 	<div class="d-flex flex-column">
-		<div class="learn-article-breadcrumbs">
-			<div class="learn-article-breadcrumbs-content">
-				<div class="align-items-baseline d-flex justify-content-between mb-3">
-					<ul
-						aria-label="breadcrumb navigation"
-						class="learn-article-breadcrumb"
-						role="navigation"
-					>
-						<li>
-							<a href="/"><@clay["icon"] symbol="home-full" /></a>
-						</li>
-
-						<#if breadcrumbJSONArray?has_content>
-							<#list breadcrumbJSONArray.length()-1..0 as i>
-								<#assign breadcrumbJSONObject = breadcrumbJSONArray.getJSONObject(i) />
-
-								<li>
-									<a href='${breadcrumbJSONObject.getString("url")}'>${breadcrumbJSONObject.getString("title")}</a>
-								</li>
-							</#list>
-						</#if>
-
-						<li>
-							${navigationJSONObject.getJSONObject("self").getString("title")}
-						</li>
-					</ul>
-
-					<div class="submit-feedback">
-						<a
-							class="text-decoration-none"
-							href="https://liferay.dev/c/portal/login?redirect=https://liferay.dev/ask/questions/liferay-learn-feedback/new"
-						>
-							${languageUtil.get(locale, "submit-feedback", "Submit Feedback")}
-							<@clay["icon"] symbol="message-boards" />
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-
 		<div class="learn-article-wrapper">
 			<div class="language-log learn-article-content">
 				<#if (content.getData())??>
@@ -222,7 +182,7 @@
 
 								<div class="how-to-cards-container" id="how-to-cards-container">
 									<#list knowledgeArticles.items as knowledgeArticle>
-											<a class="how-to-card" href="${themeDisplay.getCanonicalURL()}/l/${knowledgeArticle.id}/">
+										<a class="how-to-card" href="${(themeDisplay.getCanonicalURL()!)!''}/l/${knowledgeArticle.id}/">
 											<div class="how-to-card-header">
 												${knowledgeArticle.title!}
 											</div>
@@ -239,10 +199,6 @@
 						</#if>
 					</#if>
 				</div>
-			</div>
-
-			<div class="learn-article-page-nav">
-				<ul class="nav nav-stacked toc" id="articleTOC"></ul>
 			</div>
 		</div>
 	</div>
@@ -337,9 +293,19 @@
 		line-height: 1.75rem;
 	}
 
+	.learn-article {
+		max-width: 900px !important;
+	}
+
 	@media only screen and (max-width: 1200px) {
 		.how-to-cards-container {
 			flex-direction: column;
+		}
+	}
+
+	@media (max-width: 1024px) {
+		.learn-article {
+			margin-top: 2.5rem;
 		}
 	}
 </style>

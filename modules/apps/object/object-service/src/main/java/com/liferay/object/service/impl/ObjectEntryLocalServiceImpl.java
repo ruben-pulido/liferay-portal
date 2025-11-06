@@ -9,8 +9,15 @@ import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntryOrganizationRelTable;
 import com.liferay.account.model.AccountEntryTable;
 import com.liferay.account.model.AccountEntryUserRelTable;
+import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.model.AssetTagGroupRel;
+import com.liferay.asset.kernel.model.AssetVocabularyGroupRel;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.asset.kernel.service.AssetTagGroupRelLocalService;
+import com.liferay.asset.kernel.service.AssetVocabularyGroupRelLocalService;
 import com.liferay.asset.link.constants.AssetLinkConstants;
 import com.liferay.asset.link.service.AssetLinkLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
@@ -41,7 +48,6 @@ import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectFieldValidationConstants;
 import com.liferay.object.constants.ObjectFilterConstants;
-import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.definition.setting.util.ObjectDefinitionSettingUtil;
 import com.liferay.object.definition.util.ObjectDefinitionThreadLocal;
@@ -53,6 +59,7 @@ import com.liferay.object.entry.util.ObjectEntryThreadLocal;
 import com.liferay.object.entry.util.ObjectEntryValuesUtil;
 import com.liferay.object.exception.DuplicateObjectEntryExternalReferenceCodeException;
 import com.liferay.object.exception.NoSuchObjectDefinitionException;
+import com.liferay.object.exception.ObjectDefinitionScopeException;
 import com.liferay.object.exception.ObjectEntryDefaultLanguageIdException;
 import com.liferay.object.exception.ObjectEntryExpirationDateException;
 import com.liferay.object.exception.ObjectEntryFolderScopeException;
@@ -78,6 +85,7 @@ import com.liferay.object.internal.filter.parser.InclusionOperatorsObjectFilterP
 import com.liferay.object.internal.filter.parser.ObjectFilterParser;
 import com.liferay.object.internal.sort.SortDSLQueryVisitor;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectDefinitionSetting;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.model.ObjectEntryTable;
@@ -111,6 +119,7 @@ import com.liferay.object.service.ObjectStateLocalService;
 import com.liferay.object.service.ObjectValidationRuleLocalService;
 import com.liferay.object.service.base.ObjectEntryLocalServiceBaseImpl;
 import com.liferay.object.service.persistence.ObjectDefinitionPersistence;
+import com.liferay.object.service.persistence.ObjectDefinitionSettingPersistence;
 import com.liferay.object.service.persistence.ObjectEntryFolderPersistence;
 import com.liferay.object.service.persistence.ObjectEntryVersionPersistence;
 import com.liferay.object.service.persistence.ObjectFieldPersistence;
@@ -668,6 +677,57 @@ public class ObjectEntryLocalServiceImpl
 		_checkObjectEntriesByReviewDate(companyId, date);
 
 		_companyIdPreviousCheckDate.put(companyId, date);
+	}
+
+	@Override
+	public ObjectEntry copyObjectEntry(
+			long userId, long objectEntryId, long objectEntryFolderId,
+			Map<String, Serializable> values, ServiceContext serviceContext)
+		throws PortalException {
+
+		ObjectEntry objectEntry = getObjectEntry(objectEntryId);
+
+		ObjectEntryFolder objectEntryFolder =
+			_objectEntryFolderPersistence.findByPrimaryKey(objectEntryFolderId);
+
+		_checkObjectDefinitionScope(
+			objectEntry.getObjectDefinitionId(),
+			objectEntryFolder.getGroupId());
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(
+				objectEntry.getObjectDefinitionId());
+
+		_removeInvalidAssetCategories(
+			objectEntryFolder.getGroupId(), objectDefinition.getClassName(),
+			objectEntryId, serviceContext);
+		_removeInvalidAssetTags(
+			objectEntryFolder.getGroupId(), objectDefinition.getClassName(),
+			objectEntryId, serviceContext);
+
+		List<ObjectField> objectFields =
+			_objectFieldLocalService.getCustomObjectFields(
+				objectDefinition.getObjectDefinitionId());
+
+		for (ObjectField objectField : objectFields) {
+			if (ObjectFieldUtil.isReadOnly(
+					_ddmExpressionFactory, objectEntry, objectField, userId)) {
+
+				values.remove(objectField.getName());
+			}
+		}
+
+		if (objectDefinition.isEnableObjectEntryDraft()) {
+			serviceContext.setWorkflowAction(
+				WorkflowConstants.ACTION_SAVE_DRAFT);
+		}
+
+		values.put("externalReferenceCode", null);
+
+		return addObjectEntry(
+			objectEntryFolder.getGroupId(), userId,
+			objectDefinition.getObjectDefinitionId(), objectEntryFolderId,
+			objectEntry.getDefaultLanguageId(), values, serviceContext);
 	}
 
 	@Override
@@ -1684,6 +1744,42 @@ public class ObjectEntryLocalServiceImpl
 		}
 	}
 
+	@Override
+	public ObjectEntry moveObjectEntry(
+			long userId, long objectEntryId, long objectEntryFolderId,
+			Map<String, Serializable> values, ServiceContext serviceContext)
+		throws PortalException {
+
+		ObjectEntry objectEntry = getObjectEntry(objectEntryId);
+
+		ObjectEntryFolder objectEntryFolder =
+			_objectEntryFolderPersistence.findByPrimaryKey(objectEntryFolderId);
+
+		_checkObjectDefinitionScope(
+			objectEntry.getObjectDefinitionId(),
+			objectEntryFolder.getGroupId());
+
+		if (objectEntryFolder.getGroupId() != objectEntry.getGroupId()) {
+			objectEntry.setGroupId(objectEntryFolder.getGroupId());
+
+			updateObjectEntry(objectEntry);
+		}
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(
+				objectEntry.getObjectDefinitionId());
+
+		_removeInvalidAssetCategories(
+			objectEntryFolder.getGroupId(), objectDefinition.getClassName(),
+			objectEntryId, serviceContext);
+		_removeInvalidAssetTags(
+			objectEntryFolder.getGroupId(), objectDefinition.getClassName(),
+			objectEntryId, serviceContext);
+
+		return updateObjectEntry(
+			userId, objectEntryId, objectEntryFolderId, values, serviceContext);
+	}
+
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntry moveObjectEntryToTrash(
@@ -2324,8 +2420,7 @@ public class ObjectEntryLocalServiceImpl
 			ServiceContext serviceContext, Map<String, Serializable> values)
 		throws PortalException {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-21926") ||
-			ObjectDefinitionUtil.isDefaultFriendlyURLSeparator(
+		if (ObjectDefinitionUtil.isDefaultFriendlyURLSeparator(
 				objectDefinition.getFriendlyURLSeparator())) {
 
 			return;
@@ -2634,6 +2729,56 @@ public class ObjectEntryLocalServiceImpl
 		return dslQuery;
 	}
 
+	private void _checkObjectDefinitionScope(
+			long objectDefinitionId, long groupId)
+		throws PortalException {
+
+		ObjectDefinitionSetting acceptAllObjectDefinitionSetting =
+			_objectDefinitionSettingPersistence.fetchByODI_N(
+				objectDefinitionId,
+				ObjectDefinitionSettingConstants.NAME_ACCEPT_ALL_GROUPS);
+
+		if ((acceptAllObjectDefinitionSetting != null) &&
+			GetterUtil.getBoolean(
+				acceptAllObjectDefinitionSetting.getValue())) {
+
+			return;
+		}
+
+		ObjectDefinitionSetting acceptedGroupsObjectDefinitionSetting =
+			_objectDefinitionSettingPersistence.fetchByODI_N(
+				objectDefinitionId,
+				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS);
+
+		if ((acceptedGroupsObjectDefinitionSetting != null) &&
+			Validator.isNull(
+				acceptedGroupsObjectDefinitionSetting.getValue())) {
+
+			throw new ObjectDefinitionScopeException(
+				StringBundler.concat(
+					"The object definition ", objectDefinitionId,
+					" requires explicit group IDs for accepted group IDs  ",
+					"setting"));
+		}
+		else if (acceptedGroupsObjectDefinitionSetting != null) {
+			String acceptedGroupIdsString =
+				acceptedGroupsObjectDefinitionSetting.getValue();
+
+			String[] acceptedGroupIds = StringUtil.split(
+				acceptedGroupIdsString);
+
+			if (!ArrayUtil.contains(
+					acceptedGroupIds, String.valueOf(groupId))) {
+
+				throw new ObjectDefinitionScopeException(
+					StringBundler.concat(
+						"The group ", groupId,
+						" is not included in the object definition's accepted ",
+						"group IDs setting"));
+			}
+		}
+	}
+
 	private void _checkObjectEntriesByDisplayDate(long companyId, Date date)
 		throws PortalException {
 
@@ -2787,12 +2932,15 @@ public class ObjectEntryLocalServiceImpl
 					"select count(*) from ",
 					dynamicObjectDefinitionTable.getTableName(), " where ",
 					dynamicObjectDefinitionTable.getPrimaryKeyColumnName(),
-					" = ", primaryKey));
-			ResultSet resultSet = preparedStatement.executeQuery()) {
+					" = ?"))) {
 
-			resultSet.next();
+			preparedStatement.setLong(1, primaryKey);
 
-			return resultSet.getInt(1);
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				resultSet.next();
+
+				return resultSet.getInt(1);
+			}
 		}
 		catch (SQLException sqlException) {
 			throw new SystemException(sqlException);
@@ -5208,7 +5356,16 @@ public class ObjectEntryLocalServiceImpl
 		_updateLatestApprovedObjectEntry(
 			objectEntry.getObjectEntryId(), WorkflowConstants.STATUS_IN_TRASH);
 
-		for (ObjectEntryVersion objectEntryVersion : objectEntryVersions) {
+		for (ObjectEntryVersion objectEntryVersion :
+				_objectEntryVersionLocalService.getObjectEntryVersions(
+					objectEntry.getObjectEntryId())) {
+
+			if (objectEntryVersion.getStatus() ==
+					WorkflowConstants.STATUS_IN_TRASH) {
+
+				continue;
+			}
+
 			objectEntryVersion.setStatus(WorkflowConstants.STATUS_IN_TRASH);
 
 			_objectEntryVersionLocalService.updateObjectEntryVersion(
@@ -5476,6 +5633,81 @@ public class ObjectEntryLocalServiceImpl
 
 			indexer.reindex(objectEntry);
 		}
+	}
+
+	private void _removeInvalidAssetCategories(
+			long groupId, String className, long objectEntryId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
+			className, objectEntryId);
+
+		if (assetEntry == null) {
+			return;
+		}
+
+		long[] assetCategoryIds = assetEntry.getCategoryIds();
+
+		long[] assetVocabularyIds = ArrayUtil.unique(
+			ArrayUtil.append(
+				TransformUtil.transformToLongArray(
+					_assetVocabularyGroupRelLocalService.
+						getAssetVocabularyGroupRelsByGroupId(groupId),
+					AssetVocabularyGroupRel::getVocabularyId),
+				TransformUtil.transformToLongArray(
+					_assetVocabularyGroupRelLocalService.
+						getAssetVocabularyGroupRelsByGroupId(-1),
+					AssetVocabularyGroupRel::getVocabularyId)));
+
+		for (long assetCategoryId : assetEntry.getCategoryIds()) {
+			AssetCategory assetCategory =
+				_assetCategoryLocalService.getAssetCategory(assetCategoryId);
+
+			if (!ArrayUtil.contains(
+					assetVocabularyIds, assetCategory.getVocabularyId())) {
+
+				assetCategoryIds = ArrayUtil.remove(
+					assetCategoryIds, assetCategory.getCategoryId());
+			}
+		}
+
+		serviceContext.setAssetCategoryIds(assetCategoryIds);
+	}
+
+	private void _removeInvalidAssetTags(
+			long groupId, String className, long objectEntryId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
+			className, objectEntryId);
+
+		if (assetEntry == null) {
+			return;
+		}
+
+		String[] assetTagNames = assetEntry.getTagNames();
+
+		long[] tagIds = ArrayUtil.unique(
+			ArrayUtil.append(
+				TransformUtil.transformToLongArray(
+					_assetTagGroupRelLocalService.
+						getAssetTagGroupRelsByGroupyId(groupId),
+					AssetTagGroupRel::getTagId),
+				TransformUtil.transformToLongArray(
+					_assetTagGroupRelLocalService.
+						getAssetTagGroupRelsByGroupyId(-1),
+					AssetTagGroupRel::getTagId)));
+
+		for (AssetTag assetTag : assetEntry.getTags()) {
+			if (!ArrayUtil.contains(tagIds, assetTag.getTagId())) {
+				assetTagNames = ArrayUtil.remove(
+					assetTagNames, assetTag.getName());
+			}
+		}
+
+		serviceContext.setAssetTagNames(assetTagNames);
 	}
 
 	private ObjectEntry _restoreObjectEntryFromTrash(
@@ -6030,14 +6262,7 @@ public class ObjectEntryLocalServiceImpl
 			}
 		}
 
-		if (Objects.equals(
-				objectDefinition.getObjectFolderExternalReferenceCode(),
-				ObjectFolderConstants.
-					EXTERNAL_REFERENCE_CODE_CONTENT_STRUCTURES) ||
-			Objects.equals(
-				objectDefinition.getObjectFolderExternalReferenceCode(),
-				ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_FILE_TYPES)) {
-
+		if (objectDefinition.isCMS()) {
 			Group group = _groupLocalService.fetchGroup(
 				objectEntry.getCompanyId(), GroupConstants.CMS);
 
@@ -6770,12 +6995,15 @@ public class ObjectEntryLocalServiceImpl
 				StringBundler.concat(
 					"select count(*) from ",
 					dynamicObjectDefinitionTable.getTableName(), " where ",
-					dbColumnName, " = ", dbColumnValue));
-			ResultSet resultSet = preparedStatement.executeQuery()) {
+					dbColumnName, " = ?"))) {
 
-			resultSet.next();
+			preparedStatement.setLong(1, dbColumnValue);
 
-			count = resultSet.getInt(1);
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				resultSet.next();
+
+				count = resultSet.getInt(1);
+			}
 		}
 		catch (SQLException sqlException) {
 			throw new SystemException(sqlException);
@@ -6808,13 +7036,16 @@ public class ObjectEntryLocalServiceImpl
 					"select count(*) from ",
 					dynamicObjectDefinitionTable.getTableName(), " where ",
 					dynamicObjectDefinitionTable.getPrimaryKeyColumnName(),
-					" != ", objectEntryId, " and ", dbColumnName, " = ",
-					dbColumnValue));
-			ResultSet resultSet = preparedStatement.executeQuery()) {
+					" != ? and ", dbColumnName, " = ?"))) {
 
-			resultSet.next();
+			preparedStatement.setLong(1, objectEntryId);
+			preparedStatement.setLong(2, dbColumnValue);
 
-			count = resultSet.getInt(1);
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				resultSet.next();
+
+				count = resultSet.getInt(1);
+			}
 		}
 		catch (SQLException sqlException) {
 			throw new SystemException(sqlException);
@@ -7366,10 +7597,20 @@ public class ObjectEntryLocalServiceImpl
 			() -> false);
 
 	@Reference
+	private AssetCategoryLocalService _assetCategoryLocalService;
+
+	@Reference
 	private AssetEntryLocalService _assetEntryLocalService;
 
 	@Reference
 	private AssetLinkLocalService _assetLinkLocalService;
+
+	@Reference
+	private AssetTagGroupRelLocalService _assetTagGroupRelLocalService;
+
+	@Reference
+	private AssetVocabularyGroupRelLocalService
+		_assetVocabularyGroupRelLocalService;
 
 	@Reference
 	private AttachmentManager _attachmentManager;
@@ -7440,6 +7681,10 @@ public class ObjectEntryLocalServiceImpl
 
 	@Reference
 	private ObjectDefinitionPersistence _objectDefinitionPersistence;
+
+	@Reference
+	private ObjectDefinitionSettingPersistence
+		_objectDefinitionSettingPersistence;
 
 	@Reference
 	private ObjectEntryFolderPersistence _objectEntryFolderPersistence;

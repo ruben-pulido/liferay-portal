@@ -207,7 +207,7 @@ public class AccountGroupResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
-			public String getItemClassName() {
+			public String getModelClassName() {
 				return com.liferay.account.model.AccountGroup.class.getName();
 			}
 
@@ -219,6 +219,11 @@ public class AccountGroupResourceImpl
 			@Override
 			public String getPortletId() {
 				return AccountPortletKeys.ACCOUNT_GROUPS_ADMIN;
+			}
+
+			@Override
+			public String getResourceClassName() {
+				return AccountGroupResourceImpl.class.getName();
 			}
 
 			@Override

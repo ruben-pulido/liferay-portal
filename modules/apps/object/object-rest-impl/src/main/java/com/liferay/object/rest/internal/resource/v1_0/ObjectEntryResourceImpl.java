@@ -401,12 +401,12 @@ public class ObjectEntryResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
-			public String getItemClassName() {
+			public String getModelClassName() {
 				return _objectDefinition.getClassName();
 			}
 
 			@Override
-			public String getItemModelName() {
+			public String getModelName() {
 				return _objectDefinition.getShortName();
 			}
 
@@ -422,6 +422,11 @@ public class ObjectEntryResourceImpl
 			@Override
 			public String getPortletId() {
 				return _objectDefinition.getPortletId();
+			}
+
+			@Override
+			public String getResourceClassName() {
+				return _objectDefinition.getClassName();
 			}
 
 			@Override
@@ -764,6 +769,66 @@ public class ObjectEntryResourceImpl
 			_objectDefinition.getName());
 
 		return super.postObjectEntryBatch(callbackURL, object);
+	}
+
+	@Override
+	public ObjectEntry postObjectEntryByObjectEntryFolderCopy(
+			Long objectEntryId, Long objectEntryFolderId)
+		throws Exception {
+
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(
+				_objectEntryManagerRegistry.getObjectEntryManager(
+					_objectDefinition.getStorageType()));
+
+		return defaultObjectEntryManager.copyObjectEntry(
+			_getDTOConverterContext(objectEntryId), objectEntryId,
+			objectEntryFolderId, false);
+	}
+
+	@Override
+	public ObjectEntry postObjectEntryByObjectEntryFolderCopyReplace(
+			Long objectEntryId, Long objectEntryFolderId)
+		throws Exception {
+
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(
+				_objectEntryManagerRegistry.getObjectEntryManager(
+					_objectDefinition.getStorageType()));
+
+		return defaultObjectEntryManager.copyObjectEntry(
+			_getDTOConverterContext(objectEntryId), objectEntryId,
+			objectEntryFolderId, true);
+	}
+
+	@Override
+	public ObjectEntry postObjectEntryByObjectEntryFolderMove(
+			Long objectEntryId, Long objectEntryFolderId)
+		throws Exception {
+
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(
+				_objectEntryManagerRegistry.getObjectEntryManager(
+					_objectDefinition.getStorageType()));
+
+		return defaultObjectEntryManager.moveObjectEntry(
+			_getDTOConverterContext(objectEntryId), objectEntryId,
+			objectEntryFolderId, false);
+	}
+
+	@Override
+	public ObjectEntry postObjectEntryByObjectEntryFolderMoveReplace(
+			Long objectEntryId, Long objectEntryFolderId)
+		throws Exception {
+
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(
+				_objectEntryManagerRegistry.getObjectEntryManager(
+					_objectDefinition.getStorageType()));
+
+		return defaultObjectEntryManager.moveObjectEntry(
+			_getDTOConverterContext(objectEntryId), objectEntryId,
+			objectEntryFolderId, true);
 	}
 
 	@Override

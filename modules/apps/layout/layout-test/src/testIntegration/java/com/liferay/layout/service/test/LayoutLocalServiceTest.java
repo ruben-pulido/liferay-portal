@@ -621,7 +621,8 @@ public class LayoutLocalServiceTest {
 
 		ContentLayoutTestUtil.addFragmentEntryLinkToLayout(
 			null, fragmentEntry.getCss(), fragmentEntry.getConfiguration(),
-			fragmentEntry.getFragmentEntryId(), fragmentEntry.getHtml(),
+			fragmentEntry.getExternalReferenceCode(),
+			fragmentEntry.getScopeERC(), fragmentEntry.getHtml(),
 			fragmentEntry.getJs(), draftLayout,
 			fragmentEntry.getFragmentEntryKey(),
 			_segmentsExperienceLocalService.fetchDefaultSegmentsExperienceId(
@@ -734,8 +735,8 @@ public class LayoutLocalServiceTest {
 	public void testUpdateLayoutWithJavaScriptIvalidValue1() throws Exception {
 		Layout layout = LayoutTestUtil.addTypePortletLayout(_group);
 
-		_layoutLocalService.updateLayout(
-			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
+		_layoutLocalService.updateTypeSettings(
+			layout,
 			UnicodePropertiesBuilder.put(
 				"javascript", "<script>"
 			).buildString());
@@ -745,8 +746,8 @@ public class LayoutLocalServiceTest {
 	public void testUpdateLayoutWithJavaScriptIvalidValue2() throws Exception {
 		Layout layout = LayoutTestUtil.addTypePortletLayout(_group);
 
-		_layoutLocalService.updateLayout(
-			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
+		_layoutLocalService.updateTypeSettings(
+			layout,
 			UnicodePropertiesBuilder.put(
 				"javascript", "</script>"
 			).buildString());

@@ -20,6 +20,50 @@ components:
                         -   $ref: "#/components/schemas/SitePageActionExecutionResult"
                         -   $ref: "#/components/schemas/URLActionExecutionResult"
             type: object
+        ActionFragmentElementValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentElementValue"
+                -   properties:
+                        action:
+                            # @review
+                            description:
+                                The fragment element's action. Must be mapped to an external value.
+                            oneOf:
+                                -   $ref: "#/components/schemas/FragmentMappedValue"
+                        onError:
+                            $ref: "#/components/schemas/ActionExecutionResult"
+                            # @review
+                            description:
+                                The action execution result in case the action fails.
+                        onSuccess:
+                            $ref: "#/components/schemas/ActionExecutionResult"
+                            # @review
+                            description:
+                                The action execution result in case the action succeeds.
+                        text:
+                            # @review
+                            description:
+                                The fragment element's text.
+                            oneOf:
+                                -   $ref: "#/components/schemas/FragmentInlineValue"
+                                -   $ref: "#/components/schemas/FragmentMappedValue"
+            # @review
+            description:
+                A fragment element value of type action.
+            type: object
+        BackgroundImageFragmentElementValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentElementValue"
+                -   properties:
+                        backgroundFragmentImage:
+                            $ref: "#/components/schemas/FragmentImage"
+                            # @review
+                            description:
+                                The fragment element's background image.
+            # @review
+            description:
+                A fragment element value of type background image.
+            type: object
         BasicLayout:
             properties:
                 align:
@@ -31,6 +75,46 @@ components:
                 justify:
                     enum: [Center, End, None, SpaceAround, SpaceBetween, Start]
                     type: string
+        CategoryFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            $ref: "#/components/schemas/ItemExternalReference"
+                            # @review
+                            description:
+                                The value of the fragment configuration field of type category.
+                        value_i18n:
+                            additionalProperties:
+                                $ref: "#/components/schemas/ItemExternalReference"
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type category.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type category.
+            type: object
+        CheckboxFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            # @review
+                            description:
+                                Whether the fragment configuration field of type checkbox is checked.
+                            type: boolean
+                        value_i18n:
+                            additionalProperties:
+                                type: boolean
+                            # @review
+                            description:
+                                Whether the fragment configuration field of type checkbox is checked.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type checkbox.
+            type: object
         ClassNameReference:
             allOf:
                 -   $ref: "#/components/schemas/CollectionReference"
@@ -73,6 +157,151 @@ components:
                         The client extension's external reference code.
                     type: string
             type: object
+        CollectionDisplayListStyle:
+            # @review
+            description:
+                The collection display's list style.
+            discriminator:
+                mapping:
+                    ListStyle: "#/components/schemas/ListStyle"
+                    Template: "#/components/schemas/TemplateListStyle"
+                propertyName: collectionDisplayListStyleType
+            properties:
+                collectionDisplayListStyleType:
+                    # @review
+                    description:
+                        The collection display's list style type (ListStyle, Template).
+                    enum: [ListStyle, Template]
+                    type: string
+            type: object
+        CollectionDisplayPageElementDefinition:
+            allOf:
+                -   $ref: "#/components/schemas/PageElementDefinition"
+                -   properties:
+                        collectionDisplayListStyle:
+                            $ref: "#/components/schemas/CollectionDisplayListStyle"
+                        collectionDisplayViewports:
+                            # @review
+                            description:
+                                A list of viewports of the collection display page element.
+                            items:
+                                $ref: "#/components/schemas/CollectionDisplayViewport"
+                            type: array
+                        collectionSettings:
+                            properties:
+                                collectionConfig:
+                                    additionalProperties:
+                                        type: object
+                                    # @review
+                                    description:
+                                        The configuration keys and values of the collection.
+                                    type: object
+                                collectionReference:
+                                    $ref: "#/components/schemas/CollectionReference"
+                            type: object
+                        displayAllItems:
+                            # @review
+                            description:
+                                Whether to show all items when pagination is disabled.
+                            type: boolean
+                        displayAllPages:
+                            # @review
+                            description:
+                                Whether to show all pages when pagination is enabled.
+                            type: boolean
+                        emptyCollectionConfig:
+                            $ref: "#/components/schemas/EmptyCollectionConfig"
+                        hidden:
+                            # @review
+                            description:
+                                Specifies if the collection display is hidden to the user.
+                            type: boolean
+                        name:
+                            # @review
+                            description:
+                                The custom name of a collection display page element.
+                            type: string
+                        numberOfItems:
+                            # @review
+                            description:
+                                The maximum number of items to display in the collection display page element when
+                                pagination is disabled.
+                            type: integer
+                        numberOfItemsPerPage:
+                            # @review
+                            description:
+                                The maximum number of items per page to display in the collection display page element
+                                when pagination is enabled.
+                            type: integer
+                        numberOfPages:
+                            # @review
+                            description:
+                                The maximum number of pages to display in the collection display page element when
+                                pagination is enabled.
+                            type: integer
+                        paginationType:
+                            # @review
+                            description:
+                                The type of pagination.
+                            enum: [
+                                None,
+                                Numeric,
+                                Simple]
+                            type: string
+            # @review
+            description:
+                The page element definition of a Collection.
+            type: object
+        CollectionDisplayViewport:
+            # @review
+            description:
+                A collection display viewport.
+            properties:
+                collectionDisplayViewportDefinition:
+                    # @review
+                    allOf:
+                        -   $ref: "#/components/schemas/BasicLayout"
+                        -   properties:
+                                hidden:
+                                    # @review
+                                    description:
+                                        Specifies if the collection display is hidden to the user for the viewport.
+                                    type: boolean
+                                numberOfColumns:
+                                    # @review
+                                    description:
+                                        The number of columns of the collection viewport.
+                                    type: integer
+                    description:
+                        The definition of the collection display viewport.
+                    type: object
+                id:
+                    enum: [LandscapeMobile, PortraitMobile, Tablet]
+                    type: string
+            required:
+                -   collectionDisplayViewportDefinition
+                -   id
+            type: object
+        CollectionFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            $ref: "#/components/schemas/CollectionReference"
+                            # @review
+                            description:
+                                The value of the fragment configuration field of type collection.
+                        value_i18n:
+                            additionalProperties:
+                                $ref: "#/components/schemas/CollectionReference"
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type collection.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type collection.
+            type: object
         CollectionItemExternalReference:
             allOf:
                 -   $ref: "#/components/schemas/CollectionReference"
@@ -94,104 +323,6 @@ components:
             description:
                 The page element definition of a Collection Item.
             type: object
-        CollectionPageElementDefinition:
-            allOf:
-                -   $ref: "#/components/schemas/PageElementDefinition"
-                -   properties:
-                        collectionReference:
-                            $ref: "#/components/schemas/CollectionReference"
-                        collectionViewports:
-                            # @review
-                            description:
-                                A list of viewports of the collection page element.
-                            items:
-                                $ref: "#/components/schemas/CollectionViewport"
-                            type: array
-                        displayAllItems:
-                            # @review
-                            description:
-                                Whether to show all items when pagination is disabled.
-                            type: boolean
-                        displayAllPages:
-                            # @review
-                            description:
-                                Whether to show all pages when pagination is enabled.
-                            type: boolean
-                        emptyCollectionConfig:
-                            $ref: "#/components/schemas/EmptyCollectionConfig"
-                            type: object
-                        fragmentStyle:
-                            $ref: "#/components/schemas/FragmentStyle"
-                            # @review
-                            description:
-                                The fragment style of the collection page element.
-                        fragmentViewports:
-                            # @review
-                            description:
-                                The fragment viewports of the collection page element.
-                            items:
-                                $ref: "#/components/schemas/FragmentViewport"
-                            type: array
-                        layout:
-                            $ref: "#/components/schemas/BasicLayout"
-                            # @review
-                            description:
-                                the collection page element's layout.
-                        listItemStyle:
-                            # @review
-                            description:
-                                The style of a list of items in the collection page element.
-                            type: string
-                        listStyle:
-                            # @review
-                            description:
-                                The style of a list in the collection page element.
-                            type: string
-                        name:
-                            # @review
-                            description:
-                                The custom name of a collection page element.
-                            type: string
-                        numberOfColumns:
-                            # @review
-                            description:
-                                The number of columns in the collection page element.
-                            type: integer
-                        numberOfItems:
-                            # @review
-                            description:
-                                The maximum number of items to display in the collection page element when pagination is
-                                disabled.
-                            type: integer
-                        numberOfItemsPerPage:
-                            # @review
-                            description:
-                                The number of items per page in the collection page element.
-                            type: integer
-                        numberOfPages:
-                            # @review
-                            description:
-                                The maximum number of pages to show when pagination is enabled.
-                            type: integer
-                        paginationType:
-                            # @review
-                            description:
-                                The type of pagination.
-                            enum: [
-                                None,
-                                Numeric,
-                                Regular,
-                                Simple]
-                            type: string
-                        templateKey:
-                            # @review
-                            description:
-                                The collection page element's template key.
-                            type: string
-            # @review
-            description:
-                The page element definition of a Collection.
-            type: object
         CollectionReference:
             # @review
             description:
@@ -209,30 +340,57 @@ components:
                     enum: [Collection, CollectionProvider]
                     type: string
             type: object
-        CollectionViewport:
-            # @review
-            description:
-                A collection viewport.
-            properties:
-                collectionViewportDefinition:
-                    # @review
-                    description:
-                        The definition of the collection viewport.
-                    properties:
-                        numberOfColumns:
+        ColorPaletteFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            $ref: "#/components/schemas/ColorPaletteValue"
                             # @review
                             description:
-                                The number of columns of the collection viewport.
-                            type: integer
-                    type: object
-                id:
-                    # @review
-                    description:
-                        The collection viewport's ID.
+                                The value of the fragment configuration field of type color palette.
+                        value_i18n:
+                            additionalProperties:
+                                $ref: "#/components/schemas/ColorPaletteValue"
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type color palette.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type color palette.
+            type: object
+        ColorPaletteValue:
+            # @review
+            description:
+                The value of a field of type color palette.
+            properties:
+                color:
                     type: string
-            required:
-                -   id
-                -   collectionViewportDefinition
+                cssClass:
+                    type: string
+                rgbValue:
+                    type: string
+            type: object
+        ColorPickerFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            # @review
+                            description:
+                                The value of the fragment configuration field of type color picker.
+                            type: string
+                        value_i18n:
+                            additionalProperties:
+                                type: string
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type color picker.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type color picker.
             type: object
         ContainerPageElementDefinition:
             allOf:
@@ -345,6 +503,16 @@ components:
             required:
                 -   contextSource
             type: object
+        ContextualMenuNavigationMenuValue:
+            allOf:
+                -   $ref: "#/components/schemas/NavigationMenuValue"
+                -   properties:
+                        contextualMenuType:
+                            enum: [Children, ParentAndItsSiblings, SelfAndSiblings]
+                            type: string
+                    required:
+                        -   contextualMenuType
+                    type: object
         CustomCSSViewport:
             # @review
             description:
@@ -932,6 +1100,36 @@ components:
             description:
                 The page element definition of a fragment composition instance.
             type: object
+        FragmentConfigurationFieldValue:
+            # @review
+            description:
+                The value of a fragment configuration field.
+            discriminator:
+                mapping:
+                    Category: "#/components/schemas/CategoryFragmentConfigurationFieldValue"
+                    Checkbox: "#/components/schemas/CheckboxFragmentConfigurationFieldValue"
+                    Collection: "#/components/schemas/CollectionFragmentConfigurationFieldValue"
+                    ColorPalette: "#/components/schemas/ColorPaletteFragmentConfigurationFieldValue"
+                    ColorPicker: "#/components/schemas/ColorPickerFragmentConfigurationFieldValue"
+                    Item: "#/components/schemas/ItemFragmentConfigurationFieldValue"
+                    Length: "#/components/schemas/LengthFragmentConfigurationFieldValue"
+                    NavigationMenu: "#/components/schemas/NavigationMenuFragmentConfigurationFieldValue"
+                    Select: "#/components/schemas/SelectFragmentConfigurationFieldValue"
+                    Text: "#/components/schemas/TextFragmentConfigurationFieldValue"
+                    URL: "#/components/schemas/URLFragmentConfigurationFieldValue"
+                    Video: "#/components/schemas/VideoFragmentConfigurationFieldValue"
+                propertyName: type
+            properties:
+                type:
+                    # @review
+                    description:
+                        The configuration field's type (category, checkbox, collection, colorPalette, colorPicker, item,
+                        length, navigationMenu, select, text, URL, video).
+                    enum: [Category, Checkbox, Collection, ColorPalette, ColorPicker, Item, Length, NavigationMenu, Select, Text, URL, Video]
+                    type: string
+            required:
+                -   type
+            type: object
         FragmentDropZonePageElementDefinition:
             allOf:
                 -   $ref: "#/components/schemas/PageElementDefinition"
@@ -945,113 +1143,43 @@ components:
             # @review
             description:
                 The page element definition of a fragment drop zone.
-        FragmentField:
+        FragmentElement:
             # @review
             description:
-                A fragment field.
+                A fragment element.
             properties:
                 id:
                     # @review
                     description:
-                        The fragment field's ID.
+                        The fragment element's ID.
                     type: string
                 value:
-                    anyOf:
-                        -   $ref: "#/components/schemas/FragmentFieldAction"
-                        -   $ref: "#/components/schemas/FragmentFieldBackgroundImage"
-                        -   $ref: "#/components/schemas/FragmentFieldHTML"
-                        -   $ref: "#/components/schemas/FragmentFieldImage"
-                        -   $ref: "#/components/schemas/FragmentFieldText"
-                    # @review
-                    description:
-                        The fragment field's value.
+                    $ref: "#/components/schemas/FragmentElementValue"
             type: object
-        FragmentFieldAction:
+        FragmentElementValue:
             # @review
             description:
-                A fragment field with an action.
+                The fragment element value.
+            discriminator:
+                mapping:
+                    Action: "#/components/schemas/ActionFragmentElementValue"
+                    BackgroundImage: "#/components/schemas/BackgroundImageFragmentElementValue"
+                    HTML: "#/components/schemas/HTMLFragmentElementValue"
+                    Image: "#/components/schemas/ImageFragmentElementValue"
+                    Text: "#/components/schemas/TextFragmentElementValue"
+                propertyName: type
             properties:
-                action:
+                type:
                     # @review
                     description:
-                        The fragment field's action. Must be mapped to an external value.
-                    oneOf:
-                        -   $ref: "#/components/schemas/FragmentMappedValue"
-                onError:
-                    $ref: "#/components/schemas/ActionExecutionResult"
-                    # @review
-                    description:
-                        The action execution result in case the action fails.
-                onSuccess:
-                    $ref: "#/components/schemas/ActionExecutionResult"
-                    # @review
-                    description:
-                        The action execution result in case the action succeeds.
-                text:
-                    # @review
-                    description:
-                        The fragment field's text.
-                    oneOf:
-                        -   $ref: "#/components/schemas/FragmentInlineValue"
-                        -   $ref: "#/components/schemas/FragmentMappedValue"
-            type: object
-        FragmentFieldBackgroundImage:
-            # @review
-            description:
-                A fragment field with a background image.
-            properties:
-                backgroundFragmentImage:
-                    $ref: "#/components/schemas/FragmentImage"
-                    # @review
-                    description:
-                        The fragment field's background image.
-            type: object
-        FragmentFieldHTML:
-            # @review
-            description:
-                A fragment field with HTML.
-            properties:
-                html:
-                    # @review
-                    description:
-                        The fragment field's HTML. Can be inline or mapped to an external value.
-                    oneOf:
-                        -   $ref: "#/components/schemas/FragmentInlineValue"
-                        -   $ref: "#/components/schemas/FragmentMappedValue"
-            type: object
-        FragmentFieldImage:
-            # @review
-            description:
-                A fragment field with an image.
-            properties:
-                fragmentImage:
-                    $ref: "#/components/schemas/FragmentImage"
-                    # @review
-                    description:
-                        The fragment field's image.
-                fragmentLink:
-                    $ref: "#/components/schemas/FragmentLink"
-                    # @review
-                    description:
-                        A link to a fragment.
-            type: object
-        FragmentFieldText:
-            # @review
-            description:
-                A fragment field with text.
-            properties:
-                fragmentLink:
-                    $ref: "#/components/schemas/FragmentLink"
-                    # @review
-                    description:
-                        A link to a fragment.
-                text:
-                    # @review
-                    description:
-                        The fragment field's text.
-                    oneOf:
-                        -   $ref: "#/components/schemas/FragmentInlineValue"
-                        -   $ref: "#/components/schemas/FragmentMappedValue"
+                        The fragment element's type.
+                    enum:
+                        -   Action
+                        -   BackgroundImage
+                        -   HTML
+                        -   Image
+                        -   Text
+                    type: string
             type: object
         FragmentImage:
             # @review
@@ -1158,19 +1286,19 @@ components:
                                 The external reference code of the corresponding fragment instance in the draft of the
                                 page. Available only in the published page specification.
                             type: string
-                        fragmentConfig:
+                        fragmentConfigurationFieldValues:
                             additionalProperties:
-                                type: object
+                                $ref: "#/components/schemas/FragmentConfigurationFieldValue"
                             # @review
                             description:
-                                The configuration values of the fragment instance.
+                                The fragment configuration field values of the fragment instance.
                             type: object
-                        fragmentFields:
+                        fragmentElements:
                             # @review
                             description:
-                                The fragment field values of the the fragment instance.
+                                The fragment elements of the the fragment instance.
                             items:
-                                $ref: "#/components/schemas/FragmentField"
+                                $ref: "#/components/schemas/FragmentElement"
                             type: array
                         fragmentInstanceExternalReferenceCode:
                             # @review
@@ -1827,11 +1955,51 @@ components:
                 -   gridViewportDefinition
                 -   id
             type: object
+        HTMLFragmentElementValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentElementValue"
+                -   properties:
+                        html:
+                            # @review
+                            description:
+                                The fragment element's HTML. Can be inline or mapped to an external value.
+                            oneOf:
+                                -   $ref: "#/components/schemas/FragmentInlineValue"
+                                -   $ref: "#/components/schemas/FragmentMappedValue"
+            # @review
+            description:
+                A fragment element value of type HTML.
+            type: object
+        HrefURLValue:
+            allOf:
+                -   $ref: "#/components/schemas/URLValue"
+                -   properties:
+                        href:
+                            type: string
+            type: object
         HtmlProperties:
             properties:
                 htmlTag:
                     enum: [Article, Aside, Div, Footer, Header, Nav, Section]
                     type: string
+            type: object
+        ImageFragmentElementValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentElementValue"
+                -   properties:
+                        fragmentImage:
+                            $ref: "#/components/schemas/FragmentImage"
+                            # @reviewwith
+                            description:
+                                The fragment element's image.
+                        fragmentLink:
+                            $ref: "#/components/schemas/FragmentLink"
+                            # @review
+                            description:
+                                A link to a fragment.
+            # @review
+            description:
+                A fragment element value of type image.
             type: object
         ItemExternalReference:
             # @review
@@ -1856,6 +2024,36 @@ components:
             required:
                 -   externalReferenceCode
             type: object
+        ItemFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            $ref: "#/components/schemas/ItemValue"
+                            # @review
+                            description:
+                                The value of the fragment configuration field of type item.
+                        value_i18n:
+                            additionalProperties:
+                                $ref: "#/components/schemas/ItemValue"
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type item.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type item.
+            type: object
+        ItemValue:
+            # @review
+            description:
+                A value of a field of type item.
+            properties:
+                item:
+                    $ref: "#/components/schemas/ItemExternalReference"
+                template:
+                    $ref: "#/components/schemas/TemplateReference"
+            type: object
         Layout:
             allOf:
                 -   $ref: "#/components/schemas/BasicLayout"
@@ -1868,6 +2066,61 @@ components:
                                 The width's type (fixed or fluid).
                             enum: [Fixed, Fluid]
                             type: string
+        LengthFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            # @review
+                            description:
+                                The value of the fragment configuration field of type length.
+                            type: string
+                        value_i18n:
+                            additionalProperties:
+                                type: string
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type length.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type length.
+            type: object
+        ListStyle:
+            # @review
+            allOf:
+                -   $ref: "#/components/schemas/CollectionDisplayListStyle"
+                -   properties:
+                        listStyleDefinition:
+                            allOf:
+                                -   $ref: "#/components/schemas/BasicLayout"
+                                -   properties:
+                                        gutters:
+                                            # @review
+                                            description:
+                                                A flag that indicates whether the collection display page element has
+                                                gutters if a grid list style is selected.
+                                            type: boolean
+                                        numberOfColumns:
+                                            # @review
+                                            description:
+                                                The number of columns in the collection display page element.
+                                            type: integer
+                                        verticalAlignment:
+                                            # @review
+                                            description:
+                                                The vertical alignment property of the collection display page element
+                                                if a grid list style is selected..
+                                            enum: [Bottom, Middle, Top]
+                                            type: string
+                            type: object
+                        listStyleType:
+                            enum: [Grid, FlexColumn, FlexRow]
+                            type: string
+            # @review
+            description:
+                The collection display's list style.
+            type: object
         MasterPage:
             # @review
             description:
@@ -1952,7 +2205,6 @@ components:
                     description:
                         A valid external identifier to reference this page.
                     type: string
-            type: object
         MessageFormSubmissionResult:
             # @review
             description:
@@ -2087,6 +2339,26 @@ components:
                     format: int64
                     readOnly: true
                     type: integer
+        NavigationMenuFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            $ref: "#/components/schemas/NavigationMenuValue"
+                            # @review
+                            description:
+                                The value of the fragment configuration field of type navigation menu.
+                        value_i18n:
+                            additionalProperties:
+                                $ref: "#/components/schemas/NavigationMenuValue"
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type navigation menu.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type navigation menu.
+            type: object
         NavigationMenuItem:
             # @review
             description:
@@ -2179,6 +2451,22 @@ components:
                     type: boolean
             required:
                 -   typeSettings
+        NavigationMenuValue:
+            # @review
+            description:
+                A value of a field of type navigation menu.
+            discriminator:
+                mapping:
+                    ContextualMenu: "#/components/schemas/ContextualMenuNavigationMenuValue"
+                    SiteMenu: "#/components/schemas/SiteMenuNavigationMenuValue"
+                    SitePages: "#/components/schemas/SitePagesNavigationMenuValue"
+                propertyName:
+                    navigationMenuType
+            properties:
+                navigationMenuType:
+                    enum: [ContextualMenu, SiteMenu, SitePages]
+                    type: string
+            type: object
         NavigationSettings:
             # @review
             description:
@@ -2293,7 +2581,7 @@ components:
                 The page element definition.
             discriminator:
                 mapping:
-                    Collection: "#/components/schemas/CollectionPageElementDefinition"
+                    CollectionDisplay: "#/components/schemas/CollectionDisplayPageElementDefinition"
                     CollectionItem: "#/components/schemas/CollectionItemPageElementDefinition"
                     Container: "#/components/schemas/ContainerPageElementDefinition"
                     DropZone: "#/components/schemas/DropZonePageElementDefinition"
@@ -2311,11 +2599,11 @@ components:
                 type:
                     # @review
                     description:
-                        The page element definition's type (collection, collection item, container, drop zone, form,
-                        form step, form step container, fragment, fragment composition, fragment drop zone, grid, 
+                        The page element definition's type (collection display, collection item, container, drop zone,
+                        form, form step, form step container, fragment, fragment composition, fragment drop zone, grid, 
                         module or widget).
                     enum:
-                        -   Collection
+                        -   CollectionDisplay
                         -   CollectionItem
                         -   Container
                         -   DropZone
@@ -2780,6 +3068,26 @@ components:
                     description:
                         Represents settings related with the site map.
             type: object
+        SelectFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            # @review
+                            description:
+                                The value of the fragment configuration field of type select.
+                            type: string
+                        value_i18n:
+                            additionalProperties:
+                                type: string
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type select.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type select.
+            type: object
         Settings:
             # @review
             description:
@@ -2913,6 +3221,15 @@ components:
                     type: object
             required:
                 -   name
+            type: object
+        SiteMenuNavigationMenuValue:
+            allOf:
+                -   $ref: "#/components/schemas/NavigationMenuValue"
+                -   properties:
+                        navigationMenuItemExternalReference:
+                            $ref: "#/components/schemas/ItemExternalReference"
+                        parentMenuItemExternalReferenceCode:
+                            type: string
             type: object
         SitePage:
             # @review
@@ -3067,6 +3384,23 @@ components:
             description:
                 The navigation settings of a site page.
             type: object
+        SitePageURLValue:
+            allOf:
+                -   $ref: "#/components/schemas/URLValue"
+                -   properties:
+                        sitePage:
+                            $ref: "#/components/schemas/ItemExternalReference"
+            type: object
+        SitePagesNavigationMenuValue:
+            allOf:
+                -   $ref: "#/components/schemas/NavigationMenuValue"
+                -   properties:
+                        pageSetType:
+                            enum: [PrivatePages, PublicPages]
+                            type: string
+                        parentSitePageExternalReferenceCode:
+                            type: string
+                    type: object
         SitemapSettings:
             # @review
             description:
@@ -3101,6 +3435,136 @@ components:
                     minimum: 0
                     type: number
             type: object
+        TemplateListStyle:
+            # @review
+            allOf:
+                -   $ref: "#/components/schemas/CollectionDisplayListStyle"
+                -   properties:
+                        listItemStyleClassName:
+                            # @review
+                            description:
+                                The style className of a list of items in the collection display page element.
+                            type: string
+                        listStyleClassName:
+                            # @review
+                            description:
+                                The style className of a list in the collection display page element.
+                            type: string
+                        templateKey:
+                            # @review
+                            description:
+                                The collection display page element's template key.
+                            type: string
+            description:
+                The collection display's template list style.
+            type: object
+        TemplateReference:
+            # @review
+            description:
+                The template's reference.
+            properties:
+                rendererKey:
+                    # @review
+                    description:
+                        The renderer's key.
+                    type: string
+                templateKey:
+                    # @review
+                    description:
+                        The template's key.
+                    type: string
+            type: object
+        TextFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            # @review
+                            description:
+                                The value of the fragment configuration field of type text.
+                            type: string
+                        value_i18n:
+                            additionalProperties:
+                                type: string
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type text.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type text.
+            type: object
+        TextFragmentElementValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentElementValue"
+                -   properties:
+                        fragmentLink:
+                            $ref: "#/components/schemas/FragmentLink"
+                            # @review
+                            description:
+                                The fragment link of a text fragment element.
+                        textDefaultValue:
+                            properties:
+                                value:
+                                    # @review
+                                    description:
+                                        The text fragment element's default value.
+                                    type: string
+                            type: object
+                        textFragmentValue:
+                            $ref: "#/components/schemas/TextFragmentValue"
+                            # @review
+                            description:
+                                The fragment element's text.
+            # @review
+            description:
+                A fragment element of type text.
+            type: object
+        TextFragmentValue:
+            # @review
+            description:
+                The value of a fragment text element.
+            discriminator:
+                mapping:
+                    Inline: "#/components/schemas/TextInlineFragmentValue"
+                    Mapped: "#/components/schemas/TextMappedFragmentValue"
+                propertyName: type
+            properties:
+                type:
+                    # @review
+                    description:
+                        Whether the value is set inline or mapped.
+                    enum: [Inline, Mapped]
+                    type: string
+            type: object
+        TextInlineFragmentValue:
+            # @review
+            allOf:
+                -   properties:
+                        inlineValue:
+                            $ref: "#/components/schemas/FragmentInlineValue"
+                            # @review
+                            description:
+                                The fragment inline value.
+                -   $ref: "#/components/schemas/TextFragmentValue"
+            # @review
+            description:
+                An inline value of a fragment text element.
+            type: object
+        TextMappedFragmentValue:
+            # @review
+            allOf:
+                -   properties:
+                        mappedValue:
+                            $ref: "#/components/schemas/FragmentMappedValue"
+                            # @review
+                            description:
+                                The fragment mapped value.
+                -   $ref: "#/components/schemas/TextFragmentValue"
+            # @review
+            description:
+                A mapped value of a fragment text element.
+            type: object
         URLActionExecutionResult:
             # @review
             description:
@@ -3122,6 +3586,41 @@ components:
                     # @review
                     description:
                         The localized submission of URL type.
+            type: object
+        URLFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            $ref: "#/components/schemas/URLValue"
+                            # @review
+                            description:
+                                The value of the fragment configuration field of type URL.
+                        value_i18n:
+                            additionalProperties:
+                                $ref: "#/components/schemas/URLValue"
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type URL.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type URL.
+            type: object
+        URLValue:
+            # @review
+            description:
+                A value of a field of type URL.
+            discriminator:
+                mapping:
+                    Href: "#/components/schemas/HrefURLValue"
+                    SitePage: "#/components/schemas/SitePageURLValue"
+                propertyName:
+                    urlType
+            properties:
+                urlType:
+                    enum: [Href, SitePage]
+                    type: string
             type: object
         UtilityPage:
             description:
@@ -3243,6 +3742,36 @@ components:
                     # @review
                     description:
                         The utility page's SEO settings.
+            type: object
+        VideoFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            $ref: "#/components/schemas/VideoValue"
+                            # @review
+                            description:
+                                The value of the fragment configuration field of type video.
+                        value_i18n:
+                            additionalProperties:
+                                $ref: "#/components/schemas/VideoValue"
+                            # @review
+                            description:
+                                The localized value of the fragment configuration field of type video.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type video.
+            type: object
+        VideoValue:
+            # @review
+            description:
+                A value of a field of type video.
+            properties:
+                html:
+                    type: string
+                title:
+                    type: string
             type: object
         WidgetInstance:
             # @review
@@ -3799,7 +4328,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.site.client', and version '1.0.17'."
+        'com.liferay.headless.admin.site.client', and version '1.0.19'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -3807,138 +4336,6 @@ info:
     version: v1.0
 openapi: 3.0.1
 paths:
-    "/navigation-menus/{navigationMenuId}":
-        delete:
-            # @review
-            description:
-                Deletes the navigation menu and returns a 204 if the operation succeeds
-            operationId: deleteNavigationMenu
-            parameters:
-                -   in: path
-                    name: navigationMenuId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["NavigationMenu"]
-        get:
-            operationId: getNavigationMenu
-            parameters:
-                -   in: path
-                    name: navigationMenuId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: query
-                    name: fields
-                    schema:
-                        type: string
-                -   in: query
-                    name: nestedFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: restrictFields
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/NavigationMenu"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/NavigationMenu"
-            tags: ["NavigationMenu"]
-        put:
-            # @review
-            description:
-                Replaces the navigation menu with the information sent in the request body. Any missing fields are
-                deleted, unless they are required.
-            operationId: putNavigationMenu
-            parameters:
-                -   in: path
-                    name: navigationMenuId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/NavigationMenu"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/NavigationMenu"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/NavigationMenu"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/NavigationMenu"
-            tags: ["NavigationMenu"]
-    "/navigation-menus/{navigationMenuId}/permissions":
-        get:
-            operationId: getNavigationMenuPermissionsPage
-            parameters:
-                -   in: path
-                    name: navigationMenuId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: query
-                    name: fields
-                    schema:
-                        type: string
-                -   in: query
-                    name: nestedFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: restrictFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: roleNames
-                    schema:
-                        type: string
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["NavigationMenu"]
-        put:
-            operationId: putNavigationMenuPermissionsPage
-            parameters:
-                -   in: path
-                    name: navigationMenuId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-            requestBody:
-                content:
-                    application/json: {}
-                    application/xml: {}
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["NavigationMenu"]
     "/sites/{siteExternalReferenceCode}/display-page-template-folders":
         get:
             # @review
@@ -5416,6 +5813,244 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["MasterPage"]
+    "/sites/{siteExternalReferenceCode}/navigation-menus":
+        get:
+            operationId: getSiteNavigationMenusPage
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: filter
+                    schema:
+                        type: string
+                -   in: query
+                    name: nestedFields
+                    schema:
+                        type: integer
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: search
+                    schema:
+                        type: string
+                -   in: query
+                    name: sort
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/NavigationMenu"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/NavigationMenu"
+                                type: array
+            tags: ["NavigationMenu"]
+        post:
+            # @review
+            description:
+                Creates a new navigation menu.
+            operationId: postSiteNavigationMenu
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/NavigationMenu"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/NavigationMenu"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/NavigationMenu"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/NavigationMenu"
+            tags: ["NavigationMenu"]
+    "/sites/{siteExternalReferenceCode}/navigation-menus/{navigationMenuExternalReferenceCode}":
+        delete:
+            # @review
+            description:
+                Deletes a specific navigation menu of a site.
+            operationId: deleteSiteNavigationMenu
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: navigationMenuExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["NavigationMenu"]
+        get:
+            # @review
+            description:
+                Retrieves a specific navigation menu of a site.
+            operationId: getSiteNavigationMenu
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: navigationMenuExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: nestedFields
+                    schema:
+                        type: integer
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/NavigationMenu"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/NavigationMenu"
+            tags: ["NavigationMenu"]
+        put:
+            # @review
+            description:
+                Updates the navigation menu with the given external reference code or creates it if it does not exist.
+            operationId: putSiteNavigationMenu
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: navigationMenuExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/NavigationMenu"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/NavigationMenu"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/NavigationMenu"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/NavigationMenu"
+            tags: ["NavigationMenu"]
+    "/sites/{siteExternalReferenceCode}/navigation-menus/{navigationMenuExternalReferenceCode}/permissions":
+        get:
+            operationId: getSiteNavigationMenuPermissionsPage
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: navigationMenuExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: nestedFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: roleNames
+                    schema:
+                        type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["NavigationMenu"]
+        put:
+            operationId: putSiteNavigationMenuPermissionsPage
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: navigationMenuExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json: {}
+                    application/xml: {}
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["NavigationMenu"]
     "/sites/{siteExternalReferenceCode}/page-experiences/{pageExperienceExternalReferenceCode}":
         delete:
             # @review
@@ -9054,241 +9689,6 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/Site"
             tags: ["Site"]
-    "/sites/{siteId}/navigation-menus":
-        get:
-            operationId: getSiteNavigationMenusPage
-            parameters:
-                -   in: path
-                    name: siteId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: query
-                    name: fields
-                    schema:
-                        type: string
-                -   in: query
-                    name: filter
-                    schema:
-                        type: string
-                -   in: query
-                    name: nestedFields
-                    schema:
-                        type: integer
-                -   in: query
-                    name: page
-                    schema:
-                        type: integer
-                -   in: query
-                    name: pageSize
-                    schema:
-                        type: integer
-                -   in: query
-                    name: restrictFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: search
-                    schema:
-                        type: string
-                -   in: query
-                    name: sort
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/NavigationMenu"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/NavigationMenu"
-                                type: array
-            tags: ["NavigationMenu"]
-        post:
-            # @review
-            description:
-                Creates a new navigation menu.
-            operationId: postSiteNavigationMenu
-            parameters:
-                -   in: path
-                    name: siteId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/NavigationMenu"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/NavigationMenu"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/NavigationMenu"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/NavigationMenu"
-            tags: ["NavigationMenu"]
-    "/sites/{siteId}/navigation-menus/by-external-reference-code/{externalReferenceCode}":
-        delete:
-            # @review
-            description:
-                Deletes the navigation menu by external reference code and returns a 204 if the operation succeeds
-            operationId: deleteSiteNavigationMenuByExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: siteId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: path
-                    name: externalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["NavigationMenu"]
-        get:
-            # @review
-            description:
-                Retrieves the navigation menu by external reference code.
-            operationId: getSiteNavigationMenuByExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: siteId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: path
-                    name: externalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: query
-                    name: fields
-                    schema:
-                        type: string
-                -   in: query
-                    name: nestedFields
-                    schema:
-                        type: integer
-                -   in: query
-                    name: restrictFields
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/NavigationMenu"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/NavigationMenu"
-            tags: ["NavigationMenu"]
-        put:
-            # @review
-            description:
-                Updates the navigation menu with the given external reference code or creates it if it does not exist.
-            operationId: putSiteNavigationMenuByExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: siteId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: path
-                    name: externalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/NavigationMenu"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/NavigationMenu"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/NavigationMenu"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/NavigationMenu"
-            tags: ["NavigationMenu"]
-    "/sites/{siteId}/navigation-menus/permissions":
-        get:
-            operationId: getSiteNavigationMenuPermissionsPage
-            parameters:
-                -   in: path
-                    name: siteId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: query
-                    name: fields
-                    schema:
-                        type: string
-                -   in: query
-                    name: nestedFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: restrictFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: roleNames
-                    schema:
-                        type: string
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["NavigationMenu"]
-        put:
-            operationId: putSiteNavigationMenuPermissionsPage
-            parameters:
-                -   in: path
-                    name: siteId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-            requestBody:
-                content:
-                    application/json: {}
-                    application/xml: {}
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["NavigationMenu"]
     /sites:
         get:
             description:

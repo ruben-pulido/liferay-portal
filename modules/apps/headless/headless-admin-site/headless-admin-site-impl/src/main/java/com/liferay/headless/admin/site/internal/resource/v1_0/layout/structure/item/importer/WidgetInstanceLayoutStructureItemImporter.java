@@ -26,8 +26,10 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
+import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -102,11 +104,15 @@ public class WidgetInstanceLayoutStructureItemImporter
 		if (fragmentEntryLink == null) {
 			fragmentEntryLink = _addFragmentEntryLink(
 				widgetInstancePageElementDefinition.
+					getDraftWidgetInstanceExternalReferenceCode(),
+				widgetInstancePageElementDefinition.
 					getWidgetInstanceExternalReferenceCode(),
 				layoutStructureItemImporterContext, widgetInstance);
 		}
 		else {
 			fragmentEntryLink = _updateFragmentEntryLink(
+				widgetInstancePageElementDefinition.
+					getDraftWidgetInstanceExternalReferenceCode(),
 				fragmentEntryLink, layoutStructureItemImporterContext,
 				widgetInstance);
 		}
@@ -146,6 +152,7 @@ public class WidgetInstanceLayoutStructureItemImporter
 	}
 
 	private FragmentEntryLink _addFragmentEntryLink(
+			String draftWidgetInstanceExternalReferenceCode,
 			String externalReferenceCode,
 			LayoutStructureItemImporterContext
 				layoutStructureItemImporterContext,
@@ -160,7 +167,8 @@ public class WidgetInstanceLayoutStructureItemImporter
 		return FragmentEntryLinkLocalServiceUtil.addFragmentEntryLink(
 			externalReferenceCode,
 			layoutStructureItemImporterContext.getUserId(),
-			layoutStructureItemImporterContext.getGroupId(), 0, 0,
+			layoutStructureItemImporterContext.getGroupId(),
+			draftWidgetInstanceExternalReferenceCode, null, null,
 			layoutStructureItemImporterContext.getSegmentsExperienceId(),
 			layout.getPlid(), StringPool.BLANK, StringPool.BLANK,
 			StringPool.BLANK, StringPool.BLANK,
@@ -200,7 +208,9 @@ public class WidgetInstanceLayoutStructureItemImporter
 		return editableValuesJSONObject.put(
 			"instanceId",
 			() -> {
-				String instanceId = widgetInstance.getWidgetInstanceId();
+				String instanceId = _getInstanceId(
+					widgetInstance.getWidgetInstanceId(),
+					widgetInstance.getWidgetName());
 
 				if (Validator.isNull(instanceId)) {
 					return null;
@@ -211,6 +221,16 @@ public class WidgetInstanceLayoutStructureItemImporter
 		).put(
 			"portletId", widgetInstance.getWidgetName()
 		);
+	}
+
+	private String _getInstanceId(String widgetInstanceId, String widgetName) {
+		Portlet portlet = PortletLocalServiceUtil.getPortletById(widgetName);
+
+		if (portlet.isInstanceable()) {
+			return widgetInstanceId;
+		}
+
+		return StringPool.BLANK;
 	}
 
 	private String _getNamespace(WidgetInstance widgetInstance) {
@@ -293,6 +313,7 @@ public class WidgetInstanceLayoutStructureItemImporter
 	}
 
 	private FragmentEntryLink _updateFragmentEntryLink(
+			String draftWidgetInstanceExternalReferenceCode,
 			FragmentEntryLink fragmentEntryLink,
 			LayoutStructureItemImporterContext
 				layoutStructureItemImporterContext,
@@ -331,10 +352,13 @@ public class WidgetInstanceLayoutStructureItemImporter
 		editableValuesJSONObject = _getEditableValuesJSONObject(
 			fragmentEntryLink, widgetInstance);
 
-		return FragmentEntryLinkLocalServiceUtil.updateFragmentEntryLink(
-			layoutStructureItemImporterContext.getUserId(),
-			fragmentEntryLink.getFragmentEntryLinkId(),
+		fragmentEntryLink.setOriginalFragmentEntryLinkERC(
+			draftWidgetInstanceExternalReferenceCode);
+		fragmentEntryLink.setEditableValues(
 			editableValuesJSONObject.toString());
+
+		return FragmentEntryLinkLocalServiceUtil.updateFragmentEntryLink(
+			fragmentEntryLink);
 	}
 
 	private static final ServiceTracker

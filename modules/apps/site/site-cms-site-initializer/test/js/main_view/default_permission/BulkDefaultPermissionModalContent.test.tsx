@@ -84,6 +84,7 @@ describe('BulkDefaultPermissionModalContent', () => {
 			externalReferenceCode: 'ERC2',
 			id: 1,
 			name: 'Test Space',
+			siteId: 20203,
 		});
 
 		batchUpdateSpy = jest.spyOn(
@@ -128,6 +129,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'ERC2',
+							scope: {
+								externalReferenceCode: 'ERC_100',
+							},
 							scopeId: 100,
 							scopeKey: '',
 						},
@@ -292,6 +296,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'ERC2',
+							scope: {
+								externalReferenceCode: 'ERC_100',
+							},
 							scopeId: 100,
 							scopeKey: '123',
 						},
@@ -376,6 +383,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'PARENT_ERC',
+							scope: {
+								externalReferenceCode: 'ERC_100',
+							},
 							scopeId: 100,
 							scopeKey: '123',
 						},
@@ -387,6 +397,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'PARENT_ERC',
+							scope: {
+								externalReferenceCode: 'ERC_100',
+							},
 							scopeId: 100,
 							scopeKey: '123',
 						},
@@ -448,6 +461,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'PARENT1_ERC',
+							scope: {
+								externalReferenceCode: 'ERC_100',
+							},
 							scopeId: 100,
 							scopeKey: '123',
 						},
@@ -459,6 +475,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'PARENT2_ERC',
+							scope: {
+								externalReferenceCode: 'ERC_100',
+							},
 							scopeId: 100,
 							scopeKey: '123',
 						},
@@ -475,7 +494,7 @@ describe('BulkDefaultPermissionModalContent', () => {
 
 		await waitFor(() => {
 			expect(getSpaceSpy).toHaveBeenCalledTimes(1);
-			expect(getSpaceSpy).toHaveBeenCalledWith(100);
+			expect(getSpaceSpy).toHaveBeenCalledWith('ERC_100');
 			expect(getObjectEntrySpy).toHaveBeenCalledTimes(1);
 			expect(getObjectEntrySpy).toHaveBeenCalledWith({
 				classExternalReferenceCode: 'ERC2',
@@ -525,6 +544,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'PARENT1_ERC',
+							scope: {
+								externalReferenceCode: 'ERC_100',
+							},
 							scopeId: 100,
 							scopeKey: '123',
 						},
@@ -536,6 +558,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'PARENT2_ERC',
+							scope: {
+								externalReferenceCode: 'ERC_200',
+							},
 							scopeId: 200,
 							scopeKey: '456',
 						},
@@ -599,6 +624,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'ERC2',
+							scope: {
+								externalReferenceCode: 'ERC_100',
+							},
 							scopeId: 100,
 							scopeKey: '',
 						},
@@ -656,6 +684,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'ERC2',
+							scope: {
+								externalReferenceCode: 'ERC_100',
+							},
 							scopeId: 100,
 							scopeKey: '',
 						},
@@ -668,6 +699,9 @@ describe('BulkDefaultPermissionModalContent', () => {
 						embedded: {
 							parentObjectEntryFolderExternalReferenceCode:
 								'ERC2',
+							scope: {
+								externalReferenceCode: 'ERC_100',
+							},
 							scopeId: 100,
 							scopeKey: '',
 						},

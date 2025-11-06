@@ -26,41 +26,34 @@ public class UserDataCleanupPreupgradeProcess
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
 				StringBundler.concat(
-					"[$SOURCE_TABLE_ALIAS$].classNameId = (select classNameId ",
-					"from ClassName_ where value = '", User.class.getName(),
-					"')"),
+					"classNameId = (select classNameId from ClassName_ where ",
+					"value = '", User.class.getName(), "')"),
 				"classPK", "AssetEntry", "userId", "User_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
 				StringBundler.concat(
-					"[$SOURCE_TABLE_ALIAS$].classNameId = (select classNameId ",
-					"from ClassName_ where value = '", User.class.getName(),
-					"')"),
+					"classNameId = (select classNameId from ClassName_ where ",
+					"value = '", User.class.getName(), "')"),
 				"classPK", "Contact_", "userId", "User_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
 				StringBundler.concat(
-					"[$SOURCE_TABLE_ALIAS$].classNameId = (select classNameId ",
-					"from ClassName_ where value = '", User.class.getName(),
-					"')"),
+					"classNameId = (select classNameId from ClassName_ where ",
+					"value = '", User.class.getName(), "')"),
 				"classPK", "Group_", "userId", "User_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
-				"[$SOURCE_TABLE_ALIAS$].ownerType = " +
-					PortletKeys.PREFS_OWNER_TYPE_USER,
-				"ownerId", "PortalPreferences", "userId", "User_"));
+				"ownerType = " + PortletKeys.PREFS_OWNER_TYPE_USER, "ownerId",
+				"PortalPreferences", "userId", "User_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
-				"[$SOURCE_TABLE_ALIAS$].ownerType = " +
-					PortletKeys.PREFS_OWNER_TYPE_USER,
-				"ownerId", "PortletPreferences", "userId", "User_"));
+				"ownerType = " + PortletKeys.PREFS_OWNER_TYPE_USER, "ownerId",
+				"PortletPreferences", "userId", "User_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
 				StringBundler.concat(
-					"[$SOURCE_TABLE_ALIAS$].scope = ",
-					ResourceConstants.SCOPE_INDIVIDUAL, " and ",
-					"[$SOURCE_TABLE_ALIAS$].name = '", User.class.getName(),
-					"'"),
+					"scope = ", ResourceConstants.SCOPE_INDIVIDUAL,
+					" and name = '", User.class.getName(), "'"),
 				"primKeyId", "ResourcePermission", "userId", "User_"));
 	}
 

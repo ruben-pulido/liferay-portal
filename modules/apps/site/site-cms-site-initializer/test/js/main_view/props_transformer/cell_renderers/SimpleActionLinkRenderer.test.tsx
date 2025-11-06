@@ -4,6 +4,9 @@
  */
 
 import '@testing-library/jest-dom';
+
+// eslint-disable-next-line
+import {checkAccessibility} from '@liferay/layout-js-components-web/test/__lib__/index';
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 
@@ -149,6 +152,14 @@ describe('SimpleActionLinkRenderer. Show type icon.', () => {
 		);
 	});
 
+	it('checks the accessibility of component', async () => {
+		const {container} = render(
+			<SimpleActionLinkRenderer {...testBaseProps} />
+		);
+
+		await checkAccessibility({bestPractices: true, context: container});
+	});
+
 	it('folder item with folder icon', () => {
 		const {container} = render(
 			<SimpleActionLinkRenderer {...testFolderProps} />
@@ -160,5 +171,23 @@ describe('SimpleActionLinkRenderer. Show type icon.', () => {
 		expect(screen.getByRole('presentation', {name: ''})).toHaveClass(
 			'lexicon-icon-folder'
 		);
+	});
+});
+
+describe('SimpleActionLinkRenderer. Show lock icon.', () => {
+	it('shows lock icon if it is a system link', () => {
+		render(
+			<SimpleActionLinkRenderer
+				{...testBaseProps}
+				itemData={{
+					...testBaseProps.itemData,
+					system: true,
+				}}
+			/>
+		);
+
+		expect(
+			screen.getByLabelText('system-default-structure')
+		).toBeInTheDocument();
 	});
 });

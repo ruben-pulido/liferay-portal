@@ -5,6 +5,7 @@
 
 import {IInternalRenderer} from '@liferay/frontend-data-set-web';
 
+import {getScopeExternalReferenceCode} from '../../common/utils/getScopeExternalReferenceCode';
 import AuthorRenderer from './cell_renderers/AuthorRenderer';
 import SpaceRendererWithCache from './cell_renderers/SpaceRendererWithCache';
 import TypeRenderer from './cell_renderers/TypeRenderer';
@@ -26,7 +27,8 @@ export default function StructureUsagesFDSPropsTransformer({
 				{
 					component: ({itemData}) =>
 						SpaceRendererWithCache({
-							spaceId: itemData.embedded.scopeId,
+							spaceExternalReferenceCode:
+								getScopeExternalReferenceCode(itemData),
 						}),
 					name: 'spaceTableCellRenderer',
 					type: 'internal',

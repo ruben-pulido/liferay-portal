@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
+import ClayButton from '@clayui/button';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import classNames from 'classnames';
 import {add} from 'date-fns';
 import {ReactElement, useState} from 'react';
 import {KeyedMutator} from 'swr';
 
+import ButtonWithIcon from '../../../components/ButtonWithIcon';
 import {OrderCustomFields, OrderStatus as Status} from '../../../enums/Order';
 import i18n from '../../../i18n';
 import {Liferay} from '../../../liferay/liferay';
@@ -87,7 +88,7 @@ const ExtendRequestModal: React.FC<ExtendSSATrialModalProps> = ({
 					</span>
 
 					<span>
-						<ClayButtonWithIcon
+						<ButtonWithIcon
 							aria-label="Close"
 							borderless
 							className="text-dark"

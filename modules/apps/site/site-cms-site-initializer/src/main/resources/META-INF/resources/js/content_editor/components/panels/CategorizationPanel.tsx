@@ -13,33 +13,38 @@ import {
 } from '../ContentEditorSidePanel';
 
 export default function CategorizationPanel({
+	categorizationFields,
 	contentAPIURL,
 	groupId,
+	hasUpdatePermission,
 	onUpdateCategorization,
 }: {
+	categorizationFields: CategorizationFields;
 	contentAPIURL: string;
 	groupId: number | string;
+	hasUpdatePermission: boolean;
 	onUpdateCategorization: (props: UpdateCategorizationProps) => void;
 }) {
+	const {assetCategoryIds, assetTagNames} = categorizationFields;
+
 	const updateCategorization = useCallback(
 		({keywords = [], taxonomyCategoryBriefs = []}: IAssetObjectEntry) => {
-			const fields: {
-				name: keyof CategorizationFields;
-				value: string;
-			}[] = [
-				{
-					name: 'assetCategoryIds',
-					value: taxonomyCategoryBriefs
+			const fields: CategorizationFields = {
+				assetCategoryIds: {
+					serverValue: taxonomyCategoryBriefs
 						.map(({taxonomyCategoryId: id}) => id)
 						.join(','),
+					value: taxonomyCategoryBriefs,
 				},
-				{
-					name: 'assetTagNames',
-					value: keywords.join(','),
+				assetTagNames: {
+					serverValue: keywords.join(','),
+					value: keywords,
 				},
-			];
+			};
 
-			fields.forEach(onUpdateCategorization);
+			(Object.entries(fields) as UpdateCategorizationProps[]).forEach(
+				onUpdateCategorization
+			);
 		},
 		[onUpdateCategorization]
 	);
@@ -47,11 +52,15 @@ export default function CategorizationPanel({
 	return (
 		<div className="px-3">
 			<AssetCategorization
+				categorization={{
+					keywords: assetTagNames.value,
+					taxonomyCategoryBriefs: assetCategoryIds.value,
+				}}
 				cmsGroupId={groupId}
 				getObjectEntryURL={contentAPIURL}
+				hasUpdatePermission={hasUpdatePermission}
 				inputSize="sm"
 				onUpdateCategorization={updateCategorization}
-				updateObjectEntryURL={contentAPIURL}
 			/>
 		</div>
 	);

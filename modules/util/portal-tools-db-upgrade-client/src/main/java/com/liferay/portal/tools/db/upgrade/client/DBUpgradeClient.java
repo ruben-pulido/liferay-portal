@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -417,6 +418,25 @@ public class DBUpgradeClient {
 		_appendClassPath(sb, _appServer.getExtraLibDirs());
 
 		return sb.toString();
+	}
+
+	private String[] _getDBTypes() {
+		if (_appServer == null) {
+			return _DATABASE_TYPES_PORTAL;
+		}
+
+		File portalShieldedContainerLibDir =
+			_appServer.getPortalShieldedContainerLibDir();
+
+		if (portalShieldedContainerLibDir != null) {
+			Path path = portalShieldedContainerLibDir.toPath();
+
+			if (Files.exists(path.resolve("com.liferay.portal.dao.db.jar"))) {
+				return _DATABASE_TYPES_DXP;
+			}
+		}
+
+		return _DATABASE_TYPES_PORTAL;
 	}
 
 	private File _getResolvedDir(
@@ -816,7 +836,7 @@ public class DBUpgradeClient {
 		while (dataSource == null) {
 			System.out.print("[ ");
 
-			for (String databaseType : _DATABASE_TYPES) {
+			for (String databaseType : _getDBTypes()) {
 				System.out.print(databaseType + " ");
 			}
 
@@ -936,8 +956,12 @@ public class DBUpgradeClient {
 		"jboss", "tomcat", "weblogic", "wildfly"
 	};
 
-	private static final String[] _DATABASE_TYPES = {
+	private static final String[] _DATABASE_TYPES_DXP = {
 		"db2", "mariadb", "mysql", "oracle", "postgresql", "sqlserver"
+	};
+
+	private static final String[] _DATABASE_TYPES_PORTAL = {
+		"mariadb", "mysql", "postgresql"
 	};
 
 	private static final String _GOGO_SHELL_PREFIX = "g! ";

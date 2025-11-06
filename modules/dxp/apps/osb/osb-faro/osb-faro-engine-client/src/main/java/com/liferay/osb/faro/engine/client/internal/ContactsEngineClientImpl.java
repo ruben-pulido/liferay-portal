@@ -2153,14 +2153,18 @@ public class ContactsEngineClientImpl
 			"status", FilterConstants.COMPARISON_OPERATOR_EQUALS, status);
 
 		if (segmentTypes != null) {
+			FilterBuilder segmentTypeFilterBuilder = new FilterBuilder();
+
 			for (String segmentType : segmentTypes) {
-				filterBuilder.addFilter(
+				segmentTypeFilterBuilder.addFilter(
 					"type", FilterConstants.COMPARISON_OPERATOR_EQUALS,
 					segmentType, false);
 			}
+
+			filterBuilder.addFilter(segmentTypeFilterBuilder.build());
 		}
 
-		filterBuilder.addSearchFilter(query, fields, null);
+		filterBuilder.addSearchFilter(query, fields, null, true);
 
 		uriVariables.put("filter", filterBuilder.build());
 

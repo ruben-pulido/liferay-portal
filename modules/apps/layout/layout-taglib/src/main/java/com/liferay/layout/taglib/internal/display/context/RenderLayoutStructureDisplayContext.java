@@ -7,6 +7,7 @@ package com.liferay.layout.taglib.internal.display.context;
 
 import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.entry.processor.helper.FragmentEntryProcessorHelper;
+import com.liferay.fragment.entry.processor.helper.LayoutReferenceResolver;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.renderer.DefaultFragmentRendererContext;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
@@ -927,12 +928,19 @@ public class RenderLayoutStructureDisplayContext {
 			return StringPool.BLANK;
 		}
 
-		String layoutUuid = layoutJSONObject.getString("layoutUuid");
-		long groupId = layoutJSONObject.getLong("groupId");
-		boolean privateLayout = layoutJSONObject.getBoolean("privateLayout");
+		LayoutReferenceResolver layoutReferenceResolver =
+			ServletContextUtil.getLayoutReferenceResolverRegistry();
 
-		Layout layout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(
-			layoutUuid, groupId, privateLayout);
+		Layout layout = layoutReferenceResolver.resolve(
+			_themeDisplay.getCompanyId(), layoutJSONObject,
+			_themeDisplay.getScopeGroupId());
+
+		if (layout == null) {
+			layout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(
+				layoutJSONObject.getString("layoutUuid"),
+				layoutJSONObject.getLong("groupId"),
+				layoutJSONObject.getBoolean("privateLayout"));
+		}
 
 		if (layout != null) {
 			return PortalUtil.getLayoutURL(layout, _themeDisplay);

@@ -7,8 +7,8 @@ package com.liferay.headless.admin.site.internal.dto.v1_0.converter;
 
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
+import com.liferay.headless.admin.site.dto.v1_0.CollectionDisplayPageElementDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.CollectionItemPageElementDefinition;
-import com.liferay.headless.admin.site.dto.v1_0.CollectionPageElementDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.ContainerPageElementDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.DropZonePageElementDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.FormPageElementDefinition;
@@ -124,7 +124,8 @@ public class PageElementDTOConverter
 				layoutStructureItem.getItemType(),
 				LayoutDataItemTypeConstants.TYPE_COLLECTION)) {
 
-			return _collectionPageElementDefinitionDTOConverter.toDTO(
+			return _collectionDisplayPageElementDefinitionDTOConverter.toDTO(
+				dtoConverterContext,
 				(CollectionStyledLayoutStructureItem)layoutStructureItem);
 		}
 
@@ -132,14 +133,7 @@ public class PageElementDTOConverter
 				layoutStructureItem.getItemType(),
 				LayoutDataItemTypeConstants.TYPE_COLLECTION_ITEM)) {
 
-			CollectionItemPageElementDefinition
-				collectionItemPageElementDefinition =
-					new CollectionItemPageElementDefinition();
-
-			collectionItemPageElementDefinition.setType(
-				PageElementDefinition.Type.COLLECTION_ITEM);
-
-			return collectionItemPageElementDefinition;
+			return new CollectionItemPageElementDefinition();
 		}
 
 		if (Objects.equals(
@@ -216,7 +210,7 @@ public class PageElementDTOConverter
 			}
 
 			return _fragmentInstancePageElementDefinitionDTOConverter.toDTO(
-				fragmentStyledLayoutStructureItem);
+				dtoConverterContext, fragmentStyledLayoutStructureItem);
 		}
 
 		if (Objects.equals(
@@ -280,11 +274,12 @@ public class PageElementDTOConverter
 	}
 
 	@Reference(
-		target = "(component.name=com.liferay.headless.admin.site.internal.dto.v1_0.converter.CollectionPageElementDefinitionDTOConverter)"
+		target = "(component.name=com.liferay.headless.admin.site.internal.dto.v1_0.converter.CollectionDisplayPageElementDefinitionDTOConverter)"
 	)
 	private DTOConverter
-		<CollectionStyledLayoutStructureItem, CollectionPageElementDefinition>
-			_collectionPageElementDefinitionDTOConverter;
+		<CollectionStyledLayoutStructureItem,
+		 CollectionDisplayPageElementDefinition>
+			_collectionDisplayPageElementDefinitionDTOConverter;
 
 	@Reference(
 		target = "(component.name=com.liferay.headless.admin.site.internal.dto.v1_0.converter.ContainerPageElementDefinitionDTOConverter)"

@@ -7,6 +7,7 @@ import {Locator, Page, expect} from '@playwright/test';
 
 export class DataSetPage {
 	readonly activeViewSelector: Locator;
+	readonly assetLink: (assetName: string) => Locator;
 	readonly page: Page;
 	readonly table: {
 		bodyRows: Locator;
@@ -16,9 +17,13 @@ export class DataSetPage {
 	readonly selectAllLink: Locator;
 
 	constructor(page: Page) {
-		this.activeViewSelector = page.getByLabel(
-			'Show View Options'
-		) as Locator;
+		this.activeViewSelector = page.getByLabel(/View Selected/);
+		this.assetLink = (assetName) => {
+			return page.getByRole('link', {
+				exact: true,
+				name: assetName,
+			});
+		};
 
 		const tableContainer = page.locator('.fds table');
 		this.table = {

@@ -63,12 +63,10 @@ if (ParamUtil.getBoolean(request, "showHeader", true)) {
 			</c:if>
 
 			<%
-			boolean showFriendlyURL = FeatureFlagManagerUtil.isEnabled("LPD-21926") && objectDefinition.isEnableFriendlyURLCustomization();
-
 			ObjectLayoutBox seoObjectLayoutBox = objectEntryDisplayContext.getObjectLayoutBox(ObjectLayoutBoxConstants.TYPE_SEO);
 			%>
 
-			<c:if test="<%= showFriendlyURL && ((seoObjectLayoutBox != null) || defaultObjectLayout) %>">
+			<c:if test="<%= objectDefinition.isEnableFriendlyURLCustomization() && ((seoObjectLayoutBox != null) || defaultObjectLayout) %>">
 				<div class="mt-4">
 					<clay:panel-group>
 						<clay:panel

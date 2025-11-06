@@ -140,8 +140,6 @@ public class BatchEnginePortletDataHandlerRegistrar {
 	@Reference
 	private BatchEngineImportTaskService _batchEngineImportTaskService;
 
-	private final Map<String, BatchEnginePortletDataHandler>
-		_batchEnginePortletDataHandlers = new HashMap<>();
 	private final List<Long> _enabledCompanyIds = new CopyOnWriteArrayList<>();
 
 	@Reference
@@ -188,7 +186,8 @@ public class BatchEnginePortletDataHandlerRegistrar {
 
 			BatchEnginePortletDataHandler
 				previousBatchEnginePortletDataHandler =
-					_batchEnginePortletDataHandlers.get(portletId);
+					BatchEnginePortletDataHandlerRegistryUtil.getByPortletId(
+						portletId);
 
 			BatchEnginePortletDataHandler batchEnginePortletDataHandler =
 				previousBatchEnginePortletDataHandler;
@@ -205,7 +204,7 @@ public class BatchEnginePortletDataHandlerRegistrar {
 				batchEnginePortletDataHandler.setPortletId(
 					exportImportDescriptor.getPortletId());
 
-				_batchEnginePortletDataHandlers.put(
+				BatchEnginePortletDataHandlerRegistryUtil.put(
 					portletId, batchEnginePortletDataHandler);
 			}
 
@@ -229,9 +228,6 @@ public class BatchEnginePortletDataHandlerRegistrar {
 					PortletDataHandler.class, batchEnginePortletDataHandler,
 					_setEnabledCompanyIds(
 						HashMapDictionaryBuilder.<String, Object>put(
-							"batch.engine.task.item.delegate.item.class.name",
-							exportImportDescriptor.getItemClassName()
-						).put(
 							"jakarta.portlet.name", portletId
 						).put(
 							"service.ranking", Integer.MAX_VALUE
@@ -268,31 +264,29 @@ public class BatchEnginePortletDataHandlerRegistrar {
 			String portletId = exportImportDescriptor.getPortletId();
 
 			BatchEnginePortletDataHandler batchEnginePortletDataHandler =
-				_batchEnginePortletDataHandlers.get(portletId);
+				BatchEnginePortletDataHandlerRegistryUtil.getByPortletId(
+					portletId);
 
 			if (batchEnginePortletDataHandler == null) {
 				return;
 			}
 
-			String className = GetterUtil.getObject(
-				(String)serviceReference.getProperty(
-					"batch.engine.task.item.delegate.class.name"),
-				() -> (String)serviceReference.getProperty(
-					"batch.engine.entity.class.name"));
-
-			String taskItemDelegateName = (String)serviceReference.getProperty(
-				"batch.engine.task.item.delegate.name");
-
 			batchEnginePortletDataHandler.
 				unregisterExportImportVulcanBatchEngineTaskItemDelegate(
-					className, taskItemDelegateName);
+					GetterUtil.getObject(
+						(String)serviceReference.getProperty(
+							"batch.engine.task.item.delegate.class.name"),
+						() -> (String)serviceReference.getProperty(
+							"batch.engine.entity.class.name")),
+					(String)serviceReference.getProperty(
+						"batch.engine.task.item.delegate.name"));
 
 			String[] classNames = batchEnginePortletDataHandler.getClassNames();
 
 			if (classNames.length == 0) {
 				serviceRegistration.unregister();
 
-				_batchEnginePortletDataHandlers.remove(portletId);
+				BatchEnginePortletDataHandlerRegistryUtil.remove(portletId);
 
 				_serviceRegistrations.remove(portletId);
 			}

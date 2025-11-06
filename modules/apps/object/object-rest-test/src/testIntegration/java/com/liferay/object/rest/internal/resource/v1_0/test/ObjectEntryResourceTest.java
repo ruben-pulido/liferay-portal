@@ -31,6 +31,7 @@ import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.headless.admin.taxonomy.client.dto.v1_0.TaxonomyCategory;
 import com.liferay.headless.admin.taxonomy.client.resource.v1_0.TaxonomyCategoryResource;
 import com.liferay.headless.delivery.dto.v1_0.Creator;
+import com.liferay.headless.object.dto.v1_0.Scope;
 import com.liferay.list.type.entry.util.ListTypeEntryUtil;
 import com.liferay.list.type.model.ListTypeDefinition;
 import com.liferay.list.type.model.ListTypeEntry;
@@ -65,7 +66,6 @@ import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.model.ObjectValidationRule;
 import com.liferay.object.rest.dto.v1_0.Folder;
 import com.liferay.object.rest.dto.v1_0.Link;
-import com.liferay.object.rest.dto.v1_0.Scope;
 import com.liferay.object.rest.dto.v1_0.ValidationRequest;
 import com.liferay.object.rest.dto.v1_0.ValidationResponse;
 import com.liferay.object.rest.dto.v1_0.util.ScopeUtil;
@@ -234,6 +234,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -5186,8 +5187,8 @@ public class ObjectEntryResourceTest {
 	public void testGetCreatorExternalReferenceCode() throws Exception {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), 0, null, false, true, false, true,
-				false, false, false, false, false, null,
+				null, TestPropsValues.getUserId(), 0, null, false, true, false,
+				true, false, false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -6013,7 +6014,6 @@ public class ObjectEntryResourceTest {
 				Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS)));
 	}
 
-	@FeatureFlag("LPD-6233")
 	@Test
 	public void testGetObjectEntriesWithAssigneeObjectField() throws Exception {
 		ObjectFieldUtil.addCustomObjectField(
@@ -6302,6 +6302,15 @@ public class ObjectEntryResourceTest {
 	@Test
 	public void testGetObjectEntryByExternalReferenceCodeWithSlash()
 		throws Exception {
+
+		ObjectField textObjectField = _objectFieldLocalService.getObjectField(
+			_objectDefinition1.getObjectDefinitionId(), _OBJECT_FIELD_NAME_1);
+
+		_objectDefinition1.setTitleObjectFieldId(
+			textObjectField.getObjectFieldId());
+
+		_objectDefinitionLocalService.updateObjectDefinition(
+			_objectDefinition1);
 
 		HTTPTestUtil.invokeToJSONObject(
 			JSONUtil.put(
@@ -7292,8 +7301,8 @@ public class ObjectEntryResourceTest {
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), 0, null, false, true, false, true,
-				false, false, false, false, false, null,
+				null, TestPropsValues.getUserId(), 0, null, false, true, false,
+				true, false, false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -7693,7 +7702,6 @@ public class ObjectEntryResourceTest {
 			JSONCompareMode.LENIENT);
 	}
 
-	@FeatureFlag("LPD-21926")
 	@Test
 	public void testGetObjectEntryWithFriendlyURL() throws Exception {
 		_objectDefinition1.setEnableFriendlyURLCustomization(true);
@@ -8491,7 +8499,6 @@ public class ObjectEntryResourceTest {
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 	}
 
-	@FeatureFlag("LPD-21926")
 	@Test
 	public void testPatchObjectEntryWithFriendlyURL() throws Exception {
 		_objectDefinition1.setEnableFriendlyURLCustomization(true);
@@ -8836,7 +8843,6 @@ public class ObjectEntryResourceTest {
 		Assert.assertNull(objectEntryJSONObject.get("permissions"));
 	}
 
-	@FeatureFlag("LPD-6233")
 	@Test
 	public void testPatchPutCustomObjectEntryByExternalReferenceCodeWithAssigneeObjectField()
 		throws Exception {
@@ -8883,7 +8889,6 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT, jsonObject.getLong("id"));
 	}
 
-	@FeatureFlag("LPD-6233")
 	@Test
 	public void testPatchPutCustomObjectEntryWithAssigneeObjectField()
 		throws Exception {
@@ -9023,7 +9028,6 @@ public class ObjectEntryResourceTest {
 			group.getGroupKey());
 	}
 
-	@FeatureFlag("LPD-6233")
 	@Test
 	public void testPostCustomObjectEntryWithAssigneeObjectField()
 		throws Exception {
@@ -9074,9 +9078,11 @@ public class ObjectEntryResourceTest {
 		User adminUser = UserTestUtil.getAdminUser(
 			portalInstanceJSONObject.getLong("companyId"));
 
+		String objectDefinitionName = ObjectDefinitionTestUtil.getRandomName();
+
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.publishObjectDefinition(
-				_objectDefinition1.getShortName(),
+				objectDefinitionName,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT,
@@ -9167,8 +9173,7 @@ public class ObjectEntryResourceTest {
 								ObjectFieldSettingConstants.
 									NAME_STORAGE_DL_FOLDER_PATH
 							).value(
-								StringPool.SLASH +
-									_objectDefinition1.getShortName()
+								StringPool.SLASH + objectDefinitionName
 							).build()),
 						false)),
 				ObjectDefinitionConstants.SCOPE_COMPANY, adminUser.getUserId());
@@ -9648,6 +9653,76 @@ public class ObjectEntryResourceTest {
 			_testPostCustomObjectEntryWithInvalidNestedCustomObjectEntriesInOneToManyRelationship(
 				_objectDefinition1.getRESTContextPath(), _objectRelationship1);
 		}
+	}
+
+	@Test
+	public void testPostCustomObjectEntryWithLargeAttachmentObjectField()
+		throws Exception {
+
+		String attachmentFieldName = "x" + RandomTestUtil.randomString();
+
+		ObjectField objectField = ObjectFieldUtil.createObjectField(
+			ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT,
+			ObjectFieldConstants.DB_TYPE_LONG, true, false, null,
+			attachmentFieldName, attachmentFieldName,
+			Arrays.asList(
+				new ObjectFieldSettingBuilder(
+				).name(
+					ObjectFieldSettingConstants.NAME_ACCEPTED_FILE_EXTENSIONS
+				).value(
+					"txt"
+				).build(),
+				new ObjectFieldSettingBuilder(
+				).name(
+					ObjectFieldSettingConstants.NAME_FILE_SOURCE
+				).value(
+					ObjectFieldSettingConstants.VALUE_USER_COMPUTER
+				).build(),
+				new ObjectFieldSettingBuilder(
+				).name(
+					ObjectFieldSettingConstants.NAME_MAX_FILE_SIZE
+				).value(
+					String.valueOf(100)
+				).build()),
+			false);
+
+		objectField.setObjectDefinitionId(
+			_objectDefinition1.getObjectDefinitionId());
+
+		ObjectFieldTestUtil.addCustomObjectField(
+			TestPropsValues.getUserId(), objectField);
+
+		byte[] data = new byte[60_000_000];
+
+		Random random = new Random();
+
+		random.nextBytes(data);
+
+		String base64 = Base64.encode(data);
+
+		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				attachmentFieldName,
+				JSONUtil.put(
+					"fileBase64", base64
+				).put(
+					"name", StringUtil.randomString() + ".txt"
+				)
+			).toString(),
+			StringBundler.concat(
+				_objectDefinition1.getRESTContextPath(), "?nestedFields=",
+				attachmentFieldName, ".fileBase64"),
+			Http.Method.POST);
+
+		_assertAttachmentJSONObject(
+			_dlFileEntryLocalService.getDLFileEntry(
+				_testDLFileEntryModelListener.getLastFileEntryId()),
+			base64, jsonObject.getJSONObject(attachmentFieldName),
+			JSONUtil.put(
+				"externalReferenceCode", "L_GLOBAL"
+			).put(
+				"type", Scope.Type.SITE.getValue()
+			));
 	}
 
 	@Test

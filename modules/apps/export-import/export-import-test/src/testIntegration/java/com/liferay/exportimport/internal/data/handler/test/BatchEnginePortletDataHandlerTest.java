@@ -1767,13 +1767,18 @@ public class BatchEnginePortletDataHandlerTest {
 			return new ExportImportDescriptor() {
 
 				@Override
-				public String getItemClassName() {
-					return _itemClassName;
+				public String getModelClassName() {
+					return _modelClassName;
 				}
 
 				@Override
 				public String getPortletId() {
 					return _portletId;
+				}
+
+				@Override
+				public String getResourceClassName() {
+					return _resourceClassName;
 				}
 
 				@Override
@@ -1861,7 +1866,9 @@ public class BatchEnginePortletDataHandlerTest {
 			};
 		}
 
-		private static String _itemClassName = RandomTestUtil.randomString();
+		private static String _modelClassName = RandomTestUtil.randomString();
+		private static String _resourceClassName =
+			RandomTestUtil.randomString();
 
 		private final Function<Filter, Page<TestItem>> _function;
 		private final String _portletId;

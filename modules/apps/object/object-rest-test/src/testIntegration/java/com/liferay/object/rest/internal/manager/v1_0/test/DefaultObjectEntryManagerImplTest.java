@@ -54,6 +54,7 @@ import com.liferay.object.definition.tree.util.ObjectDefinitionTreeUtil;
 import com.liferay.object.exception.NoSuchObjectEntryException;
 import com.liferay.object.exception.NoSuchObjectEntryFolderException;
 import com.liferay.object.exception.ObjectDefinitionAccountEntryRestrictedException;
+import com.liferay.object.exception.ObjectDefinitionScopeException;
 import com.liferay.object.exception.ObjectEntryDefaultLanguageIdException;
 import com.liferay.object.exception.ObjectEntryValuesException;
 import com.liferay.object.exception.ObjectRelationshipDeletionTypeException;
@@ -79,6 +80,7 @@ import com.liferay.object.field.setting.builder.ObjectFieldSettingBuilder;
 import com.liferay.object.field.setting.util.ObjectFieldSettingUtil;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectDefinitionSetting;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.model.ObjectEntryVersion;
 import com.liferay.object.model.ObjectField;
@@ -850,8 +852,8 @@ public class DefaultObjectEntryManagerImplTest
 
 		_objectDefinition3 =
 			objectDefinitionLocalService.addCustomObjectDefinition(
-				adminUser.getUserId(), 0, null, false, true, false, true, true,
-				false, false, false, false, null,
+				null, adminUser.getUserId(), 0, null, false, true, false, true,
+				true, false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -981,6 +983,31 @@ public class DefaultObjectEntryManagerImplTest
 			_objectDefinition6.getObjectDefinitionId(),
 			ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS,
 			String.valueOf(_depotEntry.getGroupId()));
+
+		_objectDefinition7 = _addObjectDefinition(
+			Arrays.asList(
+				new TextObjectFieldBuilder(
+				).indexed(
+					true
+				).labelMap(
+					LocalizedMapUtil.getLocalizedMap(
+						RandomTestUtil.randomString())
+				).name(
+					"textObjectFieldName"
+				).build()),
+			ObjectDefinitionConstants.SCOPE_DEPOT);
+
+		_objectDefinition7.setEnableObjectEntryVersioning(true);
+
+		ObjectField titleObjectField = objectFieldLocalService.fetchObjectField(
+			_objectDefinition7.getObjectDefinitionId(), "textObjectFieldName");
+
+		_objectDefinition7.setTitleObjectFieldId(
+			titleObjectField.getObjectFieldId());
+
+		_objectDefinition7 =
+			objectDefinitionLocalService.updateObjectDefinition(
+				_objectDefinition7);
 
 		_accountAdministratorRole = _roleLocalService.getRole(
 			companyId,
@@ -1373,7 +1400,6 @@ public class DefaultObjectEntryManagerImplTest
 		_addObjectEntry(accountEntry);
 	}
 
-	@FeatureFlag("LPD-6233")
 	@Test
 	public void testAddObjectEntryWithAssigneeObjectField() throws Exception {
 		ObjectFieldUtil.addCustomObjectField(
@@ -2680,9 +2706,7 @@ public class DefaultObjectEntryManagerImplTest
 		}
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-32050")
 	@Test
 	public void testAddObjectEntryWithMissingTaxonomyCategoryBriefReference()
 		throws Exception {
@@ -3014,7 +3038,6 @@ public class DefaultObjectEntryManagerImplTest
 			});
 	}
 
-	@FeatureFlag("LPD-21926")
 	@Test
 	public void testAddOrUpdateObjectEntryWithFriendlyURL() throws Exception {
 		ObjectDefinition objectDefinition =
@@ -3289,6 +3312,47 @@ public class DefaultObjectEntryManagerImplTest
 	@FeatureFlags(
 		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
 	)
+	@Test
+	public void testCopyObjectEntry() throws Exception {
+		DepotEntry depotEntry = _addDepotEntry();
+
+		ObjectDefinitionSetting objectDefinitionSetting =
+			_objectDefinitionSettingLocalService.addObjectDefinitionSetting(
+				TestPropsValues.getUserId(),
+				_objectDefinition7.getObjectDefinitionId(),
+				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS,
+				String.valueOf(depotEntry.getGroupId()));
+
+		ObjectEntryFolder objectEntryFolder1 =
+			_objectEntryFolderLocalService.addObjectEntryFolder(
+				RandomTestUtil.randomString(), depotEntry.getGroupId(),
+				adminUser.getUserId(),
+				ObjectEntryFolderConstants.
+					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+				null, null, RandomTestUtil.randomString(),
+				ServiceContextTestUtil.getServiceContext());
+
+		ObjectEntryFolder objectEntryFolder2 =
+			_objectEntryFolderLocalService.addObjectEntryFolder(
+				RandomTestUtil.randomString(), depotEntry.getGroupId(),
+				adminUser.getUserId(),
+				objectEntryFolder1.getObjectEntryFolderId(), null, null,
+				RandomTestUtil.randomString(),
+				ServiceContextTestUtil.getServiceContext());
+
+		_testCopyObjectEntry(
+			depotEntry.getGroupId(), objectEntryFolder1, objectEntryFolder2);
+
+		_testCopyObjectEntryDuplicateName(
+			depotEntry.getGroupId(), objectEntryFolder1);
+		_testCopyObjectEntryReplace(
+			depotEntry.getGroupId(), objectEntryFolder1, objectEntryFolder2);
+
+		_testCopyObjectEntryGroup(
+			depotEntry.getGroupId(), objectDefinitionSetting);
+	}
+
+	@FeatureFlag("LPD-17564")
 	@Test
 	public void testCopyObjectEntryByVersion() throws Exception {
 
@@ -6268,11 +6332,7 @@ public class DefaultObjectEntryManagerImplTest
 				_objectDefinition4, _group.getGroupKey(), 2));
 	}
 
-	@FeatureFlags(
-		featureFlags = {
-			@FeatureFlag(value = "LPD-6233"), @FeatureFlag(value = "LPD-17564")
-		}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	public void testGetObjectEntryByVersionWithAssigneeObjectField()
 		throws Exception {
@@ -6837,6 +6897,46 @@ public class DefaultObjectEntryManagerImplTest
 	@FeatureFlags(
 		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
 	)
+	@Test
+	public void testMoveObjectEntry() throws Exception {
+		DepotEntry depotEntry = _addDepotEntry();
+
+		ObjectDefinitionSetting objectDefinitionSetting =
+			_objectDefinitionSettingLocalService.addObjectDefinitionSetting(
+				TestPropsValues.getUserId(),
+				_objectDefinition7.getObjectDefinitionId(),
+				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS,
+				String.valueOf(depotEntry.getGroupId()));
+
+		ObjectEntryFolder objectEntryFolder1 =
+			_objectEntryFolderLocalService.addObjectEntryFolder(
+				RandomTestUtil.randomString(), depotEntry.getGroupId(),
+				adminUser.getUserId(),
+				ObjectEntryFolderConstants.
+					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+				null, null, RandomTestUtil.randomString(),
+				ServiceContextTestUtil.getServiceContext());
+
+		ObjectEntryFolder objectEntryFolder2 =
+			_objectEntryFolderLocalService.addObjectEntryFolder(
+				RandomTestUtil.randomString(), depotEntry.getGroupId(),
+				adminUser.getUserId(),
+				objectEntryFolder1.getObjectEntryFolderId(), null, null,
+				RandomTestUtil.randomString(),
+				ServiceContextTestUtil.getServiceContext());
+
+		_testMoveObjectEntry(
+			depotEntry.getGroupId(), objectEntryFolder1, objectEntryFolder2);
+		_testMoveObjectEntryDuplicateName(
+			depotEntry.getGroupId(), objectEntryFolder2, objectEntryFolder1);
+		_testMoveObjectEntryReplace(
+			depotEntry.getGroupId(), objectEntryFolder1, objectEntryFolder2);
+
+		_testMoveObjectEntryGroup(
+			depotEntry.getGroupId(), objectDefinitionSetting);
+	}
+
+	@FeatureFlag("LPD-17564")
 	@Test
 	public void testMoveObjectEntryToTrash() throws Exception {
 		ObjectEntry objectEntry = _addObjectEntry(
@@ -8733,7 +8833,6 @@ public class DefaultObjectEntryManagerImplTest
 			objectEntry);
 	}
 
-	@FeatureFlag("LPD-6233")
 	@Test
 	public void testUpdateObjectEntryWithAssigneeObjectField()
 		throws Exception {
@@ -9197,8 +9296,8 @@ public class DefaultObjectEntryManagerImplTest
 
 		ObjectDefinition objectDefinition =
 			objectDefinitionLocalService.addCustomObjectDefinition(
-				adminUser.getUserId(), 0, null, false, true, false, true, true,
-				false, false, enableObjectEntrySubscription, false, null,
+				null, adminUser.getUserId(), 0, null, false, true, false, true,
+				true, false, false, enableObjectEntrySubscription, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -10645,6 +10744,126 @@ public class DefaultObjectEntryManagerImplTest
 		_objectEntryLocalService.deleteObjectEntry(objectEntryAA.getId());
 	}
 
+	private void _testCopyObjectEntry(
+			long groupId, ObjectEntryFolder destinationObjectEntryFolder,
+			ObjectEntryFolder sourceObjectEntryFolder)
+		throws Exception {
+
+		ObjectEntry objectEntry1 = _addObjectEntry(
+			_objectDefinition7,
+			sourceObjectEntryFolder.getObjectEntryFolderId(),
+			String.valueOf(groupId), 1);
+
+		ObjectEntry objectEntry2 = _defaultObjectEntryManager.copyObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry1.getId(),
+			destinationObjectEntryFolder.getObjectEntryFolderId(), false);
+
+		Assert.assertEquals(
+			objectEntry1.getPropertyValue("textObjectFieldName"),
+			objectEntry2.getPropertyValue("textObjectFieldName"));
+		Assert.assertEquals(
+			String.valueOf(
+				destinationObjectEntryFolder.getObjectEntryFolderId()),
+			String.valueOf(objectEntry2.getObjectEntryFolderId()));
+	}
+
+	private void _testCopyObjectEntryDuplicateName(
+			long groupId, ObjectEntryFolder objectEntryFolder)
+		throws Exception {
+
+		ObjectEntry objectEntry1 = _addObjectEntry(
+			_objectDefinition7, objectEntryFolder.getObjectEntryFolderId(),
+			String.valueOf(groupId), 1);
+
+		ObjectEntry objectEntry2 = _defaultObjectEntryManager.copyObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry1.getId(),
+			objectEntryFolder.getObjectEntryFolderId(), false);
+
+		Assert.assertEquals(
+			objectEntry1.getPropertyValue("textObjectFieldName") + " (Copy)",
+			objectEntry2.getPropertyValue("textObjectFieldName"));
+
+		Assert.assertEquals(
+			String.valueOf(objectEntryFolder.getObjectEntryFolderId()),
+			String.valueOf(objectEntry2.getObjectEntryFolderId()));
+	}
+
+	private void _testCopyObjectEntryGroup(
+			long groupId, ObjectDefinitionSetting objectDefinitionSetting)
+		throws Exception {
+
+		DepotEntry depotEntry = _addDepotEntry();
+
+		ObjectEntryFolder objectEntryFolder =
+			_objectEntryFolderLocalService.addObjectEntryFolder(
+				RandomTestUtil.randomString(), depotEntry.getGroupId(),
+				adminUser.getUserId(),
+				ObjectEntryFolderConstants.
+					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+				null, null, RandomTestUtil.randomString(),
+				ServiceContextTestUtil.getServiceContext());
+
+		ObjectEntry objectEntry1 = _addObjectEntry(
+			_objectDefinition7,
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			String.valueOf(groupId), 1);
+
+		Assert.assertThrows(
+			ObjectDefinitionScopeException.class,
+			() -> _defaultObjectEntryManager.copyObjectEntry(
+				_createDTOConverterContext(adminUser), objectEntry1.getId(),
+				objectEntryFolder.getObjectEntryFolderId(), false));
+
+		objectDefinitionSetting.setValue(
+			StringBundler.concat(
+				groupId, StringPool.COMMA, depotEntry.getGroupId()));
+
+		_objectDefinitionSettingLocalService.updateObjectDefinitionSetting(
+			objectDefinitionSetting);
+
+		ObjectEntry objectEntry2 = _defaultObjectEntryManager.copyObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry1.getId(),
+			objectEntryFolder.getObjectEntryFolderId(), false);
+
+		Assert.assertEquals(
+			String.valueOf(objectEntryFolder.getObjectEntryFolderId()),
+			String.valueOf(objectEntry2.getObjectEntryFolderId()));
+	}
+
+	private void _testCopyObjectEntryReplace(
+			long groupId, ObjectEntryFolder destinationObjectEntryFolder,
+			ObjectEntryFolder sourceObjectEntryFolder)
+		throws Exception {
+
+		ObjectEntry objectEntry1 = _addObjectEntry(
+			_objectDefinition7,
+			sourceObjectEntryFolder.getObjectEntryFolderId(),
+			String.valueOf(groupId), 1);
+
+		ObjectEntry objectEntry2 = _defaultObjectEntryManager.copyObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry1.getId(),
+			destinationObjectEntryFolder.getObjectEntryFolderId(), false);
+
+		Assert.assertEquals(
+			objectEntry1.getPropertyValue("textObjectFieldName"),
+			objectEntry2.getPropertyValue("textObjectFieldName"));
+
+		ObjectEntry objectEntry3 = _defaultObjectEntryManager.copyObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry1.getId(),
+			destinationObjectEntryFolder.getObjectEntryFolderId(), true);
+
+		Assert.assertEquals(
+			objectEntry1.getPropertyValue("textObjectFieldName"),
+			objectEntry3.getPropertyValue("textObjectFieldName"));
+
+		Assert.assertNull(
+			_objectEntryLocalService.fetchObjectEntry(objectEntry2.getId()));
+		Assert.assertEquals(
+			String.valueOf(
+				destinationObjectEntryFolder.getObjectEntryFolderId()),
+			String.valueOf(objectEntry3.getObjectEntryFolderId()));
+	}
+
 	private void _testDeleteObjectEntryWithAccountEntryRestricted2(
 			String actionId, Tree tree)
 		throws Exception {
@@ -11112,6 +11331,128 @@ public class DefaultObjectEntryManagerImplTest
 				objectEntryAA2.getId()));
 	}
 
+	private void _testMoveObjectEntry(
+			long groupId, ObjectEntryFolder sourceObjectEntryFolder,
+			ObjectEntryFolder destinationObjectEntryFolder)
+		throws Exception {
+
+		ObjectEntry objectEntry1 = _addObjectEntry(
+			_objectDefinition7,
+			sourceObjectEntryFolder.getObjectEntryFolderId(),
+			String.valueOf(groupId), 1);
+
+		ObjectEntry objectEntry2 = _defaultObjectEntryManager.moveObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry1.getId(),
+			destinationObjectEntryFolder.getObjectEntryFolderId(), false);
+
+		Assert.assertEquals(
+			objectEntry1.getPropertyValue("textObjectFieldName"),
+			objectEntry2.getPropertyValue("textObjectFieldName"));
+		Assert.assertEquals(
+			String.valueOf(
+				destinationObjectEntryFolder.getObjectEntryFolderId()),
+			String.valueOf(objectEntry2.getObjectEntryFolderId()));
+	}
+
+	private void _testMoveObjectEntryDuplicateName(
+			long groupId, ObjectEntryFolder destinationObjectEntryFolder,
+			ObjectEntryFolder sourceObjectEntryFolder)
+		throws Exception {
+
+		ObjectEntry objectEntry1 = _addObjectEntry(
+			_objectDefinition7,
+			destinationObjectEntryFolder.getObjectEntryFolderId(),
+			String.valueOf(groupId), 1);
+
+		ObjectEntry objectEntry2 = _defaultObjectEntryManager.copyObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry1.getId(),
+			sourceObjectEntryFolder.getObjectEntryFolderId(), false);
+
+		objectEntry2 = _defaultObjectEntryManager.moveObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry2.getId(),
+			destinationObjectEntryFolder.getObjectEntryFolderId(), false);
+
+		Assert.assertEquals(
+			objectEntry1.getPropertyValue("textObjectFieldName") + " (Copy)",
+			objectEntry2.getPropertyValue("textObjectFieldName"));
+		Assert.assertEquals(
+			String.valueOf(
+				destinationObjectEntryFolder.getObjectEntryFolderId()),
+			String.valueOf(objectEntry2.getObjectEntryFolderId()));
+	}
+
+	private void _testMoveObjectEntryGroup(
+			long groupId, ObjectDefinitionSetting objectDefinitionSetting)
+		throws Exception {
+
+		DepotEntry depotEntry = _addDepotEntry();
+
+		ObjectEntryFolder objectEntryFolder =
+			_objectEntryFolderLocalService.addObjectEntryFolder(
+				RandomTestUtil.randomString(), depotEntry.getGroupId(),
+				adminUser.getUserId(),
+				ObjectEntryFolderConstants.
+					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+				null, null, RandomTestUtil.randomString(),
+				ServiceContextTestUtil.getServiceContext());
+
+		ObjectEntry objectEntry1 = _addObjectEntry(
+			_objectDefinition7,
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			String.valueOf(groupId), 1);
+
+		Assert.assertThrows(
+			ObjectDefinitionScopeException.class,
+			() -> _defaultObjectEntryManager.moveObjectEntry(
+				_createDTOConverterContext(adminUser), objectEntry1.getId(),
+				objectEntryFolder.getObjectEntryFolderId(), false));
+
+		objectDefinitionSetting.setValue(
+			StringBundler.concat(
+				groupId, StringPool.COMMA, depotEntry.getGroupId()));
+
+		_objectDefinitionSettingLocalService.updateObjectDefinitionSetting(
+			objectDefinitionSetting);
+
+		ObjectEntry objectEntry2 = _defaultObjectEntryManager.moveObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry1.getId(),
+			objectEntryFolder.getObjectEntryFolderId(), false);
+
+		Assert.assertEquals(
+			String.valueOf(objectEntryFolder.getObjectEntryFolderId()),
+			String.valueOf(objectEntry2.getObjectEntryFolderId()));
+	}
+
+	private void _testMoveObjectEntryReplace(
+			long groupId, ObjectEntryFolder sourceObjectEntryFolder,
+			ObjectEntryFolder destinationObjectEntryFolder)
+		throws Exception {
+
+		ObjectEntry objectEntry1 = _addObjectEntry(
+			_objectDefinition7,
+			destinationObjectEntryFolder.getObjectEntryFolderId(),
+			String.valueOf(groupId), 1);
+
+		ObjectEntry objectEntry2 = _defaultObjectEntryManager.copyObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry1.getId(),
+			sourceObjectEntryFolder.getObjectEntryFolderId(), false);
+
+		objectEntry2 = _defaultObjectEntryManager.moveObjectEntry(
+			_createDTOConverterContext(adminUser), objectEntry2.getId(),
+			destinationObjectEntryFolder.getObjectEntryFolderId(), true);
+
+		Assert.assertEquals(
+			objectEntry1.getPropertyValue("textObjectFieldName"),
+			objectEntry2.getPropertyValue("textObjectFieldName"));
+
+		Assert.assertNull(
+			_objectEntryLocalService.fetchObjectEntry(objectEntry1.getId()));
+		Assert.assertEquals(
+			String.valueOf(
+				destinationObjectEntryFolder.getObjectEntryFolderId()),
+			String.valueOf(objectEntry2.getObjectEntryFolderId()));
+	}
+
 	private void _testUpdateObjectEntryWithAccountEntryRestricted2(
 			String actionId, Tree tree)
 		throws Exception {
@@ -11445,6 +11786,9 @@ public class DefaultObjectEntryManagerImplTest
 
 	@DeleteAfterTestRun
 	private ObjectDefinition _objectDefinition6;
+
+	@DeleteAfterTestRun
+	private ObjectDefinition _objectDefinition7;
 
 	@Inject
 	private ObjectDefinitionSettingLocalService
