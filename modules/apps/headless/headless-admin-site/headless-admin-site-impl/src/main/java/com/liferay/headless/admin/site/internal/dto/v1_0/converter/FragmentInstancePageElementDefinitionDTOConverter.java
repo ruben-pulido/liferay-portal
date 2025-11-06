@@ -6,16 +6,23 @@
 package com.liferay.headless.admin.site.internal.dto.v1_0.converter;
 
 import com.liferay.fragment.contributor.FragmentCollectionContributorRegistry;
+import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
+import com.liferay.fragment.entry.processor.util.EditableFragmentEntryProcessorUtil;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.headless.admin.site.dto.v1_0.DefaultFragmentReference;
+import com.liferay.headless.admin.site.dto.v1_0.FragmentElement;
 import com.liferay.headless.admin.site.dto.v1_0.FragmentInstancePageElementDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.FragmentItemExternalReference;
 import com.liferay.headless.admin.site.dto.v1_0.PageElementDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.Scope;
+import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentElementUtil;
+import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -24,7 +31,10 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -51,6 +61,14 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 			DTOConverterContext dtoConverterContext,
 			FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem)
 		throws Exception {
+
+		Long companyId = (Long)dtoConverterContext.getAttribute("companyId");
+		Long scopeGroupId = (Long)dtoConverterContext.getAttribute(
+			"scopeGroupId");
+
+		if ((companyId == null) || (scopeGroupId == null)) {
+			throw new UnsupportedOperationException();
+		}
 
 		FragmentEntryLink fragmentEntryLink =
 			_fragmentEntryLinkLocalService.fetchFragmentEntryLink(
@@ -81,6 +99,9 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 				setDraftFragmentInstanceExternalReferenceCode(
 					() -> _getDraftFragmentInstanceExternalReferenceCode(
 						fragmentEntryLink));
+				setFragmentElements(
+					() -> _getFragmentElements(
+						companyId, fragmentEntryLink, scopeGroupId));
 				setFragmentInstanceExternalReferenceCode(
 					fragmentEntryLink::getExternalReferenceCode);
 				setFragmentReference(
@@ -191,6 +212,65 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 		return originalFragmentEntryLink.getExternalReferenceCode();
 	}
 
+	private FragmentElement[] _getFragmentElements(
+		long companyId, FragmentEntryLink fragmentEntryLink,
+		long scopeGroupId) {
+
+		JSONObject editableValuesJSONObject =
+			fragmentEntryLink.getEditableValuesJSONObject();
+
+		if (editableValuesJSONObject == null) {
+			return null;
+		}
+
+		List<FragmentElement> fragmentElements = new ArrayList<>();
+
+		JSONObject jsonObject = editableValuesJSONObject.getJSONObject(
+			FragmentEntryProcessorConstants.
+				KEY_EDITABLE_FRAGMENT_ENTRY_PROCESSOR);
+
+		if (jsonObject == null) {
+			return fragmentElements.toArray(new FragmentElement[0]);
+		}
+
+		fragmentElements.addAll(
+			_getTextFragmentElements(
+				companyId,
+				EditableFragmentEntryProcessorUtil.getEditableTypes(
+					fragmentEntryLink.getHtml()),
+				jsonObject, scopeGroupId));
+
+		return fragmentElements.toArray(new FragmentElement[0]);
+	}
+
+	private List<FragmentElement> _getTextFragmentElements(
+		long companyId, Map<String, String> editableTypes,
+		JSONObject jsonObject, long scopeGroupId) {
+
+		return TransformUtil.transform(
+			jsonObject.keySet(),
+			textId -> new FragmentElement() {
+				{
+					setId(() -> textId);
+					setValue(
+						() -> {
+							String type = editableTypes.getOrDefault(
+								textId, "text");
+
+							if (!Objects.equals(type, "text")) {
+								return null;
+							}
+
+							return FragmentElementUtil.
+								toTextFragmentElementValue(
+									companyId, _infoItemServiceRegistry,
+									jsonObject.getJSONObject(textId),
+									scopeGroupId);
+						});
+				}
+			});
+	}
+
 	@Reference
 	private FragmentCollectionContributorRegistry
 		_fragmentCollectionContributorRegistry;
@@ -203,5 +283,8 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 
 	@Reference
 	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private InfoItemServiceRegistry _infoItemServiceRegistry;
 
 }
