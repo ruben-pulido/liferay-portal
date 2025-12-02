@@ -36,7 +36,8 @@ import java.util.function.Supplier;
  */
 @Generated("")
 @GraphQLName(
-	description = "A nested widget section.", value = "NestedWidgetSection"
+	description = "A section within a Nested Applications widget instance.",
+	value = "NestedWidgetSection"
 )
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "NestedWidgetSection")
