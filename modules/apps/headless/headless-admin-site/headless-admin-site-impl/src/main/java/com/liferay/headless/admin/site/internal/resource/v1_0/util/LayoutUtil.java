@@ -1119,12 +1119,11 @@ public class LayoutUtil {
 		LayoutTypePortlet layoutTypePortlet =
 			(LayoutTypePortlet)layout.getLayoutType();
 
-		List<String> columns = layoutTypePortlet.getColumns();
-
 		if (widgetPageSections.length != layoutTypePortlet.getNumOfColumns()) {
 			throw new UnsupportedOperationException();
 		}
 
+		List<String> columns = layoutTypePortlet.getColumns();
 		List<String> portletIds = layoutTypePortlet.getPortletIds();
 
 		boolean layoutCustomizable = GetterUtil.getBoolean(
