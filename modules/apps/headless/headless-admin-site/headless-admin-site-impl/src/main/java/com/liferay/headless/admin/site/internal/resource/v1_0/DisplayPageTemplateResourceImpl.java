@@ -397,25 +397,21 @@ public class DisplayPageTemplateResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
+		String contentTypeReferenceClassName = className.getClassName();
+
+		if (contentTypeReferenceClassName == null) {
+			throw new UnsupportedOperationException();
+		}
+
 		long classTypeId = _getClassTypeId(contentTypeReference, groupId);
 
-		if (!className.equals(layoutPageTemplateEntry.getClassName()) ||
+		if (!contentTypeReferenceClassName.equals(
+				layoutPageTemplateEntry.getClassName()) ||
 			(classTypeId != layoutPageTemplateEntry.getClassTypeId())) {
 
 			_layoutPageTemplateEntryService.updateLayoutPageTemplateEntry(
 				layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
 				className.getClassNameId(), classTypeId);
-		}
-
-		if (!Objects.equals(
-				GetterUtil.getBoolean(displayPageTemplate.getMarkedAsDefault()),
-				layoutPageTemplateEntry.isDefaultTemplate())) {
-
-			layoutPageTemplateEntry =
-				_layoutPageTemplateEntryService.updateLayoutPageTemplateEntry(
-					layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
-					GetterUtil.getBoolean(
-						displayPageTemplate.getMarkedAsDefault()));
 		}
 
 		long previewFileEntryId = FileEntryUtil.getPreviewFileEntryId(
@@ -455,6 +451,17 @@ public class DisplayPageTemplateResourceImpl
 				_layoutPageTemplateEntryService.updateStatus(
 					layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
 					WorkflowConstants.STATUS_APPROVED);
+		}
+
+		if (!Objects.equals(
+				GetterUtil.getBoolean(displayPageTemplate.getMarkedAsDefault()),
+				layoutPageTemplateEntry.isDefaultTemplate())) {
+
+			layoutPageTemplateEntry =
+				_layoutPageTemplateEntryService.updateLayoutPageTemplateEntry(
+					layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
+					GetterUtil.getBoolean(
+						displayPageTemplate.getMarkedAsDefault()));
 		}
 
 		return _displayPageTemplateDTOConverter.toDTO(
@@ -571,7 +578,8 @@ public class DisplayPageTemplateResourceImpl
 				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
 				FileEntryUtil.getPreviewFileEntryId(
 					groupId, displayPageTemplate.getThumbnail()),
-				false, 0L, layout.getPlid(), 0L,
+				GetterUtil.getBoolean(displayPageTemplate.getMarkedAsDefault()),
+				0L, layout.getPlid(), 0L,
 				PageSpecificationUtil.getPublishedStatus(
 					displayPageTemplate.getPageSpecifications()),
 				serviceContext));
