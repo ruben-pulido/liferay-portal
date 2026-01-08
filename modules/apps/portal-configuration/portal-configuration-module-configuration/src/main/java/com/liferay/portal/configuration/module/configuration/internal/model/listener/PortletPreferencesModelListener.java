@@ -59,7 +59,7 @@ public class PortletPreferencesModelListener
 			PortletPreferences portletPreferences)
 		throws ModelListenerException {
 
-		_updateLayout(portletPreferences);
+		_updateLayout(portletPreferences);//
 
 		_clearConfigurationOverrideInstance(portletPreferences);
 	}
@@ -166,8 +166,8 @@ public class PortletPreferencesModelListener
 				else {
 					layout.setModifiedDate(new Date());
 
-					_layoutLocalService.updateTypeSettings(
-						layout, layout.getTypeSettings());
+//					_layoutLocalService.updateTypeSettings(//
+//						layout, layout.getTypeSettings());
 				}
 			}
 		}
