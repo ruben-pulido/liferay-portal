@@ -58,7 +58,7 @@ public class InfoForm {
 	}
 
 	public List<InfoField<?>> getAllInfoFields() {
-		return new ArrayList<>(_builder._infoFieldsByUniqueId.values());
+		return new ArrayList<>(_builder._infoFieldsByExternalUniqueId.values());
 	}
 
 	public InfoLocalizedValue<String> getDescriptionInfoLocalizedValue() {
@@ -66,7 +66,13 @@ public class InfoForm {
 	}
 
 	public InfoField<?> getInfoField(String name) {
-		InfoField<?> infoField = _builder._infoFieldsByUniqueId.get(name);
+		InfoField<?> infoField = _builder._infoFieldsByExternalUniqueId.get(name);
+
+		if (infoField != null) {
+			return infoField;
+		}
+
+		infoField = _builder._infoFieldsByUniqueId.get(name);
 
 		if (infoField != null) {
 			return infoField;
@@ -215,6 +221,9 @@ public class InfoForm {
 				_infoFieldsByName.put(
 					infoFieldSetEntry.getName(),
 					(InfoField<?>)infoFieldSetEntry);
+				_infoFieldsByExternalUniqueId.put(
+					infoFieldSetEntry.getExternalUniqueId(),
+					(InfoField<?>)infoFieldSetEntry);
 				_infoFieldsByUniqueId.put(
 					infoFieldSetEntry.getUniqueId(),
 					(InfoField<?>)infoFieldSetEntry);
@@ -226,11 +235,14 @@ public class InfoForm {
 
 			for (InfoField<?> infoField : infoFieldSet.getAllInfoFields()) {
 				_infoFieldsByName.put(infoField.getName(), infoField);
+				_infoFieldsByExternalUniqueId.put(infoField.getExternalUniqueId(), infoField);
 				_infoFieldsByUniqueId.put(infoField.getUniqueId(), infoField);
 			}
 		}
 
 		private InfoLocalizedValue<String> _descriptionInfoLocalizedValue;
+		private final Map<String, InfoField<?>> _infoFieldsByExternalUniqueId =
+			new LinkedHashMap<>();
 		private final Map<String, InfoField<?>> _infoFieldsByName =
 			new LinkedHashMap<>();
 		private final Map<String, InfoField<?>> _infoFieldsByUniqueId =

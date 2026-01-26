@@ -44,6 +44,7 @@ public class MappingContentUtil {
 
 		return JSONUtil.put(
 			"key", infoField.getUniqueId()
+//			"key", infoField.getExternalUniqueId()
 		).put(
 			"label",
 			() -> {

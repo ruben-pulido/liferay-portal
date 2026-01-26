@@ -221,7 +221,8 @@ public class DisplayPageTemplateDTOConverter
 		};
 	}
 
-	private ItemExternalReference _getSubtypeItemExternalReference(
+// TODO Extract
+private String _getSubtypeItemExternalReferenceCode(
 		LayoutPageTemplateEntry layoutPageTemplateEntry) {
 
 		InfoItemFormVariationsProvider<?> infoItemFormVariationsProvider =
@@ -242,10 +243,17 @@ public class DisplayPageTemplateDTOConverter
 			return null;
 		}
 
+		return infoItemFormVariation.getExternalReferenceCode();
+	}
+
+	private ItemExternalReference _getSubtypeItemExternalReference(
+		LayoutPageTemplateEntry layoutPageTemplateEntry) {
+
 		return new ItemExternalReference() {
 			{
 				setExternalReferenceCode(
-					infoItemFormVariation::getExternalReferenceCode);
+					() -> _getSubtypeItemExternalReferenceCode(
+						layoutPageTemplateEntry));
 			}
 		};
 	}

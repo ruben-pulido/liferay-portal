@@ -149,8 +149,8 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 
 		return _pageElementDTOConverter.toDTO(
 			_getDTOConverterContext(
-				layoutPageTemplateStructure.getCompanyId(), layoutStructure,
-				groupId),
+				layoutPageTemplateStructure.getCompanyId(), layout.getPlid(),
+				layoutStructure, groupId),
 			layoutStructureItem);
 	}
 
@@ -205,7 +205,7 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 					layoutStructureItem.getItemId(), layoutStructure),
 				itemId -> _pageElementDTOConverter.toDTO(
 					_getDTOConverterContext(
-						layoutPageTemplateStructure.getCompanyId(),
+						layoutPageTemplateStructure.getCompanyId(), layout.getPlid(),
 						layoutStructure, groupId),
 					layoutStructure.getLayoutStructureItem(itemId))));
 	}
@@ -256,7 +256,7 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 					layoutStructure.getMainItemId(), layoutStructure),
 				itemId -> _pageElementDTOConverter.toDTO(
 					_getDTOConverterContext(
-						layoutPageTemplateStructure.getCompanyId(),
+						layoutPageTemplateStructure.getCompanyId(), layout.getPlid(),
 						layoutStructure, groupId),
 					layoutStructure.getLayoutStructureItem(itemId))));
 	}
@@ -383,13 +383,13 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 
 			return _pageElementDTOConverter.toDTO(
 				_getDTOConverterContext(
-					layout.getCompanyId(), layoutStructure, groupId),
+					layout.getCompanyId(), layout.getPlid(), layoutStructure, groupId),
 				layoutStructureItem);
 		}
 	}
 
 	private DTOConverterContext _getDTOConverterContext(
-		long companyId, LayoutStructure layoutStructure, long scopeGroupId) {
+		long companyId, long layoutPlid, LayoutStructure layoutStructure, long scopeGroupId) {
 
 		DTOConverterContext dtoConverterContext =
 			new DefaultDTOConverterContext(null, null, null, null, null);
@@ -397,6 +397,7 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 		dtoConverterContext.setAttribute(
 			LayoutStructure.class.getName(), layoutStructure);
 		dtoConverterContext.setAttribute("companyId", companyId);
+		dtoConverterContext.setAttribute("layoutId", layoutPlid);
 		dtoConverterContext.setAttribute("scopeGroupId", scopeGroupId);
 
 		return dtoConverterContext;

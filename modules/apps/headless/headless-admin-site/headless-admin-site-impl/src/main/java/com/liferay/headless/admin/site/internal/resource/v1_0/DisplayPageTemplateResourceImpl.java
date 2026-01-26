@@ -51,6 +51,7 @@ import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -294,6 +295,21 @@ public class DisplayPageTemplateResourceImpl
 		}
 
 		return _displayPageTemplateDTOConverter.toDTO(layoutPageTemplateEntry);
+
+//		long groupId = GroupUtil.getGroupId(
+//			true, contextCompany.getCompanyId(),
+//			siteExternalReferenceCode);
+//
+//		ServiceContext serviceContext = _getServiceContext(null, groupId);
+//
+//		ServiceContextThreadLocal.pushServiceContext(serviceContext);
+//
+//		try {
+//			return _displayPageTemplateDTOConverter.toDTO(layoutPageTemplateEntry);
+//		}
+//		finally {
+//			ServiceContextThreadLocal.popServiceContext();
+//		}
 	}
 
 	@Override
@@ -310,6 +326,11 @@ public class DisplayPageTemplateResourceImpl
 		long groupId = GroupUtil.getGroupId(
 			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
 
+		ServiceContext serviceContext = _getServiceContext(null, groupId);
+
+		ServiceContextThreadLocal.pushServiceContext(serviceContext);
+
+		try {
 		return Page.of(
 			transform(
 				_layoutPageTemplateEntryService.getLayoutPageTemplateEntries(
@@ -322,6 +343,10 @@ public class DisplayPageTemplateResourceImpl
 			pagination,
 			_layoutPageTemplateEntryService.getLayoutPageTemplateEntriesCount(
 				groupId, LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE));
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
 	}
 
 	@Override
@@ -681,10 +706,13 @@ public class DisplayPageTemplateResourceImpl
 		).build();
 
 		serviceContext.setCompanyId(contextCompany.getCompanyId());
-		serviceContext.setCreateDate(displayPageTemplate.getDateCreated());
-		serviceContext.setModifiedDate(displayPageTemplate.getDateModified());
 		serviceContext.setUserId(contextUser.getUserId());
-		serviceContext.setUuid(displayPageTemplate.getUuid());
+
+		if (displayPageTemplate != null) {
+			serviceContext.setCreateDate(displayPageTemplate.getDateCreated());
+			serviceContext.setModifiedDate(displayPageTemplate.getDateModified());
+			serviceContext.setUuid(displayPageTemplate.getUuid());
+		}
 
 		return serviceContext;
 	}

@@ -29,6 +29,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
@@ -39,7 +40,9 @@ import com.liferay.portal.kernel.portlet.constants.FriendlyURLResolverConstants;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.ScopeUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
@@ -120,19 +123,10 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 			Layout layout = _layoutLocalService.fetchLayout(
 				layoutPageTemplateEntry.getPlid());
 
-			infoFieldValues.add(
-				_getInfoFieldValue(
-					groupFriendlyURL,
-					String.valueOf(
-						layoutPageTemplateEntry.getLayoutPageTemplateEntryId()),
-					infoItemReference, layout, layoutPageTemplateEntry,
-					themeDisplay));
-			infoFieldValues.add(
-				_getInfoFieldValue(
-					groupFriendlyURL,
-					layoutPageTemplateEntry.getLayoutPageTemplateEntryKey(),
-					infoItemReference, layout, layoutPageTemplateEntry,
-					themeDisplay));
+			infoFieldValues.addAll(
+				_getInfoFieldValues(
+					groupFriendlyURL, infoItemReference, layout,
+					layoutPageTemplateEntry, themeDisplay));
 		}
 
 		return infoFieldValues;
@@ -206,6 +200,27 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 		return DisplayPageInfoFieldType.INSTANCE;
 	}
 
+	private String _getExternalUniqueId(
+		String externalReferenceCode, long itemGroupId, long scopeGroupId) {
+
+		String scopeExternalReferenceCode = StringPool.BLANK;
+
+		try {
+			scopeExternalReferenceCode = GetterUtil.getString(
+				ScopeUtil.getItemScopeExternalReferenceCode(
+					itemGroupId, scopeGroupId));
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.error(portalException);
+			}
+		}
+
+		return StringBundler.concat(
+			LayoutPageTemplateEntry.class.getSimpleName(), StringPool.UNDERLINE,
+			externalReferenceCode, "_SERC_", scopeExternalReferenceCode);
+	}
+
 	private List<InfoFieldSetEntry> _getInfoFieldSetEntries(
 		String itemClassName, String infoItemFormVariationKey, String namespace,
 		long scopeGroupId) {
@@ -235,6 +250,10 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 								getLayoutPageTemplateEntryId()))
 				).name(
 					layoutPageTemplateEntry.getName()
+				).externalUniqueId(
+					_getExternalUniqueId(
+						layoutPageTemplateEntry.getExternalReferenceCode(),
+						layoutPageTemplateEntry.getGroupId(), scopeGroupId)
 				).labelInfoLocalizedValue(
 					InfoLocalizedValue.singleValue(
 						layoutPageTemplateEntry.getName())
@@ -244,25 +263,12 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 		return infoFieldSetEntries;
 	}
 
-	private InfoFieldValue<Object> _getInfoFieldValue(
-		String groupFriendlyURL, String id, InfoItemReference infoItemReference,
+	private List<InfoFieldValue<Object>> _getInfoFieldValues(
+		String groupFriendlyURL, InfoItemReference infoItemReference,
 		Layout layout, LayoutPageTemplateEntry layoutPageTemplateEntry,
 		ThemeDisplay themeDisplay) {
 
-		return new InfoFieldValue<>(
-			InfoField.builder(
-			).infoFieldType(
-				URLInfoFieldType.INSTANCE
-			).uniqueId(
-				_getUniqueId(id)
-			).name(
-				layoutPageTemplateEntry.getName()
-			).attribute(
-				URLInfoFieldType.NOFOLLOW, Boolean.TRUE
-			).labelInfoLocalizedValue(
-				InfoLocalizedValue.singleValue(
-					layoutPageTemplateEntry.getName())
-			).build(),
+		FunctionInfoLocalizedValue<WebURL> functionInfoLocalizedValue =
 			new FunctionInfoLocalizedValue<>(
 				locale -> {
 					WebURL webURL = new WebURL(
@@ -279,7 +285,48 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 					webURL.setNofollow(true);
 
 					return webURL;
-				}));
+				});
+
+		return ListUtil.fromArray(
+			new InfoFieldValue<>(
+				InfoField.builder(
+				).infoFieldType(
+					URLInfoFieldType.INSTANCE
+				).uniqueId(
+					_getUniqueId(
+						String.valueOf(
+							layoutPageTemplateEntry.
+								getLayoutPageTemplateEntryId()))
+				).name(
+					layoutPageTemplateEntry.getName()
+				).attribute(
+					URLInfoFieldType.NOFOLLOW, Boolean.TRUE
+				).externalUniqueId(
+					_getExternalUniqueId(
+						layoutPageTemplateEntry.getExternalReferenceCode(),
+						layoutPageTemplateEntry.getGroupId(),
+						themeDisplay.getScopeGroupId())
+				).labelInfoLocalizedValue(
+					InfoLocalizedValue.singleValue(
+						layoutPageTemplateEntry.getName())
+				).build(),
+				functionInfoLocalizedValue),
+			new InfoFieldValue<>(
+				InfoField.builder(
+				).infoFieldType(
+					URLInfoFieldType.INSTANCE
+				).uniqueId(
+					_getUniqueId(
+						layoutPageTemplateEntry.getLayoutPageTemplateEntryKey())
+				).name(
+					layoutPageTemplateEntry.getName()
+				).attribute(
+					URLInfoFieldType.NOFOLLOW, Boolean.TRUE
+				).labelInfoLocalizedValue(
+					InfoLocalizedValue.singleValue(
+						layoutPageTemplateEntry.getName())
+				).build(),
+				functionInfoLocalizedValue));
 	}
 
 	private String _getInfoItemIdentifier(InfoItemReference infoItemReference) {
