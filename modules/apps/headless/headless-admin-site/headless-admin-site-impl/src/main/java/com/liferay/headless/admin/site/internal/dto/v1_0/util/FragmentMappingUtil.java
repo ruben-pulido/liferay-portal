@@ -10,8 +10,27 @@ import com.liferay.headless.admin.site.dto.v1_0.FragmentMappedValueItemContextRe
 import com.liferay.headless.admin.site.dto.v1_0.FragmentMappedValueItemExternalReference;
 import com.liferay.headless.admin.site.dto.v1_0.FragmentMappedValueItemReference;
 import com.liferay.headless.admin.site.dto.v1_0.Mapping;
+import com.liferay.info.exception.NoSuchFormVariationException;
+import com.liferay.info.exception.NoSuchInfoItemException;
+import com.liferay.info.field.InfoField;
+import com.liferay.info.form.InfoForm;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.ERCInfoItemIdentifier;
+import com.liferay.info.item.InfoItemFormVariation;
+import com.liferay.info.item.InfoItemIdentifier;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
+import com.liferay.info.item.provider.InfoItemFormProvider;
+import com.liferay.info.item.provider.InfoItemFormVariationsProvider;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
+import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
+import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.LayoutStructure;
+import com.liferay.layout.util.structure.LayoutStructureItem;
+import com.liferay.layout.util.structure.LayoutStructureItemUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -19,6 +38,9 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.scope.Scope;
@@ -30,26 +52,305 @@ import java.util.Objects;
  */
 public class FragmentMappingUtil {
 
-	public static String getFieldKey(JSONObject jsonObject) {
+	public static String getFieldKey(
+		InfoItemServiceRegistry infoItemServiceRegistry,
+		JSONObject jsonObject, long layoutPlid, LayoutStructure layoutStructure,
+		String layoutStructureItemId, long scopeGroupId
+		) {
+
 		String collectionFieldId = jsonObject.getString("collectionFieldId");
 
 		if (Validator.isNotNull(collectionFieldId)) {
-			return collectionFieldId;
+		LayoutStructureItem layoutStructureItem =
+			LayoutStructureItemUtil.getAncestor(
+				layoutStructureItemId,
+				LayoutDataItemTypeConstants.TYPE_COLLECTION, layoutStructure);
+
+			if (!(layoutStructureItem instanceof CollectionStyledLayoutStructureItem)) {
+				return null;
+			}
+
+			CollectionStyledLayoutStructureItem collectionStyledLayoutStructureItem =
+				(CollectionStyledLayoutStructureItem) layoutStructureItem;
+
+			JSONObject collectionJSONObject =
+				collectionStyledLayoutStructureItem.getCollectionJSONObject();
+
+			String itemType = collectionJSONObject.getString("itemType");
+
+			if (itemType == null) {
+				return null;
+			}
+
+			return _toExternalUniqueId(
+				itemType,
+				infoItemServiceRegistry,
+				collectionFieldId,
+				collectionJSONObject.getString("itemSubtype"), scopeGroupId);
 		}
 
-		String fieldId = jsonObject.getString("fieldId");
+		InfoItemReference infoItemReference = null;
 
-		if (Validator.isNotNull(fieldId)) {
-			return fieldId;
+		if (Validator.isNotNull(jsonObject.getString("fieldId"))) {
+
+			int classPK = GetterUtil.getInteger
+				(jsonObject.getString("classPK"));
+
+			if (classPK > 0) {
+				infoItemReference = new InfoItemReference(
+				jsonObject.getString("className"),
+				new ClassPKInfoItemIdentifier(classPK));
+			}
+			else {
+				infoItemReference = new InfoItemReference(
+					jsonObject.getString("className"),
+					new ERCInfoItemIdentifier(
+						jsonObject.getString("externalReferenceCode"),
+						jsonObject.getString("scopeExternalReferenceCode")));
+			}
+
+			return _toExternalUniqueId(
+				jsonObject.getString("className"),
+				infoItemServiceRegistry,
+				jsonObject.getString("fieldId"), _getInfoItem(
+					infoItemReference, infoItemServiceRegistry),
+				null, layoutPlid, scopeGroupId);
 		}
 
 		String mappedField = jsonObject.getString("mappedField");
 
 		if (Validator.isNotNull(mappedField)) {
-			return mappedField;
+
+			LayoutPageTemplateEntry layoutPageTemplateEntry =
+				_getLayoutPageTemplateEntry(layoutPlid);
+
+			if (layoutPageTemplateEntry == null) {
+				return null;
+			}
+
+			return _toExternalUniqueId(
+				layoutPageTemplateEntry.getClassName(),
+				infoItemServiceRegistry,
+				mappedField, null,
+				layoutPageTemplateEntry, layoutPlid, scopeGroupId);
 		}
 
 		return null;
+	}
+
+	private static LayoutPageTemplateEntry _getLayoutPageTemplateEntry(long layoutPlid) {
+			Layout layout = LayoutLocalServiceUtil.fetchLayout(layoutPlid);
+
+			if (layout == null) {
+				return null;
+			}
+
+			if (layout.isDraftLayout()) {
+				layout =
+					LayoutLocalServiceUtil.fetchLayout(layout.getClassPK());
+			}
+
+			if (layout == null) {
+				return null;
+			}
+
+			return
+			LayoutPageTemplateEntryLocalServiceUtil.fetchLayoutPageTemplateEntryByPlid(
+				layout.getPlid());
+
+	}
+
+	private static String _getInfoItemFormVariationKey(
+		InfoItemServiceRegistry infoItemServiceRegistry,
+		LayoutPageTemplateEntry layoutPageTemplateEntry) {
+
+		InfoItemFormVariationsProvider<?> infoItemFormVariationsProvider =
+			infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemFormVariationsProvider.class,
+				layoutPageTemplateEntry.getClassName());
+
+		if (infoItemFormVariationsProvider == null) {
+			return null;
+		}
+
+		InfoItemFormVariation infoItemFormVariation =
+			infoItemFormVariationsProvider.getInfoItemFormVariation(
+				layoutPageTemplateEntry.getGroupId(),
+				String.valueOf(layoutPageTemplateEntry.getClassTypeId()));
+
+		if (infoItemFormVariation == null) {
+			return null;
+		}
+
+		return infoItemFormVariation.getKey();
+	}
+
+	private static Object _getInfoItem(
+		InfoItemReference infoItemReference,
+		InfoItemServiceRegistry infoItemServiceRegistry) {
+		if (infoItemReference == null) {
+			return null;
+		}
+
+		InfoItemIdentifier infoItemIdentifier =
+			infoItemReference.getInfoItemIdentifier();
+
+		InfoItemObjectProvider<Object> infoItemObjectProvider =
+			infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemObjectProvider.class, infoItemReference.getClassName(),
+				infoItemIdentifier.getInfoItemServiceFilter());
+
+		try {
+			return infoItemObjectProvider.getInfoItem(infoItemIdentifier);
+		}
+		catch (NoSuchInfoItemException noSuchInfoItemException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchInfoItemException);
+			}
+		}
+
+		return null;
+	}
+
+	// To be used on display_page or item mapping
+
+	private static String _toExternalUniqueId(
+		String className, InfoItemServiceRegistry infoItemServiceRegistry, String fieldName,
+		Object infoItem, LayoutPageTemplateEntry layoutPageTemplateEntry, long layoutPlid, long scopeGroupId) {
+
+		InfoItemFormProvider infoItemFormProvider =
+			infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemFormProvider.class, className);
+
+		if (infoItemFormProvider == null) {
+			return fieldName;
+		}
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setScopeGroupId(scopeGroupId);
+
+		ServiceContextThreadLocal.pushServiceContext(serviceContext);
+
+		InfoForm infoForm = null;
+
+		if (infoItem != null) {
+			try {
+				infoForm = infoItemFormProvider.getInfoForm(infoItem);
+			}
+			finally {
+				ServiceContextThreadLocal.popServiceContext();
+			}
+
+			// TODO Can we extract this common code?
+			InfoField<?> infoField = infoForm.getInfoField(fieldName);
+
+			if (infoField == null) {
+				return fieldName;
+			}
+
+			return infoField.getExternalUniqueId();
+		}
+
+		//
+
+		if (layoutPageTemplateEntry == null) {
+			return fieldName;
+		}
+
+		InfoItemFormVariationsProvider<?> infoItemFormVariationsProvider =
+			infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemFormVariationsProvider.class,
+				layoutPageTemplateEntry.getClassName());
+
+		if (infoItemFormVariationsProvider == null) {
+			return null;
+		}
+
+		InfoItemFormVariation infoItemFormVariation =
+			infoItemFormVariationsProvider.getInfoItemFormVariation(
+				layoutPageTemplateEntry.getGroupId(),
+				String.valueOf(layoutPageTemplateEntry.getClassTypeId()));
+
+		if (infoItemFormVariation == null) {
+			return fieldName;
+		}
+
+		try {
+			infoForm = infoItemFormProvider.getInfoForm(
+				infoItemFormVariation.getKey(), scopeGroupId);
+		}
+		catch (NoSuchFormVariationException noSuchFormVariationException) {
+			_log.error(noSuchFormVariationException);
+		}finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
+
+
+
+//		InfoItemFormProvider<?> infoItemFormProvider =
+//			_infoItemServiceRegistry.getFirstInfoItemService(
+//				InfoItemFormProvider.class, itemClassName);
+//
+//		if (infoItemFormProvider == null) {
+//			if (_log.isWarnEnabled()) {
+//				_log.warn(
+//					"Unable to get info item form provider for class " +
+//						itemClassName);
+//			}
+//
+//			return Collections.emptyList();
+//		}
+//
+//		InfoForm infoForm = infoItemFormProvider.getInfoForm(
+//			String.valueOf(formStyledLayoutStructureItem.getClassTypeId()),
+//			groupId);
+
+		//
+
+		InfoField<?> infoField = infoForm.getInfoField(fieldName);
+
+		if (infoField == null) {
+			return fieldName;
+		}
+
+		return infoField.getExternalUniqueId();
+	}
+
+	// To be used on collection item mapping
+
+	private static String _toExternalUniqueId(
+		String className,
+		InfoItemServiceRegistry infoItemServiceRegistry,
+		String fieldName, String formVariationKey, long scopeGroupId) {
+
+		InfoItemFormProvider infoItemFormProvider =
+			infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemFormProvider.class, className);
+
+		if (infoItemFormProvider == null) {
+			return fieldName;
+		}
+
+		InfoField<?> infoField = null;
+
+		try {
+			InfoForm infoForm = infoItemFormProvider.getInfoForm(
+				formVariationKey, scopeGroupId);
+
+			infoField = infoForm.getInfoField(fieldName);
+		}
+		catch (NoSuchFormVariationException noSuchFormVariationException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchFormVariationException);
+			}
+		}
+
+		if (infoField == null) {
+			return fieldName;
+		}
+
+		return infoField.getExternalUniqueId();
 	}
 
 	public static FragmentMappedValueItemReference
@@ -203,8 +504,9 @@ public class FragmentMappingUtil {
 	}
 
 	public static FragmentMappedValue toFragmentMappedValue(
-			long companyId, InfoItemServiceRegistry infoItemServiceRegistry,
-			JSONObject jsonObject, long scopeGroupId)
+		long companyId, InfoItemServiceRegistry infoItemServiceRegistry,
+		JSONObject jsonObject, long layoutPlid, LayoutStructure layoutStructure,
+		String layoutStructureItemId, long scopeGroupId)
 		throws Exception {
 
 		FragmentMappedValueItemReference fragmentMappedValueItemReference =
@@ -221,7 +523,9 @@ public class FragmentMappingUtil {
 			() -> new Mapping() {
 				{
 					setFieldKey(
-						() -> FragmentMappingUtil.getFieldKey(jsonObject));
+						() -> FragmentMappingUtil.getFieldKey(
+							infoItemServiceRegistry, jsonObject, layoutPlid,
+							layoutStructure, layoutStructureItemId, scopeGroupId));
 					setItemReference(() -> fragmentMappedValueItemReference);
 				}
 			});
@@ -264,7 +568,7 @@ public class FragmentMappingUtil {
 
 		if (jsonObject.has("classPK")) {
 			ERCInfoItemIdentifier ercInfoItemIdentifier =
-				InfoItemUtil.getERCInfoItemIdentifier(
+				InfoItemUtil.getERCInfoItemIdentifier(//
 					className, jsonObject.getLong("classPK"),
 					infoItemServiceRegistry, scopeGroupId);
 
