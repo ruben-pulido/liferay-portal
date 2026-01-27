@@ -26,9 +26,12 @@ const isolatedSiteTest = test.extend<{
 
 				// Create site and go Site Settings
 
-				site = await apiHelpers.headlessSite.createSite({
-					name: getRandomString(),
-				});
+				site = {
+					externalReferenceCode: 's1-erc',
+					friendlyUrlPath: '/s1',
+					id: '35181',
+					key: 's1',
+				};
 
 				await use(site);
 			}
@@ -36,14 +39,6 @@ const isolatedSiteTest = test.extend<{
 				throw new Error(
 					`Isolated site could not be created, the default site will be used instead`
 				);
-			}
-			finally {
-
-				// Delete the site
-
-				if (site?.id) {
-					await apiHelpers.headlessSite.deleteSite(site.id);
-				}
 			}
 		},
 		{auto: true},

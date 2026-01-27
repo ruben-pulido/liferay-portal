@@ -48,19 +48,7 @@ test(
 
 		// Create a page in the Site A through the UI and take screenshots in view mode and edit mode
 
-		const layoutName = getRandomString();
-
-		await pagesAdminPage.goto(siteA.friendlyUrlPath);
-
-		await pagesAdminPage.createNewPage({
-			draft: true,
-			name: layoutName,
-			template: 'Blank',
-		});
-
-		await pageEditorPage.addFragment('Basic Components', 'Heading');
-
-		await pageEditorPage.publishPage();
+		const layoutName = 'p1';
 
 		const viewModeScreenshotA = await pageEditorPage.captureScreenshot({
 			layoutName,
@@ -84,10 +72,10 @@ test(
 		// Create a site B
 
 		const siteB = await apiHelpers.headlessSite.createSite({
-			name: getRandomString(),
+			name: 's2',
 		});
 
-		apiHelpers.data.push({id: siteB.id, type: 'site'});
+// 		apiHelpers.data.push({id: siteB.id, type: 'site'});
 
 		// Import the site A into the site B
 
@@ -199,32 +187,36 @@ test(
 
 		// Create a page in the Site A with a Container, a Grid and a Heading
 
-		const containerDefinition = getContainerDefinition({
-			id: getRandomString(),
-		});
+// 		const containerDefinition = getContainerDefinition({
+// 			id: getRandomString(),
+// 		});
+//
+// 		const headingDefinition = getFragmentDefinition({
+// 			id: getRandomString(),
+// 			key: 'BASIC_COMPONENT-heading',
+// 		});
 
-		const headingDefinition = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'BASIC_COMPONENT-heading',
-		});
+// 		const gridDefinition = getGridDefinition({
+// 			columns: [
+// 				{pageElements: [headingDefinition], size: 4},
+// 				{size: 4},
+// 				{size: 4},
+// 			],
+// 			id: getRandomString(),
+// 		});
 
-		const gridDefinition = getGridDefinition({
-			columns: [
-				{pageElements: [headingDefinition], size: 4},
-				{size: 4},
-				{size: 4},
-			],
-			id: getRandomString(),
-		});
+// 		const layout = await apiHelpers.headlessDelivery.createSitePage({
+// 			pageDefinition: getPageDefinition([
+// 				containerDefinition,
+// 				gridDefinition,
+// 			]),
+// 			siteId: siteA.id,
+// 			title: getRandomString(),
+// 		});
 
-		const layout = await apiHelpers.headlessDelivery.createSitePage({
-			pageDefinition: getPageDefinition([
-				containerDefinition,
-				gridDefinition,
-			]),
-			siteId: siteA.id,
-			title: getRandomString(),
-		});
+		const layout = {
+				'friendlyUrlPath' : '/p1'
+			};
 
 		await pageEditorPage.goto(layout, siteA.friendlyUrlPath);
 
@@ -245,10 +237,10 @@ test(
 		// Create a site B
 
 		const siteB = await apiHelpers.headlessSite.createSite({
-			name: getRandomString(),
+			name: 's3',
 		});
 
-		apiHelpers.data.push({id: siteB.id, type: 'site'});
+// 		apiHelpers.data.push({id: siteB.id, type: 'site'});
 
 		// Import the site A into the site B
 

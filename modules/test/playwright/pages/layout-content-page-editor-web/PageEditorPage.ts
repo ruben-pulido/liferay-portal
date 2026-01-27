@@ -1953,6 +1953,10 @@ export class PageEditorPage {
 			banner = this.page.locator('#banner.page-editor__disabled-area');
 		}
 
+		if(await this.page.locator('.product-menu-open').isVisible()) {
+			await this.page.locator('.product-menu-open').getByRole('button', {name: 'Close'}).click();
+		}
+
 		return captureScreenshot({
 			mask: [...mask, banner, controlMenu],
 			name,

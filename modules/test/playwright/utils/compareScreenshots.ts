@@ -6,10 +6,21 @@
 import {expect} from '@playwright/test';
 import {getComparator} from 'playwright-core/lib/utils';
 
+import * as fs from 'fs';
+import * as path from 'path';
+
+import {getTempDir} from './temp';
+
 export function compareScreenshots(screenshotA: Buffer, screenshotB: Buffer) {
 	const comparator = getComparator('image/png');
 
+// 	const buffer = comparator(screenshotA, screenshotB, {maxDiffPixels: 100});
 	const buffer = comparator(screenshotA, screenshotB);
+
+	if (buffer) {
+		fs.writeFileSync(path.join(__dirname, `pepito.png`), buffer.diff);
+	}
+	
 
 	try {
 		expect(buffer).toBe(null);
