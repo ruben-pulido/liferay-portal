@@ -66,7 +66,13 @@ public class InfoForm {
 	}
 
 	public InfoField<?> getInfoField(String name) {
-		InfoField<?> infoField = _builder._infoFieldsByUniqueId.get(name);
+		InfoField<?> infoField = _builder._infoFieldsByExternalUniqueId.get(name);
+
+		if (infoField != null) {
+			return infoField;
+		}
+
+		infoField = _builder._infoFieldsByUniqueId.get(name);
 
 		if (infoField != null) {
 			return infoField;
