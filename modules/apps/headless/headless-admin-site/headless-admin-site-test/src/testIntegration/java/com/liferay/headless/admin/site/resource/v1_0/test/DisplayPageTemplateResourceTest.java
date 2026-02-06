@@ -18,24 +18,38 @@ import com.liferay.headless.admin.site.client.dto.v1_0.DisplayPageTemplateSettin
 import com.liferay.headless.admin.site.client.dto.v1_0.FavIcon;
 import com.liferay.headless.admin.site.client.dto.v1_0.FriendlyUrlHistory;
 import com.liferay.headless.admin.site.client.dto.v1_0.ItemExternalReference;
+import com.liferay.headless.admin.site.client.dto.v1_0.PageElement;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.SitemapSettings;
 import com.liferay.headless.admin.site.client.pagination.Page;
 import com.liferay.headless.admin.site.client.problem.Problem;
 import com.liferay.headless.admin.site.client.resource.v1_0.DisplayPageTemplateResource;
+import com.liferay.headless.admin.site.resource.v1_0.test.util.AssetTestUtil;
 import com.liferay.headless.admin.site.resource.v1_0.test.util.LayoutPageTemplateEntryTestUtil;
+import com.liferay.headless.admin.site.resource.v1_0.test.util.PageElementsTestUtil;
+import com.liferay.headless.admin.site.resource.v1_0.test.util.PageExperiencesTestUtil;
 import com.liferay.headless.admin.site.resource.v1_0.test.util.PageSpecificationsTestUtil;
 import com.liferay.headless.admin.site.resource.v1_0.test.util.SettingsTestUtil;
+import com.liferay.info.constants.InfoDisplayWebKeys;
+import com.liferay.info.item.ERCInfoItemIdentifier;
+import com.liferay.info.item.InfoItemClassDetails;
+import com.liferay.info.item.InfoItemDetails;
 import com.liferay.info.item.InfoItemFormVariation;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemFormVariationsProvider;
+import com.liferay.journal.model.JournalArticle;
+import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateCollectionTypeConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
+import com.liferay.layout.provider.LayoutStructureProvider;
 import com.liferay.layout.test.util.ContentLayoutTestUtil;
+import com.liferay.layout.util.LayoutServiceContextHelper;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.lang.SafeCloseable;
@@ -54,7 +68,9 @@ import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.servlet.ServletContextPool;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -64,8 +80,10 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -79,6 +97,7 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,6 +115,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * @author Rubén Pulido
@@ -398,10 +419,18 @@ public class DisplayPageTemplateResourceTest
 	@Override
 	@Test
 	public void testPostSiteDisplayPageTemplate() throws Exception {
+		_testPostSiteDisplayPageTemplateWithPageElementsWithTemplateEntries();
+	}
+
+	// @Override
+
+	@Test
+	public void testPostSiteDisplayPageTemplate0() throws Exception {
 		super.testPostSiteDisplayPageTemplate();
 
 		_testPostSiteDisplayPageTemplateWithKey();
 		_testPostSiteDisplayPageTemplateWithMarkedAsDefault();
+		_testPostSiteDisplayPageTemplateWithPageElementsWithTemplateEntries();
 		_testPostSiteDisplayPageTemplateWithPageSpecifications();
 		_testPostSiteDisplayPageTemplateWithParentFolder();
 		_testPostSiteDisplayPageTemplateWithThumbnail();
@@ -750,15 +779,31 @@ public class DisplayPageTemplateResourceTest
 		InfoItemFormVariation infoItemFormVariation =
 			infoItemFormVariations.get(0);
 
+		List<InfoItemFormVariation> filteredInfoItemFormVariations =
+			ListUtil.filter(
+				infoItemFormVariations,
+				curInfoItemFormVariation -> {
+					return Objects.equals(
+						curInfoItemFormVariation.getLabelInfoLocalizedValue(
+						).getValue(),
+						"Test Structure");
+				});
+
+		if (!filteredInfoItemFormVariations.isEmpty()) {
+			infoItemFormVariation = filteredInfoItemFormVariations.get(0);
+		}
+
+		String subTypeExternalReferenceCode =
+			infoItemFormVariation.getExternalReferenceCode();
+
 		return new ClassSubtypeReference() {
 			{
 				setClassName(classSubtypeReferenceClassName);
 				setSubTypeExternalReference(
-					() -> new ItemExternalReference() {
+					new ItemExternalReference() {
 						{
 							setExternalReferenceCode(
-								infoItemFormVariation::
-									getExternalReferenceCode);
+								subTypeExternalReferenceCode);
 						}
 					});
 			}
@@ -797,6 +842,50 @@ public class DisplayPageTemplateResourceTest
 		).parameters(
 			"nestedFields", nestedFields
 		).build();
+	}
+
+	private DisplayPageTemplate _getDisplayPageTemplateWithPageElements(
+			PageElement[] pageElements)
+		throws Exception {
+
+		DisplayPageTemplate displayPageTemplate = _randomDisplayPageTemplate(
+			Boolean.TRUE);
+
+		displayPageTemplate.setContentTypeReference(
+			_getClassSubtypeReference(
+				"com.liferay.journal.model.JournalArticle"));
+
+		String draftContentPageSpecificationExternalReferenceCode =
+			RandomTestUtil.randomString();
+
+		ContentPageSpecification draftContentPageSpecification =
+			PageSpecificationsTestUtil.getContentPageSpecification(
+				null, testGroup.getGroupId(),
+				PageSpecification.Status.APPROVED);
+
+		draftContentPageSpecification.setPageExperiences(
+			PageExperiencesTestUtil.getDefaultPageExperiences(
+				pageElements,
+				draftContentPageSpecificationExternalReferenceCode));
+
+		ContentPageSpecification publishedContentPageSpecification =
+			PageSpecificationsTestUtil.getContentPageSpecification(
+				draftContentPageSpecification.getExternalReferenceCode(),
+				testGroup.getGroupId(), PageSpecification.Status.APPROVED);
+
+		publishedContentPageSpecification.setExternalReferenceCode(
+			displayPageTemplate.getExternalReferenceCode());
+
+		publishedContentPageSpecification.setPageExperiences(
+			PageExperiencesTestUtil.getDefaultPageExperiences(
+				pageElements, displayPageTemplate.getExternalReferenceCode()));
+
+		displayPageTemplate.setPageSpecifications(
+			() -> new PageSpecification[] {
+				publishedContentPageSpecification, draftContentPageSpecification
+			});
+
+		return displayPageTemplate;
 	}
 
 	private String _getLayoutPageTemplateCollectionExternalReferenceCode(
@@ -1256,6 +1345,131 @@ public class DisplayPageTemplateResourceTest
 			() -> displayPageTemplateResource.postSiteDisplayPageTemplate(
 				testGroup.getExternalReferenceCode(),
 				_randomDisplayPageTemplate(Boolean.TRUE)));
+	}
+
+	private void _testPostSiteDisplayPageTemplateWithPageElementsWithTemplateEntries()
+		throws Exception {
+
+		JournalArticle journalArticle =
+			AssetTestUtil.randomCompanyGroupJournalArticle();
+
+		PageElement[] pageElements =
+			PageElementsTestUtil.getPageElementsWithTemplateEntries(
+				journalArticle,
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
+				testGroup.getGroupId());
+
+		DisplayPageTemplate displayPageTemplate =
+			_getDisplayPageTemplateWithPageElements(pageElements);
+
+		DisplayPageTemplate postDisplayPageTemplate =
+			displayPageTemplateResource.postSiteDisplayPageTemplate(
+				testGroup.getExternalReferenceCode(), displayPageTemplate);
+
+		Layout layout = _layoutLocalService.getLayoutByExternalReferenceCode(
+			postDisplayPageTemplate.getExternalReferenceCode(),
+			testGroup.getGroupId());
+
+		long segmentsExperienceId =
+			_segmentsExperienceLocalService.fetchDefaultSegmentsExperienceId(
+				layout.getPlid());
+
+		Map<String, Object> attributes = new HashMap<>();
+
+		InfoItemClassDetails infoItemClassDetails = new InfoItemClassDetails(
+			"com.liferay.journal.model.JournalArticle");
+
+		InfoItemDetails infoItemDetails = new InfoItemDetails(
+			infoItemClassDetails,
+			new InfoItemReference(
+				"com.liferay.journal.model.JournalArticle",
+				new ERCInfoItemIdentifier(
+					journalArticle.getExternalReferenceCode(), "L_GLOBAL")));
+
+		attributes.put(InfoDisplayWebKeys.INFO_ITEM_DETAILS, infoItemDetails);
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest(
+				ServletContextPool.get(StringPool.BLANK));
+
+		LayoutDisplayPageObjectProvider<Object>
+			layoutDisplayPageObjectProvider =
+				new LayoutDisplayPageObjectProvider<>() {
+
+					@Override
+					public long getClassNameId() {
+						return PortalUtil.getClassNameId(
+							"com.liferay.journal.model.JournalArticle");
+					}
+
+					@Override
+					public long getClassPK() {
+						return GetterUtil.getLong(
+							journalArticle.getArticleId());
+					}
+
+					@Override
+					public long getClassTypeId() {
+						return 0;
+					}
+
+					@Override
+					public String getDescription(Locale locale) {
+						return "";
+					}
+
+					@Override
+					public Object getDisplayObject() {
+						return journalArticle;
+					}
+
+					@Override
+					public long getGroupId() {
+						return journalArticle.getGroupId();
+					}
+
+					@Override
+					public String getKeywords(Locale locale) {
+						return "";
+					}
+
+					@Override
+					public String getTitle(Locale locale) {
+						return "";
+					}
+
+					@Override
+					public String getURLTitle(Locale locale) {
+						return "";
+					}
+
+				};
+
+		mockHttpServletRequest.setAttribute(
+			"LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER",
+			layoutDisplayPageObjectProvider);
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				testGroup, TestPropsValues.getUserId());
+
+		serviceContext.setRequest(mockHttpServletRequest);
+
+		String renderLayoutHTML = null;
+
+		try {
+			ServiceContextThreadLocal.pushServiceContext(serviceContext);
+
+			renderLayoutHTML = ContentLayoutTestUtil.getRenderLayoutHTML(
+				attributes, layout, _layoutServiceContextHelper,
+				_layoutStructureProvider, segmentsExperienceId);
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
+
+		PageElementsTestUtil.assertRenderedLayoutHTMLWithTemplateEntries(
+			true, renderLayoutHTML);
 	}
 
 	private void _testPostSiteDisplayPageTemplateWithPageSpecifications()
@@ -1848,6 +2062,12 @@ public class DisplayPageTemplateResourceTest
 	private LayoutPageTemplateEntryLocalService
 		_layoutPageTemplateEntryLocalService;
 
+	@Inject
+	private LayoutServiceContextHelper _layoutServiceContextHelper;
+
+	@Inject
+	private LayoutStructureProvider _layoutStructureProvider;
+
 	@Inject(
 		filter = "mvc.command.name=/layout_content_page_editor/publish_layout_page_template_entry"
 	)
@@ -1858,6 +2078,9 @@ public class DisplayPageTemplateResourceTest
 
 	@Inject
 	private PortletFileRepository _portletFileRepository;
+
+	@Inject
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 	@Inject
 	private StagingLocalService _stagingLocalService;

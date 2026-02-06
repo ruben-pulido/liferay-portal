@@ -224,6 +224,20 @@ public class DisplayPageTemplateDTOConverter
 	private ItemExternalReference _getSubtypeItemExternalReference(
 		LayoutPageTemplateEntry layoutPageTemplateEntry) {
 
+		return new ItemExternalReference() {
+			{
+				setExternalReferenceCode(
+					() -> _getSubtypeItemExternalReferenceCode(
+						layoutPageTemplateEntry));
+			}
+		};
+	}
+
+	// TODO Extract
+
+	private String _getSubtypeItemExternalReferenceCode(
+		LayoutPageTemplateEntry layoutPageTemplateEntry) {
+
 		InfoItemFormVariationsProvider<?> infoItemFormVariationsProvider =
 			_infoItemServiceRegistry.getFirstInfoItemService(
 				InfoItemFormVariationsProvider.class,
@@ -242,12 +256,7 @@ public class DisplayPageTemplateDTOConverter
 			return null;
 		}
 
-		return new ItemExternalReference() {
-			{
-				setExternalReferenceCode(
-					infoItemFormVariation::getExternalReferenceCode);
-			}
-		};
+		return infoItemFormVariation.getExternalReferenceCode();
 	}
 
 	@Reference(
