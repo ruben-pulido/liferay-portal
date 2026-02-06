@@ -89,7 +89,10 @@ public class ContainerPageElementDefinitionDTOConverter
 					() -> FragmentLinkUtil.toFragmentLink(
 						companyId, _infoItemServiceRegistry,
 						containerStyledLayoutStructureItem.getLinkJSONObject(),
-						scopeGroupId));
+
+						// TODO?
+
+						0, null, null, scopeGroupId));
 				setFragmentViewports(
 					() -> FragmentViewportUtil.toFragmentViewports(
 						containerStyledLayoutStructureItem.

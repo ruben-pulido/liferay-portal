@@ -424,7 +424,9 @@ public class FragmentLayoutStructureItemImporter
 			(fragmentEntryLink.getSegmentsExperienceId() !=
 				layoutStructureItemImporterContext.getSegmentsExperienceId())) {
 
-			throw new UnsupportedOperationException();
+			// TODO
+
+			//			throw new UnsupportedOperationException();
 		}
 
 		FragmentEntryReference fragmentEntryReference =

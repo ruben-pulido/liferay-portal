@@ -10,7 +10,6 @@ import com.liferay.headless.admin.site.client.dto.v1_0.PageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageExperience;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -108,8 +107,9 @@ public class PageExperiencesTestUtil {
 	}
 
 	public static PageExperience getPageExperience(
-		String pageSpecificationExternalReferenceCode, int priority,
-		long scopeGroupId, SegmentsEntry segmentsEntry) {
+			String pageSpecificationExternalReferenceCode, int priority,
+			long scopeGroupId, SegmentsEntry segmentsEntry)
+		throws Exception {
 
 		PageExperience pageExperience = getPageExperience();
 
@@ -131,7 +131,7 @@ public class PageExperiencesTestUtil {
 	public static PageExperience[] getPageExperiences(
 			long companyGroupId, long groupId,
 			String pageSpecificationExternalReferenceCode)
-		throws PortalException {
+		throws Exception {
 
 		return new PageExperience[] {
 			getPageExperience(
