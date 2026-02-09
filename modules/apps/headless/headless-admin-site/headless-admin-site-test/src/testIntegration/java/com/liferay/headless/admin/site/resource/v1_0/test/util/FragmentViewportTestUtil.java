@@ -13,14 +13,16 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
  */
 public class FragmentViewportTestUtil {
 
-	public static FragmentViewport[] getFragmentViewports() {
+	public static FragmentViewport[] getFragmentViewports(
+		final Boolean hidden) {
+
 		return new FragmentViewport[] {
 			new FragmentViewport() {
 				{
 					setCustomCSS(RandomTestUtil.randomString());
 					setFragmentViewportStyle(
-						FragmentViewportStyleTestUtil.
-							getFragmentViewportStyle());
+						FragmentViewportStyleTestUtil.getFragmentViewportStyle(
+							hidden));
 					setId(Id.DESKTOP);
 				}
 			},
@@ -28,8 +30,8 @@ public class FragmentViewportTestUtil {
 				{
 					setCustomCSS(RandomTestUtil.randomString());
 					setFragmentViewportStyle(
-						FragmentViewportStyleTestUtil.
-							getFragmentViewportStyle());
+						FragmentViewportStyleTestUtil.getFragmentViewportStyle(
+							hidden));
 					setId(Id.LANDSCAPE_MOBILE);
 				}
 			},
@@ -37,8 +39,8 @@ public class FragmentViewportTestUtil {
 				{
 					setCustomCSS(RandomTestUtil.randomString());
 					setFragmentViewportStyle(
-						FragmentViewportStyleTestUtil.
-							getFragmentViewportStyle());
+						FragmentViewportStyleTestUtil.getFragmentViewportStyle(
+							hidden));
 					setId(Id.PORTRAIT_MOBILE);
 				}
 			},
@@ -46,8 +48,8 @@ public class FragmentViewportTestUtil {
 				{
 					setCustomCSS(RandomTestUtil.randomString());
 					setFragmentViewportStyle(
-						FragmentViewportStyleTestUtil.
-							getFragmentViewportStyle());
+						FragmentViewportStyleTestUtil.getFragmentViewportStyle(
+							hidden));
 					setId(Id.TABLET);
 				}
 			}
