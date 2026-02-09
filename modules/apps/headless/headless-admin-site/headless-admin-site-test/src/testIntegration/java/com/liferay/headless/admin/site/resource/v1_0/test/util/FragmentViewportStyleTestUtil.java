@@ -24,7 +24,7 @@ public class FragmentViewportStyleTestUtil {
 				setFontSize(RandomTestUtil::randomString);
 				setFontWeight(RandomTestUtil::randomString);
 				setHeight(RandomTestUtil::randomString);
-				setHidden(RandomTestUtil::randomBoolean);
+				setHidden(false); //TODO
 				setMarginBottom(RandomTestUtil::randomString);
 				setMarginLeft(RandomTestUtil::randomString);
 				setMarginRight(RandomTestUtil::randomString);

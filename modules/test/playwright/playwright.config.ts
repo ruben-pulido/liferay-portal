@@ -164,6 +164,7 @@ import {config as siteNavigationBreadcrumbWebConfig} from './tests/site-navigati
 import {config as siteNavigationDirectoryWebConfig} from './tests/site-navigation-directory-web/main/config';
 import {config as siteNavigationLanguageWebConfig} from './tests/site-navigation-language-web/main/config';
 import {config as siteNavigationMenuWebConfig} from './tests/site-navigation-menu-web/main/config';
+import {config as siteNavigationSiteMapWebConfig} from './tests/site-navigation-site-map-web/main/config';
 import {config as siteSitemapWebConfig} from './tests/site-sitemap-web/main/config';
 import {config as siteTeamsWebConfig} from './tests/site-teams-web/main/config';
 import {config as smokeConfig} from './tests/smoke/main/config';
@@ -353,6 +354,7 @@ export default defineConfig({
 		siteNavigationDirectoryWebConfig,
 		siteNavigationLanguageWebConfig,
 		siteNavigationMenuWebConfig,
+		siteNavigationSiteMapWebConfig,
 		siteSitemapWebConfig,
 		siteTeamsWebConfig,
 		smokeConfig,

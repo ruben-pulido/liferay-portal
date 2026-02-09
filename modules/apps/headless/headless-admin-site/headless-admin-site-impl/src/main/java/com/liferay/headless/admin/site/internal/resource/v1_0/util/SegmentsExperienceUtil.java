@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
-import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsEntryLocalServiceUtil;
@@ -54,7 +53,10 @@ public class SegmentsExperienceUtil {
 				UnicodePropertiesBuilder.create(
 					true
 				).build(),
-				new ServiceContext());
+				ServiceContextUtil.createServiceContext(
+					serviceContext.getScopeGroupId(),
+					serviceContext.getRequest(), serviceContext.getUserId(),
+					pageExperience.getUuid()));
 
 		LayoutLocalServiceUtil.updateLayoutContent(
 			_getData(
@@ -64,25 +66,6 @@ public class SegmentsExperienceUtil {
 			layout, segmentsExperience.getSegmentsExperienceId());
 
 		return segmentsExperience;
-	}
-
-	public static String getDefaultSegmentsExperienceExternalReferenceCode(
-		PageExperience[] pageExperiences) {
-
-		if (ArrayUtil.isEmpty(pageExperiences)) {
-			throw new UnsupportedOperationException();
-		}
-
-		for (PageExperience pageExperience : pageExperiences) {
-			if (Objects.equals(
-					pageExperience.getKey(),
-					SegmentsExperienceConstants.KEY_DEFAULT)) {
-
-				return pageExperience.getExternalReferenceCode();
-			}
-		}
-
-		throw new UnsupportedOperationException();
 	}
 
 	public static SegmentsExperience updateSegmentsExperience(
