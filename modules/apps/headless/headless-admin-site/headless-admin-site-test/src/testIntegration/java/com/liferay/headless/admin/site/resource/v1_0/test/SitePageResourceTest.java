@@ -53,11 +53,13 @@ import com.liferay.info.field.type.InfoFieldType;
 import com.liferay.info.form.InfoForm;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemFormProvider;
+import com.liferay.journal.model.JournalArticle;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.provider.LayoutStructureProvider;
 import com.liferay.layout.test.util.ContentLayoutTestUtil;
 import com.liferay.layout.test.util.LayoutFriendlyURLRandomizerBumper;
 import com.liferay.layout.test.util.LayoutTestUtil;
+import com.liferay.layout.util.LayoutServiceContextHelper;
 import com.liferay.list.type.entry.util.ListTypeEntryUtil;
 import com.liferay.list.type.model.ListTypeDefinition;
 import com.liferay.list.type.service.ListTypeDefinitionLocalService;
@@ -315,6 +317,15 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	@Override
 	@Test
 	public void testPostSiteSitePage() throws Exception {
+		_testPostSiteSitePageWithPageElementsWithTemplateEntries();
+	}
+
+	// TODO
+
+	// 	@Override
+
+	@Test
+	public void testPostSiteSitePage0() throws Exception {
 		super.testPostSiteSitePage();
 
 		ServiceContext serviceContext =
@@ -336,6 +347,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				StringUtil.toLowerCase(RandomTestUtil.randomString())));
 
 		_testPostSiteSitePageWithPageElements();
+		_testPostSiteSitePageWithPageElementsWithTemplateEntries();
 		_testPostSiteSitePageWithPageSpecifications();
 		_testPostSiteSitePageWithWidgetPageSettings();
 		_testPostSiteSitePageWithWidgetPageSettingsWithWidgetPageTemplate();
@@ -385,6 +397,14 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	@Test
 	@TestInfo({"LPD-74331", "LPD-75450"})
 	public void testPutSiteSitePage() throws Exception {
+		_testPutSiteSitePageWithPageElementsWithTemplateEntries();
+	}
+
+	// 	@Override
+
+	@Test
+	@TestInfo({"LPD-74331", "LPD-75450"})
+	public void testPutSiteSitePageBK() throws Exception {
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(
 				testGroup.getGroupId(), TestPropsValues.getUserId());
@@ -396,6 +416,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		_testPutSiteSitePageWithExportedSitePageWithLayoutIdFriendlyURL();
 		_testPutSiteSitePageWithFormFragmentPageElements();
 		_testPutSiteSitePageWithPageElements();
+		_testPutSiteSitePageWithPageElementsWithTemplateEntries();
 		_testPutSiteSitePageWithPageExperiences();
 		_testPutSiteSitePageWithPageSpecifications();
 		_testPutSiteSitePageWithPriority();
@@ -729,21 +750,39 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	}
 
 	private void _assertPageElements(
+		PageElement[] draftExpectedPageElements,
+		PageElement[] publishedExpectedPageElements, SitePage sitePage) {
+
+		PageSpecification[] pageSpecifications =
+			sitePage.getPageSpecifications();
+
+		ContentPageSpecification publishedContentPageSpecification =
+			(ContentPageSpecification)pageSpecifications[0];
+
+		for (PageExperience pageExperience :
+				publishedContentPageSpecification.getPageExperiences()) {
+
+			Assert.assertArrayEquals(
+				publishedExpectedPageElements,
+				pageExperience.getPageElements());
+		}
+
+		ContentPageSpecification draftContentPageSpecification =
+			(ContentPageSpecification)pageSpecifications[1];
+
+		for (PageExperience pageExperience :
+				draftContentPageSpecification.getPageExperiences()) {
+
+			Assert.assertArrayEquals(
+				draftExpectedPageElements, pageExperience.getPageElements());
+		}
+	}
+
+	private void _assertPageElements(
 		PageElement[] expectedPageElements, SitePage sitePage) {
 
-		for (PageSpecification pageSpecification :
-				sitePage.getPageSpecifications()) {
-
-			ContentPageSpecification contentPageSpecification =
-				(ContentPageSpecification)pageSpecification;
-
-			for (PageExperience pageExperience :
-					contentPageSpecification.getPageExperiences()) {
-
-				Assert.assertArrayEquals(
-					expectedPageElements, pageExperience.getPageElements());
-			}
-		}
+		_assertPageElements(
+			expectedPageElements, expectedPageElements, sitePage);
 	}
 
 	private void _assertPageSpecifications(
@@ -1422,6 +1461,14 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	private SitePage _getSitePageWithPageElements(PageElement[] pageElements)
 		throws Exception {
 
+		return _getSitePageWithPageElements(pageElements, pageElements);
+	}
+
+	private SitePage _getSitePageWithPageElements(
+			PageElement[] draftPageElements,
+			PageElement[] publishedPageElements)
+		throws Exception {
+
 		SitePage sitePage = _getRandomSitePage(SitePage.Type.CONTENT_PAGE);
 
 		String draftContentPageSpecificationExternalReferenceCode =
@@ -1429,12 +1476,11 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		ContentPageSpecification draftContentPageSpecification =
 			PageSpecificationsTestUtil.getContentPageSpecification(
-				null, testGroup.getGroupId(),
-				PageSpecification.Status.APPROVED);
+				null, testGroup.getGroupId(), PageSpecification.Status.DRAFT);
 
 		draftContentPageSpecification.setPageExperiences(
 			PageExperiencesTestUtil.getDefaultPageExperiences(
-				pageElements,
+				draftPageElements,
 				draftContentPageSpecificationExternalReferenceCode));
 
 		ContentPageSpecification publishedContentPageSpecification =
@@ -1447,7 +1493,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		publishedContentPageSpecification.setPageExperiences(
 			PageExperiencesTestUtil.getDefaultPageExperiences(
-				pageElements, sitePage.getExternalReferenceCode()));
+				publishedPageElements, sitePage.getExternalReferenceCode()));
 
 		sitePage.setPageSpecifications(
 			() -> new PageSpecification[] {
@@ -2180,6 +2226,37 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				testGroup.getExternalReferenceCode(), sitePage));
 	}
 
+	private void _testPostSiteSitePageWithPageElementsWithTemplateEntries()
+		throws Exception {
+
+		JournalArticle journalArticle =
+			AssetTestUtil.randomCompanyGroupJournalArticle();
+
+		PageElement[] draftPageElements =
+			PageElementsTestUtil.getPageElementsWithTemplateEntries(
+				journalArticle, -1, testGroup.getGroupId());
+		PageElement[] publishedPageElements =
+			PageElementsTestUtil.getPageElementsWithTemplateEntries(
+				journalArticle, -1, testGroup.getGroupId());
+
+		SitePage sitePage = _getSitePageWithPageElements(
+			draftPageElements, publishedPageElements);
+
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
+
+		SitePage postSitePage = sitePageResource.postSiteSitePage(
+			testGroup.getExternalReferenceCode(), sitePage);
+
+		PageElementsTestUtil.toPageElementsWithExternalFields(
+			draftPageElements, testGroup.getGroupId());
+		PageElementsTestUtil.toPageElementsWithExternalFields(
+			publishedPageElements, testGroup.getGroupId());
+
+		_assertPageElements(
+			draftPageElements, publishedPageElements, postSitePage);
+	}
+
 	private void _testPostSiteSitePageWithPageSpecifications()
 		throws Exception {
 
@@ -2629,6 +2706,38 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			sitePageResource.putSiteSitePage(
 				testGroup.getExternalReferenceCode(),
 				postSitePage.getExternalReferenceCode(), sitePage));
+	}
+
+	private void _testPutSiteSitePageWithPageElementsWithTemplateEntries()
+		throws Exception {
+
+		JournalArticle journalArticle =
+			AssetTestUtil.randomCompanyGroupJournalArticle();
+
+		PageElement[] pageElements =
+			PageElementsTestUtil.getPageElementsWithTemplateEntries(
+				journalArticle, -1, testGroup.getGroupId());
+
+		SitePage sitePage = _getSitePageWithPageElements(pageElements);
+
+		SitePageResource sitePageResource = _getSitePageResource(
+			"pageSpecifications");
+
+		SitePage postSitePage = sitePageResource.postSiteSitePage(
+			testGroup.getExternalReferenceCode(), sitePage);
+
+		Layout layout = _layoutLocalService.getLayoutByExternalReferenceCode(
+			postSitePage.getExternalReferenceCode(), testGroup.getGroupId());
+
+		long segmentsExperienceId =
+			_segmentsExperienceLocalService.fetchDefaultSegmentsExperienceId(
+				layout.getPlid());
+
+		PageElementsTestUtil.assertRenderedLayoutHTMLWithTemplateEntries(
+			false,
+			ContentLayoutTestUtil.getRenderLayoutHTML(
+				layout, _layoutServiceContextHelper, _layoutStructureProvider,
+				segmentsExperienceId));
 	}
 
 	private void _testPutSiteSitePageWithPageExperiences() throws Exception {
@@ -3128,6 +3237,9 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 	@Inject
 	private LayoutLocalService _layoutLocalService;
+
+	@Inject
+	private LayoutServiceContextHelper _layoutServiceContextHelper;
 
 	@Inject
 	private LayoutStructureProvider _layoutStructureProvider;

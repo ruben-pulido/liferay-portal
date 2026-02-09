@@ -507,6 +507,8 @@ public class FragmentConfigurationFieldValueDTOConverter
 		return contextualMenuNavigationMenuValue;
 	}
 
+	// TODO Extract
+
 	private ItemExternalReference _getInfoItemExternalReference(
 		long companyId, JSONObject jsonObject, long scopeGroupId) {
 
@@ -544,6 +546,8 @@ public class FragmentConfigurationFieldValueDTOConverter
 				companyId, jsonObject.getString("scopeExternalReferenceCode"),
 				scopeGroupId));
 	}
+
+	// TODO Extract
 
 	private ItemExternalReference _getItemExternalReference(
 		String className, String externalReferenceCode, Scope scope) {

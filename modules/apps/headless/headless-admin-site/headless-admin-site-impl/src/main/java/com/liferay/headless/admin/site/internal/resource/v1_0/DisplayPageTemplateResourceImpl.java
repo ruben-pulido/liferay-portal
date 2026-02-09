@@ -681,10 +681,14 @@ public class DisplayPageTemplateResourceImpl
 		).build();
 
 		serviceContext.setCompanyId(contextCompany.getCompanyId());
-		serviceContext.setCreateDate(displayPageTemplate.getDateCreated());
-		serviceContext.setModifiedDate(displayPageTemplate.getDateModified());
 		serviceContext.setUserId(contextUser.getUserId());
-		serviceContext.setUuid(displayPageTemplate.getUuid());
+
+		if (displayPageTemplate != null) {
+			serviceContext.setCreateDate(displayPageTemplate.getDateCreated());
+			serviceContext.setModifiedDate(
+				displayPageTemplate.getDateModified());
+			serviceContext.setUuid(displayPageTemplate.getUuid());
+		}
 
 		return serviceContext;
 	}

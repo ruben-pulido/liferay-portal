@@ -95,6 +95,7 @@ public class TemplateInfoItemFieldSetProviderImpl
 				_getTemplateEntries(
 					infoItemClassName, infoItemFormVariationKey)) {
 
+			// TODO Do we need to add two entries for each infoFieldValue? (one with uniqueId and a second one with uniqueExternalId)
 			infoFieldValues.add(
 				new InfoFieldValue<>(
 					_getInfoField(scopeGroupId, templateEntry),
@@ -156,12 +157,12 @@ public class TemplateInfoItemFieldSetProviderImpl
 	private String _getExternalUniqueId(
 		String externalReferenceCode, long itemGroupId, long scopeGroupId) {
 
-		String scopeExternalReferenceCode = StringPool.BLANK;
+		String scopeExternalReferenceCode = null;
 
 		try {
 			scopeExternalReferenceCode = GetterUtil.getString(
 				ScopeUtil.getItemScopeExternalReferenceCode(
-					itemGroupId, scopeGroupId));
+					itemGroupId, scopeGroupId), null);
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
@@ -169,10 +170,18 @@ public class TemplateInfoItemFieldSetProviderImpl
 			}
 		}
 
-		return StringBundler.concat(
-			PortletDisplayTemplate.DISPLAY_STYLE_PREFIX, StringPool.UNDERLINE,
-			externalReferenceCode, "_SERC_",
-			scopeExternalReferenceCode);
+		String externalUniqueId = StringBundler.concat(
+			PortletDisplayTemplate.DISPLAY_STYLE_PREFIX,
+			"__L_TEMPLATE_ENTRY_ERC__",
+			externalReferenceCode);
+
+		if (scopeExternalReferenceCode != null) {
+			externalUniqueId =
+			StringBundler.concat(
+			externalUniqueId, "__L_SCOPE_ERC__", scopeExternalReferenceCode);
+		}
+
+		return externalUniqueId;
 	}
 
 	private List<TemplateEntry> _getTemplateEntries(
