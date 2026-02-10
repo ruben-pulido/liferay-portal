@@ -5,6 +5,12 @@
 
 package com.liferay.headless.admin.site.resource.v1_0.test.util;
 
+import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetRendererFactory;
+import com.liferay.asset.list.constants.AssetListEntryTypeConstants;
+import com.liferay.asset.list.model.AssetListEntry;
+import com.liferay.asset.list.service.AssetListEntryLocalServiceUtil;
 import com.liferay.asset.publisher.constants.AssetPublisherPortletKeys;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.contributor.util.FragmentCollectionContributorRegistryUtil;
@@ -21,6 +27,7 @@ import com.liferay.headless.admin.site.client.dto.v1_0.CollectionDisplayListStyl
 import com.liferay.headless.admin.site.client.dto.v1_0.CollectionDisplayPageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.CollectionDisplayViewport;
 import com.liferay.headless.admin.site.client.dto.v1_0.CollectionDisplayViewportDefinition;
+import com.liferay.headless.admin.site.client.dto.v1_0.CollectionItemExternalReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.CollectionItemPageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.CollectionReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.CollectionSettings;
@@ -32,32 +39,55 @@ import com.liferay.headless.admin.site.client.dto.v1_0.FormStepContainerPageElem
 import com.liferay.headless.admin.site.client.dto.v1_0.FormStepPageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentDropZonePageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentEditableElement;
+import com.liferay.headless.admin.site.client.dto.v1_0.FragmentEditableElementValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentInstance;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentItemExternalReference;
+import com.liferay.headless.admin.site.client.dto.v1_0.FragmentLink;
+import com.liferay.headless.admin.site.client.dto.v1_0.FragmentLinkMappedValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.FragmentLinkTextValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.FragmentLinkValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValueItemContextReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.GridPageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.GridViewport;
 import com.liferay.headless.admin.site.client.dto.v1_0.GridViewportDefinition;
+import com.liferay.headless.admin.site.client.dto.v1_0.HTMLFragmentEditableElementValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.HTMLFragmentMappedValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.HTMLFragmentValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.Mapping;
 import com.liferay.headless.admin.site.client.dto.v1_0.ModulePageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.ModuleViewport;
 import com.liferay.headless.admin.site.client.dto.v1_0.ModuleViewportDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageElement;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.TemplateListStyle;
+import com.liferay.headless.admin.site.client.dto.v1_0.TextFragmentEditableElementValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.TextFragmentMappedValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.TextFragmentValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetInstance;
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetInstancePageElementDefinition;
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPermission;
 import com.liferay.headless.admin.site.client.scope.Scope;
+import com.liferay.journal.model.JournalArticle;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.segments.constants.SegmentsEntryConstants;
+import com.liferay.template.model.TemplateEntry;
+import com.liferay.template.service.TemplateEntryLocalServiceUtil;
+import com.liferay.template.test.util.TemplateTestUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,21 +97,98 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.junit.Assert;
+
 /**
  * @author Lourdes Fernández Besada
  */
 public class PageElementsTestUtil {
 
+	public static void assertRenderedLayoutHTMLWithTemplateEntries(
+		boolean checkDisplayPageTemplateContextFields,
+		String renderLayoutHTML) {
+
+		Assert.assertNotNull(renderLayoutHTML);
+
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("companyGroupTemplateEntry1"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("companyGroupTemplateEntry2"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("companyGroupTemplateEntry3"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("companyGroupTemplateEntry4"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("scopeGroupTemplateEntry1"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("scopeGroupTemplateEntry2"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("scopeGroupTemplateEntry3"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("scopeGroupTemplateEntry4"));
+
+		if (checkDisplayPageTemplateContextFields) {
+			Assert.assertTrue(
+				renderLayoutHTML,
+				renderLayoutHTML.contains("companyGroupTemplateEntry5"));
+			Assert.assertTrue(
+				renderLayoutHTML,
+				renderLayoutHTML.contains("companyGroupTemplateEntry6"));
+			Assert.assertTrue(
+				renderLayoutHTML,
+				renderLayoutHTML.contains("scopeGroupTemplateEntry5"));
+			Assert.assertTrue(
+				renderLayoutHTML,
+				renderLayoutHTML.contains("scopeGroupTemplateEntry6"));
+		}
+	}
+
+	public static BasicFragmentInstancePageElementDefinition
+		getBasicFragmentInstancePageElementDefinition(
+			Map<String, Object> configurationValuesMap, Boolean hidden,
+			String key, FragmentEditableElement[] fragmentEditableElements,
+			long scopeGroupId) {
+
+		FragmentEntry fragmentEntry =
+			FragmentCollectionContributorRegistryUtil.getFragmentEntry(key);
+
+		if (fragmentEntry != null) {
+			return getBasicFragmentInstancePageElementDefinition(
+				configurationValuesMap, fragmentEditableElements, fragmentEntry,
+				hidden, scopeGroupId);
+		}
+
+		FragmentRenderer fragmentRenderer =
+			FragmentRendererRegistryUtil.getFragmentRenderer(key);
+
+		if (fragmentRenderer != null) {
+			return getBasicFragmentInstancePageElementDefinition(
+				configurationValuesMap, fragmentEditableElements,
+				fragmentRenderer, scopeGroupId);
+		}
+
+		return null;
+	}
+
 	public static BasicFragmentInstancePageElementDefinition
 		getBasicFragmentInstancePageElementDefinition(
 			Map<String, Object> configurationValuesMap,
 			FragmentEditableElement[] fragmentEditableElements,
-			FragmentEntry fragmentEntry, long scopeGroupId) {
+			FragmentEntry fragmentEntry, Boolean hidden, long scopeGroupId) {
 
 		return getBasicFragmentInstancePageElementDefinition(
 			configurationValuesMap, fragmentEditableElements, fragmentEntry,
-			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-			scopeGroupId, RandomTestUtil.randomString(), null);
+			RandomTestUtil.randomString(), hidden,
+			RandomTestUtil.randomString(), scopeGroupId,
+			RandomTestUtil.randomString(), null);
 	}
 
 	public static BasicFragmentInstancePageElementDefinition
@@ -89,8 +196,9 @@ public class PageElementsTestUtil {
 			Map<String, Object> configurationValuesMap,
 			FragmentEditableElement[] fragmentEditableElements,
 			FragmentEntry fragmentEntry,
-			String fragmentInstanceExternalReferenceCode, String namespace,
-			long scopeGroupId, String uuid, WidgetInstance[] widgetInstances) {
+			String fragmentInstanceExternalReferenceCode, Boolean hidden,
+			String namespace, long scopeGroupId, String uuid,
+			WidgetInstance[] widgetInstances) {
 
 		return new BasicFragmentInstancePageElementDefinition() {
 			{
@@ -98,7 +206,8 @@ public class PageElementsTestUtil {
 					_getFragmentInstance(
 						configurationValuesMap, fragmentEditableElements,
 						fragmentEntry, fragmentInstanceExternalReferenceCode,
-						namespace, scopeGroupId, uuid, widgetInstances));
+						hidden, namespace, scopeGroupId, uuid,
+						widgetInstances));
 				setType(() -> Type.BASIC_FRAGMENT);
 			}
 		};
@@ -121,32 +230,6 @@ public class PageElementsTestUtil {
 		};
 	}
 
-	public static BasicFragmentInstancePageElementDefinition
-		getBasicFragmentInstancePageElementDefinition(
-			Map<String, Object> configurationValuesMap, String key,
-			long scopeGroupId) {
-
-		FragmentEntry fragmentEntry =
-			FragmentCollectionContributorRegistryUtil.getFragmentEntry(key);
-
-		if (fragmentEntry != null) {
-			return getBasicFragmentInstancePageElementDefinition(
-				configurationValuesMap, new FragmentEditableElement[0],
-				fragmentEntry, scopeGroupId);
-		}
-
-		FragmentRenderer fragmentRenderer =
-			FragmentRendererRegistryUtil.getFragmentRenderer(key);
-
-		if (fragmentRenderer != null) {
-			return getBasicFragmentInstancePageElementDefinition(
-				configurationValuesMap, new FragmentEditableElement[0],
-				fragmentRenderer, scopeGroupId);
-		}
-
-		return null;
-	}
-
 	public static PageElement getDropZonePageElement(
 			String externalReferenceCode, long groupId)
 		throws PortalException {
@@ -165,7 +248,7 @@ public class PageElementsTestUtil {
 	}
 
 	public static PageElementDefinition getPageElementDefinition(
-		PageElementDefinition.Type type, long scopeGroupId) {
+		Boolean hidden, PageElementDefinition.Type type, long scopeGroupId) {
 
 		if (Objects.equals(
 				type, PageElementDefinition.Type.COLLECTION_DISPLAY)) {
@@ -178,44 +261,8 @@ public class PageElementsTestUtil {
 			classNameReference.setCollectionType(
 				CollectionReference.CollectionType.COLLECTION_PROVIDER);
 
-			return new CollectionDisplayPageElementDefinition() {
-				{
-					setCollectionDisplayListStyle(
-						_getCollectionDisplayListStyle());
-					setCollectionDisplayViewports(
-						new CollectionDisplayViewport[] {
-							new CollectionDisplayViewport() {
-								{
-									setCollectionDisplayViewportDefinition(
-										() ->
-											new CollectionDisplayViewportDefinition() {
-												{
-													setHidden(
-														RandomTestUtil.
-															randomBoolean());
-													setNumberOfColumns(1);
-												}
-											});
-									setId(Id.DESKTOP);
-								}
-							}
-						});
-					setCollectionSettings(
-						() -> new CollectionSettings() {
-							{
-								setCollectionReference(
-									() -> classNameReference);
-							}
-						});
-					setDisplayAllItems(Boolean.FALSE);
-					setDisplayAllPages(Boolean.TRUE);
-					setNumberOfItems(5);
-					setNumberOfItemsPerPage(5);
-					setNumberOfPages(20);
-					setPaginationType(PaginationType.NONE);
-					setType(Type.COLLECTION_DISPLAY);
-				}
-			};
+			return _getCollectionDisplayPageElementDefinition(
+				classNameReference, hidden);
 		}
 
 		if (Objects.equals(type, PageElementDefinition.Type.COLLECTION_ITEM)) {
@@ -273,8 +320,8 @@ public class PageElementsTestUtil {
 
 		if (Objects.equals(type, PageElementDefinition.Type.BASIC_FRAGMENT)) {
 			return getBasicFragmentInstancePageElementDefinition(
-				Collections.emptyMap(), "BASIC_COMPONENT-heading",
-				scopeGroupId);
+				Collections.emptyMap(), hidden, "BASIC_COMPONENT-heading",
+				new FragmentEditableElement[0], scopeGroupId);
 		}
 
 		if (Objects.equals(
@@ -333,7 +380,9 @@ public class PageElementsTestUtil {
 
 			pageElement.setExternalReferenceCode(RandomTestUtil::randomString);
 			pageElement.setPageElementDefinition(
-				getPageElementDefinition(_getRandomType(), scopeGroupId));
+				getPageElementDefinition(
+					RandomTestUtil.randomBoolean(), _getRandomType(),
+					scopeGroupId));
 			pageElement.setPosition(i);
 
 			if (_isParentablePageElementDefinitionType(
@@ -368,6 +417,7 @@ public class PageElementsTestUtil {
 		pageElements.add(
 			_getPageElement(
 				getPageElementDefinition(
+					RandomTestUtil.randomBoolean(),
 					PageElementDefinition.Type.CONTAINER, scopeGroupId),
 				StringPool.BLANK, position++));
 		pageElements.add(_getGridPageElement(position++));
@@ -375,10 +425,272 @@ public class PageElementsTestUtil {
 		pageElements.add(
 			_getPageElement(
 				getPageElementDefinition(
+					RandomTestUtil.randomBoolean(),
 					PageElementDefinition.Type.WIDGET, scopeGroupId),
 				StringPool.BLANK, position));
 
 		return pageElements.toArray(new PageElement[0]);
+	}
+
+	public static PageElement[] getPageElementsWithTemplateEntries(
+			JournalArticle journalArticle, int layoutPageTemplateEntryType,
+			long scopeGroupId)
+		throws Exception {
+
+		List<PageElement> pageElements = new ArrayList<>();
+
+		Company company = CompanyLocalServiceUtil.getCompany(
+			TestPropsValues.getCompanyId());
+
+		ServiceContext companyGroupServiceContext =
+			ServiceContextTestUtil.getServiceContext(company.getGroupId());
+
+		ServiceContext scopeGroupServiceContext =
+			ServiceContextTestUtil.getServiceContext(scopeGroupId);
+
+		int position = 0;
+
+		pageElements.add(
+			_getPageElement(
+				_getExternalGlobalGroupTemplateFieldKey(
+					_getTemplateEntry(
+						journalArticle, "companyGroupTemplateEntry1",
+						companyGroupServiceContext)),
+				journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getPageElement(
+				_getExternalScopeGroupTemplateFieldKey(
+					_getTemplateEntry(
+						journalArticle, "scopeGroupTemplateEntry1",
+						scopeGroupServiceContext)),
+				journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getPageElement(
+				_getInternalTemplateFieldKey(
+					_getTemplateEntry(
+						journalArticle, "companyGroupTemplateEntry2",
+						companyGroupServiceContext)),
+				journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getPageElement(
+				_getInternalTemplateFieldKey(
+					_getTemplateEntry(
+						journalArticle, "scopeGroupTemplateEntry2",
+						scopeGroupServiceContext)),
+				journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getCollectionDisplayPageElement(
+				_getExternalGlobalGroupTemplateFieldKey(
+					_getTemplateEntry(
+						journalArticle, "companyGroupTemplateEntry3",
+						companyGroupServiceContext)),
+				journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getCollectionDisplayPageElement(
+				_getExternalScopeGroupTemplateFieldKey(
+					_getTemplateEntry(
+						journalArticle, "scopeGroupTemplateEntry3",
+						scopeGroupServiceContext)),
+				journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getCollectionDisplayPageElement(
+				_getInternalTemplateFieldKey(
+					_getTemplateEntry(
+						journalArticle, "companyGroupTemplateEntry4",
+						companyGroupServiceContext)),
+				journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getCollectionDisplayPageElement(
+				_getInternalTemplateFieldKey(
+					_getTemplateEntry(
+						journalArticle, "scopeGroupTemplateEntry4",
+						scopeGroupServiceContext)),
+				journalArticle, position++, scopeGroupId));
+
+		if (layoutPageTemplateEntryType ==
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE) {
+
+			pageElements.add(
+				_getDisplayPageItemPageElement(
+					_getExternalGlobalGroupTemplateFieldKey(
+						_getTemplateEntry(
+							journalArticle, "companyGroupTemplateEntry5",
+							companyGroupServiceContext)),
+					position++, scopeGroupId));
+			pageElements.add(
+				_getDisplayPageItemPageElement(
+					_getExternalScopeGroupTemplateFieldKey(
+						_getTemplateEntry(
+							journalArticle, "scopeGroupTemplateEntry5",
+							scopeGroupServiceContext)),
+					position++, scopeGroupId));
+			pageElements.add(
+				_getDisplayPageItemPageElement(
+					_getInternalTemplateFieldKey(
+						_getTemplateEntry(
+							journalArticle, "companyGroupTemplateEntry6",
+							companyGroupServiceContext)),
+					position++, scopeGroupId));
+			pageElements.add(
+				_getDisplayPageItemPageElement(
+					_getInternalTemplateFieldKey(
+						_getTemplateEntry(
+							journalArticle, "scopeGroupTemplateEntry6",
+							scopeGroupServiceContext)),
+					position, scopeGroupId));
+		}
+
+		return pageElements.toArray(new PageElement[0]);
+	}
+
+	public static void toPageElementsWithExternalFields(
+			PageElement[] pageElements, long scopeGroupId)
+		throws PortalException {
+
+		if (pageElements == null) {
+			return;
+		}
+
+		for (PageElement pageElement : pageElements) {
+			PageElementDefinition pageElementDefinition =
+				pageElement.getPageElementDefinition();
+
+			if (pageElementDefinition instanceof
+					BasicFragmentInstancePageElementDefinition) {
+
+				BasicFragmentInstancePageElementDefinition
+					basicFragmentInstancePageElementDefinition =
+						(BasicFragmentInstancePageElementDefinition)
+							pageElementDefinition;
+
+				FragmentInstance fragmentInstance =
+					basicFragmentInstancePageElementDefinition.
+						getFragmentInstance();
+
+				FragmentEditableElement[] fragmentEditableElements =
+					fragmentInstance.getFragmentEditableElements();
+
+				for (FragmentEditableElement fragmentEditableElement :
+						fragmentEditableElements) {
+
+					FragmentEditableElementValue fragmentEditableElementValue =
+						fragmentEditableElement.
+							getFragmentEditableElementValue();
+
+					if (fragmentEditableElementValue instanceof
+							HTMLFragmentEditableElementValue) {
+
+						HTMLFragmentEditableElementValue
+							htmlFragmentEditableElementValue =
+								(HTMLFragmentEditableElementValue)
+									fragmentEditableElementValue;
+
+						HTMLFragmentValue htmlFragmentValue =
+							htmlFragmentEditableElementValue.
+								getHtmlFragmentValue();
+
+						if (htmlFragmentValue instanceof
+								HTMLFragmentMappedValue) {
+
+							HTMLFragmentMappedValue htmlFragmentMappedValue =
+								(HTMLFragmentMappedValue)htmlFragmentValue;
+
+							FragmentMappedValue fragmentMappedValue =
+								htmlFragmentMappedValue.
+									getFragmentMappedValue();
+
+							Mapping mapping = fragmentMappedValue.getMapping();
+
+							mapping.setFieldKey(
+								_toExternalFieldKey(
+									mapping.getFieldKey(), scopeGroupId));
+						}
+					}
+
+					if (fragmentEditableElementValue instanceof
+							TextFragmentEditableElementValue) {
+
+						TextFragmentEditableElementValue
+							textFragmentEditableElementValue =
+								(TextFragmentEditableElementValue)
+									fragmentEditableElementValue;
+
+						FragmentLinkTextValue fragmentLinkTextValue =
+							textFragmentEditableElementValue.
+								getFragmentLinkTextValue();
+
+						TextFragmentValue textFragmentValue =
+							fragmentLinkTextValue.getTextFragmentValue();
+
+						TextFragmentMappedValue textFragmentMappedValue =
+							(TextFragmentMappedValue)textFragmentValue;
+
+						FragmentMappedValue fragmentMappedValue =
+							textFragmentMappedValue.getFragmentMappedValue();
+
+						Mapping mapping = fragmentMappedValue.getMapping();
+
+						mapping.setFieldKey(
+							_toExternalFieldKey(
+								mapping.getFieldKey(), scopeGroupId));
+					}
+				}
+			}
+
+			if (pageElementDefinition instanceof
+					ContainerPageElementDefinition) {
+
+				ContainerPageElementDefinition containerPageElementDefinition =
+					(ContainerPageElementDefinition)pageElementDefinition;
+
+				FragmentLink fragmentLink =
+					containerPageElementDefinition.getFragmentLink();
+
+				FragmentLinkValue fragmentLinkValue = fragmentLink.getValue();
+
+				if (fragmentLinkValue.getType() !=
+						FragmentLinkValue.Type.FRAGMENT_MAPPED_VALUE) {
+
+					continue;
+				}
+
+				FragmentLinkMappedValue fragmentLinkMappedValue =
+					(FragmentLinkMappedValue)fragmentLinkValue;
+
+				Mapping mapping = fragmentLinkMappedValue.getMapping();
+
+				String fieldKey = mapping.getFieldKey();
+
+				mapping.setFieldKey(
+					_toExternalFieldKey(fieldKey, scopeGroupId));
+			}
+
+			toPageElementsWithExternalFields(
+				pageElement.getPageElements(), scopeGroupId);
+		}
+	}
+
+	private static AssetListEntry _addAssetListEntry(
+			long groupId, JournalArticle journalArticle)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(groupId);
+
+		AssetListEntry assetListEntry =
+			AssetListEntryLocalServiceUtil.addAssetListEntry(
+				RandomTestUtil.randomString(), TestPropsValues.getUserId(),
+				groupId, RandomTestUtil.randomString(),
+				AssetListEntryTypeConstants.TYPE_MANUAL, serviceContext);
+
+		AssetEntry assetEntry = _getAssetEntry(journalArticle);
+
+		AssetListEntryLocalServiceUtil.addAssetEntrySelections(
+			assetListEntry.getAssetListEntryId(),
+			new long[] {assetEntry.getEntryId()},
+			SegmentsEntryConstants.ID_DEFAULT, serviceContext);
+
+		return assetListEntry;
 	}
 
 	private static DefaultFragmentReference _addDefaultFragmentReference(
@@ -431,6 +743,38 @@ public class PageElementsTestUtil {
 		return fragmentItemExternalReference;
 	}
 
+	private static AssetEntry _getAssetEntry(JournalArticle journalArticle)
+		throws Exception {
+
+		AssetRendererFactory<?> assetRendererFactory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
+				JournalArticle.class.getName());
+
+		return assetRendererFactory.getAssetEntry(
+			JournalArticle.class.getName(),
+			journalArticle.getResourcePrimKey());
+	}
+
+	private static PageElement _getBasicFragmentPageElement(
+		String className,
+		FragmentMappedValueItemContextReference.ContextSource contextSource,
+		String externalReferenceCode, String fieldKey,
+		String scopeExternalReferenceCode, long scopeGroupId) {
+
+		return _getPageElement(
+			RandomTestUtil.randomString(),
+			getBasicFragmentInstancePageElementDefinition(
+				Collections.emptyMap(), false, "BASIC_COMPONENT-heading",
+				new FragmentEditableElement[] {
+					FragmentEditableElementTestUtil.
+						getTextFragmentEditableElement(
+							className, contextSource, externalReferenceCode,
+							fieldKey, null, null, scopeExternalReferenceCode,
+							TextFragmentValue.Type.MAPPED)
+				},
+				scopeGroupId));
+	}
+
 	private static CollectionDisplayListStyle _getCollectionDisplayListStyle() {
 		TemplateListStyle templateListStyle = new TemplateListStyle();
 
@@ -452,13 +796,15 @@ public class PageElementsTestUtil {
 
 		PageElement collectionDisplayPageElement = _getPageElement(
 			getPageElementDefinition(
-				PageElementDefinition.Type.COLLECTION_DISPLAY, scopeGroupId),
+				Boolean.FALSE, PageElementDefinition.Type.COLLECTION_DISPLAY,
+				scopeGroupId),
 			StringPool.BLANK, position);
 
 		collectionDisplayPageElement.setPageElements(
 			new PageElement[] {
 				_getPageElement(
 					getPageElementDefinition(
+						Boolean.FALSE,
 						PageElementDefinition.Type.COLLECTION_ITEM,
 						scopeGroupId),
 					collectionDisplayPageElement.getExternalReferenceCode(), 0)
@@ -467,12 +813,147 @@ public class PageElementsTestUtil {
 		return collectionDisplayPageElement;
 	}
 
+	private static PageElement _getCollectionDisplayPageElement(
+			JournalArticle journalArticle, int position, long scopeGroupId,
+			PageElement[] pageElements)
+		throws Exception {
+
+		Company company = CompanyLocalServiceUtil.getCompany(
+			TestPropsValues.getCompanyId());
+
+		AssetListEntry assetListEntry = _addAssetListEntry(
+			company.getGroupId(), journalArticle);
+
+		CollectionItemExternalReference collectionItemExternalReference =
+			new CollectionItemExternalReference();
+
+		collectionItemExternalReference.setCollectionType(
+			CollectionReference.CollectionType.COLLECTION);
+		collectionItemExternalReference.setExternalReferenceCode(
+			assetListEntry.getExternalReferenceCode());
+		collectionItemExternalReference.setScope(
+			new Scope() {
+				{
+					setExternalReferenceCode("L_GLOBAL");
+					setType(Type.SITE);
+				}
+			});
+
+		PageElement collectionDisplayPageElement = _getPageElement(
+			_getCollectionDisplayPageElementDefinition(
+				collectionItemExternalReference, Boolean.FALSE),
+			StringPool.BLANK, position);
+
+		collectionDisplayPageElement.setPageElements(
+			new PageElement[] {
+				_getPageElement(
+					RandomTestUtil.randomString(),
+					getPageElementDefinition(
+						Boolean.FALSE,
+						PageElementDefinition.Type.COLLECTION_ITEM,
+						scopeGroupId),
+					pageElements,
+					collectionDisplayPageElement.getExternalReferenceCode(), 0)
+			});
+
+		return collectionDisplayPageElement;
+	}
+
+	private static PageElement _getCollectionDisplayPageElement(
+			String fieldKey, JournalArticle journalArticle, int position,
+			long scopeGroupId)
+		throws Exception {
+
+		PageElement pageElement = _getCollectionDisplayPageElement(
+			journalArticle, position, scopeGroupId,
+			new PageElement[] {
+				_getBasicFragmentPageElement(
+					null,
+					FragmentMappedValueItemContextReference.ContextSource.
+						COLLECTION_ITEM,
+					null, fieldKey, null, scopeGroupId)
+			});
+
+		pageElement.setPosition(position);
+
+		return pageElement;
+	}
+
+	private static CollectionDisplayPageElementDefinition
+		_getCollectionDisplayPageElementDefinition(
+			CollectionReference curCollectionReference, Boolean curHidden) {
+
+		return new CollectionDisplayPageElementDefinition() {
+			{
+				setCollectionDisplayListStyle(_getCollectionDisplayListStyle());
+				setCollectionDisplayViewports(
+					new CollectionDisplayViewport[] {
+						new CollectionDisplayViewport() {
+							{
+								setCollectionDisplayViewportDefinition(
+									new CollectionDisplayViewportDefinition() {
+										{
+											setHidden(curHidden);
+											setNumberOfColumns(1);
+										}
+									});
+								setId(Id.DESKTOP);
+							}
+						}
+					});
+				setCollectionSettings(
+					new CollectionSettings() {
+						{
+							setCollectionReference(curCollectionReference);
+						}
+					});
+				setDisplayAllItems(Boolean.FALSE);
+				setDisplayAllPages(Boolean.TRUE);
+				setNumberOfItems(5);
+				setNumberOfItemsPerPage(5);
+				setNumberOfPages(20);
+				setPaginationType(PaginationType.NONE);
+				setType(Type.COLLECTION_DISPLAY);
+			}
+		};
+	}
+
+	private static PageElement _getDisplayPageItemPageElement(
+		String fieldKey, int position, long scopeGroupId) {
+
+		PageElement pageElement = _getBasicFragmentPageElement(
+			null,
+			FragmentMappedValueItemContextReference.ContextSource.
+				DISPLAY_PAGE_ITEM,
+			null, fieldKey, null, scopeGroupId);
+
+		pageElement.setPosition(position);
+
+		return pageElement;
+	}
+
+	private static String _getExternalGlobalGroupTemplateFieldKey(
+		TemplateEntry templateEntry) {
+
+		return "ddmTemplate___L_TEMPLATE_ENTRY_ERC__" +
+			templateEntry.getExternalReferenceCode() +
+				"__L_SCOPE_ERC__L_GLOBAL";
+	}
+
+	private static String _getExternalScopeGroupTemplateFieldKey(
+		TemplateEntry templateEntry) {
+
+		return "ddmTemplate___L_TEMPLATE_ENTRY_ERC__" +
+			templateEntry.getExternalReferenceCode();
+	}
+
 	private static FragmentInstance _getFragmentInstance(
 		Map<String, Object> configurationValuesMap,
 		FragmentEditableElement[] fragmentEditableElements,
 		FragmentEntry fragmentEntry,
-		String fragmentInstanceExternalReferenceCode, String namespace,
-		long scopeGroupId, String uuid, WidgetInstance[] widgetInstances) {
+		String fragmentInstanceExternalReferenceCode, Boolean hidden,
+		String namespace, long scopeGroupId, String uuid,
+		WidgetInstance[] widgetInstances) {
 
 		FragmentInstance fragmentInstance = new FragmentInstance();
 
@@ -505,7 +986,7 @@ public class PageElementsTestUtil {
 						fragmentEntry.getGroupId(), scopeGroupId));
 			});
 		fragmentInstance.setFragmentViewports(
-			FragmentViewportTestUtil.getFragmentViewports());
+			FragmentViewportTestUtil.getFragmentViewports(hidden));
 		fragmentInstance.setHtml(fragmentEntry::getHtml);
 		fragmentInstance.setIndexed(RandomTestUtil::randomBoolean);
 		fragmentInstance.setJs(fragmentEntry::getJs);
@@ -681,6 +1162,12 @@ public class PageElementsTestUtil {
 		return gridViewport;
 	}
 
+	private static String _getInternalTemplateFieldKey(
+		TemplateEntry templateEntry) {
+
+		return "ddmTemplate__ddmTemplate_" + templateEntry.getTemplateEntryId();
+	}
+
 	private static ModulePageElementDefinition _getModulePageElementDefinition(
 		ModuleViewport[] moduleViewports) {
 
@@ -700,6 +1187,20 @@ public class PageElementsTestUtil {
 		return _getPageElement(
 			RandomTestUtil.randomString(), pageElementDefinition,
 			new PageElement[0], parentExternalReferenceCode, position);
+	}
+
+	private static PageElement _getPageElement(
+		String fieldKey, JournalArticle journalArticle, int position,
+		long scopeGroupId) {
+
+		PageElement pageElement = _getBasicFragmentPageElement(
+			"com.liferay.journal.model.JournalArticle", null,
+			journalArticle.getExternalReferenceCode(), fieldKey, "L_GLOBAL",
+			scopeGroupId);
+
+		pageElement.setPosition(position);
+
+		return pageElement;
 	}
 
 	private static PageElement _getPageElement(
@@ -726,6 +1227,12 @@ public class PageElementsTestUtil {
 
 		pageElement.setExternalReferenceCode(externalReferenceCode);
 		pageElement.setPageElementDefinition(pageElementDefinition);
+
+		for (PageElement childPageElement : pageElements) {
+			childPageElement.setParentExternalReferenceCode(
+				externalReferenceCode);
+		}
+
 		pageElement.setPageElements(pageElements);
 		pageElement.setParentExternalReferenceCode(parentExternalReferenceCode);
 		pageElement.setPosition(position);
@@ -735,6 +1242,19 @@ public class PageElementsTestUtil {
 
 	private static PageElementDefinition.Type _getRandomType() {
 		return _types.get(RandomTestUtil.randomInt(0, _types.size() - 1));
+	}
+
+	private static TemplateEntry _getTemplateEntry(
+			JournalArticle journalArticle, String text,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		return TemplateTestUtil.addTemplateEntry(
+			JournalArticle.class.getName(),
+			String.valueOf(journalArticle.getDDMStructureId()), text,
+			RandomTestUtil.randomString(),
+			TemplateTestUtil.getSampleScriptFTL("JournalArticle_title", text),
+			serviceContext);
 	}
 
 	private static WidgetInstance _getWidgetInstance() {
@@ -771,6 +1291,39 @@ public class PageElementsTestUtil {
 		}
 
 		return false;
+	}
+
+	private static String _toExternalFieldKey(
+			String fieldKey, long scopeGroupId)
+		throws PortalException {
+
+		String externalFieldKey = fieldKey;
+
+		if ((fieldKey == null) ||
+			!fieldKey.startsWith("ddmTemplate__ddmTemplate_")) {
+
+			return externalFieldKey;
+		}
+
+		long templateEntryId = GetterUtil.getLong(
+			fieldKey.substring(fieldKey.lastIndexOf("_") + 1));
+
+		if (templateEntryId == 0) {
+			return externalFieldKey;
+		}
+
+		TemplateEntry templateEntry =
+			TemplateEntryLocalServiceUtil.getTemplateEntry(templateEntryId);
+
+		externalFieldKey =
+			"ddmTemplate___L_TEMPLATE_ENTRY_ERC__" +
+				templateEntry.getExternalReferenceCode();
+
+		if (templateEntry.getGroupId() != scopeGroupId) {
+			externalFieldKey = externalFieldKey + "__L_SCOPE_ERC__L_GLOBAL";
+		}
+
+		return externalFieldKey;
 	}
 
 	private static final List<PageElementDefinition.Type> _types =

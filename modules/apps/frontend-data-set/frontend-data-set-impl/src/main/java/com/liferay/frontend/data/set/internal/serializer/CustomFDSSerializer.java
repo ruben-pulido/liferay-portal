@@ -320,6 +320,16 @@ public class CustomFDSSerializer
 	}
 
 	@Override
+	public JSONArray serializeGroupedFilters(
+		String fdsName, HttpServletRequest httpServletRequest) {
+
+		// TODO LPD-70111
+
+		return _systemFDSSerializer.serializeGroupedFilters(
+			fdsName, httpServletRequest);
+	}
+
+	@Override
 	public boolean serializeHideManagementBarInEmptyState(
 		String fdsName, HttpServletRequest httpServletRequest) {
 
@@ -429,7 +439,7 @@ public class CustomFDSSerializer
 			() -> {
 				String[] listOfItemsPerPage = StringUtil.split(
 					String.valueOf(properties.get("listOfItemsPerPage")),
-					StringPool.COMMA_AND_SPACE);
+					StringPool.COMMA);
 
 				if (ArrayUtil.isNotEmpty(listOfItemsPerPage)) {
 					return JSONUtil.toJSONArray(

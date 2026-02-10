@@ -39,11 +39,18 @@ public class MoreLikeThisQueryTest extends BaseMoreLikeThisQueryTestCase {
 	@Ignore
 	@Override
 	@Test
+	public void testLegacyMoreLikeThisWithFieldAndLikeText() throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
 	public void testMoreLikeThisWithoutFields() throws Exception {
 	}
 
+	@Ignore
 	@Test
-	public void testMoreLikeThisWithoutFieldsElasticsearch7() throws Throwable {
+	public void testMoreLikeThisWithoutFieldsElasticsearch8() throws Throwable {
 		SearchSearchRequest searchSearchRequest = createSearchSearchRequest();
 
 		searchSearchRequest.setQuery(

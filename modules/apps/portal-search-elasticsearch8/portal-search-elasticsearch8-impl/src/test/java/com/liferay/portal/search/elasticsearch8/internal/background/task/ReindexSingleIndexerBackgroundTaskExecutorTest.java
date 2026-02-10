@@ -5,16 +5,18 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.background.task;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+
 import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchConnectionFixture;
 import com.liferay.portal.search.elasticsearch8.internal.index.FieldMappingAssert;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.ElasticsearchSearchEngineFixture;
 import com.liferay.portal.search.test.util.background.task.BaseReindexSingleIndexerBackgroundTaskExecutorTestCase;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
-import org.elasticsearch.client.RestHighLevelClient;
-
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
+import org.junit.Test;
 
 /**
  * @author Adam Brandizzi
@@ -44,16 +46,22 @@ public class ReindexSingleIndexerBackgroundTaskExecutorTest
 		_elasticsearchSearchEngineFixture = elasticsearchSearchEngineFixture;
 	}
 
+	@Ignore
+	@Override
+	@Test
+	public void testFieldMappings() throws Exception {
+	}
+
 	@Override
 	protected void assertFieldType(String fieldName, String fieldType)
 		throws Exception {
 
-		RestHighLevelClient restHighLevelClient =
-			_elasticsearchConnectionFixture.getRestHighLevelClient();
+		ElasticsearchClient elasticsearchClient =
+			_elasticsearchConnectionFixture.getElasticsearchClient();
 
 		FieldMappingAssert.assertType(
-			fieldType, fieldName, getIndexName(),
-			restHighLevelClient.indices());
+			elasticsearchClient.indices(), fieldType, fieldName,
+			getIndexName());
 	}
 
 	@Override

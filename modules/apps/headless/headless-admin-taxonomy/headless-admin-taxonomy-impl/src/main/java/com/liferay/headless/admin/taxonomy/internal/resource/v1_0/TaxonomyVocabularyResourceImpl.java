@@ -395,18 +395,6 @@ public class TaxonomyVocabularyResourceImpl
 			taxonomyVocabulary.getExternalReferenceCode(), siteId,
 			taxonomyVocabulary);
 
-		Group group = _groupLocalService.getGroup(siteId);
-
-		if (FeatureFlagManagerUtil.isEnabled(
-				group.getCompanyId(), "LPD-17564") &&
-			group.isCMS()) {
-
-			_assetVocabularyGroupRelLocalService.setAssetVocabularyGroupRels(
-				assetVocabulary.getVocabularyId(),
-				_getAssetLibraryGroupIds(
-					group.getCompanyId(), taxonomyVocabulary));
-		}
-
 		return _toTaxonomyVocabulary(assetVocabulary);
 	}
 
@@ -512,7 +500,7 @@ public class TaxonomyVocabularyResourceImpl
 			true, LocaleUtil.getSiteDefault(), "Taxonomy vocabulary", titleMap,
 			new HashSet<>(descriptionMap.keySet()));
 
-		return _assetVocabularyService.addVocabulary(
+		AssetVocabulary assetVocabulary = _assetVocabularyService.addVocabulary(
 			externalReferenceCode, siteId,
 			titleMap.get(LocaleUtil.getSiteDefault()), null, titleMap,
 			descriptionMap,
@@ -525,6 +513,29 @@ public class TaxonomyVocabularyResourceImpl
 				siteId, contextHttpServletRequest,
 				taxonomyVocabulary.getViewableByAsString()
 			).build());
+
+		Group group = _groupLocalService.getGroup(siteId);
+
+		if (FeatureFlagManagerUtil.isEnabled(
+				group.getCompanyId(), "LPD-17564") &&
+			group.isCMS()) {
+
+			if (ArrayUtil.isNotEmpty(taxonomyVocabulary.getAssetLibraries())) {
+				_assetVocabularyGroupRelLocalService.
+					setAssetVocabularyGroupRels(
+						assetVocabulary.getVocabularyId(),
+						_getAssetLibraryGroupIds(
+							group.getCompanyId(), taxonomyVocabulary));
+			}
+			else {
+				_assetVocabularyGroupRelLocalService.
+					setAssetVocabularyGroupRels(
+						assetVocabulary.getVocabularyId(),
+						new long[] {_GROUP_ID_ALL});
+			}
+		}
+
+		return assetVocabulary;
 	}
 
 	private AssetLibrary[] _getAssetLibraries(AssetVocabulary assetVocabulary) {
@@ -581,7 +592,8 @@ public class TaxonomyVocabularyResourceImpl
 	}
 
 	private long[] _getAssetLibraryGroupIds(
-		long companyId, TaxonomyVocabulary taxonomyVocabulary) {
+			long companyId, TaxonomyVocabulary taxonomyVocabulary)
+		throws Exception {
 
 		return TaxonomyGroupUtil.getAssetLibraryGroupIds(
 			taxonomyVocabulary.getAssetLibraries(), companyId);
@@ -1043,9 +1055,19 @@ public class TaxonomyVocabularyResourceImpl
 			new HashSet<>(descriptionMap.keySet()));
 
 		if (FeatureFlagManagerUtil.isEnabled(companyId, "LPD-17564")) {
-			_assetVocabularyGroupRelLocalService.setAssetVocabularyGroupRels(
-				assetVocabulary.getVocabularyId(),
-				_getAssetLibraryGroupIds(companyId, taxonomyVocabulary));
+			if (ArrayUtil.isNotEmpty(taxonomyVocabulary.getAssetLibraries())) {
+				_assetVocabularyGroupRelLocalService.
+					setAssetVocabularyGroupRels(
+						assetVocabulary.getVocabularyId(),
+						_getAssetLibraryGroupIds(
+							companyId, taxonomyVocabulary));
+			}
+			else {
+				_assetVocabularyGroupRelLocalService.
+					setAssetVocabularyGroupRels(
+						assetVocabulary.getVocabularyId(),
+						new long[] {_GROUP_ID_ALL});
+			}
 		}
 
 		return _assetVocabularyService.updateVocabulary(
@@ -1061,6 +1083,8 @@ public class TaxonomyVocabularyResourceImpl
 				taxonomyVocabulary.getViewableByAsString()
 			).build());
 	}
+
+	private static final long _GROUP_ID_ALL = -1L;
 
 	private static final Map<String, String> _assetTypeTypeToClassNames =
 		new HashMap<>();

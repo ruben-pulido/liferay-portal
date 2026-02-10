@@ -26,6 +26,7 @@ import com.liferay.headless.admin.site.internal.dto.v1_0.util.LocalizedValueUtil
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.WidgetInstanceUtil;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -43,6 +44,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -70,10 +72,16 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 		throws Exception {
 
 		Long companyId = (Long)dtoConverterContext.getAttribute("companyId");
+		Long layoutPlid = (Long)dtoConverterContext.getAttribute("layoutPlid");
+		LayoutStructure layoutStructure =
+			(LayoutStructure)dtoConverterContext.getAttribute(
+				LayoutStructure.class.getName());
 		Long scopeGroupId = (Long)dtoConverterContext.getAttribute(
 			"scopeGroupId");
 
-		if ((companyId == null) || (scopeGroupId == null)) {
+		if ((companyId == null) || (layoutPlid == null) ||
+			(layoutStructure == null) || (scopeGroupId == null)) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -100,7 +108,8 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 						() -> _getFragmentInstance(
 							companyId, fragmentEntryLink,
 							fragmentStyledLayoutStructureItem,
-							freeMarkerJSONObject, scopeGroupId));
+							freeMarkerJSONObject, layoutPlid, scopeGroupId,
+							layoutStructure));
 					setType(Type.BASIC_FRAGMENT);
 				}
 			};
@@ -116,7 +125,7 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 					() -> _getFragmentInstance(
 						companyId, fragmentEntryLink,
 						fragmentStyledLayoutStructureItem, freeMarkerJSONObject,
-						scopeGroupId));
+						layoutPlid, scopeGroupId, layoutStructure));
 				setHelpText_i18n(
 					() -> _getI18nMap(freeMarkerJSONObject, "inputHelpText"));
 				setLabel_i18n(
@@ -230,7 +239,8 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 	private FragmentInstance _getFragmentInstance(
 		long companyId, FragmentEntryLink fragmentEntryLink,
 		FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem,
-		JSONObject freeMarkerJSONObject, long scopeGroupId) {
+		JSONObject freeMarkerJSONObject, long layoutPlid, long scopeGroupId,
+		LayoutStructure layoutStructure) {
 
 		return new FragmentInstance() {
 			{
@@ -238,15 +248,14 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 				setCss(fragmentEntryLink::getCss);
 				setCssClasses(
 					() -> {
-						if (SetUtil.isEmpty(
-								fragmentStyledLayoutStructureItem.
-									getCssClasses())) {
+						Set<String> cssClasses =
+							fragmentStyledLayoutStructureItem.getCssClasses();
 
+						if (SetUtil.isEmpty(cssClasses)) {
 							return null;
 						}
 
-						return ArrayUtil.toStringArray(
-							fragmentStyledLayoutStructureItem.getCssClasses());
+						return ArrayUtil.toStringArray(cssClasses);
 					});
 				setDatePropagated(fragmentEntryLink::getLastPropagationDate);
 				setDraftFragmentInstanceExternalReferenceCode(
@@ -259,7 +268,10 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 					() ->
 						FragmentEditableElementUtil.getFragmentEditableElements(
 							companyId, fragmentEntryLink,
-							_infoItemServiceRegistry, scopeGroupId));
+							_infoItemServiceRegistry, layoutPlid,
+							layoutStructure,
+							fragmentStyledLayoutStructureItem.getItemId(),
+							scopeGroupId));
 				setFragmentInstanceExternalReferenceCode(
 					fragmentEntryLink::getExternalReferenceCode);
 				setFragmentReference(

@@ -33,6 +33,8 @@ import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
+import com.liferay.site.navigation.type.SiteNavigationMenuItemType;
+import com.liferay.site.navigation.type.util.SiteNavigationMenuItemTypeRegistryUtil;
 
 import jakarta.portlet.PortletResponse;
 
@@ -115,6 +117,21 @@ public class AssetVocabularySiteNavigationMenuTypeDisplayContext {
 			"defaultLanguageId",
 			LocaleUtil.toLanguageId(LocaleUtil.getMostRelevantLocale())
 		).put(
+			"hasModel",
+			() -> {
+				SiteNavigationMenuItemType siteNavigationMenuItemType =
+					SiteNavigationMenuItemTypeRegistryUtil.
+						getSiteNavigationMenuItemType(
+							_siteNavigationMenuItem.getType());
+
+				return siteNavigationMenuItemType.hasModel(
+					_siteNavigationMenuItem.getCompanyId(),
+					_siteNavigationMenuItem.getGroupId(),
+					UnicodePropertiesBuilder.fastLoad(
+						_siteNavigationMenuItem.getTypeSettings()
+					).build());
+			}
+		).put(
 			"locales",
 			JSONUtil.toJSONArray(
 				LanguageUtil.getAvailableLocales(
@@ -154,7 +171,8 @@ public class AssetVocabularySiteNavigationMenuTypeDisplayContext {
 			"siteName",
 			() -> {
 				Group group = GroupLocalServiceUtil.getGroup(
-					_assetVocabulary.getGroupId());
+					_siteNavigationMenuItem.getGroupId());
+
 				String scopeExternalReferenceCode =
 					_typeSettingsUnicodeProperties.get(
 						"scopeExternalReferenceCode");
@@ -164,6 +182,11 @@ public class AssetVocabularySiteNavigationMenuTypeDisplayContext {
 						GroupLocalServiceUtil.getGroupByExternalReferenceCode(
 							scopeExternalReferenceCode,
 							_themeDisplay.getCompanyId());
+				}
+
+				if (group == null) {
+					return LanguageUtil.format(
+						_httpServletRequest, "unable-to-find-x", "site");
 				}
 
 				if (group.getGroupId() == _themeDisplay.getCompanyGroupId()) {

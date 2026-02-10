@@ -36,6 +36,8 @@ const siteName = 'My Site ' + randomString;
 let site;
 
 test.beforeEach(async ({apiHelpers, page}) => {
+	page.setViewportSize({height: 1080, width: 1920});
+
 	page.on('dialog', async (dialog) => {
 		await dialog.accept();
 	});
@@ -1661,6 +1663,10 @@ test(
 			await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyURL}`);
 
 			await expect(page.getByText('User1 and User2')).toBeVisible();
+		});
+
+		await test.step('Switch to test user', async () => {
+			await performUserSwitch(page, 'test');
 		});
 	}
 );

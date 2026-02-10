@@ -5,9 +5,11 @@
 
 package com.liferay.jenkins.results.parser.history;
 
+import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.testray.TestrayRoutine;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -19,6 +21,10 @@ public class HistoryFactory {
 
 	public static BatchHistory newBatchHistory(
 		String batchName, JobHistory jobHistory, JSONObject jsonObject) {
+
+		if (jobHistory == null) {
+			throw new RuntimeException("Job history is null");
+		}
 
 		BatchHistory batchHistory = _batchHistories.get(batchName);
 
@@ -41,7 +47,11 @@ public class HistoryFactory {
 
 	public static JobHistory newJobHistory(
 		int maxBuildCount, String portalUpstreamBranchName,
-		TestrayRoutine testrayRoutine) {
+		List<TestrayRoutine> testrayRoutines) {
+
+		if (JenkinsResultsParserUtil.isNullOrEmpty(portalUpstreamBranchName)) {
+			return null;
+		}
 
 		JobHistory jobHistory = _jobHistories.get(portalUpstreamBranchName);
 
@@ -49,9 +59,9 @@ public class HistoryFactory {
 			return jobHistory;
 		}
 
-		if (testrayRoutine != null) {
+		if ((testrayRoutines != null) && !testrayRoutines.isEmpty()) {
 			jobHistory = new TestrayJobHistory(
-				maxBuildCount, portalUpstreamBranchName, testrayRoutine);
+				maxBuildCount, portalUpstreamBranchName, testrayRoutines);
 		}
 		else {
 			jobHistory = new CachedJobHistory(portalUpstreamBranchName);
@@ -69,6 +79,10 @@ public class HistoryFactory {
 	public static TestClassHistory newTestClassHistory(
 		BatchHistory batchHistory, JSONObject jsonObject,
 		String testClassName) {
+
+		if (batchHistory == null) {
+			throw new RuntimeException("Batch history is null");
+		}
 
 		TestClassHistory testClassHistory = _testClassHistories.get(
 			testClassName);
@@ -91,6 +105,10 @@ public class HistoryFactory {
 
 	public static TestTaskHistory newTestTaskHistory(
 		BatchHistory batchHistory, JSONObject jsonObject, String testTaskName) {
+
+		if (batchHistory == null) {
+			throw new RuntimeException("Batch history is null");
+		}
 
 		TestTaskHistory testTaskHistory = _testTaskHistories.get(testTaskName);
 

@@ -5,6 +5,7 @@
 
 package com.liferay.oauth.client.persistence.internal.upgrade.registry;
 
+import com.liferay.oauth.client.persistence.internal.upgrade.v1_4_0.OAuthClientASLocalMetadataUpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
@@ -35,6 +36,9 @@ public class OAuthClientPersistenceServiceUpgradeStepRegistrator
 			"1.2.0", "1.3.0",
 			UpgradeProcessFactory.addColumns(
 				"OAuthClientEntry", "customClaimsJSON TEXT null"));
+
+		registry.register(
+			"1.3.0", "1.4.0", new OAuthClientASLocalMetadataUpgradeProcess());
 	}
 
 }

@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.scope.Scope;
 
 /**
@@ -30,6 +31,10 @@ public class InfoItemUtil {
 		String className, String externalReferenceCode,
 		InfoItemServiceRegistry infoItemServiceRegistry, Scope scope,
 		long scopeGroupId) {
+
+		if (className == null) {
+			return null;
+		}
 
 		InfoItemObjectProvider<Object> infoItemObjectProvider =
 			infoItemServiceRegistry.getFirstInfoItemService(
@@ -43,6 +48,9 @@ public class InfoItemUtil {
 
 		if ((infoItemObjectProvider == null) ||
 			(infoItemDetailsProvider == null)) {
+
+			LogUtil.logOptionalReference(
+				className, externalReferenceCode, scope, scopeGroupId);
 
 			return null;
 		}
@@ -155,7 +163,14 @@ public class InfoItemUtil {
 		return JSONUtil.put(
 			"className", className
 		).put(
-			"classNameId", PortalUtil.getClassNameId(className)
+			"classNameId",
+			() -> {
+				if (Validator.isNull(className)) {
+					return null;
+				}
+
+				return PortalUtil.getClassNameId(className);
+			}
 		).put(
 			"classPK",
 			() -> {

@@ -13,7 +13,8 @@ import React, {useState} from 'react';
 import {useSelector, useStateDispatch} from '../contexts/StateContext';
 import selectPublishedChildren from '../selectors/selectPublishedChildren';
 import selectSelection from '../selectors/selectSelection';
-import confirmChildrenDeletion from '../utils/confirmChildrenDeletion';
+import selectStructure from '../selectors/selectStructure';
+import {deleteSelection} from '../utils/deleteSelection';
 import AddChildDropdown from './AddChildDropdown';
 import StructureTree from './StructureTree';
 
@@ -48,6 +49,7 @@ function Toolbar({
 }) {
 	const dispatch = useStateDispatch();
 	const selection = useSelector(selectSelection);
+	const structure = useSelector(selectStructure);
 	const publishedChildren = useSelector(selectPublishedChildren);
 
 	if (selection.length <= 1) {
@@ -66,18 +68,6 @@ function Toolbar({
 		);
 	}
 
-	const onDeleteSelection = async () => {
-		if (selection.some((uuid) => publishedChildren.has(uuid))) {
-			const confirm = await confirmChildrenDeletion();
-
-			if (!confirm) {
-				return;
-			}
-		}
-
-		dispatch({type: 'delete-selection'});
-	};
-
 	return (
 		<ManagementToolbar.Container
 			active
@@ -89,14 +79,21 @@ function Toolbar({
 			<ClayDropDownWithItems
 				items={[
 					{
-						label: Liferay.Language.get('delete'),
-						onClick: onDeleteSelection,
-						symbolLeft: 'trash',
-					},
-					{
 						label: Liferay.Language.get('create-repeatable-group'),
 						onClick: () => dispatch({type: 'add-repeatable-group'}),
 						symbolLeft: 'repeat',
+					},
+					{type: 'divider'},
+					{
+						label: Liferay.Language.get('delete'),
+						onClick: () =>
+							deleteSelection({
+								dispatch,
+								publishedChildren,
+								selection,
+								structure,
+							}),
+						symbolLeft: 'trash',
 					},
 				]}
 				trigger={

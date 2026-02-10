@@ -134,13 +134,16 @@ public class BatchEnginePortletDataHandlerUtilTest {
 			_mockPortletDataContext(
 				null,
 				HashMapBuilder.put(
+					PortletDataHandlerKeys.COMMENTS, new String[] {"true"}
+				).put(
 					PortletDataHandlerKeys.PERMISSIONS, new String[] {"true"}
 				).build(),
 				null),
 			_getStagingGroupHelper(false));
 
 		Assert.assertEquals(
-			"customFields.attributeType,permissions,nestedField1,nestedField2",
+			"customFields.attributeType,comments,permissions,nestedField1," +
+				"nestedField2",
 			parameters.get("batchNestedFields"));
 	}
 
@@ -188,6 +191,54 @@ public class BatchEnginePortletDataHandlerUtilTest {
 	}
 
 	@Test
+	public void testBuildImportParametersWithBatchRestrictFields() {
+		Assert.assertNull(
+			_getBatchRestrictFields(
+				HashMapBuilder.put(
+					PortletDataHandlerKeys.COMMENTS, new String[] {"true"}
+				).put(
+					PortletDataHandlerKeys.PERMISSIONS, new String[] {"true"}
+				).build()));
+		Assert.assertEquals(
+			"comments",
+			_getBatchRestrictFields(
+				HashMapBuilder.put(
+					PortletDataHandlerKeys.COMMENTS, new String[] {"false"}
+				).put(
+					PortletDataHandlerKeys.PERMISSIONS, new String[] {"true"}
+				).build()));
+		Assert.assertEquals(
+			"comments,permissions",
+			_getBatchRestrictFields(
+				HashMapBuilder.put(
+					PortletDataHandlerKeys.COMMENTS, new String[] {"false"}
+				).build()));
+		Assert.assertEquals(
+			"comments,permissions",
+			_getBatchRestrictFields(
+				HashMapBuilder.put(
+					PortletDataHandlerKeys.COMMENTS, new String[] {"false"}
+				).put(
+					PortletDataHandlerKeys.PERMISSIONS, new String[] {"false"}
+				).build()));
+		Assert.assertEquals(
+			"comments,permissions",
+			_getBatchRestrictFields(
+				HashMapBuilder.put(
+					PortletDataHandlerKeys.PERMISSIONS, new String[] {"false"}
+				).build()));
+		Assert.assertEquals(
+			"permissions",
+			_getBatchRestrictFields(
+				HashMapBuilder.put(
+					PortletDataHandlerKeys.COMMENTS, new String[] {"true"}
+				).put(
+					PortletDataHandlerKeys.PERMISSIONS, new String[] {"false"}
+				).build()));
+
+	}
+
+	@Test
 	public void testBuildImportParametersWithModelClassName() {
 		String modelClassName = RandomTestUtil.randomString();
 
@@ -204,6 +255,18 @@ public class BatchEnginePortletDataHandlerUtilTest {
 	public void testBuildParametersWithGroup() {
 		_testBuildParametersWithGroup(false);
 		_testBuildParametersWithGroup(true);
+	}
+
+	private Serializable _getBatchRestrictFields(
+		Map<String, String[]> parameterMap) {
+
+		Map<String, Serializable> parameters =
+			BatchEnginePortletDataHandlerUtil.buildImportParameters(
+				_mockExportImportDescriptor(), _mockGroupLocalService(null),
+				_mockPortletDataContext(null, parameterMap, null),
+				_getStagingGroupHelper(false));
+
+		return parameters.get("batchRestrictFields");
 	}
 
 	private Date _getDate(int days) {

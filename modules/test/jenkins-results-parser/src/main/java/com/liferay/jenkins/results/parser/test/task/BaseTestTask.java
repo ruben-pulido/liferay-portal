@@ -5,7 +5,10 @@
 
 package com.liferay.jenkins.results.parser.test.task;
 
+import com.liferay.jenkins.results.parser.history.BatchHistory;
+import com.liferay.jenkins.results.parser.history.TestTaskHistory;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
+import com.liferay.jenkins.results.parser.test.clazz.group.BatchTestClassGroup;
 import com.liferay.jenkins.results.parser.test.clazz.group.TestClassGroup;
 
 import java.util.ArrayList;
@@ -44,13 +47,19 @@ public class BaseTestTask implements TestTask {
 
 	@Override
 	public long getAverageDuration() {
-		return _averageDuration;
+		TestTaskHistory testTaskHistory = getTestTaskHistory();
+
+		if (testTaskHistory == null) {
+			return _batchTestClassGroup.getDefaultTestTaskDuration();
+		}
+
+		return testTaskHistory.getAverageDuration();
 	}
 
 	@Override
 	public long getAverageOverheadDuration() {
 		if (_testClasses.isEmpty()) {
-			throw new RuntimeException("Missing associated test classes");
+			return _batchTestClassGroup.getDefaultTestOverheadDuration();
 		}
 
 		TestClass testClass = _testClasses.get(0);
@@ -60,7 +69,18 @@ public class BaseTestTask implements TestTask {
 
 	@Override
 	public long getAverageTotalDuration() {
-		return _averageTotalDuration;
+		TestTaskHistory testTaskHistory = getTestTaskHistory();
+
+		if (testTaskHistory == null) {
+			return _batchTestClassGroup.getDefaultTestTaskDuration();
+		}
+
+		return testTaskHistory.getAverageTotalDuration();
+	}
+
+	@Override
+	public BatchHistory getBatchHistory() {
+		return _batchTestClassGroup.getBatchHistory();
 	}
 
 	@Override
@@ -96,7 +116,13 @@ public class BaseTestTask implements TestTask {
 
 	@Override
 	public long getLongestDuration() {
-		return _longestDuration;
+		TestTaskHistory testTaskHistory = getTestTaskHistory();
+
+		if (testTaskHistory == null) {
+			return _batchTestClassGroup.getDefaultTestTaskDuration();
+		}
+
+		return testTaskHistory.getLongestDuration();
 	}
 
 	@Override
@@ -112,6 +138,23 @@ public class BaseTestTask implements TestTask {
 	@Override
 	public List<TestClass> getTestClasses() {
 		return _testClasses;
+	}
+
+	@Override
+	public TestTaskHistory getTestTaskHistory() {
+		if (_testTaskHistory != null) {
+			return _testTaskHistory;
+		}
+
+		BatchHistory batchHistory = getBatchHistory();
+
+		if (batchHistory == null) {
+			return null;
+		}
+
+		_testTaskHistory = batchHistory.getTestTaskHistory(getName());
+
+		return _testTaskHistory;
 	}
 
 	@Override
@@ -141,8 +184,6 @@ public class BaseTestTask implements TestTask {
 		}
 
 		if (weight <= 0) {
-			_latestReportMissing = true;
-
 			weight = 0L;
 		}
 
@@ -160,37 +201,44 @@ public class BaseTestTask implements TestTask {
 
 	@Override
 	public boolean isIsolated() {
-		if (_weight == null) {
-			getWeight();
-		}
-
 		return isLatestReportMissing();
 	}
 
 	public boolean isLatestReportMissing() {
-		return _latestReportMissing;
+		TestTaskHistory testTaskHistory = getTestTaskHistory();
+
+		if (testTaskHistory == null) {
+			return true;
+		}
+
+		return testTaskHistory.isLatestReportMissing();
+	}
+
+	@Override
+	public boolean isSplit() {
+		return _split;
+	}
+
+	@Override
+	public void setSplit(boolean split) {
+		_split = split;
 	}
 
 	protected BaseTestTask(
-		long averageDuration, long averageTotalDuration,
-		TestClassGroup.GroupingStrategy groupingStrategy,
-		boolean latestReportMissing, long longestDuration, String name) {
+		BatchTestClassGroup batchTestClassGroup,
+		TestClassGroup.GroupingStrategy groupingStrategy, String name) {
 
-		_averageDuration = averageDuration;
-		_averageTotalDuration = averageTotalDuration;
+		_batchTestClassGroup = batchTestClassGroup;
 		_groupingStrategy = groupingStrategy;
-		_latestReportMissing = latestReportMissing;
-		_longestDuration = longestDuration;
 		_name = name;
 	}
 
-	private final long _averageDuration;
-	private final long _averageTotalDuration;
+	private final BatchTestClassGroup _batchTestClassGroup;
 	private final TestClassGroup.GroupingStrategy _groupingStrategy;
-	private boolean _latestReportMissing;
-	private final long _longestDuration;
 	private final String _name;
+	private boolean _split;
 	private final List<TestClass> _testClasses = new ArrayList<>();
+	private TestTaskHistory _testTaskHistory;
 	private Long _weight;
 
 }

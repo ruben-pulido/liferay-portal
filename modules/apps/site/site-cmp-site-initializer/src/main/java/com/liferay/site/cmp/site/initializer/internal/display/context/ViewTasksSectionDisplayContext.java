@@ -6,20 +6,34 @@
 package com.liferay.site.cmp.site.initializer.internal.display.context;
 
 import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.frontend.data.set.filter.FDSFilter;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
+import com.liferay.site.cmp.site.initializer.internal.constants.CMPActionConstants;
+import com.liferay.site.cmp.site.initializer.internal.frontend.data.set.filter.CreateDateFDSFilter;
+import com.liferay.site.cmp.site.initializer.internal.frontend.data.set.filter.DueDateRangeFDSFilter;
+import com.liferay.site.cmp.site.initializer.internal.frontend.data.set.filter.ProjectSelectionFDSFilter;
+import com.liferay.site.cmp.site.initializer.internal.frontend.data.set.filter.StateSelectionFDSFilter;
 import com.liferay.site.cmp.site.initializer.internal.util.ActionUtil;
+
+import jakarta.portlet.ActionRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,59 +44,84 @@ public class ViewTasksSectionDisplayContext extends BaseSectionDisplayContext {
 
 	public ViewTasksSectionDisplayContext(
 		HttpServletRequest httpServletRequest,
-		ObjectDefinition objectDefinition) {
+		ObjectDefinition projectObjectDefinition,
+		ObjectDefinition taskObjectDefinition) {
 
-		super(httpServletRequest, objectDefinition);
+		super(httpServletRequest, taskObjectDefinition);
 
 		_assetEntry = (AssetEntry)httpServletRequest.getAttribute(
 			WebKeys.LAYOUT_ASSET_ENTRY);
+
+		_projectObjectDefinition = projectObjectDefinition;
 	}
 
 	public String getAPIURL() {
-		StringBundler sb = new StringBundler(6);
+		StringBundler sb = new StringBundler(11);
 
-		sb.append("/o/search/v1.0/search?emptySearch=true&");
-		sb.append("filter=objectDefinitionId eq ");
+		sb.append("/o/search/v1.0/search?emptySearch=true");
+
+		if (_assetEntry == null) {
+			sb.append("&entryClassNames=");
+			sb.append(HtmlUtil.escapeURL(objectDefinition.getClassName()));
+			sb.append(StringPool.COMMA);
+			sb.append(KaleoTaskInstanceToken.class.getName());
+		}
+
+		sb.append("&filter=(objectDefinitionId eq ");
 		sb.append(objectDefinition.getObjectDefinitionId());
 
 		if (_assetEntry != null) {
 			sb.append(" and scopeGroupId eq ");
 			sb.append(_assetEntry.getGroupId());
 		}
+		else {
+			sb.append(" or keywords/any(k:startswith(k, '");
+			sb.append(objectDefinition.getExternalReferenceCode());
+			sb.append("'))");
+		}
 
-		sb.append("&nestedFields=cmpProjectToCMPTasks,embedded");
+		sb.append(")&nestedFields=cmpProjectToCMPTasks,embedded");
 
 		return sb.toString();
 	}
 
 	public CreationMenu getCreationMenu() {
-		if (_assetEntry == null) {
-			return null;
-		}
-
 		return CreationMenuBuilder.addPrimaryDropdownItem(
 			dropdownItem -> {
-				dropdownItem.putData("action", "createTask");
+				dropdownItem.putData("action", CMPActionConstants.CREATE_TASK);
+				dropdownItem.putData(
+					"addProjectURL",
+					StringBundler.concat(
+						ActionUtil.getAddProjectURL(
+							_projectObjectDefinition, themeDisplay),
+						"&action=",
+						CMPActionConstants.CREATE_PROJECT_GLOBAL_TASK));
+				dropdownItem.putData(
+					"addTaskURL",
+					StringBundler.concat(
+						ActionUtil.getAddTaskURL(
+							0, objectDefinition, 0, themeDisplay),
+						"&action=", CMPActionConstants.CREATE_GLOBAL_TASK));
 				dropdownItem.putData(
 					"objectDefinitionId",
 					String.valueOf(objectDefinition.getObjectDefinitionId()));
-				dropdownItem.putData(
-					"redirect",
-					StringBundler.concat(
-						themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-						GroupConstants.CMS_FRIENDLY_URL,
-						"/add_task?objectDefinitionId=",
-						objectDefinition.getObjectDefinitionId(), "&plid=",
-						themeDisplay.getPlid(), "&projectGroupId=",
-						_assetEntry.getGroupId(), "&projectId=",
-						_assetEntry.getClassPK(), "&redirect=",
-						themeDisplay.getURLCurrent()));
+
+				if (_assetEntry != null) {
+					dropdownItem.putData(
+						"redirect",
+						ActionUtil.getAddTaskURL(
+							_assetEntry.getGroupId(), objectDefinition,
+							_assetEntry.getClassPK(), themeDisplay));
+				}
+
 				dropdownItem.putData(
 					"title",
 					objectDefinition.getLabel(themeDisplay.getLocale()));
 				dropdownItem.setIcon("forms");
 				dropdownItem.setLabel(
-					LanguageUtil.get(httpServletRequest, "new-task"));
+					LanguageUtil.get(
+						httpServletRequest,
+						(_assetEntry == null) ? "new" : "new-task"));
 			}
 		).build();
 	}
@@ -107,21 +146,112 @@ public class ViewTasksSectionDisplayContext extends BaseSectionDisplayContext {
 						objectDefinition, themeDisplay),
 					"{embedded.id}?redirect=", themeDisplay.getURLCurrent()),
 				"pencil", "edit", LanguageUtil.get(httpServletRequest, "edit"),
-				"get", "update", null),
+				"get", "update", null,
+				HashMapBuilder.<String, Object>put(
+					"entryClassName", objectDefinition.getClassName()
+				).build()),
 			new FDSActionDropdownItem(
 				StringBundler.concat(
 					ActionUtil.getBaseViewTaskURL(
 						objectDefinition, themeDisplay),
 					"{embedded.id}?redirect=", themeDisplay.getURLCurrent()),
 				"view", "actionLink",
-				LanguageUtil.get(httpServletRequest, "view"), null, "get",
-				null),
+				LanguageUtil.get(httpServletRequest, "view"), null, "get", null,
+				HashMapBuilder.<String, Object>put(
+					"entryClassName", objectDefinition.getClassName()
+				).build()),
+			new FDSActionDropdownItem(
+				StringPool.BLANK, null, "assign-to",
+				LanguageUtil.get(httpServletRequest, "assign-to-..."), null,
+				"get", null,
+				HashMapBuilder.<String, Object>put(
+					"entryClassName", objectDefinition.getClassName()
+				).build()),
 			new FDSActionDropdownItem(
 				null, "trash", "delete",
 				LanguageUtil.get(httpServletRequest, "delete"), null, "delete",
-				null));
+				null,
+				HashMapBuilder.<String, Object>put(
+					"entryClassName", objectDefinition.getClassName()
+				).build()),
+			new FDSActionDropdownItem(
+				PortletURLBuilder.create(
+					PortalUtil.getControlPanelPortletURL(
+						httpServletRequest, PortletKeys.MY_WORKFLOW_TASK,
+						ActionRequest.RENDER_PHASE)
+				).setMVCPath(
+					"/edit_workflow_task.jsp"
+				).setRedirect(
+					themeDisplay.getURLCurrent()
+				).setParameter(
+					"workflowTaskId", "{embedded.id}"
+				).buildString(),
+				"view", "actionLinkWorkflowTask",
+				LanguageUtil.get(httpServletRequest, "view"), null, "get", null,
+				HashMapBuilder.<String, Object>put(
+					"entryClassName", KaleoTaskInstanceToken.class.getName()
+				).build()),
+			new FDSActionDropdownItem(
+				null, null, "assignToMeWorkflowTask",
+				LanguageUtil.get(httpServletRequest, "assign-to-me"), null,
+				"assignToMe", null,
+				HashMapBuilder.<String, Object>put(
+					"embedded.assignedToMe", false
+				).put(
+					"embedded.completed", false
+				).put(
+					"entryClassName", KaleoTaskInstanceToken.class.getName()
+				).build()),
+			new FDSActionDropdownItem(
+				null, null, "assignToWorkflowTask",
+				LanguageUtil.get(httpServletRequest, "assign-to-..."), null,
+				"assignToUser", null,
+				HashMapBuilder.<String, Object>put(
+					"embedded.completed", false
+				).put(
+					"entryClassName", KaleoTaskInstanceToken.class.getName()
+				).build()),
+			new FDSActionDropdownItem(
+				null, "date-time", "updateDueDateWorkflowTask",
+				LanguageUtil.get(httpServletRequest, "update-due-date"), null,
+				"updateDueDate", null,
+				HashMapBuilder.<String, Object>put(
+					"embedded.completed", false
+				).put(
+					"entryClassName", KaleoTaskInstanceToken.class.getName()
+				).build()));
+	}
+
+	public List<FDSFilter> getFDSFilters() {
+		List<FDSFilter> fdsFilters = new ArrayList<>();
+
+		fdsFilters.add(new CreateDateFDSFilter());
+		fdsFilters.add(new DueDateRangeFDSFilter());
+
+		if (_assetEntry == null) {
+			fdsFilters.add(
+				new ProjectSelectionFDSFilter(_projectObjectDefinition));
+		}
+
+		fdsFilters.add(new StateSelectionFDSFilter());
+
+		return fdsFilters;
+	}
+
+	public Map<String, Object> getTasksQuickFiltersProperties() {
+		return HashMapBuilder.<String, Object>put(
+			"projectId",
+			() -> {
+				if (_assetEntry == null) {
+					return null;
+				}
+
+				return _assetEntry.getClassPK();
+			}
+		).build();
 	}
 
 	private final AssetEntry _assetEntry;
+	private final ObjectDefinition _projectObjectDefinition;
 
 }

@@ -10,6 +10,9 @@ import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncDestinationNames;
 import com.liferay.antivirus.async.store.internal.event.AntivirusAsyncEventListenerManager;
 import com.liferay.antivirus.async.store.util.AntivirusAsyncUtil;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileVersion;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.store.Store;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.reflect.ReflectionUtil;
@@ -17,6 +20,8 @@ import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
@@ -24,8 +29,12 @@ import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.scheduler.SchedulerJobConfiguration;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerConfiguration;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.File;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.IOException;
 
@@ -47,6 +56,7 @@ import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Raymond Augé
+ * @author Christopher Kian
  */
 @Component(
 	configurationPid = "com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration",
@@ -64,24 +74,22 @@ public class AntivirusAsyncFileStoreSchedulerJobConfiguration
 
 	@Override
 	public UnsafeRunnable<Exception> getJobExecutorUnsafeRunnable() {
-		java.io.File file = (java.io.File)_storeServiceReference.getProperty(
-			"rootDir");
+		if (StringUtil.startsWith(
+				PropsUtil.get(PropsKeys.DL_STORE_IMPL),
+				"com.liferay.portal.store.file.system")) {
 
-		return () -> scan((String)file.getAbsolutePath());
+			java.io.File file =
+				(java.io.File)_storeServiceReference.getProperty("rootDir");
+
+			return () -> _scan((String)file.getAbsolutePath());
+		}
+
+		return this::_scanDLFileEntries;
 	}
 
 	@Override
 	public TriggerConfiguration getTriggerConfiguration() {
 		return _triggerConfiguration;
-	}
-
-	public void scan(String rootDirAbsolutePathString) {
-		try {
-			_scan(rootDirAbsolutePathString);
-		}
-		catch (IOException ioException) {
-			ReflectionUtil.throwException(ioException);
-		}
 	}
 
 	@Activate
@@ -135,6 +143,39 @@ public class AntivirusAsyncFileStoreSchedulerJobConfiguration
 				}
 
 			});
+	}
+
+	private void _scanDLFileEntries() {
+		try {
+			ActionableDynamicQuery actionableDynamicQuery =
+				_dlFileEntryLocalService.getActionableDynamicQuery();
+
+			actionableDynamicQuery.setCompanyId(
+				CompanyThreadLocal.getCompanyId());
+			actionableDynamicQuery.setPerformActionMethod(
+				(DLFileEntry dlFileEntry) -> {
+					DLFileVersion dlFileVersion = dlFileEntry.getFileVersion();
+
+					_scheduleAntivirusScan(
+						dlFileEntry.getModelClassName(),
+						dlFileEntry.getFileEntryId(),
+						dlFileEntry.getCompanyId(), dlFileEntry.getExtension(),
+						dlFileEntry.getName(),
+						AntivirusAsyncUtil.getJobName(
+							dlFileEntry.getCompanyId(),
+							dlFileEntry.getRepositoryId(),
+							dlFileEntry.getFileName(),
+							dlFileVersion.getStoreFileName()),
+						dlFileEntry.getRepositoryId(), dlFileEntry.getSize(),
+						dlFileEntry.getFileName(), dlFileEntry.getUserId(),
+						dlFileVersion.getStoreFileName());
+				});
+
+			actionableDynamicQuery.performActions();
+		}
+		catch (PortalException portalException) {
+			ReflectionUtil.throwException(portalException);
+		}
 	}
 
 	private void _scheduleAntivirusScan(Path rootPath, Path filePath) {
@@ -222,31 +263,41 @@ public class AntivirusAsyncFileStoreSchedulerJobConfiguration
 			}
 		}
 
-		Message message = new Message();
-
-		message.put("companyId", companyId);
-		message.put("fileExtension", fileExtension);
-		message.put("fileName", fileName);
-		message.put(
-			"jobName",
-			AntivirusAsyncUtil.getJobName(
-				companyId, repositoryId, fileName, versionLabel));
-		message.put("repositoryId", repositoryId);
+		long size = -1;
 
 		try {
-			long size = -1;
-
 			if (Files.exists(filePath)) {
 				size = Files.size(filePath);
 			}
-
-			message.put("size", size);
 		}
 		catch (IOException ioException) {
 			_log.error(ioException);
 		}
 
-		message.put("userId", 0L);
+		_scheduleAntivirusScan(
+			null, 0, companyId, fileExtension, fileName,
+			AntivirusAsyncUtil.getJobName(
+				companyId, repositoryId, fileName, versionLabel),
+			repositoryId, size, null, 0L, versionLabel);
+	}
+
+	private void _scheduleAntivirusScan(
+		String className, long classPK, long companyId, String fileExtension,
+		String fileName, String jobName, long repositoryId, long size,
+		String sourceFileName, long userId, String versionLabel) {
+
+		Message message = new Message();
+
+		message.put("className", className);
+		message.put("classPK", classPK);
+		message.put("companyId", companyId);
+		message.put("fileExtension", fileExtension);
+		message.put("fileName", fileName);
+		message.put("jobName", jobName);
+		message.put("repositoryId", repositoryId);
+		message.put("size", size);
+		message.put("sourceFileName", sourceFileName);
+		message.put("userId", userId);
 		message.put("versionLabel", versionLabel);
 
 		_antivirusAsyncEventListenerManager.onPrepare(message);
@@ -261,6 +312,9 @@ public class AntivirusAsyncFileStoreSchedulerJobConfiguration
 	@Reference
 	private AntivirusAsyncEventListenerManager
 		_antivirusAsyncEventListenerManager;
+
+	@Reference
+	private DLFileEntryLocalService _dlFileEntryLocalService;
 
 	@Reference
 	private File _file;

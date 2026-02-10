@@ -17,6 +17,7 @@ import com.liferay.commerce.price.list.exception.CommercePriceListParentPriceLis
 import com.liferay.commerce.price.list.exception.DuplicateCommerceBasePriceListException;
 import com.liferay.commerce.price.list.exception.NoSuchPriceListException;
 import com.liferay.commerce.price.list.exception.RequiredCommerceBasePriceListException;
+import com.liferay.commerce.price.list.model.CommercePriceEntry;
 import com.liferay.commerce.price.list.model.CommercePriceEntryTable;
 import com.liferay.commerce.price.list.model.CommercePriceList;
 import com.liferay.commerce.price.list.model.CommercePriceListAccountRelTable;
@@ -33,8 +34,13 @@ import com.liferay.commerce.price.list.service.CommercePriceListOrderTypeRelLoca
 import com.liferay.commerce.price.list.service.base.CommercePriceListLocalServiceBaseImpl;
 import com.liferay.commerce.price.list.service.persistence.CommercePriceEntryPersistence;
 import com.liferay.commerce.pricing.exception.CommerceUndefinedBasePriceListException;
+import com.liferay.commerce.pricing.model.CommercePriceModifier;
 import com.liferay.commerce.pricing.service.CommercePriceModifierLocalService;
+import com.liferay.commerce.pricing.type.CommercePriceModifierType;
+import com.liferay.commerce.pricing.type.CommercePriceModifierTypeRegistry;
+import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CommerceChannelRelTable;
+import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CommerceChannelAccountEntryRelLocalService;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
@@ -79,6 +85,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.BigDecimalUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -93,6 +100,8 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 
 import java.io.Serializable;
+
+import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -632,7 +641,8 @@ public class CommercePriceListLocalServiceImpl
 				DSLQueryFactoryUtil.select(
 					CommercePriceListTable.INSTANCE.commercePriceListId,
 					expression,
-					CommercePriceEntryTable.INSTANCE.priceOnApplication),
+					CommercePriceEntryTable.INSTANCE.priceOnApplication,
+					CommercePriceEntryTable.INSTANCE.CProductId),
 				groupId, commerceAccountId, commerceAccountGroupIds,
 				commerceChannelId, commerceOrderTypeId, cpInstanceUuid,
 				currencyCode, type, unitOfMeasureKey
@@ -649,8 +659,115 @@ public class CommercePriceListLocalServiceImpl
 
 		Object[] result = results.get(0);
 
+		if (result[0] == null) {
+			return null;
+		}
+
+		long commercePriceListId = (Long)result[0];
+
+		if (type.equals(CommercePriceListConstants.TYPE_PROMOTION)) {
+			List<CommercePriceList> commercePromoPriceLists =
+				commercePriceListLocalService.
+					getCommercePriceListsByUnqualified(
+						groupId, currencyCode, type);
+
+			if (commercePromoPriceLists.size() <= 1) {
+				return commercePriceListLocalService.getCommercePriceList(
+					commercePriceListId);
+			}
+
+			CommercePriceList actualCommercePriceList =
+				commercePriceListLocalService.getCatalogBaseCommercePriceList(
+					groupId);
+
+			CommercePriceEntry commercePriceEntry = null;
+
+			if (actualCommercePriceList != null) {
+				commercePriceEntry =
+					_commercePriceEntryLocalService.fetchCommercePriceEntry(
+						actualCommercePriceList.getCommercePriceListId(),
+						cpInstanceUuid, unitOfMeasureKey, true);
+			}
+
+			if (commercePriceEntry == null) {
+				List<CommercePriceList> commercePriceLists =
+					commercePriceListLocalService.
+						getCommercePriceListsByUnqualified(
+							groupId, currencyCode,
+							CommercePriceListConstants.TYPE_PRICE_LIST);
+
+				if (commercePriceLists.isEmpty()) {
+					return commercePriceListLocalService.getCommercePriceList(
+						commercePriceListId);
+				}
+
+				actualCommercePriceList = commercePriceLists.get(0);
+
+				commercePriceEntry =
+					_commercePriceEntryLocalService.fetchCommercePriceEntry(
+						actualCommercePriceList.getCommercePriceListId(),
+						cpInstanceUuid, unitOfMeasureKey, true);
+			}
+
+			if (commercePriceEntry == null) {
+				return commercePriceListLocalService.getCommercePriceList(
+					commercePriceListId);
+			}
+
+			if (result[3] == null) {
+				return null;
+			}
+
+			BigDecimal originalPrice = commercePriceEntry.getPrice();
+
+			BigDecimal lowestPrice = originalPrice;
+
+			if (result[1] != null) {
+				BigDecimal price = new BigDecimal(String.valueOf(result[1]));
+
+				if (!BigDecimalUtil.eq(BigDecimal.ZERO, price)) {
+					lowestPrice = price;
+				}
+			}
+
+			CPDefinition cpDefinition =
+				_cpDefinitionLocalService.getCPDefinitionByCProductId(
+					(Long)result[3]);
+
+			for (CommercePriceList commercePriceList :
+					commercePromoPriceLists) {
+
+				if (commercePriceList.getCommercePriceListId() ==
+						commercePriceListId) {
+
+					continue;
+				}
+
+				for (CommercePriceModifier commercePriceModifier :
+						_commercePriceModifierLocalService.
+							getQualifiedCommercePriceModifiers(
+								commercePriceList.getCommercePriceListId(),
+								cpDefinition.getCPDefinitionId())) {
+
+					CommercePriceModifierType commercePriceModifierType =
+						_commercePriceModifierTypeRegistry.
+							getCommercePriceModifierType(
+								commercePriceModifier.getModifierType());
+
+					BigDecimal actualPrice = commercePriceModifierType.evaluate(
+						originalPrice, commercePriceModifier);
+
+					if (BigDecimalUtil.lt(actualPrice, lowestPrice)) {
+						commercePriceListId =
+							commercePriceList.getCommercePriceListId();
+						lowestPrice = actualPrice;
+					}
+				}
+			}
+		}
+
 		return commercePriceListLocalService.getCommercePriceList(
-			(Long)result[0]);
+			commercePriceListId);
 	}
 
 	/**
@@ -1759,6 +1876,13 @@ public class CommercePriceListLocalServiceImpl
 	@Reference
 	private CommercePriceModifierLocalService
 		_commercePriceModifierLocalService;
+
+	@Reference
+	private CommercePriceModifierTypeRegistry
+		_commercePriceModifierTypeRegistry;
+
+	@Reference
+	private CPDefinitionLocalService _cpDefinitionLocalService;
 
 	@Reference
 	private ExpandoRowLocalService _expandoRowLocalService;

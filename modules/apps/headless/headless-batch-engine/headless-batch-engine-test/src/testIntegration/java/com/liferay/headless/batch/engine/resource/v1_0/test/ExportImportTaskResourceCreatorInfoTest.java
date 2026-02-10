@@ -12,31 +12,31 @@ import com.liferay.headless.batch.engine.client.http.HttpInvoker;
 import com.liferay.headless.batch.engine.client.serdes.v1_0.ExportTaskSerDes;
 import com.liferay.headless.batch.engine.client.serdes.v1_0.ImportTaskSerDes;
 import com.liferay.object.constants.ObjectDefinitionConstants;
-import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
-import com.liferay.object.model.ObjectEntry;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.URLCodec;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.util.PortalInstances;
 
 import java.io.InputStream;
-import java.io.Serializable;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -70,40 +70,76 @@ public class ExportImportTaskResourceCreatorInfoTest {
 					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_TEXT,
 					false)),
-			ObjectDefinitionConstants.SCOPE_COMPANY);
-
-		_objectEntry1 = _addObjectEntry(
-			_objectDefinition1, _OBJECT_FIELD_NAME_TEXT,
-			RandomTestUtil.randomString(), TestPropsValues.getUser());
+			ObjectDefinitionConstants.SCOPE_COMPANY,
+			TestPropsValues.getUserId());
 
 		_user = UserTestUtil.addUser();
 
-		_objectEntry2 = _addObjectEntry(
-			_objectDefinition1, _OBJECT_FIELD_NAME_TEXT,
-			RandomTestUtil.randomString(), _user);
+		_objectDefinition2 = ObjectDefinitionTestUtil.publishObjectDefinition(
+			ObjectDefinitionTestUtil.getRandomName(),
+			Arrays.asList(
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
+					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_TEXT,
+					false)),
+			ObjectDefinitionConstants.SCOPE_COMPANY, _user.getUserId());
 
 		_executeExportTask();
 
-		_objectEntryLocalService.deleteObjectEntry(_objectEntry1);
-		_objectEntryLocalService.deleteObjectEntry(_objectEntry2);
+		_objectDefinitionLocalService.deleteObjectDefinition(
+			_objectDefinition1);
+		_objectDefinitionLocalService.deleteObjectDefinition(
+			_objectDefinition2);
 	}
 
 	@Test
 	public void testImportWithInsertAndKeepCreator() throws Exception {
 		_executeImportTask("INSERT", "KEEP_CREATOR");
 
-		_objectEntry1 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry1.getExternalReferenceCode(),
-			_objectEntry1.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
-		_objectEntry2 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry2.getExternalReferenceCode(),
-			_objectEntry2.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
+		_objectDefinition1 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition1.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
+		_objectDefinition2 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition2.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
 
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry1.getUserId());
-		Assert.assertEquals(_user.getUserId(), _objectEntry2.getUserId());
+			TestPropsValues.getUserId(), _objectDefinition1.getUserId());
+		Assert.assertEquals(_user.getUserId(), _objectDefinition2.getUserId());
+	}
+
+	@Test
+	public void testImportWithInsertAndKeepCreatorInDifferentCompany()
+		throws Exception {
+
+		Company company = CompanyLocalServiceUtil.addCompany(
+			null, _VIRTUAL_HOST_NAME, _VIRTUAL_HOST_NAME, _VIRTUAL_HOST_NAME, 0,
+			true, true, null, null, null, null, null, null);
+
+		PortalInstances.initCompany(company);
+
+		_executeImportTask("INSERT", _VIRTUAL_HOST_NAME, "KEEP_CREATOR");
+
+		_objectDefinition1 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition1.getExternalReferenceCode(),
+					company.getCompanyId());
+		_objectDefinition2 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition2.getExternalReferenceCode(),
+					company.getCompanyId());
+
+		User user = UserTestUtil.getAdminUser(company.getCompanyId());
+
+		Assert.assertEquals(user.getUserId(), _objectDefinition1.getUserId());
+		Assert.assertEquals(user.getUserId(), _objectDefinition2.getUserId());
 	}
 
 	@Test
@@ -114,19 +150,21 @@ public class ExportImportTaskResourceCreatorInfoTest {
 
 		_executeImportTask("INSERT", "KEEP_CREATOR");
 
-		_objectEntry1 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry1.getExternalReferenceCode(),
-			_objectEntry1.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
-		_objectEntry2 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry2.getExternalReferenceCode(),
-			_objectEntry2.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
+		_objectDefinition1 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition1.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
+		_objectDefinition2 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition2.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
 
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry1.getUserId());
+			TestPropsValues.getUserId(), _objectDefinition1.getUserId());
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry2.getUserId());
+			TestPropsValues.getUserId(), _objectDefinition2.getUserId());
 	}
 
 	@Test
@@ -145,66 +183,94 @@ public class ExportImportTaskResourceCreatorInfoTest {
 
 		_executeImportTask("INSERT", "KEEP_CREATOR");
 
-		_objectEntry1 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry1.getExternalReferenceCode(),
-			_objectEntry1.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
-		_objectEntry2 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry2.getExternalReferenceCode(),
-			_objectEntry2.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
+		_objectDefinition1 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition1.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
+		_objectDefinition2 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition2.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
 
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry1.getUserId());
-		Assert.assertEquals(_user.getUserId(), _objectEntry2.getUserId());
+			TestPropsValues.getUserId(), _objectDefinition1.getUserId());
+		Assert.assertEquals(_user.getUserId(), _objectDefinition2.getUserId());
 	}
 
 	@Test
 	public void testImportWithInsertAndOverwriteCreator() throws Exception {
 		_executeImportTask("INSERT", "OVERWRITE_CREATOR");
 
-		_objectEntry1 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry1.getExternalReferenceCode(),
-			_objectEntry1.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
-		_objectEntry2 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry2.getExternalReferenceCode(),
-			_objectEntry2.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
+		_objectDefinition1 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition1.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
+		_objectDefinition2 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition2.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
 
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry1.getUserId());
+			TestPropsValues.getUserId(), _objectDefinition1.getUserId());
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry2.getUserId());
+			TestPropsValues.getUserId(), _objectDefinition2.getUserId());
 	}
 
 	@Test
 	public void testImportWithUpsertAndKeepCreator() throws Exception {
-		_objectEntry1 = _addObjectEntry(
-			_objectEntry1.getExternalReferenceCode(), _objectDefinition1,
-			_OBJECT_FIELD_NAME_TEXT, RandomTestUtil.randomString(),
-			TestPropsValues.getUser());
+		ObjectDefinition objectDefinition1 =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				ObjectDefinitionTestUtil.getRandomName(),
+				Arrays.asList(
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
+						RandomTestUtil.randomString(),
+						"x" + RandomTestUtil.randomString(), false)),
+				ObjectDefinitionConstants.SCOPE_COMPANY,
+				TestPropsValues.getUserId());
 
-		_objectEntry2 = _addObjectEntry(
-			_objectEntry2.getExternalReferenceCode(), _objectDefinition1,
-			_OBJECT_FIELD_NAME_TEXT, RandomTestUtil.randomString(),
-			TestPropsValues.getUser());
+		_objectDefinitionLocalService.updateExternalReferenceCode(
+			objectDefinition1.getObjectDefinitionId(),
+			_objectDefinition1.getExternalReferenceCode());
+
+		ObjectDefinition objectDefinition2 =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				ObjectDefinitionTestUtil.getRandomName(),
+				Arrays.asList(
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
+						RandomTestUtil.randomString(),
+						"x" + RandomTestUtil.randomString(), false)),
+				ObjectDefinitionConstants.SCOPE_COMPANY,
+				TestPropsValues.getUserId());
+
+		_objectDefinitionLocalService.updateExternalReferenceCode(
+			objectDefinition2.getObjectDefinitionId(),
+			_objectDefinition2.getExternalReferenceCode());
 
 		_executeImportTask("UPSERT", "KEEP_CREATOR");
 
-		_objectEntry1 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry1.getExternalReferenceCode(),
-			_objectEntry1.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
-		_objectEntry2 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry2.getExternalReferenceCode(),
-			_objectEntry2.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
+		_objectDefinition1 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition1.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
+		_objectDefinition2 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition2.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
 
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry1.getUserId());
+			TestPropsValues.getUserId(), _objectDefinition1.getUserId());
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry2.getUserId());
+			TestPropsValues.getUserId(), _objectDefinition2.getUserId());
 	}
 
 	@Test
@@ -213,79 +279,73 @@ public class ExportImportTaskResourceCreatorInfoTest {
 
 		_executeImportTask("UPSERT", "KEEP_CREATOR");
 
-		_objectEntry1 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry1.getExternalReferenceCode(),
-			_objectEntry1.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
-		_objectEntry2 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry2.getExternalReferenceCode(),
-			_objectEntry2.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
+		_objectDefinition1 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition1.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
+		_objectDefinition2 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition2.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
 
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry1.getUserId());
-		Assert.assertEquals(_user.getUserId(), _objectEntry2.getUserId());
+			TestPropsValues.getUserId(), _objectDefinition1.getUserId());
+		Assert.assertEquals(_user.getUserId(), _objectDefinition2.getUserId());
 	}
 
 	@Test
 	public void testImportWithUpsertAndOverwriteCreator() throws Exception {
-		_objectEntry1 = _addObjectEntry(
-			_objectEntry1.getExternalReferenceCode(), _objectDefinition1,
-			_OBJECT_FIELD_NAME_TEXT, RandomTestUtil.randomString(),
-			TestPropsValues.getUser());
+		ObjectDefinition objectDefinition1 =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				ObjectDefinitionTestUtil.getRandomName(),
+				Arrays.asList(
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
+						RandomTestUtil.randomString(),
+						"x" + RandomTestUtil.randomString(), false)),
+				ObjectDefinitionConstants.SCOPE_COMPANY,
+				TestPropsValues.getUserId());
 
-		_objectEntry2 = _addObjectEntry(
-			_objectEntry2.getExternalReferenceCode(), _objectDefinition1,
-			_OBJECT_FIELD_NAME_TEXT, RandomTestUtil.randomString(),
-			TestPropsValues.getUser());
+		_objectDefinitionLocalService.updateExternalReferenceCode(
+			objectDefinition1.getObjectDefinitionId(),
+			_objectDefinition1.getExternalReferenceCode());
+
+		ObjectDefinition objectDefinition2 =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				ObjectDefinitionTestUtil.getRandomName(),
+				Arrays.asList(
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
+						RandomTestUtil.randomString(),
+						"x" + RandomTestUtil.randomString(), false)),
+				ObjectDefinitionConstants.SCOPE_COMPANY,
+				TestPropsValues.getUserId());
+
+		_objectDefinitionLocalService.updateExternalReferenceCode(
+			objectDefinition2.getObjectDefinitionId(),
+			_objectDefinition2.getExternalReferenceCode());
 
 		_executeImportTask("UPSERT", "OVERWRITE_CREATOR");
 
-		_objectEntry1 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry1.getExternalReferenceCode(),
-			_objectEntry1.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
-		_objectEntry2 = _objectEntryLocalService.getObjectEntry(
-			_objectEntry2.getExternalReferenceCode(),
-			_objectEntry2.getGroupId(),
-			_objectDefinition1.getObjectDefinitionId());
+		_objectDefinition1 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition1.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
+		_objectDefinition2 =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					_objectDefinition2.getExternalReferenceCode(),
+					TestPropsValues.getCompanyId());
 
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry1.getUserId());
+			TestPropsValues.getUserId(), _objectDefinition1.getUserId());
 		Assert.assertEquals(
-			TestPropsValues.getUserId(), _objectEntry2.getUserId());
-	}
-
-	private ObjectEntry _addObjectEntry(
-			ObjectDefinition objectDefinition, String objectFieldName,
-			Serializable objectFieldValue, User user)
-		throws Exception {
-
-		return _objectEntryLocalService.addObjectEntry(
-			0L, user.getUserId(), objectDefinition.getObjectDefinitionId(),
-			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
-			null,
-			HashMapBuilder.<String, Serializable>put(
-				objectFieldName, objectFieldValue
-			).build(),
-			ServiceContextTestUtil.getServiceContext());
-	}
-
-	private ObjectEntry _addObjectEntry(
-			String externalReferenceCode, ObjectDefinition objectDefinition,
-			String objectFieldName, Serializable objectFieldValue, User user)
-		throws Exception {
-
-		return _objectEntryLocalService.addObjectEntry(
-			0L, user.getUserId(), objectDefinition.getObjectDefinitionId(),
-			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
-			null,
-			HashMapBuilder.<String, Serializable>put(
-				objectFieldName, objectFieldValue
-			).put(
-				"externalReferenceCode", externalReferenceCode
-			).build(),
-			ServiceContextTestUtil.getServiceContext());
+			TestPropsValues.getUserId(), _objectDefinition2.getUserId());
 	}
 
 	private void _executeExportTask() throws Exception {
@@ -296,8 +356,12 @@ public class ExportImportTaskResourceCreatorInfoTest {
 		httpInvoker.path(
 			StringBundler.concat(
 				"http://localhost:8080/o/headless-batch-engine/v1.0",
-				"/export-task/com.liferay.object.rest.dto.v1_0.ObjectEntry",
-				"/JSON?taskItemDelegateName=", _objectDefinition1.getName()));
+				"/export-task/com.liferay.object.admin.rest.dto.v1_0.",
+				"ObjectDefinition/JSON?filter=",
+				URLCodec.encodeURL(
+					StringBundler.concat(
+						"name in ('", _objectDefinition1.getShortName(), "','",
+						_objectDefinition2.getShortName(), "')"))));
 		httpInvoker.userNameAndPassword(
 			"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
 
@@ -311,6 +375,7 @@ public class ExportImportTaskResourceCreatorInfoTest {
 		while (true) {
 			exportTask = ExportTaskSerDes.toDTO(
 				_invoke(
+					"localhost",
 					"http://localhost:8080/o/headless-batch-engine/v1.0" +
 						"/export-task/by-external-reference-code/" +
 							externalReferenceCode));
@@ -357,6 +422,13 @@ public class ExportImportTaskResourceCreatorInfoTest {
 			String createStrategy, String importCreatorStrategy)
 		throws Exception {
 
+		_executeImportTask(createStrategy, "localhost", importCreatorStrategy);
+	}
+
+	private void _executeImportTask(
+			String createStrategy, String host, String importCreatorStrategy)
+		throws Exception {
+
 		HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
 
 		httpInvoker.body(_json, "application/json");
@@ -364,14 +436,20 @@ public class ExportImportTaskResourceCreatorInfoTest {
 
 		httpInvoker.path(
 			StringBundler.concat(
-				"http://localhost:8080/o/headless-batch-engine/v1.0",
-				"/import-task/com.liferay.object.rest.dto.v1_0.ObjectEntry",
-				"?createStrategy=", createStrategy, "&importCreatorStrategy=",
-				importCreatorStrategy, "&taskItemDelegateName=",
-				_objectDefinition1.getName()));
+				"http://", host, ":8080/o/headless-batch-engine/v1.0",
+				"/import-task/com.liferay.object.admin.rest.dto.v1_0.",
+				"ObjectDefinition?createStrategy=", createStrategy,
+				"&importCreatorStrategy=", importCreatorStrategy));
 
-		httpInvoker.userNameAndPassword(
-			"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
+		if (StringUtil.equals(host, "localhost")) {
+			httpInvoker.userNameAndPassword(
+				"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
+		}
+		else {
+			httpInvoker.userNameAndPassword(
+				StringBundler.concat(
+					"test@", host, ":", PropsValues.DEFAULT_ADMIN_PASSWORD));
+		}
 
 		HttpInvoker.HttpResponse httpResponse = httpInvoker.invoke();
 
@@ -383,9 +461,11 @@ public class ExportImportTaskResourceCreatorInfoTest {
 		while (true) {
 			importTask = ImportTaskSerDes.toDTO(
 				_invoke(
-					"http://localhost:8080/o/headless-batch-engine/v1.0" +
-						"/import-task/by-external-reference-code/" +
-							externalReferenceCode));
+					host,
+					StringBundler.concat(
+						"http://", host, ":8080/o/headless-batch-engine/v1.0",
+						"/import-task/by-external-reference-code/",
+						externalReferenceCode)));
 
 			if (Objects.equals(
 					importTask.getExecuteStatusAsString(), "COMPLETED")) {
@@ -400,13 +480,21 @@ public class ExportImportTaskResourceCreatorInfoTest {
 		}
 	}
 
-	private String _invoke(String url) throws Exception {
+	private String _invoke(String host, String url) throws Exception {
 		HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
 
 		httpInvoker.httpMethod(HttpInvoker.HttpMethod.GET);
 		httpInvoker.path(url);
-		httpInvoker.userNameAndPassword(
-			"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
+
+		if (StringUtil.equals(host, "localhost")) {
+			httpInvoker.userNameAndPassword(
+				"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
+		}
+		else {
+			httpInvoker.userNameAndPassword(
+				StringBundler.concat(
+					"test@", host, ":", PropsValues.DEFAULT_ADMIN_PASSWORD));
+		}
 
 		HttpInvoker.HttpResponse httpResponse = httpInvoker.invoke();
 
@@ -417,10 +505,14 @@ public class ExportImportTaskResourceCreatorInfoTest {
 
 	private static final String _OBJECT_FIELD_NAME_TEXT = "testFieldName";
 
+	private static final String _VIRTUAL_HOST_NAME = "www.able.com";
+
 	private String _json;
 	private ObjectDefinition _objectDefinition1;
-	private ObjectEntry _objectEntry1;
-	private ObjectEntry _objectEntry2;
+	private ObjectDefinition _objectDefinition2;
+
+	@Inject
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 	@Inject
 	private ObjectEntryLocalService _objectEntryLocalService;

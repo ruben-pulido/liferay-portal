@@ -13,6 +13,7 @@ import {
 import {config} from '../config';
 import {
 	ReferencedStructure,
+	RelatedContent,
 	RepeatableGroup,
 	Structure,
 } from '../types/Structure';
@@ -21,6 +22,7 @@ import {
 	FIELD_TYPE_TO_DB_TYPE,
 	Field,
 } from './field';
+import isField from './isField';
 import {isFieldTextSearchable} from './isFieldTextSearchable';
 
 export default function buildObjectDefinition({
@@ -56,6 +58,7 @@ export default function buildObjectDefinition({
 		objectFields: buildFields(getFields(children)),
 		objectRelationships: buildRelationships({
 			referencedStructures: getReferencedStructures(children),
+			relatedContents: getRelatedContents(children),
 			repeatableGroups: getRepeatableGroups(children),
 			structureERC: erc,
 		}),
@@ -104,11 +107,15 @@ export default function buildObjectDefinition({
 }
 
 function getFields(children: Structure['children']): Field[] {
-	return Array.from(children.values()).filter(
-		(child) =>
-			child.type !== 'referenced-structure' &&
-			child.type !== 'repeatable-group'
+	return Array.from(children.values()).filter((child) =>
+		isField(child)
 	) as Field[];
+}
+
+function getRelatedContents(children: Structure['children']): RelatedContent[] {
+	return Array.from(children.values()).filter(
+		(child) => child.type === 'related-content'
+	) as RelatedContent[];
 }
 
 function getReferencedStructures(
@@ -167,10 +174,12 @@ function buildFields(fields: Field[]) {
 
 function buildRelationships({
 	referencedStructures,
+	relatedContents,
 	repeatableGroups,
 	structureERC,
 }: {
 	referencedStructures: ReferencedStructure[];
+	relatedContents: RelatedContent[];
 	repeatableGroups: RepeatableGroup[];
 	structureERC: Structure['erc'];
 }) {
@@ -179,6 +188,8 @@ function buildRelationships({
 	for (const referencedStructure of referencedStructures) {
 		relationships.push({
 			deletionType: 'cascade',
+			edge: true,
+			externalReferenceCode: referencedStructure.relationshipERC,
 			label: {
 				en_US: referencedStructure.name,
 			},
@@ -192,12 +203,29 @@ function buildRelationships({
 	for (const repeatableGroup of repeatableGroups) {
 		relationships.push({
 			deletionType: 'cascade',
+			edge: true,
+			externalReferenceCode: repeatableGroup.relationshipERC,
 			label: repeatableGroup.label,
 			name: repeatableGroup.relationshipName,
 			objectDefinitionExternalReferenceCode1: structureERC,
 			objectDefinitionExternalReferenceCode2: repeatableGroup.erc,
 			type: 'oneToMany',
 		});
+	}
+
+	for (const relatedContent of relatedContents) {
+		if (relatedContent.multiselection) {
+			relationships.push({
+				deletionType: 'disassociate',
+				externalReferenceCode: relatedContent.erc,
+				label: relatedContent.label,
+				name: relatedContent.name,
+				objectDefinitionExternalReferenceCode1: structureERC,
+				objectDefinitionExternalReferenceCode2:
+					relatedContent.relatedStructureERC!,
+				type: 'manyToMany',
+			});
+		}
 	}
 
 	return relationships;

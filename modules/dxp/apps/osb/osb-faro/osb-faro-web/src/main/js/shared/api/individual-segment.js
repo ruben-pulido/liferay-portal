@@ -48,6 +48,13 @@ export function fetch({groupId, includeReferencedObjects = false, segmentId}) {
 	}));
 }
 
+export function fetchMembershipMetrics({groupId, individualSegmentId}) {
+	return sendRequest({
+		method: 'GET',
+		path: `contacts/${groupId}/individual_segment/${individualSegmentId}/real-time-membership-metric`
+	});
+}
+
 export function create({
 	channelId = '',
 	criteriaString = '',
@@ -243,5 +250,34 @@ export function searchUnassigned({
 		data: {cur: page, delta, orderByFields, query, ...otherParams},
 		method: 'GET',
 		path: `contacts/${groupId}/individual_segment/unassigned`
+	});
+}
+
+export function updateSegmentActivationStatus({
+	groupId,
+	segmentActivation,
+	segmentId
+}) {
+	const {
+		frequencyType,
+		scheduleEndDate,
+		scheduleStartDate,
+		scheduleType,
+		segmentActivationId
+	} = segmentActivation;
+
+	const data = {
+		frequencyType,
+		scheduleType,
+		...(scheduleEndDate && {scheduleEndDate: Date.parse(scheduleEndDate)}),
+		...(scheduleStartDate && {
+			scheduleStartDate: Date.parse(scheduleStartDate)
+		})
+	};
+
+	return sendRequest({
+		data,
+		method: 'PUT',
+		path: `contacts/${groupId}/individual_segment/${segmentId}/activation/${segmentActivationId}`
 	});
 }

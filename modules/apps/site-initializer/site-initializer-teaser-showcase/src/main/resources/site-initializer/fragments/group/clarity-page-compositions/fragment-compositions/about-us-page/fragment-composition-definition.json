@@ -449,7 +449,7 @@
 										"fragmentConfig": {
 											"bottomLeft": true,
 											"bottomRight": true,
-											"circleSize": "false",
+											"circleSize": "sm",
 											"topLeft": true,
 											"topRight": true
 										},
@@ -560,7 +560,7 @@
 										"fragmentConfig": {
 											"bottomLeft": true,
 											"bottomRight": true,
-											"circleSize": "false",
+											"circleSize": "sm",
 											"topLeft": true,
 											"topRight": true
 										},
@@ -671,7 +671,7 @@
 										"fragmentConfig": {
 											"bottomLeft": true,
 											"bottomRight": true,
-											"circleSize": "false",
+											"circleSize": "sm",
 											"topLeft": true,
 											"topRight": true
 										},
@@ -820,11 +820,6 @@
 				{
 					"definition": {
 						"collectionConfig": {
-							"collectionReference": {
-								"className": "com.liferay.asset.list.model.AssetListEntry",
-								"classPK": 43024
-							},
-							"collectionType": "Collection"
 						},
 						"collectionViewports": [
 							{

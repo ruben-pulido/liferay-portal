@@ -115,14 +115,16 @@ export class WidgetPagePage {
 	}
 
 	async clickOnAction(portletName: string, action: string) {
-		await this.page
-			.locator('.portlet-topper', {hasText: portletName})
-			.getByLabel('Options')
-			.click();
-
-		await this.page
-			.getByRole('menuitem', {exact: true, name: action})
-			.click();
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {
+				exact: true,
+				name: action,
+			}),
+			trigger: this.page
+				.locator('.portlet-topper', {hasText: portletName})
+				.getByLabel('Options'),
+		});
 	}
 
 	async deletePortlet(portletName: string) {
@@ -130,16 +132,15 @@ export class WidgetPagePage {
 			await dialog.accept();
 		});
 
-		await this.page
-			.locator('.portlet-topper', {hasText: portletName})
-			.getByLabel('Options')
-			.click();
-
-		await this.page
-			.getByRole('menuitem', {
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {
 				name: 'Delete',
-			})
-			.click();
+			}),
+			trigger: this.page
+				.locator('.portlet-topper', {hasText: portletName})
+				.getByLabel('Options'),
+		});
 	}
 
 	async dragPortlet(portletName: string, target: Locator) {

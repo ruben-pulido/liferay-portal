@@ -78,7 +78,7 @@ test('Checks the correct label for restricted pages in the preview selector', as
 });
 
 test(
-	'Preview StyleBook when edit StyleBook',
+	'Verify that the style book preview renders correctly and prevents user interaction while in edit mode',
 	{tag: '@LPD-35561'},
 	async ({
 		page,
@@ -330,6 +330,14 @@ test(
 				previewIframe.getByRole('menuitem', {name: pageName})
 			).toHaveCSS('font-family', 'times');
 		});
+
+		await test.step('Assert that interaction with the preview page is not allowed', async () => {
+			const overlay = previewIframe.getByTestId(
+				'styleBookPreviewOverlay'
+			);
+			await expect(overlay).toHaveCSS('cursor', 'not-allowed');
+			await expect(overlay).toHaveCSS('z-index', '100000');
+		});
 	}
 );
 
@@ -511,6 +519,36 @@ test.describe('Cannot preview style book', () => {
 		});
 	});
 });
+
+test(
+	'The back button displays a tooltip with its title when hovered',
+	{tag: '@LPD-66976'},
+	async ({page, site, styleBooksPage}) => {
+		await test.step('Go to Style Book editor', async () => {
+			await styleBooksPage.goto(site.friendlyUrlPath);
+
+			await styleBooksPage.create(getRandomString());
+		});
+
+		await test.step('Assert the tooltip is visible when the back button is hovered', async () => {
+			const title = 'Go to Style Books';
+
+			const backButton = page
+				.locator('.control-menu-nav-item')
+				.getByTitle(title);
+
+			await expect(backButton).toBeVisible();
+
+			const tooltip = page.getByRole('tooltip', {name: title});
+
+			await expect(tooltip).toBeHidden();
+
+			await backButton.hover();
+
+			await expect(tooltip).toBeVisible();
+		});
+	}
+);
 
 const themeScopedTest = mergeTests(
 	isolatedSiteTest,

@@ -859,10 +859,18 @@ const Table = ({
 					const visibleFieldNames: VisibleFieldNames = {};
 
 					schema.fields.forEach(({fieldName}) => {
+						if (String(fieldName).includes('.')) {
+							fieldName = String(fieldName).replaceAll('.', ',');
+						}
+
 						visibleFieldNames[String(fieldName)] = false;
 					});
 
 					visibleColumns.forEach((value: any, key: any) => {
+						if (key.includes('.')) {
+							key = key.replaceAll('.', ',');
+						}
+
 						if (visibleFieldNames[key] !== undefined) {
 							visibleFieldNames[key] = true;
 						}

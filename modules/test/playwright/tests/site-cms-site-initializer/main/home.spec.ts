@@ -127,7 +127,7 @@ test(
 				await homePage.assignedToMeMenuItem.click();
 				await page.waitForLoadState('networkidle');
 
-				await expect(workflowTaskRow2).toBeVisible();
+				await expect(workflowTaskRow2).toBeHidden();
 			});
 
 			await test.step('Verify workflow task approve action', async () => {
@@ -139,17 +139,6 @@ test(
 				await expect(workflowTaskRow1).toBeVisible();
 				await homePage.approveWorkflowTask(objectEntry1.title);
 				await expect(workflowTaskRow1).toBeHidden();
-			});
-
-			await test.step('Verify workflow task reject action', async () => {
-				const workflowTaskRow2 = page
-					.getByRole('row')
-					.filter({hasText: /sent you/i})
-					.filter({hasText: objectEntry2.title});
-
-				await expect(workflowTaskRow2).toBeVisible();
-				await homePage.rejectWorkflowTask(objectEntry2.title);
-				await expect(workflowTaskRow2).toBeHidden();
 			});
 
 			await test.step('Verify workflow task update due date action', async () => {
@@ -192,6 +181,19 @@ test(
 				await expect(page.locator('input[type="date"]')).toHaveValue(
 					dueDate
 				);
+
+				await page.getByRole('button', {name: 'Cancel'}).click();
+			});
+
+			await test.step('Verify workflow task reject action', async () => {
+				const workflowTaskRow3 = page
+					.getByRole('row')
+					.filter({hasText: /sent you/i})
+					.filter({hasText: objectEntry3.title});
+
+				await expect(workflowTaskRow3).toBeVisible();
+				await homePage.rejectWorkflowTask(objectEntry3.title);
+				await expect(workflowTaskRow3).toBeHidden();
 			});
 		}
 		finally {
@@ -438,7 +440,7 @@ test(
 	}
 );
 
-test.skip(
+test(
 	'Can use Search Bar to search for content',
 	{tag: '@LPD-61220'},
 	async ({apiHelpers, assetsPage, homePage, page}) => {
@@ -479,6 +481,12 @@ test.skip(
 			const row = assetsPage.table.bodyRows.filter({hasText: file1Title});
 
 			await expect(row.getByText(file1Title)).toBeVisible();
+
+			await test.step('Verify search input contains the search value', async () => {
+				const searchInput = page.getByPlaceholder('Search');
+
+				await expect(searchInput).toHaveValue('title');
+			});
 		}
 		finally {
 			await apiHelpers.objectEntry.deleteObjectEntry(

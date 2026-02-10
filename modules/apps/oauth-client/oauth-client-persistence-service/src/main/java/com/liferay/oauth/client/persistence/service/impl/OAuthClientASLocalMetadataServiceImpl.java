@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class OAuthClientASLocalMetadataServiceImpl
 
 	@Override
 	public OAuthClientASLocalMetadata addOAuthClientASLocalMetadata(
-			long userId, String metadataJSON, String wellKnownURISuffix)
+			String metadataJSON, String wellKnownURISuffix)
 		throws PortalException {
 
 		ModelResourcePermissionUtil.check(
@@ -46,7 +47,27 @@ public class OAuthClientASLocalMetadataServiceImpl
 
 		return oAuthClientASLocalMetadataLocalService.
 			addOAuthClientASLocalMetadata(
-				userId, metadataJSON, wellKnownURISuffix);
+				getUserId(), metadataJSON, wellKnownURISuffix);
+	}
+
+	public OAuthClientASLocalMetadata addOAuthClientASLocalMetadata(
+			String authorizationEndpoint, String issuer, String jwksURI,
+			boolean localWellKnownEnabled, String[] supportedGrantTypes,
+			String[] supportedScopes, String[] supportedSubjectTypes,
+			String tokenEndpoint, String userInfoEndpoint)
+		throws PortalException {
+
+		ModelResourcePermissionUtil.check(
+			_oAuthClientASLocalMetadataModelResourcePermission,
+			getPermissionChecker(), GroupConstants.DEFAULT_LIVE_GROUP_ID, 0,
+			OAuthClientPersistenceActionKeys.
+				ACTION_ADD_OAUTH_CLIENT_AS_LOCAL_METADATA);
+
+		return oAuthClientASLocalMetadataLocalService.
+			addOAuthClientASLocalMetadata(
+				getUserId(), authorizationEndpoint, issuer, jwksURI,
+				localWellKnownEnabled, supportedGrantTypes, supportedScopes,
+				supportedSubjectTypes, tokenEndpoint, userInfoEndpoint);
 	}
 
 	@Override
@@ -84,6 +105,41 @@ public class OAuthClientASLocalMetadataServiceImpl
 	}
 
 	@Override
+	public OAuthClientASLocalMetadata fetchOAuthClientASLocalMetadata(
+			long oAuthClientASLocalMetadataId)
+		throws PortalException {
+
+		OAuthClientASLocalMetadata oAuthClientASLocalMetadata =
+			oAuthClientASLocalMetadataPersistence.fetchByPrimaryKey(
+				oAuthClientASLocalMetadataId);
+
+		if (oAuthClientASLocalMetadata != null) {
+			_oAuthClientASLocalMetadataModelResourcePermission.check(
+				getPermissionChecker(), oAuthClientASLocalMetadata,
+				ActionKeys.VIEW);
+		}
+
+		return oAuthClientASLocalMetadata;
+	}
+
+	@Override
+	public OAuthClientASLocalMetadata fetchOAuthClientASLocalMetadata(
+			long companyId, String issuer)
+		throws PortalException {
+
+		OAuthClientASLocalMetadata oAuthClientASLocalMetadata =
+			oAuthClientASLocalMetadataPersistence.fetchByC_I(companyId, issuer);
+
+		if (oAuthClientASLocalMetadata != null) {
+			_oAuthClientASLocalMetadataModelResourcePermission.check(
+				getPermissionChecker(), oAuthClientASLocalMetadata,
+				ActionKeys.VIEW);
+		}
+
+		return oAuthClientASLocalMetadata;
+	}
+
+	@Override
 	public List<OAuthClientASLocalMetadata>
 		getCompanyOAuthClientASLocalMetadata(long companyId) {
 
@@ -102,12 +158,44 @@ public class OAuthClientASLocalMetadataServiceImpl
 
 	@Override
 	public OAuthClientASLocalMetadata getOAuthClientASLocalMetadata(
+			long companyId, boolean localWellKnownEnabled,
+			OrderByComparator<OAuthClientASLocalMetadata> orderByComparator)
+		throws PortalException {
+
+		OAuthClientASLocalMetadata oAuthClientASLocalMetadata =
+			oAuthClientASLocalMetadataPersistence.findByC_L_First(
+				companyId, localWellKnownEnabled, orderByComparator);
+
+		_oAuthClientASLocalMetadataModelResourcePermission.check(
+			getPermissionChecker(), oAuthClientASLocalMetadata,
+			ActionKeys.VIEW);
+
+		return oAuthClientASLocalMetadata;
+	}
+
+	@Override
+	public OAuthClientASLocalMetadata getOAuthClientASLocalMetadata(
+			long companyId, String issuer)
+		throws PortalException {
+
+		OAuthClientASLocalMetadata oAuthClientASLocalMetadata =
+			oAuthClientASLocalMetadataPersistence.findByC_I(companyId, issuer);
+
+		_oAuthClientASLocalMetadataModelResourcePermission.check(
+			getPermissionChecker(), oAuthClientASLocalMetadata,
+			ActionKeys.VIEW);
+
+		return oAuthClientASLocalMetadata;
+	}
+
+	@Override
+	public OAuthClientASLocalMetadata getOAuthClientASLocalMetadata(
 			String localWellKnownURI)
 		throws PortalException {
 
 		OAuthClientASLocalMetadata oAuthClientASLocalMetadata =
-			oAuthClientASLocalMetadataLocalService.
-				getOAuthClientASLocalMetadata(localWellKnownURI);
+			oAuthClientASLocalMetadataPersistence.findByLocalWellKnownURI(
+				localWellKnownURI);
 
 		_oAuthClientASLocalMetadataModelResourcePermission.check(
 			getPermissionChecker(), oAuthClientASLocalMetadata,
@@ -139,13 +227,35 @@ public class OAuthClientASLocalMetadataServiceImpl
 
 		_oAuthClientASLocalMetadataModelResourcePermission.check(
 			getPermissionChecker(),
-			oAuthClientASLocalMetadataLocalService.
-				getOAuthClientASLocalMetadata(oAuthClientASLocalMetadataId),
+			oAuthClientASLocalMetadataPersistence.findByPrimaryKey(
+				oAuthClientASLocalMetadataId),
 			ActionKeys.UPDATE);
 
 		return oAuthClientASLocalMetadataLocalService.
 			updateOAuthClientASLocalMetadata(
 				oAuthClientASLocalMetadataId, metadataJSON, wellKnownURISuffix);
+	}
+
+	public OAuthClientASLocalMetadata updateOAuthClientASLocalMetadata(
+			long oAuthClientASLocalMetadataId, String authorizationEndpoint,
+			String issuer, String jwksURI, boolean localWellKnownEnabled,
+			String[] supportedGrantTypes, String[] supportedScopes,
+			String[] supportedSubjectTypes, String tokenEndpoint,
+			String userInfoEndpoint)
+		throws PortalException {
+
+		_oAuthClientASLocalMetadataModelResourcePermission.check(
+			getPermissionChecker(),
+			oAuthClientASLocalMetadataPersistence.findByPrimaryKey(
+				oAuthClientASLocalMetadataId),
+			ActionKeys.UPDATE);
+
+		return oAuthClientASLocalMetadataLocalService.
+			updateOAuthClientASLocalMetadata(
+				oAuthClientASLocalMetadataId, authorizationEndpoint, issuer,
+				jwksURI, localWellKnownEnabled, supportedGrantTypes,
+				supportedScopes, supportedSubjectTypes, tokenEndpoint,
+				userInfoEndpoint);
 	}
 
 	@Reference(

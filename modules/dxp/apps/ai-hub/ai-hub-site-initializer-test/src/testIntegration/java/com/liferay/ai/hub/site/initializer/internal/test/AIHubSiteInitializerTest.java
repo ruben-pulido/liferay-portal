@@ -71,15 +71,14 @@ public class AIHubSiteInitializerTest {
 			WorkflowDefinitionConstants.NAME_CHANGE_TONE);
 		_assertWorkflowDefinitionExists(
 			WorkflowDefinitionConstants.
-				EXTERNAL_REFERENCE_CODE_CHAT_MESSAGE_PIPELINE,
-			WorkflowDefinitionConstants.NAME_CHAT_MESSAGE_PIPELINE);
-		_assertWorkflowDefinitionExists(
-			WorkflowDefinitionConstants.
 				EXTERNAL_REFERENCE_CODE_FIX_SPELLING_AND_GRAMMAR,
 			WorkflowDefinitionConstants.NAME_FIX_SPELLING_AND_GRAMMAR);
 		_assertWorkflowDefinitionExists(
 			WorkflowDefinitionConstants.EXTERNAL_REFERENCE_CODE_IMPROVE_WRITING,
 			WorkflowDefinitionConstants.NAME_IMPROVE_WRITING);
+		_assertWorkflowDefinitionExists(
+			WorkflowDefinitionConstants.EXTERNAL_REFERENCE_CODE_LIFERAY_SEARCH,
+			WorkflowDefinitionConstants.NAME_LIFERAY_SEARCH);
 		_assertWorkflowDefinitionExists(
 			WorkflowDefinitionConstants.EXTERNAL_REFERENCE_CODE_MAKE_LONGER,
 			WorkflowDefinitionConstants.NAME_MAKE_LONGER);

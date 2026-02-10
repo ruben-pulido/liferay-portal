@@ -13,6 +13,7 @@ import {
 } from '../../common/types/ObjectDefinition';
 import {
 	ReferencedStructure,
+	RelatedContent,
 	RepeatableGroup,
 	Structure,
 } from '../types/Structure';
@@ -25,9 +26,11 @@ import sortChildren from './sortChildren';
 export default function buildStructure({
 	mainObjectDefinition,
 	objectDefinitions,
+	relatedContentObjectRelationships,
 }: {
 	mainObjectDefinition: ObjectDefinition;
 	objectDefinitions: ObjectDefinitions;
+	relatedContentObjectRelationships: ObjectRelationship[];
 }): Structure {
 	const uuid = getUuid();
 
@@ -38,6 +41,7 @@ export default function buildStructure({
 			objectDefinition: mainObjectDefinition,
 			objectDefinitions,
 			parent: uuid,
+			relatedContentObjectRelationships,
 		}),
 		erc: mainObjectDefinition.externalReferenceCode,
 		id: mainObjectDefinition.id,
@@ -47,7 +51,7 @@ export default function buildStructure({
 		status: isPublished ? 'published' : 'draft',
 		system: mainObjectDefinition.system ?? false,
 		type: mainObjectDefinition.objectFolderExternalReferenceCode as Structure['type'],
-		uuid: getUuid(),
+		uuid,
 		workflows: getWorkflows(mainObjectDefinition),
 	};
 }
@@ -57,11 +61,13 @@ export function buildChildren({
 	objectDefinition,
 	objectDefinitions,
 	parent,
+	relatedContentObjectRelationships,
 }: {
 	ancestors?: Array<ObjectDefinition['externalReferenceCode']>;
 	objectDefinition: ObjectDefinition;
 	objectDefinitions: ObjectDefinitions;
 	parent: Uuid;
+	relatedContentObjectRelationships?: ObjectRelationship[];
 }) {
 	const objectFields = objectDefinition.objectFields || [];
 	const objectRelationships = objectDefinition.objectRelationships || [];
@@ -83,7 +89,22 @@ export function buildChildren({
 	}
 
 	for (const objectRelationship of objectRelationships) {
-		if (isRepeatableGroup(objectRelationship, objectDefinitions)) {
+		if (isRelatedContent(objectRelationship)) {
+			const relatedContent: RelatedContent = {
+				erc: objectRelationship.externalReferenceCode,
+				label: objectRelationship.label,
+				multiselection: true,
+				name: objectRelationship.name,
+				parent,
+				relatedStructureERC:
+					objectRelationship.objectDefinitionExternalReferenceCode2,
+				type: 'related-content',
+				uuid: getUuid(),
+			};
+
+			children.set(relatedContent.uuid, relatedContent);
+		}
+		else if (isRepeatableGroup(objectRelationship, objectDefinitions)) {
 			const repeatableGroup = buildRepeatableGroup({
 				ancestors: [
 					...ancestors,
@@ -92,12 +113,13 @@ export function buildChildren({
 				erc: objectRelationship.objectDefinitionExternalReferenceCode2,
 				objectDefinitions,
 				parent,
+				relationshipERC: objectRelationship.externalReferenceCode,
 				relationshipName: objectRelationship.name,
 			});
 
 			children.set(repeatableGroup.uuid, repeatableGroup);
 		}
-		else {
+		else if (objectRelationship.edge) {
 			const referencedStructure = buildReferencedStructure({
 				ancestors: [
 					...ancestors,
@@ -106,10 +128,29 @@ export function buildChildren({
 				erc: objectRelationship.objectDefinitionExternalReferenceCode2,
 				objectDefinitions,
 				parent,
+				relationshipERC: objectRelationship.externalReferenceCode,
 				relationshipName: objectRelationship.name,
 			});
 
 			children.set(referencedStructure.uuid, referencedStructure);
+		}
+	}
+
+	if (relatedContentObjectRelationships) {
+		for (const relatedContentObjectRelationship of relatedContentObjectRelationships) {
+			const relatedContent: RelatedContent = {
+				erc: relatedContentObjectRelationship.externalReferenceCode,
+				label: relatedContentObjectRelationship.label,
+				multiselection: false,
+				name: relatedContentObjectRelationship.name,
+				parent,
+				relatedStructureERC:
+					relatedContentObjectRelationship.objectDefinitionExternalReferenceCode1,
+				type: 'related-content',
+				uuid: getUuid(),
+			};
+
+			children.set(relatedContent.uuid, relatedContent);
 		}
 	}
 
@@ -168,12 +209,14 @@ export function buildReferencedStructure({
 	erc,
 	objectDefinitions,
 	parent,
+	relationshipERC,
 	relationshipName,
 }: {
 	ancestors: Array<ObjectDefinition['externalReferenceCode']>;
 	erc: ReferencedStructure['erc'];
 	objectDefinitions: ObjectDefinitions;
 	parent: Uuid;
+	relationshipERC: string;
 	relationshipName: ObjectRelationship['name'];
 }): ReferencedStructure {
 	const uuid = getUuid();
@@ -200,6 +243,7 @@ export function buildReferencedStructure({
 		label: objectDefinition.label,
 		name: objectDefinition.name!,
 		parent,
+		relationshipERC,
 		relationshipName,
 		spaces: getSpaces(objectDefinition),
 		type: 'referenced-structure',
@@ -213,12 +257,14 @@ export function buildRepeatableGroup({
 	erc,
 	objectDefinitions,
 	parent,
+	relationshipERC,
 	relationshipName,
 }: {
 	ancestors: Array<ObjectDefinition['externalReferenceCode']>;
 	erc: RepeatableGroup['erc'];
 	objectDefinitions: ObjectDefinitions;
 	parent: Uuid;
+	relationshipERC: string;
 	relationshipName: ObjectRelationship['name'];
 }): RepeatableGroup {
 	const uuid = getUuid();
@@ -236,6 +282,7 @@ export function buildRepeatableGroup({
 		label: objectDefinition.label,
 		name: objectDefinition.name!,
 		parent,
+		relationshipERC,
 		relationshipName,
 		type: 'repeatable-group',
 		uuid,
@@ -360,4 +407,15 @@ function isRepeatableGroup(
 		objectDefinition.objectFolderExternalReferenceCode ===
 		'L_CMS_STRUCTURE_REPEATABLE_GROUPS'
 	);
+}
+
+function isRelatedContent(objectRelationship: ObjectRelationship) {
+	if (
+		objectRelationship.type === 'manyToMany' &&
+		!objectRelationship.reverse
+	) {
+		return true;
+	}
+
+	return false;
 }

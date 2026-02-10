@@ -1548,8 +1548,9 @@ public class SearchResultResourceTest extends BaseSearchResultResourceTestCase {
 	}
 
 	private static final String[] _IGNORED_ENTITY_FIELD_NAMES = {
-		"cmsKind", "cmsRoot", "cmsSection", "extension", "dateDisplay",
-		"dateExpiration", "datePublish", "dateReview", "folderId",
+		"cmpDueDate", "cmpState", "cmsKind", "cmsRoot", "cmsSection",
+		"extension", "dateDisplay", "dateExpiration", "datePublish",
+		"dateReview", "folderId", "objectDefinitionExternalReferenceCode",
 		"objectFolderExternalReferenceCode"
 	};
 

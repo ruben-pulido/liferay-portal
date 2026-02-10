@@ -17,7 +17,7 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
-import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
+import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpSchema;
 
 import java.io.UnsupportedEncodingException;
@@ -49,12 +49,17 @@ public class MCPServerTest {
 	@Test
 	public void test() throws Exception {
 		McpSyncClient mcpSyncClient = McpClient.sync(
-			HttpClientSseClientTransport.builder(
-				"http://localhost:8080/o/mcp/"
-			).sseEndpoint(
-				"sse"
+			HttpClientStreamableHttpTransport.builder(
+				"http://localhost:8080/o/"
 			).customizeRequest(
 				builder -> builder.header("Authorization", _getAuthorization())
+			).endpoint(
+				"mcp"
+			).build()
+		).capabilities(
+			McpSchema.ClientCapabilities.builder(
+			).elicitation(
+				true, true
 			).build()
 		).build();
 

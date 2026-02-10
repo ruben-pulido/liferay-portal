@@ -707,6 +707,20 @@ public class PortalUpgradeProcessRegistryImpl
 			UpgradeProcessFactory.runSQL(
 				"delete from Release_ where servletContextName = " +
 					"'com.liferay.data.cleanup'"));
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 0, 0),
+			UpgradeProcessFactory.addColumns(
+				"Layout", "portletLPTEERC VARCHAR(75) null",
+				"portletLPTESERC VARCHAR(75) null"),
+			UpgradeProcessFactory.alterColumnName(
+				"Layout", "layoutPrototypeLinkEnabled",
+				"portletLPTELE BOOLEAN"));
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 0, 1),
+			UpgradeModulesFactory.create(
+				new String[] {"com.liferay.oauth2.provider.shortcut"}, null));
 	}
 
 }

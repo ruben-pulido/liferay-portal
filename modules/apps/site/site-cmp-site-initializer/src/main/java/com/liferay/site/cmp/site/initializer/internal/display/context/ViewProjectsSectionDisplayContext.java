@@ -5,6 +5,7 @@
 
 package com.liferay.site.cmp.site.initializer.internal.display.context;
 
+import com.liferay.frontend.data.set.filter.FDSFilter;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
@@ -14,8 +15,14 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.site.cmp.site.initializer.internal.constants.CMPActionConstants;
+import com.liferay.site.cmp.site.initializer.internal.frontend.data.set.filter.DueDateRangeFDSFilter;
+import com.liferay.site.cmp.site.initializer.internal.frontend.data.set.filter.ProjectManagerSelectionFDSFilter;
+import com.liferay.site.cmp.site.initializer.internal.frontend.data.set.filter.ProjectSponsorSelectionFDSFilter;
+import com.liferay.site.cmp.site.initializer.internal.frontend.data.set.filter.StateSelectionFDSFilter;
 import com.liferay.site.cmp.site.initializer.internal.util.ActionUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,9 +38,11 @@ public class ViewProjectsSectionDisplayContext
 
 	public ViewProjectsSectionDisplayContext(
 		HttpServletRequest httpServletRequest,
-		ObjectDefinition objectDefinition) {
+		ObjectDefinition objectDefinition, UserLocalService userLocalService) {
 
 		super(httpServletRequest, objectDefinition);
+
+		_userLocalService = userLocalService;
 	}
 
 	public String getAPIURL() {
@@ -73,7 +82,8 @@ public class ViewProjectsSectionDisplayContext
 	public CreationMenu getCreationMenu() {
 		return CreationMenuBuilder.addPrimaryDropdownItem(
 			dropdownItem -> {
-				dropdownItem.putData("action", "createProject");
+				dropdownItem.putData(
+					"action", CMPActionConstants.CREATE_PROJECT);
 				dropdownItem.putData(
 					"objectDefinitionId",
 					String.valueOf(objectDefinition.getObjectDefinitionId()));
@@ -120,6 +130,22 @@ public class ViewProjectsSectionDisplayContext
 				LanguageUtil.get(httpServletRequest, "view"), null, "get",
 				null),
 			new FDSActionDropdownItem(
+				StringBundler.concat(
+					"/o", objectDefinition.getRESTContextPath(),
+					"/scopes/{embedded.scopeId}/by-external-reference-code",
+					"/{embedded.externalReferenceCode}/subscribe"),
+				"bell-on", "subscribe",
+				LanguageUtil.get(httpServletRequest, "watch-project"), "post",
+				"subscribe", "async"),
+			new FDSActionDropdownItem(
+				StringBundler.concat(
+					"/o", objectDefinition.getRESTContextPath(),
+					"/scopes/{embedded.scopeId}/by-external-reference-code",
+					"/{embedded.externalReferenceCode}/unsubscribe"),
+				"bell-off", "unsubscribe",
+				LanguageUtil.get(httpServletRequest, "stop-watching-project"),
+				"post", "unsubscribe", "async"),
+			new FDSActionDropdownItem(
 				null, "users", "view-members",
 				LanguageUtil.get(httpServletRequest, "view-members"), null,
 				"get", null),
@@ -128,5 +154,15 @@ public class ViewProjectsSectionDisplayContext
 				LanguageUtil.get(httpServletRequest, "delete"), null, "delete",
 				null));
 	}
+
+	public List<FDSFilter> getFDSFilters() {
+		return ListUtil.fromArray(
+			new DueDateRangeFDSFilter(),
+			new ProjectManagerSelectionFDSFilter(_userLocalService),
+			new ProjectSponsorSelectionFDSFilter(_userLocalService),
+			new StateSelectionFDSFilter());
+	}
+
+	private final UserLocalService _userLocalService;
 
 }

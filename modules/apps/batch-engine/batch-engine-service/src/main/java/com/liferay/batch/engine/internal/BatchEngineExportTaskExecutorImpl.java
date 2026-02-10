@@ -27,6 +27,7 @@ import com.liferay.petra.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskStatusMessageSender;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.dao.jdbc.OutputBlob;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -273,6 +274,8 @@ public class BatchEngineExportTaskExecutorImpl
 			batchEngineExportTask.setTotalItemsCount(
 				Math.toIntExact(page.getTotalCount()));
 
+			int lastReportedItemsCount = 0;
+
 			Collection<?> items = page.getItems();
 
 			while (!items.isEmpty()) {
@@ -294,6 +297,20 @@ public class BatchEngineExportTaskExecutorImpl
 				batchEngineExportTask.setProcessedItemsCount(
 					batchEngineExportTask.getProcessedItemsCount() +
 						items.size());
+
+				int currentItemsProcessedCount =
+					batchEngineExportTask.getProcessedItemsCount();
+
+				int itemsSinceLastReport =
+					currentItemsProcessedCount - lastReportedItemsCount;
+
+				if (itemsSinceLastReport >= exportBatchSize) {
+					BatchEngineTaskExecutorUtil.sendBatchProgressMessage(
+						_backgroundTaskStatusMessageSender,
+						currentItemsProcessedCount);
+
+					lastReportedItemsCount = currentItemsProcessedCount;
+				}
 
 				if (settings.isPersist()) {
 					batchEngineExportTask =
@@ -319,6 +336,14 @@ public class BatchEngineExportTaskExecutorImpl
 					(String)parameters.get("search"));
 
 				items = page.getItems();
+			}
+
+			if (batchEngineExportTask.getProcessedItemsCount() >
+					lastReportedItemsCount) {
+
+				BatchEngineTaskExecutorUtil.sendBatchProgressMessage(
+					_backgroundTaskStatusMessageSender,
+					batchEngineExportTask.getProcessedItemsCount());
 			}
 		}
 		finally {
@@ -560,6 +585,10 @@ public class BatchEngineExportTaskExecutorImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		BatchEngineExportTaskExecutorImpl.class);
+
+	@Reference
+	private BackgroundTaskStatusMessageSender
+		_backgroundTaskStatusMessageSender;
 
 	@Reference
 	private BatchEngineExportTaskLocalService

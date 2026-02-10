@@ -8,6 +8,7 @@ import SegmentProfileCard from 'segment/components/ProfileCard';
 import {debounce} from 'lodash';
 import {ReferencedObjectsProvider} from 'segment/segment-editor/dynamic/context/referencedObjects';
 import {Segment} from 'shared/util/records';
+import {SegmentActivationCard} from 'segment/components/SegmentActivationCard';
 import {SegmentTypes} from 'shared/util/constants';
 import {useTimeZone} from 'shared/hooks/useTimeZone';
 
@@ -21,6 +22,7 @@ const HEADER_MARGIN = 16;
 
 const Overview: React.FC<IOverviewProps> = ({channelId, groupId, segment}) => {
 	const {
+		activationStatus,
 		activeIndividualCount,
 		criteriaString,
 		id,
@@ -53,6 +55,13 @@ const Overview: React.FC<IOverviewProps> = ({channelId, groupId, segment}) => {
 	return (
 		<div className='overview-layout'>
 			<div className='overview-column-main'>
+				{activationStatus && (
+					<SegmentActivationCard
+						segmentActivation={activationStatus}
+						segmentType={SegmentTypes.Batch}
+					/>
+				)}
+
 				<SegmentProfileCard
 					channelId={channelId}
 					groupId={groupId}
@@ -74,12 +83,6 @@ const Overview: React.FC<IOverviewProps> = ({channelId, groupId, segment}) => {
 			</div>
 
 			<div className='overview-column-side' ref={_sideColumnRef}>
-				<CompositionCard
-					activeIndividualCount={activeIndividualCount}
-					individualCount={individualCount}
-					knownIndividualCount={knownIndividualCount}
-				/>
-
 				<ReferencedObjectsProvider segment={segment}>
 					<CriteriaCard
 						criteriaString={criteriaString}
@@ -88,6 +91,12 @@ const Overview: React.FC<IOverviewProps> = ({channelId, groupId, segment}) => {
 						timeZoneId={timeZoneId}
 					/>
 				</ReferencedObjectsProvider>
+
+				<CompositionCard
+					activeIndividualCount={activeIndividualCount}
+					individualCount={individualCount}
+					knownIndividualCount={knownIndividualCount}
+				/>
 			</div>
 		</div>
 	);

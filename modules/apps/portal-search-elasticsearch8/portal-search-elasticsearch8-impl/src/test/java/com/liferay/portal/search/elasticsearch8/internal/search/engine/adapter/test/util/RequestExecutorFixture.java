@@ -6,11 +6,10 @@
 package com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.test.util;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchClientResolver;
-import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.document.ElasticsearchBulkableDocumentRequestTranslator;
-import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.document.ElasticsearchBulkableDocumentRequestTranslatorImpl;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.document.GetDocumentRequestExecutor;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.document.GetDocumentRequestExecutorImpl;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.document.IndexDocumentRequestExecutor;
@@ -99,21 +98,12 @@ public class RequestExecutorFixture {
 
 	public void setUp() {
 		_createIndexRequestExecutor = new CreateIndexRequestExecutor(
-			_elasticsearchClientResolver);
+			_elasticsearchClientResolver, new JSONFactoryImpl());
 
 		_deleteIndexRequestExecutor = new DeleteIndexRequestExecutor(
 			_elasticsearchClientResolver);
 
 		_getDocumentRequestExecutor = new GetDocumentRequestExecutorImpl();
-
-		ElasticsearchBulkableDocumentRequestTranslator
-			elasticsearchBulkableDocumentRequestTranslator =
-				new ElasticsearchBulkableDocumentRequestTranslatorImpl();
-
-		ReflectionTestUtil.setFieldValue(
-			_getDocumentRequestExecutor,
-			"_elasticsearchBulkableDocumentRequestTranslator",
-			elasticsearchBulkableDocumentRequestTranslator);
 
 		ReflectionTestUtil.setFieldValue(
 			_getDocumentRequestExecutor, "_elasticsearchClientResolver",
@@ -125,20 +115,12 @@ public class RequestExecutorFixture {
 		_indexDocumentRequestExecutor = new IndexDocumentRequestExecutorImpl();
 
 		ReflectionTestUtil.setFieldValue(
-			_indexDocumentRequestExecutor,
-			"_elasticsearchBulkableDocumentRequestTranslator",
-			elasticsearchBulkableDocumentRequestTranslator);
-		ReflectionTestUtil.setFieldValue(
 			_indexDocumentRequestExecutor, "_elasticsearchClientResolver",
 			_elasticsearchClientResolver);
 
 		_updateDocumentRequestExecutor =
 			new UpdateDocumentRequestExecutorImpl();
 
-		ReflectionTestUtil.setFieldValue(
-			_updateDocumentRequestExecutor,
-			"_elasticsearchBulkableDocumentRequestTranslator",
-			elasticsearchBulkableDocumentRequestTranslator);
 		ReflectionTestUtil.setFieldValue(
 			_updateDocumentRequestExecutor, "_elasticsearchClientResolver",
 			_elasticsearchClientResolver);

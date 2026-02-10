@@ -29,7 +29,6 @@ import java.io.Serializable;
 import java.text.Format;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +39,30 @@ import java.util.Map;
  */
 public class BatchEnginePortletDataHandlerUtil {
 
+	public static Map<String, Serializable> buildDeleteParameters(
+		ExportImportVulcanBatchEngineTaskItemDelegate.ExportImportDescriptor
+			exportImportDescriptor,
+		GroupLocalService groupLocalService,
+		PortletDataContext portletDataContext,
+		StagingGroupHelper stagingGroupHelper) {
+
+		Map<String, Serializable> deleteParameters =
+			HashMapBuilder.<String, Serializable>putAll(
+				exportImportDescriptor.getParameters(portletDataContext)
+			).build();
+
+		Group group = groupLocalService.fetchGroup(
+			portletDataContext.getScopeGroupId());
+
+		if (!_isCompanyScoped(group, stagingGroupHelper)) {
+			deleteParameters.put(
+				"siteExternalReferenceCode", group.getExternalReferenceCode());
+			deleteParameters.put("siteId", group.getGroupId());
+		}
+
+		return deleteParameters;
+	}
+
 	public static Map<String, Serializable> buildExportParameters(
 		ExportImportVulcanBatchEngineTaskItemDelegate.ExportImportDescriptor
 			exportImportDescriptor,
@@ -47,11 +70,13 @@ public class BatchEnginePortletDataHandlerUtil {
 		PortletDataContext portletDataContext,
 		StagingGroupHelper stagingGroupHelper) {
 
-		HashMap<String, Serializable> exportParameters =
+		Map<String, Serializable> exportParameters =
 			HashMapBuilder.<String, Serializable>put(
 				"batchNestedFields",
 				() -> {
 					List<String> batchNestedFields = new ArrayList<>();
+
+					batchNestedFields.add("customFields.attributeType");
 
 					if (MapUtil.getBoolean(
 							portletDataContext.getParameterMap(),
@@ -59,8 +84,6 @@ public class BatchEnginePortletDataHandlerUtil {
 
 						batchNestedFields.add("comments");
 					}
-
-					batchNestedFields.add("customFields.attributeType");
 
 					if (MapUtil.getBoolean(
 							portletDataContext.getParameterMap(),
@@ -150,18 +173,32 @@ public class BatchEnginePortletDataHandlerUtil {
 		PortletDataContext portletDataContext,
 		StagingGroupHelper stagingGroupHelper) {
 
-		HashMap<String, Serializable> importParameters =
+		Map<String, Serializable> importParameters =
 			HashMapBuilder.<String, Serializable>put(
 				"batchRestrictFields",
 				() -> {
+					List<String> batchRestrictFields = new ArrayList<>();
+
+					if (!MapUtil.getBoolean(
+							portletDataContext.getParameterMap(),
+							PortletDataHandlerKeys.COMMENTS)) {
+
+						batchRestrictFields.add("comments");
+					}
+
 					if (!MapUtil.getBoolean(
 							portletDataContext.getParameterMap(),
 							PortletDataHandlerKeys.PERMISSIONS)) {
 
-						return "permissions";
+						batchRestrictFields.add("permissions");
 					}
 
-					return null;
+					if (batchRestrictFields.isEmpty()) {
+						return null;
+					}
+
+					return StringUtil.merge(
+						batchRestrictFields, StringPool.COMMA);
 				}
 			).put(
 				"createStrategy", CreateStrategy.UPSERT.getDBOperation()

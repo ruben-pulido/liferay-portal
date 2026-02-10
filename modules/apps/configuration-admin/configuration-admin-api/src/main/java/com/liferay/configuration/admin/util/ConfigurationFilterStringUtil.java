@@ -8,8 +8,11 @@ package com.liferay.configuration.admin.util;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
+import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.io.Serializable;
 
 import org.osgi.framework.Constants;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -20,12 +23,12 @@ import org.osgi.service.cm.ConfigurationAdmin;
 public class ConfigurationFilterStringUtil {
 
 	public static String getCompanyScopedFilterString(
-		String companyId, String virtualInstanceId) {
+		Serializable companyId, String virtualInstanceId) {
 
 		return StringBundler.concat(
 			"(&(|(",
 			ExtendedObjectClassDefinition.Scope.COMPANY.getPropertyKey(),
-			StringPool.EQUAL, GetterUtil.get(companyId, "*"),
+			StringPool.EQUAL, _toString(companyId),
 			")(dxp.lxc.liferay.com.virtualInstanceId=",
 			GetterUtil.get(virtualInstanceId, "*"), "))(!(",
 			ExtendedObjectClassDefinition.Scope.GROUP.getPropertyKey(),
@@ -36,7 +39,7 @@ public class ConfigurationFilterStringUtil {
 	}
 
 	public static String getCompanyScopedFilterString(
-		String companyId, String pid, String virtualInstanceId) {
+		Serializable companyId, String pid, String virtualInstanceId) {
 
 		return StringBundler.concat(
 			StringPool.OPEN_PARENTHESIS, StringPool.AMPERSAND,
@@ -46,52 +49,78 @@ public class ConfigurationFilterStringUtil {
 	}
 
 	public static String getGroupScopedFilterString(
-		String groupId, String siteExternalReferenceCode) {
+		Serializable companyId, Serializable groupId,
+		String siteExternalReferenceCode) {
+
+		if ((companyId == null) ||
+			(GetterUtil.getLong(companyId) == CompanyConstants.SYSTEM)) {
+
+			throw new IllegalArgumentException(
+				"A valid company is expected when building a group scoped " +
+					"configuration filter");
+		}
 
 		return StringBundler.concat(
 			"(&(|(", ExtendedObjectClassDefinition.Scope.GROUP.getPropertyKey(),
-			StringPool.EQUAL, GetterUtil.get(groupId, "*"),
+			StringPool.EQUAL, _toString(groupId),
 			")(siteExternalReferenceCode=",
-			GetterUtil.get(siteExternalReferenceCode, "*"), "))(!(",
+			GetterUtil.get(siteExternalReferenceCode, "*"), "))(",
+			ExtendedObjectClassDefinition.Scope.COMPANY.getPropertyKey(),
+			StringPool.EQUAL, companyId, ")(!(",
 			ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE.
 				getPropertyKey(),
 			"=*)))");
 	}
 
 	public static String getGroupScopedFilterString(
-		String groupId, String pid, String siteExternalReferenceCode) {
+		Serializable companyId, Serializable groupId, String pid,
+		String siteExternalReferenceCode) {
 
 		return StringBundler.concat(
 			StringPool.OPEN_PARENTHESIS, StringPool.AMPERSAND,
 			_getScopedFilterString(pid),
-			getGroupScopedFilterString(groupId, siteExternalReferenceCode),
+			getGroupScopedFilterString(
+				companyId, groupId, siteExternalReferenceCode),
 			StringPool.CLOSE_PARENTHESIS);
 	}
 
 	public static String getPortletScopedFilterString(
-		String groupId, String portletInstanceId,
-		String siteExternalReferenceCode) {
+		Serializable portletInstanceId) {
 
 		return StringBundler.concat(
-			"(&(|(", ExtendedObjectClassDefinition.Scope.GROUP.getPropertyKey(),
-			StringPool.EQUAL, GetterUtil.get(groupId, "*"),
-			")(siteExternalReferenceCode=",
-			GetterUtil.get(siteExternalReferenceCode, "*"), "))(",
+			"(&(",
 			ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE.
 				getPropertyKey(),
-			"=", GetterUtil.get(portletInstanceId, "*"), "))");
+			"=", _toString(portletInstanceId), "))");
 	}
 
 	public static String getPortletScopedFilterString(
-		String groupId, String pid, String portletInstanceId,
-		String siteExternalReferenceCode) {
+		String pid, Serializable portletInstanceId) {
 
 		return StringBundler.concat(
 			StringPool.OPEN_PARENTHESIS, StringPool.AMPERSAND,
 			_getScopedFilterString(pid),
-			getPortletScopedFilterString(
-				groupId, portletInstanceId, siteExternalReferenceCode),
+			getPortletScopedFilterString(portletInstanceId),
 			StringPool.CLOSE_PARENTHESIS);
+	}
+
+	public static String getScopedFilterString(
+		Serializable companyId, String pid,
+		ExtendedObjectClassDefinition.Scope scope, Serializable scopePK) {
+
+		if (scope.equals(ExtendedObjectClassDefinition.Scope.COMPANY)) {
+			return getCompanyScopedFilterString(scopePK, pid, null);
+		}
+		else if (scope.equals(ExtendedObjectClassDefinition.Scope.GROUP)) {
+			return getGroupScopedFilterString(companyId, scopePK, pid, null);
+		}
+		else if (scope.equals(
+					ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE)) {
+
+			return getPortletScopedFilterString(pid, scopePK);
+		}
+
+		return getSystemScopedFilterString(pid);
 	}
 
 	public static String getSystemScopedFilterString() {
@@ -160,6 +189,14 @@ public class ConfigurationFilterStringUtil {
 		}
 
 		return filterString;
+	}
+
+	private static String _toString(Serializable value) {
+		if (value == null) {
+			return StringPool.STAR;
+		}
+
+		return String.valueOf(value);
 	}
 
 }

@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Michael Hashimoto
@@ -299,9 +301,48 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 			if ((notificationRecipients != null) &&
 				!notificationRecipients.isEmpty()) {
 
-				NotificationUtil.sendEmail(
-					message, "jenkins", "Build reinvoked",
-					reinvokeRule.notificationRecipients);
+				List<String> invalidNotificationRecipients = new ArrayList<>();
+
+				for (String notificationRecipient :
+						notificationRecipients.split(",")) {
+
+					notificationRecipient = notificationRecipient.trim();
+
+					Matcher matcher = _notificationRecipentsPattern.matcher(
+						notificationRecipient);
+
+					if (matcher.find()) {
+						String slack = matcher.group("slack");
+
+						if (!JenkinsResultsParserUtil.isNullOrEmpty(slack)) {
+							NotificationUtil.sendSlackNotification(
+								message, slack, "Build Reinvoked");
+
+							continue;
+						}
+
+						String email = matcher.group("slack");
+
+						if (!JenkinsResultsParserUtil.isNullOrEmpty(email)) {
+							NotificationUtil.sendEmail(
+								message, "jenkins", "Build Reinvoked", email);
+						}
+					}
+					else {
+						invalidNotificationRecipients.add(
+							notificationRecipient);
+					}
+				}
+
+				if (!invalidNotificationRecipients.isEmpty()) {
+					String invalidNotificationRecipientsString =
+						JenkinsResultsParserUtil.join(
+							",", invalidNotificationRecipients);
+
+					System.out.println(
+						"WARNING: Invalid notification recipients found: " +
+							invalidNotificationRecipientsString);
+				}
 			}
 
 			String reinvokeBuildPriority =
@@ -365,6 +406,10 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 
 		slaveOfflineRule.takeSlaveOffline(build);
 	}
+
+	private static final Pattern _notificationRecipentsPattern =
+		Pattern.compile(
+			"slack:(?:<@)?(?<slack>[\\w-]+)>?|(?<email>[\\w-]+@[\\w.-]+)");
 
 	private final Build _build;
 	private final Map<Build.Invocation, ReinvokeRule> _reinvokeRulesMap =

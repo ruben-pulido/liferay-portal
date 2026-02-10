@@ -132,6 +132,7 @@ export default function SharedWithMeFDSPropsTransformer({
 					autocompleteURL,
 					collaboratorURL: collaboratorURLs[itemData.className],
 					creator: itemData.creator,
+					entryClassName: itemData.className,
 					itemId: itemData.classPK,
 					title: itemData?.title,
 				});
@@ -158,6 +159,7 @@ export default function SharedWithMeFDSPropsTransformer({
 						id: item.classPK,
 						title: item.title,
 					},
+					entryClassName: item.className,
 				}));
 
 				openCMSModal({

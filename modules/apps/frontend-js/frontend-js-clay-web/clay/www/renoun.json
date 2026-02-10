@@ -1,0 +1,16 @@
+{
+	"$schema": "https://renoun.dev/schema.json",
+	"git": {
+		"source": "https://github.com/liferay/clay"
+	},
+	"languages": [
+		"tsx",
+		"typescript",
+		"jsx",
+		"html",
+		"scss",
+		"shell"
+	],
+	"siteUrl": "https://clayui.com",
+	"theme": "github-light"
+}

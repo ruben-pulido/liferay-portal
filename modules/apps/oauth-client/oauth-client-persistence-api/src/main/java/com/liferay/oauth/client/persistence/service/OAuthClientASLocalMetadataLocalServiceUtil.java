@@ -44,6 +44,20 @@ public class OAuthClientASLocalMetadataLocalServiceUtil {
 			userId, metadataJSON, wellKnownURISuffix);
 	}
 
+	public static OAuthClientASLocalMetadata addOAuthClientASLocalMetadata(
+			long userId, String authorizationEndpoint, String issuer,
+			String jwksURI, boolean localWellKnownEnabled,
+			String[] supportedGrantTypes, String[] supportedScopes,
+			String[] supportedSubjectTypes, String tokenEndpoint,
+			String userInfoEndpoint)
+		throws PortalException {
+
+		return getService().addOAuthClientASLocalMetadata(
+			userId, authorizationEndpoint, issuer, jwksURI,
+			localWellKnownEnabled, supportedGrantTypes, supportedScopes,
+			supportedSubjectTypes, tokenEndpoint, userInfoEndpoint);
+	}
+
 	/**
 	 * Adds the o auth client as local metadata to the database. Also notifies the appropriate model listeners.
 	 *
@@ -232,6 +246,20 @@ public class OAuthClientASLocalMetadataLocalServiceUtil {
 	}
 
 	public static OAuthClientASLocalMetadata fetchOAuthClientASLocalMetadata(
+		long companyId, boolean localWellKnownEnabled,
+		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
+
+		return getService().fetchOAuthClientASLocalMetadata(
+			companyId, localWellKnownEnabled, orderByComparator);
+	}
+
+	public static OAuthClientASLocalMetadata fetchOAuthClientASLocalMetadata(
+		long companyId, String issuer) {
+
+		return getService().fetchOAuthClientASLocalMetadata(companyId, issuer);
+	}
+
+	public static OAuthClientASLocalMetadata fetchOAuthClientASLocalMetadata(
 		String localWellKnownURI) {
 
 		return getService().fetchOAuthClientASLocalMetadata(localWellKnownURI);
@@ -312,6 +340,10 @@ public class OAuthClientASLocalMetadataLocalServiceUtil {
 		return getService().getOAuthClientASLocalMetadatasCount();
 	}
 
+	public static int getOAuthClientASLocalMetadatasCount(long companyId) {
+		return getService().getOAuthClientASLocalMetadatasCount(companyId);
+	}
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -350,6 +382,21 @@ public class OAuthClientASLocalMetadataLocalServiceUtil {
 
 		return getService().updateOAuthClientASLocalMetadata(
 			oAuthClientASLocalMetadataId, metadataJSON, wellKnownURISuffix);
+	}
+
+	public static OAuthClientASLocalMetadata updateOAuthClientASLocalMetadata(
+			long oAuthClientASLocalMetadataId, String authorizationEndpoint,
+			String issuer, String jwksURI, boolean localWellKnownEnabled,
+			String[] supportedGrantTypes, String[] supportedScopes,
+			String[] supportedSubjectTypes, String tokenEndpoint,
+			String userInfoEndpoint)
+		throws PortalException {
+
+		return getService().updateOAuthClientASLocalMetadata(
+			oAuthClientASLocalMetadataId, authorizationEndpoint, issuer,
+			jwksURI, localWellKnownEnabled, supportedGrantTypes,
+			supportedScopes, supportedSubjectTypes, tokenEndpoint,
+			userInfoEndpoint);
 	}
 
 	/**

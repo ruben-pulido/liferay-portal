@@ -1,0 +1,48 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2026 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+import React, {useContext} from 'react';
+
+import FrontendDataSetContext, {
+	IFrontendDataSetContext,
+} from '../FrontendDataSetContext';
+
+export interface IInlineNotificationComponent {
+	context: Pick<
+		IFrontendDataSetContext,
+		| 'forceSortsUpdate'
+		| 'loadData'
+		| 'onClearResultsBar'
+		| 'selectedItems'
+		| 'sorts'
+		| 'updateAdditionalAPIURLParameters'
+	>;
+}
+
+export function InlineNotification({
+	component: InlineNotificationComponent,
+}: {
+	component: React.ComponentType<IInlineNotificationComponent>;
+}) {
+	const FDSContext = useContext(FrontendDataSetContext);
+
+	const InlineNotificationContext = (({
+		forceSortsUpdate,
+		loadData,
+		onClearResultsBar,
+		selectedItems,
+		sorts,
+		updateAdditionalAPIURLParameters,
+	}) => ({
+		forceSortsUpdate,
+		loadData,
+		onClearResultsBar,
+		selectedItems,
+		sorts,
+		updateAdditionalAPIURLParameters,
+	}))(FDSContext);
+
+	return <InlineNotificationComponent context={InlineNotificationContext} />;
+}

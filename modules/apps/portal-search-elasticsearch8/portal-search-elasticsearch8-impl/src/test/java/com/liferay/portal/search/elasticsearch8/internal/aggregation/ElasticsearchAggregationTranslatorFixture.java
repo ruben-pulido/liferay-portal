@@ -6,10 +6,6 @@
 package com.liferay.portal.search.elasticsearch8.internal.aggregation;
 
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
-import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationTranslator;
-import com.liferay.portal.search.elasticsearch8.internal.aggregation.pipeline.ElasticsearchPipelineAggregationTranslatorFixture;
-
-import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
 
 /**
  * @author Michael C. Han
@@ -17,21 +13,13 @@ import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
 public class ElasticsearchAggregationTranslatorFixture {
 
 	public ElasticsearchAggregationTranslatorFixture() {
-		ElasticsearchPipelineAggregationTranslatorFixture
-			pipelineAggregationTranslatorFixture =
-				new ElasticsearchPipelineAggregationTranslatorFixture();
-
-		PipelineAggregationTranslator<PipelineAggregationBuilder>
-			pipelineAggregationTranslator =
-				pipelineAggregationTranslatorFixture.
-					getElasticsearchPipelineAggregationTranslator();
-
 		ElasticsearchAggregationTranslator elasticsearchAggregationTranslator =
 			new ElasticsearchAggregationTranslator();
 
 		ReflectionTestUtil.setFieldValue(
 			elasticsearchAggregationTranslator,
-			"_pipelineAggregationTranslator", pipelineAggregationTranslator);
+			"_pipelineAggregationTranslator",
+			new ElasticsearchPipelineAggregationTranslator());
 
 		_elasticsearchAggregationTranslator =
 			elasticsearchAggregationTranslator;

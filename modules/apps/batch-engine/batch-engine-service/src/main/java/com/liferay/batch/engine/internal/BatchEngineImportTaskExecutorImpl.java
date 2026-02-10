@@ -38,6 +38,7 @@ import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskStatusMessageSender;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.log.Log;
@@ -473,6 +474,10 @@ public class BatchEngineImportTaskExecutorImpl
 						batchEngineImportTask, batchEngineTaskItemDelegate,
 						items, parameters, processedItemsCount);
 
+					BatchEngineTaskExecutorUtil.sendBatchProgressMessage(
+						_backgroundTaskStatusMessageSender,
+						processedItemsCount);
+
 					items.clear();
 
 					ItemIndexThreadLocal.clear();
@@ -483,6 +488,11 @@ public class BatchEngineImportTaskExecutorImpl
 				_commitItems(
 					batchEngineImportTask, batchEngineTaskItemDelegate, items,
 					parameters, processedItemsCount);
+			}
+
+			if (processedItemsCount > 0) {
+				BatchEngineTaskExecutorUtil.sendBatchProgressMessage(
+					_backgroundTaskStatusMessageSender, processedItemsCount);
 			}
 		}
 
@@ -591,6 +601,10 @@ public class BatchEngineImportTaskExecutorImpl
 	private static final TransactionConfig _transactionConfig =
 		TransactionConfig.Factory.create(
 			Propagation.REQUIRES_NEW, new Class<?>[] {Exception.class});
+
+	@Reference
+	private BackgroundTaskStatusMessageSender
+		_backgroundTaskStatusMessageSender;
 
 	@Reference
 	private BatchEngineImportTaskErrorLocalService

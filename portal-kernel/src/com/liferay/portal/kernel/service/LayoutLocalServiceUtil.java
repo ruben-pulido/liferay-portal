@@ -378,6 +378,18 @@ public class LayoutLocalServiceUtil {
 			serviceContext);
 	}
 
+	public static Layout convertEmptyLayout(
+			long userId, long plid, Map<java.util.Locale, String> nameMap,
+			String type, long classNameId, long classPK,
+			String masterLayoutPageTemplateEntryERC,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		return getService().convertEmptyLayout(
+			userId, plid, nameMap, type, classNameId, classPK,
+			masterLayoutPageTemplateEntryERC, serviceContext);
+	}
+
 	public static Layout copyLayout(
 			long userId, long groupId, boolean privateLayout,
 			Map<java.util.Locale, String> nameMap, boolean hidden,
@@ -1213,20 +1225,6 @@ public class LayoutLocalServiceUtil {
 			groupId, keywords, types, statuses, start, end, orderByComparator);
 	}
 
-	public static List<Layout> getLayoutsByLayoutPrototypeUuid(
-		String layoutPrototypeUuid) {
-
-		return getService().getLayoutsByLayoutPrototypeUuid(
-			layoutPrototypeUuid);
-	}
-
-	public static int getLayoutsByLayoutPrototypeUuidCount(
-		String layoutPrototypeUuid) {
-
-		return getService().getLayoutsByLayoutPrototypeUuidCount(
-			layoutPrototypeUuid);
-	}
-
 	/**
 	 * Returns all the layouts matching the UUID and company.
 	 *
@@ -1513,6 +1511,13 @@ public class LayoutLocalServiceUtil {
 		long groupId, boolean privateLayout, long parentLayoutId) {
 
 		return getService().hasLayouts(groupId, privateLayout, parentLayoutId);
+	}
+
+	public static boolean hasLayouts(
+		long groupId, String portletLayoutPageTemplateEntryERC) {
+
+		return getService().hasLayouts(
+			groupId, portletLayoutPageTemplateEntryERC);
 	}
 
 	public static boolean hasLayouts(

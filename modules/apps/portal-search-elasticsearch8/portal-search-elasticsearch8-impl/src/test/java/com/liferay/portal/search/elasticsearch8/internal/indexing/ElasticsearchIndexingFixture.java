@@ -5,6 +5,8 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.indexing;
 
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.search.IndexSearcher;
 import com.liferay.portal.kernel.search.IndexWriter;
@@ -38,8 +40,6 @@ import com.liferay.portal.util.LocalizationImpl;
 
 import java.util.Map;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
-
 import org.mockito.Mockito;
 
 /**
@@ -58,6 +58,11 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 
 	public ElasticsearchClientResolver getElasticsearchClientResolver() {
 		return _elasticsearchFixture;
+	}
+
+	@Override
+	public String getIndexName() {
+		return _indexName;
 	}
 
 	@Override
@@ -101,6 +106,8 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 
 		IndexNameBuilder indexNameBuilder = _createIndexNameBuilder();
 
+		_indexName = indexNameBuilder.getIndexName(_companyId);
+
 		Localization localization = new LocalizationImpl();
 
 		ElasticsearchIndexSearcher elasticsearchIndexSearcher =
@@ -108,12 +115,14 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 				_elasticsearchFixture, indexNameBuilder, localization,
 				searchEngineAdapter);
 
+		_indexSearcher = elasticsearchIndexSearcher;
+
 		IndexWriter indexWriter = _createIndexWriter(
 			_elasticsearchFixture, indexNameBuilder, localization,
 			searchEngineAdapter);
 
-		_indexSearcher = elasticsearchIndexSearcher;
 		_indexWriter = indexWriter;
+
 		_searchEngineAdapter = searchEngineAdapter;
 
 		_createIndex(indexNameBuilder);
@@ -144,7 +153,7 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 	}
 
 	protected void setFacetProcessor(
-		FacetProcessor<SearchRequestBuilder> facetProcessor) {
+		FacetProcessor<SearchRequest.Builder> facetProcessor) {
 
 		_facetProcessor = facetProcessor;
 	}
@@ -158,7 +167,7 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 	private ElasticsearchEngineAdapterFixture
 		_createElasticsearchEngineAdapterFixture(
 			ElasticsearchClientResolver elasticsearchClientResolver,
-			FacetProcessor<SearchRequestBuilder> facetProcessor) {
+			FacetProcessor<SearchRequest.Builder> facetProcessor) {
 
 		return new ElasticsearchEngineAdapterFixture() {
 			{
@@ -320,8 +329,9 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 
 	private final long _companyId;
 	private ElasticsearchFixture _elasticsearchFixture;
-	private FacetProcessor<SearchRequestBuilder> _facetProcessor;
+	private FacetProcessor<SearchRequest.Builder> _facetProcessor;
 	private IndexCreationHelper _indexCreationHelper;
+	private String _indexName;
 	private IndexSearcher _indexSearcher;
 	private IndexWriter _indexWriter;
 	private boolean _liferayMappingsAddedToIndex;

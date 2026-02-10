@@ -10,8 +10,10 @@ import {OBJECT_ENTRY_FOLDER_CLASS_NAME} from '../../common/utils/constants';
 import {openCMSModal} from '../../common/utils/openCMSModal';
 import DefaultPermissionModalContent from '../default_permission/DefaultPermissionModalContent';
 import openResetAssetPermissionModal from '../default_permission/ResetPermissionModalContent';
+import ExportTranslationModalContent from '../modal/ExportTranslationModalContent';
 import AssetNavigationModalContent from '../modal/asset_navigation_view/AssetNavigationModalContent';
 import {AdditionalProps} from './AssetsFDSPropsTransformer';
+import ACTIONS from './actions/creationMenuActions';
 import deleteItemAction from './actions/deleteItemAction';
 import openFolderItemSelectorAction from './actions/openFolderItemSelectorAction';
 import shareAction from './actions/shareAction';
@@ -151,17 +153,43 @@ export default function HomeRecentAssetsFDSPropsTransformer({
 					await deleteItemAction(itemData, loadData);
 				}
 			}
-			else if (
-				action?.data?.id === 'export-for-translation' ||
-				action?.data?.id === 'import-translation'
-			) {
+			else if (action?.data?.id === 'export-for-translation') {
 				event?.preventDefault();
 
 				openCMSModal({
-					size: 'full-screen',
-					title: action.label,
-					url: replaceTokens(action.href, itemData),
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						ExportTranslationModalContent({
+							availableExportFileFormats:
+								additionalProps.availableExportFileFormats,
+							availableSourceLocales: Object.keys(
+								itemData.embedded?.title_i18n || {}
+							)
+								.map((languageId) =>
+									additionalProps.availableTargetLocales.find(
+										(locale) =>
+											locale.languageId === languageId
+									)
+								)
+								.filter(Boolean),
+							availableTargetLocales:
+								additionalProps.availableTargetLocales,
+							closeModal,
+							defaultSourceLanguageId:
+								itemData.embedded?.defaultLanguageId,
+							itemId: itemData.embedded.id,
+						}),
 				});
+			}
+			else if (action?.data?.id === 'import-translation') {
+				event?.preventDefault();
+
+				const formattedHref = replaceTokens(action.href, itemData);
+
+				ACTIONS.importTranslation(itemData, formattedHref, loadData);
 			}
 			else if (action?.data?.id === 'reset-to-default-permissions') {
 				openResetAssetPermissionModal({
@@ -198,6 +226,7 @@ export default function HomeRecentAssetsFDSPropsTransformer({
 					autocompleteURL,
 					collaboratorURL: collaboratorURLs[itemData.entryClassName],
 					creator: itemData.embedded.creator,
+					entryClassName: itemData.entryClassName,
 					itemId: itemData.embedded.id,
 					title: itemData.embedded?.title,
 				});

@@ -128,6 +128,88 @@ public class Token implements Serializable {
 	@JsonIgnore
 	private Supplier<String> _scopeSupplier;
 
+	@io.swagger.v3.oas.annotations.media.Schema
+	public String getServiceURL() {
+		if (_serviceURLSupplier != null) {
+			serviceURL = _serviceURLSupplier.get();
+
+			_serviceURLSupplier = null;
+		}
+
+		return serviceURL;
+	}
+
+	public void setServiceURL(String serviceURL) {
+		this.serviceURL = serviceURL;
+
+		_serviceURLSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setServiceURL(
+		UnsafeSupplier<String, Exception> serviceURLUnsafeSupplier) {
+
+		_serviceURLSupplier = () -> {
+			try {
+				return serviceURLUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected String serviceURL;
+
+	@JsonIgnore
+	private Supplier<String> _serviceURLSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema
+	public String getUserToken() {
+		if (_userTokenSupplier != null) {
+			userToken = _userTokenSupplier.get();
+
+			_userTokenSupplier = null;
+		}
+
+		return userToken;
+	}
+
+	public void setUserToken(String userToken) {
+		this.userToken = userToken;
+
+		_userTokenSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setUserToken(
+		UnsafeSupplier<String, Exception> userTokenUnsafeSupplier) {
+
+		_userTokenSupplier = () -> {
+			try {
+				return userTokenUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected String userToken;
+
+	@JsonIgnore
+	private Supplier<String> _userTokenSupplier;
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
@@ -183,6 +265,38 @@ public class Token implements Serializable {
 			sb.append("\"");
 
 			sb.append(_escape(scope));
+
+			sb.append("\"");
+		}
+
+		String serviceURL = getServiceURL();
+
+		if (serviceURL != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"serviceURL\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(serviceURL));
+
+			sb.append("\"");
+		}
+
+		String userToken = getUserToken();
+
+		if (userToken != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"userToken\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(userToken));
 
 			sb.append("\"");
 		}

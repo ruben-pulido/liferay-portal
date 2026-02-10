@@ -15,6 +15,7 @@ import {
 import {
 	buildField,
 	buildReferencedStructure,
+	buildRepeatableGroup,
 	getSpaces,
 } from './buildStructure';
 import isCustomObjectField from './isCustomObjectField';
@@ -44,7 +45,8 @@ export default function refreshReferencedStructures({
 
 			const objectRelationship =
 				objectDefinition?.objectRelationships?.find(
-					({name}) => name === child.name
+					({objectDefinitionName2}) =>
+						objectDefinitionName2 === child.name
 				);
 
 			if (objectDefinition && !objectRelationship) {
@@ -78,7 +80,8 @@ export default function refreshReferencedStructures({
 
 			const objectRelationship =
 				objectDefinition?.objectRelationships?.find(
-					({name}) => name === child.name
+					({objectDefinitionName2}) =>
+						objectDefinitionName2 === child.name
 				);
 
 			if (objectDefinition && !objectRelationship) {
@@ -87,7 +90,13 @@ export default function refreshReferencedStructures({
 
 			// Insert it with updated data and refresh its children
 
-			const relatedObjectDefinition = objectDefinitions[child.erc]!;
+			const relatedObjectDefinition = objectDefinitions[child.erc];
+
+			if (!relatedObjectDefinition) {
+				children.set(child.uuid, child);
+
+				continue;
+			}
 
 			const repeatableGroup: RepeatableGroup = {
 				...child,
@@ -151,25 +160,50 @@ export default function refreshReferencedStructures({
 			children.set(field.uuid, field);
 		}
 
-		// Insert new referenced structures
+		// Insert new referenced structures and repeatable groups
 
 		const newObjectRelationships = Array.from(
 			objectDefinition.objectRelationships || []
 		).filter(
 			(objectRelationship) =>
-				!childrenNames.includes(objectRelationship.name)
+				!childrenNames.includes(
+					objectRelationship.objectDefinitionName2!
+				)
 		);
 
 		for (const objectRelationship of newObjectRelationships) {
-			const referencedStructure = buildReferencedStructure({
-				ancestors,
-				erc: objectRelationship.objectDefinitionExternalReferenceCode2,
-				objectDefinitions,
-				parent: root.uuid,
-				relationshipName: objectRelationship.name,
-			});
+			const relatedObjectDefinition =
+				objectDefinitions[
+					objectRelationship.objectDefinitionExternalReferenceCode2
+				];
 
-			children.set(referencedStructure.uuid, referencedStructure);
+			if (
+				relatedObjectDefinition?.objectFolderExternalReferenceCode ===
+				'L_CMS_STRUCTURE_REPEATABLE_GROUPS'
+			) {
+				const repeatableGroup = buildRepeatableGroup({
+					ancestors,
+					erc: objectRelationship.objectDefinitionExternalReferenceCode2,
+					objectDefinitions,
+					parent: root.uuid,
+					relationshipERC: objectRelationship.externalReferenceCode,
+					relationshipName: objectRelationship.name,
+				});
+
+				children.set(repeatableGroup.uuid, repeatableGroup);
+			}
+			else {
+				const referencedStructure = buildReferencedStructure({
+					ancestors,
+					erc: objectRelationship.objectDefinitionExternalReferenceCode2,
+					objectDefinitions,
+					parent: root.uuid,
+					relationshipERC: objectRelationship.externalReferenceCode,
+					relationshipName: objectRelationship.name,
+				});
+
+				children.set(referencedStructure.uuid, referencedStructure);
+			}
 		}
 	}
 

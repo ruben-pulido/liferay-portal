@@ -19,8 +19,13 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
@@ -31,6 +36,9 @@ import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
+
+import java.util.List;
+import java.util.Objects;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -183,6 +191,42 @@ public class DigitalSalesRoomTemplateResourceTest
 			digitalSalesRoomTemplate);
 	}
 
+	private void _assertLayouts(long groupId, String[] names) throws Exception {
+		List<Layout> layouts = _layoutLocalService.getLayouts(groupId, false);
+
+		Assert.assertTrue(
+			ArrayUtil.containsAll(
+				TransformUtil.transformToArray(
+					layouts,
+					layout -> layout.getName(LocaleUtil.getSiteDefault()),
+					String.class),
+				names));
+
+		Role role = _roleLocalService.getRole(
+			TestPropsValues.getCompanyId(), "Guest");
+
+		for (Layout layout : layouts) {
+			boolean hasResourcePermission =
+				_resourcePermissionLocalService.hasResourcePermission(
+					layout.getCompanyId(), Layout.class.getName(),
+					ResourceConstants.SCOPE_INDIVIDUAL,
+					String.valueOf(layout.getPlid()), role.getRoleId(),
+					ActionKeys.VIEW);
+
+			if (Objects.equals(
+					layout.getName(LocaleUtil.getSiteDefault()), "Documents") ||
+				Objects.equals(
+					layout.getName(LocaleUtil.getSiteDefault()),
+					"Onboarding")) {
+
+				Assert.assertFalse(hasResourcePermission);
+			}
+			else {
+				Assert.assertTrue(hasResourcePermission);
+			}
+		}
+	}
+
 	private void _testPostDigitalSalesRoomDigitalSalesRoomTemplate()
 		throws Exception {
 
@@ -248,16 +292,16 @@ public class DigitalSalesRoomTemplateResourceTest
 						digitalSalesRoomTemplate.getId(),
 						fragmentCollection.getFragmentCollectionId(), 0),
 					FragmentEntryModel::getName, String.class),
-				new String[] {"Header Main", "Header User", "Welcome Block"}));
+				new String[] {
+					"Gallery Block", "Header Main", "Header User",
+					"Our Team Block", "PDF Preview Block",
+					"Question and Answer Block", "Text Block", "Timeline Block",
+					"Video Block", "Welcome Block"
+				}));
 
-		Assert.assertTrue(
-			ArrayUtil.containsAll(
-				TransformUtil.transformToArray(
-					_layoutLocalService.getLayouts(
-						digitalSalesRoomTemplate.getId(), false),
-					layout -> layout.getName(LocaleUtil.getSiteDefault()),
-					String.class),
-				new String[] {"Documents", "Onboarding"}));
+		_assertLayouts(
+			digitalSalesRoomTemplate.getId(),
+			new String[] {"Documents", "Login", "Onboarding"});
 	}
 
 	private void _testPostDigitalSalesRoomTemplateDigitalSalesRoomTemplate()
@@ -318,20 +362,20 @@ public class DigitalSalesRoomTemplateResourceTest
 						digitalSalesRoomTemplate2.getId(),
 						fragmentCollection.getFragmentCollectionId(), 0),
 					FragmentEntryModel::getName, String.class),
-				new String[] {"Header Main", "Header User", "Welcome Block"}));
-
-		Assert.assertTrue(
-			ArrayUtil.containsAll(
-				TransformUtil.transformToArray(
-					_layoutLocalService.getLayouts(
-						digitalSalesRoomTemplate2.getId(), false),
-					layout -> layout.getName(LocaleUtil.getSiteDefault()),
-					String.class),
 				new String[] {
-					"Documents", "Onboarding",
-					layout1.getName(LocaleUtil.getSiteDefault()),
-					layout2.getName(LocaleUtil.getSiteDefault())
+					"Gallery Block", "Header Main", "Header User",
+					"Our Team Block", "PDF Preview Block",
+					"Question and Answer Block", "Text Block", "Timeline Block",
+					"Video Block", "Welcome Block"
 				}));
+
+		_assertLayouts(
+			digitalSalesRoomTemplate2.getId(),
+			new String[] {
+				"Documents", "Login", "Onboarding",
+				layout1.getName(LocaleUtil.getSiteDefault()),
+				layout2.getName(LocaleUtil.getSiteDefault())
+			});
 	}
 
 	private ObjectDefinition _dsrRoomObjectDefinition;
@@ -344,5 +388,11 @@ public class DigitalSalesRoomTemplateResourceTest
 
 	@Inject
 	private LayoutLocalService _layoutLocalService;
+
+	@Inject
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Inject
+	private RoleLocalService _roleLocalService;
 
 }

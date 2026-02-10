@@ -10,6 +10,7 @@ import React, {useEffect} from 'react';
 import {
 	ObjectDefinition,
 	ObjectDefinitions,
+	ObjectRelationship,
 } from '../../common/types/ObjectDefinition';
 import {Config, initializeConfig} from '../config';
 import CacheContextProvider from '../contexts/CacheContext';
@@ -17,6 +18,7 @@ import StateContextProvider, {useSelector} from '../contexts/StateContext';
 import selectStructureId from '../selectors/selectStructureId';
 import selectStructureStatus from '../selectors/selectStructureStatus';
 import buildState from '../utils/buildState';
+import ShortcutManager from './ShortcutManager';
 import Sidebar from './Sidebar';
 import StructureBuilderToolbar from './StructureBuilderToolbar';
 import Settings from './settings/Settings';
@@ -29,6 +31,7 @@ export default function StructureBuilder({
 	state: {
 		mainObjectDefinition: ObjectDefinition;
 		objectDefinitions: ObjectDefinitions;
+		relatedContentObjectRelationships: ObjectRelationship[];
 	};
 }) {
 	initializeConfig(config);
@@ -42,6 +45,8 @@ export default function StructureBuilder({
 			>
 				<div className="d-flex flex-column structure-builder__wrapper">
 					<HistoryManager />
+
+					<ShortcutManager />
 
 					<StructureBuilderToolbar />
 

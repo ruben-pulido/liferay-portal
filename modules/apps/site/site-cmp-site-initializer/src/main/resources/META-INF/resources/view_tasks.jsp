@@ -11,6 +11,13 @@
 ViewTasksSectionDisplayContext viewTasksSectionDisplayContext = (ViewTasksSectionDisplayContext)request.getAttribute(ViewTasksSectionDisplayContext.class.getName());
 %>
 
+<div>
+	<react:component
+		module="{TasksQuickFilters} from site-cmp-site-initializer"
+		props="<%= viewTasksSectionDisplayContext.getTasksQuickFiltersProperties() %>"
+	/>
+</div>
+
 <div class="cms-section custom-empty-state">
 	<frontend-data-set:headless-display
 		apiURL="<%= viewTasksSectionDisplayContext.getAPIURL() %>"
@@ -18,10 +25,12 @@ ViewTasksSectionDisplayContext viewTasksSectionDisplayContext = (ViewTasksSectio
 		creationMenu="<%= viewTasksSectionDisplayContext.getCreationMenu() %>"
 		emptyState="<%= viewTasksSectionDisplayContext.getEmptyState() %>"
 		fdsActionDropdownItems="<%= viewTasksSectionDisplayContext.getFDSActionDropdownItems() %>"
+		fdsFilters="<%= viewTasksSectionDisplayContext.getFDSFilters() %>"
 		formName="fm"
 		id="<%= CMPSiteInitializerFDSNames.CMP_TASK %>"
 		itemsPerPage="<%= 20 %>"
 		propsTransformer="{TasksFDSPropsTransformer} from site-cmp-site-initializer"
 		selectedItemsKey="embedded.id"
+		selectionType="multiple"
 	/>
 </div>

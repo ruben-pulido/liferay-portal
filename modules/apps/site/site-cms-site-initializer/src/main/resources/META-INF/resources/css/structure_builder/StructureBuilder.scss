@@ -22,7 +22,17 @@ $structureFieldsWidth: 448px;
 				color: $cadmin-teal-l1;
 			}
 
-			&--structure-icon {
+			&--input {
+				background: transparent;
+
+				&:active,
+				&:focus {
+					outline-color: $cadmin-primary-l1;
+				}
+			}
+
+			&--structure-icon,
+			&--related-content-icon {
 				color: $cadmin-orange-l1;
 			}
 		}

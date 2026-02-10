@@ -6,23 +6,19 @@
 package com.liferay.ai.hub.rest.internal.resource.v1_0;
 
 import com.liferay.ai.hub.rest.dto.v1_0.TaskDefinition;
+import com.liferay.ai.hub.rest.manager.v1_0.TaskDefinitionManager;
 import com.liferay.ai.hub.rest.resource.v1_0.TaskDefinitionResource;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.kernel.workflow.WorkflowDefinition;
+import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
+import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
-import com.liferay.portal.vulcan.util.SearchUtil;
-import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
-import com.liferay.portal.workflow.manager.WorkflowDefinitionManager;
+
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -38,6 +34,23 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class TaskDefinitionResourceImpl extends BaseTaskDefinitionResourceImpl {
 
 	@Override
+	public void deleteTaskDefinition(Long taskDefinitionId) throws Exception {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-62272")) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		_taskDefinitionManager.deleteTaskDefinition(
+			_createDTOConverterContext(taskDefinitionId), taskDefinitionId);
+	}
+
+	@Override
+	public EntityModel getEntityModel(MultivaluedMap multivaluedMap) {
+		return _entityModel;
+	}
+
+	@Override
 	public Page<TaskDefinition> getTaskDefinitionsPage(
 			String search, Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
@@ -48,46 +61,58 @@ public class TaskDefinitionResourceImpl extends BaseTaskDefinitionResourceImpl {
 			throw new UnsupportedOperationException();
 		}
 
-		return SearchUtil.search(
-			HashMapBuilder.put(
-				"get",
-				addAction(
-					ActionKeys.VIEW, "getTaskDefinitionsPage",
-					WorkflowConstants.RESOURCE_NAME, null)
-			).build(),
-			booleanQuery -> {
-				BooleanFilter booleanFilter =
-					booleanQuery.getPreBooleanFilter();
-
-				booleanFilter.addRequiredTerm("latest", Boolean.TRUE);
-				booleanFilter.addRequiredTerm("scope", "ai");
-			},
-			filter, KaleoDefinitionVersion.class.getName(), search, pagination,
-			queryConfig -> queryConfig.setSelectedFieldNames(
-				Field.NAME, Field.VERSION),
-			searchContext -> searchContext.setCompanyId(
-				contextCompany.getCompanyId()),
-			sorts,
-			document -> _toTaskDefinition(
-				_workflowDefinitionManager.getWorkflowDefinition(
-					contextCompany.getCompanyId(), document.get(Field.NAME),
-					GetterUtil.getInteger(document.get(Field.VERSION)))));
+		return _taskDefinitionManager.getTaskDefinitions(
+			contextCompany.getCompanyId(), _createDTOConverterContext(null),
+			filter, pagination, search, sorts);
 	}
 
-	private TaskDefinition _toTaskDefinition(
-			WorkflowDefinition workflowDefinition)
-		throws PortalException {
+	@Override
+	public TaskDefinition patchTaskDefinitionUpdateActive(
+			Long taskDefinitionId, Boolean active)
+		throws Exception {
 
-		return new TaskDefinition() {
-			{
-				setDescription(workflowDefinition::getDescription);
-				setName(workflowDefinition::getName);
-				setVersion(workflowDefinition::getVersion);
-			}
-		};
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-62272")) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		return _taskDefinitionManager.patchTaskDefinitionUpdateActive(
+			active, _createDTOConverterContext(taskDefinitionId),
+			taskDefinitionId);
+	}
+
+	@Override
+	public TaskDefinition postTaskDefinitionCopy(Long taskDefinitionId)
+		throws Exception {
+
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-62272")) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		return _taskDefinitionManager.postTaskDefinitionCopy(
+			_createDTOConverterContext(taskDefinitionId), taskDefinitionId);
+	}
+
+	private DTOConverterContext _createDTOConverterContext(
+		Long taskDefinitionId) {
+
+		return new DefaultDTOConverterContext(
+			contextAcceptLanguage.isAcceptAllLanguages(), null,
+			_dtoConverterRegistry, contextHttpServletRequest, taskDefinitionId,
+			contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
+			contextUser);
 	}
 
 	@Reference
-	private WorkflowDefinitionManager _workflowDefinitionManager;
+	private DTOConverterRegistry _dtoConverterRegistry;
+
+	@Reference(target = "(entity.model.name=TaskDefinition)")
+	private EntityModel _entityModel;
+
+	@Reference
+	private TaskDefinitionManager _taskDefinitionManager;
 
 }

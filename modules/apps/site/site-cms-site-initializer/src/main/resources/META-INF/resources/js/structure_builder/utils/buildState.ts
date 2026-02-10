@@ -6,6 +6,7 @@
 import {
 	ObjectDefinition,
 	ObjectDefinitions,
+	ObjectRelationship,
 } from '../../common/types/ObjectDefinition';
 import {State} from '../contexts/StateContext';
 import buildStructure from './buildStructure';
@@ -14,20 +15,27 @@ import {getChildrenUuids} from './getChildrenUuids';
 export default function buildState({
 	mainObjectDefinition,
 	objectDefinitions,
+	relatedContentObjectRelationships,
 }: {
 	mainObjectDefinition: ObjectDefinition;
 	objectDefinitions: ObjectDefinitions;
+	relatedContentObjectRelationships: ObjectRelationship[];
 }): State | null {
 	if (!mainObjectDefinition) {
 		return null;
 	}
 
-	const structure = buildStructure({mainObjectDefinition, objectDefinitions});
+	const structure = buildStructure({
+		mainObjectDefinition,
+		objectDefinitions,
+		relatedContentObjectRelationships,
+	});
 
 	return {
 		history: {
-			deletedChildren: false,
+			deletedChildren: [],
 			deletedGroupERCs: [],
+			deletedRelationships: [],
 			modifiedNames: new Set(),
 		},
 		invalids: new Map(),
@@ -35,6 +43,7 @@ export default function buildState({
 			structure.status === 'published'
 				? getChildrenUuids({root: structure})
 				: new Set(),
+		renamingItemUuid: null,
 		selection: [],
 		structure,
 		unsavedChanges: false,

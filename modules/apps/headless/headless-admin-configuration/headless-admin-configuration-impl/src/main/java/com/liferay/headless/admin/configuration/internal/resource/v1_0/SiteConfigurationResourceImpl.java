@@ -212,7 +212,8 @@ public class SiteConfigurationResourceImpl
 
 		Configuration[] configurations = _configurationAdmin.listConfigurations(
 			ConfigurationFilterStringUtil.getGroupScopedFilterString(
-				String.valueOf(groupId), siteExternalReferenceCode));
+				contextCompany.getCompanyId(), groupId,
+				siteExternalReferenceCode));
 
 		if (ArrayUtil.isEmpty(configurations)) {
 			return;
@@ -283,7 +284,8 @@ public class SiteConfigurationResourceImpl
 
 		Configuration[] configurations = _configurationAdmin.listConfigurations(
 			ConfigurationFilterStringUtil.getGroupScopedFilterString(
-				String.valueOf(groupId), siteConfigurationExternalReferenceCode,
+				contextCompany.getCompanyId(), groupId,
+				siteConfigurationExternalReferenceCode,
 				siteExternalReferenceCode));
 
 		if (ArrayUtil.isEmpty(configurations)) {
@@ -343,7 +345,7 @@ public class SiteConfigurationResourceImpl
 
 		String filterString =
 			ConfigurationFilterStringUtil.getGroupScopedFilterString(
-				String.valueOf(groupId),
+				contextCompany.getCompanyId(), groupId,
 				siteConfiguration.getExternalReferenceCode(),
 				siteExternalReferenceCode);
 

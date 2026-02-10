@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListMergeable;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -184,7 +185,8 @@ public class LayoutSEOLinkManagerImpl implements LayoutSEOLinkManager {
 				layout.getLayoutId());
 
 		if ((layoutSEOEntry == null) ||
-			!layoutSEOEntry.isCanonicalURLEnabled()) {
+			!layoutSEOEntry.isCanonicalURLEnabled() ||
+			MapUtil.isEmpty(layoutSEOEntry.getCanonicalURLMap())) {
 
 			return alternateURLs;
 		}
@@ -208,8 +210,9 @@ public class LayoutSEOLinkManagerImpl implements LayoutSEOLinkManager {
 			String alternateCanonicalURL = layoutSEOEntry.getCanonicalURL(
 				locale);
 
-			if (!locale.equals(siteDefaultLocale) &&
-				currentCanonicalURL.equals(alternateCanonicalURL)) {
+			if (Validator.isNull(alternateCanonicalURL) ||
+				(!locale.equals(siteDefaultLocale) &&
+				 currentCanonicalURL.equals(alternateCanonicalURL))) {
 
 				alternateCanonicalURL = entry.getValue();
 			}
@@ -262,7 +265,8 @@ public class LayoutSEOLinkManagerImpl implements LayoutSEOLinkManager {
 
 		LayoutSEOGeneralGroupConfiguration layoutSEOGeneralGroupConfiguration =
 			_configurationProvider.getGroupConfiguration(
-				LayoutSEOGeneralGroupConfiguration.class, layout.getGroupId());
+				LayoutSEOGeneralGroupConfiguration.class, layout.getCompanyId(),
+				layout.getGroupId());
 
 		if (!layoutSEOGeneralGroupConfiguration.includeInstanceName() &&
 			!layoutSEOGeneralGroupConfiguration.includeSiteName()) {

@@ -158,8 +158,47 @@ public class SlaveOfflineRule {
 			(notificationRecipients != null) &&
 			!notificationRecipients.isEmpty()) {
 
-			NotificationUtil.sendEmail(
-				message, "jenkins", "Slave offline", notificationRecipients);
+			List<String> invalidNotificationRecipients = new ArrayList<>();
+
+			for (String notificationRecipient :
+					notificationRecipients.split(",")) {
+
+				notificationRecipient = notificationRecipient.trim();
+
+				Matcher matcher = _notificationRecipentsPattern.matcher(
+					notificationRecipient);
+
+				if (matcher.find()) {
+					String slack = matcher.group("slack");
+
+					if (!JenkinsResultsParserUtil.isNullOrEmpty(slack)) {
+						NotificationUtil.sendSlackNotification(
+							message, slack, "Slave offline");
+
+						continue;
+					}
+
+					String email = matcher.group("slack");
+
+					if (!JenkinsResultsParserUtil.isNullOrEmpty(email)) {
+						NotificationUtil.sendEmail(
+							message, "jenkins", "Slave offline", email);
+					}
+				}
+				else {
+					invalidNotificationRecipients.add(notificationRecipient);
+				}
+			}
+
+			if (!invalidNotificationRecipients.isEmpty()) {
+				String invalidNotificationRecipientsString =
+					JenkinsResultsParserUtil.join(
+						",", invalidNotificationRecipients);
+
+				System.out.println(
+					"WARNING: Invalid notification recipients found: " +
+						invalidNotificationRecipientsString);
+			}
 		}
 	}
 
@@ -265,6 +304,9 @@ public class SlaveOfflineRule {
 
 	private static final Pattern _configurationsPattern = Pattern.compile(
 		"([^=]+)=(.*)");
+	private static final Pattern _notificationRecipentsPattern =
+		Pattern.compile(
+			"slack:(?:<@)?(?<slack>[\\w-]+)>?|(?<email>[\\w-]+@[\\w.-]+)");
 	private static List<SlaveOfflineRule> _slaveOfflineRules;
 
 }

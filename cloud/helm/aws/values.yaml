@@ -33,34 +33,52 @@ liferay-default:
             -   secretRef:
                     name: managed-service-details
     customInitContainers:
-        x-liferay-overlay:
+        x-liferay-install-opensearch-modules:
             -   containerTemplate: |
                     -   command:
-                            -   bash
-                            -   -c
-                            -   |
-                                    {{- if and .overlay .overlay.enabled }}
-                                    {{- $overlay := .overlay -}}
-                                    {{- range $overlay.dirs }}
-                                    tree /mnt/liferay/
-                                    mkdir -p /temp/{{ . }}
-                                    cp -R /mnt/liferay/overlay/{{ . }}/* /temp/{{ . }}
-                                    tree /temp/{{ . }}
-                                    {{- end }}
-                                    {{- else }}
-                                    echo "Overlay is not enabled."
-                                    {{- end }}
+                        -   bash
+                        -   -c
+                        -   |
+                            set -e
+
+                            function download_module {
+                                local product_version="{{ .image.tag }}"
+
+                                local http_code=$( \
+                                    curl \
+                                        --location \
+                                        --output-dir /temp/liferay/deploy \
+                                        --remote-name \
+                                        --retry 5 \
+                                        --retry-all-errors \
+                                        --retry-delay 2 \
+                                        --write-out "%{http_code}") \
+                                        "https://releases.liferay.com/opensearch2/dxp/${product_version}/com.liferay.portal.search.opensearch2.${1}.jar"
+
+                                if [ "${http_code}" != "200" ]
+                                then
+                                    echo "Unable to download OpenSearch modules for product version ${product_version}." >&2
+
+                                    exit 1
+                                fi
+                            }
+
+                            function main {
+                                mkdir --parents /temp/liferay/deploy
+
+                                rm --force --verbose "/temp/osgi/modules/com.liferay.portal.search.opensearch2"*
+
+                                download_module "api"
+                                download_module "impl"
+                            }
+
+                            main
                         image: {{ printf "%s:%s" .image.repository (.image.tag | toString) }}
                         imagePullPolicy: {{ .image.pullPolicy }}
-                        name: liferay-overlay
-                        {{- if and .overlay .overlay.enabled }}
+                        name: liferay-install-opensearch-modules
                         volumeMounts:
-                            -   mountPath: /mnt/liferay/overlay
-                                name: {{ .overlay.bucketName }}
-                                subPath: {{ .overlay.bucketPath }}
                             -   mountPath: /temp
                                 name: liferay-persistent-volume
-                        {{- end }}
     customLabels:
         origin: liferay-aws
     customVolumeMounts:

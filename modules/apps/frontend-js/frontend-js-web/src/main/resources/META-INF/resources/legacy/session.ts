@@ -54,7 +54,7 @@ export class Session {
 		this._initPageTitle = document.title;
 		this._pageTitle = document.title;
 		this._setTimestamp();
-		this._warningLength = config.warningLength * 1000 || this.sessionLength;
+		this._warningLength = config.warningLength * 1000 || 0;
 		this._warningText = Liferay.Util.sub(
 			Liferay.Language.get('due-to-inactivity-your-session-will-expire'),
 			[
@@ -94,7 +94,8 @@ export class Session {
 
 	async openToast(args: any) {
 		const {openToast} = await import(
-			Liferay.ThemeDisplay.getPathContext() +
+			Liferay.ThemeDisplay.getCDNHost() +
+				Liferay.ThemeDisplay.getPathContext() +
 				'/o/frontend-js-components-web/__liferay__/index.js'
 		);
 
@@ -255,6 +256,7 @@ export class Session {
 
 			const shouldExpire = elapsed >= this.sessionLength;
 			const shouldWarn =
+				this._warningLength > 0 &&
 				elapsed >= this.sessionLength - this._warningLength;
 
 			const expiredTimeoutOffset =
@@ -274,14 +276,16 @@ export class Session {
 				this.warn();
 			}
 
-			if (!shouldWarn) {
-				this._removeAlert();
-			}
-			else if (!shouldExpire) {
-				this._uiSetRemainingTime(
-					this.sessionLength - elapsed,
-					document.querySelector(`#${TOAST_ID} .countdown-timer`)
-				);
+			if (this._banner) {
+				if (!shouldWarn) {
+					this._removeAlert();
+				}
+				else if (!shouldExpire) {
+					this._uiSetRemainingTime(
+						this.sessionLength - elapsed,
+						document.querySelector(`#${TOAST_ID} .countdown-timer`)
+					);
+				}
 			}
 		}, 1000);
 	}
@@ -292,6 +296,8 @@ export class Session {
 		if (this._banner) {
 			this._destroyBanner();
 		}
+
+		this.sessionState = 'active';
 	}
 
 	private _uiSetExpired() {

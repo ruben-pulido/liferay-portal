@@ -5,6 +5,7 @@
 
 package com.liferay.layout.internal.manager;
 
+import com.liferay.configuration.admin.util.ConfigurationFilterStringUtil;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.configuration.LockedLayoutsGroupConfiguration;
 import com.liferay.layout.manager.LayoutLockManager;
@@ -17,8 +18,6 @@ import com.liferay.petra.sql.dsl.Column;
 import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.sql.dsl.base.BaseTable;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
@@ -39,6 +38,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Time;
@@ -56,6 +56,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Types;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Dictionary;
@@ -407,24 +408,6 @@ public class LayoutLockManagerImpl implements LayoutLockManager {
 		return null;
 	}
 
-	private String _getLockedLayoutsGroupConfigurationFilterString(
-		long companyId) {
-
-		String filterString = StringBundler.concat(
-			"(&(", ConfigurationAdmin.SERVICE_FACTORYPID, StringPool.EQUAL,
-			LockedLayoutsGroupConfiguration.class.getName(), ".scoped)(|");
-
-		for (Group group :
-				_groupLocalService.getGroups(
-					companyId, GroupConstants.ANY_PARENT_GROUP_ID, true)) {
-
-			filterString = filterString.concat(
-				"(groupId=" + group.getGroupId() + ")");
-		}
-
-		return filterString.concat("))");
-	}
-
 	private Map<Long, LockedLayoutsGroupConfiguration>
 			_getLockedLayoutsGroupConfigurations(long companyId)
 		throws PortalException {
@@ -435,11 +418,20 @@ public class LayoutLockManagerImpl implements LayoutLockManager {
 		try {
 			Configuration[] configurations =
 				_configurationAdmin.listConfigurations(
-					_getLockedLayoutsGroupConfigurationFilterString(companyId));
+					ConfigurationFilterStringUtil.getGroupScopedFilterString(
+						companyId, null,
+						LockedLayoutsGroupConfiguration.class.getName(), null));
 
 			if (ArrayUtil.isEmpty(configurations)) {
 				return Collections.emptyMap();
 			}
+
+			long[] groupIds = ListUtil.toLongArray(
+				_groupLocalService.getGroups(
+					companyId, GroupConstants.ANY_PARENT_GROUP_ID, true),
+				Group.GROUP_ID_ACCESSOR);
+
+			Arrays.sort(groupIds);
 
 			for (Configuration configuration : configurations) {
 				Dictionary<String, Object> dictionary =
@@ -447,11 +439,12 @@ public class LayoutLockManagerImpl implements LayoutLockManager {
 
 				long groupId = GetterUtil.getLong(dictionary.get("groupId"));
 
-				if (groupId > 0) {
+				if (Arrays.binarySearch(groupIds, groupId) >= 0) {
 					lockedLayoutsGroupConfigurations.put(
 						groupId,
 						_configurationProvider.getGroupConfiguration(
-							LockedLayoutsGroupConfiguration.class, groupId));
+							LockedLayoutsGroupConfiguration.class, companyId,
+							groupId));
 				}
 			}
 		}

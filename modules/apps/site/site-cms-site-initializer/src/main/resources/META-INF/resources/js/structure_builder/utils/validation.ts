@@ -12,7 +12,12 @@ import focusInvalidElement from '../../common/utils/focusInvalidElement';
 import {State, useSelector, useStateDispatch} from '../contexts/StateContext';
 import selectState from '../selectors/selectState';
 import selectStructureChildren from '../selectors/selectStructureChildren';
-import {RepeatableGroup, Structure, StructureChild} from '../types/Structure';
+import {
+	RelatedContent,
+	RepeatableGroup,
+	Structure,
+	StructureChild,
+} from '../types/Structure';
 import {Field, MultiselectField, SingleSelectField} from './field';
 
 const NAME_MAX_LENGTH = 41;
@@ -25,6 +30,7 @@ export type ValidationProperty =
 	| 'label'
 	| 'max-length'
 	| 'picklist'
+	| 'related-content'
 	| 'spaces';
 
 export type ValidationError =
@@ -44,6 +50,7 @@ export function validateField({
 	children,
 	currentErrors,
 	data,
+	deletedChildren,
 	uuid,
 }: {
 	children?: Structure['children'];
@@ -57,6 +64,7 @@ export function validateField({
 			| MultiselectField['picklistId'];
 		settings?: Field['settings'];
 	};
+	deletedChildren: State['history']['deletedChildren'];
 	uuid?: Field['uuid'];
 }): ErrorMap {
 	const {erc, label, name, picklistId, settings} = data;
@@ -79,7 +87,7 @@ export function validateField({
 	}
 
 	if (!isNullOrUndefined(name)) {
-		const names = getSiblingFieldNames(uuid, children);
+		const names = getSiblingFieldNames(uuid, children, deletedChildren);
 
 		if (!name) {
 			errors.set('name', 'empty');
@@ -121,6 +129,47 @@ export function validateField({
 		settings.maxLength
 			? errors.delete('max-length')
 			: errors.set('max-length', 'empty');
+	}
+
+	return errors;
+}
+
+export function validateRelatedContent({
+	currentErrors,
+	data,
+}: {
+	currentErrors?: ErrorMap;
+	data: Partial<RelatedContent>;
+}): ErrorMap {
+	const {erc, label, relatedStructureERC} = data;
+
+	const errors = new Map(currentErrors);
+
+	if (!isNullOrUndefined(erc)) {
+		if (!erc) {
+			errors.set('erc', 'empty');
+		}
+		else if (erc.length > ERC_MAX_LENGTH) {
+			errors.set('erc', 'max-length');
+		}
+		else if (erc.startsWith('L_')) {
+			errors.set('erc', 'prefix-reserved');
+		}
+		else {
+			errors.delete('erc');
+		}
+	}
+
+	if (!isNullOrUndefined(label)) {
+		Object.values(label ?? {}).every(Boolean)
+			? errors.delete('label')
+			: errors.set('label', 'empty');
+	}
+
+	if (!isNullOrUndefined(relatedStructureERC)) {
+		relatedStructureERC
+			? errors.delete('related-content')
+			: errors.set('related-content', 'empty');
 	}
 
 	return errors;
@@ -306,13 +355,23 @@ export function getErrorMessage(
 
 function getSiblingFieldNames(
 	uuid?: Field['uuid'],
-	children?: Structure['children']
+	children?: Structure['children'],
+	deletedChildren?: State['history']['deletedChildren']
 ) {
 	if (!uuid || !children) {
 		return [];
 	}
 
-	return Array.from(children.values())
+	const deletedFields =
+		deletedChildren?.filter(
+			(child) =>
+				child.type !== 'referenced-structure' &&
+				child.type !== 'repeatable-group'
+		) || [];
+
+	const fields = [...deletedFields, ...children.values()];
+
+	return fields
 		.filter(
 			(child) =>
 				child.type !== 'referenced-structure' &&
@@ -340,10 +399,21 @@ export function useValidate() {
 	const {structure} = state;
 
 	const validateChild = useCallback(
-		(child: StructureChild, invalids: State['invalids']) => {
+		(
+			child: StructureChild,
+			invalids: State['invalids'],
+			deletedChildren: State['history']['deletedChildren']
+		) => {
 			let errors: ErrorMap = new Map();
 
-			if (child.type === 'repeatable-group') {
+			if (child.type === 'related-content') {
+				errors = validateRelatedContent({data: child});
+
+				if (errors.size) {
+					invalids.set(child.uuid, errors);
+				}
+			}
+			else if (child.type === 'repeatable-group') {
 				errors = validateRepeatableGroup({data: child});
 
 				if (errors.size) {
@@ -355,11 +425,14 @@ export function useValidate() {
 						continue;
 					}
 
-					validateChild(grandChild, invalids);
+					validateChild(grandChild, invalids, deletedChildren);
 				}
 			}
 			else if (child.type !== 'referenced-structure') {
-				errors = validateField({data: child as Field});
+				errors = validateField({
+					data: child as Field,
+					deletedChildren,
+				});
 
 				if (errors.size) {
 					invalids.set(child.uuid, errors);
@@ -386,7 +459,7 @@ export function useValidate() {
 		// Validate children
 
 		for (const child of children.values()) {
-			validateChild(child, invalids);
+			validateChild(child, invalids, state.history.deletedChildren);
 		}
 
 		// If there's some invalid, dispatch validate action
@@ -405,5 +478,12 @@ export function useValidate() {
 		// It's valid
 
 		return true;
-	}, [children, dispatch, state.invalids, structure, validateChild]);
+	}, [
+		children,
+		dispatch,
+		state.history.deletedChildren,
+		state.invalids,
+		structure,
+		validateChild,
+	]);
 }

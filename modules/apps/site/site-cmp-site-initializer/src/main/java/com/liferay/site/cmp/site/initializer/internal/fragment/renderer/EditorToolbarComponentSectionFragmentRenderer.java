@@ -12,18 +12,17 @@ import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.site.cmp.site.initializer.internal.constants.CMPActionConstants;
 import com.liferay.site.cmp.site.initializer.internal.util.ActionUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
 
 import java.util.Collections;
 import java.util.Map;
@@ -42,24 +41,6 @@ public class EditorToolbarComponentSectionFragmentRenderer
 	@Override
 	public String getCollectionKey() {
 		return "project-editor";
-	}
-
-	@Override
-	public void render(
-			FragmentRendererContext fragmentRendererContext,
-			HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse)
-		throws IOException {
-
-		String layoutMode = ParamUtil.getString(
-			httpServletRequest, "p_l_mode", Constants.VIEW);
-
-		if (Objects.equals(layoutMode, Constants.READ)) {
-			return;
-		}
-
-		super.render(
-			fragmentRendererContext, httpServletRequest, httpServletResponse);
 	}
 
 	@Override
@@ -101,8 +82,33 @@ public class EditorToolbarComponentSectionFragmentRenderer
 		).put(
 			"formSubmitURL",
 			() -> {
+				String action = ParamUtil.getString(
+					httpServletRequest, "action");
+
+				if (StringUtil.equals(
+						action, CMPActionConstants.CREATE_GLOBAL_TASK)) {
+
+					return ParamUtil.getString(httpServletRequest, "redirect");
+				}
+
 				if (!objectEntry.isDraft()) {
 					return null;
+				}
+
+				if (StringUtil.equals(
+						action,
+						CMPActionConstants.CREATE_PROJECT_GLOBAL_TASK)) {
+
+					return StringBundler.concat(
+						ActionUtil.getAddTaskURL(
+							objectEntry.getGroupId(),
+							_objectDefinitionLocalService.
+								getObjectDefinitionByExternalReferenceCode(
+									"L_CMP_TASK", themeDisplay.getCompanyId()),
+							objectEntry.getObjectEntryId(),
+							ParamUtil.getString(httpServletRequest, "redirect"),
+							themeDisplay),
+						"&action=", CMPActionConstants.CREATE_GLOBAL_TASK);
 				}
 
 				if (Objects.equals(

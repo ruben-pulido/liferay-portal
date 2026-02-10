@@ -23,7 +23,6 @@ import com.liferay.commerce.shipping.engine.fixed.web.internal.constants.Commerc
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Country;
@@ -64,13 +63,12 @@ public class CommerceShippingFixedOptionRelsDisplayContext
 
 		super(
 			commerceChannelLocalService, commerceCurrencyLocalService,
-			commerceShippingMethodService, renderRequest, renderResponse);
+			commerceShippingFixedOptionService, commerceShippingMethodService,
+			renderRequest, renderResponse);
 
 		_commerceInventoryWarehouseService = commerceInventoryWarehouseService;
 		_commerceShippingFixedOptionRelService =
 			commerceShippingFixedOptionRelService;
-		_commerceShippingFixedOptionService =
-			commerceShippingFixedOptionService;
 		_countryService = countryService;
 		_cpMeasurementUnitLocalService = cpMeasurementUnitLocalService;
 		_portal = portal;
@@ -84,6 +82,8 @@ public class CommerceShippingFixedOptionRelsDisplayContext
 				PortletRequest.RENDER_PHASE)
 		).setMVCRenderCommandName(
 			"/commerce_shipping_methods/edit_commerce_shipping_fixed_option_rel"
+		).setParameter(
+			"commerceShippingFixedOptionId", getCommerceShippingFixedOptionId()
 		).setParameter(
 			"commerceShippingMethodId", getCommerceShippingMethodId()
 		).setWindowState(
@@ -133,15 +133,6 @@ public class CommerceShippingFixedOptionRelsDisplayContext
 		}
 
 		return commerceShippingFixedOptionRel;
-	}
-
-	public List<CommerceShippingFixedOption> getCommerceShippingFixedOptions()
-		throws PortalException {
-
-		return _commerceShippingFixedOptionService.
-			getCommerceShippingFixedOptions(
-				getCommerceShippingMethodId(), QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS);
 	}
 
 	public List<Country> getCountries() {
@@ -220,18 +211,20 @@ public class CommerceShippingFixedOptionRelsDisplayContext
 	}
 
 	public boolean isVisible() throws PortalException {
-		List<CommerceShippingFixedOption> commerceShippingFixedOptions =
-			getCommerceShippingFixedOptions();
+		CommerceShippingFixedOption commerceShippingFixedOption =
+			getCommerceShippingFixedOption();
 
-		return !commerceShippingFixedOptions.isEmpty();
+		if (commerceShippingFixedOption == null) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private final CommerceInventoryWarehouseService
 		_commerceInventoryWarehouseService;
 	private final CommerceShippingFixedOptionRelService
 		_commerceShippingFixedOptionRelService;
-	private final CommerceShippingFixedOptionService
-		_commerceShippingFixedOptionService;
 	private final CountryService _countryService;
 	private final CPMeasurementUnitLocalService _cpMeasurementUnitLocalService;
 	private final Portal _portal;

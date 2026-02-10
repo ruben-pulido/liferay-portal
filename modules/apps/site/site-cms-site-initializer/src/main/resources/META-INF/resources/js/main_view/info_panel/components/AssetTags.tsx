@@ -6,6 +6,7 @@
 import Label from '@clayui/label';
 import ClayPanel from '@clayui/panel';
 import {ItemSelector} from '@liferay/frontend-js-item-selector-web';
+import classNames from 'classnames';
 import {sub} from 'frontend-js-web';
 import React, {useCallback, useMemo, useState} from 'react';
 
@@ -25,6 +26,7 @@ const AssetTags = ({
 	hasUpdatePermission,
 	inputSize,
 	objectEntry,
+	titleClassName,
 	updateObjectEntry,
 }: {
 	assetLibraryId?: number | string | null | undefined;
@@ -33,6 +35,7 @@ const AssetTags = ({
 	hasUpdatePermission?: boolean;
 	inputSize?: CategorizationInputSize;
 	objectEntry: IAssetObjectEntry | EntryCategorizationDTO;
+	titleClassName?: string;
 	updateObjectEntry: (object: EntryCategorizationDTO) => void | Promise<void>;
 }) => {
 	const [value, setValue] = useState('');
@@ -94,14 +97,19 @@ const AssetTags = ({
 		async (keyword: string) => {
 			const {keywords = []} = objectEntry;
 
-			const newKeywords = keywords.filter((value) => value !== keyword);
+			const index = keywords.indexOf(keyword);
 
-			if (newKeywords.length < keywords.length) {
-				await updateObjectEntry({
-					keywords: newKeywords,
-					keywordsToRemove: [keyword],
-				} as EntryCategorizationDTO);
-			}
+			const keywordsToRemove = [];
+
+			keywordsToRemove.push(keywords[index]);
+
+			keywords.splice(index, 1);
+
+			await updateObjectEntry({
+				keywords,
+				keywordsToAdd: keywords,
+				keywordsToRemove,
+			} as EntryCategorizationDTO);
 		},
 		[objectEntry, updateObjectEntry]
 	);
@@ -111,7 +119,12 @@ const AssetTags = ({
 			collapsable={collapsable}
 			defaultExpanded={true}
 			displayTitle={
-				<ClayPanel.Title className="panel-title text-secondary">
+				<ClayPanel.Title
+					className={classNames(
+						'panel-title',
+						titleClassName ? titleClassName : 'text-secondary'
+					)}
+				>
 					{Liferay.Language.get('tags')}
 				</ClayPanel.Title>
 			}

@@ -86,9 +86,12 @@ public class TestrayBatchHistory extends BaseBatchHistory {
 			TestrayTestTaskHistory testrayTestTaskHistory =
 				(TestrayTestTaskHistory)testTaskHistory;
 
-			testrayTestTaskHistory.addTestTaskReport(testTaskReport);
+			testrayTestTaskHistory.addTestTaskReport(
+				latestBuild, testTaskReport);
 
-			if (latestBuild && testTaskReport.isMissing()) {
+			if (downstreamBuildReport.isBuildTimedOut() && latestBuild &&
+				testTaskReport.isMissing()) {
+
 				testrayTestTaskHistory.setLatestReportMissing(true);
 			}
 		}
@@ -194,6 +197,10 @@ public class TestrayBatchHistory extends BaseBatchHistory {
 
 		StopWatchRecordsGroup stopWatchRecordsGroup =
 			downstreamBuildReport.getStopWatchRecordsGroup();
+
+		if (stopWatchRecordsGroup == null) {
+			return testTaskReports;
+		}
 
 		for (StopWatchRecord stopWatchRecord :
 				stopWatchRecordsGroup.getAllStopWatchRecords()) {

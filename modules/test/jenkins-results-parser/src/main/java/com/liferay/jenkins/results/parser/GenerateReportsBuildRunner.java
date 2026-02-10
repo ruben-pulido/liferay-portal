@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -280,6 +281,11 @@ public class GenerateReportsBuildRunner extends BaseBuildRunner<BuildData> {
 	}
 
 	private void _downloadTestrayBuildReportJSONFiles() {
+		TestrayCloudBucket testrayCloudBucket =
+			TestrayCloudBucket.getInstance();
+
+		List<String> keys = new ArrayList<>();
+
 		LocalDate currentLocalDate = LocalDate.now();
 
 		String currentMonthString = currentLocalDate.format(
@@ -294,15 +300,27 @@ public class GenerateReportsBuildRunner extends BaseBuildRunner<BuildData> {
 				DateTimeFormatter.ofPattern("yyyy-MM"));
 		}
 
-		TestrayCloudBucket testrayCloudBucket =
-			TestrayCloudBucket.getInstance();
+		List<String> jenkinsMasterNames = new ArrayList<>();
 
-		List<String> keys = new ArrayList<>();
+		try {
+			String jenkinsLoadBalancerWhitelist =
+				JenkinsResultsParserUtil.getProperty(
+					JenkinsResultsParserUtil.getBuildProperties(),
+					"jenkins.load.balancer.whitelist");
 
-		String jobName = "test-portal-acceptance-pullrequest(master)";
+			jenkinsLoadBalancerWhitelist =
+				JenkinsResultsParserUtil.expandSlaveRange(
+					jenkinsLoadBalancerWhitelist);
 
-		for (int i = 1; i <= 40; i++) {
-			String jenkinsMasterName = "test-1-" + i;
+			Collections.addAll(
+				jenkinsMasterNames, jenkinsLoadBalancerWhitelist.split(","));
+		}
+		catch (IOException ioException) {
+			throw new RuntimeException(ioException);
+		}
+
+		for (String jenkinsMasterName : jenkinsMasterNames) {
+			String jobName = "test-portal-acceptance-pullrequest(master)";
 
 			keys.addAll(
 				_getTestrayBucketBuildReportJSONFilePaths(

@@ -56,12 +56,7 @@ public class ModulesJUnitBatchTestClassGroup extends JUnitBatchTestClassGroup {
 
 			if (testTask == null) {
 				testTask = TestTaskFactory.newTestTask(
-					modulesJUnitTestClass.getAverageTestTaskDuration(),
-					modulesJUnitTestClass.getAverageTotalTestTaskDuration(),
-					groupingStrategy,
-					modulesJUnitTestClass.isLatestReportMissing(),
-					modulesJUnitTestClass.getLongestTestTaskDuration(),
-					testTaskName);
+					this, groupingStrategy, testTaskName);
 
 				_testTasks.put(testTaskName, testTask);
 			}

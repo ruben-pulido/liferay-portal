@@ -29,12 +29,14 @@ const DEFAULT_STRUCTURE: Structure = {
 
 const DEFAULT_STATE: State = {
 	history: {
-		deletedChildren: false,
+		deletedChildren: [],
 		deletedGroupERCs: [],
+		deletedRelationships: [],
 		modifiedNames: new Set(),
 	},
 	invalids: new Map(),
 	publishedChildren: new Set(),
+	renamingItemUuid: null,
 	selection: [],
 	structure: DEFAULT_STRUCTURE,
 	unsavedChanges: false,

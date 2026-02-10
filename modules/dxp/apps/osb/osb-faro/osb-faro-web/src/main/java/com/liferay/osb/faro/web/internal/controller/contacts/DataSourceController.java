@@ -29,7 +29,6 @@ import com.liferay.osb.faro.engine.client.model.Provider;
 import com.liferay.osb.faro.engine.client.model.Results;
 import com.liferay.osb.faro.engine.client.model.credentials.OAuth1Credentials;
 import com.liferay.osb.faro.engine.client.model.credentials.OAuth2Credentials;
-import com.liferay.osb.faro.engine.client.model.credentials.TokenCredentials;
 import com.liferay.osb.faro.engine.client.model.provider.CSVProvider;
 import com.liferay.osb.faro.engine.client.model.provider.LiferayProvider;
 import com.liferay.osb.faro.engine.client.model.provider.SalesforceProvider;
@@ -137,6 +136,8 @@ public class DataSourceController extends BaseFaroController {
 	public Map<String, Object> connect(
 			@PathParam("groupId") long groupId,
 			@DefaultValue("Liferay") @FormParam("name") String dataSourceName,
+			@FormParam("oAuthClientId") String oAuthClientId,
+			@FormParam("oAuthClientSecret") String oAuthClientSecret,
 			@FormParam("portalURL") String portalURL,
 			@FormParam("token") String token)
 		throws Exception {
@@ -157,16 +158,24 @@ public class DataSourceController extends BaseFaroController {
 
 		if (dataSourceId == null) {
 			dataSource = contactsEngineClient.addDataSource(
-				faroProject, new TokenCredentials(), getUserId(),
-				dataSourceName, portalURL, new LiferayProvider(), null,
-				DataSource.Status.ACTIVE.toString());
+				faroProject,
+				OAuthUtil.getOAuth20Credentials(
+					"CLIENT_CREDENTIALS", portalURL, "",
+					"https://analytics.liferay.com/oauth/receive",
+					oAuthClientId, oAuthClientSecret, "LIFERAY"),
+				getUserId(), dataSourceName, portalURL, new LiferayProvider(),
+				null, DataSource.Status.ACTIVE.toString());
 
 			_tokenManager.setDataSourceId(dataSource.getId(), token);
 		}
 		else {
 			dataSource = contactsEngineClient.patchDataSource(
-				faroProject, dataSourceId, new TokenCredentials(), getUserId(),
-				null, portalURL, new LiferayProvider(), null,
+				faroProject, dataSourceId,
+				OAuthUtil.getOAuth20Credentials(
+					"CLIENT_CREDENTIALS", portalURL, "",
+					"https://analytics.liferay.com/oauth/receive",
+					oAuthClientId, oAuthClientSecret, "LIFERAY"),
+				getUserId(), null, portalURL, new LiferayProvider(), null,
 				DataSource.Status.ACTIVE.toString());
 
 			_tokenManager.clearToken(token);
@@ -175,9 +184,6 @@ public class DataSourceController extends BaseFaroController {
 		faroProject.setDataSourceConnected(true);
 
 		faroProject = faroProjectLocalService.updateFaroProject(faroProject);
-
-		TokenCredentials tokenCredentials =
-			(TokenCredentials)dataSource.getCredentials();
 
 		return HashMapBuilder.<String, Object>put(
 			"liferayAnalyticsDataSourceId", dataSource.getId()
@@ -195,7 +201,7 @@ public class DataSourceController extends BaseFaroController {
 		).put(
 			"liferayAnalyticsURL", dataSource.getWorkspaceURL()
 		).put(
-			"publicKey", tokenCredentials.getPublicKey()
+			"publicKey", ""
 		).build();
 	}
 
@@ -707,7 +713,8 @@ public class DataSourceController extends BaseFaroController {
 				Results<Individual> individualResults =
 					contactsEngineClient.getIndividuals(
 						faroProject, null, null, id, null, null, null, null,
-						null, null, false, 1, 0, null);
+						Collections.singletonList("KNOWN"), null, null, false,
+						1, 0, null);
 
 				return individualResults.getTotal();
 			}
@@ -1151,6 +1158,37 @@ public class DataSourceController extends BaseFaroController {
 			SalesforceProvider.TYPE, 0, null, status, null, true);
 	}
 
+	@Path("/{id}")
+	@POST
+	@Unauthenticated
+	public DataSource postDataSourceCredentials(
+			@PathParam("groupId") long groupId, @PathParam("id") String id,
+			@FormParam("oAuthClientId") String oAuthClientId,
+			@FormParam("oAuthClientSecret") String oAuthClientSecret)
+		throws Exception {
+
+		FaroProject faroProject =
+			faroProjectLocalService.getFaroProjectByGroupId(groupId);
+
+		DataSource dataSource = contactsEngineClient.getDataSource(
+			faroProject, id);
+
+		if (Objects.equals(
+				dataSource.getState(), DataSource.State.DISCONNECTED.name()) &&
+			Objects.equals(
+				dataSource.getStatus(), DataSource.Status.INACTIVE.name())) {
+
+			return dataSource;
+		}
+
+		return contactsEngineClient.patchDataSource(
+			faroProject, id,
+			OAuthUtil.getOAuth20Credentials(
+				"CLIENT_CREDENTIALS", "", "", "", oAuthClientId,
+				oAuthClientSecret, "LIFERAY"),
+			0, null, null, null, null, DataSource.Status.ACTIVE.toString());
+	}
+
 	@Override
 	public FaroResultsDisplay search(
 			long groupId, FaroSearchContext faroSearchContext)
@@ -1446,10 +1484,10 @@ public class DataSourceController extends BaseFaroController {
 				(OAuth2Credentials)credentials;
 
 			return OAuthUtil.getOAuth20Credentials(
-				url, providerType, oAuth2Credentials.getOAuthClientId(),
-				oAuth2Credentials.getOAuthClientSecret(),
-				oAuth2Credentials.getOAuthCode(),
-				oAuth2Credentials.getOAuthCallbackURL());
+				"REFRESH_TOKEN", url, oAuth2Credentials.getOAuthCode(),
+				oAuth2Credentials.getOAuthCallbackURL(),
+				oAuth2Credentials.getOAuthClientId(),
+				oAuth2Credentials.getOAuthClientSecret(), providerType);
 		}
 
 		return credentials;

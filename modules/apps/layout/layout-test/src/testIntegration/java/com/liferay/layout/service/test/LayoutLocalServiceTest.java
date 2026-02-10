@@ -30,6 +30,8 @@ import com.liferay.portal.kernel.exception.LayoutTypeException;
 import com.liferay.portal.kernel.exception.MasterLayoutException;
 import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ColorScheme;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
@@ -283,6 +285,64 @@ public class LayoutLocalServiceTest {
 			externalReferenceCode, _group.getGroupId());
 
 		Assert.assertEquals(layout1, layout2);
+	}
+
+	@Test
+	@TestInfo({"LPD-64609", "LPD-72013"})
+	public void testConvertEmptyLayoutToContentLayout() throws Exception {
+		Layout layout = _addEmptyLayout();
+
+		try {
+			layout = _layoutLocalService.updateLayout(
+				_group.getGroupId(), layout.isPrivateLayout(),
+				layout.getLayoutId(), layout.getParentLayoutId(),
+				layout.getNameMap(), layout.getTitleMap(),
+				layout.getDescriptionMap(), layout.getKeywordsMap(),
+				layout.getRobotsMap(), layout.getType(), false,
+				layout.getFriendlyURLMap(), layout.isIconImage(), null,
+				layout.getStyleBookEntryERC(), layout.getFaviconFileEntryERC(),
+				layout.getFaviconFileEntryScopeERC(),
+				layout.getMasterLayoutPageTemplateEntryERC(), _serviceContext);
+
+			Assert.fail();
+		}
+		catch (LayoutTypeException layoutTypeException) {
+			Assert.assertEquals(
+				LayoutTypeException.EMPTY, layoutTypeException.getType());
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(layoutTypeException);
+			}
+		}
+
+		_serviceContext.setAttribute(
+			"layout.instanceable.allowed", Boolean.TRUE);
+
+		try {
+			layout = _layoutLocalService.convertEmptyLayout(
+				TestPropsValues.getUserId(), layout.getPlid(),
+				RandomTestUtil.randomLocaleStringMap(),
+				LayoutConstants.TYPE_CONTENT, 0, 0, null, _serviceContext);
+		}
+		finally {
+			_serviceContext.removeAttribute("layout.instanceable.allowed");
+		}
+
+		Assert.assertFalse(layout.isPublished());
+		Assert.assertTrue(layout.isTypeContent());
+	}
+
+	@Test
+	@TestInfo({"LPD-64609", "LPD-72013"})
+	public void testConvertEmptyLayoutToPortletLayout() throws Exception {
+		Layout layout = _addEmptyLayout();
+
+		layout = _layoutLocalService.convertEmptyLayout(
+			TestPropsValues.getUserId(), layout.getPlid(),
+			RandomTestUtil.randomLocaleStringMap(),
+			LayoutConstants.TYPE_PORTLET, 0, 0, null, _serviceContext);
+
+		Assert.assertTrue(layout.isTypePortlet());
 	}
 
 	@Test
@@ -839,7 +899,7 @@ public class LayoutLocalServiceTest {
 	}
 
 	@Test(expected = LayoutJavaScriptException.class)
-	public void testUpdateLayoutWithJavaScriptIvalidValue1() throws Exception {
+	public void testUpdateLayoutWithJavaScriptInvalidValue1() throws Exception {
 		Layout layout = LayoutTestUtil.addTypePortletLayout(_group);
 
 		_layoutLocalService.updateTypeSettings(
@@ -850,7 +910,7 @@ public class LayoutLocalServiceTest {
 	}
 
 	@Test(expected = LayoutJavaScriptException.class)
-	public void testUpdateLayoutWithJavaScriptIvalidValue2() throws Exception {
+	public void testUpdateLayoutWithJavaScriptInvalidValue2() throws Exception {
 		Layout layout = LayoutTestUtil.addTypePortletLayout(_group);
 
 		_layoutLocalService.updateTypeSettings(
@@ -858,54 +918,6 @@ public class LayoutLocalServiceTest {
 			UnicodePropertiesBuilder.put(
 				"javascript", "</script>"
 			).buildString());
-	}
-
-	@Test
-	public void testUpdateLayoutWithLazyReferencingEnabled() throws Exception {
-		try (SafeCloseable safeCloseable =
-				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
-
-			Layout layout = _layoutLocalService.getOrAddEmptyLayout(
-				RandomTestUtil.randomString(), TestPropsValues.getUserId(),
-				_group.getGroupId(), _serviceContext);
-
-			Assert.assertEquals(
-				WorkflowConstants.STATUS_EMPTY, layout.getStatus());
-
-			try {
-				layout = _layoutLocalService.updateLayout(
-					_group.getGroupId(), layout.isPrivateLayout(),
-					layout.getLayoutId(), layout.getParentLayoutId(),
-					layout.getNameMap(), layout.getTitleMap(),
-					layout.getDescriptionMap(), layout.getKeywordsMap(),
-					layout.getRobotsMap(), layout.getType(), false,
-					layout.getFriendlyURLMap(), layout.isIconImage(), null,
-					layout.getStyleBookEntryERC(),
-					layout.getFaviconFileEntryERC(),
-					layout.getFaviconFileEntryScopeERC(),
-					layout.getMasterLayoutPageTemplateEntryERC(),
-					_serviceContext);
-
-				Assert.fail();
-			}
-			catch (LayoutTypeException layoutTypeException) {
-				Assert.assertNotNull(layoutTypeException);
-			}
-
-			layout = _layoutLocalService.updateLayout(
-				_group.getGroupId(), layout.isPrivateLayout(),
-				layout.getLayoutId(), layout.getParentLayoutId(),
-				layout.getNameMap(), layout.getTitleMap(),
-				layout.getDescriptionMap(), layout.getKeywordsMap(),
-				layout.getRobotsMap(), LayoutConstants.TYPE_CONTENT, false,
-				layout.getFriendlyURLMap(), layout.isIconImage(), null,
-				layout.getStyleBookEntryERC(), layout.getFaviconFileEntryERC(),
-				layout.getFaviconFileEntryScopeERC(),
-				layout.getMasterLayoutPageTemplateEntryERC(), _serviceContext);
-
-			Assert.assertEquals(
-				WorkflowConstants.STATUS_DRAFT, layout.getStatus());
-		}
 	}
 
 	@Test
@@ -1085,6 +1097,16 @@ public class LayoutLocalServiceTest {
 			typeSettingsUnicodeProperties.containsKey(Sites.LAYOUT_UPDATEABLE));
 	}
 
+	private Layout _addEmptyLayout() throws Exception {
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			return _layoutLocalService.getOrAddEmptyLayout(
+				RandomTestUtil.randomString(), TestPropsValues.getUserId(),
+				_group.getGroupId(), _serviceContext);
+		}
+	}
+
 	private void _assertExternalReferenceCodes(
 			Layout draftLayout,
 			UnsafeBiFunction<String, String, Boolean, Exception>
@@ -1165,6 +1187,9 @@ public class LayoutLocalServiceTest {
 		Assert.assertEquals(expectedParentLayoutId, layout.getParentLayoutId());
 		Assert.assertEquals(expectedPriority, layout.getPriority());
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LayoutLocalServiceTest.class);
 
 	@Inject
 	private CounterLocalService _counterLocalService;

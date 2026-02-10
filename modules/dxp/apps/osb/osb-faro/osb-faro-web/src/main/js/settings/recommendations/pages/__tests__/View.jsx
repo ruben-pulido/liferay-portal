@@ -40,7 +40,11 @@ const DefaultComponent = props => (
 						mockRecommendationJobRunsReq([
 							data.mockRecommendationJobRun(0)
 						]),
-						mockRecommendationReq(data.mockRecommendationJob('321'))
+						mockRecommendationReq(
+							data.mockRecommendationJob('321', {
+								nextRunDate: new Date().getTime()
+							})
+						)
 					]}
 				>
 					<View

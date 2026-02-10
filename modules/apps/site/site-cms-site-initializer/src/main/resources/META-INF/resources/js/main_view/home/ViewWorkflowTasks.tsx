@@ -151,6 +151,8 @@ export default function ViewWorkflowTasks({
 							data: {
 								id: 'approve',
 							},
+							isVisible: (itemData: any) =>
+								itemData.name === 'review',
 							label: Liferay.Language.get('approve'),
 							onClick: ({itemData}: any) => {
 								openCMSModal({
@@ -173,6 +175,8 @@ export default function ViewWorkflowTasks({
 							data: {
 								id: 'reject',
 							},
+							isVisible: (itemData: any) =>
+								itemData.name === 'review',
 							label: Liferay.Language.get('reject'),
 							onClick: ({itemData}: any) => {
 								openCMSModal({
@@ -183,8 +187,38 @@ export default function ViewWorkflowTasks({
 									}) =>
 										TransitionWorkflowStateModalContent({
 											closeModal,
-											loadData: getWorkflowTasks,
+											loadData: () =>
+												new Promise<void>((resolve) =>
+													setTimeout(() => {
+														getWorkflowTasks();
+														resolve();
+													}, 1000)
+												),
 											transitionName: 'reject',
+											workflowTaskId: Number(itemData.id),
+										}),
+									size: 'md',
+								});
+							},
+						},
+						{
+							data: {
+								id: 'resubmit',
+							},
+							isVisible: (itemData: any) =>
+								itemData.name === 'update',
+							label: Liferay.Language.get('resubmit'),
+							onClick: ({itemData}: any) => {
+								openCMSModal({
+									contentComponent: ({
+										closeModal,
+									}: {
+										closeModal: () => void;
+									}) =>
+										TransitionWorkflowStateModalContent({
+											closeModal,
+											loadData: getWorkflowTasks,
+											transitionName: 'resubmit',
 											workflowTaskId: Number(itemData.id),
 										}),
 									size: 'md',

@@ -361,7 +361,7 @@ exports[`View should render 1`] = `
                         Every 30 days
                       </b>
                       <b>
-                        (Next 8 years ago)
+                        (Next a few seconds ago)
                       </b>
                     </div>
                   </div>

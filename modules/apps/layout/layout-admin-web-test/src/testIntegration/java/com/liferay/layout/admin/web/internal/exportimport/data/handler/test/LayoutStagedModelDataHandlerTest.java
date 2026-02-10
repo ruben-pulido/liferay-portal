@@ -112,7 +112,6 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.permission.ResourceActions;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutFriendlyURLLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
@@ -209,7 +208,11 @@ public class LayoutStagedModelDataHandlerTest
 			_groupLocalService.deleteGroup(stagingGroup.getGroupId());
 		}
 
-		GroupLocalServiceUtil.deleteGroup(liveGroup);
+		liveGroup = _groupLocalService.fetchGroup(liveGroup.getGroupId());
+
+		if (liveGroup != null) {
+			_groupLocalService.deleteGroup(liveGroup.getGroupId());
+		}
 
 		ServiceContextThreadLocal.popServiceContext();
 	}
@@ -453,6 +456,12 @@ public class LayoutStagedModelDataHandlerTest
 			TestPropsValues.getUserId(), liveGroup, false, false,
 			serviceContext);
 
+		String friendlyURL = StringPool.SLASH + RandomTestUtil.randomString();
+
+		liveLayout = _layoutLocalService.updateFriendlyURL(
+			TestPropsValues.getUserId(), liveLayout.getPlid(), friendlyURL,
+			liveLayout.getDefaultLanguageId());
+
 		stagingGroup = liveGroup.getStagingGroup();
 
 		initExport();
@@ -471,8 +480,8 @@ public class LayoutStagedModelDataHandlerTest
 		ContentLayoutTestUtil.publishLayout(stagingDraftLayout, stagingLayout);
 
 		stagingLayout = _layoutLocalService.updateFriendlyURL(
-			TestPropsValues.getUserId(), stagingLayout.getPlid(),
-			liveLayout.getFriendlyURL(), stagingLayout.getDefaultLanguageId());
+			TestPropsValues.getUserId(), stagingLayout.getPlid(), friendlyURL,
+			stagingLayout.getDefaultLanguageId());
 
 		Assert.assertEquals(
 			stagingLayout.getFriendlyURL(), liveLayout.getFriendlyURL());
@@ -1415,63 +1424,38 @@ public class LayoutStagedModelDataHandlerTest
 		Layout layout = LayoutTestUtil.addTypeLinkToLayoutLayout(
 			stagingGroup.getGroupId(), linkedLayout.getLayoutId());
 
-		List<LayoutFriendlyURL> layoutFriendlyURLs =
-			_layoutFriendlyURLLocalService.getLayoutFriendlyURLs(
-				layout.getPlid());
+		_testTypeLinkToLayout(
+			layout, dependentStagedModelsMap, linkedLayout,
+			linkedLayoutFriendlyURLs);
 
-		_addDependentFriendlyURLEntries(dependentStagedModelsMap, layout);
-		_addDependentLayoutFriendlyURLs(dependentStagedModelsMap, layout);
+		initExport();
 
-		StagedModelDataHandlerUtil.exportStagedModel(
-			portletDataContext, layout);
+		dependentStagedModelsMap = new HashMap<>();
 
-		validateExport(portletDataContext, layout, dependentStagedModelsMap);
+		addDependentStagedModel(
+			dependentStagedModelsMap, Layout.class, linkedLayout);
 
-		try (SafeCloseable safeCloseable = initImportWithSafeCloseable()) {
-			ExportImportLifecycleManagerUtil.fireExportImportLifecycleEvent(
-				ExportImportLifecycleConstants.EVENT_LAYOUT_IMPORT_STARTED,
-				ExportImportLifecycleConstants.
-					PROCESS_FLAG_LAYOUT_IMPORT_IN_PROCESS,
-				portletDataContext.getExportImportProcessId(),
-				PortletDataContextFactoryUtil.clonePortletDataContext(
-					portletDataContext));
+		_addDependentFriendlyURLEntries(dependentStagedModelsMap, linkedLayout);
+		_addDependentLayoutFriendlyURLs(dependentStagedModelsMap, linkedLayout);
 
-			Layout exportedLayout = (Layout)readExportedStagedModel(layout);
+		layout = LayoutTestUtil.addTypeLinkToLayoutLayout(
+			stagingGroup.getGroupId(), linkedLayout.getLayoutId());
 
-			StagedModelDataHandlerUtil.importStagedModel(
-				portletDataContext, exportedLayout);
+		UnicodeProperties typeSettingsUnicodeProperties =
+			layout.getTypeSettingsProperties();
 
-			Layout exportedLinkedLayout = (Layout)readExportedStagedModel(
-				linkedLayout);
+		typeSettingsUnicodeProperties.put(
+			"linkToLayoutExternalReferenceCode",
+			linkedLayout.getExternalReferenceCode());
+		typeSettingsUnicodeProperties.put("linkToLayoutId", null);
 
-			StagedModelDataHandlerUtil.importStagedModel(
-				portletDataContext, exportedLinkedLayout);
+		_layoutLocalService.updateTypeSettings(
+			stagingGroup.getGroupId(), layout.isPrivateLayout(),
+			layout.getLayoutId(), typeSettingsUnicodeProperties.toString());
 
-			ExportImportLifecycleManagerUtil.fireExportImportLifecycleEvent(
-				ExportImportLifecycleConstants.EVENT_LAYOUT_IMPORT_SUCCEEDED,
-				ExportImportLifecycleConstants.
-					PROCESS_FLAG_LAYOUT_IMPORT_IN_PROCESS,
-				portletDataContext.getExportImportProcessId(),
-				PortletDataContextFactoryUtil.clonePortletDataContext(
-					portletDataContext));
-
-			_layoutLocalService.getLayoutByUuidAndGroupId(
-				linkedLayout.getUuid(), liveGroup.getGroupId(), false);
-
-			LayoutFriendlyURL linkedLayoutFriendlyURL =
-				linkedLayoutFriendlyURLs.get(0);
-
-			_layoutFriendlyURLLocalService.getLayoutFriendlyURLByUuidAndGroupId(
-				linkedLayoutFriendlyURL.getUuid(), liveGroup.getGroupId());
-
-			_layoutLocalService.getLayoutByUuidAndGroupId(
-				layout.getUuid(), liveGroup.getGroupId(), false);
-
-			LayoutFriendlyURL layoutFriendlyURL = layoutFriendlyURLs.get(0);
-
-			_layoutFriendlyURLLocalService.getLayoutFriendlyURLByUuidAndGroupId(
-				layoutFriendlyURL.getUuid(), liveGroup.getGroupId());
-		}
+		_testTypeLinkToLayout(
+			layout, dependentStagedModelsMap, linkedLayout,
+			linkedLayoutFriendlyURLs);
 	}
 
 	@Test
@@ -2535,6 +2519,72 @@ public class LayoutStagedModelDataHandlerTest
 					getClientExtensionEntryRelsCount(
 						_portal.getClassNameId(Layout.class),
 						importedLayout.getPlid(), type));
+		}
+	}
+
+	private void _testTypeLinkToLayout(
+			Layout layout,
+			Map<String, List<StagedModel>> dependentStagedModelsMap,
+			Layout linkedLayout,
+			List<LayoutFriendlyURL> linkedLayoutFriendlyURLs)
+		throws Exception {
+
+		List<LayoutFriendlyURL> layoutFriendlyURLs =
+			_layoutFriendlyURLLocalService.getLayoutFriendlyURLs(
+				layout.getPlid());
+
+		_addDependentFriendlyURLEntries(dependentStagedModelsMap, layout);
+		_addDependentLayoutFriendlyURLs(dependentStagedModelsMap, layout);
+
+		StagedModelDataHandlerUtil.exportStagedModel(
+			portletDataContext, layout);
+
+		validateExport(portletDataContext, layout, dependentStagedModelsMap);
+
+		try (SafeCloseable safeCloseable = initImportWithSafeCloseable()) {
+			ExportImportLifecycleManagerUtil.fireExportImportLifecycleEvent(
+				ExportImportLifecycleConstants.EVENT_LAYOUT_IMPORT_STARTED,
+				ExportImportLifecycleConstants.
+					PROCESS_FLAG_LAYOUT_IMPORT_IN_PROCESS,
+				portletDataContext.getExportImportProcessId(),
+				PortletDataContextFactoryUtil.clonePortletDataContext(
+					portletDataContext));
+
+			Layout exportedLayout = (Layout)readExportedStagedModel(layout);
+
+			StagedModelDataHandlerUtil.importStagedModel(
+				portletDataContext, exportedLayout);
+
+			Layout exportedLinkedLayout = (Layout)readExportedStagedModel(
+				linkedLayout);
+
+			StagedModelDataHandlerUtil.importStagedModel(
+				portletDataContext, exportedLinkedLayout);
+
+			ExportImportLifecycleManagerUtil.fireExportImportLifecycleEvent(
+				ExportImportLifecycleConstants.EVENT_LAYOUT_IMPORT_SUCCEEDED,
+				ExportImportLifecycleConstants.
+					PROCESS_FLAG_LAYOUT_IMPORT_IN_PROCESS,
+				portletDataContext.getExportImportProcessId(),
+				PortletDataContextFactoryUtil.clonePortletDataContext(
+					portletDataContext));
+
+			_layoutLocalService.getLayoutByUuidAndGroupId(
+				linkedLayout.getUuid(), liveGroup.getGroupId(), false);
+
+			LayoutFriendlyURL linkedLayoutFriendlyURL =
+				linkedLayoutFriendlyURLs.get(0);
+
+			_layoutFriendlyURLLocalService.getLayoutFriendlyURLByUuidAndGroupId(
+				linkedLayoutFriendlyURL.getUuid(), liveGroup.getGroupId());
+
+			_layoutLocalService.getLayoutByUuidAndGroupId(
+				layout.getUuid(), liveGroup.getGroupId(), false);
+
+			LayoutFriendlyURL layoutFriendlyURL = layoutFriendlyURLs.get(0);
+
+			_layoutFriendlyURLLocalService.getLayoutFriendlyURLByUuidAndGroupId(
+				layoutFriendlyURL.getUuid(), liveGroup.getGroupId());
 		}
 	}
 

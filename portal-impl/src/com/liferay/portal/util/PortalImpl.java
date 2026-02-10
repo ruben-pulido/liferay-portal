@@ -2545,20 +2545,23 @@ public class PortalImpl implements Portal {
 	}
 
 	@Override
-	public String getLayoutActualURL(Layout layout) {
+	public String getLayoutActualURL(Layout layout) throws PortalException {
 		return getLayoutActualURL(layout, getPathMain());
 	}
 
 	@Override
-	public String getLayoutActualURL(Layout layout, String mainPath) {
+	public String getLayoutActualURL(Layout layout, String mainPath)
+		throws PortalException {
+
 		Map<String, String> variables = _getVariables(
 			LayoutLocalServiceUtil.getBrowsableLayout(layout), mainPath);
-
-		variables.putAll(layout.getTypeSettingsProperties());
 
 		LayoutTypeController layoutTypeController =
 			LayoutTypeControllerTracker.getLayoutTypeController(
 				layout.getType());
+
+		variables.putAll(
+			layoutTypeController.getTypeSettingsProperties(layout));
 
 		return LayoutTypeImpl.getURL(layoutTypeController.getURL(), variables);
 	}

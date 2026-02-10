@@ -12,6 +12,7 @@ import {
 	BULK_ACTION_DEFAULT_PERMISSIONS,
 	BULK_ACTION_DELETE,
 	BULK_ACTION_DOWNLOAD,
+	BULK_ACTION_EXPIRE,
 	BULK_ACTION_MOVE,
 	BULK_ACTION_PERMISSIONS,
 	BULK_ACTION_RESET_PERMISSIONS,
@@ -38,7 +39,7 @@ const BULK_ACTION_MESSAGES: BulkActionMessage = {
 				'categories-update-action-started-for-x-assets'
 			),
 			singular: Liferay.Language.get(
-				'categories-update-action-started-for-x-asset'
+				'categories-update-action-started-for-one-asset'
 			),
 		},
 	},
@@ -72,6 +73,15 @@ const BULK_ACTION_MESSAGES: BulkActionMessage = {
 			),
 			singular: Liferay.Language.get(
 				'download-action-started-for-one-asset'
+			),
+		},
+	},
+	[BULK_ACTION_EXPIRE]: {
+		info: {
+			all: Liferay.Language.get('expire-action-started-for-all-assets'),
+			plural: Liferay.Language.get('expire-action-started-for-x-assets'),
+			singular: Liferay.Language.get(
+				'expire-action-started-for-one-asset'
 			),
 		},
 	},

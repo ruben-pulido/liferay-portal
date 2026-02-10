@@ -1033,7 +1033,8 @@ public class ObjectDefinitionLocalServiceImpl
 				scope, system),
 			externalReferenceCode,
 			this::fetchObjectDefinitionByExternalReferenceCode,
-			this::getObjectDefinitionByExternalReferenceCode);
+			this::getObjectDefinitionByExternalReferenceCode,
+			ObjectDefinition.class.getName());
 	}
 
 	@Override
@@ -1633,6 +1634,24 @@ public class ObjectDefinitionLocalServiceImpl
 			addOrUpdateObjectDefinitionPLOEntries(objectDefinition);
 
 			dbTableName = "ObjectEntry";
+		}
+
+		if (Validator.isNotNull(className) &&
+			!StringUtil.equals(className, objectDefinition.getClassName())) {
+
+			_objectDefinitionSettingLocalService.addObjectDefinitionSetting(
+				objectDefinition.getUserId(),
+				objectDefinition.getObjectDefinitionId(),
+				ObjectDefinitionSettingConstants.NAME_OLD_CLASS_NAME,
+				className);
+
+			for (long classNameId : _getClassNameIds(className)) {
+				_objectDefinitionSettingLocalService.addObjectDefinitionSetting(
+					objectDefinition.getUserId(),
+					objectDefinition.getObjectDefinitionId(),
+					ObjectDefinitionSettingConstants.NAME_OLD_CLASS_NAME_ID,
+					String.valueOf(classNameId));
+			}
 		}
 
 		_addOrUpdateObjectDefinitionSettings(
@@ -2243,6 +2262,27 @@ public class ObjectDefinitionLocalServiceImpl
 				return sb.toString();
 			}
 		}
+	}
+
+	private Set<Long> _getClassNameIds(String className) {
+		Set<Long> classNameIds = new HashSet<>();
+
+		_companyLocalService.forEachCompanyId(
+			companyId -> {
+				ObjectDefinition objectDefinition =
+					objectDefinitionPersistence.fetchByC_C(
+						companyId, className);
+
+				if ((objectDefinition != null) &&
+					objectDefinition.isApproved()) {
+
+					classNameIds.add(
+						_classNameLocalService.getClassNameId(
+							objectDefinition.getClassName()));
+				}
+			});
+
+		return classNameIds;
 	}
 
 	private String _getDBTableName(

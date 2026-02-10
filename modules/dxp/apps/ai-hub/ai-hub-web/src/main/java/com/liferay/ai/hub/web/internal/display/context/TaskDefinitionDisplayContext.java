@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.workflow.constants.WorkflowDefinitionConstants;
 import com.liferay.portal.workflow.constants.WorkflowPortletKeys;
 
 import jakarta.portlet.PortletMode;
@@ -53,9 +54,7 @@ public class TaskDefinitionDisplayContext {
 		return CreationMenuBuilder.addDropdownItem(
 			dropdownItem -> {
 				dropdownItem.setHref(
-					HttpComponentsUtil.addParameter(
-						_getBaseURL(_themeDisplay.getCompany(), namespace),
-						namespace + "scope", "ai"));
+					_getBaseURL(_themeDisplay.getCompany(), namespace));
 				dropdownItem.setLabel(
 					LanguageUtil.get(_httpServletRequest, "new-workflow"));
 			}
@@ -73,7 +72,25 @@ public class TaskDefinitionDisplayContext {
 				HttpComponentsUtil.addParameter(
 					_getBaseURL(_themeDisplay.getCompany(), namespace),
 					namespace + "name", "{name}"),
-				"view", "view", "view", "get", null, null));
+				"view", "view", LanguageUtil.get(_httpServletRequest, "view"),
+				"get", null, null),
+			new FDSActionDropdownItem(
+				getAPIURL() + "/{id}/copy", "copy", "copy",
+				LanguageUtil.get(_httpServletRequest, "duplicate"), "post",
+				"copy", "async"),
+			new FDSActionDropdownItem(
+				getAPIURL() + "/{id}", "trash", "delete",
+				LanguageUtil.get(_httpServletRequest, "delete"), "delete",
+				"delete", "async"),
+			new FDSActionDropdownItem(
+				getAPIURL() + "/{id}/update-active?active=false", "block",
+				"deactivate",
+				LanguageUtil.get(_httpServletRequest, "deactivate"), "patch",
+				"deactivate", "async"),
+			new FDSActionDropdownItem(
+				getAPIURL() + "/{id}/update-active?active=true", "logout",
+				"activate", LanguageUtil.get(_httpServletRequest, "activate"),
+				"patch", "activate", "async"));
 	}
 
 	private String _getBaseURL(Company company, String namespace)
@@ -92,7 +109,8 @@ public class TaskDefinitionDisplayContext {
 			"/designer/edit_workflow_definition.jsp", namespace + "redirect",
 			_portal.getPortalURL(_httpServletRequest) +
 				_portal.getCurrentURL(_httpServletRequest),
-			namespace + "clearSessionMessage", true);
+			namespace + "clearSessionMessage", true, namespace + "scope",
+			WorkflowDefinitionConstants.SCOPE_AI);
 	}
 
 	private final HttpServletRequest _httpServletRequest;

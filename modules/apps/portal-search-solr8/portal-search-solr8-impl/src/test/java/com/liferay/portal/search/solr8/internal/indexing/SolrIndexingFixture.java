@@ -25,7 +25,6 @@ import com.liferay.portal.search.solr8.internal.SolrSpellCheckIndexWriter;
 import com.liferay.portal.search.solr8.internal.SolrUnitTestRequirements;
 import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
 import com.liferay.portal.search.solr8.internal.connection.TestSolrClientManager;
-import com.liferay.portal.search.solr8.internal.document.DefaultSolrDocumentFactory;
 import com.liferay.portal.search.solr8.internal.facet.FacetProcessor;
 import com.liferay.portal.search.solr8.internal.query.SolrQueryTranslator;
 import com.liferay.portal.search.solr8.internal.search.engine.adapter.SolrSearchEngineAdapterFixture;
@@ -62,6 +61,11 @@ public class SolrIndexingFixture implements IndexingFixture {
 	@Override
 	public long getCompanyId() {
 		return _COMPANY_ID;
+	}
+
+	@Override
+	public String getIndexName() {
+		return "liferay";
 	}
 
 	@Override
@@ -131,7 +135,6 @@ public class SolrIndexingFixture implements IndexingFixture {
 				setProperties(properties);
 				setQueryTranslator(new SolrQueryTranslator());
 				setSolrClientManager(solrClientManager);
-				setSolrDocumentFactory(new DefaultSolrDocumentFactory());
 			}
 		};
 	}

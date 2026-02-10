@@ -43,12 +43,14 @@ const FIELD: Field = {
 
 const DEFAULT_STATE: State = {
 	history: {
-		deletedChildren: false,
+		deletedChildren: [],
 		deletedGroupERCs: [],
+		deletedRelationships: [],
 		modifiedNames: new Set(),
 	},
 	invalids: new Map(),
 	publishedChildren: new Set(),
+	renamingItemUuid: null,
 	selection: [],
 	structure: {
 		children: new Map([[TEXT_FIELD_UUID, FIELD]]),

@@ -10,8 +10,10 @@ import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.Keyword;
 import com.liferay.headless.admin.taxonomy.internal.batch.engine.action.test.util.ExportImportTaskResourceTestUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -23,6 +25,7 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
+import com.liferay.portal.util.PortalInstances;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -85,6 +88,34 @@ public class KeywordImportTaskPreActionTest {
 		_assertAssetTag(
 			assetTag.getExternalReferenceCode(), _targetGroup.getGroupId(),
 			TestPropsValues.getUserId());
+	}
+
+	@Test
+	public void testImportWithInsertAndKeepCreatorUserFromDifferentCompany()
+		throws Exception {
+
+		AssetTag assetTag = _getAssetTag(_user.getUserId());
+
+		String json = ExportImportTaskResourceTestUtil.executeExportTask(
+			_ITEM_CLASS_NAME, _localGroup.getGroupId());
+
+		String virtualHostname = "www.able.com";
+
+		Company company = CompanyLocalServiceUtil.addCompany(
+			null, virtualHostname, virtualHostname, virtualHostname, 0, true,
+			true, null, null, null, null, null, null);
+
+		PortalInstances.initCompany(company);
+
+		Group group = GroupTestUtil.addGroupToCompany(company.getCompanyId());
+
+		ExportImportTaskResourceTestUtil.executeImportTask(
+			_ITEM_CLASS_NAME, "INSERT", group.getGroupId(), virtualHostname,
+			"KEEP_CREATOR", json, null);
+
+		_assertAssetTag(
+			assetTag.getExternalReferenceCode(), group.getGroupId(),
+			group.getCreatorUserId());
 	}
 
 	@Test

@@ -29,6 +29,7 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoTable;
+import com.liferay.expando.kernel.model.ExpandoTableConstants;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.headless.admin.user.client.custom.field.CustomField;
@@ -161,6 +162,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -709,6 +712,7 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 
 		_testGetUserAccountsPageWithBirthDateFilter();
 		_testGetUserAccountsPageWithCustomFields();
+		_testGetUserAccountsPageWithSortCustomField();
 		_testGetUserAccountsPageWithSortFullName();
 	}
 
@@ -1861,6 +1865,26 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 			accountId, userAccount);
 	}
 
+	private ExpandoColumn _addExpandoColumn(
+			int expandoColumnType, ExpandoTable expandoTable)
+		throws Exception {
+
+		ExpandoColumn expandoColumn = _expandoColumnLocalService.addColumn(
+			expandoTable.getTableId(), "A" + RandomTestUtil.randomString(),
+			expandoColumnType);
+
+		UnicodeProperties unicodeProperties =
+			expandoColumn.getTypeSettingsProperties();
+
+		unicodeProperties.setProperty(
+			ExpandoColumnConstants.INDEX_TYPE,
+			String.valueOf(ExpandoColumnConstants.INDEX_TYPE_KEYWORD));
+
+		expandoColumn.setTypeSettingsProperties(unicodeProperties);
+
+		return _expandoColumnLocalService.updateExpandoColumn(expandoColumn);
+	}
+
 	private FileEntry _addImageFileEntry() throws Exception {
 		Company company = _companyLocalService.getCompany(
 			TestPropsValues.getCompanyId());
@@ -2162,26 +2186,37 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 	private void _testGetUserAccountsPageWithCustomFields() throws Exception {
 		ExpandoTable expandoTable = _expandoTableLocalService.addTable(
 			testGroup.getCompanyId(),
-			_classNameLocalService.getClassNameId(User.class), "CUSTOM_FIELDS");
+			_classNameLocalService.getClassNameId(User.class),
+			ExpandoTableConstants.DEFAULT_TABLE_NAME);
 
-		ExpandoColumn expandoColumn = _expandoColumnLocalService.addColumn(
-			expandoTable.getTableId(), "A" + RandomTestUtil.randomString(),
-			ExpandoColumnConstants.STRING);
+		Function<Number, List<String>> function = number -> Arrays.asList(
+			number.toString(), "0" + number, "00" + number, number + "0",
+			number + "00");
 
-		UnicodeProperties unicodeProperties =
-			expandoColumn.getTypeSettingsProperties();
+		_testGetUserAccountsPageWithCustomFields(
+			ExpandoColumnConstants.DOUBLE, expandoTable, function,
+			RandomTestUtil::randomDouble);
+		_testGetUserAccountsPageWithCustomFields(
+			ExpandoColumnConstants.FLOAT, expandoTable, function,
+			RandomTestUtil::randomFloat);
 
-		unicodeProperties.setProperty(
-			ExpandoColumnConstants.INDEX_TYPE,
-			String.valueOf(ExpandoColumnConstants.INDEX_TYPE_KEYWORD));
+		_testGetUserAccountsPageWithCustomFields(
+			ExpandoColumnConstants.STRING, expandoTable,
+			value -> List.of(StringUtil.quote(value)),
+			RandomTestUtil::randomString);
+	}
 
-		expandoColumn.setTypeSettingsProperties(unicodeProperties);
+	private <T> void _testGetUserAccountsPageWithCustomFields(
+			int expandoColumnType, ExpandoTable expandoTable,
+			Function<T, List<String>> function, Supplier<T> supplier)
+		throws Exception {
 
-		_expandoColumnLocalService.updateExpandoColumn(expandoColumn);
+		ExpandoColumn expandoColumn = _addExpandoColumn(
+			expandoColumnType, expandoTable);
 
 		UserAccount userAccount = randomUserAccount();
 
-		String value = RandomTestUtil.randomString();
+		T value = supplier.get();
 
 		userAccount.setCustomFields(
 			() -> new CustomField[] {
@@ -2192,7 +2227,6 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 								data = value;
 							}
 						};
-						dataType = "Text";
 						name = expandoColumn.getName();
 					}
 				}
@@ -2200,20 +2234,94 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 
 		userAccount = testGetUserAccountsPage_addUserAccount(userAccount);
 
-		_testGetUserAccountsPage(
-			StringBundler.concat(
-				"(customFields/", expandoColumn.getName(), " eq '",
-				RandomTestUtil.randomString(), "')"));
-		_testGetUserAccountsPage(
-			StringBundler.concat(
-				"(customFields/", expandoColumn.getName(), " eq '", value,
-				"')"),
-			userAccount);
+		for (String filterString : function.apply(value)) {
+			_testGetUserAccountsPage(
+				StringBundler.concat(
+					"(customFields/", expandoColumn.getName(), " eq ",
+					filterString, ")"),
+				userAccount);
+		}
+
+		for (String filterString : function.apply(supplier.get())) {
+			_testGetUserAccountsPage(
+				StringBundler.concat(
+					"(customFields/", expandoColumn.getName(), " eq ",
+					filterString, ")"));
+		}
+	}
+
+	private void _testGetUserAccountsPageWithSortCustomField()
+		throws Exception {
+
+		ExpandoTable expandoTable = _expandoTableLocalService.addTable(
+			testGroup.getCompanyId(),
+			_classNameLocalService.getClassNameId(User.class),
+			ExpandoTableConstants.DEFAULT_TABLE_NAME);
+
+		_testGetUserAccountsPageWithSortCustomField(
+			expandoTable, ExpandoColumnConstants.DATE,
+			Arrays.asList(
+				"2000-07-27T00:00:00Z", "2000-07-27T10:00:00Z",
+				"2000-07-28T00:00:00Z"));
+		_testGetUserAccountsPageWithSortCustomField(
+			expandoTable, ExpandoColumnConstants.DOUBLE,
+			Arrays.asList(1.001, 01.01, 001.1));
+		_testGetUserAccountsPageWithSortCustomField(
+			expandoTable, ExpandoColumnConstants.FLOAT,
+			Arrays.asList(1.001F, 01.01F, 001.1F));
+	}
+
+	private void _testGetUserAccountsPageWithSortCustomField(
+			ExpandoTable expandoTable, int expandoColumnType,
+			List<Object> values)
+		throws Exception {
+
+		String domainName = StringUtil.randomString() + ".com";
+		ExpandoColumn expandoColumn = _addExpandoColumn(
+			expandoColumnType, expandoTable);
+
+		List<UserAccount> userAccounts = TransformUtil.transform(
+			values,
+			value -> userAccountResource.postUserAccount(
+				null, null,
+				_randomUserAccount(
+					userAccount -> {
+						userAccount.setCustomFields(
+							() -> new CustomField[] {
+								new CustomField() {
+									{
+										customValue = new CustomValue() {
+											{
+												data = value;
+											}
+										};
+										name = expandoColumn.getName();
+									}
+								}
+							});
+
+						userAccount.setEmailAddress(
+							RandomTestUtil.randomString() + '@' + domainName);
+					})));
+
+		Page<UserAccount> page = userAccountResource.getUserAccountsPage(
+			domainName, null, Pagination.of(1, 10),
+			"customFields/" + expandoColumn.getName() + ":asc");
+
+		assertEquals(userAccounts, (List<UserAccount>)page.getItems());
+
+		page = userAccountResource.getUserAccountsPage(
+			domainName, null, Pagination.of(1, 10),
+			"customFields/" + expandoColumn.getName() + ":desc");
+
+		Collections.reverse(userAccounts);
+
+		assertEquals(userAccounts, (List<UserAccount>)page.getItems());
 	}
 
 	private void _testGetUserAccountsPageWithSortFullName() throws Exception {
+		String domainName = StringUtil.randomString() + ".com";
 		List<UserAccount> userAccounts = new ArrayList<>();
-		String domain = StringUtil.randomString() + ".com";
 
 		userAccounts.add(
 			userAccountResource.postUserAccount(
@@ -2221,7 +2329,7 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 				_randomUserAccount(
 					userAccount -> {
 						userAccount.setGivenName("aaa");
-						userAccount.setEmailAddress("aaa@" + domain);
+						userAccount.setEmailAddress("aaa@" + domainName);
 					})));
 		userAccounts.add(
 			userAccountResource.postUserAccount(
@@ -2229,18 +2337,18 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 				_randomUserAccount(
 					userAccount -> {
 						userAccount.setGivenName("bbb");
-						userAccount.setEmailAddress("bbb@" + domain);
+						userAccount.setEmailAddress("bbb@" + domainName);
 					})));
 
 		Page<UserAccount> page = userAccountResource.getUserAccountsPage(
-			domain, null, Pagination.of(1, 10), "name:asc");
+			domainName, null, Pagination.of(1, 10), "name:asc");
 
 		assertEquals(userAccounts, (List<UserAccount>)page.getItems());
 
 		Collections.reverse(userAccounts);
 
 		page = userAccountResource.getUserAccountsPage(
-			domain, null, Pagination.of(1, 10), "name:desc");
+			domainName, null, Pagination.of(1, 10), "name:desc");
 
 		assertEquals(userAccounts, (List<UserAccount>)page.getItems());
 	}

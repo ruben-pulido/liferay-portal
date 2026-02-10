@@ -6,6 +6,13 @@
 package com.liferay.portal.security.sso.openid.connect.internal.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetCategoryConstants;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.asset.kernel.service.AssetTagLocalService;
+import com.liferay.asset.test.util.AssetTestUtil;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoTable;
@@ -35,6 +42,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.PrefsPropsTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
@@ -42,6 +50,7 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
@@ -49,6 +58,7 @@ import com.liferay.portal.security.sso.openid.connect.persistence.model.OpenIdCo
 import com.liferay.portal.security.sso.openid.connect.persistence.service.OpenIdConnectUserLocalService;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import java.util.List;
 
@@ -69,8 +79,10 @@ public class OIDCUserInfoProcessorTest {
 
 	@ClassRule
 	@Rule
-	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
-		new LiferayIntegrationTestRule();
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -203,10 +215,37 @@ public class OIDCUserInfoProcessorTest {
 			_userGroupLocalService.addUserUserGroups(
 				user.getUserId(), new long[] {userGroup.getUserGroupId()});
 
+			AssetVocabulary assetVocabulary = AssetTestUtil.addVocabulary(
+				TestPropsValues.getGroupId(),
+				_portal.getClassNameId(User.class),
+				AssetCategoryConstants.ALL_CLASS_TYPE_PK, true);
+
+			AssetCategory assetCategory = AssetTestUtil.addCategory(
+				TestPropsValues.getGroupId(),
+				assetVocabulary.getVocabularyId());
+
+			AssetEntry assetEntry = _assetEntryLocalService.updateEntry(
+				user.getUserId(), TestPropsValues.getGroupId(),
+				user.getCreateDate(), user.getModifiedDate(),
+				User.class.getName(), user.getUserId(), user.getUuid(), 0,
+				new long[] {assetCategory.getCategoryId()},
+				new String[] {"tag"}, true, false, null, null, null, null, null,
+				user.getFullName(), null, null, null, null, 0, 0, null);
+
 			_testProcessUserInfo(
 				new String[] {"group1", "group2", "group3"}, "email",
 				new String[] {"group1", "group3"},
 				OAuthClientEntryConstants.OIDC_USER_INFO_MAPPER_JSON);
+
+			assetEntry = _assetEntryLocalService.fetchEntry(
+				assetEntry.getEntryId());
+
+			Assert.assertArrayEquals(
+				_serviceContext.getAssetCategoryIds(),
+				assetEntry.getCategoryIds());
+			Assert.assertNotNull(
+				_assetTagLocalService.fetchTag(assetEntry.getGroupId(), "tag"));
+
 			_testProcessUserInfo(
 				new String[] {"group1", "group2"}, "email",
 				new String[] {"group1"},
@@ -536,6 +575,12 @@ public class OIDCUserInfoProcessorTest {
 	private static String _customOIDCUserInfoMapperJSON;
 
 	@Inject
+	private AssetEntryLocalService _assetEntryLocalService;
+
+	@Inject
+	private AssetTagLocalService _assetTagLocalService;
+
+	@Inject
 	private ClassNameLocalService _classNameLocalService;
 
 	@Inject
@@ -568,6 +613,10 @@ public class OIDCUserInfoProcessorTest {
 	private OpenIdConnectUserLocalService _openIdConnectUserLocalService;
 
 	private String _pid;
+
+	@Inject
+	private Portal _portal;
+
 	private String _screenName;
 	private ServiceContext _serviceContext;
 

@@ -32,7 +32,6 @@ import com.liferay.portal.kernel.search.query.QueryVisitor;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.opensearch2.internal.util.QueryUtil;
 import com.liferay.portal.search.opensearch2.internal.util.SetterUtil;
 
@@ -63,10 +62,6 @@ import org.opensearch.client.opensearch._types.query_dsl.ZeroTermsQuery;
  */
 public class OpenSearchQueryTranslator
 	implements QueryTranslator<QueryVariant>, QueryVisitor<QueryVariant> {
-
-	public OpenSearchQueryTranslator(IndexNameBuilder indexNameBuilder) {
-		_indexNameBuilder = indexNameBuilder;
-	}
 
 	@Override
 	public QueryVariant translate(
@@ -459,9 +454,6 @@ public class OpenSearchQueryTranslator
 			return likes;
 		}
 
-		String indexName = _indexNameBuilder.getIndexName(
-			moreLikeThisQuery.getCompanyId());
-
 		for (String documentUID : moreLikeThisQuery.getDocumentUIDs()) {
 			likes.add(
 				Like.of(
@@ -470,7 +462,7 @@ public class OpenSearchQueryTranslator
 							likeDocument -> likeDocument.id(
 								documentUID
 							).index(
-								indexName
+								moreLikeThisQuery.getIndexName()
 							)))));
 		}
 
@@ -672,7 +664,5 @@ public class OpenSearchQueryTranslator
 			OpenSearchQueryTranslator.class,
 			Snapshot.cast(FilterTranslator.class),
 			"(search.engine.impl=OpenSearch)", true);
-
-	private final IndexNameBuilder _indexNameBuilder;
 
 }

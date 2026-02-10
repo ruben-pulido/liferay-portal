@@ -39,6 +39,30 @@ export type TChannelsDTO = {
 	totalCount: number;
 };
 
+export type TCommentDTO = {
+	category: string;
+	creator: {
+		id: string;
+		image: string;
+		name: string;
+	};
+	dateCreated: string;
+	dateModified: string;
+	externalReferenceCode: string;
+	id: number;
+	numberOfComments: number;
+	parentCommentId: number;
+	text: string;
+};
+
+export type TCommentsDTO = {
+	items: Array<TCommentDTO>;
+	lastPage: number;
+	page: number;
+	pageSize: number;
+	totalCount: number;
+};
+
 export type TDSRDTO = {
 	accountId: number;
 	accountName?: string;
@@ -142,6 +166,24 @@ export type TDSRTemplatePayload = {
 	secondaryColor?: string;
 };
 
+export type TUserAccountBrief = {
+	alternateName?: string;
+	emailAddress: string;
+	externalReferenceCode?: string;
+	id: number;
+	image?: string;
+	name: string;
+	roleKey?: string;
+};
+
+export type TUserAccountBriefsDTO = {
+	items: Array<TUserAccountBrief>;
+	lastPage: number;
+	page: number;
+	pageSize: number;
+	totalCount: number;
+};
+
 async function deleteDigitalSalesRoom(groupId: number) {
 	return await ApiHelper.delete(`${PATH}/${groupId}`);
 }
@@ -169,6 +211,21 @@ async function getChannels(channelName = ''): Promise<TChannelsDTO> {
 
 	if (data) {
 		return data as TChannelsDTO;
+	}
+
+	throw new Error(error);
+}
+
+async function getDigitalSalesRoomComments(
+	digitalSalesRoomId: number,
+	page: number = 1
+): Promise<TCommentsDTO> {
+	const {data, error} = await ApiHelper.get(
+		`${PATH}/${digitalSalesRoomId}/comments?page=${page}&sort=dateCreated:desc`
+	);
+
+	if (data) {
+		return data as TCommentsDTO;
 	}
 
 	throw new Error(error);
@@ -283,6 +340,24 @@ async function patchDigitalSalesRoomTemplate(
 
 	if (data) {
 		return data as TDSRTemplateDTO;
+	}
+
+	throw new Error(error);
+}
+
+async function postDigitalSalesRoomComment(
+	digitalSalesRoomId: number,
+	text: string
+): Promise<TCommentDTO> {
+	const {data, error} = await ApiHelper.post(
+		`${PATH}/${digitalSalesRoomId}/comments`,
+		{
+			text,
+		}
+	);
+
+	if (data) {
+		return data as TCommentDTO;
 	}
 
 	throw new Error(error);
@@ -426,19 +501,85 @@ async function postDigitalSalesRoomTemplateDigitalSalesRoomTemplate(
 	throw new Error(error);
 }
 
+async function getDigitalSalesRoomUserAccountBriefs(
+	digitalSalesRoomId: number
+): Promise<TUserAccountBrief[]> {
+	const {data, error} = await ApiHelper.get(
+		`${PATH}/${digitalSalesRoomId}/user-account-briefs`
+	);
+
+	if (data) {
+		return (data as TUserAccountBriefsDTO).items || [];
+	}
+
+	throw new Error(error);
+}
+
+async function addDigitalSalesRoomUserAccountBrief(
+	digitalSalesRoomId: number,
+	userAccountBrief: {emailAddress: string; roleKey?: string}
+): Promise<TUserAccountBrief> {
+	const {data, error} = await ApiHelper.post(
+		`${PATH}/${digitalSalesRoomId}/user-account-briefs`,
+		userAccountBrief
+	);
+
+	if (data) {
+		return data as TUserAccountBrief;
+	}
+
+	throw new Error(error);
+}
+
+async function updateDigitalSalesRoomUserAccountBrief(
+	digitalSalesRoomId: number,
+	userId: number,
+	userAccountBrief: {roleKey?: string}
+): Promise<TUserAccountBrief> {
+	const {data, error} = await ApiHelper.patch(
+		`${PATH}/${digitalSalesRoomId}/user-account-briefs/${userId}`,
+		userAccountBrief
+	);
+
+	if (data) {
+		return data as TUserAccountBrief;
+	}
+
+	throw new Error(error);
+}
+
+async function deleteDigitalSalesRoomUserAccountBrief(
+	digitalSalesRoomId: number,
+	userId: number
+): Promise<void> {
+	const {error} = await ApiHelper.delete(
+		`${PATH}/${digitalSalesRoomId}/user-account-briefs/${userId}`
+	);
+
+	if (error) {
+		throw new Error(error);
+	}
+}
+
 export default {
+	addDigitalSalesRoomUserAccountBrief,
 	deleteDigitalSalesRoom,
 	deleteDigitalSalesRoomTemplate,
+	deleteDigitalSalesRoomUserAccountBrief,
 	getAccounts,
 	getChannels,
+	getComments: getDigitalSalesRoomComments,
 	getDigitalSalesRoom,
 	getDigitalSalesRoomTemplate,
 	getDigitalSalesRoomTemplates,
+	getDigitalSalesRoomUserAccountBriefs,
 	patchDigitalSalesRoom,
 	patchDigitalSalesRoomTemplate,
 	postDigitalSalesRoom,
+	postDigitalSalesRoomComment,
 	postDigitalSalesRoomDigitalSalesRoomTemplate,
 	postDigitalSalesRoomTemplate,
 	postDigitalSalesRoomTemplateDigitalSalesRoom,
 	postDigitalSalesRoomTemplateDigitalSalesRoomTemplate,
+	updateDigitalSalesRoomUserAccountBrief,
 };

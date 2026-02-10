@@ -10,7 +10,6 @@ import com.liferay.batch.engine.BatchEngineImportTaskExecutor;
 import com.liferay.batch.engine.BatchEngineTaskExecuteStatus;
 import com.liferay.batch.engine.BatchEngineTaskOperation;
 import com.liferay.batch.engine.constants.BatchEngineImportTaskConstants;
-import com.liferay.batch.engine.constants.CreateStrategy;
 import com.liferay.batch.engine.model.BatchEngineExportTask;
 import com.liferay.batch.engine.model.BatchEngineImportTask;
 import com.liferay.batch.engine.service.BatchEngineExportTaskLocalService;
@@ -45,7 +44,6 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.staging.StagingGroupHelper;
@@ -53,7 +51,6 @@ import com.liferay.staging.StagingGroupHelper;
 import jakarta.portlet.PortletPreferences;
 
 import java.io.InputStream;
-import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -147,6 +144,27 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 	}
 
 	@Override
+	public int getRank() {
+		if (_registrations.isEmpty()) {
+			return super.getRank();
+		}
+
+		int rank = Integer.MAX_VALUE;
+
+		for (Registration registration : _registrations) {
+			ExportImportVulcanBatchEngineTaskItemDelegate.ExportImportDescriptor
+				exportImportDescriptor =
+					registration.getExportImportDescriptor();
+
+			if (exportImportDescriptor.getRank() < rank) {
+				rank = exportImportDescriptor.getRank();
+			}
+		}
+
+		return rank;
+	}
+
+	@Override
 	public String getSchemaVersion() {
 		return SCHEMA_VERSION;
 	}
@@ -175,9 +193,10 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 
 		portletDataContext.setCompanyId(companyId);
 
-		return !_getActiveRegistrations(
-			portletDataContext, true
-		).isEmpty();
+		List<Registration> activeRegistrations = _getActiveRegistrations(
+			portletDataContext, true);
+
+		return !activeRegistrations.isEmpty();
 	}
 
 	@Override
@@ -318,9 +337,10 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 					BatchEngineImportTaskConstants.
 						IMPORT_STRATEGY_ON_ERROR_CONTINUE,
 					BatchEngineTaskOperation.DELETE.name(),
-					HashMapBuilder.<String, Serializable>put(
-						"createStrategy", CreateStrategy.UPSERT.getDBOperation()
-					).build(),
+					BatchEnginePortletDataHandlerUtil.buildDeleteParameters(
+						registration.getExportImportDescriptor(),
+						_groupLocalService, portletDataContext,
+						_stagingGroupHelper),
 					registration.getTaskItemDelegateName());
 
 			_batchEngineImportTaskExecutor.execute(batchEngineDeleteTask);
@@ -392,7 +412,15 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 				}
 			}
 
-			portletDataContext.setValidateExistingDataHandler(true);
+			if (_stagingGroupHelper.isCompanyGroup(
+					portletDataContext.getCompanyId(),
+					portletDataContext.getScopeGroupId())) {
+
+				portletDataContext.setValidateExistingDataHandler(false);
+			}
+			else {
+				portletDataContext.setValidateExistingDataHandler(true);
+			}
 
 			return getExportDataRootElementString(
 				addExportDataRootElement(portletDataContext));

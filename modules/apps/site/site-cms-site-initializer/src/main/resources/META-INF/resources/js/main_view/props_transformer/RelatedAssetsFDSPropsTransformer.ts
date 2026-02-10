@@ -3,8 +3,10 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {IView} from '@liferay/frontend-data-set-web';
+import {FDS_EVENT, IView} from '@liferay/frontend-data-set-web';
+import {openToast} from 'frontend-js-components-web';
 
+import ApiHelper from '../../common/services/ApiHelper';
 import AssetsFDSPropsTransformer, {
 	AdditionalProps,
 } from './AssetsFDSPropsTransformer';
@@ -14,12 +16,14 @@ import {MultipleFileUploaderData} from './actions/multipleFilesUploadAction';
 export default function RelatedAssetsFDSPropsTransformer({
 	additionalProps,
 	creationMenu,
+	id,
 	itemsActions = [],
 	views,
 	...otherProps
 }: {
 	additionalProps: AdditionalProps & MultipleFileUploaderData;
 	creationMenu: any;
+	id: string;
 	itemsActions?: any[];
 	otherProps: any;
 	views: IView[];
@@ -37,9 +41,66 @@ export default function RelatedAssetsFDSPropsTransformer({
 		fileDropSettings: {
 			enabled: true,
 			isDropTarget: () => true,
-			onFileDrop: (droppedFiles: any, dropTarget?: any) =>
-				fileDropAction(additionalProps, droppedFiles, dropTarget),
+			onFileDrop: (droppedFiles: any, dropTarget?: any) => {
+				fileDropAction(
+					{
+						...additionalProps,
+						loadData: () =>
+							Liferay.fire(FDS_EVENT.UPDATE_DISPLAY, {id}),
+					},
+					droppedFiles,
+					dropTarget
+				);
+			},
 		},
+		id,
 		infoPanelComponent: null,
+		async onActionDropdownItemClick({
+			action,
+			event,
+			itemData,
+			items,
+			loadData,
+		}: {
+			action: any;
+			event: Event;
+			itemData: ItemData;
+			items: any;
+			loadData: () => {};
+		}) {
+			if (action.data.id === 'unlink-asset') {
+				const {actions, embedded} = itemData;
+
+				await ApiHelper.patch(
+					{
+						keywords: embedded.keywords?.filter(
+							(keyword) =>
+								!additionalProps.keywords
+									?.split(',')
+									.includes(keyword)
+						),
+					},
+					actions.update.href
+				);
+
+				openToast({
+					message: Liferay.Language.get(
+						'your-request-completed-successfully'
+					),
+					type: 'success',
+				});
+
+				loadData();
+			}
+			else {
+				assetsData.onActionDropdownItemClick({
+					action,
+					event,
+					itemData,
+					items,
+					loadData,
+				});
+			}
+		},
 	};
 }

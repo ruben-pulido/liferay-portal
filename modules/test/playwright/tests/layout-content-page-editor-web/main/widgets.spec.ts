@@ -409,38 +409,16 @@ test(
 
 		await pageEditorPage.addWidget('Tools', 'Language Selector');
 
-		// Open permissions
+		// Remove view permissions
 
 		const widgetId =
 			await pageEditorPage.getFragmentId('Language Selector');
 
-		await pageEditorPage.selectFragment(widgetId);
-
-		await page
-			.locator('.page-editor__topper__item')
-			.getByRole('button', {name: 'Options'})
-			.click();
-
-		const dropdown = page.locator('.dropdown-menu.show');
-
-		await dropdown.getByText('Permissions', {exact: true}).click();
-
-		// Removes view permissions
-
-		const permissionsIFrame = page.frameLocator(
-			'iframe[title="Permissions"]'
+		await pageEditorPage.changeWidgetPermission(
+			widgetId,
+			'#guest_ACTION_VIEW',
+			false
 		);
-
-		await permissionsIFrame.locator('#guest_ACTION_VIEW').uncheck();
-
-		await permissionsIFrame.getByRole('button', {name: 'Save'}).click();
-
-		await waitForAlert(permissionsIFrame);
-
-		await page
-			.locator('.modal-header')
-			.getByLabel('Close', {exact: true})
-			.click();
 
 		// Publish
 
@@ -458,15 +436,17 @@ test(
 
 		await performLogout(page);
 
-		await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyURL}`);
+		await expect(async () => {
+			await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyURL}`);
 
-		await expect(
-			page
-				.getByText(
-					'You do not have the roles required to access this portlet.'
-				)
-				.first()
-		).toBeVisible();
+			await expect(
+				page
+					.getByText(
+						'You do not have the roles required to access this portlet.'
+					)
+					.first()
+			).toBeVisible({timeout: 3000});
+		}).toPass();
 	}
 );
 

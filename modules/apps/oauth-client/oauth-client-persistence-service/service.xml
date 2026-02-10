@@ -19,8 +19,12 @@
 
 		<!-- Other fields -->
 
+		<column name="issuer" type="String" />
+		<column name="localWellKnownEnabled" type="boolean" />
 		<column name="localWellKnownURI" type="String" />
 		<column name="metadataJSON" type="String" />
+		<column name="oAuthASLocalWellKnownURI" type="String" />
+		<column name="oAuthASMetadataJSON" type="String" />
 
 		<!-- Finder methods -->
 
@@ -32,6 +36,18 @@
 		</finder>
 		<finder name="LocalWellKnownURI" return-type="OAuthClientASLocalMetadata" unique="true">
 			<finder-column name="localWellKnownURI" />
+		</finder>
+		<finder name="C_I" return-type="OAuthClientASLocalMetadata" unique="true">
+			<finder-column name="companyId" />
+			<finder-column name="issuer" />
+		</finder>
+		<finder name="C_L" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column name="localWellKnownEnabled" />
+		</finder>
+		<finder name="C_O" return-type="OAuthClientASLocalMetadata" unique="true">
+			<finder-column name="companyId" />
+			<finder-column name="oAuthASLocalWellKnownURI" />
 		</finder>
 	</entity>
 	<entity local-service="true" name="OAuthClientEntry" remote-service="true">
@@ -80,8 +96,9 @@
 	<exceptions>
 		<exception>DuplicateOAuthClientASLocalMetadata</exception>
 		<exception>DuplicateOAuthClientEntry</exception>
-		<exception>OAuthClientASLocalMetadataJSON</exception>
+		<exception>OAuthClientASLocalMetadataIssuer</exception>
 		<exception>OAuthClientASLocalMetadataLocalWellKnownURI</exception>
+		<exception>OAuthClientASLocalMetadataMetadataJSON</exception>
 		<exception>OAuthClientEntryAuthRequestParametersJSON</exception>
 		<exception>OAuthClientEntryAuthServerWellKnownURI</exception>
 		<exception>OAuthClientEntryInfoJSON</exception>

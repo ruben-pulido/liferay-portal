@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import jakarta.portlet.PortletURL;
@@ -78,6 +79,25 @@ public class LinkToPageLayoutTypeControllerDisplayContext {
 		return itemSelectorURL.toString();
 	}
 
+	public String getLinkToLayoutExternalReferenceCode() {
+		if (_linkToLayoutExternalReferenceCode != null) {
+			return _linkToLayoutExternalReferenceCode;
+		}
+
+		Layout layout = _getLayout();
+
+		if (layout == null) {
+			_linkToLayoutExternalReferenceCode = StringPool.BLANK;
+
+			return _linkToLayoutExternalReferenceCode;
+		}
+
+		_linkToLayoutExternalReferenceCode = layout.getTypeSettingsProperty(
+			"linkToLayoutExternalReferenceCode", StringPool.BLANK);
+
+		return _linkToLayoutExternalReferenceCode;
+	}
+
 	public String getLinkToLayoutName() throws Exception {
 		if (_selectedLayout != null) {
 			ThemeDisplay themeDisplay =
@@ -87,7 +107,7 @@ public class LinkToPageLayoutTypeControllerDisplayContext {
 			return _selectedLayout.getBreadcrumb(themeDisplay.getLocale());
 		}
 
-		return StringPool.BLANK;
+		return getLinkToLayoutExternalReferenceCode();
 	}
 
 	public String getLinkToLayoutUuid() {
@@ -98,11 +118,33 @@ public class LinkToPageLayoutTypeControllerDisplayContext {
 		return ParamUtil.getString(_liferayPortletRequest, "layoutUuid");
 	}
 
-	private void _setSelectedLayout() {
-		Layout layout = (Layout)_liferayPortletRequest.getAttribute(
+	private Layout _getLayout() {
+		if (_layout != null) {
+			return _layout;
+		}
+
+		_layout = (Layout)_liferayPortletRequest.getAttribute(
 			WebKeys.SEL_LAYOUT);
 
+		return _layout;
+	}
+
+	private void _setSelectedLayout() {
+		Layout layout = _getLayout();
+
 		if (layout != null) {
+			String linkToLayoutExternalReferenceCode =
+				layout.getTypeSettingsProperty(
+					"linkToLayoutExternalReferenceCode");
+
+			if (Validator.isNotNull(linkToLayoutExternalReferenceCode)) {
+				_selectedLayout =
+					LayoutLocalServiceUtil.fetchLayoutByExternalReferenceCode(
+						linkToLayoutExternalReferenceCode, layout.getGroupId());
+
+				return;
+			}
+
 			long linkToLayoutId = GetterUtil.getLong(
 				layout.getTypeSettingsProperty("linkToLayoutId"));
 
@@ -111,8 +153,10 @@ public class LinkToPageLayoutTypeControllerDisplayContext {
 		}
 	}
 
+	private Layout _layout;
 	private final LiferayPortletRequest _liferayPortletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
+	private String _linkToLayoutExternalReferenceCode;
 	private Layout _selectedLayout;
 
 }

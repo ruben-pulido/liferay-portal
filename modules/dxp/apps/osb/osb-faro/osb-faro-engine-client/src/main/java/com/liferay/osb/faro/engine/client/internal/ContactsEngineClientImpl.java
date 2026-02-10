@@ -50,6 +50,7 @@ import com.liferay.osb.faro.engine.client.model.PageVisited;
 import com.liferay.osb.faro.engine.client.model.PagedModel;
 import com.liferay.osb.faro.engine.client.model.ProjectUsageMetric;
 import com.liferay.osb.faro.engine.client.model.Provider;
+import com.liferay.osb.faro.engine.client.model.RealTimeMembershipMetric;
 import com.liferay.osb.faro.engine.client.model.Rels;
 import com.liferay.osb.faro.engine.client.model.Results;
 import com.liferay.osb.faro.engine.client.model.StringPagedModel;
@@ -1928,8 +1929,9 @@ public class ContactsEngineClientImpl
 		FaroProject faroProject, String accountId, String channelId,
 		String dataSourceId, String individualSegmentId,
 		String notIndividualSegmentId, String interestName, String filterString,
-		String query, List<String> fields, boolean includeAnonymousUsers,
-		int cur, int delta, List<OrderByField> orderByFields) {
+		List<String> profileTypes, String query, List<String> fields,
+		boolean includeAnonymousUsers, int cur, int delta,
+		List<OrderByField> orderByFields) {
 
 		Map<String, Object> uriVariables = getUriVariables(
 			faroProject, cur, delta, orderByFields,
@@ -1963,6 +1965,11 @@ public class ContactsEngineClientImpl
 
 		if (Validator.isNotNull(notIndividualSegmentId)) {
 			uriVariables.put("notSegmentId", notIndividualSegmentId);
+		}
+
+		if (profileTypes != null) {
+			uriVariables.put(
+				"profileTypes", String.join(StringPool.COMMA, profileTypes));
 		}
 
 		if (Validator.isNotNull(query)) {
@@ -2488,6 +2495,15 @@ public class ContactsEngineClientImpl
 			).build());
 
 		return pagedModel.getResults();
+	}
+
+	@Override
+	public RealTimeMembershipMetric getRealTimeMembershipMetric(
+		FaroProject faroProject, String individualSegmentId) {
+
+		return get(
+			faroProject, Rels.INDIVIDUAL_SEGMENT_REAL_TIME_MEMBERSHIP_METRIC,
+			individualSegmentId, RealTimeMembershipMetric.class);
 	}
 
 	@Override

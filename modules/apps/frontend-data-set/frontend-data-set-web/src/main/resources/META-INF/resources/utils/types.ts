@@ -3,9 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {Atom} from '@liferay/frontend-js-state-web';
 import {ModalStatus} from 'frontend-js-components-web';
 import React from 'react';
 
+import {IInlineNotificationComponent} from '../inline_notification/InlineNotification';
+import {EEntityFieldType} from '../management_bar/controls/filters/utils/types';
 import {ISnapshot} from '../views/ViewsContext';
 
 export declare function FrontendDataSet({
@@ -104,6 +107,13 @@ export interface IBaseActions {
 	itemId: number | string;
 }
 
+interface IBulkActionItem {
+	href: string;
+	icon: string;
+	label: string;
+	method?: string;
+	target: 'modal' | 'sidePanel';
+}
 export interface ICreationActionItem {
 	data?: {
 		disableHeader?: boolean;
@@ -128,6 +138,7 @@ export interface ICreationActionItem {
 }
 
 export enum EItemActionsType {
+	CONTEXTUAL = 'contextual',
 	GROUP = 'group',
 	ITEM = 'item',
 }
@@ -284,7 +295,8 @@ export interface IFrontendDataSetProps {
 	additionalAPIURLParameters?: string;
 	apiURL?: string;
 	appURL?: string;
-	bulkActions?: any[];
+	atom?: Atom<IFDSState>;
+	bulkActions?: Array<IBulkActionItem>;
 	configInURLBehavior?: EConfigInURLBehavior;
 	creationMenu?: {
 		loadData?: Function;
@@ -304,9 +316,9 @@ export interface IFrontendDataSetProps {
 	};
 	fileDropSettings?: IFileDropSettings;
 	filters?: Array<any>;
-	filtersGroups?: Array<any>;
 	formId?: string;
 	formName?: string;
+	groupedFilters?: Array<any>;
 	header?: IHeader;
 	hideManagementBarInEmptyState?: boolean;
 	id: string;
@@ -317,6 +329,7 @@ export interface IFrontendDataSetProps {
 		method?: string;
 	};
 	inlineEditingSettings?: IInlineEditingSettings;
+	inlineNotificationComponent?: React.ComponentType<IInlineNotificationComponent>;
 	items?: any[];
 	itemsActions?: IItemsActions[];
 	namespace?: string;
@@ -354,6 +367,30 @@ export interface IFrontendDataSetProps {
 
 export interface IInfoPanelComponent {
 	items?: Array<any>;
+}
+
+export interface IManagementBarProps {
+	bulkActions?: Array<IBulkActionItem>;
+	creationMenu?: {
+		primaryItems: Array<ICreationActionItem>;
+		secondaryItems?: any[];
+	};
+	dataLoading: boolean;
+	deselectItems: (value: any) => void;
+	fluid: boolean;
+	items: Array<any>;
+	onBulkActionsClear: () => void;
+	onSelectAll: (value: boolean) => void;
+	pageSelectedItemsValue?: Array<any>;
+	selectItems: (value: any) => void;
+	selectedItems?: Array<any>;
+	selectedItemsKey: string;
+	selectedItemsValue: Array<any>;
+	selectionType?: 'multiple' | 'single';
+	showNavBarWhenSelected?: boolean;
+	showSearch?: boolean;
+	showSelectAll?: boolean;
+	total: number;
 }
 
 export interface IModalConfig {
@@ -454,3 +491,51 @@ export type IConfigWriter<K extends keyof IConfigInURL> = (
 export type VisibleFieldNames = {
 	[fieldName: string]: boolean;
 };
+
+interface ISearch {
+	query: string;
+}
+
+export interface IBaseFilterState {
+	active?: boolean;
+	enabled: boolean;
+	entityFieldType: EEntityFieldType;
+	id: string;
+	label: string;
+	moduleURL?: string;
+	odataFilterString?: string;
+	preloadedData: Record<string, unknown>;
+	selectedData?: Record<string, unknown>;
+	selectedItemsLabel: string;
+	type: 'clientExtension' | 'dateRange' | 'selection';
+}
+
+export interface IClientExtensionFilterState extends IBaseFilterState {
+	clientExtensionFilterImplementation?: string;
+	clientExtensionFilterURL: string;
+	clientExtensionResolutionError?: string;
+}
+
+export interface ISelectionFilterStateItem {
+	label?: string;
+	value: string;
+}
+interface ISelectionFilterState extends IBaseFilterState {
+	apiURL: string;
+	autocompleteEnabled: boolean;
+	itemKey: string;
+	itemLabel: string;
+	items: Array<ISelectionFilterStateItem>;
+	multiple: boolean;
+	placeholder: string;
+	selectedData?: {
+		exclude: boolean;
+		selectedItems: Array<ISelectionFilterStateItem>;
+	};
+}
+interface IFDSState {
+	filters: Array<IBaseFilterState>;
+	search: ISearch;
+}
+
+export type {IFDSState, ISelectionFilterState};

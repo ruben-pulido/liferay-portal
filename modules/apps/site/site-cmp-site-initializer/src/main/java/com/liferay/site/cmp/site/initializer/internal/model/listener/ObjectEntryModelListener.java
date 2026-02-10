@@ -106,14 +106,14 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 
 		int totalCount = _getCount(null, objectDefinition, objectEntry);
 
-		if (totalCount == 0) {
-			return;
+		int completionRate = 0;
+
+		if (totalCount != 0) {
+			int filteredCount = _getCount(
+				"state eq 'done'", objectDefinition, objectEntry);
+
+			completionRate = (filteredCount * 100) / totalCount;
 		}
-
-		int filteredCount = _getCount(
-			"state eq 'done'", objectDefinition, objectEntry);
-
-		int completionRate = (filteredCount * 100) / totalCount;
 
 		if (Objects.equals(
 				MapUtil.getInteger(

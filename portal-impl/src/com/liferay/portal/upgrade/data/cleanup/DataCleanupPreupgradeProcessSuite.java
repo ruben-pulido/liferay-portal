@@ -86,6 +86,8 @@ public class DataCleanupPreupgradeProcessSuite {
 			new CompanyDataCleanupPreupgradeProcess();
 		DataCleanupPreupgradeProcess configurationDataCleanupPreupgradeProcess =
 			new ConfigurationDataCleanupPreupgradeProcess();
+		DataCleanupPreupgradeProcess contactDataCleanupPreupgradeProcess =
+			new ContactDataCleanupPreupgradeProcess();
 		DataCleanupPreupgradeProcess
 			databaseTableAndColumnCaseDataCleanupPreupgradeProcess =
 				new DatabaseTableAndColumnCaseDataCleanupPreupgradeProcess();
@@ -100,6 +102,8 @@ public class DataCleanupPreupgradeProcessSuite {
 			new GroupDataCleanupPreupgradeProcess();
 		DataCleanupPreupgradeProcess journalDataCleanupPreupgradeProcess =
 			new JournalDataCleanupPreupgradeProcess();
+		DataCleanupPreupgradeProcess layoutDataCleanupPreupgradeProcess =
+			new LayoutDataCleanupPreupgradeProcess();
 		DataCleanupPreupgradeProcess
 			nullUnicodeContentDataCleanupPreupgradeProcess =
 				new NullUnicodeContentDataCleanupPreupgradeProcess();
@@ -112,6 +116,8 @@ public class DataCleanupPreupgradeProcessSuite {
 		DataCleanupPreupgradeProcess
 			quartzJobDetailsDataCleanupPreupgradeProcess =
 				new QuartzJobDetailsDataCleanupPreupgradeProcess();
+		DataCleanupPreupgradeProcess roleDataCleanupPreupgradeProcess =
+			new RoleDataCleanupPreupgradeProcess();
 		DataCleanupPreupgradeProcess
 			updateAllPrimaryKeysDataCleanupPreupgradeProcess =
 				new DataCleanupPreupgradeProcess() {
@@ -143,21 +149,28 @@ public class DataCleanupPreupgradeProcessSuite {
 					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					userDataCleanupPreupgradeProcess)
 			).put(
+				contactDataCleanupPreupgradeProcess,
+				DataCleanupPreupgradeProcess.dependsOn(
+					userDataCleanupPreupgradeProcess)
+			).put(
 				new CounterDataCleanupPreupgradeProcess(),
 				DataCleanupPreupgradeProcess.dependsOn(
 					analyticsMessageDataCleanupPreupgradeProcess,
 					companyDataCleanupPreupgradeProcess,
 					configurationDataCleanupPreupgradeProcess,
+					contactDataCleanupPreupgradeProcess,
 					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					ddmDataCleanupPreupgradeProcess,
 					ddmStorageLinkDataCleanupPreupgradeProcess,
 					dlFileEntryDataCleanupPreupgradeProcess,
 					groupDataCleanupPreupgradeProcess,
 					journalDataCleanupPreupgradeProcess,
+					layoutDataCleanupPreupgradeProcess,
 					nullUnicodeContentDataCleanupPreupgradeProcess,
 					portalPreferencesDataCleanupPreupgradeProcess,
 					portletPreferencesDataCleanupPreupgradeProcess,
 					quartzJobDetailsDataCleanupPreupgradeProcess,
+					roleDataCleanupPreupgradeProcess,
 					updateAllPrimaryKeysDataCleanupPreupgradeProcess,
 					userDataCleanupPreupgradeProcess)
 			).put(
@@ -191,6 +204,12 @@ public class DataCleanupPreupgradeProcessSuite {
 					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					ddmDataCleanupPreupgradeProcess)
 			).put(
+				layoutDataCleanupPreupgradeProcess,
+				DataCleanupPreupgradeProcess.dependsOn(
+					companyDataCleanupPreupgradeProcess,
+					groupDataCleanupPreupgradeProcess,
+					userDataCleanupPreupgradeProcess)
+			).put(
 				nullUnicodeContentDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
 					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
@@ -204,13 +223,16 @@ public class DataCleanupPreupgradeProcessSuite {
 			).put(
 				portletPreferencesDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
-					companyDataCleanupPreupgradeProcess,
-					groupDataCleanupPreupgradeProcess,
-					userDataCleanupPreupgradeProcess)
+					layoutDataCleanupPreupgradeProcess)
 			).put(
 				quartzJobDetailsDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
 					databaseTableAndColumnCaseDataCleanupPreupgradeProcess)
+			).put(
+				roleDataCleanupPreupgradeProcess,
+				DataCleanupPreupgradeProcess.dependsOn(
+					companyDataCleanupPreupgradeProcess,
+					userDataCleanupPreupgradeProcess)
 			).put(
 				updateAllPrimaryKeysDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(

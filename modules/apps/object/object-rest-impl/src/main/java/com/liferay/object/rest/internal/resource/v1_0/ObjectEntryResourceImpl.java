@@ -13,6 +13,7 @@ import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.model.ObjectRelationshipModel;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
+import com.liferay.object.rest.dto.v1_0.TranslationResponse;
 import com.liferay.object.rest.dto.v1_0.ValidationError;
 import com.liferay.object.rest.dto.v1_0.ValidationRequest;
 import com.liferay.object.rest.dto.v1_0.ValidationResponse;
@@ -25,10 +26,9 @@ import com.liferay.object.scope.ObjectScopeProvider;
 import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
-import com.liferay.object.service.ObjectRelationshipService;
-import com.liferay.object.system.SystemObjectDefinitionManagerRegistry;
 import com.liferay.object.tree.Edge;
 import com.liferay.object.tree.Node;
 import com.liferay.object.tree.ObjectDefinitionTreeFactory;
@@ -37,8 +37,12 @@ import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.events.ServicePreAction;
+import com.liferay.portal.events.ThemeServicePreAction;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -46,23 +50,35 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.servlet.DummyHttpServletResponse;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.fields.NestedFieldsContext;
+import com.liferay.portal.vulcan.multipart.BinaryFile;
+import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.NestedFieldsContextResource;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.NestedFieldsContextUtil;
+import com.liferay.translation.manager.Translation;
 import com.liferay.translation.manager.TranslationManager;
 
+import jakarta.servlet.http.HttpServletResponse;
+
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotSupportedException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -76,6 +92,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -96,12 +113,10 @@ public class ObjectEntryResourceImpl
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectEntryLocalService objectEntryLocalService,
 		ObjectEntryManagerRegistry objectEntryManagerRegistry,
+		ObjectEntryService objectEntryService,
 		ObjectFieldLocalService objectFieldLocalService,
 		ObjectRelationshipLocalService objectRelationshipLocalService,
-		ObjectRelationshipService objectRelationshipService,
 		ObjectScopeProviderRegistry objectScopeProviderRegistry,
-		SystemObjectDefinitionManagerRegistry
-			systemObjectDefinitionManagerRegistry,
 		TranslationManager translationManager,
 		UserLocalService userLocalService) {
 
@@ -112,12 +127,10 @@ public class ObjectEntryResourceImpl
 		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectEntryLocalService = objectEntryLocalService;
 		_objectEntryManagerRegistry = objectEntryManagerRegistry;
+		_objectEntryService = objectEntryService;
 		_objectFieldLocalService = objectFieldLocalService;
 		_objectRelationshipLocalService = objectRelationshipLocalService;
-		_objectRelationshipService = objectRelationshipService;
 		_objectScopeProviderRegistry = objectScopeProviderRegistry;
-		_systemObjectDefinitionManagerRegistry =
-			systemObjectDefinitionManagerRegistry;
 		_translationManager = translationManager;
 		_userLocalService = userLocalService;
 	}
@@ -240,7 +253,7 @@ public class ObjectEntryResourceImpl
 									null) {
 
 								deleteScopeScopeKeyByExternalReferenceCode(
-									_getScopeKey(parameters),
+									GroupUtil.getScopeKey(parameters),
 									objectEntry.getExternalReferenceCode());
 
 								return objectEntry;
@@ -249,7 +262,7 @@ public class ObjectEntryResourceImpl
 					}
 					else if (objectEntry.getExternalReferenceCode() != null) {
 						deleteScopeScopeKeyByExternalReferenceCode(
-							_getScopeKey(parameters),
+							GroupUtil.getScopeKey(parameters),
 							objectEntry.getExternalReferenceCode());
 
 						return objectEntry;
@@ -1057,6 +1070,40 @@ public class ObjectEntryResourceImpl
 	}
 
 	@Override
+	public TranslationResponse postObjectEntryTranslation(
+			Long objectEntryId, MultipartBody multipartBody)
+		throws Exception {
+
+		_checkFeatureFlag();
+
+		BinaryFile binaryFile = multipartBody.getBinaryFile("file");
+
+		if (binaryFile == null) {
+			throw new BadRequestException("No file found in body");
+		}
+
+		com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry =
+			_objectEntryService.getObjectEntry(objectEntryId);
+
+		List<Map<String, String>> failureMessages = new LinkedList<>();
+		List<String> successMessages = new ArrayList<>();
+
+		_initThemeDisplay(serviceBuilderObjectEntry);
+
+		_translationManager.processXLIFFTranslation(
+			serviceBuilderObjectEntry.getGroupId(),
+			_objectDefinition.getClassName(), objectEntryId,
+			new Translation(
+				() -> MimeTypesUtil.getContentType(binaryFile.getFileName()),
+				binaryFile.getFileName(), binaryFile::getInputStream),
+			successMessages, failureMessages,
+			contextAcceptLanguage.getPreferredLocale(),
+			ServiceContextFactory.getInstance(contextHttpServletRequest));
+
+		return _toTranslationResponse(failureMessages, successMessages);
+	}
+
+	@Override
 	public ObjectEntry postScopeScopeKey(
 			String scopeKey, ObjectEntry objectEntry)
 		throws Exception {
@@ -1142,6 +1189,21 @@ public class ObjectEntryResourceImpl
 
 		defaultObjectEntryManager.subscribeObjectEntry(
 			externalReferenceCode, _objectDefinition, scopeKey);
+	}
+
+	@Override
+	public TranslationResponse
+			postScopeScopeKeyByExternalReferenceCodeTranslation(
+				String scopeKey, String externalReferenceCode,
+				MultipartBody multipartBody)
+		throws Exception {
+
+		_checkFeatureFlag();
+
+		ObjectEntry objectEntry = getScopeScopeKeyByExternalReferenceCode(
+			scopeKey, externalReferenceCode);
+
+		return postObjectEntryTranslation(objectEntry.getId(), multipartBody);
 	}
 
 	@Override
@@ -1372,8 +1434,8 @@ public class ObjectEntryResourceImpl
 
 		if (objectScopeProvider.isGroupAware()) {
 			return getScopeScopeKeyPage(
-				_getScopeKey(parameters), search, null, filter, pagination,
-				sorts);
+				GroupUtil.getScopeKey(parameters), search, null, filter,
+				pagination, sorts);
 		}
 
 		return getObjectEntriesPage(search, null, filter, pagination, sorts);
@@ -1402,10 +1464,10 @@ public class ObjectEntryResourceImpl
 
 	@Override
 	protected Long getPermissionCheckerGroupId(Object id) throws Exception {
-		com.liferay.object.model.ObjectEntry objectEntry =
+		com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry =
 			_objectEntryLocalService.getObjectEntry(GetterUtil.getLong(id));
 
-		return objectEntry.getGroupId();
+		return serviceBuilderObjectEntry.getGroupId();
 	}
 
 	@Override
@@ -1439,7 +1501,7 @@ public class ObjectEntryResourceImpl
 
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
-		String scopeKey = _getScopeKey(parameters);
+		String scopeKey = GroupUtil.getScopeKey(parameters);
 		UnsafeFunction<ObjectEntry, ObjectEntry, Exception> unsafeFunction =
 			null;
 
@@ -1562,22 +1624,6 @@ public class ObjectEntryResourceImpl
 			objectDefinition.getResourceName());
 	}
 
-	private String _getScopeKey(Map<String, Serializable> parameters) {
-		if (parameters.containsKey("scopeKey")) {
-			return String.valueOf(parameters.get("scopeKey"));
-		}
-
-		if (parameters.containsKey("siteExternalReferenceCode")) {
-			return String.valueOf(parameters.get("siteExternalReferenceCode"));
-		}
-
-		if (parameters.containsKey("siteId")) {
-			return String.valueOf(parameters.get("siteId"));
-		}
-
-		return null;
-	}
-
 	private String _getXLIFFMimeType(String accept) {
 		if (Validator.isBlank(accept)) {
 			return null;
@@ -1590,6 +1636,64 @@ public class ObjectEntryResourceImpl
 		}
 
 		return null;
+	}
+
+	private void _initThemeDisplay(
+			com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry)
+		throws Exception {
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)contextHttpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		if (themeDisplay != null) {
+			return;
+		}
+
+		ServicePreAction servicePreAction = new ServicePreAction();
+
+		HttpServletResponse httpServletResponse =
+			new DummyHttpServletResponse();
+
+		servicePreAction.servicePre(
+			contextHttpServletRequest, httpServletResponse, false);
+
+		ThemeServicePreAction themeServicePreAction =
+			new ThemeServicePreAction();
+
+		themeServicePreAction.run(
+			contextHttpServletRequest, httpServletResponse);
+
+		themeDisplay = (ThemeDisplay)contextHttpServletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		themeDisplay.setCompany(contextCompany);
+		themeDisplay.setScopeGroupId(serviceBuilderObjectEntry.getGroupId());
+		themeDisplay.setUser(contextUser);
+	}
+
+	private TranslationResponse _toTranslationResponse(
+		List<Map<String, String>> failureMessages,
+		List<String> successMessages) {
+
+		TranslationResponse translationResponse = new TranslationResponse();
+
+		translationResponse.setFailureMessagesJSON(
+			() -> transformToArray(
+				failureMessages,
+				failureMessage -> {
+					JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+						failureMessage);
+
+					return jsonObject.toString();
+				},
+				String.class));
+		translationResponse.setSuccessMessages(
+			() -> transformToArray(
+				successMessages, successMessage -> successMessage,
+				String.class));
+
+		return translationResponse;
 	}
 
 	private ValidationResponse _validateObjectEntry(
@@ -1653,13 +1757,11 @@ public class ObjectEntryResourceImpl
 	private final Map<Long, ObjectDefinition> _objectDefinitions;
 	private final ObjectEntryLocalService _objectEntryLocalService;
 	private final ObjectEntryManagerRegistry _objectEntryManagerRegistry;
+	private final ObjectEntryService _objectEntryService;
 	private final ObjectFieldLocalService _objectFieldLocalService;
 	private final ObjectRelationshipLocalService
 		_objectRelationshipLocalService;
-	private final ObjectRelationshipService _objectRelationshipService;
 	private final ObjectScopeProviderRegistry _objectScopeProviderRegistry;
-	private final SystemObjectDefinitionManagerRegistry
-		_systemObjectDefinitionManagerRegistry;
 	private final TranslationManager _translationManager;
 	private final UserLocalService _userLocalService;
 

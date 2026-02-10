@@ -5,16 +5,20 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
+import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
+import co.elastic.clients.elasticsearch.indices.ElasticsearchIndicesClient;
+
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchConnectionFixture;
-import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.cluster.ClusterRequestExecutorFixture;
+import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.cluster.ClusterRequestExecutorTestUtil;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.cluster.ClusterHealthStatus;
-import com.liferay.portal.search.engine.adapter.cluster.ClusterRequestExecutor;
 import com.liferay.portal.search.engine.adapter.cluster.HealthClusterRequest;
 import com.liferay.portal.search.engine.adapter.cluster.HealthClusterResponse;
 import com.liferay.portal.search.engine.adapter.cluster.StateClusterRequest;
@@ -24,12 +28,6 @@ import com.liferay.portal.search.engine.adapter.cluster.StatsClusterResponse;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.io.IOException;
-
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.CreateIndexRequest;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -71,10 +69,10 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 		_searchEngineAdapter = createSearchEngineAdapter(
 			_elasticsearchConnectionFixture);
 
-		RestHighLevelClient restHighLevelClient =
-			_elasticsearchConnectionFixture.getRestHighLevelClient();
+		ElasticsearchClient elasticsearchClient =
+			_elasticsearchConnectionFixture.getElasticsearchClient();
 
-		_indicesClient = restHighLevelClient.indices();
+		_elasticsearchIndicesClient = elasticsearchClient.indices();
 
 		_createIndex();
 	}
@@ -133,7 +131,8 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 
 		ReflectionTestUtil.setFieldValue(
 			searchEngineAdapter, "_clusterRequestExecutor",
-			_createClusterRequestExecutor(elasticsearchClientResolver));
+			ClusterRequestExecutorTestUtil.createClusterRequestExecutor(
+				elasticsearchClientResolver));
 
 		return searchEngineAdapter;
 	}
@@ -145,21 +144,6 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 		catch (JSONException jsonException) {
 			throw new RuntimeException(jsonException);
 		}
-	}
-
-	private static ClusterRequestExecutor _createClusterRequestExecutor(
-		ElasticsearchClientResolver elasticsearchClientResolver) {
-
-		ClusterRequestExecutorFixture clusterRequestExecutorFixture =
-			new ClusterRequestExecutorFixture() {
-				{
-					setElasticsearchClientResolver(elasticsearchClientResolver);
-				}
-			};
-
-		clusterRequestExecutorFixture.setUp();
-
-		return clusterRequestExecutorFixture.getClusterRequestExecutor();
 	}
 
 	private void _assertClusterName(JSONObject jsonObject) {
@@ -190,11 +174,11 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 	}
 
 	private void _createIndex() {
-		CreateIndexRequest createIndexRequest = new CreateIndexRequest(
-			_INDEX_NAME);
-
 		try {
-			_indicesClient.create(createIndexRequest, RequestOptions.DEFAULT);
+			_elasticsearchIndicesClient.create(
+				CreateIndexRequest.of(
+					createIndexRequest -> createIndexRequest.index(
+						_INDEX_NAME)));
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
@@ -202,11 +186,11 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 	}
 
 	private void _deleteIndex() {
-		DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(
-			_INDEX_NAME);
-
 		try {
-			_indicesClient.delete(deleteIndexRequest, RequestOptions.DEFAULT);
+			_elasticsearchIndicesClient.delete(
+				DeleteIndexRequest.of(
+					deleteIndexRequest -> deleteIndexRequest.index(
+						_INDEX_NAME)));
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
@@ -236,7 +220,7 @@ public class ElasticsearchSearchEngineAdapterClusterRequestTest {
 	private static ElasticsearchConnectionFixture
 		_elasticsearchConnectionFixture;
 
-	private IndicesClient _indicesClient;
+	private ElasticsearchIndicesClient _elasticsearchIndicesClient;
 	private SearchEngineAdapter _searchEngineAdapter;
 
 }

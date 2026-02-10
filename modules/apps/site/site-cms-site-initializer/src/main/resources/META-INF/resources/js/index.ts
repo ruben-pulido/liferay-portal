@@ -6,6 +6,7 @@
 export {default as Breadcrumb} from './common/components/Breadcrumb';
 export {default as SpaceSticker} from './common/components/SpaceSticker';
 export {default as Toolbar} from './common/components/Toolbar';
+export {IAssetObjectEntry} from './common/types/AssetType';
 
 export {default as ContentEditorSidePanel} from './content_editor/components/ContentEditorSidePanel';
 
@@ -26,12 +27,17 @@ export {default as EditVocabulary} from './main_view/categorization/vocabularies
 export {default as ViewDashboard} from './main_view/dashboard/ViewDashboard';
 export {default as EditFolder} from './main_view/folders/EditFolder';
 
-// Main
-
 export {default as QuickActions} from './main_view/home/QuickActions';
 export {default as SearchBar} from './main_view/home/SearchBar';
 export {default as ViewWorkflowTasks} from './main_view/home/ViewWorkflowTasks';
+
+// Main
+
+export {default as AssignToModalContent} from './main_view/home/modal/AssignToModalContent';
+export {default as TransitionWorkflowStateModalContent} from './main_view/home/modal/TransitionWorkflowStateModalContent';
+export {default as UpdateDueDateModalContent} from './main_view/home/modal/UpdateDueDateModalContent';
 export {default as AssetTypeInfoPanelContent} from './main_view/info_panel/AssetTypeInfoPanelContent';
+export {default as AssetTags} from './main_view/info_panel/components/AssetTags';
 export {default as AllSpacesFDSPropsTransformer} from './main_view/props_transformer/AllSpacesFDSPropsTransformer';
 export {
 	default as AssetsFDSPropsTransformer,
@@ -54,6 +60,7 @@ export {default as TagUsagesFDSPropsTransformer} from './main_view/props_transfo
 export {default as ViewVersionHistoryFDSPropsTransformer} from './main_view/props_transformer/ViewVersionHistoryFDSPropsTransformer';
 export {default as VocabularyFDSPropsTransformer} from './main_view/props_transformer/VocabularyFDSPropsTransformer';
 export {default as ACTIONS} from './main_view/props_transformer/actions/creationMenuActions';
+export {default as deleteAssetEntriesBulkAction} from './main_view/props_transformer/actions/deleteAssetEntriesBulkAction';
 export {default as deleteItemAction} from './main_view/props_transformer/actions/deleteItemAction';
 export {default as manageMembersAction} from './main_view/props_transformer/actions/manageMembersAction';
 export {default as SimpleActionLinkRenderer} from './main_view/props_transformer/cell_renderers/SimpleActionLinkRenderer';

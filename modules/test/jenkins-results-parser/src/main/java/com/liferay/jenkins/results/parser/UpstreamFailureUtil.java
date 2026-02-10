@@ -77,7 +77,7 @@ public class UpstreamFailureUtil {
 					if (!testReportStatus.equals("PASSED")) {
 						upstreamFailures.add(
 							_formatUpstreamTestFailure(
-								batchName, testReport.getTestName()));
+								batchName, testReport.getTestIdentifier()));
 					}
 				}
 			}
@@ -415,7 +415,7 @@ public class UpstreamFailureUtil {
 		try {
 			String testHistoryRoutineURL = JenkinsResultsParserUtil.getProperty(
 				JenkinsResultsParserUtil.getBuildProperties(),
-				"test.history.routine.url",
+				"upstream.comparison.testray.routine.url",
 				branchInformation.getUpstreamBranchName());
 
 			if (JenkinsResultsParserUtil.isNullOrEmpty(testHistoryRoutineURL)) {

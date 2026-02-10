@@ -4,6 +4,7 @@ import Card from 'shared/components/Card';
 import ClayLink from '@clayui/link';
 import CriteriaCard from 'segment/components/criteria-card';
 import Loading from 'shared/components/Loading';
+import MembershipMetrics from '../components/MembershipMetrics';
 import NoResultsDisplay from 'shared/components/NoResultsDisplay';
 import React, {useMemo, useState} from 'react';
 import SearchableEntityTable from 'shared/components/SearchableEntityTable';
@@ -20,6 +21,7 @@ import {membershipChangesColumns} from 'shared/util/table-columns';
 import {ReferencedObjectsProvider} from 'segment/segment-editor/dynamic/context/referencedObjects';
 import {ReportContainer} from 'shared/components/download-report/DownloadPDFReport';
 import {Segment} from 'shared/util/records';
+import {SegmentActivationCard} from 'segment/components/SegmentActivationCard';
 import {SegmentGrowthChart} from 'segment/components/Growth';
 import {SegmentTypes} from 'shared/util/constants';
 import {Text} from '@clayui/core';
@@ -141,7 +143,12 @@ const RealTimeSegmentOverview: React.FC<IOverviewProps> = ({
 }) => {
 	const fetchMembers = params => getMembershipChanges(params);
 
-	const {criteriaString, id, includeAnonymousUsers} = segment;
+	const {
+		activationStatus,
+		criteriaString,
+		id,
+		includeAnonymousUsers
+	} = segment;
 
 	const {timeZoneId} = useTimeZone();
 
@@ -263,6 +270,15 @@ const RealTimeSegmentOverview: React.FC<IOverviewProps> = ({
 					timeZoneId={timeZoneId}
 				/>
 			</ReferencedObjectsProvider>
+
+			{activationStatus && (
+				<SegmentActivationCard
+					segmentActivation={activationStatus}
+					segmentType={SegmentTypes.RealTime}
+				/>
+			)}
+
+			<MembershipMetrics />
 
 			<Card
 				className='segment-membership-root'

@@ -1,10 +1,15 @@
 {
 	"dependencies": {
 		"@clayui/button": "*",
+		"@clayui/form": "*",
+		"@clayui/icon": "*",
 		"@clayui/layout": "*",
 		"@clayui/link": "*",
 		"@clayui/loading-indicator": "*",
 		"@clayui/modal": "*",
+		"@clayui/multi-step-nav": "*",
+		"classnames": "2.3.1",
+		"formik": "2.1.4",
 		"frontend-js-components-web": "*",
 		"frontend-js-web": "*",
 		"react": "18.2.0"

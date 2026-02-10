@@ -5,17 +5,17 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter;
 
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch8.internal.facet.FacetProcessor;
-import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.cluster.ClusterRequestExecutorFixture;
+import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.cluster.ClusterRequestExecutorTestUtil;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.document.DocumentRequestExecutorFixture;
-import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.index.IndexRequestExecutorFixture;
+import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.index.IndexRequestExecutorTestUtil;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.search.SearchRequestExecutorFixture;
-import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.snapshot.SnapshotRequestExecutorFixture;
+import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.snapshot.SnapshotRequestExecutorTestUtil;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
-
-import org.elasticsearch.action.search.SearchRequestBuilder;
 
 /**
  * @author Michael C. Han
@@ -39,22 +39,8 @@ public class ElasticsearchEngineAdapterFixture {
 		ElasticsearchClientResolver elasticsearchClientResolver,
 		FacetProcessor<?> facetProcessor) {
 
-		ClusterRequestExecutorFixture clusterRequestExecutorFixture =
-			new ClusterRequestExecutorFixture() {
-				{
-					setElasticsearchClientResolver(elasticsearchClientResolver);
-				}
-			};
-
 		DocumentRequestExecutorFixture documentRequestExecutorFixture =
 			new DocumentRequestExecutorFixture() {
-				{
-					setElasticsearchClientResolver(elasticsearchClientResolver);
-				}
-			};
-
-		IndexRequestExecutorFixture indexRequestExecutorFixture =
-			new IndexRequestExecutorFixture() {
 				{
 					setElasticsearchClientResolver(elasticsearchClientResolver);
 				}
@@ -67,18 +53,8 @@ public class ElasticsearchEngineAdapterFixture {
 			}
 		};
 
-		SnapshotRequestExecutorFixture snapshotRequestExecutorFixture =
-			new SnapshotRequestExecutorFixture() {
-				{
-					setElasticsearchClientResolver(elasticsearchClientResolver);
-				}
-			};
-
-		clusterRequestExecutorFixture.setUp();
 		documentRequestExecutorFixture.setUp();
-		indexRequestExecutorFixture.setUp();
 		_searchRequestExecutorFixture.setUp();
-		snapshotRequestExecutorFixture.setUp();
 
 		SearchEngineAdapter searchEngineAdapter =
 			new ElasticsearchSearchEngineAdapterImpl() {
@@ -89,19 +65,22 @@ public class ElasticsearchEngineAdapterFixture {
 
 		ReflectionTestUtil.setFieldValue(
 			searchEngineAdapter, "_clusterRequestExecutor",
-			clusterRequestExecutorFixture.getClusterRequestExecutor());
+			ClusterRequestExecutorTestUtil.createClusterRequestExecutor(
+				elasticsearchClientResolver));
 		ReflectionTestUtil.setFieldValue(
 			searchEngineAdapter, "_documentRequestExecutor",
 			documentRequestExecutorFixture.getDocumentRequestExecutor());
 		ReflectionTestUtil.setFieldValue(
 			searchEngineAdapter, "_indexRequestExecutor",
-			indexRequestExecutorFixture.getIndexRequestExecutor());
+			IndexRequestExecutorTestUtil.createIndexRequestExecutor(
+				elasticsearchClientResolver));
 		ReflectionTestUtil.setFieldValue(
 			searchEngineAdapter, "_searchRequestExecutor",
 			_searchRequestExecutorFixture.getSearchRequestExecutor());
 		ReflectionTestUtil.setFieldValue(
 			searchEngineAdapter, "_snapshotRequestExecutor",
-			snapshotRequestExecutorFixture.getSnapshotRequestExecutor());
+			SnapshotRequestExecutorTestUtil.createSnapshotRequestExecutor(
+				elasticsearchClientResolver));
 
 		return searchEngineAdapter;
 	}
@@ -113,7 +92,7 @@ public class ElasticsearchEngineAdapterFixture {
 	}
 
 	protected void setFacetProcessor(
-		FacetProcessor<SearchRequestBuilder> facetProcessor) {
+		FacetProcessor<SearchRequest.Builder> facetProcessor) {
 
 		_facetProcessor = facetProcessor;
 	}
@@ -121,7 +100,7 @@ public class ElasticsearchEngineAdapterFixture {
 	private static SearchRequestExecutorFixture _searchRequestExecutorFixture;
 
 	private ElasticsearchClientResolver _elasticsearchClientResolver;
-	private FacetProcessor<SearchRequestBuilder> _facetProcessor;
+	private FacetProcessor<SearchRequest.Builder> _facetProcessor;
 	private SearchEngineAdapter _searchEngineAdapter;
 
 }

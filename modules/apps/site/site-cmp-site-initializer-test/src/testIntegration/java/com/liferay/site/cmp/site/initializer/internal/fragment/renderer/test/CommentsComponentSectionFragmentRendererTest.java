@@ -65,7 +65,8 @@ public class CommentsComponentSectionFragmentRendererTest
 	private String _getURL(String actionId) {
 		return StringBundler.concat(
 			themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-			GroupConstants.CMS_FRIENDLY_URL, actionId, "?classNameId=",
+			GroupConstants.CMS_FRIENDLY_URL, actionId, "?p_l_id=",
+			themeDisplay.getPlid(), "&classNameId=",
 			_portal.getClassNameId(projectObjectDefinition.getClassName()),
 			"&classPK=", projectObjectEntry.getObjectEntryId());
 	}

@@ -258,7 +258,14 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 
 	@Override
 	public String getStatusIcon(SiteNavigationMenuItem siteNavigationMenuItem) {
-		if (!_hasAssetDisplayPage(siteNavigationMenuItem)) {
+		if (!_hasAssetDisplayPage(siteNavigationMenuItem) ||
+			!hasModel(
+				siteNavigationMenuItem.getCompanyId(),
+				siteNavigationMenuItem.getGroupId(),
+				UnicodePropertiesBuilder.fastLoad(
+					siteNavigationMenuItem.getTypeSettings()
+				).build())) {
+
 			return "warning-full";
 		}
 
@@ -301,11 +308,21 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 			).build();
 
 		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
-			_displayPageTypeContext.getLayoutDisplayPageObjectProvider(
-				typeSettingsUnicodeProperties.get("externalReferenceCode"),
-				siteNavigationMenuItem.getGroupId(),
-				typeSettingsUnicodeProperties.get(
-					"scopeExternalReferenceCode"));
+			null;
+
+		String scopeExternalReferenceCode = typeSettingsUnicodeProperties.get(
+			"scopeExternalReferenceCode");
+
+		Group group = _groupLocalService.fetchGroupByExternalReferenceCode(
+			scopeExternalReferenceCode, siteNavigationMenuItem.getCompanyId());
+
+		if (group != null) {
+			layoutDisplayPageObjectProvider =
+				_displayPageTypeContext.getLayoutDisplayPageObjectProvider(
+					typeSettingsUnicodeProperties.get("externalReferenceCode"),
+					siteNavigationMenuItem.getGroupId(),
+					scopeExternalReferenceCode);
+		}
 
 		String defaultTitle = typeSettingsUnicodeProperties.getProperty(
 			"title");
@@ -353,9 +370,8 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 
 	@Override
 	public boolean hasModel(
-			long companyId, long groupId,
-			UnicodeProperties typeSettingsUnicodeProperties)
-		throws PortalException {
+		long companyId, long groupId,
+		UnicodeProperties typeSettingsUnicodeProperties) {
 
 		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
 			_displayPageTypeContext.getLayoutDisplayPageObjectProvider(
@@ -545,10 +561,20 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 				siteNavigationMenuItem.getTypeSettings()
 			).build();
 
+		String scopeExternalReferenceCode = typeSettingsUnicodeProperties.get(
+			"scopeExternalReferenceCode");
+
+		Group group = _groupLocalService.fetchGroupByExternalReferenceCode(
+			scopeExternalReferenceCode, siteNavigationMenuItem.getCompanyId());
+
+		if ((scopeExternalReferenceCode != null) && (group == null)) {
+			return false;
+		}
+
 		InfoItemIdentifier infoItemIdentifier = new ERCInfoItemIdentifier(
 			GetterUtil.getString(
 				typeSettingsUnicodeProperties.get("externalReferenceCode")),
-			typeSettingsUnicodeProperties.get("scopeExternalReferenceCode"));
+			scopeExternalReferenceCode);
 
 		return AssetDisplayPageUtil.hasAssetDisplayPage(
 			siteNavigationMenuItem.getGroupId(),

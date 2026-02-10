@@ -56,6 +56,14 @@ public interface OAuthClientASLocalMetadataLocalService
 			long userId, String metadataJSON, String wellKnownURISuffix)
 		throws PortalException;
 
+	public OAuthClientASLocalMetadata addOAuthClientASLocalMetadata(
+			long userId, String authorizationEndpoint, String issuer,
+			String jwksURI, boolean localWellKnownEnabled,
+			String[] supportedGrantTypes, String[] supportedScopes,
+			String[] supportedSubjectTypes, String tokenEndpoint,
+			String userInfoEndpoint)
+		throws PortalException;
+
 	/**
 	 * Adds the o auth client as local metadata to the database. Also notifies the appropriate model listeners.
 	 *
@@ -207,6 +215,15 @@ public interface OAuthClientASLocalMetadataLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public OAuthClientASLocalMetadata fetchOAuthClientASLocalMetadata(
+		long companyId, boolean localWellKnownEnabled,
+		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public OAuthClientASLocalMetadata fetchOAuthClientASLocalMetadata(
+		long companyId, String issuer);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public OAuthClientASLocalMetadata fetchOAuthClientASLocalMetadata(
 		String localWellKnownURI);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -264,6 +281,9 @@ public interface OAuthClientASLocalMetadataLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getOAuthClientASLocalMetadatasCount();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getOAuthClientASLocalMetadatasCount(long companyId);
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -290,6 +310,14 @@ public interface OAuthClientASLocalMetadataLocalService
 	public OAuthClientASLocalMetadata updateOAuthClientASLocalMetadata(
 			long oAuthClientASLocalMetadataId, String metadataJSON,
 			String wellKnownURISuffix)
+		throws PortalException;
+
+	public OAuthClientASLocalMetadata updateOAuthClientASLocalMetadata(
+			long oAuthClientASLocalMetadataId, String authorizationEndpoint,
+			String issuer, String jwksURI, boolean localWellKnownEnabled,
+			String[] supportedGrantTypes, String[] supportedScopes,
+			String[] supportedSubjectTypes, String tokenEndpoint,
+			String userInfoEndpoint)
 		throws PortalException;
 
 	/**

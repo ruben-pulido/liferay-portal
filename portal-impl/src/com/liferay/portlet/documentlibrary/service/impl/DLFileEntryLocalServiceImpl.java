@@ -449,8 +449,7 @@ public class DLFileEntryLocalServiceImpl
 		}
 
 		DLFileVersion lastDLFileVersion =
-			_dlFileVersionLocalService.getFileVersion(
-				dlFileEntry.getFileEntryId(), dlFileEntry.getVersion());
+			_dlFileVersionLocalService.getLatestFileVersion(fileEntryId, true);
 		DLFileVersion latestDLFileVersion =
 			_dlFileVersionLocalService.getLatestFileVersion(fileEntryId, false);
 
@@ -459,10 +458,13 @@ public class DLFileEntryLocalServiceImpl
 				dlVersionNumberIncrease, lastDLFileVersion, latestDLFileVersion,
 				serviceContext.getWorkflowAction());
 
-		if (computedDLVersionNumberIncrease == DLVersionNumberIncrease.NONE) {
+		if ((computedDLVersionNumberIncrease == DLVersionNumberIncrease.NONE) ||
+			(lastDLFileVersion.getStatus() ==
+				WorkflowConstants.STATUS_PENDING)) {
+
 			_overwritePreviousFileVersion(
-				user, dlFileEntry, latestDLFileVersion, lastDLFileVersion,
-				serviceContext);
+				user, dlFileEntry, computedDLVersionNumberIncrease,
+				latestDLFileVersion, lastDLFileVersion, serviceContext);
 
 			unlockFileEntry(fileEntryId);
 
@@ -479,7 +481,7 @@ public class DLFileEntryLocalServiceImpl
 
 		latestDLFileVersion.setChangeLog(changeLog);
 		latestDLFileVersion.setVersion(
-			_getNextVersion(dlFileEntry, computedDLVersionNumberIncrease));
+			_getVersion(lastDLFileVersion, computedDLVersionNumberIncrease));
 		latestDLFileVersion.setStoreUUID(String.valueOf(UUID.randomUUID()));
 
 		latestDLFileVersion = _dlFileVersionPersistence.update(
@@ -3035,43 +3037,6 @@ public class DLFileEntryLocalServiceImpl
 		}
 	}
 
-	private String _getNextVersion(
-			DLFileEntry dlFileEntry,
-			DLVersionNumberIncrease dlVersionNumberIncrease)
-		throws InvalidFileVersionException {
-
-		String version = dlFileEntry.getVersion();
-
-		DLFileVersion dlFileVersion =
-			_dlFileVersionLocalService.fetchLatestFileVersion(
-				dlFileEntry.getFileEntryId(), true);
-
-		if (dlFileVersion != null) {
-			version = dlFileVersion.getVersion();
-		}
-
-		if (!_isValidFileVersionNumber(version)) {
-			throw new InvalidFileVersionException(
-				StringBundler.concat(
-					"Unable to increase version number for file entry ",
-					dlFileEntry.getFileEntryId(),
-					" because original version number ", version,
-					" is invalid"));
-		}
-
-		int[] versionParts = StringUtil.split(version, StringPool.PERIOD, 0);
-
-		if (dlVersionNumberIncrease == DLVersionNumberIncrease.MAJOR) {
-			versionParts[0]++;
-			versionParts[1] = 0;
-		}
-		else {
-			versionParts[1]++;
-		}
-
-		return versionParts[0] + StringPool.PERIOD + versionParts[1];
-	}
-
 	private int _getStatus(Date date, DLFileVersion dlFileVersion, int status) {
 		if ((status == WorkflowConstants.STATUS_APPROVED) &&
 			(dlFileVersion.getDisplayDate() != null) &&
@@ -3106,6 +3071,50 @@ public class DLFileEntryLocalServiceImpl
 			return _dlFileEntryTypeLocalService.getDefaultFileEntryTypeId(
 				dlFileEntry.getFolderId());
 		}
+	}
+
+	private String _getVersion(
+			DLFileVersion dlFileVersion,
+			DLVersionNumberIncrease dlVersionNumberIncrease)
+		throws InvalidFileVersionException {
+
+		String version = dlFileVersion.getVersion();
+
+		if (!_isValidFileVersionNumber(version)) {
+			throw new InvalidFileVersionException(
+				StringBundler.concat(
+					"Unable to increase version number for file entry ",
+					dlFileVersion.getFileEntryId(),
+					" because original version number ", version,
+					" is invalid"));
+		}
+
+		if (dlVersionNumberIncrease == DLVersionNumberIncrease.NONE) {
+			return version;
+		}
+
+		int[] versionParts = StringUtil.split(version, StringPool.PERIOD, 0);
+
+		if (dlVersionNumberIncrease == DLVersionNumberIncrease.MAJOR) {
+			versionParts[0]++;
+			versionParts[1] = 0;
+		}
+		else {
+			versionParts[1]++;
+		}
+
+		return versionParts[0] + StringPool.PERIOD + versionParts[1];
+	}
+
+	private boolean _hasApprovedVersion(DLFileEntry dlFileEntry) {
+		int fileVersionsCount = dlFileEntry.getFileVersionsCount(
+			WorkflowConstants.STATUS_APPROVED);
+
+		if (fileVersionsCount > 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private boolean _isInTrashExplicitly(TrashedModel trashedModel) {
@@ -3528,29 +3537,46 @@ public class DLFileEntryLocalServiceImpl
 
 	private void _overwritePreviousFileVersion(
 			User user, DLFileEntry dlFileEntry,
+			DLVersionNumberIncrease dlVersionNumberIncrease,
 			DLFileVersion latestDLFileVersion, DLFileVersion lastDLFileVersion,
 			ServiceContext serviceContext)
 		throws PortalException {
 
 		// File entry
 
-		dlFileEntry.setModifiedDate(latestDLFileVersion.getModifiedDate());
-		dlFileEntry.setFileName(latestDLFileVersion.getFileName());
-		dlFileEntry.setExtension(latestDLFileVersion.getExtension());
-		dlFileEntry.setMimeType(latestDLFileVersion.getMimeType());
-		dlFileEntry.setTitle(latestDLFileVersion.getTitle());
-		dlFileEntry.setDescription(latestDLFileVersion.getDescription());
-		dlFileEntry.setExtraSettings(latestDLFileVersion.getExtraSettings());
-		dlFileEntry.setFileEntryTypeId(
-			latestDLFileVersion.getFileEntryTypeId());
-		dlFileEntry.setSize(latestDLFileVersion.getSize());
-		dlFileEntry.setDisplayDate(latestDLFileVersion.getDisplayDate());
-		dlFileEntry.setExpirationDate(lastDLFileVersion.getExpirationDate());
-		dlFileEntry.setReviewDate(lastDLFileVersion.getReviewDate());
+		String version = _getVersion(
+			lastDLFileVersion, dlVersionNumberIncrease);
 
-		dlFileEntry = dlFileEntryPersistence.update(dlFileEntry);
+		if (!_hasApprovedVersion(dlFileEntry) ||
+			(lastDLFileVersion.getStatus() !=
+				WorkflowConstants.STATUS_PENDING)) {
+
+			dlFileEntry.setModifiedDate(latestDLFileVersion.getModifiedDate());
+			dlFileEntry.setFileName(latestDLFileVersion.getFileName());
+			dlFileEntry.setExtension(latestDLFileVersion.getExtension());
+			dlFileEntry.setMimeType(latestDLFileVersion.getMimeType());
+			dlFileEntry.setTitle(latestDLFileVersion.getTitle());
+			dlFileEntry.setDescription(latestDLFileVersion.getDescription());
+			dlFileEntry.setExtraSettings(
+				latestDLFileVersion.getExtraSettings());
+			dlFileEntry.setFileEntryTypeId(
+				latestDLFileVersion.getFileEntryTypeId());
+			dlFileEntry.setVersion(version);
+			dlFileEntry.setSize(latestDLFileVersion.getSize());
+			dlFileEntry.setDisplayDate(latestDLFileVersion.getDisplayDate());
+			dlFileEntry.setExpirationDate(
+				lastDLFileVersion.getExpirationDate());
+			dlFileEntry.setReviewDate(lastDLFileVersion.getReviewDate());
+
+			dlFileEntry = dlFileEntryPersistence.update(dlFileEntry);
+		}
 
 		// File version
+
+		lastDLFileVersion = _dlFileVersionLocalService.getDLFileVersion(
+			lastDLFileVersion.getFileVersionId());
+
+		String oldStoreFileName = lastDLFileVersion.getStoreFileName();
 
 		lastDLFileVersion.setUserId(latestDLFileVersion.getUserId());
 		lastDLFileVersion.setUserName(latestDLFileVersion.getUserName());
@@ -3566,6 +3592,7 @@ public class DLFileEntryLocalServiceImpl
 			latestDLFileVersion.getExtraSettings());
 		lastDLFileVersion.setFileEntryTypeId(
 			latestDLFileVersion.getFileEntryTypeId());
+		lastDLFileVersion.setVersion(version);
 		lastDLFileVersion.setSize(latestDLFileVersion.getSize());
 		lastDLFileVersion.setStoreUUID(String.valueOf(UUID.randomUUID()));
 		lastDLFileVersion.setDisplayDate(latestDLFileVersion.getDisplayDate());
@@ -3616,13 +3643,9 @@ public class DLFileEntryLocalServiceImpl
 
 		// File
 
-		DLFileVersion previousDLFileVersion =
-			_dlFileVersionLocalService.getLatestFileVersion(
-				dlFileEntry.getFileEntryId(), true);
-
 		_deleteFile(
 			user.getCompanyId(), dlFileEntry.getDataRepositoryId(),
-			dlFileEntry.getName(), previousDLFileVersion.getStoreFileName());
+			dlFileEntry.getName(), oldStoreFileName);
 
 		_copyFileVersion(dlFileEntry, latestDLFileVersion, lastDLFileVersion);
 

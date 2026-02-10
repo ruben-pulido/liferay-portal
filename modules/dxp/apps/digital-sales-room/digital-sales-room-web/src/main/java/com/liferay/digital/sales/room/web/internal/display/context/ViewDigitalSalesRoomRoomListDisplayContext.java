@@ -5,7 +5,7 @@
 
 package com.liferay.digital.sales.room.web.internal.display.context;
 
-import com.liferay.digital.sales.room.web.internal.constants.DigitalSalesRoomPortletKeys;
+import com.liferay.digital.sales.room.constants.DigitalSalesRoomPortletKeys;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItemBuilder;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItemList;
@@ -117,6 +117,15 @@ public class ViewDigitalSalesRoomRoomListDisplayContext {
 				"post"
 			).build(
 				"saveAsTemplate"
+			),
+			FDSActionDropdownItemBuilder.setIcon(
+				"envelope-open"
+			).setLabel(
+				LanguageUtil.get(_httpServletRequest, "share")
+			).setMethod(
+				"post"
+			).build(
+				"share"
 			),
 			FDSActionDropdownItemBuilder.setHref(
 				() -> PortletURLBuilder.create(

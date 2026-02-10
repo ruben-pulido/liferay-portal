@@ -5,25 +5,11 @@
 
 package com.liferay.source.formatter.check;
 
-import com.liferay.petra.string.CharPool;
-import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.source.formatter.check.util.JavaSourceUtil;
 import com.liferay.source.formatter.parser.JavaClass;
-import com.liferay.source.formatter.parser.JavaMethod;
 import com.liferay.source.formatter.parser.JavaTerm;
-import com.liferay.source.formatter.util.FileUtil;
-import com.liferay.source.formatter.util.SourceFormatterUtil;
 
-import java.io.File;
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,22 +25,28 @@ public class JavaUpgradeConnectionCheck extends BaseJavaTermCheck {
 
 	@Override
 	protected String doProcess(
-			String fileName, String absolutePath, JavaTerm javaTerm,
-			String fileContent)
-		throws IOException {
+		String fileName, String absolutePath, JavaTerm javaTerm,
+		String fileContent) {
 
-		if (absolutePath.contains("/test/")) {
+		if (absolutePath.contains("/test/") ||
+			absolutePath.contains("/testIntegration/") ||
+			!absolutePath.contains("/upgrade/") ||
+			!isUpgradeProcess(absolutePath, fileContent) ||
+			(javaTerm.getParentJavaClass() != null)) {
+
 			return javaTerm.getContent();
 		}
 
 		JavaClass javaClass = (JavaClass)javaTerm;
 
-		String className = javaClass.getName();
+		for (JavaTerm childJavaTerm : javaClass.getChildJavaTerms()) {
+			if (!childJavaTerm.isJavaMethod()) {
+				continue;
+			}
 
-		if ((className.contains("Upgrade") || className.contains("Verify")) &&
-			_extendsPortalKernelUpgradeProcess(absolutePath, fileContent)) {
-
-			_checkDataAccessGetConnection(fileName, fileContent, javaClass);
+			_checkDataAccessGetConnectionCall(fileName, childJavaTerm);
+			_checkMissingConnectionInDBRunSQLCall(
+				fileName, childJavaTerm, javaClass);
 		}
 
 		return javaTerm.getContent();
@@ -65,179 +57,97 @@ public class JavaUpgradeConnectionCheck extends BaseJavaTermCheck {
 		return new String[] {JAVA_CLASS};
 	}
 
-	private void _checkDataAccessGetConnection(
-		String fileName, String fileContent, JavaClass javaClass) {
+	private void _checkDataAccessGetConnectionCall(
+		String fileName, JavaTerm javaTerm) {
 
-		for (JavaTerm childJavaTerm : javaClass.getChildJavaTerms()) {
-			if (!childJavaTerm.isJavaMethod()) {
+		String methodName = javaTerm.getName();
+
+		if (methodName.equals("upgrade") &&
+			javaTerm.hasAnnotation("Override")) {
+
+			return;
+		}
+
+		String content = javaTerm.getContent();
+
+		int index = content.indexOf("DataAccess.getConnection(");
+
+		if (index == -1) {
+			return;
+		}
+
+		addMessage(
+			fileName,
+			"Use existing connection field instead of calling \"DataAccess." +
+				"getConnection\"",
+			javaTerm.getLineNumber(index));
+	}
+
+	private void _checkMissingConnectionInDBRunSQLCall(
+		String fileName, JavaTerm javaTerm, JavaClass javaClass) {
+
+		String content = javaTerm.getContent();
+
+		Matcher matcher = _runSQLPattern.matcher(content);
+
+		while (matcher.find()) {
+			String variableName = matcher.group(1);
+
+			String variableTypeName = getVariableTypeName(
+				content, javaTerm, javaClass.getContent(), fileName,
+				variableName);
+
+			if ((variableTypeName == null) || !variableTypeName.equals("DB")) {
 				continue;
 			}
 
-			JavaMethod javaMethod = (JavaMethod)childJavaTerm;
+			List<String> parameterList = JavaSourceUtil.getParameterList(
+				content.substring(matcher.start()));
 
-			String methodName = javaMethod.getName();
-
-			if (methodName.equals("upgrade") &&
-				javaMethod.hasAnnotation("Override")) {
-
+			if (parameterList.size() != 1) {
 				continue;
 			}
 
-			String methodContent = javaMethod.getContent();
+			String parameter = parameterList.get(0);
 
-			int x = methodContent.indexOf("DataAccess.getConnection");
+			if (parameter.matches("(?i)(\\w+\\.)?\\w+SQL\\(.*\\)") ||
+				parameter.startsWith("\"") ||
+				parameter.startsWith("StringBundler.concat(") ||
+				parameter.startsWith("new String[]")) {
 
-			if (x != -1) {
 				addMessage(
 					fileName,
-					"Use existing connection field instead of " +
-						"DataAccess.getConnection",
-					getLineNumber(fileContent, x));
+					"Missing parameter \"connection\" for \"" + variableName +
+						".runSQL\"",
+					javaTerm.getLineNumber(matcher.start()));
+
+				continue;
 			}
+
+			if (!parameter.matches("\\w+")) {
+				continue;
+			}
+
+			variableTypeName = getVariableTypeName(
+				content, javaTerm, javaClass.getContent(), fileName, parameter,
+				true, false);
+
+			if ((variableTypeName == null) ||
+				(!variableTypeName.equals("String") &&
+				 !variableTypeName.equals("String[]"))) {
+
+				continue;
+			}
+
+			addMessage(
+				fileName,
+				"Missing parameter \"connection\" for \"" + variableName +
+					".runSQL\"",
+				javaTerm.getLineNumber(matcher.start()));
 		}
 	}
 
-	private boolean _extendsPortalKernelUpgradeProcess(
-			String absolutePath, String fileContent)
-		throws IOException {
-
-		String upgradeAbsolutePath = absolutePath;
-		String upgradeContent = fileContent;
-
-		while (Validator.isNotNull(upgradeAbsolutePath)) {
-			if (!absolutePath.equals(upgradeAbsolutePath)) {
-				upgradeContent = _getUpgradeContent(upgradeAbsolutePath);
-			}
-
-			upgradeAbsolutePath = StringPool.BLANK;
-
-			if (Validator.isNull(upgradeContent)) {
-				return false;
-			}
-
-			Matcher matcher = _extendedClassPattern.matcher(upgradeContent);
-
-			if (matcher.find()) {
-				String extendedClassName = matcher.group(1);
-
-				String relativePath = StringPool.BLANK;
-
-				if (extendedClassName.contains(StringPool.PERIOD)) {
-					relativePath = StringUtil.replace(
-						extendedClassName, CharPool.PERIOD, CharPool.SLASH);
-				}
-				else {
-					String fullyQualifiedName = StringPool.BLANK;
-
-					List<String> importNames = JavaSourceUtil.getImportNames(
-						upgradeContent);
-
-					for (String importName : importNames) {
-						if (importName.endsWith(
-								CharPool.PERIOD + extendedClassName)) {
-
-							fullyQualifiedName = importName;
-
-							break;
-						}
-					}
-
-					if (Validator.isNotNull(fullyQualifiedName)) {
-						relativePath = StringUtil.replace(
-							fullyQualifiedName, CharPool.PERIOD,
-							CharPool.SLASH);
-					}
-					else {
-						String fileLocation = absolutePath.substring(
-							0, absolutePath.lastIndexOf(CharPool.SLASH) + 1);
-
-						relativePath = fileLocation + extendedClassName;
-					}
-				}
-
-				for (String s : _getUpgradeAbsolutePaths()) {
-					if (s.endsWith(relativePath + ".java")) {
-						upgradeAbsolutePath = s;
-
-						break;
-					}
-				}
-			}
-
-			if (upgradeAbsolutePath.endsWith(
-					"com/liferay/portal/kernel/upgrade/UpgradeProcess.java")) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private synchronized List<String> _getUpgradeAbsolutePaths()
-		throws IOException {
-
-		if (_upgradeAbsolutePaths != null) {
-			return _upgradeAbsolutePaths;
-		}
-
-		File portalDir = getPortalDir();
-
-		if (portalDir == null) {
-			_upgradeAbsolutePaths = Collections.emptyList();
-
-			return _upgradeAbsolutePaths;
-		}
-
-		List<String> upgradeAbsolutePaths = new ArrayList<>();
-
-		List<String> fileNames = SourceFormatterUtil.scanForFileNames(
-			portalDir.getCanonicalPath(),
-			new String[] {"**/upgrade/**/*.java"});
-
-		outerLoop:
-		for (String fileName : fileNames) {
-			for (String skipDirName : _SKIP_DIR_NAMES) {
-				if (fileName.contains(skipDirName)) {
-					continue outerLoop;
-				}
-			}
-
-			upgradeAbsolutePaths.add(fileName);
-		}
-
-		_upgradeAbsolutePaths = upgradeAbsolutePaths;
-
-		return _upgradeAbsolutePaths;
-	}
-
-	private synchronized String _getUpgradeContent(String absolutePath)
-		throws IOException {
-
-		if (_upgradeContentsMap.containsKey(absolutePath)) {
-			return _upgradeContentsMap.get(absolutePath);
-		}
-
-		File file = new File(absolutePath);
-
-		if (!file.exists()) {
-			return StringPool.BLANK;
-		}
-
-		_upgradeContentsMap.put(absolutePath, FileUtil.read(file));
-
-		return _upgradeContentsMap.get(absolutePath);
-	}
-
-	private static final String[] _SKIP_DIR_NAMES = {
-		"/sdk/", "/sql/", "/test/", "/test-classes/", "/test-coverage/",
-		"/test-results/", "/tmp/"
-	};
-
-	private static final Pattern _extendedClassPattern = Pattern.compile(
-		"\\sextends\\s+([\\w\\.]+)\\W");
-
-	private List<String> _upgradeAbsolutePaths;
-	private final Map<String, String> _upgradeContentsMap = new HashMap<>();
+	private static final Pattern _runSQLPattern = Pattern.compile(
+		"\\b(\\w+)\\.runSQL\\(");
 
 }

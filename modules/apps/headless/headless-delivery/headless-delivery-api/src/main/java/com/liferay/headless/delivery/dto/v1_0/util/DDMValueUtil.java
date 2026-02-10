@@ -59,11 +59,13 @@ import java.util.Objects;
 public class DDMValueUtil {
 
 	public static Value toDDMValue(
-			ContentField contentField, DDMFormField ddmFormField,
+			String contentFieldJSON, DDMFormField ddmFormField,
 			DLAppService dlAppService, long groupId,
 			JournalArticleService journalArticleService,
 			LayoutLocalService layoutLocalService, Locale preferredLocale)
 		throws Exception {
+
+		ContentField contentField = ContentField.toDTO(contentFieldJSON);
 
 		ContentFieldValue contentFieldValue =
 			contentField.getContentFieldValue();
@@ -200,17 +202,13 @@ public class DDMValueUtil {
 		try {
 			List<String> values = new ArrayList<>();
 
-			if (!ddmFormField.isMultiple() &&
-				!Objects.equals(
-					DDMFormFieldType.CHECKBOX_MULTIPLE,
-					ddmFormField.getType())) {
-
-				values.add(optionValues);
-			}
-			else {
+			if (JSONUtil.isJSONArray(optionValues)) {
 				values.addAll(
 					JSONUtil.toStringList(
 						JSONFactoryUtil.createJSONArray(optionValues)));
+			}
+			else {
+				values.add(optionValues);
 			}
 
 			values = _transformValuesToKeys(ddmFormField, locale, values);

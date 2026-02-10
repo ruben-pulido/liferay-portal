@@ -5,26 +5,26 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.synonym;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchPhraseQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch8.internal.connection.IndexName;
 import com.liferay.portal.search.elasticsearch8.internal.document.SingleFieldFixture;
-import com.liferay.portal.search.elasticsearch8.internal.query.QueryBuilderFactories;
+import com.liferay.portal.search.elasticsearch8.internal.query.QueryFactories;
 import com.liferay.portal.search.elasticsearch8.internal.query.SearchAssert;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.ElasticsearchSearchEngineAdapterImpl;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.ElasticsearchSearchEngineAdapterIndexRequestTest;
-import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.index.IndexRequestExecutorFixture;
+import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.index.IndexRequestExecutorTestUtil;
 import com.liferay.portal.search.elasticsearch8.internal.util.ResourceUtil;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexResponse;
 import com.liferay.portal.search.engine.adapter.index.DeleteIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.DeleteIndexResponse;
-import com.liferay.portal.search.engine.adapter.index.IndexRequestExecutor;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
-
-import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -54,11 +54,11 @@ public class SynonymFiltersTest {
 			_elasticsearchFixture);
 
 		_singleFieldFixture = new SingleFieldFixture(
-			_elasticsearchFixture.getRestHighLevelClient(),
+			_elasticsearchFixture.getElasticsearchClient(),
 			new IndexName(_INDEX_NAME));
 
 		_singleFieldFixture.setField(_FIELD_NAME);
-		_singleFieldFixture.setQueryBuilderFactory(QueryBuilderFactories.MATCH);
+		_singleFieldFixture.setQueryFactory(QueryFactories.MATCH);
 	}
 
 	@AfterClass
@@ -185,21 +185,6 @@ public class SynonymFiltersTest {
 		_assertMatchPhraseQuerySearch("stable", "git hash", "stable");
 	}
 
-	private static IndexRequestExecutor _createIndexRequestExecutor(
-		ElasticsearchClientResolver elasticsearchClientResolver) {
-
-		IndexRequestExecutorFixture indexRequestExecutorFixture =
-			new IndexRequestExecutorFixture() {
-				{
-					setElasticsearchClientResolver(elasticsearchClientResolver);
-				}
-			};
-
-		indexRequestExecutorFixture.setUp();
-
-		return indexRequestExecutorFixture.getIndexRequestExecutor();
-	}
-
 	private static SearchEngineAdapter _createSearchEngineAdapter(
 		ElasticsearchClientResolver elasticsearchClientResolver) {
 
@@ -208,7 +193,8 @@ public class SynonymFiltersTest {
 
 		ReflectionTestUtil.setFieldValue(
 			searchEngineAdapter, "_indexRequestExecutor",
-			_createIndexRequestExecutor(elasticsearchClientResolver));
+			IndexRequestExecutorTestUtil.createIndexRequestExecutor(
+				elasticsearchClientResolver));
 
 		return searchEngineAdapter;
 	}
@@ -217,12 +203,14 @@ public class SynonymFiltersTest {
 			String text, String... expectedValues)
 		throws Exception {
 
-		MatchPhraseQueryBuilder matchPhraseQueryBuilder =
-			new MatchPhraseQueryBuilder(_FIELD_NAME, text);
+		MatchPhraseQuery.Builder builder = new MatchPhraseQuery.Builder();
+
+		builder.field(_FIELD_NAME);
+		builder.query(text);
 
 		SearchAssert.assertSearch(
-			_elasticsearchFixture.getRestHighLevelClient(), _FIELD_NAME,
-			matchPhraseQueryBuilder, expectedValues);
+			_elasticsearchFixture.getElasticsearchClient(), _FIELD_NAME,
+			new Query(builder.build()), expectedValues);
 	}
 
 	private void _createIndex(String suffix) {

@@ -1,7 +1,9 @@
 {
 	"dependencies": {
+		"@clayui/alert": "*",
 		"@clayui/autocomplete": "*",
 		"@clayui/badge": "*",
+		"@clayui/breadcrumb": "*",
 		"@clayui/button": "*",
 		"@clayui/card": "*",
 		"@clayui/core": "*",
@@ -21,6 +23,7 @@
 		"@clayui/table": "*",
 		"@clayui/tooltip": "*",
 		"@liferay/frontend-js-react-web": "*",
+		"@liferay/frontend-js-state-web": "*",
 		"@liferay/js-api": "0.6.2",
 		"classnames": "2.3.1",
 		"frontend-js-components-web": "*",

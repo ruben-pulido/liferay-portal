@@ -189,6 +189,22 @@ public class LayoutSiteNavigationMenuItemType
 	}
 
 	@Override
+	public String getName(String typeSettings) {
+		UnicodeProperties typeSettingsUnicodeProperties =
+			UnicodePropertiesBuilder.fastLoad(
+				typeSettings
+			).build();
+
+		String name = typeSettingsUnicodeProperties.get("name");
+
+		if (Validator.isNotNull(name)) {
+			return name;
+		}
+
+		return typeSettingsUnicodeProperties.get("title");
+	}
+
+	@Override
 	public String getRegularURL(
 			HttpServletRequest httpServletRequest,
 			SiteNavigationMenuItem siteNavigationMenuItem)
@@ -234,13 +250,41 @@ public class LayoutSiteNavigationMenuItemType
 	}
 
 	@Override
+	public String getStatusIcon(SiteNavigationMenuItem siteNavigationMenuItem) {
+		if (!hasModel(
+				siteNavigationMenuItem.getCompanyId(),
+				siteNavigationMenuItem.getGroupId(),
+				UnicodePropertiesBuilder.fastLoad(
+					siteNavigationMenuItem.getTypeSettings()
+				).build())) {
+
+			return "warning-full";
+		}
+
+		return SiteNavigationMenuItemType.super.getStatusIcon(
+			siteNavigationMenuItem);
+	}
+
+	@Override
 	public String getSubtitle(
 		SiteNavigationMenuItem siteNavigationMenuItem, Locale locale) {
 
 		Layout layout = _fetchLayout(siteNavigationMenuItem);
 
 		if (layout == null) {
-			return StringPool.BLANK;
+			UnicodeProperties typeSettingsUnicodeProperties =
+				UnicodePropertiesBuilder.fastLoad(
+					siteNavigationMenuItem.getTypeSettings()
+				).build();
+
+			String privateLayout = typeSettingsUnicodeProperties.getProperty(
+				"privateLayout");
+
+			if (privateLayout.equals("true")) {
+				return _language.get(locale, "private-page");
+			}
+
+			return _language.get(locale, "page");
 		}
 
 		Group group = layout.getGroup();
@@ -293,8 +337,14 @@ public class LayoutSiteNavigationMenuItemType
 			defaultTitle = layout.getName(locale);
 		}
 
-		return typeSettingsUnicodeProperties.getProperty(
+		String name = typeSettingsUnicodeProperties.getProperty(
 			"name_" + LocaleUtil.toLanguageId(locale), defaultTitle);
+
+		if ((layout == null) && Validator.isNull(name)) {
+			return typeSettingsUnicodeProperties.getProperty("title");
+		}
+
+		return name;
 	}
 
 	@Override
@@ -516,6 +566,14 @@ public class LayoutSiteNavigationMenuItemType
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
+		httpServletRequest.setAttribute(
+			SiteNavigationMenuItemTypeLayoutWebKeys.HAS_MODEL,
+			hasModel(
+				siteNavigationMenuItem.getCompanyId(),
+				siteNavigationMenuItem.getGroupId(),
+				UnicodePropertiesBuilder.fastLoad(
+					siteNavigationMenuItem.getTypeSettings()
+				).build()));
 		httpServletRequest.setAttribute(
 			SiteNavigationMenuItemTypeLayoutWebKeys.ITEM_SELECTOR,
 			_itemSelector);

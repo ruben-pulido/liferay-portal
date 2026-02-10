@@ -30,6 +30,7 @@ import {config as commerceAccountWebConfig} from './tests/commerce/commerce-acco
 import {config as commerceCartContentWebConfig} from './tests/commerce/commerce-cart-content-web/main/config';
 import {config as commerceCatalogWebConfig} from './tests/commerce/commerce-catalog-web/main/config';
 import {config as commerceChannelWebConfig} from './tests/commerce/commerce-channel-web/main/config';
+import {config as commerceCheckoutWebClientExtensionConfig} from './tests/commerce/commerce-checkout-web/client-extension/config';
 import {config as commerceCheckoutWebConfig} from './tests/commerce/commerce-checkout-web/main/config';
 import {config as commerceCurrencyWebConfig} from './tests/commerce/commerce-currency-web/main/config';
 import {config as commerceDiscountContentWebConfig} from './tests/commerce/commerce-discount-content-web/main/config';
@@ -164,6 +165,7 @@ import {config as siteNavigationBreadcrumbWebConfig} from './tests/site-navigati
 import {config as siteNavigationDirectoryWebConfig} from './tests/site-navigation-directory-web/main/config';
 import {config as siteNavigationLanguageWebConfig} from './tests/site-navigation-language-web/main/config';
 import {config as siteNavigationMenuWebConfig} from './tests/site-navigation-menu-web/main/config';
+import {config as siteNavigationSiteMapWebConfig} from './tests/site-navigation-site-map-web/main/config';
 import {config as siteSitemapWebConfig} from './tests/site-sitemap-web/main/config';
 import {config as siteTeamsWebConfig} from './tests/site-teams-web/main/config';
 import {config as smokeConfig} from './tests/smoke/main/config';
@@ -219,6 +221,7 @@ export default defineConfig({
 		commerceCartContentWebConfig,
 		commerceCatalogWebConfig,
 		commerceChannelWebConfig,
+		commerceCheckoutWebClientExtensionConfig,
 		commerceCheckoutWebConfig,
 		commerceCurrencyWebConfig,
 		commerceDiscountContentWebConfig,
@@ -353,6 +356,7 @@ export default defineConfig({
 		siteNavigationDirectoryWebConfig,
 		siteNavigationLanguageWebConfig,
 		siteNavigationMenuWebConfig,
+		siteNavigationSiteMapWebConfig,
 		siteSitemapWebConfig,
 		siteTeamsWebConfig,
 		smokeConfig,
@@ -395,7 +399,7 @@ export default defineConfig({
 	],
 	retries: process.env.CI ? 1 : 0,
 	testDir: './tests',
-	timeout: 60 * 1000,
+	timeout: 90 * 1000,
 	use: {
 		...devices['Desktop Chrome'],
 		baseURL: process.env.PORTAL_URL

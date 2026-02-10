@@ -27,6 +27,7 @@ import {
 	ReferencedObjectsContext,
 	withReferencedObjectsProvider
 } from './context/referencedObjects';
+import {SegmentEnabledSequentialCard} from 'segment/components/SegmentEnabledSequentialCard';
 import {SegmentStates, SegmentTypes} from 'shared/util/constants';
 
 /**
@@ -101,6 +102,10 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 
 	static defaultProps = {
 		segment: new Segment()
+	};
+
+	state = {
+		enabledSequentialSegment: false
 	};
 
 	_formRef = React.createRef<Formik>();
@@ -242,6 +247,23 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 											<div className='contributor-container'>
 												<div className='container-fluid container-fluid-max-xl'>
 													<div className='content-wrapper'>
+														{type ===
+															SegmentTypes.RealTime && (
+															<SegmentEnabledSequentialCard
+																onToggle={value =>
+																	this.setState(
+																		{
+																			enabledSequentialSegment: value
+																		}
+																	)
+																}
+																toggled={
+																	this.state
+																		.enabledSequentialSegment
+																}
+															/>
+														)}
+
 														{segmentState ===
 															SegmentStates.Disabled && (
 															<EmbeddedAlertList
@@ -262,24 +284,22 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 															/>
 														)}
 
-														<div className='sheet'>
-															<CriteriaBuilderForm
-																channelId={
-																	channelId
-																}
-																groupId={
-																	groupId
-																}
-																id={id}
-																name='criteria'
-																segmentType={
-																	type
-																}
-																validate={
-																	validateSegmentEditor
-																}
-															/>
-														</div>
+														<CriteriaBuilderForm
+															channelId={
+																channelId
+															}
+															enabledSequentialSegment={
+																this.state
+																	.enabledSequentialSegment
+															}
+															groupId={groupId}
+															id={id}
+															name='criteria'
+															segmentType={type}
+															validate={
+																validateSegmentEditor
+															}
+														/>
 													</div>
 												</div>
 											</div>

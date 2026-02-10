@@ -5,11 +5,17 @@
 		<fileSet filtered="true">
 			<directory></directory>
 			<includes>
+				<include>.claude/**</include>
+				<include>.cursor/**</include>
+				<include>.gemini/**</include>
+				<include>.github/**</include>
 				<include>.gitignore</include>
-				<include>Dockerfile.ext</include>
-				<include>GETTING_STARTED.md</include>
+				<include>.windsurf/**</include>
+				<include>.workspace-rules/**</include>
 				<include>build.gradle</include>
 				<include>configs/**</include>
+				<include>Dockerfile.ext</include>
+				<include>GETTING_STARTED.md</include>
 				<include>gradle-local.properties</include>
 				<include>gradle.properties</include>
 				<include>modules/pom.xml</include>

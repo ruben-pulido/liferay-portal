@@ -30,7 +30,10 @@ public class DefaultExportImportBackgroundTaskStatusMessageTranslator
 
 		String messageType = message.getString("messageType");
 
-		if (messageType.equals("layout")) {
+		if (messageType.equals("batchProgress")) {
+			_translateBatchProgressMessage(backgroundTaskStatus, message);
+		}
+		else if (messageType.equals("layout")) {
 			translateLayoutMessage(backgroundTaskStatus, message);
 		}
 		else if (messageType.equals("portlet")) {
@@ -57,6 +60,9 @@ public class DefaultExportImportBackgroundTaskStatusMessageTranslator
 		backgroundTaskStatus.setAttribute(
 			"currentPortletModelAdditionCounters",
 			new HashMap<String, LongWrapper>());
+		backgroundTaskStatus.setAttribute("percentage", 0);
+		backgroundTaskStatus.setAttribute(
+			"previousPortletsModelAdditionCountersTotal", 0L);
 	}
 
 	protected synchronized void translateLayoutMessage(
@@ -78,6 +84,8 @@ public class DefaultExportImportBackgroundTaskStatusMessageTranslator
 
 		backgroundTaskStatus.setAttribute(
 			"allPortletAdditionCounter", allPortletAdditionCounter);
+
+		_updatePercentage(backgroundTaskStatus);
 	}
 
 	protected synchronized void translatePortletMessage(
@@ -88,6 +96,25 @@ public class DefaultExportImportBackgroundTaskStatusMessageTranslator
 		HashMap<String, Long> allPortletModelAdditionCounters =
 			(HashMap<String, Long>)backgroundTaskStatus.getAttribute(
 				"allPortletModelAdditionCounters");
+
+		String previousPortletId = (String)backgroundTaskStatus.getAttribute(
+			"portletId");
+
+		if ((previousPortletId != null) &&
+			!previousPortletId.equals(portletId)) {
+
+			long previousPortletTotal = GetterUtil.getLong(
+				allPortletModelAdditionCounters.get(previousPortletId));
+			long previousPortletsModelAdditionCountersTotal =
+				GetterUtil.getLong(
+					backgroundTaskStatus.getAttribute(
+						"previousPortletsModelAdditionCountersTotal"));
+
+			backgroundTaskStatus.setAttribute(
+				"previousPortletsModelAdditionCountersTotal",
+				previousPortletsModelAdditionCountersTotal +
+					previousPortletTotal);
+		}
 
 		long portletModelAdditionCountersTotal = GetterUtil.getLong(
 			message.get("portletModelAdditionCountersTotal"));
@@ -123,6 +150,8 @@ public class DefaultExportImportBackgroundTaskStatusMessageTranslator
 		backgroundTaskStatus.setAttribute("stagedModelName", StringPool.BLANK);
 		backgroundTaskStatus.setAttribute("stagedModelType", StringPool.BLANK);
 		backgroundTaskStatus.setAttribute("uuid", StringPool.BLANK);
+
+		_updatePercentage(backgroundTaskStatus);
 	}
 
 	private long _getTotal(Map<String, LongWrapper> modelCounters) {
@@ -139,6 +168,32 @@ public class DefaultExportImportBackgroundTaskStatusMessageTranslator
 		}
 
 		return total;
+	}
+
+	private synchronized void _translateBatchProgressMessage(
+		BackgroundTaskStatus backgroundTaskStatus, Message message) {
+
+		long allModelAdditionCountersTotal = GetterUtil.getLong(
+			backgroundTaskStatus.getAttribute("allModelAdditionCountersTotal"));
+		int batchEngineProcessedItemsCount = GetterUtil.getInteger(
+			message.get("batchEngineProcessedItemsCount"));
+		long currentModelAdditionCountersTotal = GetterUtil.getLong(
+			backgroundTaskStatus.getAttribute(
+				"currentModelAdditionCountersTotal"));
+		long previousPortletsModelAdditionCountersTotal = GetterUtil.getLong(
+			backgroundTaskStatus.getAttribute(
+				"previousPortletsModelAdditionCountersTotal"));
+
+		backgroundTaskStatus.setAttribute(
+			"currentModelAdditionCountersTotal",
+			Math.max(
+				currentModelAdditionCountersTotal,
+				Math.min(
+					batchEngineProcessedItemsCount +
+						previousPortletsModelAdditionCountersTotal,
+					allModelAdditionCountersTotal)));
+
+		_updatePercentage(backgroundTaskStatus);
 	}
 
 	private synchronized void _translateStagedModelMessage(
@@ -193,6 +248,37 @@ public class DefaultExportImportBackgroundTaskStatusMessageTranslator
 		backgroundTaskStatus.setAttribute(
 			"stagedModelType", message.getString("stagedModelType"));
 		backgroundTaskStatus.setAttribute("uuid", message.getString("uuid"));
+
+		_updatePercentage(backgroundTaskStatus);
+	}
+
+	private void _updatePercentage(BackgroundTaskStatus backgroundTaskStatus) {
+		int percentage = 100;
+
+		long allModelAdditionCountersTotal = GetterUtil.getLong(
+			backgroundTaskStatus.getAttribute("allModelAdditionCountersTotal"));
+		long allPortletAdditionCounter = GetterUtil.getLong(
+			backgroundTaskStatus.getAttribute("allPortletAdditionCounter"));
+		long currentModelAdditionCountersTotal = GetterUtil.getLong(
+			backgroundTaskStatus.getAttribute(
+				"currentModelAdditionCountersTotal"));
+		long currentPortletAdditionCounter = GetterUtil.getLong(
+			backgroundTaskStatus.getAttribute("currentPortletAdditionCounter"));
+
+		long allProgressBarCountersTotal =
+			allModelAdditionCountersTotal + allPortletAdditionCounter;
+
+		if (allProgressBarCountersTotal > 0) {
+			long currentProgressBarCountersTotal =
+				currentModelAdditionCountersTotal +
+					currentPortletAdditionCounter;
+
+			percentage = Math.round(
+				(float)currentProgressBarCountersTotal /
+					allProgressBarCountersTotal * 100);
+		}
+
+		backgroundTaskStatus.setAttribute("percentage", percentage);
 	}
 
 }

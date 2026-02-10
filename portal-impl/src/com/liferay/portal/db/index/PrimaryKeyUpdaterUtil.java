@@ -6,10 +6,12 @@
 package com.liferay.portal.db.index;
 
 import com.liferay.petra.concurrent.DCLSingleton;
+import com.liferay.petra.lang.CentralizedThreadLocal;
 import com.liferay.portal.db.DBResourceUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.framework.ThrowableCollector;
@@ -18,6 +20,7 @@ import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.sql.Connection;
@@ -28,6 +31,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -40,8 +44,6 @@ public class PrimaryKeyUpdaterUtil {
 	public static void updateAllPrimaryKeys() {
 		try (LoggingTimer loggingTimer = new LoggingTimer(
 				"Updating database primary keys")) {
-
-			_throwableCollector = new ThrowableCollector();
 
 			_addUpdatePrimaryKeysFutures(
 				DBResourceUtil.getPortalTablesPrimaryKeyColumnNames());
@@ -78,7 +80,15 @@ public class PrimaryKeyUpdaterUtil {
 
 			_awaitFuturesTermination();
 
-			_throwableCollector.rethrow();
+			ThrowableCollector throwableCollector = _throwableCollector.get();
+
+			throwableCollector.rethrow();
+		}
+		finally {
+			if (_pendingExecutions.decrementAndGet() == 0) {
+				_executorServiceDCLSingleton.destroy(
+					executorService -> executorService.shutdownNow());
+			}
 		}
 	}
 
@@ -90,18 +100,20 @@ public class PrimaryKeyUpdaterUtil {
 		}
 
 		ExecutorService executorService = _getExecutorService();
+		List<Future<?>> futures = _futures.get();
+		ThrowableCollector throwableCollector = _throwableCollector.get();
 
 		for (Map.Entry<String, String[]> entry :
 				tablesPrimaryKeysColumnNames.entrySet()) {
 
-			_futures.add(
+			futures.add(
 				executorService.submit(
 					() -> {
 						try {
 							_updatePrimaryKey(entry.getKey(), entry.getValue());
 						}
 						catch (Exception exception) {
-							_throwableCollector.collect(exception);
+							throwableCollector.collect(exception);
 
 							throw new RuntimeException(exception);
 						}
@@ -110,7 +122,9 @@ public class PrimaryKeyUpdaterUtil {
 	}
 
 	private static void _awaitFuturesTermination() {
-		for (Future<?> future : _futures) {
+		List<Future<?>> futures = _futures.get();
+
+		for (Future<?> future : futures) {
 			try {
 				future.get();
 			}
@@ -119,12 +133,21 @@ public class PrimaryKeyUpdaterUtil {
 			}
 		}
 
-		_futures.clear();
+		futures.clear();
 	}
 
 	private static ExecutorService _getExecutorService() {
 		return _executorServiceDCLSingleton.getSingleton(
 			() -> {
+				if (PropsValues.DATABASE_PARTITION_ENABLED) {
+					long[] companyIds = PortalInstancePool.getCompanyIds();
+
+					_pendingExecutions = new AtomicInteger(companyIds.length);
+				}
+				else {
+					_pendingExecutions = new AtomicInteger(1);
+				}
+
 				Runtime runtime = Runtime.getRuntime();
 
 				return Executors.newFixedThreadPool(
@@ -138,7 +161,7 @@ public class PrimaryKeyUpdaterUtil {
 
 		DB db = DBManagerUtil.getDB();
 
-		db.process(
+		CompanyLocalServiceUtil.forEachCompanyId(
 			companyId -> {
 				try {
 					try (Connection connection = DataAccess.getConnection()) {
@@ -165,8 +188,14 @@ public class PrimaryKeyUpdaterUtil {
 
 	private static final DCLSingleton<ExecutorService>
 		_executorServiceDCLSingleton = new DCLSingleton<>();
-	private static final List<Future<?>> _futures =
-		new CopyOnWriteArrayList<>();
-	private static ThrowableCollector _throwableCollector;
+	private static final ThreadLocal<List<Future<?>>> _futures =
+		new CentralizedThreadLocal<>(
+			PrimaryKeyUpdaterUtil.class + "._futures",
+			() -> new CopyOnWriteArrayList<>());
+	private static AtomicInteger _pendingExecutions;
+	private static final ThreadLocal<ThrowableCollector> _throwableCollector =
+		new CentralizedThreadLocal<>(
+			PrimaryKeyUpdaterUtil.class + "._throwableCollector",
+			() -> new ThrowableCollector());
 
 }

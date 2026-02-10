@@ -7,8 +7,8 @@ import {State} from '../../structure_builder/contexts/StateContext';
 import {Structure} from '../../structure_builder/types/Structure';
 import buildGroupObjectDefinitions from '../../structure_builder/utils/buildGroupObjectDefinitions';
 import buildObjectDefinition from '../../structure_builder/utils/buildObjectDefinition';
+import buildObjectRelationships from '../../structure_builder/utils/buildObjectRelationships';
 import getRandomId from '../../structure_builder/utils/getRandomId';
-import {ObjectDefinitions} from '../types/ObjectDefinition';
 import ApiHelper from './ApiHelper';
 
 async function createStructure({
@@ -61,10 +61,45 @@ async function createStructure({
 		workflows,
 	});
 
-	return await ApiHelper.post<{id: number}>(
+	const {data, error} = await ApiHelper.post<{id: number}>(
 		'/o/object-admin/v1.0/object-definitions',
 		mainObjectDefinition
 	);
+
+	if (error) {
+		return {
+			data: null,
+			error: Liferay.Language.get(
+				'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
+			),
+		};
+	}
+
+	const objectRelationships = buildObjectRelationships({
+		children,
+		structureERC: erc,
+	});
+
+	for (const objectRelationship of objectRelationships) {
+		const {error} = await ApiHelper.post(
+			`/o/object-admin/v1.0/object-definitions/by-external-reference-code/${objectRelationship.objectDefinitionExternalReferenceCode1}/object-relationships`,
+			objectRelationship
+		);
+
+		if (error) {
+			return {
+				data: null,
+				error: Liferay.Language.get(
+					'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
+				),
+			};
+		}
+	}
+
+	return {
+		data,
+		error: null,
+	};
 }
 
 async function updateStructure({
@@ -74,7 +109,6 @@ async function updateStructure({
 	id,
 	label,
 	name,
-	objectDefinitions,
 	spaces,
 	status,
 	workflows,
@@ -85,58 +119,11 @@ async function updateStructure({
 	id: Structure['id'];
 	label: Structure['label'];
 	name: Structure['name'];
-	objectDefinitions: ObjectDefinitions;
 	spaces: Structure['spaces'];
 	status: Structure['status'];
 	workflows: Structure['workflows'];
 }) {
-
-	// Delete object definitions of deleted repeatable groups
-
-	if (history.deletedGroupERCs.length) {
-		const ids = history.deletedGroupERCs.map((erc) => {
-			const objectDefinition = objectDefinitions[erc];
-
-			return objectDefinition.id!;
-		});
-
-		const response = await ApiHelper.batch({
-			data: ids.map((id) => ({
-				id,
-			})),
-			method: 'DELETE',
-			url: '/o/object-admin/v1.0/object-definitions/batch',
-		});
-
-		if (response?.error) {
-			return {
-				error: Liferay.Language.get(
-					'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
-				),
-			};
-		}
-	}
-
-	// Publish object definitions for repeatable groups
-
 	const groupObjectDefinitions = buildGroupObjectDefinitions({children});
-
-	for (const objectDefinition of groupObjectDefinitions) {
-		const {error} = await ApiHelper.put(
-			`/o/object-admin/v1.0/object-definitions/by-external-reference-code/${objectDefinition.externalReferenceCode}`,
-			objectDefinition
-		);
-
-		if (error) {
-			return {
-				error: Liferay.Language.get(
-					'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
-				),
-			};
-		}
-	}
-
-	// Publish the main object definition
 
 	const mainObjectDefinition = buildObjectDefinition({
 		children,
@@ -149,52 +136,89 @@ async function updateStructure({
 		workflows,
 	});
 
-	return await ApiHelper.put(
-		`/o/object-admin/v1.0/object-definitions/${id}`,
-		mainObjectDefinition
+	const objectRelationships = buildObjectRelationships({
+		children,
+		structureERC: erc,
+	});
+
+	const pathMain = Liferay.ThemeDisplay.getPathMain();
+
+	const formData = new FormData();
+
+	formData.append(
+		'deletedObjectRelationships',
+		JSON.stringify(
+			history.deletedRelationships.map((relationship) => ({
+				objectDefinitionERC: relationship.structureERC,
+				objectRelationshipERC: relationship.relationshipERC,
+			}))
+		)
 	);
+
+	formData.append(
+		'deletedRepeatableGroupsERCs',
+		history.deletedGroupERCs.join(',')
+	);
+
+	formData.append('objectDefinition', JSON.stringify(mainObjectDefinition));
+
+	formData.append('objectRelationships', JSON.stringify(objectRelationships));
+
+	formData.append(
+		'repeatableGroupObjectDefinitions',
+		JSON.stringify(groupObjectDefinitions)
+	);
+
+	const response = await ApiHelper.postFormData(
+		formData,
+		`${pathMain}/cms/update-structure`
+	);
+
+	if (response?.error) {
+		return {
+			error: Liferay.Language.get(
+				'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
+			),
+		};
+	}
+
+	return response;
 }
 
-async function deleteStructure({
-	id,
-	repeatableGroupIds,
-}: {
-	id: Structure['id'];
-	repeatableGroupIds?: number[];
-}) {
-	let promise;
+async function deleteStructure({id}: {id: Structure['id']}) {
+	const pathMain = Liferay.ThemeDisplay.getPathMain();
 
-	// If the structure does not have repeatable groups, just delete it
+	const formData = new FormData();
 
-	if (!repeatableGroupIds?.length) {
-		promise = ApiHelper.delete(
-			`/o/object-admin/v1.0/object-definitions/${id}`
-		);
-	}
+	formData.append('objectDefinitionId', String(id));
 
-	// Otherwise perform a batch request to remove also the groups
-
-	else {
-		const data = [...repeatableGroupIds, id].map((id) => ({
-			id,
-		}));
-
-		promise = ApiHelper.batch({
-			data,
-			method: 'DELETE',
-			url: '/o/object-admin/v1.0/object-definitions/batch',
-		});
-	}
-
-	const response = await promise;
+	const response = await ApiHelper.postFormData(
+		formData,
+		`${pathMain}/cms/delete-structure`
+	);
 
 	if (response?.error) {
 		return {error: response.error};
 	}
 }
 
+async function updateStructureWorkflow({
+	structureIds,
+	workflow,
+}: {
+	structureIds: string[];
+	workflow: string;
+}) {
+	return {
+		error: false,
+		structureIds,
+		workflow,
+	};
+}
+
 export default {
 	createStructure,
 	deleteStructure,
 	updateStructure,
+	updateStructureWorkflow,
 };

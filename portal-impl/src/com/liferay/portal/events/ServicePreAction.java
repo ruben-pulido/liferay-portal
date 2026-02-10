@@ -1101,7 +1101,8 @@ public class ServicePreAction extends Action {
 		String doAsUserId = ParamUtil.getString(
 			httpServletRequest, "doAsUserId");
 
-		if (!Validator.isHex(doAsUserId) ||
+		if (!PropsValues.PORTAL_IMPERSONATION_ENABLE ||
+			!Validator.isHex(doAsUserId) ||
 			!ChecksumUtil.isValid(StringUtil.hexStringToBytes(doAsUserId))) {
 
 			doAsUserId = StringPool.BLANK;
@@ -1763,7 +1764,9 @@ public class ServicePreAction extends Action {
 			themeDisplay.setShowPageSettingsIcon(false);
 		}
 
-		if ((layout != null) && layout.isLayoutPrototypeLinkActive()) {
+		if ((layout != null) &&
+			layout.isPortletLayoutPageTemplateEntryLinkActive()) {
+
 			themeDisplay.setShowPageCustomizationIcon(false);
 		}
 

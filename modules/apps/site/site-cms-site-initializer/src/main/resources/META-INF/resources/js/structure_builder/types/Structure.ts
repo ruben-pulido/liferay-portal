@@ -8,7 +8,7 @@ import {Workflow} from '../../common/types/Workflow';
 import {Field} from '../utils/field';
 import {Uuid} from './Uuid';
 
-type Status = 'new' | 'draft' | 'published';
+type Status = 'new' | 'draft' | 'published' | 'publishing' | 'saving';
 
 type Spaces = 'all' | string[];
 
@@ -21,11 +21,23 @@ export type ReferencedStructure = {
 	label: Liferay.Language.LocalizedValue<string>;
 	name: string;
 	parent: Uuid;
+	relationshipERC: string;
 	relationshipName: string;
 	spaces: Spaces;
 	type: 'referenced-structure';
 	uuid: Uuid;
 	workflows: Workflows;
+};
+
+export type RelatedContent = {
+	erc: string;
+	label: Liferay.Language.LocalizedValue<string>;
+	multiselection: boolean;
+	name: string;
+	parent: Uuid;
+	relatedStructureERC: string;
+	type: 'related-content';
+	uuid: Uuid;
 };
 
 export type RepeatableGroup = {
@@ -34,12 +46,17 @@ export type RepeatableGroup = {
 	label: Liferay.Language.LocalizedValue<string>;
 	name: string;
 	parent: Uuid;
+	relationshipERC: string;
 	relationshipName: string;
 	type: 'repeatable-group';
 	uuid: Uuid;
 };
 
-export type StructureChild = Field | ReferencedStructure | RepeatableGroup;
+export type StructureChild =
+	| Field
+	| ReferencedStructure
+	| RelatedContent
+	| RepeatableGroup;
 
 export type Structure = {
 	children: Map<Uuid, StructureChild>;
