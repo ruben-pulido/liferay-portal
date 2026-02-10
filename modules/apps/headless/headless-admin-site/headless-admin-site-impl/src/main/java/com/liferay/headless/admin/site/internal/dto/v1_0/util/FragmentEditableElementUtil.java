@@ -450,7 +450,8 @@ public class FragmentEditableElementUtil {
 
 		if (Objects.equals(type, "action")) {
 			return _toActionFragmentEditableElementValue(
-				companyId, infoItemServiceRegistry, jsonObject, scopeGroupId);
+				companyId, infoItemServiceRegistry, jsonObject, layoutPlid,
+				layoutStructure, layoutStructureItemId, scopeGroupId);
 		}
 
 		if (Objects.equals(type, "background-image")) {
@@ -474,7 +475,8 @@ public class FragmentEditableElementUtil {
 
 		if (Objects.equals(type, "link")) {
 			return _toLinkFragmentEditableElementValue(
-				companyId, infoItemServiceRegistry, jsonObject, scopeGroupId);
+				companyId, infoItemServiceRegistry, jsonObject, layoutPlid,
+				layoutStructure, layoutStructureItemId, scopeGroupId);
 		}
 
 		if (Objects.equals(type, "rich-text")) {
@@ -832,13 +834,16 @@ public class FragmentEditableElementUtil {
 	private static ActionFragmentEditableElementValue
 			_toActionFragmentEditableElementValue(
 				long companyId, InfoItemServiceRegistry infoItemServiceRegistry,
-				JSONObject jsonObject, long scopeGroupId)
+				JSONObject jsonObject, long layoutPlid,
+				LayoutStructure layoutStructure, String layoutStructureItemId,
+				long scopeGroupId)
 		throws Exception {
 
 		JSONObject configJSONObject = jsonObject.getJSONObject("config");
 
 		TextFragmentValue textFragmentValue = _toTextFragmentValue(
-			companyId, infoItemServiceRegistry, jsonObject, scopeGroupId);
+			companyId, infoItemServiceRegistry, jsonObject, layoutPlid,
+			layoutStructure, layoutStructureItemId, scopeGroupId);
 
 		if ((configJSONObject == null) ||
 			!configJSONObject.has("mappedAction")) {
@@ -849,7 +854,8 @@ public class FragmentEditableElementUtil {
 		FragmentMappedValue fragmentMappedValue =
 			FragmentMappingUtil.toFragmentMappedValue(
 				companyId, infoItemServiceRegistry,
-				configJSONObject.getJSONObject("mappedAction"), scopeGroupId);
+				configJSONObject.getJSONObject("mappedAction"), layoutPlid,
+				layoutStructure, layoutStructureItemId, scopeGroupId);
 
 		if (fragmentMappedValue == null) {
 			return _toActionFragmentEditableElementValue(textFragmentValue);
@@ -1268,7 +1274,8 @@ public class FragmentEditableElementUtil {
 
 	private static FragmentLinkTextValue _toFragmentLinkTextValue(
 		long companyId, InfoItemServiceRegistry infoItemServiceRegistry,
-		JSONObject jsonObject, long scopeGroupId) {
+		JSONObject jsonObject, long layoutPlid, LayoutStructure layoutStructure,
+		String layoutStructureItemId, long scopeGroupId) {
 
 		if (jsonObject == null) {
 			return null;
@@ -1278,10 +1285,12 @@ public class FragmentEditableElementUtil {
 			fragmentEditableElementValueFragmentLink =
 				_toFragmentEditableElementValueFragmentLink(
 					companyId, infoItemServiceRegistry,
-					jsonObject.getJSONObject("config"), scopeGroupId);
+					jsonObject.getJSONObject("config"), layoutPlid,
+					layoutStructure, layoutStructureItemId, scopeGroupId);
 
 		TextFragmentValue textFragmentValue = _toTextFragmentValue(
-			companyId, infoItemServiceRegistry, jsonObject, scopeGroupId);
+			companyId, infoItemServiceRegistry, jsonObject, layoutPlid,
+			layoutStructure, layoutStructureItemId, scopeGroupId);
 
 		if ((fragmentEditableElementValueFragmentLink == null) &&
 			(textFragmentValue == null)) {
@@ -1411,10 +1420,13 @@ public class FragmentEditableElementUtil {
 	private static LinkFragmentEditableElementValue
 		_toLinkFragmentEditableElementValue(
 			long companyId, InfoItemServiceRegistry infoItemServiceRegistry,
-			JSONObject jsonObject, long scopeGroupId) {
+			JSONObject jsonObject, long layoutPlid,
+			LayoutStructure layoutStructure, String layoutStructureItemId,
+			long scopeGroupId) {
 
 		FragmentLinkTextValue fragmentLinkTextValue = _toFragmentLinkTextValue(
-			companyId, infoItemServiceRegistry, jsonObject, scopeGroupId);
+			companyId, infoItemServiceRegistry, jsonObject, layoutPlid,
+			layoutStructure, layoutStructureItemId, scopeGroupId);
 
 		if (fragmentLinkTextValue == null) {
 			return null;
@@ -1485,7 +1497,8 @@ public class FragmentEditableElementUtil {
 		}
 
 		FragmentLinkTextValue fragmentLinkTextValue = _toFragmentLinkTextValue(
-			companyId, infoItemServiceRegistry, jsonObject, scopeGroupId);
+			companyId, infoItemServiceRegistry, jsonObject, layoutPlid,
+			layoutStructure, layoutStructureItemId, scopeGroupId);
 
 		if (fragmentLinkTextValue == null) {
 			return null;

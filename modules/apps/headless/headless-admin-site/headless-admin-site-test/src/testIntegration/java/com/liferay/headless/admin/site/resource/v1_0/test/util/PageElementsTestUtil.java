@@ -44,6 +44,7 @@ import com.liferay.headless.admin.site.client.dto.v1_0.FragmentInstance;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentItemExternalReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentLink;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentLinkMappedValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.FragmentLinkTextValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentLinkValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValueItemContextReference;
@@ -181,7 +182,7 @@ public class PageElementsTestUtil {
 		getBasicFragmentInstancePageElementDefinition(
 			Map<String, Object> configurationValuesMap,
 			FragmentEditableElement[] fragmentEditableElements,
-			FragmentEntry fragmentEntry, boolean hidden, long scopeGroupId) {
+			FragmentEntry fragmentEntry, Boolean hidden, long scopeGroupId) {
 
 		return getBasicFragmentInstancePageElementDefinition(
 			configurationValuesMap, fragmentEditableElements, fragmentEntry,
@@ -614,26 +615,24 @@ public class PageElementsTestUtil {
 								(TextFragmentEditableElementValue)
 									fragmentEditableElementValue;
 
-						TextFragmentValue textFragmentValue =
+						FragmentLinkTextValue fragmentLinkTextValue =
 							textFragmentEditableElementValue.
-								getTextFragmentValue();
+								getFragmentLinkTextValue();
 
-						if (textFragmentValue instanceof
-								TextFragmentMappedValue) {
+						TextFragmentValue textFragmentValue =
+							fragmentLinkTextValue.getTextFragmentValue();
 
-							TextFragmentMappedValue textFragmentMappedValue =
-								(TextFragmentMappedValue)textFragmentValue;
+						TextFragmentMappedValue textFragmentMappedValue =
+							(TextFragmentMappedValue)textFragmentValue;
 
-							FragmentMappedValue fragmentMappedValue =
-								textFragmentMappedValue.
-									getFragmentMappedValue();
+						FragmentMappedValue fragmentMappedValue =
+							textFragmentMappedValue.getFragmentMappedValue();
 
-							Mapping mapping = fragmentMappedValue.getMapping();
+						Mapping mapping = fragmentMappedValue.getMapping();
 
-							mapping.setFieldKey(
-								_toExternalFieldKey(
-									mapping.getFieldKey(), scopeGroupId));
-						}
+						mapping.setFieldKey(
+							_toExternalFieldKey(
+								mapping.getFieldKey(), scopeGroupId));
 					}
 				}
 			}
@@ -757,6 +756,7 @@ public class PageElementsTestUtil {
 	}
 
 	private static PageElement _getBasicFragmentPageElement(
+		String className,
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
 		String externalReferenceCode, String fieldKey,
 		String scopeExternalReferenceCode, long scopeGroupId) {
@@ -768,8 +768,8 @@ public class PageElementsTestUtil {
 				new FragmentEditableElement[] {
 					FragmentEditableElementTestUtil.
 						getTextFragmentEditableElement(
-							contextSource, externalReferenceCode, fieldKey,
-							null, null, scopeExternalReferenceCode,
+							className, contextSource, externalReferenceCode,
+							fieldKey, null, null, scopeExternalReferenceCode,
 							TextFragmentValue.Type.MAPPED)
 				},
 				scopeGroupId));
@@ -796,7 +796,7 @@ public class PageElementsTestUtil {
 
 		PageElement collectionDisplayPageElement = _getPageElement(
 			getPageElementDefinition(
-				false, PageElementDefinition.Type.COLLECTION_DISPLAY,
+				Boolean.FALSE, PageElementDefinition.Type.COLLECTION_DISPLAY,
 				scopeGroupId),
 			StringPool.BLANK, position);
 
@@ -804,7 +804,8 @@ public class PageElementsTestUtil {
 			new PageElement[] {
 				_getPageElement(
 					getPageElementDefinition(
-						false, PageElementDefinition.Type.COLLECTION_ITEM,
+						Boolean.FALSE,
+						PageElementDefinition.Type.COLLECTION_ITEM,
 						scopeGroupId),
 					collectionDisplayPageElement.getExternalReferenceCode(), 0)
 			});
@@ -840,7 +841,7 @@ public class PageElementsTestUtil {
 
 		PageElement collectionDisplayPageElement = _getPageElement(
 			_getCollectionDisplayPageElementDefinition(
-				collectionItemExternalReference, false),
+				collectionItemExternalReference, Boolean.FALSE),
 			StringPool.BLANK, position);
 
 		collectionDisplayPageElement.setPageElements(
@@ -848,7 +849,8 @@ public class PageElementsTestUtil {
 				_getPageElement(
 					RandomTestUtil.randomString(),
 					getPageElementDefinition(
-						false, PageElementDefinition.Type.COLLECTION_ITEM,
+						Boolean.FALSE,
+						PageElementDefinition.Type.COLLECTION_ITEM,
 						scopeGroupId),
 					pageElements,
 					collectionDisplayPageElement.getExternalReferenceCode(), 0)
@@ -866,9 +868,10 @@ public class PageElementsTestUtil {
 			journalArticle, position, scopeGroupId,
 			new PageElement[] {
 				_getBasicFragmentPageElement(
+					null,
 					FragmentMappedValueItemContextReference.ContextSource.
 						COLLECTION_ITEM,
-					RandomTestUtil.randomString(), fieldKey, null, scopeGroupId)
+					null, fieldKey, null, scopeGroupId)
 			});
 
 		pageElement.setPosition(position);
@@ -919,6 +922,7 @@ public class PageElementsTestUtil {
 		String fieldKey, int position, long scopeGroupId) {
 
 		PageElement pageElement = _getBasicFragmentPageElement(
+			null,
 			FragmentMappedValueItemContextReference.ContextSource.
 				DISPLAY_PAGE_ITEM,
 			null, fieldKey, null, scopeGroupId);
@@ -1190,8 +1194,9 @@ public class PageElementsTestUtil {
 		long scopeGroupId) {
 
 		PageElement pageElement = _getBasicFragmentPageElement(
-			null, journalArticle.getExternalReferenceCode(), fieldKey,
-			"L_GLOBAL", scopeGroupId);
+			"com.liferay.journal.model.JournalArticle", null,
+			journalArticle.getExternalReferenceCode(), fieldKey, "L_GLOBAL",
+			scopeGroupId);
 
 		pageElement.setPosition(position);
 

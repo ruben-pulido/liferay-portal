@@ -18,7 +18,7 @@ public class FragmentViewportStyleTestUtil {
 	}
 
 	public static FragmentViewportStyle getFragmentViewportStyle(
-		Boolean hidden) {
+		Boolean curHidden) {
 
 		return new FragmentViewportStyle() {
 			{
@@ -30,7 +30,7 @@ public class FragmentViewportStyleTestUtil {
 				setFontSize(RandomTestUtil::randomString);
 				setFontWeight(RandomTestUtil::randomString);
 				setHeight(RandomTestUtil::randomString);
-				setHidden(hidden);
+				setHidden(() -> curHidden);
 				setMarginBottom(RandomTestUtil::randomString);
 				setMarginLeft(RandomTestUtil::randomString);
 				setMarginRight(RandomTestUtil::randomString);

@@ -1333,20 +1333,16 @@ public class DisplayPageTemplateResourceTest
 		JournalArticle journalArticle =
 			AssetTestUtil.randomCompanyGroupJournalArticle();
 
-		PageElement[] draftPageElements =
-			PageElementsTestUtil.getPageElementsWithTemplateEntries(
-				journalArticle,
-				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
-				testGroup.getGroupId());
-		PageElement[] publishedPageElements =
-			PageElementsTestUtil.getPageElementsWithTemplateEntries(
-				journalArticle,
-				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
-				testGroup.getGroupId());
-
 		DisplayPageTemplate displayPageTemplate =
 			_getDisplayPageTemplateWithPageElements(
-				draftPageElements, publishedPageElements);
+				PageElementsTestUtil.getPageElementsWithTemplateEntries(
+					journalArticle,
+					LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
+					testGroup.getGroupId()),
+				PageElementsTestUtil.getPageElementsWithTemplateEntries(
+					journalArticle,
+					LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
+					testGroup.getGroupId()));
 
 		DisplayPageTemplate postDisplayPageTemplate =
 			displayPageTemplateResource.postSiteDisplayPageTemplate(
@@ -1645,20 +1641,16 @@ public class DisplayPageTemplateResourceTest
 		JournalArticle journalArticle =
 			AssetTestUtil.randomCompanyGroupJournalArticle();
 
-		PageElement[] draftPageElements =
-			PageElementsTestUtil.getPageElementsWithTemplateEntries(
-				journalArticle,
-				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
-				testGroup.getGroupId());
-		PageElement[] publishedPageElements =
-			PageElementsTestUtil.getPageElementsWithTemplateEntries(
-				journalArticle,
-				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
-				testGroup.getGroupId());
-
 		DisplayPageTemplate displayPageTemplate =
 			_getDisplayPageTemplateWithPageElements(
-				draftPageElements, publishedPageElements);
+				PageElementsTestUtil.getPageElementsWithTemplateEntries(
+					journalArticle,
+					LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
+					testGroup.getGroupId()),
+				PageElementsTestUtil.getPageElementsWithTemplateEntries(
+					journalArticle,
+					LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
+					testGroup.getGroupId()));
 
 		DisplayPageTemplate postDisplayPageTemplate =
 			displayPageTemplateResource.postSiteDisplayPageTemplate(

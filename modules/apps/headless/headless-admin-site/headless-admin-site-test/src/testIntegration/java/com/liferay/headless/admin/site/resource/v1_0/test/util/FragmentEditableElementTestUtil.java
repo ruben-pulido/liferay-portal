@@ -262,11 +262,12 @@ public class FragmentEditableElementTestUtil {
 	}
 
 	public static FragmentEditableElement getLinkFragmentEditableElement(
+		String className,
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		FragmentLink fragmentLink,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType,
-		String id, FragmentEditableElementValueFragmentLink.Prefix prefix,
+		String externalReferenceCode, String fieldKey,
+		FragmentLink fragmentLink, String id,
+		FragmentEditableElementValueFragmentLink.Prefix prefix,
+		String scopeExternalReferenceCode,
 		TextFragmentValue.Type textFragmentValueType) {
 
 		FragmentEditableElement fragmentEditableElement =
@@ -277,8 +278,8 @@ public class FragmentEditableElementTestUtil {
 
 		linkFragmentEditableElementValue.setFragmentLinkTextValue(
 			() -> _getFragmentLinkTextValue(
-				contextSource, fragmentLink,
-				fragmentMappedValueItemReferenceType, prefix,
+				className, contextSource, externalReferenceCode, fieldKey,
+				fragmentLink, prefix, scopeExternalReferenceCode,
 				textFragmentValueType));
 		linkFragmentEditableElementValue.setType(
 			() -> FragmentEditableElementValue.Type.LINK);
@@ -293,17 +294,15 @@ public class FragmentEditableElementTestUtil {
 
 	public static FragmentImageValue getMappedFragmentImageValue(
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		String fieldKey,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType) {
+		String fieldKey) {
 
 		MappedFragmentImageValue mappedFragmentImageValue =
 			new MappedFragmentImageValue();
 
 		mappedFragmentImageValue.setFragmentMappedValue(
 			() -> _getFragmentMappedValue(
-				null, contextSource, RandomTestUtil.randomString(), fieldKey,
-				null));
+				"com.liferay.portal.kernel.repository.model.FileEntry",
+				contextSource, RandomTestUtil.randomString(), fieldKey, null));
 		mappedFragmentImageValue.setType(() -> FragmentImageValue.Type.MAPPED);
 
 		return mappedFragmentImageValue;
@@ -364,6 +363,7 @@ public class FragmentEditableElementTestUtil {
 	}
 
 	public static FragmentEditableElement getTextFragmentEditableElement(
+		String className,
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
 		String externalReferenceCode, String fieldKey,
 		FragmentLink fragmentLink,
@@ -379,8 +379,8 @@ public class FragmentEditableElementTestUtil {
 
 		textFragmentEditableElementValue.setFragmentLinkTextValue(
 			() -> _getFragmentLinkTextValue(
-				contextSource, fragmentLink,
-				fragmentMappedValueItemReferenceType, prefix,
+				className, contextSource, externalReferenceCode, fieldKey,
+				fragmentLink, prefix, scopeExternalReferenceCode,
 				textFragmentValueType));
 		textFragmentEditableElementValue.setType(
 			() -> FragmentEditableElementValue.Type.TEXT);
@@ -459,11 +459,12 @@ public class FragmentEditableElementTestUtil {
 	}
 
 	private static FragmentLinkTextValue _getFragmentLinkTextValue(
+		String className,
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
+		String externalReferenceCode, String fieldKey,
 		FragmentLink fragmentLink,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType,
 		FragmentEditableElementValueFragmentLink.Prefix prefix,
+		String scopeExternalReferenceCode,
 		TextFragmentValue.Type textFragmentValueType) {
 
 		return new FragmentLinkTextValue() {
@@ -473,7 +474,8 @@ public class FragmentEditableElementTestUtil {
 						fragmentLink, prefix));
 				setTextFragmentValue(
 					() -> _getTextFragmentValue(
-						contextSource, fragmentMappedValueItemReferenceType,
+						className, contextSource, externalReferenceCode,
+						fieldKey, scopeExternalReferenceCode,
 						textFragmentValueType));
 			}
 		};
@@ -619,6 +621,12 @@ public class FragmentEditableElementTestUtil {
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
 		final String externalReferenceCode, String fieldKey,
 		final String scopeExternalReferenceCode) {
+
+		if ((className == null) && (contextSource == null) &&
+			(externalReferenceCode == null) && (fieldKey == null)) {
+
+			return null;
+		}
 
 		return new TextFragmentMappedValue() {
 			{

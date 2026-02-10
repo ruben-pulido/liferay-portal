@@ -411,14 +411,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	@Test
 	@TestInfo({"LPD-72013", "LPD-74331", "LPD-75450", "LPD-77124", "LPD-77852"})
 	public void testPutSiteSitePage() throws Exception {
-		_testPutSiteSitePageWithPageElementsWithTemplateEntries();
-	}
 
-	// 	@Override
-
-	@Test
-	@TestInfo({"LPD-74331", "LPD-75450"})
-	public void testPutSiteSitePageBK() throws Exception {
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(
 				testGroup.getGroupId(), TestPropsValues.getUserId());
@@ -3184,11 +3177,11 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		JournalArticle journalArticle =
 			AssetTestUtil.randomCompanyGroupJournalArticle();
 
-		PageElement[] pageElements =
+		SitePage sitePage = _getSitePageWithPageElements(
 			PageElementsTestUtil.getPageElementsWithTemplateEntries(
-				journalArticle, -1, testGroup.getGroupId());
-
-		SitePage sitePage = _getSitePageWithPageElements(pageElements);
+				journalArticle, -1, testGroup.getGroupId()),
+			PageElementsTestUtil.getPageElementsWithTemplateEntries(
+				journalArticle, -1, testGroup.getGroupId()));
 
 		SitePageResource sitePageResource = _getSitePageResource(
 			"pageSpecifications");

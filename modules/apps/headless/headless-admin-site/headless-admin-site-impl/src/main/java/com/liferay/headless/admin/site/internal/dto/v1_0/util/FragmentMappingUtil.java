@@ -277,7 +277,7 @@ public class FragmentMappingUtil {
 		if (!(layoutStructureItem instanceof
 				CollectionStyledLayoutStructureItem)) {
 
-			return null;
+			return collectionFieldId;
 		}
 
 		CollectionStyledLayoutStructureItem
@@ -288,13 +288,13 @@ public class FragmentMappingUtil {
 			collectionStyledLayoutStructureItem.getCollectionJSONObject();
 
 		if (collectionJSONObject == null) {
-			return null;
+			return collectionFieldId;
 		}
 
 		String itemType = collectionJSONObject.getString("itemType");
 
 		if (itemType == null) {
-			return null;
+			return collectionFieldId;
 		}
 
 		InfoItemFormProvider<Object> infoItemFormProvider =
@@ -338,7 +338,7 @@ public class FragmentMappingUtil {
 			_getLayoutPageTemplateEntry(layoutPlid);
 
 		if (layoutPageTemplateEntry == null) {
-			return null;
+			return mappedField;
 		}
 
 		return _toExternalUniqueId(
@@ -431,6 +431,10 @@ public class FragmentMappingUtil {
 			infoItemServiceRegistry.getFirstInfoItemService(
 				InfoItemObjectProvider.class, infoItemReference.getClassName(),
 				infoItemIdentifier.getInfoItemServiceFilter());
+
+		if (infoItemObjectProvider == null) {
+			return null;
+		}
 
 		try {
 			return infoItemObjectProvider.getInfoItem(infoItemIdentifier);
