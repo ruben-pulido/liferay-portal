@@ -11,8 +11,6 @@ import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValueItemEx
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValueItemReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.Mapping;
 import com.liferay.headless.admin.site.client.scope.Scope;
-import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 /**
@@ -21,12 +19,16 @@ import com.liferay.portal.kernel.util.Validator;
 public class FragmentMappedValueTestUtil {
 
 	public static FragmentMappedValue getFragmentMappedValue(
+		String className,
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		String fieldKey, FragmentMappedValueItemReference.Type type) {
+		String externalReferenceCode, String fieldKey,
+		String scopeExternalReferenceCode) {
 
 		return getFragmentMappedValue(
 			fieldKey,
-			_getFragmentMappedValueItemReference(contextSource, type));
+			_getFragmentMappedValueItemReference(
+				className, contextSource, externalReferenceCode,
+				scopeExternalReferenceCode));
 	}
 
 	public static FragmentMappedValue getFragmentMappedValue(
@@ -107,18 +109,17 @@ public class FragmentMappedValueTestUtil {
 
 	private static FragmentMappedValueItemReference
 		_getFragmentMappedValueItemReference(
+			String className,
 			FragmentMappedValueItemContextReference.ContextSource contextSource,
-			FragmentMappedValueItemReference.Type type) {
+			String externalReferenceCode, String scopeExternalReferenceCode) {
 
-		if (type == FragmentMappedValueItemReference.Type.CONTEXT_REFERENCE) {
+		if (contextSource != null) {
 			return _getFragmentMappedValueItemContextReference(contextSource);
 		}
 
-		if (type ==
-				FragmentMappedValueItemReference.Type.ITEM_EXTERNAL_REFERENCE) {
-
+		if (Validator.isNotNull(externalReferenceCode)) {
 			return _getFragmentMappedValueItemExternalReference(
-				FileEntry.class.getName(), RandomTestUtil.randomString(), null);
+				className, externalReferenceCode, scopeExternalReferenceCode);
 		}
 
 		return null;

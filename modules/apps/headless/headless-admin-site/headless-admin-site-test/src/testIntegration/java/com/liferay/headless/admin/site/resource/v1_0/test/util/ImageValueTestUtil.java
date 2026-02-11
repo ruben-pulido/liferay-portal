@@ -10,13 +10,13 @@ import com.liferay.headless.admin.site.client.dto.v1_0.DirectBackgroundImageValu
 import com.liferay.headless.admin.site.client.dto.v1_0.DirectFragmentImageValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentImageValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValueItemContextReference;
-import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValueItemReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.ImageValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.ItemExternalReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.ItemImageValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.MappedBackgroundImageValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.MappedFragmentImageValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.URLImageValue;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
@@ -57,16 +57,15 @@ public class ImageValueTestUtil {
 
 	public static BackgroundImageValue getMappedBackgroundImageValue(
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		String fieldKey,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType) {
+		String fieldKey) {
 
 		MappedBackgroundImageValue mappedBackgroundImageValue =
 			new MappedBackgroundImageValue();
 
 		mappedBackgroundImageValue.setFragmentMappedValue(
 			() -> FragmentMappedValueTestUtil.getFragmentMappedValue(
-				contextSource, fieldKey, fragmentMappedValueItemReferenceType));
+				"com.liferay.portal.kernel.repository.model.FileEntry",
+				contextSource, RandomTestUtil.randomString(), fieldKey, null));
 		mappedBackgroundImageValue.setType(
 			() -> BackgroundImageValue.Type.MAPPED);
 
@@ -92,16 +91,15 @@ public class ImageValueTestUtil {
 
 	public static FragmentImageValue getMappedFragmentImageValue(
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		String fieldKey,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType) {
+		String fieldKey) {
 
 		MappedFragmentImageValue mappedFragmentImageValue =
 			new MappedFragmentImageValue();
 
 		mappedFragmentImageValue.setFragmentMappedValue(
 			() -> FragmentMappedValueTestUtil.getFragmentMappedValue(
-				contextSource, fieldKey, fragmentMappedValueItemReferenceType));
+				"com.liferay.portal.kernel.repository.model.FileEntry",
+				contextSource, RandomTestUtil.randomString(), fieldKey, null));
 		mappedFragmentImageValue.setType(() -> FragmentImageValue.Type.MAPPED);
 
 		return mappedFragmentImageValue;

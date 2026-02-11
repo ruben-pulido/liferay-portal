@@ -42,6 +42,7 @@ import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
@@ -365,11 +366,12 @@ public class PageSpecificationsTestUtil {
 	}
 
 	public static ContentPageSpecification getContentPageSpecification(
-		String contentPageSpecificationExternalReferenceCode,
-		CustomField[] customFields,
-		String draftContentPageSpecificationExternalReferenceCode,
-		PageExperience[] pageExperiences, long scopeGroupId,
-		PageSpecification.Status status) {
+			String contentPageSpecificationExternalReferenceCode,
+			CustomField[] customFields,
+			String draftContentPageSpecificationExternalReferenceCode,
+			PageExperience[] pageExperiences, long scopeGroupId,
+			PageSpecification.Status status)
+		throws PortalException {
 
 		ContentPageSpecification contentPageSpecification =
 			new ContentPageSpecification() {
@@ -404,8 +406,9 @@ public class PageSpecificationsTestUtil {
 	}
 
 	public static ContentPageSpecification getContentPageSpecification(
-		String draftContentPageSpecificationExternalReferenceCode,
-		long scopeGroupId, PageSpecification.Status status) {
+			String draftContentPageSpecificationExternalReferenceCode,
+			long scopeGroupId, PageSpecification.Status status)
+		throws PortalException {
 
 		return getContentPageSpecification(
 			RandomTestUtil.randomString(), null,
@@ -414,8 +417,9 @@ public class PageSpecificationsTestUtil {
 	}
 
 	public static PageSpecification[] getContentPageSpecifications(
-		String publishedPageSpecificationExternalReferenceCode,
-		long scopeGroupId) {
+			String publishedPageSpecificationExternalReferenceCode,
+			long scopeGroupId)
+		throws PortalException {
 
 		return _getContentPageSpecifications(
 			getCustomFields(), RandomTestUtil.randomString(), null,
@@ -482,7 +486,8 @@ public class PageSpecificationsTestUtil {
 	}
 
 	public static PageSpecification[] getPageSpecifications(
-		String externalReferenceCode, long scopeGroupId, SitePage.Type type) {
+			String externalReferenceCode, long scopeGroupId, SitePage.Type type)
+		throws PortalException {
 
 		if (type == SitePage.Type.CONTENT_PAGE) {
 			ContentPageSpecification draftContentPageSpecification =
@@ -520,7 +525,8 @@ public class PageSpecificationsTestUtil {
 	}
 
 	public static PageSpecification[] getPatchPageSpecifications(
-		PageSpecification[] pageSpecifications, long scopeGroupId) {
+			PageSpecification[] pageSpecifications, long scopeGroupId)
+		throws PortalException {
 
 		if (pageSpecifications.length == 2) {
 			ContentPageSpecification draftContentPageSpecification = null;
@@ -891,13 +897,14 @@ public class PageSpecificationsTestUtil {
 	}
 
 	private static ContentPageSpecification[] _getContentPageSpecifications(
-		CustomField[] draftPageSpecificationCustomFields,
-		String draftPageSpecificationExternalReferenceCode,
-		PageExperience[] draftPageSpecificationPageExperiences,
-		CustomField[] publishedPageSpecificationCustomFields,
-		String publishedPageSpecificationExternalReferenceCode,
-		PageExperience[] publishedPageSpecificationPageExperiences,
-		long scopeGroupId) {
+			CustomField[] draftPageSpecificationCustomFields,
+			String draftPageSpecificationExternalReferenceCode,
+			PageExperience[] draftPageSpecificationPageExperiences,
+			CustomField[] publishedPageSpecificationCustomFields,
+			String publishedPageSpecificationExternalReferenceCode,
+			PageExperience[] publishedPageSpecificationPageExperiences,
+			long scopeGroupId)
+		throws PortalException {
 
 		ContentPageSpecification draftContentPageSpecification =
 			getContentPageSpecification(
