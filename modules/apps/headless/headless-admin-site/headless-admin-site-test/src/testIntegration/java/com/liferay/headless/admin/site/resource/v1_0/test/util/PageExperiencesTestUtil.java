@@ -109,8 +109,9 @@ public class PageExperiencesTestUtil {
 	}
 
 	public static PageExperience getPageExperience(
-		String pageSpecificationExternalReferenceCode, int priority,
-		long scopeGroupId, SegmentsEntry segmentsEntry) {
+			String pageSpecificationExternalReferenceCode, int priority,
+			long scopeGroupId, SegmentsEntry segmentsEntry)
+		throws Exception {
 
 		PageExperience pageExperience = _getPageExperience(
 			pageSpecificationExternalReferenceCode, priority, scopeGroupId);
@@ -125,9 +126,10 @@ public class PageExperiencesTestUtil {
 	}
 
 	public static PageExperience getPageExperience(
-		String pageSpecificationExternalReferenceCode, int priority,
-		long scopeGroupId, String segmentsEntryERC,
-		String segmentsEntryScopeERC) {
+			String pageSpecificationExternalReferenceCode, int priority,
+			long scopeGroupId, String segmentsEntryERC,
+			String segmentsEntryScopeERC)
+		throws PortalException {
 
 		PageExperience pageExperience = _getPageExperience(
 			pageSpecificationExternalReferenceCode, priority, scopeGroupId);
@@ -145,7 +147,7 @@ public class PageExperiencesTestUtil {
 	public static PageExperience[] getPageExperiences(
 			long companyGroupId, long groupId,
 			String pageSpecificationExternalReferenceCode)
-		throws PortalException {
+		throws Exception {
 
 		return new PageExperience[] {
 			getPageExperience(
@@ -205,8 +207,9 @@ public class PageExperiencesTestUtil {
 	}
 
 	private static PageExperience _getPageExperience(
-		String pageSpecificationExternalReferenceCode, int priority,
-		long scopeGroupId) {
+			String pageSpecificationExternalReferenceCode, int priority,
+			long scopeGroupId)
+		throws PortalException {
 
 		PageExperience pageExperience = getPageExperience();
 

@@ -8,7 +8,6 @@ package com.liferay.headless.admin.site.resource.v1_0.test.util;
 import com.liferay.headless.admin.site.client.dto.v1_0.ActionFragmentEditableElementValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.ActionInteraction;
 import com.liferay.headless.admin.site.client.dto.v1_0.BackgroundImageFragmentEditableElementValue;
-import com.liferay.headless.admin.site.client.dto.v1_0.DirectFragmentImageValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.DisplayPageActionInteraction;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentEditableElement;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentEditableElementValue;
@@ -21,19 +20,13 @@ import com.liferay.headless.admin.site.client.dto.v1_0.FragmentLink;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentLinkTextValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValueItemContextReference;
-import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValueItemExternalReference;
-import com.liferay.headless.admin.site.client.dto.v1_0.FragmentMappedValueItemReference;
 import com.liferay.headless.admin.site.client.dto.v1_0.HTMLFragmentEditableElementValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.HTMLFragmentInlineValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.HTMLFragmentMappedValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.HTMLFragmentValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.ImageFragmentEditableElementValue;
-import com.liferay.headless.admin.site.client.dto.v1_0.ImageValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.ItemExternalReference;
-import com.liferay.headless.admin.site.client.dto.v1_0.ItemImageValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.LinkFragmentEditableElementValue;
-import com.liferay.headless.admin.site.client.dto.v1_0.MappedFragmentImageValue;
-import com.liferay.headless.admin.site.client.dto.v1_0.Mapping;
 import com.liferay.headless.admin.site.client.dto.v1_0.NoneActionInteraction;
 import com.liferay.headless.admin.site.client.dto.v1_0.NotificationActionInteraction;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageActionInteraction;
@@ -42,15 +35,11 @@ import com.liferay.headless.admin.site.client.dto.v1_0.TextFragmentInlineValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.TextFragmentMappedValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.TextFragmentValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.URLActionInteraction;
-import com.liferay.headless.admin.site.client.dto.v1_0.URLImageValue;
-import com.liferay.headless.admin.site.client.scope.Scope;
+import com.liferay.journal.model.JournalArticle;
 import com.liferay.petra.function.transform.TransformUtil;
-import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Map;
 import java.util.TreeSet;
@@ -115,39 +104,6 @@ public class FragmentEditableElementTestUtil {
 		return fragmentEditableElement;
 	}
 
-	public static FragmentImageValue getDirectFragmentImageValue(
-		ItemExternalReference itemExternalReference, String url) {
-
-		DirectFragmentImageValue directFragmentImageValue =
-			new DirectFragmentImageValue();
-
-		directFragmentImageValue.setType(() -> FragmentImageValue.Type.DIRECT);
-		directFragmentImageValue.setValue_i18n(
-			HashMapBuilder.put(
-				LocaleUtil.toBCP47LanguageId(LocaleUtil.getDefault()),
-				() -> {
-					if (itemExternalReference == null) {
-						URLImageValue urlImageValue = new URLImageValue();
-
-						urlImageValue.setType(() -> ImageValue.Type.URL);
-						urlImageValue.setUrl(() -> url);
-
-						return urlImageValue;
-					}
-
-					ItemImageValue itemImageValue = new ItemImageValue();
-
-					itemImageValue.setItemExternalReference(
-						() -> itemExternalReference);
-					itemImageValue.setType(() -> ImageValue.Type.ITEM);
-
-					return itemImageValue;
-				}
-			).build());
-
-		return directFragmentImageValue;
-	}
-
 	public static DisplayPageActionInteraction
 		getDisplayPageActionInteraction() {
 
@@ -206,21 +162,9 @@ public class FragmentEditableElementTestUtil {
 		return fragmentImage;
 	}
 
-	public static FragmentMappedValue getFragmentMappedValue(
-		String className, String externalReferenceCode, String fieldKey,
-		String scopeExternalReferenceCode) {
-
-		return _getFragmentMappedValue(
-			fieldKey,
-			_getFragmentMappedValueItemExternalReference(
-				className, externalReferenceCode, scopeExternalReferenceCode));
-	}
-
 	public static FragmentEditableElement getHTMLFragmentEditableElement(
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
 		FragmentEditableElementValue.Type fragmentEditableElementValueType,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType,
 		HTMLFragmentValue.Type htmlFragmentValueType, String id) {
 
 		FragmentEditableElement fragmentEditableElement =
@@ -230,9 +174,7 @@ public class FragmentEditableElementTestUtil {
 			new HTMLFragmentEditableElementValue();
 
 		htmlFragmentEditableElementValue.setHtmlFragmentValue(
-			() -> _getHTMLFragmentValue(
-				contextSource, fragmentMappedValueItemReferenceType,
-				htmlFragmentValueType));
+			() -> _getHTMLFragmentValue(contextSource, htmlFragmentValueType));
 		htmlFragmentEditableElementValue.setType(
 			() -> fragmentEditableElementValueType);
 
@@ -266,11 +208,12 @@ public class FragmentEditableElementTestUtil {
 	}
 
 	public static FragmentEditableElement getLinkFragmentEditableElement(
+		String className,
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		FragmentLink fragmentLink,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType,
-		String id, FragmentEditableElementValueFragmentLink.Prefix prefix,
+		String externalReferenceCode, String fieldKey,
+		FragmentLink fragmentLink, String id,
+		FragmentEditableElementValueFragmentLink.Prefix prefix,
+		String scopeExternalReferenceCode,
 		TextFragmentValue.Type textFragmentValueType) {
 
 		FragmentEditableElement fragmentEditableElement =
@@ -281,8 +224,8 @@ public class FragmentEditableElementTestUtil {
 
 		linkFragmentEditableElementValue.setFragmentLinkTextValue(
 			() -> _getFragmentLinkTextValue(
-				contextSource, fragmentLink,
-				fragmentMappedValueItemReferenceType, prefix,
+				className, contextSource, externalReferenceCode, fieldKey,
+				fragmentLink, prefix, scopeExternalReferenceCode,
 				textFragmentValueType));
 		linkFragmentEditableElementValue.setType(
 			() -> FragmentEditableElementValue.Type.LINK);
@@ -293,39 +236,6 @@ public class FragmentEditableElementTestUtil {
 		fragmentEditableElement.setId(() -> id);
 
 		return fragmentEditableElement;
-	}
-
-	public static FragmentImageValue getMappedFragmentImageValue(
-		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		String fieldKey,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType) {
-
-		MappedFragmentImageValue mappedFragmentImageValue =
-			new MappedFragmentImageValue();
-
-		mappedFragmentImageValue.setFragmentMappedValue(
-			() -> _getFragmentMappedValue(
-				contextSource, fieldKey, fragmentMappedValueItemReferenceType));
-		mappedFragmentImageValue.setType(() -> FragmentImageValue.Type.MAPPED);
-
-		return mappedFragmentImageValue;
-	}
-
-	public static FragmentImageValue getMappedFragmentImageValue(
-		String className, String externalReferenceCode, String fieldKey,
-		String scopeExternalReferenceCode) {
-
-		MappedFragmentImageValue mappedFragmentImageValue =
-			new MappedFragmentImageValue();
-
-		mappedFragmentImageValue.setFragmentMappedValue(
-			() -> getFragmentMappedValue(
-				className, externalReferenceCode, fieldKey,
-				scopeExternalReferenceCode));
-		mappedFragmentImageValue.setType(() -> FragmentImageValue.Type.MAPPED);
-
-		return mappedFragmentImageValue;
 	}
 
 	public static NoneActionInteraction getNoneActionInteraction() {
@@ -367,11 +277,12 @@ public class FragmentEditableElementTestUtil {
 	}
 
 	public static FragmentEditableElement getTextFragmentEditableElement(
+		String className,
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
+		String externalReferenceCode, String fieldKey,
 		FragmentLink fragmentLink,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType,
 		FragmentEditableElementValueFragmentLink.Prefix prefix,
+		String scopeExternalReferenceCode,
 		TextFragmentValue.Type textFragmentValueType) {
 
 		FragmentEditableElement fragmentEditableElement =
@@ -382,8 +293,8 @@ public class FragmentEditableElementTestUtil {
 
 		textFragmentEditableElementValue.setFragmentLinkTextValue(
 			() -> _getFragmentLinkTextValue(
-				contextSource, fragmentLink,
-				fragmentMappedValueItemReferenceType, prefix,
+				className, contextSource, externalReferenceCode, fieldKey,
+				fragmentLink, prefix, scopeExternalReferenceCode,
 				textFragmentValueType));
 		textFragmentEditableElementValue.setType(
 			() -> FragmentEditableElementValue.Type.TEXT);
@@ -462,11 +373,12 @@ public class FragmentEditableElementTestUtil {
 	}
 
 	private static FragmentLinkTextValue _getFragmentLinkTextValue(
+		String className,
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
+		String externalReferenceCode, String fieldKey,
 		FragmentLink fragmentLink,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType,
 		FragmentEditableElementValueFragmentLink.Prefix prefix,
+		String scopeExternalReferenceCode,
 		TextFragmentValue.Type textFragmentValueType) {
 
 		return new FragmentLinkTextValue() {
@@ -476,104 +388,11 @@ public class FragmentEditableElementTestUtil {
 						fragmentLink, prefix));
 				setTextFragmentValue(
 					() -> _getTextFragmentValue(
-						contextSource, fragmentMappedValueItemReferenceType,
+						className, contextSource, externalReferenceCode,
+						fieldKey, scopeExternalReferenceCode,
 						textFragmentValueType));
 			}
 		};
-	}
-
-	private static FragmentMappedValue _getFragmentMappedValue(
-		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		String fieldKey, FragmentMappedValueItemReference.Type type) {
-
-		return _getFragmentMappedValue(
-			fieldKey,
-			_getFragmentMappedValueItemReference(contextSource, type));
-	}
-
-	private static FragmentMappedValue _getFragmentMappedValue(
-		String fieldKey,
-		FragmentMappedValueItemReference fragmentMappedValueItemReference) {
-
-		FragmentMappedValue fragmentMappedValue = new FragmentMappedValue();
-
-		Mapping mapping = new Mapping();
-
-		mapping.setFieldKey(() -> fieldKey);
-		mapping.setItemReference(() -> fragmentMappedValueItemReference);
-
-		fragmentMappedValue.setMapping(() -> mapping);
-
-		return fragmentMappedValue;
-	}
-
-	private static FragmentMappedValueItemContextReference
-		_getFragmentMappedValueItemContextReference(
-			FragmentMappedValueItemContextReference.ContextSource
-				contextSource) {
-
-		FragmentMappedValueItemContextReference
-			fragmentMappedValueItemContextReference =
-				new FragmentMappedValueItemContextReference();
-
-		fragmentMappedValueItemContextReference.setContextSource(contextSource);
-		fragmentMappedValueItemContextReference.setType(
-			FragmentMappedValueItemReference.Type.CONTEXT_REFERENCE);
-
-		return fragmentMappedValueItemContextReference;
-	}
-
-	private static FragmentMappedValueItemExternalReference
-		_getFragmentMappedValueItemExternalReference(
-			String className, String externalReferenceCode,
-			String scopeExternalReferenceCode) {
-
-		FragmentMappedValueItemExternalReference
-			fragmentMappedValueItemExternalReference =
-				new FragmentMappedValueItemExternalReference() {
-					{
-						setType(Type.ITEM_EXTERNAL_REFERENCE);
-					}
-				};
-
-		fragmentMappedValueItemExternalReference.setClassName(() -> className);
-		fragmentMappedValueItemExternalReference.setExternalReferenceCode(
-			() -> externalReferenceCode);
-		fragmentMappedValueItemExternalReference.setScope(
-			() -> {
-				if (Validator.isNull(scopeExternalReferenceCode)) {
-					return null;
-				}
-
-				Scope scope = new Scope();
-
-				scope.setExternalReferenceCode(
-					() -> scopeExternalReferenceCode);
-				scope.setType(() -> Scope.Type.SITE);
-
-				return scope;
-			});
-
-		return fragmentMappedValueItemExternalReference;
-	}
-
-	private static FragmentMappedValueItemReference
-		_getFragmentMappedValueItemReference(
-			FragmentMappedValueItemContextReference.ContextSource contextSource,
-			FragmentMappedValueItemReference.Type type) {
-
-		if (type == FragmentMappedValueItemReference.Type.CONTEXT_REFERENCE) {
-			return _getFragmentMappedValueItemContextReference(contextSource);
-		}
-
-		if (type ==
-				FragmentMappedValueItemReference.Type.ITEM_EXTERNAL_REFERENCE) {
-
-			return _getFragmentMappedValueItemExternalReference(
-				FileEntry.class.getName(), RandomTestUtil.randomString(), null);
-		}
-
-		return null;
 	}
 
 	private static HTMLFragmentInlineValue _getHTMLFragmentInlineValue() {
@@ -586,16 +405,14 @@ public class FragmentEditableElementTestUtil {
 	}
 
 	private static HTMLFragmentMappedValue _getHTMLFragmentMappedValue(
-		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType) {
+		FragmentMappedValueItemContextReference.ContextSource contextSource) {
 
 		return new HTMLFragmentMappedValue() {
 			{
 				setFragmentMappedValue(
-					() -> _getFragmentMappedValue(
-						contextSource, "field-key",
-						fragmentMappedValueItemReferenceType));
+					() -> FragmentMappedValueTestUtil.getFragmentMappedValue(
+						JournalArticle.class.getName(), contextSource,
+						RandomTestUtil.randomString(), "field-key", null));
 				setType(Type.MAPPED);
 			}
 		};
@@ -603,8 +420,6 @@ public class FragmentEditableElementTestUtil {
 
 	private static HTMLFragmentValue _getHTMLFragmentValue(
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType,
 		HTMLFragmentValue.Type htmlFragmentValueType) {
 
 		if (htmlFragmentValueType == HTMLFragmentValue.Type.INLINE) {
@@ -612,33 +427,40 @@ public class FragmentEditableElementTestUtil {
 		}
 
 		if (htmlFragmentValueType == HTMLFragmentValue.Type.MAPPED) {
-			return _getHTMLFragmentMappedValue(
-				contextSource, fragmentMappedValueItemReferenceType);
+			return _getHTMLFragmentMappedValue(contextSource);
 		}
 
 		return null;
 	}
 
 	private static TextFragmentMappedValue _getTextFragmentMappedValue(
+		String className,
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType) {
+		final String externalReferenceCode, String fieldKey,
+		final String scopeExternalReferenceCode) {
+
+		if ((className == null) && (contextSource == null) &&
+			(externalReferenceCode == null) && (fieldKey == null)) {
+
+			return null;
+		}
 
 		return new TextFragmentMappedValue() {
 			{
 				setFragmentMappedValue(
-					() -> _getFragmentMappedValue(
-						contextSource, "field-key",
-						fragmentMappedValueItemReferenceType));
+					() -> FragmentMappedValueTestUtil.getFragmentMappedValue(
+						className, contextSource, externalReferenceCode,
+						fieldKey, scopeExternalReferenceCode));
 				setType(Type.MAPPED);
 			}
 		};
 	}
 
 	private static TextFragmentValue _getTextFragmentValue(
+		String className,
 		FragmentMappedValueItemContextReference.ContextSource contextSource,
-		FragmentMappedValueItemReference.Type
-			fragmentMappedValueItemReferenceType,
+		String externalReferenceCode, String fieldKey,
+		String scopeExternalReferenceCode,
 		TextFragmentValue.Type textFragmentValueType) {
 
 		if (textFragmentValueType == TextFragmentValue.Type.INLINE) {
@@ -647,7 +469,8 @@ public class FragmentEditableElementTestUtil {
 
 		if (textFragmentValueType == TextFragmentValue.Type.MAPPED) {
 			return _getTextFragmentMappedValue(
-				contextSource, fragmentMappedValueItemReferenceType);
+				className, contextSource, externalReferenceCode, fieldKey,
+				scopeExternalReferenceCode);
 		}
 
 		return null;

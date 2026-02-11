@@ -74,6 +74,22 @@ components:
             description:
                 A fragment editable element value of type background image.
             type: object
+        BackgroundImageValue:
+            # @review
+            description:
+                The background image value.
+            discriminator:
+                mapping:
+                    Direct: "#/components/schemas/DirectBackgroundImageValue"
+                    Mapped: "#/components/schemas/MappedBackgroundImageValue"
+                propertyName: type
+            properties:
+                type:
+                    # @review
+                    description:
+                        The background image's type.
+                    enum: [Direct, Mapped]
+                    type: string
         BasicFragmentInstancePageElementDefinition:
             allOf:
                 -   $ref: "#/components/schemas/PageElementDefinition"                               
@@ -424,11 +440,11 @@ components:
             allOf:
                 -   $ref: "#/components/schemas/PageElementDefinition"
                 -   properties:
-                        backgroundFragmentImage:
-                            $ref: "#/components/schemas/FragmentImage"
+                        backgroundImageValue:
+                            $ref: "#/components/schemas/BackgroundImageValue"
                             # @review
                             description:
-                                The fragment's background image.
+                                The background image.
                         contentVisibility:
                             # @review
                             description:
@@ -593,6 +609,16 @@ components:
                 A reference to a default fragment (provided out-of-the-box).
             required:
                 -   defaultFragmentKey
+            type: object
+        DirectBackgroundImageValue:
+            allOf:
+                -   $ref: "#/components/schemas/BackgroundImageValue"
+                -   properties:
+                        imageValue:
+                            $ref: "#/components/schemas/ImageValue"
+            # @review
+            description:
+                A background image value of type direct.
             type: object
         DirectFragmentImageValue:
             allOf:
@@ -1066,11 +1092,11 @@ components:
             allOf:
                 -   $ref: "#/components/schemas/PageElementDefinition"
                 -   properties:
-                        backgroundFragmentImage:
-                            $ref: "#/components/schemas/FragmentImage"
+                        backgroundImageValue:
+                            $ref: "#/components/schemas/BackgroundImageValue"
                             # @review
                             description:
-                                The fragment's background image.
+                                The background image.
                         cssClasses:
                             # @review
                             description:
@@ -1179,11 +1205,11 @@ components:
             allOf:
                 -   $ref: "#/components/schemas/PageElementDefinition"
                 -   properties:
-                        backgroundFragmentImage:
-                            $ref: "#/components/schemas/FragmentImage"
+                        backgroundImageValue:
+                            $ref: "#/components/schemas/BackgroundImageValue"
                             # @review
                             description:
-                                The fragment's background image.
+                                The background image.
                         cssClasses:
                             # @review
                             description:
@@ -1469,11 +1495,11 @@ components:
             description:
                 A fragment instance.
             properties:
-                backgroundFragmentImage:
-                    $ref: "#/components/schemas/FragmentImage"
+                backgroundImageValue:
+                    $ref: "#/components/schemas/BackgroundImageValue"
                     # @review
                     description:
-                        The fragment's background image.
+                        The background image.
                 configuration:
                     # @review
                     description:
@@ -1927,11 +1953,11 @@ components:
             allOf:
                 -   $ref: "#/components/schemas/PageElementDefinition"
                 -   properties:
-                        backgroundFragmentImage:
-                            $ref: "#/components/schemas/FragmentImage"
+                        backgroundImageValue:
+                            $ref: "#/components/schemas/BackgroundImageValue"
                             # @review
                             description:
-                                The fragment's background image.
+                                The background image.
                         cssClasses:
                             # @review
                             description:
@@ -2032,13 +2058,13 @@ components:
         HTMLFragmentInlineValue:
             # @review
             allOf:
+                -   $ref: "#/components/schemas/HTMLFragmentValue"
                 -   properties:
                         fragmentInlineValue:
                             $ref: "#/components/schemas/FragmentInlineValue"
                             # @review
                             description:
                                 The fragment inline value.
-                -   $ref: "#/components/schemas/HTMLFragmentValue"
             # @review
             description:
                 An inline value of a fragment HTML element.
@@ -2046,13 +2072,13 @@ components:
         HTMLFragmentMappedValue:
             # @review
             allOf:
+                -   $ref: "#/components/schemas/HTMLFragmentValue"
                 -   properties:
                         fragmentMappedValue:
                             $ref: "#/components/schemas/FragmentMappedValue"
                             # @review
                             description:
                                 The fragment mapped value.
-                -   $ref: "#/components/schemas/HTMLFragmentValue"
             # @review
             description:
                 A mapped value of a fragment HTML element.
@@ -2287,6 +2313,16 @@ components:
             # @review
             description:
                 The collection display's list style.
+            type: object
+        MappedBackgroundImageValue:
+            allOf:
+                -   $ref: "#/components/schemas/BackgroundImageValue"
+                -   properties:
+                        fragmentMappedValue:
+                            $ref: "#/components/schemas/FragmentMappedValue"
+            # @review
+            description:
+                A mapped background image value.
             type: object
         MappedFragmentImageValue:
             allOf:
@@ -4326,11 +4362,11 @@ components:
             allOf:
                 -   $ref: "#/components/schemas/PageElementDefinition"
                 -   properties:
-                        backgroundFragmentImage:
-                            $ref: "#/components/schemas/FragmentImage"
+                        backgroundImageValue:
+                            $ref: "#/components/schemas/BackgroundImageValue"
                             # @review
                             description:
-                                The fragment's background image.
+                                The background image.
                         cssClasses:
                             # @review
                             description:
