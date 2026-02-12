@@ -3,14 +3,23 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
-import {IView} from '@liferay/frontend-data-set-web';
+import {
+	EConfigInURLBehavior,
+	IInlineNotificationComponent,
+	IView,
+	TSort,
+} from '@liferay/frontend-data-set-web';
 import {
 	IItemSelectorModalProps,
 	ItemSelectorModal,
 } from '@liferay/frontend-js-item-selector-web';
-import React, {useState} from 'react';
+import {fetch} from 'frontend-js-web';
+import React, {useEffect, useState} from 'react';
 import {v4 as uuidv4} from 'uuid';
+
+import useBrowserTabVisibility from './utils/useBrowserTabVisibility';
 
 const OBJECT_ENTRY_FOLDER_CLASS_NAME =
 	'com.liferay.object.model.ObjectEntryFolder';
@@ -35,6 +44,18 @@ function getCMSChildFolderURL(folderId: string) {
 	}).toString()}`;
 }
 
+async function checkNewCMSFiles(lastRequestTime: string) {
+	const response = await fetch(
+		`${CMS_ROOT_FILES_URL} and dateCreated gt ${lastRequestTime}`
+	);
+
+	if (!response.ok) {
+		return {totalCount: 0};
+	}
+
+	return (await response.json()) as {totalCount: number};
+}
+
 type CMSFile = {
 	id: number;
 	title: string;
@@ -42,6 +63,7 @@ type CMSFile = {
 
 function CMSFilesItemSelectorModal({
 	fdsProps,
+	open,
 	...otherProps
 }: Omit<
 	IItemSelectorModalProps<CMSFile>,
@@ -52,7 +74,25 @@ function CMSFilesItemSelectorModal({
 	const [folderStructure, setFolderStructure] = useState<
 		{folderId: string; folderName: string}[]
 	>([]);
+	const [newItemsCount, setNewItemsCount] = useState(0);
+	const [showInlineNotification, setShowInlineNotification] = useState(false);
 	const [url, setURL] = useState(CMS_ROOT_FILES_URL);
+
+	const isBrowserTabVisible = useBrowserTabVisibility();
+	const lastRequestTimeRef = React.useRef(new Date().toISOString());
+
+	useEffect(() => {
+		if (isBrowserTabVisible && open) {
+			checkNewCMSFiles(lastRequestTimeRef.current).then((response) => {
+				if (response.totalCount > 0) {
+					setNewItemsCount(response.totalCount);
+					setShowInlineNotification(true);
+
+					lastRequestTimeRef.current = new Date().toISOString();
+				}
+			});
+		}
+	}, [isBrowserTabVisible, open]);
 
 	function onChildFolderClick({
 		folderId,
@@ -68,6 +108,70 @@ function CMSFilesItemSelectorModal({
 
 		setURL(getCMSChildFolderURL(folderId));
 	}
+
+	const NewItemsNotificationComponent = ({
+		context,
+	}: {
+		context: IInlineNotificationComponent['context'];
+	}) => {
+		if (!showInlineNotification) {
+			return null;
+		}
+
+		return (
+			<ClayAlert
+				displayType="info"
+				onClose={() => setShowInlineNotification(false)}
+				title={Liferay.Language.get('info')}
+				variant="stripe"
+			>
+				{Liferay.Util.sub(
+					Liferay.Language.get(
+						'x-new-items-are-not-visible-in-this-view'
+					),
+					[newItemsCount]
+				)}
+
+				<ClayButton.Group className="pl-3" spaced>
+					<ClayButton
+						displayType="info"
+						onClick={() => {
+							const updatedSorts: TSort[] = (context?.sorts || [])
+								.filter((sort) => sort.key !== 'dateCreated')
+								.map((sort) => {
+									sort.active = false;
+
+									return sort;
+								});
+
+							updatedSorts.push({
+								active: true,
+								direction: 'desc',
+								key: 'dateCreated',
+								label: Liferay.Language.get('by-creation-date'),
+							});
+
+							context && context.onClearResultsBar();
+							context && context.forceSortsUpdate(updatedSorts);
+
+							setShowInlineNotification(false);
+						}}
+						size="sm"
+					>
+						{Liferay.Language.get('reload')}
+					</ClayButton>
+
+					<ClayButton
+						alert
+						onClick={() => setShowInlineNotification(false)}
+						size="sm"
+					>
+						{Liferay.Language.get('dismiss')}
+					</ClayButton>
+				</ClayButton.Group>
+			</ClayAlert>
+		);
+	};
 
 	return (
 		<ItemSelectorModal
@@ -103,10 +207,7 @@ function CMSFilesItemSelectorModal({
 					: undefined
 			}
 			fdsProps={{
-				pagination: {
-					deltas: [{label: 20}, {label: 40}, {label: 60}],
-					initialDelta: 20,
-				},
+				configInURLBehavior: EConfigInURLBehavior.OFF,
 				...fdsProps,
 				customRenderers: {
 					tableCell: [
@@ -150,6 +251,11 @@ function CMSFilesItemSelectorModal({
 					},
 				],
 				id: `itemSelectorModal-cms-${uuidv4()}`,
+				inlineNotificationComponent: NewItemsNotificationComponent,
+				pagination: {
+					deltas: [{label: 20}, {label: 40}, {label: 60}],
+					initialDelta: 20,
+				},
 				views: [
 					{
 						contentRenderer: 'cards',
@@ -190,6 +296,7 @@ function CMSFilesItemSelectorModal({
 							};
 
 							if (
+								item.embedded.file &&
 								!item.embedded.file.mimeType.startsWith('image')
 							) {
 								return {
@@ -246,6 +353,7 @@ function CMSFilesItemSelectorModal({
 				label: 'embedded.title',
 				value: 'embedded.id',
 			}}
+			open={open}
 		/>
 	);
 }

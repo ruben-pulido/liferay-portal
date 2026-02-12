@@ -11,9 +11,11 @@ import com.liferay.headless.admin.site.dto.v1_0.PageElementDefinition;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.ContainerLayoutUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentLinkUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentViewportUtil;
+import com.liferay.headless.admin.site.internal.dto.v1_0.util.ImageValueUtil;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.converter.ContentVisibilityConverter;
 import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -51,15 +53,29 @@ public class ContainerPageElementDefinitionDTOConverter
 		throws Exception {
 
 		Long companyId = (Long)dtoConverterContext.getAttribute("companyId");
+		Long layoutPlid = (Long)dtoConverterContext.getAttribute("layoutPlid");
+		LayoutStructure layoutStructure =
+			(LayoutStructure)dtoConverterContext.getAttribute(
+				LayoutStructure.class.getName());
 		Long scopeGroupId = (Long)dtoConverterContext.getAttribute(
 			"scopeGroupId");
 
-		if ((companyId == null) || (scopeGroupId == null)) {
+		if ((companyId == null) || (layoutPlid == null) ||
+			(layoutStructure == null) || (scopeGroupId == null)) {
+
 			throw new UnsupportedOperationException();
 		}
 
 		return new ContainerPageElementDefinition() {
 			{
+				setBackgroundImageValue(
+					() -> ImageValueUtil.toBackgroundImageValue(
+						companyId, _infoItemServiceRegistry,
+						containerStyledLayoutStructureItem.
+							getBackgroundImageJSONObject(),
+						layoutPlid, layoutStructure,
+						containerStyledLayoutStructureItem.getItemId(),
+						scopeGroupId));
 				setContentVisibility(
 					() -> {
 						String contentVisibility =
@@ -89,6 +105,8 @@ public class ContainerPageElementDefinitionDTOConverter
 					() -> FragmentLinkUtil.toFragmentLink(
 						companyId, _infoItemServiceRegistry,
 						containerStyledLayoutStructureItem.getLinkJSONObject(),
+						layoutPlid, layoutStructure,
+						containerStyledLayoutStructureItem.getItemId(),
 						scopeGroupId));
 				setFragmentViewports(
 					() -> FragmentViewportUtil.toFragmentViewports(

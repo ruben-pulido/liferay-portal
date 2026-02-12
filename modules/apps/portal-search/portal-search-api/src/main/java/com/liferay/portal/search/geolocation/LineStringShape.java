@@ -5,11 +5,20 @@
 
 package com.liferay.portal.search.geolocation;
 
-import org.osgi.annotation.versioning.ProviderType;
+import java.util.List;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface LineStringShape extends Shape {
+public class LineStringShape extends Shape {
+
+	@Override
+	public <T> T accept(ShapeTranslator<T> shapeTranslator) {
+		return shapeTranslator.translate(this);
+	}
+
+	protected LineStringShape(List<Coordinate> coordinates) {
+		super(coordinates);
+	}
+
 }
