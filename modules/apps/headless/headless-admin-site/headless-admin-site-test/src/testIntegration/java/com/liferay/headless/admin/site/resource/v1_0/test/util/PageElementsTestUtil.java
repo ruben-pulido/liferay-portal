@@ -240,6 +240,7 @@ public class PageElementsTestUtil {
 		getBasicFragmentInstancePageElementDefinition(
 			BackgroundImageValue backgroundImageValue,
 			Map<String, Object> configurationValuesMap, String key,
+			FragmentEditableElement[] fragmentEditableElements, Boolean hidden,
 			long scopeGroupId) {
 
 		FragmentEntry fragmentEntry =
@@ -248,7 +249,7 @@ public class PageElementsTestUtil {
 		if (fragmentEntry != null) {
 			return getBasicFragmentInstancePageElementDefinition(
 				backgroundImageValue, configurationValuesMap,
-				new FragmentEditableElement[0], fragmentEntry, scopeGroupId);
+				fragmentEditableElements, fragmentEntry, hidden, scopeGroupId);
 		}
 
 		FragmentRenderer fragmentRenderer =
@@ -257,10 +258,22 @@ public class PageElementsTestUtil {
 		if (fragmentRenderer != null) {
 			return getBasicFragmentInstancePageElementDefinition(
 				backgroundImageValue, configurationValuesMap,
-				new FragmentEditableElement[0], fragmentRenderer, scopeGroupId);
+				fragmentEditableElements, fragmentRenderer, scopeGroupId);
 		}
 
 		return null;
+	}
+
+	public static BasicFragmentInstancePageElementDefinition
+		getBasicFragmentInstancePageElementDefinition(
+			BackgroundImageValue backgroundImageValue,
+			Map<String, Object> configurationValuesMap, String key,
+			long scopeGroupId) {
+
+		return getBasicFragmentInstancePageElementDefinition(
+			backgroundImageValue, configurationValuesMap, key,
+			new FragmentEditableElement[0], RandomTestUtil.randomBoolean(),
+			scopeGroupId);
 	}
 
 	public static PageElement getDropZonePageElement(
