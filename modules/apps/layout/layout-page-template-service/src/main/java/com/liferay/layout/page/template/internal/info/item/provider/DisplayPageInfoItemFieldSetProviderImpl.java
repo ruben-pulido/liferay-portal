@@ -250,13 +250,13 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 								getLayoutPageTemplateEntryId()))
 				).name(
 					layoutPageTemplateEntry.getName()
-				).labelInfoLocalizedValue(
-					InfoLocalizedValue.singleValue(
-						layoutPageTemplateEntry.getName())
 				).externalUniqueId(
 					_getExternalUniqueId(
 						layoutPageTemplateEntry.getExternalReferenceCode(),
 						layoutPageTemplateEntry.getGroupId(), scopeGroupId)
+				).labelInfoLocalizedValue(
+					InfoLocalizedValue.singleValue(
+						layoutPageTemplateEntry.getName())
 				).build());
 		}
 
