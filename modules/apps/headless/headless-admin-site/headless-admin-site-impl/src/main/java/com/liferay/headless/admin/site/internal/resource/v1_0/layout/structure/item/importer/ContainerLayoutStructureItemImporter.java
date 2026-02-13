@@ -11,6 +11,7 @@ import com.liferay.headless.admin.site.dto.v1_0.Layout;
 import com.liferay.headless.admin.site.dto.v1_0.PageElement;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentLinkUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentViewportUtil;
+import com.liferay.headless.admin.site.internal.dto.v1_0.util.ImageValueUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.layout.structure.item.importer.context.LayoutStructureItemImporterContext;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutStructureUtil;
 import com.liferay.layout.converter.AlignConverter;
@@ -61,6 +62,17 @@ public class ContainerLayoutStructureItemImporter
 			return containerStyledLayoutStructureItem;
 		}
 
+		JSONObject backgroundImageValueJSONObject =
+			ImageValueUtil.toBackgroundImageValueJSONObject(
+				containerPageElementDefinition.getBackgroundImageValue(),
+				layoutStructureItemImporterContext);
+
+		if (backgroundImageValueJSONObject != null) {
+			containerStyledLayoutStructureItem.updateItemConfig(
+				JSONUtil.put(
+					"backgroundImage", backgroundImageValueJSONObject));
+		}
+
 		String contentVisibility =
 			containerPageElementDefinition.getContentVisibilityAsString();
 
@@ -68,9 +80,6 @@ public class ContainerLayoutStructureItemImporter
 			containerStyledLayoutStructureItem.setContentVisibility(
 				ContentVisibilityConverter.convertToInternalValue(
 					contentVisibility));
-		}
-		else {
-			containerStyledLayoutStructureItem.setContentVisibility(null);
 		}
 
 		containerStyledLayoutStructureItem.setCssClasses(
@@ -83,9 +92,6 @@ public class ContainerLayoutStructureItemImporter
 			containerStyledLayoutStructureItem.setHtmlTag(
 				HtmlTagConverter.convertToInternalValue(
 					htmlProperties.getHtmlTagAsString()));
-		}
-		else {
-			containerStyledLayoutStructureItem.setHtmlTag(null);
 		}
 
 		containerStyledLayoutStructureItem.setIndexed(

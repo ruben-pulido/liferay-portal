@@ -22,11 +22,13 @@ import com.liferay.headless.admin.site.dto.v1_0.PageElementDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetInstance;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentEditableElementUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentViewportUtil;
+import com.liferay.headless.admin.site.internal.dto.v1_0.util.ImageValueUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.ItemScopeUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.LocalizedValueUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.WidgetInstanceUtil;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
@@ -73,10 +75,16 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 		throws Exception {
 
 		Long companyId = (Long)dtoConverterContext.getAttribute("companyId");
+		Long layoutPlid = (Long)dtoConverterContext.getAttribute("layoutPlid");
+		LayoutStructure layoutStructure =
+			(LayoutStructure)dtoConverterContext.getAttribute(
+				LayoutStructure.class.getName());
 		Long scopeGroupId = (Long)dtoConverterContext.getAttribute(
 			"scopeGroupId");
 
-		if ((companyId == null) || (scopeGroupId == null)) {
+		if ((companyId == null) || (layoutPlid == null) ||
+			(layoutStructure == null) || (scopeGroupId == null)) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -103,8 +111,8 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 						() -> _getFragmentInstance(
 							companyId, fragmentEntryLink,
 							fragmentStyledLayoutStructureItem,
-							freeMarkerJSONObject, scopeGroupId,
-							dtoConverterContext.getUser()));
+							freeMarkerJSONObject, layoutPlid, layoutStructure,
+							scopeGroupId, dtoConverterContext.getUser()));
 					setType(Type.BASIC_FRAGMENT);
 				}
 			};
@@ -120,7 +128,8 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 					() -> _getFragmentInstance(
 						companyId, fragmentEntryLink,
 						fragmentStyledLayoutStructureItem, freeMarkerJSONObject,
-						scopeGroupId, dtoConverterContext.getUser()));
+						layoutPlid, layoutStructure, scopeGroupId,
+						dtoConverterContext.getUser()));
 				setHelpText_i18n(
 					() -> _getI18nMap(freeMarkerJSONObject, "inputHelpText"));
 				setLabel_i18n(
@@ -234,10 +243,19 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 	private FragmentInstance _getFragmentInstance(
 		long companyId, FragmentEntryLink fragmentEntryLink,
 		FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem,
-		JSONObject freeMarkerJSONObject, long scopeGroupId, User user) {
+		JSONObject freeMarkerJSONObject, long layoutPlid,
+		LayoutStructure layoutStructure, long scopeGroupId, User user) {
 
 		return new FragmentInstance() {
 			{
+				setBackgroundImageValue(
+					() -> ImageValueUtil.toBackgroundImageValue(
+						companyId, _infoItemServiceRegistry,
+						fragmentStyledLayoutStructureItem.
+							getBackgroundImageJSONObject(),
+						layoutPlid, layoutStructure,
+						fragmentStyledLayoutStructureItem.getItemId(),
+						scopeGroupId));
 				setConfiguration(fragmentEntryLink::getConfiguration);
 				setCss(fragmentEntryLink::getCss);
 				setCssClasses(
@@ -263,7 +281,10 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 						FragmentEditableElementUtil.getFragmentEditableElements(
 							companyId, fragmentEntryLink,
 							_fragmentEntryProcessorRegistry,
-							_infoItemServiceRegistry, scopeGroupId, user));
+							_infoItemServiceRegistry, layoutPlid,
+							layoutStructure,
+							fragmentStyledLayoutStructureItem.getItemId(),
+							scopeGroupId, user));
 				setFragmentInstanceExternalReferenceCode(
 					fragmentEntryLink::getExternalReferenceCode);
 				setFragmentReference(
