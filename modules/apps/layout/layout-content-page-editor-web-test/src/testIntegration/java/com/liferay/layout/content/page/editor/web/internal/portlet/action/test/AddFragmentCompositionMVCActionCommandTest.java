@@ -80,6 +80,7 @@ import jakarta.portlet.ActionResponse;
 
 import java.util.HashMap;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -103,16 +104,15 @@ public class AddFragmentCompositionMVCActionCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_group = GroupTestUtil.addGroup();
+		_company = _companyLocalService.getCompany(
+			TestPropsValues.getCompanyId());
 
-		_company = _companyLocalService.getCompany(_group.getCompanyId());
+		_group = GroupTestUtil.addGroup();
 
 		_layout = LayoutTestUtil.addTypeContentLayout(_group);
 
 		_serviceContext = ServiceContextTestUtil.getServiceContext(
 			_group.getGroupId(), TestPropsValues.getUserId());
-
-		_serviceContext.setCompanyId(TestPropsValues.getCompanyId());
 
 		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
 
@@ -121,6 +121,11 @@ public class AddFragmentCompositionMVCActionCommandTest {
 				configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
 			}
 		};
+	}
+
+	@After
+	public void tearDown() {
+		ServiceContextThreadLocal.popServiceContext();
 	}
 
 	@Test
@@ -228,6 +233,75 @@ public class AddFragmentCompositionMVCActionCommandTest {
 		Assert.assertEquals(
 			newFragmentCollection.getFragmentCollectionKey(),
 			fragmentCollection.getFragmentCollectionKey());
+	}
+
+	@Test
+	@TestInfo("LPD-77498")
+	public void testAddFragmentCompositionMissingFragmentEntry()
+		throws Exception {
+
+		Layout draftLayout = _layout.fetchDraftLayout();
+
+		long segmentsExperienceId =
+			_segmentsExperienceLocalService.fetchDefaultSegmentsExperienceId(
+				draftLayout.getPlid());
+
+		FragmentEntryLink fragmentEntryLink =
+			_fragmentEntryLinkLocalService.addFragmentEntryLink(
+				null, TestPropsValues.getUserId(), _group.getGroupId(), null,
+				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+				segmentsExperienceId, draftLayout.getPlid(), StringPool.BLANK,
+				StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
+				StringPool.BLANK, StringPool.BLANK, 0, null,
+				FragmentConstants.TYPE_COMPONENT, _serviceContext);
+
+		JSONObject addItemJSONObject = ContentLayoutTestUtil.addItemToLayout(
+			"{}", LayoutDataItemTypeConstants.TYPE_CONTAINER, draftLayout,
+			_layoutStructureProvider, segmentsExperienceId);
+
+		String containerItemId = addItemJSONObject.getString("addedItemId");
+
+		ContentLayoutTestUtil.addFragmentEntryLinkToLayout(
+			fragmentEntryLink, draftLayout, containerItemId, 0,
+			segmentsExperienceId);
+
+		MockLiferayPortletActionRequest mockLiferayPortletActionRequest =
+			ContentLayoutTestUtil.getMockLiferayPortletActionRequest(
+				_company, _group, draftLayout);
+
+		mockLiferayPortletActionRequest.addParameter("itemId", containerItemId);
+
+		FragmentCollection fragmentCollection =
+			_fragmentCollectionLocalService.addFragmentCollection(
+				null, TestPropsValues.getUserId(), _group.getGroupId(),
+				RandomTestUtil.randomString(), StringPool.BLANK,
+				_serviceContext);
+
+		mockLiferayPortletActionRequest.addParameter(
+			"fragmentCollectionId",
+			String.valueOf(fragmentCollection.getFragmentCollectionId()));
+
+		mockLiferayPortletActionRequest.addParameter(
+			"name", RandomTestUtil.randomString());
+
+		JSONObject jsonObject = ReflectionTestUtil.invoke(
+			_mvcActionCommand, "doTransactionalCommand",
+			new Class<?>[] {ActionRequest.class, ActionResponse.class},
+			mockLiferayPortletActionRequest,
+			new MockLiferayPortletActionResponse());
+
+		JSONObject fragmentCompositionJSONObject = jsonObject.getJSONObject(
+			"fragmentComposition");
+
+		Assert.assertFalse(
+			fragmentCompositionJSONObject.has("fragmentEntryKey"));
+
+		Assert.assertFalse(jsonObject.getBoolean("valid"));
+
+		Assert.assertEquals(
+			0,
+			_fragmentCompositionLocalService.getFragmentCompositionsCount(
+				fragmentCollection.getFragmentCollectionId()));
 	}
 
 	@Test

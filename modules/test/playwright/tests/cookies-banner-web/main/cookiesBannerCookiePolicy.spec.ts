@@ -11,8 +11,8 @@ import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {
 	clearConsentCookies,
-	resetAllCookieManagerConfigurations,
-} from './utils/cookieManagerAfterEach';
+	resetAllConsentManagerConfigurations,
+} from './utils/consentManagerAfterEach';
 
 const hideableCookieTypes = [
 	'Functional Cookies',
@@ -23,14 +23,15 @@ const hideableCookieTypes = [
 export const test = mergeTests(
 	featureFlagsTest({
 		'LPD-51356': {enabled: true},
+		'LPD-75032': {enabled: true},
 	}),
 	loginTest(),
 	systemSettingsPageTest
 );
 
 test.afterEach(async ({systemSettingsPage}) => {
-	await test.step('Reset All Cookie Manager Configurations', async () => {
-		await resetAllCookieManagerConfigurations(systemSettingsPage);
+	await test.step('Reset All Consent Manager Configurations', async () => {
+		await resetAllConsentManagerConfigurations(systemSettingsPage);
 	});
 
 	await test.step('Clear Consent Cookies if present', async () => {
@@ -43,7 +44,10 @@ test('LPD-30561 Cookie Banner Cookie Policy Page', async ({
 	systemSettingsPage,
 }) => {
 	await test.step('Enable Preference Handling Cookies', async () => {
-		await systemSettingsPage.goToSystemSetting('Privacy', 'Cookie Manager');
+		await systemSettingsPage.goToSystemSetting(
+			'Privacy',
+			'Consent Manager'
+		);
 
 		const enabledButton = page.getByLabel('Enabled');
 
@@ -150,13 +154,16 @@ test('LPD-30561 Cookie Banner Cookie Policy Page', async ({
 });
 
 test(
-	'Cookie Manager Adjustments',
+	'Consent Manager Adjustments',
 	{tag: '@LPD-60002'},
 	async ({browser, page, systemSettingsPage}) => {
+		const saveButton = page.getByRole('button', {name: 'Save'});
+		const updateButton = page.getByRole('button', {name: 'Update'});
+
 		await test.step('Enable Preference Handling Cookies if needed', async () => {
 			await systemSettingsPage.goToSystemSetting(
 				'Privacy',
-				'Cookie Manager'
+				'Consent Manager'
 			);
 
 			const enabledButton = await page.getByLabel('Enabled');
@@ -165,9 +172,12 @@ test(
 
 			await enabledButton.check();
 
-			await page
-				.getByRole('button', {name: 'Save'})
-				.dispatchEvent('click');
+			if (await saveButton.isVisible()) {
+				await saveButton.dispatchEvent('click');
+			}
+			else if (await updateButton.isVisible()) {
+				await updateButton.dispatchEvent('click');
+			}
 
 			await waitForAlert(page);
 		});
@@ -208,7 +218,12 @@ test(
 
 			await cookiePolicyLink.fill('http://www.liferay.com');
 
-			await page.getByRole('button', {name: 'Save'}).click();
+			if (await saveButton.isVisible()) {
+				await saveButton.dispatchEvent('click');
+			}
+			else if (await updateButton.isVisible()) {
+				await updateButton.dispatchEvent('click');
+			}
 
 			await waitForAlert(page);
 

@@ -4,6 +4,7 @@
  */
 
 export {default as Breadcrumb} from './common/components/Breadcrumb';
+export {default as SpaceSelector} from './common/components/SpaceSelector';
 export {default as SpaceSticker} from './common/components/SpaceSticker';
 export {default as Toolbar} from './common/components/Toolbar';
 export {default as FieldPicker} from './common/components/forms/FieldPicker';
@@ -12,6 +13,11 @@ export {default as FieldWrapper} from './common/components/forms/FieldWrapper';
 export {required, validate} from './common/components/forms/validations';
 export {default as ApiHelper} from './common/services/ApiHelper';
 export {IAssetObjectEntry} from './common/types/AssetType';
+export {type Space} from './common/types/Space';
+export {
+	IBulkActionFDSData,
+	IBulkActionTaskStarterDTO,
+} from './common/types/BulkActionTask';
 export {
 	displayCreateSuccessToast,
 	displayCreateTaskErrorToast,
@@ -79,6 +85,7 @@ export {default as ACTIONS} from './main_view/props_transformer/actions/creation
 export {default as deleteAssetEntriesBulkAction} from './main_view/props_transformer/actions/deleteAssetEntriesBulkAction';
 export {default as deleteItemAction} from './main_view/props_transformer/actions/deleteItemAction';
 export {default as manageMembersAction} from './main_view/props_transformer/actions/manageMembersAction';
+export {triggerAssetBulkAction} from './main_view/props_transformer/actions/triggerAssetBulkAction';
 export {default as SimpleActionLinkRenderer} from './main_view/props_transformer/cell_renderers/SimpleActionLinkRenderer';
 export {default as addOnClickToCreationMenuItems} from './main_view/props_transformer/utils/addOnClickToCreationMenuItems';
 export {default as RecycleBinToolbar} from './main_view/recycle_bin/RecycleBinToolbar';

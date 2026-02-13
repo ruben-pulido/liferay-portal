@@ -13,8 +13,10 @@
 taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
+taglib uri="http://liferay.com/tld/react" prefix="react" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
-taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
+taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
+taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
 <%@ page import="com.liferay.application.list.PanelApp" %><%@
 page import="com.liferay.application.list.PanelAppRegistry" %><%@
@@ -23,11 +25,15 @@ page import="com.liferay.application.list.constants.ApplicationListWebKeys" %><%
 page import="com.liferay.application.list.display.context.logic.PanelCategoryHelper" %><%@
 page import="com.liferay.application.list.taglib.display.context.logic.PanelAppContentHelper" %><%@
 page import="com.liferay.application.list.taglib.internal.display.context.ContentPanelCategoryDisplayContext" %><%@
+page import="com.liferay.application.list.taglib.internal.display.context.SideNavigationDisplayContext" %><%@
 page import="com.liferay.application.list.taglib.internal.util.PanelAppUtil" %><%@
 page import="com.liferay.application.list.taglib.internal.util.PanelCategoryUtil" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
+page import="com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil" %><%@
+page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.model.Group" %><%@
 page import="com.liferay.portal.kernel.model.Layout" %><%@
+page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
 page import="com.liferay.portal.kernel.service.LayoutLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@

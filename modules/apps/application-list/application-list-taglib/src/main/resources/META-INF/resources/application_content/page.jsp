@@ -9,7 +9,20 @@
 
 <%
 PanelAppContentHelper panelAppContentHelper = new PanelAppContentHelper(request, response);
+
+PanelAppRegistry panelAppRegistry = (PanelAppRegistry)request.getAttribute(ApplicationListWebKeys.PANEL_APP_REGISTRY);
+
+PanelCategoryHelper panelCategoryHelper = new PanelCategoryHelper(panelAppRegistry);
+
+boolean sideNavigationEnabled = FeatureFlagManagerUtil.isEnabled(themeDisplay.getCompanyId(), "LPD-36105") && panelCategoryHelper.containsPortlet(themeDisplay.getPpid(), "applications_menu") && !LiferayWindowState.isPopUp(request);
 %>
+
+<c:if test="<%= sideNavigationEnabled %>">
+	<div class="d-flex">
+		<%@ include file="/side_navigation/page.jsp" %>
+
+		<div class="flex-grow-1">
+</c:if>
 
 <c:choose>
 	<c:when test="<%= panelAppContentHelper.isValidPortletSelected() %>">
@@ -25,3 +38,8 @@ PanelAppContentHelper panelAppContentHelper = new PanelAppContentHelper(request,
 		</div>
 	</c:otherwise>
 </c:choose>
+
+<c:if test="<%= sideNavigationEnabled %>">
+		</div>
+	</div>
+</c:if>

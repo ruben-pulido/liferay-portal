@@ -22,6 +22,7 @@ import com.liferay.osb.faro.web.internal.controller.FaroController;
 import com.liferay.osb.faro.web.internal.controller.main.PreferencesController;
 import com.liferay.osb.faro.web.internal.exception.FaroException;
 import com.liferay.osb.faro.web.internal.model.display.FaroResultsDisplay;
+import com.liferay.osb.faro.web.internal.model.display.contacts.IndividualSegmentActivationDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.IndividualSegmentDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.IndividualSegmentMembershipChangeDisplay;
 import com.liferay.osb.faro.web.internal.param.FaroParam;
@@ -86,7 +87,7 @@ public class IndividualSegmentController extends BaseFaroController {
 
 	@POST
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public IndividualSegmentDisplay create(
+	public IndividualSegmentDisplay createIndividualSegmentDisplay(
 			@PathParam("groupId") long groupId,
 			@FormParam("channelId") String channelId,
 			@DefaultValue(JSONConstants.NULL_JSON_ARRAY)
@@ -108,7 +109,7 @@ public class IndividualSegmentController extends BaseFaroController {
 
 	@DELETE
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public void delete(
+	public void deleteIndividualSegments(
 			@PathParam("groupId") long groupId,
 			@FormParam("ids") FaroParam<List<String>> idsFaroParam)
 		throws Exception {
@@ -163,7 +164,7 @@ public class IndividualSegmentController extends BaseFaroController {
 	@Path("/{id}/memberships/changes/aggregations")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
 	public List<IndividualSegmentMembershipChangeAggregation>
-			getMembershipChangeAggregations(
+			getIndividualSegmentMembershipChangeAggregations(
 				@PathParam("groupId") long groupId, @PathParam("id") String id,
 				@QueryParam("interval") String interval,
 				@QueryParam("max") int max)
@@ -182,7 +183,7 @@ public class IndividualSegmentController extends BaseFaroController {
 	@Path("/{id}/memberships/changes")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
 	@SuppressWarnings("unchecked")
-	public FaroResultsDisplay getMembershipChanges(
+	public FaroResultsDisplay getIndividualSegmentMembershipChanges(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
 			@QueryParam("query") String query,
 			@DefaultValue(StringPool.BLANK) @QueryParam("startDate") FaroParam
@@ -213,7 +214,7 @@ public class IndividualSegmentController extends BaseFaroController {
 	@Path("/{id}/memberships")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
 	@SuppressWarnings("unchecked")
-	public FaroResultsDisplay getMemberships(
+	public FaroResultsDisplay getIndividualSegmentMemberships(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
 			@QueryParam("cur") int cur, @QueryParam("delta") int delta,
 			@DefaultValue(StringPool.BLANK) @QueryParam("orderByFields")
@@ -229,21 +230,10 @@ public class IndividualSegmentController extends BaseFaroController {
 	}
 
 	@GET
-	@Path("/{id}/real-time-membership-metric")
-	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public RealTimeMembershipMetric getRealTimeMembershipMetric(
-			@PathParam("groupId") long groupId, @PathParam("id") String id)
-		throws Exception {
-
-		return contactsEngineClient.getRealTimeMembershipMetric(
-			faroProjectLocalService.getFaroProjectByGroupId(groupId), id);
-	}
-
-	@GET
 	@Path("/{id}/real-time-memberships")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
 	@SuppressWarnings("unchecked")
-	public FaroResultsDisplay getRealTimeMemberships(
+	public FaroResultsDisplay getIndividualSegmentRealTimeMemberships(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
 			@QueryParam("day") String day,
 			@DefaultValue(StringPool.BLANK) @QueryParam("profileTypes")
@@ -267,9 +257,20 @@ public class IndividualSegmentController extends BaseFaroController {
 	}
 
 	@GET
+	@Path("/{id}/real-time-membership-metric")
+	@RolesAllowed(RoleConstants.SITE_MEMBER)
+	public RealTimeMembershipMetric getRealTimeMembershipMetric(
+			@PathParam("groupId") long groupId, @PathParam("id") String id)
+		throws Exception {
+
+		return contactsEngineClient.getRealTimeMembershipMetric(
+			faroProjectLocalService.getFaroProjectByGroupId(groupId), id);
+	}
+
+	@GET
 	@Path("/unassigned")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public FaroResultsDisplay getUnassigned(
+	public FaroResultsDisplay getUnassignedIndividualSegmentDisplay(
 			@PathParam("groupId") long groupId, @QueryParam("cur") int cur,
 			@QueryParam("delta") int delta,
 			@DefaultValue(StringPool.BLANK) @QueryParam("orderByFields")
@@ -323,10 +324,37 @@ public class IndividualSegmentController extends BaseFaroController {
 			delta, orderByFieldsFaroParam.getValue());
 	}
 
+	@Path("/{id}/activation")
+	@PUT
+	@RolesAllowed(RoleConstants.SITE_MEMBER)
+	public IndividualSegmentActivationDisplay
+			updateIndividualSegmentActivationDisplay(
+				@PathParam("groupId") long groupId,
+				@FormParam("cronExpression") String cronExpression,
+				@FormParam("frequencyType") String frequencyType,
+				@PathParam("id") long segmentId,
+				@DefaultValue(StringPool.BLANK) @FormParam("scheduleEndDate")
+					FaroParam<Date> scheduleEndDateFaroParam,
+				@DefaultValue(StringPool.BLANK) @FormParam("scheduleStartDate")
+					FaroParam<Date> scheduleStartDateFaroParam,
+				@FormParam("scheduleType") String scheduleType)
+		throws Exception {
+
+		FaroProject faroProject =
+			faroProjectLocalService.getFaroProjectByGroupId(groupId);
+
+		return new IndividualSegmentActivationDisplay(
+			contactsEngineClient.updateSegmentActivation(
+				faroProject, cronExpression, frequencyType,
+				scheduleEndDateFaroParam.getValue(),
+				scheduleStartDateFaroParam.getValue(), scheduleType,
+				segmentId));
+	}
+
 	@Path("/{id}")
 	@PUT
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public IndividualSegmentDisplay update(
+	public IndividualSegmentDisplay updateIndividualSegmentDisplay(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
 			@FormParam("filter") String filterString,
 			@FormParam("includeAnonymousUsers") boolean includeAnonymousUsers,

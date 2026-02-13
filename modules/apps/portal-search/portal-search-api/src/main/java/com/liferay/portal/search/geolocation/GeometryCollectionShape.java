@@ -5,16 +5,31 @@
 
 package com.liferay.portal.search.geolocation;
 
+import java.util.Collections;
 import java.util.List;
-
-import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface GeometryCollectionShape extends Shape {
+public class GeometryCollectionShape extends Shape {
 
-	public List<Shape> getShapes();
+	@Override
+	public <T> T accept(ShapeTranslator<T> shapeTranslator) {
+		return shapeTranslator.translate(this);
+	}
+
+	public List<Shape> getShapes() {
+		return _shapes;
+	}
+
+	protected GeometryCollectionShape(
+		List<Coordinate> coordinates, List<Shape> shapes) {
+
+		super(coordinates);
+
+		_shapes = Collections.unmodifiableList(shapes);
+	}
+
+	private final List<Shape> _shapes;
 
 }

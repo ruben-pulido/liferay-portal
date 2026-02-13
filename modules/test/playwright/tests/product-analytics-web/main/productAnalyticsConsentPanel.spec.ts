@@ -37,6 +37,7 @@ export const test = mergeTests(
 	accountSettingsPagesTest,
 	featureFlagsTest({
 		'LPD-51356': {enabled: true},
+		'LPD-75032': {enabled: true},
 	}),
 	instanceSettingsPagesTest,
 	loginTest(),
@@ -52,7 +53,10 @@ test.afterEach(async ({page, systemSettingsPage}) => {
 	});
 
 	await test.step('Reset Product Analytics System Settings if needed', async () => {
-		await systemSettingsPage.goToSystemSetting('Privacy', 'Cookie Manager');
+		await systemSettingsPage.goToSystemSetting(
+			'Privacy',
+			'Consent Manager'
+		);
 
 		if (!(await page.getByText('Product Analytics').isVisible())) {
 			return;
@@ -97,7 +101,10 @@ test.beforeEach(async ({page, systemSettingsPage}) => {
 	});
 
 	await test.step('Verify Product Analytics Instance Level Configuration', async () => {
-		await systemSettingsPage.goToSystemSetting('Privacy', 'Cookie Manager');
+		await systemSettingsPage.goToSystemSetting(
+			'Privacy',
+			'Consent Manager'
+		);
 
 		if (!(await page.getByText('Product Analytics').isVisible())) {
 			return;

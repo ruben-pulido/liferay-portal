@@ -928,6 +928,12 @@ public class ObjectDefinitionResourceImpl
 			return _toObjectDefinition(serviceBuilderObjectDefinition);
 		}
 
+		if (GetterUtil.getBoolean(serviceBuilderObjectDefinition.isSystem())) {
+			return _toObjectDefinition(
+				_objectDefinitionService.publishSystemObjectDefinition(
+					objectDefinitionId));
+		}
+
 		return _toObjectDefinition(
 			_objectDefinitionService.publishCustomObjectDefinition(
 				serviceBuilderObjectDefinition.getObjectDefinitionId()));
@@ -1241,6 +1247,9 @@ public class ObjectDefinitionResourceImpl
 		throws Exception {
 
 		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setLanguageId(
+			contextAcceptLanguage.getPreferredLanguageId());
 
 		if (!FeatureFlagManagerUtil.isEnabled(
 				contextCompany.getCompanyId(), "LPD-35914") ||

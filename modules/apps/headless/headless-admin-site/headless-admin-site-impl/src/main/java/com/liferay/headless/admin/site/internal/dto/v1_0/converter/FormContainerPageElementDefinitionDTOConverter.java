@@ -23,12 +23,15 @@ import com.liferay.headless.admin.site.dto.v1_0.SuccessNotificationMessage;
 import com.liferay.headless.admin.site.dto.v1_0.URLFormContainerSubmissionResult;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.ContainerLayoutUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentViewportUtil;
+import com.liferay.headless.admin.site.internal.dto.v1_0.util.ImageValueUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.ItemScopeUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.LayoutUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.LocalizedValueUtil;
+import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.util.structure.FormStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -68,16 +71,28 @@ public class FormContainerPageElementDefinitionDTOConverter
 		throws Exception {
 
 		Long companyId = (Long)dtoConverterContext.getAttribute("companyId");
+		Long layoutPlid = (Long)dtoConverterContext.getAttribute("layoutPlid");
+		LayoutStructure layoutStructure =
+			(LayoutStructure)dtoConverterContext.getAttribute(
+				LayoutStructure.class.getName());
 		Long scopeGroupId = (Long)dtoConverterContext.getAttribute(
 			"scopeGroupId");
 
-		if ((companyId == null) || (scopeGroupId == null)) {
+		if ((companyId == null) || (layoutPlid == null) ||
+			(layoutStructure == null) || (scopeGroupId == null)) {
+
 			throw new UnsupportedOperationException();
 		}
 
 		FormContainerPageElementDefinition formContainerPageElementDefinition =
 			new FormContainerPageElementDefinition();
 
+		formContainerPageElementDefinition.setBackgroundImageValue(
+			() -> ImageValueUtil.toBackgroundImageValue(
+				companyId, _infoItemServiceRegistry,
+				formStyledLayoutStructureItem.getBackgroundImageJSONObject(),
+				layoutPlid, layoutStructure,
+				formStyledLayoutStructureItem.getItemId(), scopeGroupId));
 		formContainerPageElementDefinition.setCssClasses(
 			() -> {
 				if (SetUtil.isEmpty(
@@ -403,6 +418,9 @@ public class FormContainerPageElementDefinitionDTOConverter
 
 		return successNotificationMessage;
 	}
+
+	@Reference
+	private InfoItemServiceRegistry _infoItemServiceRegistry;
 
 	@Reference
 	private LayoutPageTemplateEntryLocalService

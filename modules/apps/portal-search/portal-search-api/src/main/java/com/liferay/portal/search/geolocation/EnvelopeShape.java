@@ -5,16 +5,37 @@
 
 package com.liferay.portal.search.geolocation;
 
-import org.osgi.annotation.versioning.ProviderType;
+import java.util.List;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface EnvelopeShape extends Shape {
+public class EnvelopeShape extends Shape {
 
-	public Coordinate getBottomRight();
+	@Override
+	public <T> T accept(ShapeTranslator<T> shapeTranslator) {
+		return shapeTranslator.translate(this);
+	}
 
-	public Coordinate getTopLeft();
+	public Coordinate getBottomRight() {
+		return _bottomRightCoordinate;
+	}
+
+	public Coordinate getTopLeft() {
+		return _topLeftCoordinate;
+	}
+
+	protected EnvelopeShape(
+		List<Coordinate> coordinates, Coordinate bottomRightCoordinate,
+		Coordinate topLeftCoordinate) {
+
+		super(coordinates);
+
+		_bottomRightCoordinate = bottomRightCoordinate;
+		_topLeftCoordinate = topLeftCoordinate;
+	}
+
+	private final Coordinate _bottomRightCoordinate;
+	private final Coordinate _topLeftCoordinate;
 
 }

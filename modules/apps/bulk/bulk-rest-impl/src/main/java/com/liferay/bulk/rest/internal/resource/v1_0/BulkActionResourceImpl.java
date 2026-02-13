@@ -9,9 +9,11 @@ import com.liferay.bulk.rest.dto.v1_0.BulkAction;
 import com.liferay.bulk.rest.dto.v1_0.BulkActionItem;
 import com.liferay.bulk.rest.dto.v1_0.BulkActionTask;
 import com.liferay.bulk.rest.dto.v1_0.DefaultPermissionBulkAction;
+import com.liferay.bulk.rest.dto.v1_0.DueDateBulkAction;
 import com.liferay.bulk.rest.dto.v1_0.KeywordBulkAction;
 import com.liferay.bulk.rest.dto.v1_0.PermissionBulkAction;
 import com.liferay.bulk.rest.dto.v1_0.SelectionScope;
+import com.liferay.bulk.rest.dto.v1_0.StatusBulkAction;
 import com.liferay.bulk.rest.dto.v1_0.TaxonomyCategoryBulkAction;
 import com.liferay.bulk.rest.internal.odata.entity.v1_0.BulkActionEntityModel;
 import com.liferay.bulk.rest.internal.selection.v1_0.BulkActionBulkSelectionFactory;
@@ -399,6 +401,9 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 		else if (BulkAction.Type.DELETE_BULK_ACTION.equals(type)) {
 			return _deleteObjectBulkSelectionAction;
 		}
+		else if (BulkAction.Type.DUE_DATE_BULK_ACTION.equals(type)) {
+			return _dueDateObjectBulkSelectionAction;
+		}
 		else if (BulkAction.Type.EXPIRE_BULK_ACTION.equals(type)) {
 			return _expireObjectBulkSelectionAction;
 		}
@@ -410,6 +415,9 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 		}
 		else if (BulkAction.Type.RESET_PERMISSION_BULK_ACTION.equals(type)) {
 			return _resetPermissionObjectBulkSelectionAction;
+		}
+		else if (BulkAction.Type.STATUS_BULK_ACTION.equals(type)) {
+			return _statusObjectBulkSelectionAction;
 		}
 		else if (BulkAction.Type.TAXONOMY_CATEGORY_BULK_ACTION.equals(type)) {
 			return _editObjectCategoriesBulkSelectionAction;
@@ -448,6 +456,13 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 		else if (BulkAction.Type.DELETE_BULK_ACTION.equals(type)) {
 			return hashMapWrapper.build();
 		}
+		else if (BulkAction.Type.DUE_DATE_BULK_ACTION.equals(type)) {
+			DueDateBulkAction dueDateBulkAction = (DueDateBulkAction)bulkAction;
+
+			return hashMapWrapper.put(
+				"dueDate", dueDateBulkAction.getDueDate()
+			).build();
+		}
 		else if (BulkAction.Type.EXPIRE_BULK_ACTION.equals(type)) {
 			return hashMapWrapper.build();
 		}
@@ -479,6 +494,13 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 		}
 		else if (BulkAction.Type.RESET_PERMISSION_BULK_ACTION.equals(type)) {
 			return hashMapWrapper.build();
+		}
+		else if (BulkAction.Type.STATUS_BULK_ACTION.equals(type)) {
+			StatusBulkAction statusBulkAction = (StatusBulkAction)bulkAction;
+
+			return hashMapWrapper.put(
+				"status", statusBulkAction.getStatus()
+			).build();
 		}
 		else if (BulkAction.Type.TAXONOMY_CATEGORY_BULK_ACTION.equals(type)) {
 			TaxonomyCategoryBulkAction taxonomyCategoryBulkAction =
@@ -826,6 +848,9 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 	@Reference
 	private DLMimeTypeDisplayContext _dlMimeTypeDisplayContext;
 
+	@Reference(target = "(bulk.selection.action.key=due.date.object)")
+	private BulkSelectionAction<Object> _dueDateObjectBulkSelectionAction;
+
 	@Reference(target = "(bulk.selection.action.key=edit.object.categories)")
 	private BulkSelectionAction<Object>
 		_editObjectCategoriesBulkSelectionAction;
@@ -894,6 +919,9 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 
 	@Reference
 	private SearchResultResource.Factory _searchResultResourceFactory;
+
+	@Reference(target = "(bulk.selection.action.key=status.object)")
+	private BulkSelectionAction<Object> _statusObjectBulkSelectionAction;
 
 	@Reference
 	private TrashHelper _trashHelper;

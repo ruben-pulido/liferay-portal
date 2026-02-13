@@ -99,6 +99,9 @@ export interface IBulkActionTaskType {
 	};
 	DeleteBulkAction: {};
 	DownloadBulkAction: {};
+	DueDateBulkAction: {
+		dueDate?: string;
+	};
 	ExpireBulkAction: {};
 	KeywordBulkAction: {
 		append?: boolean;
@@ -113,6 +116,9 @@ export interface IBulkActionTaskType {
 		roleKey?: string;
 	};
 	ResetPermissionBulkAction: {};
+	StatusBulkAction: {
+		status?: string;
+	};
 	TaxonomyCategoryBulkAction: {
 		append?: boolean;
 		taxonomyCategoryIdsToAdd?: number[];

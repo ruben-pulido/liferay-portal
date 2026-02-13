@@ -10,6 +10,7 @@ import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.service.ObjectEntryService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -38,20 +39,23 @@ public class ViewProjectsSectionDisplayContext
 
 	public ViewProjectsSectionDisplayContext(
 		HttpServletRequest httpServletRequest,
-		ObjectDefinition objectDefinition, UserLocalService userLocalService) {
+		ObjectDefinition objectDefinition,
+		ObjectEntryService objectEntryService,
+		UserLocalService userLocalService) {
 
-		super(httpServletRequest, objectDefinition);
+		super(httpServletRequest, objectDefinition, objectEntryService);
 
 		_userLocalService = userLocalService;
 	}
 
 	public String getAPIURL() {
-		StringBundler sb = new StringBundler(4);
+		StringBundler sb = new StringBundler(5);
 
 		sb.append("/o/search/v1.0/search?emptySearch=true&");
 		sb.append("filter=objectDefinitionId eq ");
 		sb.append(objectDefinition.getObjectDefinitionId());
-		sb.append("&nestedFields=embedded");
+		sb.append("&nestedFields=embedded,r_userToCMPProjectManager_user");
+		sb.append(",r_userToCMPProjectSponsor_user");
 
 		return sb.toString();
 	}
@@ -79,7 +83,11 @@ public class ViewProjectsSectionDisplayContext
 		).build();
 	}
 
-	public CreationMenu getCreationMenu() {
+	public CreationMenu getCreationMenu() throws Exception {
+		if (!hasAddObjectEntryPortletResourcePermission()) {
+			return null;
+		}
+
 		return CreationMenuBuilder.addPrimaryDropdownItem(
 			dropdownItem -> {
 				dropdownItem.putData(

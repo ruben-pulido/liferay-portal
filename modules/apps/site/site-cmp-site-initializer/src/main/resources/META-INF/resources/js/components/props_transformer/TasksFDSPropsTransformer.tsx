@@ -21,9 +21,12 @@ import React from 'react';
 
 import {openCMPModal} from '../../utils/openCMPModal';
 import StateLabel from '../StateLabel';
+import BulkEditDueDateModalContent from '../modal/BulkEditDueDateModalContent';
+import BulkEditStateModalContent from '../modal/BulkEditStateModalContent';
 import EditAssigneeModalContent from '../modal/EditAssigneeModalContent';
 import ACTIONS from './actions/creationMenuActions';
 import {cmpTasksFDSAtom} from './atoms';
+import AssigneeRenderer from './cell_renderers/AssigneeRenderer';
 import KanbanView from './views/kanban_view/KanbanView';
 
 const _CLASS_NAME_KALEO_TASK_INSTANCE_TOKEN =
@@ -95,12 +98,14 @@ const WORKFLOW_TASK_MODALS: Record<
 };
 
 export default function TasksFDSPropsTransformer({
+	additionalProps,
 	creationMenu,
 	id,
 	itemsActions = [],
 	views,
 	...otherProps
 }: {
+	additionalProps: any;
 	apiURL?: string;
 	creationMenu: any;
 	id: string;
@@ -117,7 +122,6 @@ export default function TasksFDSPropsTransformer({
 
 	const kanbanView: IView = {
 		component: (props: any) => KanbanView({...props}),
-		dataSetId: id,
 		default: false,
 		label: Liferay.Language.get('kanban'),
 		name: 'kanban',
@@ -159,7 +163,12 @@ export default function TasksFDSPropsTransformer({
 								.join(', ');
 						}
 
-						return itemData.embedded?.assignTo?.name;
+						return (
+							<AssigneeRenderer
+								image={itemData.embedded?.assignTo?.portrait}
+								name={itemData.embedded?.assignTo?.name}
+							/>
+						);
 					},
 					name: 'assigneeTableCellRenderer',
 					type: 'internal',
@@ -230,7 +239,21 @@ export default function TasksFDSPropsTransformer({
 							itemData.entryClassName ===
 							_CLASS_NAME_KALEO_TASK_INSTANCE_TOKEN
 						) {
-							return '-';
+							return StateLabel({
+								state: itemData.embedded?.completed
+									? {
+											key: 'completed',
+											name: Liferay.Language.get(
+												'completed'
+											),
+										}
+									: {
+											key: 'pending',
+											name: Liferay.Language.get(
+												'pending'
+											),
+										},
+							});
 						}
 
 						return StateLabel({
@@ -314,7 +337,40 @@ export default function TasksFDSPropsTransformer({
 			action: any;
 			selectedData: any;
 		}) => {
-			if (action?.data?.id === 'delete') {
+			if (action?.data?.id === 'update-due-date') {
+				openCMPModal({
+					center: true,
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						BulkEditDueDateModalContent({
+							apiURL: otherProps?.apiURL,
+							closeModal,
+							selectedData,
+						}),
+					size: 'md',
+				});
+			}
+			else if (action?.data?.id === 'update-state') {
+				openCMPModal({
+					center: true,
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						BulkEditStateModalContent({
+							apiURL: otherProps?.apiURL,
+							closeModal,
+							selectedData,
+							states: additionalProps.states,
+						}),
+					size: 'md',
+				});
+			}
+			else if (action?.data?.id === 'delete') {
 				deleteAssetEntriesBulkAction({
 					apiURL: otherProps.apiURL,
 					selectedData,

@@ -1,5 +1,5 @@
 {
-	"@generated": "fa317ee45cd7dba24316e97ee408d833ec086a06",
+	"@generated": "1a6c3097af3f2779a271ea4c6fe8574ed33618a8",
 	"@readonly": "** AUTO-GENERATED: DO NOT EDIT **",
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
@@ -16,6 +16,12 @@
 			],
 			"@liferay/frontend-js-item-selector-web": [
 				"../../../../../../frontend-js-item-selector-web/src/main/resources/META-INF/resources/index.ts"
+			],
+			"@liferay/site-cms-site-initializer": [
+				"../../../../../../../site/site-cms-site-initializer/src/main/resources/META-INF/resources/js/index.ts"
+			],
+			"frontend-js-components-web": [
+				"../../../../../../frontend-js-components-web/src/main/resources/META-INF/resources/index.ts"
 			],
 			"frontend-js-web": [
 				"../../../../../../frontend-js-web/src/main/resources/META-INF/resources/main/index.d.ts"
@@ -45,6 +51,12 @@
 		},
 		{
 			"path": "../../../../../../frontend-js-item-selector-web/src/main/resources/META-INF/resources/tsconfig.json"
+		},
+		{
+			"path": "../../../../../../../site/site-cms-site-initializer/src/main/resources/META-INF/resources/tsconfig.json"
+		},
+		{
+			"path": "../../../../../../frontend-js-components-web/src/main/resources/META-INF/resources/tsconfig.json"
 		},
 		{
 			"path": "../../../../../../frontend-js-web/src/main/resources/META-INF/resources/tsconfig.json"
