@@ -142,7 +142,6 @@ export default async function ArticlePage({
 							height={600}
 							priority={true}
 							src={liferay.getDocument(article.image.link.href)}
-							unoptimized={true}
 							width={1200}
 						/>
 					</div>

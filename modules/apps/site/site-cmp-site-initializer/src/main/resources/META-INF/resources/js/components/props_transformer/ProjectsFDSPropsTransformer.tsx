@@ -16,7 +16,7 @@ import {fetch} from 'frontend-js-web';
 
 import StateLabel from '../StateLabel';
 import ACTIONS from './actions/creationMenuActions';
-import UserRelationshipRenderer from './cell_renderers/UserRelationshipRenderer';
+import AssigneeRenderer from './cell_renderers/AssigneeRenderer';
 
 type Action = {
 	href: string;
@@ -107,7 +107,11 @@ export default function ProjectsFDSPropsTransformer({
 					type: 'internal',
 				} as IInternalRenderer,
 				{
-					component: UserRelationshipRenderer,
+					component: ({value}) =>
+						AssigneeRenderer({
+							image: value?.image,
+							name: value?.name,
+						}),
 					name: 'userRelationshipTableCellRenderer',
 					type: 'internal',
 				} as IInternalRenderer,

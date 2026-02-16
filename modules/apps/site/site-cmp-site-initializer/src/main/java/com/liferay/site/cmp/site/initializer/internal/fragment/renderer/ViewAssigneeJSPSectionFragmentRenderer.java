@@ -11,6 +11,7 @@ import com.liferay.object.field.business.type.ObjectFieldBusinessTypeRegistry;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.cmp.site.initializer.internal.display.context.ViewAssigneeSectionDisplayContext;
@@ -30,7 +31,7 @@ public class ViewAssigneeJSPSectionFragmentRenderer
 
 	@Override
 	public String getCollectionKey() {
-		return "assignee-field";
+		return "assignee";
 	}
 
 	@Override
@@ -49,7 +50,8 @@ public class ViewAssigneeJSPSectionFragmentRenderer
 				ObjectFieldConstants.BUSINESS_TYPE_ASSIGNEE),
 			_language, objectEntry,
 			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY));
+				WebKeys.THEME_DISPLAY),
+			_userLocalService);
 	}
 
 	@Override
@@ -59,7 +61,7 @@ public class ViewAssigneeJSPSectionFragmentRenderer
 
 	@Override
 	protected String getLabelKey() {
-		return "assignee-field";
+		return "assignee";
 	}
 
 	@Reference
@@ -67,5 +69,8 @@ public class ViewAssigneeJSPSectionFragmentRenderer
 
 	@Reference
 	private ObjectFieldBusinessTypeRegistry _objectFieldBusinessTypeRegistry;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }

@@ -300,6 +300,15 @@ public class FragmentEntryConfigurationParserImpl
 	}
 
 	@Override
+	public Object getFieldValue(
+		JSONObject configurationJSONObject, JSONObject editableValuesJSONObject,
+		String name) {
+
+		return getFieldValue(
+			configurationJSONObject, editableValuesJSONObject, null, name);
+	}
+
+	@Override
 	public List<FragmentConfigurationField> getFragmentConfigurationFields(
 		JSONObject configurationJSONObject) {
 
@@ -438,7 +447,7 @@ public class FragmentEntryConfigurationParserImpl
 		String parsedValue = GetterUtil.getString(value);
 
 		if (fragmentConfigurationField.isLocalizable() &&
-			JSONUtil.isJSONObject(parsedValue)) {
+			JSONUtil.isJSONObject(parsedValue) && (locale != null)) {
 
 			try {
 				JSONObject valueJSONObject = _jsonFactory.createJSONObject(
@@ -461,6 +470,13 @@ public class FragmentEntryConfigurationParserImpl
 
 		if (StringUtil.equalsIgnoreCase(
 				fragmentConfigurationField.getType(), "checkbox")) {
+
+			if (fragmentConfigurationField.isLocalizable() &&
+				(locale == null)) {
+
+				return _getFieldValue(
+					FragmentConfigurationFieldDataType.OBJECT, parsedValue);
+			}
 
 			return _getFieldValue(
 				FragmentConfigurationFieldDataType.BOOLEAN, parsedValue);
@@ -488,6 +504,13 @@ public class FragmentEntryConfigurationParserImpl
 		else if (StringUtil.equalsIgnoreCase(
 					fragmentConfigurationField.getType(), "colorPicker")) {
 
+			if (fragmentConfigurationField.isLocalizable() &&
+				(locale == null)) {
+
+				return _getFieldValue(
+					FragmentConfigurationFieldDataType.OBJECT, parsedValue);
+			}
+
 			String fieldValue = (String)_getFieldValue(
 				FragmentConfigurationFieldDataType.STRING, parsedValue);
 
@@ -504,6 +527,13 @@ public class FragmentEntryConfigurationParserImpl
 					 fragmentConfigurationField.getType(), "select") ||
 				 StringUtil.equalsIgnoreCase(
 					 fragmentConfigurationField.getType(), "text")) {
+
+			if (fragmentConfigurationField.isLocalizable() &&
+				(locale == null)) {
+
+				return _getFieldValue(
+					FragmentConfigurationFieldDataType.OBJECT, parsedValue);
+			}
 
 			FragmentConfigurationFieldDataType
 				fragmentConfigurationFieldDataType =

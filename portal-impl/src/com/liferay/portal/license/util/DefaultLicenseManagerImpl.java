@@ -149,6 +149,11 @@ public class DefaultLicenseManagerImpl implements LicenseManager {
 	}
 
 	@Override
+	public boolean isFreeTier() {
+		return false;
+	}
+
+	@Override
 	public void registerLicense(JSONObject jsonObject) throws Exception {
 		String serverId = jsonObject.getString("serverId");
 

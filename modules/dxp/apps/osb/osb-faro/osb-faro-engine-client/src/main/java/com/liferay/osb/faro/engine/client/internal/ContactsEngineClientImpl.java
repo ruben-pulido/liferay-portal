@@ -53,6 +53,7 @@ import com.liferay.osb.faro.engine.client.model.Provider;
 import com.liferay.osb.faro.engine.client.model.RealTimeMembershipMetric;
 import com.liferay.osb.faro.engine.client.model.Rels;
 import com.liferay.osb.faro.engine.client.model.Results;
+import com.liferay.osb.faro.engine.client.model.SegmentActivation;
 import com.liferay.osb.faro.engine.client.model.StringPagedModel;
 import com.liferay.osb.faro.engine.client.model.credentials.TokenCredentials;
 import com.liferay.osb.faro.engine.client.model.provider.LiferayProvider;
@@ -2940,6 +2941,36 @@ public class ContactsEngineClientImpl
 		return put(
 			faroProject, Rels.INDIVIDUAL_SEGMENT, individualSegment,
 			IndividualSegment.class, getUriVariables(faroProject, id));
+	}
+
+	@Override
+	public SegmentActivation updateSegmentActivation(
+		FaroProject faroProject, String cronExpression, String frequencyType,
+		Date scheduleEndDate, Date scheduleStartDate, String scheduleType,
+		Long segmentId) {
+
+		SegmentActivation segmentActivation = new SegmentActivation();
+
+		segmentActivation.setCronExpression(cronExpression);
+		segmentActivation.setFrequencyType(
+			SegmentActivation.FrequencyType.valueOf(frequencyType));
+
+		if (scheduleEndDate != null) {
+			segmentActivation.setScheduleEndDate(scheduleEndDate);
+		}
+
+		if (scheduleStartDate != null) {
+			segmentActivation.setScheduleStartDate(scheduleStartDate);
+		}
+
+		segmentActivation.setScheduleType(
+			SegmentActivation.ScheduleType.valueOf(scheduleType));
+		segmentActivation.setSegmentId(String.valueOf(segmentId));
+
+		return put(
+			faroProject, Rels.INDIVIDUAL_SEGMENT_ACTIVATION, segmentActivation,
+			SegmentActivation.class,
+			getUriVariables(faroProject, String.valueOf(segmentId)));
 	}
 
 	protected void addActionFilter(

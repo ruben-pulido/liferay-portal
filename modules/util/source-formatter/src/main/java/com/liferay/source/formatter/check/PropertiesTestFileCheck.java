@@ -118,7 +118,9 @@ public class PropertiesTestFileCheck extends BaseFileCheck {
 		return sb.toString();
 	}
 
-	private String _checkIndentation(String sqlClauses) throws IOException {
+	private String _checkIndentation(String sqlClauses, String indent)
+		throws IOException {
+
 		StringBundler sb = new StringBundler();
 
 		try (UnsyncBufferedReader unsyncBufferedReader =
@@ -131,7 +133,7 @@ public class PropertiesTestFileCheck extends BaseFileCheck {
 			while ((line = unsyncBufferedReader.readLine()) != null) {
 				line = line.replaceFirst("^\\( *(\\(.+\\)) *\\)$", "$1");
 
-				sb.append(_fixIndentation(line, level));
+				sb.append(_fixIndentation(line, level, indent));
 
 				sb.append("\n");
 
@@ -262,15 +264,16 @@ public class PropertiesTestFileCheck extends BaseFileCheck {
 		List<String> testrayAllTeamsComponentNames =
 			_getTestrayAllTeamsComponentNames();
 
-		if (!testrayAllTeamsComponentNames.contains(testrayMainComponentName)) {
-			addMessage(
-				fileName,
-				StringBundler.concat(
-					"Property value \"", testrayMainComponentName,
-					"\" does not exist in \"testray.team.*.component.names\" ",
-					"in ", SourceUtil.getRootDirName(absolutePath),
-					"/test.properties"));
+		if (testrayAllTeamsComponentNames.contains(testrayMainComponentName)) {
+			return;
 		}
+
+		addMessage(
+			fileName,
+			StringBundler.concat(
+				"Property value \"", testrayMainComponentName, "\" does not ",
+				"exist in \"testray.team.*.component.names\" in ",
+				SourceUtil.getRootDirName(absolutePath), "/test.properties"));
 	}
 
 	private int _compareTo(String sqlClause, String nextSQLClause) {
@@ -283,7 +286,7 @@ public class PropertiesTestFileCheck extends BaseFileCheck {
 		return sqlClause.compareTo(nextSQLClause);
 	}
 
-	private String _fixIndentation(String line, int level) {
+	private String _fixIndentation(String line, int level, String indent) {
 		String trimmedLine = StringUtil.trim(line);
 
 		if (Validator.isNull(trimmedLine)) {
@@ -291,6 +294,8 @@ public class PropertiesTestFileCheck extends BaseFileCheck {
 		}
 
 		StringBundler sb = new StringBundler();
+
+		sb.append(indent);
 
 		for (int i = 0; i < level; i++) {
 			if ((i == (level - 1)) && trimmedLine.startsWith(")")) {
@@ -312,7 +317,7 @@ public class PropertiesTestFileCheck extends BaseFileCheck {
 
 		outerLoop:
 		while (matcher.find()) {
-			String originalSqlClauses = matcher.group(2);
+			String originalSqlClauses = matcher.group(3);
 
 			String sqlClauses = originalSqlClauses.replaceAll("\\\\\n *", "");
 
@@ -360,7 +365,7 @@ public class PropertiesTestFileCheck extends BaseFileCheck {
 
 			sqlClauses = _addParenthesis(sqlClauses);
 
-			sqlClauses = _checkIndentation(sqlClauses);
+			sqlClauses = _checkIndentation(sqlClauses, matcher.group(1));
 
 			sqlClauses = _sortSQLClauses(sqlClauses);
 
@@ -370,13 +375,15 @@ public class PropertiesTestFileCheck extends BaseFileCheck {
 				sqlClauses = sqlClauses + "\n";
 			}
 
-			if (!sqlClauses.equals(originalSqlClauses)) {
-				String replacement = StringUtil.replaceFirst(
-					matcher.group(), matcher.group(2), sqlClauses);
-
-				matcher.appendReplacement(
-					sb, Matcher.quoteReplacement(replacement));
+			if (sqlClauses.equals(originalSqlClauses)) {
+				continue;
 			}
+
+			String replacement = StringUtil.replaceFirst(
+				matcher.group(), matcher.group(3), sqlClauses);
+
+			matcher.appendReplacement(
+				sb, Matcher.quoteReplacement(replacement));
 		}
 
 		if (sb.length() > 0) {
@@ -619,15 +626,17 @@ public class PropertiesTestFileCheck extends BaseFileCheck {
 
 			String sqlClause = matcher.group(1);
 
-			if (_compareTo(sqlClause, nextSQLClause) > 0) {
-				sqlClauses = StringUtil.replaceFirst(
-					sqlClauses, nextSQLClause, sqlClause,
-					getLineStartPos(sqlClauses, lineNumber + 1));
-
-				return StringUtil.replaceFirst(
-					sqlClauses, sqlClause, nextSQLClause,
-					getLineStartPos(sqlClauses, lineNumber));
+			if (_compareTo(sqlClause, nextSQLClause) <= 0) {
+				continue;
 			}
+
+			sqlClauses = StringUtil.replaceFirst(
+				sqlClauses, nextSQLClause, sqlClause,
+				getLineStartPos(sqlClauses, lineNumber + 1));
+
+			return StringUtil.replaceFirst(
+				sqlClauses, sqlClause, nextSQLClause,
+				getLineStartPos(sqlClauses, lineNumber));
 		}
 
 		return sqlClauses;
@@ -637,7 +646,7 @@ public class PropertiesTestFileCheck extends BaseFileCheck {
 		"checkTestrayMainComponentName";
 
 	private static final Pattern _sqlPattern1 = Pattern.compile(
-		"(?<=\\A|\n)test\\.batch\\.run\\.property(\\.global)?\\.query.+]=" +
+		"(?<=\\A|\n)( *)test\\.batch\\.run\\.property(\\.global)?\\.query.+]=" +
 			"([\\s\\S]*?[^\\\\])(?=(\\Z|\n))");
 	private static final Pattern _sqlPattern2 = Pattern.compile(
 		"\\s(\\(.* ([!=]=|~) .+\\))( (AND|OR) )?(\\\\)?");

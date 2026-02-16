@@ -95,7 +95,6 @@ export default async function Home({
 													height={90}
 													priority={index < 5}
 													src={src}
-													unoptimized={true}
 													width={160}
 												/>
 											</div>

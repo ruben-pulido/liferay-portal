@@ -14,10 +14,6 @@ function getConfigParamName(id: string): string {
 }
 
 export function readConfigFromURL(id: string): Partial<IConfigInURL> | null {
-	if (!Liferay.FeatureFlags['LPD-22473']) {
-		return null;
-	}
-
 	const params = new URLSearchParams(window.location.search);
 
 	const configParam = params.get(getConfigParamName(id));
@@ -46,11 +42,7 @@ export function writeConfigInURL(
 	config: Partial<IConfigInURL>,
 	configInURLBehavior: EConfigInURLBehavior
 ) {
-	if (
-		!config ||
-		configInURLBehavior === EConfigInURLBehavior.OFF ||
-		!Liferay.FeatureFlags['LPD-22473']
-	) {
+	if (!config || configInURLBehavior === EConfigInURLBehavior.OFF) {
 		return;
 	}
 
