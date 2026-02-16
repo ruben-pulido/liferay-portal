@@ -69,6 +69,8 @@ import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPermission;
 import com.liferay.headless.admin.site.client.scope.Scope;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -1105,6 +1107,15 @@ public class PageElementsTestUtil {
 		return pageElement;
 	}
 
+	private static String _getExternalDisplayPageTemplateFieldKey(
+		LayoutPageTemplateEntry layoutPageTemplateEntry) {
+
+		return StringBundler.concat(
+			LayoutPageTemplateEntry.class.getSimpleName(),
+			"__L_DISPLAY_PAGE_TEMPLATE_ERC__",
+			layoutPageTemplateEntry.getExternalReferenceCode());
+	}
+
 	private static String _getExternalGlobalGroupTemplateFieldKey(
 		TemplateEntry templateEntry) {
 
@@ -1339,6 +1350,14 @@ public class PageElementsTestUtil {
 		gridViewport.setId(id);
 
 		return gridViewport;
+	}
+
+	private static String _getInternalDisplayPageTemplateFieldKey(
+		LayoutPageTemplateEntry layoutPageTemplateEntry) {
+
+		return StringBundler.concat(
+			LayoutPageTemplateEntry.class.getSimpleName(), StringPool.UNDERLINE,
+			layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
 	}
 
 	private static String _getInternalTemplateFieldKey(
