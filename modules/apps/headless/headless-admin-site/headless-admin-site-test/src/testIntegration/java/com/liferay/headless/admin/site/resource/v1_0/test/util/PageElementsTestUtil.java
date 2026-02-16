@@ -122,6 +122,38 @@ public class PageElementsTestUtil {
 				"data-lfr-editable-type=\"text\">Default text</div>");
 	}
 
+	public static void assertFieldKeysWithDisplayPageTemplates(
+			PageSpecification[] externalPageSpecifications,
+			PageSpecification[] internalPageSpecifications)
+		throws PortalException {
+
+		Assert.assertEquals(
+			Arrays.toString(externalPageSpecifications), 2,
+			externalPageSpecifications.length);
+		Assert.assertEquals(
+			Arrays.toString(internalPageSpecifications),
+			externalPageSpecifications.length,
+			internalPageSpecifications.length);
+
+		ContentPageSpecification externalPublishedPageSpecification =
+			(ContentPageSpecification)externalPageSpecifications[0];
+		ContentPageSpecification internalPublishedPageSpecification =
+			(ContentPageSpecification)internalPageSpecifications[0];
+
+		_assertFieldKeysWithDisplayPageTemplates(
+			externalPublishedPageSpecification.getPageExperiences()[0],
+			internalPublishedPageSpecification.getPageExperiences()[0]);
+
+		ContentPageSpecification externalDraftPageSpecification =
+			(ContentPageSpecification)externalPageSpecifications[1];
+		ContentPageSpecification internalDraftPageSpecification =
+			(ContentPageSpecification)internalPageSpecifications[1];
+
+		_assertFieldKeysWithTemplateEntries(
+			externalDraftPageSpecification.getPageExperiences()[0],
+			internalDraftPageSpecification.getPageExperiences()[0]);
+	}
+
 	public static void assertFieldKeysWithTemplateEntries(
 			PageSpecification[] externalPageSpecifications,
 			PageSpecification[] internalPageSpecifications)
@@ -801,6 +833,147 @@ public class PageElementsTestUtil {
 		fragmentItemExternalReference.setScope(scope);
 
 		return fragmentItemExternalReference;
+	}
+
+	private static void _assertFieldKeysWithDisplayPageTemplates(
+			PageElement externalPageElement, PageElement internalPageElement) {
+
+		PageElementDefinition externalPageElementDefinition =
+			externalPageElement.getPageElementDefinition();
+
+		if (externalPageElementDefinition instanceof
+				BasicFragmentInstancePageElementDefinition) {
+
+			PageElementDefinition internalPageElementDefinition =
+				internalPageElement.getPageElementDefinition();
+
+			BasicFragmentInstancePageElementDefinition
+				externalBasicFragmentInstancePageElementDefinition =
+					(BasicFragmentInstancePageElementDefinition)
+						externalPageElementDefinition;
+			BasicFragmentInstancePageElementDefinition
+				internalBasicFragmentInstancePageElementDefinition =
+					(BasicFragmentInstancePageElementDefinition)
+						internalPageElementDefinition;
+
+			FragmentInstance externalFragmentInstance =
+				externalBasicFragmentInstancePageElementDefinition.
+					getFragmentInstance();
+			FragmentInstance internalFragmentInstance =
+				internalBasicFragmentInstancePageElementDefinition.
+					getFragmentInstance();
+
+			FragmentEditableElement[] externalFragmentEditableElements =
+				externalFragmentInstance.getFragmentEditableElements();
+			FragmentEditableElement[] internalFragmentEditableElements =
+				internalFragmentInstance.getFragmentEditableElements();
+
+			FragmentEditableElementValue externalFragmentEditableElementValue =
+				externalFragmentEditableElements[0].
+					getFragmentEditableElementValue();
+			FragmentEditableElementValue internalFragmentEditableElementValue =
+				internalFragmentEditableElements[0].
+					getFragmentEditableElementValue();
+
+			Assert.assertTrue(
+				externalFragmentEditableElementValue instanceof
+					TextFragmentEditableElementValue);
+			Assert.assertTrue(
+				internalFragmentEditableElementValue instanceof
+					TextFragmentEditableElementValue);
+
+			TextFragmentEditableElementValue
+				externalTextFragmentEditableElementValue =
+					(TextFragmentEditableElementValue)
+						externalFragmentEditableElementValue;
+			TextFragmentEditableElementValue
+				internalTextFragmentEditableElementValue =
+					(TextFragmentEditableElementValue)
+						internalFragmentEditableElementValue;
+
+			FragmentLinkTextValue externalFragmentLinkTextValue =
+				externalTextFragmentEditableElementValue.
+					getFragmentLinkTextValue();
+			FragmentLinkTextValue internalFragmentLinkTextValue =
+				internalTextFragmentEditableElementValue.
+					getFragmentLinkTextValue();
+
+			TextFragmentValue externalTextFragmentValue =
+				externalFragmentLinkTextValue.getTextFragmentValue();
+			TextFragmentValue internalTextFragmentValue =
+				internalFragmentLinkTextValue.getTextFragmentValue();
+
+			Assert.assertTrue(
+				externalTextFragmentValue instanceof TextFragmentMappedValue);
+			Assert.assertTrue(
+				internalTextFragmentValue instanceof TextFragmentMappedValue);
+
+			TextFragmentMappedValue externalTextFragmentMappedValue =
+				(TextFragmentMappedValue)externalTextFragmentValue;
+			TextFragmentMappedValue internalTextFragmentMappedValue =
+				(TextFragmentMappedValue)internalTextFragmentValue;
+
+			FragmentMappedValue externalFragmentMappedValue =
+				externalTextFragmentMappedValue.getFragmentMappedValue();
+			FragmentMappedValue internalFragmentMappedValue =
+				internalTextFragmentMappedValue.getFragmentMappedValue();
+
+			Mapping externalMapping = externalFragmentMappedValue.getMapping();
+			Mapping internalMapping = internalFragmentMappedValue.getMapping();
+
+			String externalFieldKey = externalMapping.getFieldKey();
+			String internalFieldKey = internalMapping.getFieldKey();
+
+			if (internalFieldKey.contains("L_DISPLAY_PAGE_TEMPLATE_ERC")) {
+				Assert.assertEquals(externalFieldKey, internalFieldKey);
+			}
+			else {
+				long layoutPageTemplateEntryId = GetterUtil.getLong(
+					internalFieldKey.substring(
+						"LayoutPageTemplateEntry_".length()));
+
+				LayoutPageTemplateEntry layoutPageTemplateEntry =
+					LayoutPageTemplateEntryLocalServiceUtil.
+						fetchLayoutPageTemplateEntry(layoutPageTemplateEntryId);
+
+				Assert.assertEquals(
+					externalFieldKey,
+					_getExternalDisplayPageTemplateFieldKey(
+						layoutPageTemplateEntry));
+			}
+		}
+
+		if (externalPageElementDefinition instanceof
+				CollectionDisplayPageElementDefinition ||
+			externalPageElementDefinition instanceof
+				CollectionItemPageElementDefinition) {
+
+			_assertFieldKeysWithDisplayPageTemplates(
+				externalPageElement.getPageElements()[0],
+				internalPageElement.getPageElements()[0]);
+		}
+	}
+
+	private static void _assertFieldKeysWithDisplayPageTemplates(
+			PageExperience externalPageExperience,
+			PageExperience internalPageExperience) {
+
+		PageElement[] externalPageElements =
+			externalPageExperience.getPageElements();
+		PageElement[] internalPageElements =
+			internalPageExperience.getPageElements();
+
+		Assert.assertEquals(
+			Arrays.toString(externalPageElements), 6,
+			externalPageElements.length);
+		Assert.assertEquals(
+			Arrays.toString(internalPageElements), externalPageElements.length,
+			internalPageElements.length);
+
+		for (int i = 0; i < internalPageElements.length; i++) {
+			_assertFieldKeysWithDisplayPageTemplates(
+				externalPageElements[i], internalPageElements[i]);
+		}
 	}
 
 	private static void _assertFieldKeysWithTemplateEntries(
