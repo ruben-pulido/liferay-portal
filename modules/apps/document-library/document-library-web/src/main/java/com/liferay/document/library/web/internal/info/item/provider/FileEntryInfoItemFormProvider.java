@@ -33,8 +33,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.template.info.item.provider.TemplateInfoItemFieldSetProvider;
@@ -59,15 +57,6 @@ public class FileEntryInfoItemFormProvider
 
 	@Override
 	public InfoForm getInfoForm() {
-		long scopeGroupId = 0;
-
-		ServiceContext serviceContext =
-			ServiceContextThreadLocal.getServiceContext();
-
-		if (serviceContext != null) {
-			scopeGroupId = serviceContext.getScopeGroupId();
-		}
-
 		try {
 			return _getInfoForm(
 				assetEntryInfoItemFieldSetProvider.getInfoFieldSet(
@@ -75,8 +64,8 @@ public class FileEntryInfoItemFormProvider
 				0,
 				displayPageInfoItemFieldSetProvider.getInfoFieldSet(
 					FileEntry.class.getName(), StringPool.BLANK,
-					FileEntry.class.getSimpleName(), scopeGroupId),
-				scopeGroupId);
+					FileEntry.class.getSimpleName(), 0),
+				0);
 		}
 		catch (NoSuchFormVariationException noSuchFormVariationException) {
 			throw new RuntimeException(noSuchFormVariationException);
@@ -100,15 +89,6 @@ public class FileEntryInfoItemFormProvider
 			}
 		}
 
-		long scopeGroupId = 0;
-
-		ServiceContext serviceContext =
-			ServiceContextThreadLocal.getServiceContext();
-
-		if (serviceContext != null) {
-			scopeGroupId = serviceContext.getScopeGroupId();
-		}
-
 		try {
 			return _getInfoForm(
 				assetEntryInfoItemFieldSetProvider.getInfoFieldSet(
@@ -118,7 +98,7 @@ public class FileEntryInfoItemFormProvider
 				ddmStructureId,
 				displayPageInfoItemFieldSetProvider.getInfoFieldSet(
 					FileEntry.class.getName(), String.valueOf(fileEntryTypeId),
-					FileEntry.class.getSimpleName(), scopeGroupId),
+					FileEntry.class.getSimpleName(), 0),
 				fileEntryTypeId);
 		}
 		catch (NoSuchFormVariationException noSuchFormVariationException) {
