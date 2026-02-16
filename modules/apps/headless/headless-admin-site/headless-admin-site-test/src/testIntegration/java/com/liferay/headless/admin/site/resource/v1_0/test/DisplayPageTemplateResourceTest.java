@@ -427,6 +427,7 @@ public class DisplayPageTemplateResourceTest
 
 		_testPostSiteDisplayPageTemplateWithKey();
 		_testPostSiteDisplayPageTemplateWithMarkedAsDefault();
+		_testPostSiteDisplayPageTemplateWithPageElementsWithDisplayPageTemplates();
 		_testPostSiteDisplayPageTemplateWithPageElementsWithTemplateEntries();
 		_testPostSiteDisplayPageTemplateWithPageSpecifications();
 		_testPostSiteDisplayPageTemplateWithParentFolder();
@@ -1653,6 +1654,38 @@ public class DisplayPageTemplateResourceTest
 			() -> displayPageTemplateResource.postSiteDisplayPageTemplate(
 				testGroup.getExternalReferenceCode(),
 				_randomDisplayPageTemplate(Boolean.TRUE)));
+	}
+
+	private void _testPostSiteDisplayPageTemplateWithPageElementsWithDisplayPageTemplates()
+		throws Exception {
+
+		FragmentEntry fragmentEntry =
+			PageElementsTestUtil.addCompanyGroupFragmentEntryWithTextEditable();
+
+		JournalArticle journalArticle =
+			AssetTestUtil.randomCompanyGroupJournalArticle();
+
+		DisplayPageTemplate displayPageTemplate =
+			_getDisplayPageTemplateWithPageElements(
+				PageElementsTestUtil.getPageElementsWithDisplayPageTemplates(
+					"draft-", fragmentEntry.getFragmentEntryKey(),
+					journalArticle,
+					LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
+					testGroup.getGroupId()),
+				PageElementsTestUtil.getPageElementsWithDisplayPageTemplates(
+					"published-", fragmentEntry.getFragmentEntryKey(),
+					journalArticle,
+					LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
+					testGroup.getGroupId()));
+
+		DisplayPageTemplate postDisplayPageTemplate =
+			displayPageTemplateResource.postSiteDisplayPageTemplate(
+				testGroup.getExternalReferenceCode(), displayPageTemplate);
+
+		PageElementsTestUtil.assertRenderedLayoutHTMLWithDisplayPageTemplates(
+			_getRenderDisplayPageTemplate(
+				postDisplayPageTemplate.getExternalReferenceCode(),
+				journalArticle));
 	}
 
 	private void _testPostSiteDisplayPageTemplateWithPageElementsWithTemplateEntries()
