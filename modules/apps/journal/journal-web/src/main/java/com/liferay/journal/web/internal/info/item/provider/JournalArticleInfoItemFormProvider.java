@@ -28,6 +28,8 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.template.info.item.provider.TemplateInfoItemFieldSetProvider;
@@ -73,6 +75,15 @@ public class JournalArticleInfoItemFormProvider
 
 		long ddmStructureId = ddmStructure.getStructureId();
 
+		long scopeGroupId = 0;
+
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		if (serviceContext != null) {
+			scopeGroupId = serviceContext.getScopeGroupId();
+		}
+
 		try {
 			return _getInfoForm(
 				String.valueOf(ddmStructureId),
@@ -83,7 +94,7 @@ public class JournalArticleInfoItemFormProvider
 				displayPageInfoItemFieldSetProvider.getInfoFieldSet(
 					JournalArticle.class.getName(),
 					String.valueOf(ddmStructureId),
-					JournalArticle.class.getSimpleName(), 0));
+					JournalArticle.class.getSimpleName(), scopeGroupId));
 		}
 		catch (NoSuchClassTypeException noSuchClassTypeException) {
 			throw new RuntimeException(
