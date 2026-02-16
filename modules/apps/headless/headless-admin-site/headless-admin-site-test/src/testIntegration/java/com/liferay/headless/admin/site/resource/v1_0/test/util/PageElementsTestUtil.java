@@ -12,6 +12,7 @@ import com.liferay.asset.list.constants.AssetListEntryTypeConstants;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalServiceUtil;
 import com.liferay.asset.publisher.constants.AssetPublisherPortletKeys;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.contributor.util.FragmentCollectionContributorRegistryUtil;
 import com.liferay.fragment.model.FragmentCollection;
@@ -68,7 +69,11 @@ import com.liferay.headless.admin.site.client.dto.v1_0.WidgetInstancePageElement
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPermission;
 import com.liferay.headless.admin.site.client.scope.Scope;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -80,6 +85,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.segments.constants.SegmentsEntryConstants;
@@ -120,6 +126,38 @@ public class PageElementsTestUtil {
 				"data-lfr-editable-type=\"text\">Default text</div>");
 	}
 
+	public static void assertFieldKeysWithDisplayPageTemplates(
+			PageSpecification[] externalPageSpecifications,
+			PageSpecification[] internalPageSpecifications)
+		throws PortalException {
+
+		Assert.assertEquals(
+			Arrays.toString(externalPageSpecifications), 2,
+			externalPageSpecifications.length);
+		Assert.assertEquals(
+			Arrays.toString(internalPageSpecifications),
+			externalPageSpecifications.length,
+			internalPageSpecifications.length);
+
+		ContentPageSpecification externalPublishedPageSpecification =
+			(ContentPageSpecification)externalPageSpecifications[0];
+		ContentPageSpecification internalPublishedPageSpecification =
+			(ContentPageSpecification)internalPageSpecifications[0];
+
+		_assertFieldKeysWithDisplayPageTemplates(
+			externalPublishedPageSpecification.getPageExperiences()[0],
+			internalPublishedPageSpecification.getPageExperiences()[0]);
+
+		ContentPageSpecification externalDraftPageSpecification =
+			(ContentPageSpecification)externalPageSpecifications[1];
+		ContentPageSpecification internalDraftPageSpecification =
+			(ContentPageSpecification)internalPageSpecifications[1];
+
+		_assertFieldKeysWithTemplateEntries(
+			externalDraftPageSpecification.getPageExperiences()[0],
+			internalDraftPageSpecification.getPageExperiences()[0]);
+	}
+
 	public static void assertFieldKeysWithTemplateEntries(
 			PageSpecification[] externalPageSpecifications,
 			PageSpecification[] internalPageSpecifications)
@@ -152,29 +190,36 @@ public class PageElementsTestUtil {
 			internalDraftPageSpecification.getPageExperiences()[0]);
 	}
 
-	public static void assertRenderedLayoutHTMLWithTemplateEntries(
+	public static void assertRenderedLayoutHTMLWithDisplayPageTemplates(
 		String renderLayoutHTML) {
 
 		Assert.assertNotNull(renderLayoutHTML);
 
 		Assert.assertTrue(
 			renderLayoutHTML,
-			renderLayoutHTML.contains("companyGroupTemplateEntry1"));
+			renderLayoutHTML.contains("published-display-page-template1"));
 		Assert.assertTrue(
 			renderLayoutHTML,
-			renderLayoutHTML.contains("companyGroupTemplateEntry2"));
+			renderLayoutHTML.contains("published-display-page-template2"));
 		Assert.assertTrue(
 			renderLayoutHTML,
-			renderLayoutHTML.contains("companyGroupTemplateEntry3"));
+			renderLayoutHTML.contains("published-display-page-template3"));
 		Assert.assertTrue(
 			renderLayoutHTML,
-			renderLayoutHTML.contains("companyGroupTemplateEntry4"));
+			renderLayoutHTML.contains("published-display-page-template4"));
 		Assert.assertTrue(
 			renderLayoutHTML,
-			renderLayoutHTML.contains("companyGroupTemplateEntry5"));
+			renderLayoutHTML.contains("published-display-page-template5"));
 		Assert.assertTrue(
 			renderLayoutHTML,
-			renderLayoutHTML.contains("companyGroupTemplateEntry6"));
+			renderLayoutHTML.contains("published-display-page-template6"));
+	}
+
+	public static void assertRenderedLayoutHTMLWithTemplateEntries(
+		String renderLayoutHTML) {
+
+		Assert.assertNotNull(renderLayoutHTML);
+
 		Assert.assertTrue(
 			renderLayoutHTML,
 			renderLayoutHTML.contains("scopeGroupTemplateEntry1"));
@@ -578,6 +623,82 @@ public class PageElementsTestUtil {
 		return pageElements.toArray(new PageElement[0]);
 	}
 
+	public static PageElement[] getPageElementsWithDisplayPageTemplates(
+			String displayPageTemplateNamePrefix, String fragmentKey,
+			JournalArticle journalArticle, int layoutPageTemplateEntryType,
+			long scopeGroupId)
+		throws Exception {
+
+		List<PageElement> pageElements = new ArrayList<>();
+
+		ServiceContext scopeGroupServiceContext =
+			ServiceContextTestUtil.getServiceContext(scopeGroupId);
+
+		int position = 0;
+
+		pageElements.add(
+			_getBasicFragmentPageElement(
+				_getExternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						journalArticle,
+						displayPageTemplateNamePrefix +
+							"display-page-template1",
+						scopeGroupServiceContext)),
+				fragmentKey, journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getBasicFragmentPageElement(
+				_getInternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						journalArticle,
+						displayPageTemplateNamePrefix +
+							"display-page-template2",
+						scopeGroupServiceContext)),
+				fragmentKey, journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getCollectionDisplayPageElement(
+				_getExternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						journalArticle,
+						displayPageTemplateNamePrefix +
+							"display-page-template3",
+						scopeGroupServiceContext)),
+				fragmentKey, journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getCollectionDisplayPageElement(
+				_getInternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						journalArticle,
+						displayPageTemplateNamePrefix +
+							"display-page-template4",
+						scopeGroupServiceContext)),
+				fragmentKey, journalArticle, position++, scopeGroupId));
+
+		if (layoutPageTemplateEntryType ==
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE) {
+
+			pageElements.add(
+				_getDisplayPageItemPageElement(
+					_getExternalDisplayPageTemplateFieldKey(
+						_getDisplayPageTemplateLayoutPageTemplateEntry(
+							journalArticle,
+							displayPageTemplateNamePrefix +
+								"display-page-template5",
+							scopeGroupServiceContext)),
+					fragmentKey, position++, scopeGroupId));
+			pageElements.add(
+				_getDisplayPageItemPageElement(
+					_getInternalDisplayPageTemplateFieldKey(
+						_getDisplayPageTemplateLayoutPageTemplateEntry(
+							journalArticle,
+							displayPageTemplateNamePrefix +
+								"display-page-template6",
+							scopeGroupServiceContext)),
+					fragmentKey, position, scopeGroupId));
+		}
+
+		return pageElements.toArray(new PageElement[0]);
+	}
+
 	public static PageElement[] getPageElementsWithTemplateEntries(
 			String fragmentKey, JournalArticle journalArticle,
 			int layoutPageTemplateEntryType, long scopeGroupId)
@@ -774,6 +895,147 @@ public class PageElementsTestUtil {
 		fragmentItemExternalReference.setScope(scope);
 
 		return fragmentItemExternalReference;
+	}
+
+	private static void _assertFieldKeysWithDisplayPageTemplates(
+			PageElement externalPageElement, PageElement internalPageElement) {
+
+		PageElementDefinition externalPageElementDefinition =
+			externalPageElement.getPageElementDefinition();
+
+		if (externalPageElementDefinition instanceof
+				BasicFragmentInstancePageElementDefinition) {
+
+			PageElementDefinition internalPageElementDefinition =
+				internalPageElement.getPageElementDefinition();
+
+			BasicFragmentInstancePageElementDefinition
+				externalBasicFragmentInstancePageElementDefinition =
+					(BasicFragmentInstancePageElementDefinition)
+						externalPageElementDefinition;
+			BasicFragmentInstancePageElementDefinition
+				internalBasicFragmentInstancePageElementDefinition =
+					(BasicFragmentInstancePageElementDefinition)
+						internalPageElementDefinition;
+
+			FragmentInstance externalFragmentInstance =
+				externalBasicFragmentInstancePageElementDefinition.
+					getFragmentInstance();
+			FragmentInstance internalFragmentInstance =
+				internalBasicFragmentInstancePageElementDefinition.
+					getFragmentInstance();
+
+			FragmentEditableElement[] externalFragmentEditableElements =
+				externalFragmentInstance.getFragmentEditableElements();
+			FragmentEditableElement[] internalFragmentEditableElements =
+				internalFragmentInstance.getFragmentEditableElements();
+
+			FragmentEditableElementValue externalFragmentEditableElementValue =
+				externalFragmentEditableElements[0].
+					getFragmentEditableElementValue();
+			FragmentEditableElementValue internalFragmentEditableElementValue =
+				internalFragmentEditableElements[0].
+					getFragmentEditableElementValue();
+
+			Assert.assertTrue(
+				externalFragmentEditableElementValue instanceof
+					TextFragmentEditableElementValue);
+			Assert.assertTrue(
+				internalFragmentEditableElementValue instanceof
+					TextFragmentEditableElementValue);
+
+			TextFragmentEditableElementValue
+				externalTextFragmentEditableElementValue =
+					(TextFragmentEditableElementValue)
+						externalFragmentEditableElementValue;
+			TextFragmentEditableElementValue
+				internalTextFragmentEditableElementValue =
+					(TextFragmentEditableElementValue)
+						internalFragmentEditableElementValue;
+
+			FragmentLinkTextValue externalFragmentLinkTextValue =
+				externalTextFragmentEditableElementValue.
+					getFragmentLinkTextValue();
+			FragmentLinkTextValue internalFragmentLinkTextValue =
+				internalTextFragmentEditableElementValue.
+					getFragmentLinkTextValue();
+
+			TextFragmentValue externalTextFragmentValue =
+				externalFragmentLinkTextValue.getTextFragmentValue();
+			TextFragmentValue internalTextFragmentValue =
+				internalFragmentLinkTextValue.getTextFragmentValue();
+
+			Assert.assertTrue(
+				externalTextFragmentValue instanceof TextFragmentMappedValue);
+			Assert.assertTrue(
+				internalTextFragmentValue instanceof TextFragmentMappedValue);
+
+			TextFragmentMappedValue externalTextFragmentMappedValue =
+				(TextFragmentMappedValue)externalTextFragmentValue;
+			TextFragmentMappedValue internalTextFragmentMappedValue =
+				(TextFragmentMappedValue)internalTextFragmentValue;
+
+			FragmentMappedValue externalFragmentMappedValue =
+				externalTextFragmentMappedValue.getFragmentMappedValue();
+			FragmentMappedValue internalFragmentMappedValue =
+				internalTextFragmentMappedValue.getFragmentMappedValue();
+
+			Mapping externalMapping = externalFragmentMappedValue.getMapping();
+			Mapping internalMapping = internalFragmentMappedValue.getMapping();
+
+			String externalFieldKey = externalMapping.getFieldKey();
+			String internalFieldKey = internalMapping.getFieldKey();
+
+			if (internalFieldKey.contains("L_DISPLAY_PAGE_TEMPLATE_ERC")) {
+				Assert.assertEquals(externalFieldKey, internalFieldKey);
+			}
+			else {
+				long layoutPageTemplateEntryId = GetterUtil.getLong(
+					internalFieldKey.substring(
+						"LayoutPageTemplateEntry_".length()));
+
+				LayoutPageTemplateEntry layoutPageTemplateEntry =
+					LayoutPageTemplateEntryLocalServiceUtil.
+						fetchLayoutPageTemplateEntry(layoutPageTemplateEntryId);
+
+				Assert.assertEquals(
+					externalFieldKey,
+					_getExternalDisplayPageTemplateFieldKey(
+						layoutPageTemplateEntry));
+			}
+		}
+
+		if (externalPageElementDefinition instanceof
+				CollectionDisplayPageElementDefinition ||
+			externalPageElementDefinition instanceof
+				CollectionItemPageElementDefinition) {
+
+			_assertFieldKeysWithDisplayPageTemplates(
+				externalPageElement.getPageElements()[0],
+				internalPageElement.getPageElements()[0]);
+		}
+	}
+
+	private static void _assertFieldKeysWithDisplayPageTemplates(
+			PageExperience externalPageExperience,
+			PageExperience internalPageExperience) {
+
+		PageElement[] externalPageElements =
+			externalPageExperience.getPageElements();
+		PageElement[] internalPageElements =
+			internalPageExperience.getPageElements();
+
+		Assert.assertEquals(
+			Arrays.toString(externalPageElements), 6,
+			externalPageElements.length);
+		Assert.assertEquals(
+			Arrays.toString(internalPageElements), externalPageElements.length,
+			internalPageElements.length);
+
+		for (int i = 0; i < internalPageElements.length; i++) {
+			_assertFieldKeysWithDisplayPageTemplates(
+				externalPageElements[i], internalPageElements[i]);
+		}
 	}
 
 	private static void _assertFieldKeysWithTemplateEntries(
@@ -1105,6 +1367,37 @@ public class PageElementsTestUtil {
 		return pageElement;
 	}
 
+	private static LayoutPageTemplateEntry
+			_getDisplayPageTemplateLayoutPageTemplateEntry(
+				JournalArticle journalArticle, String name,
+				ServiceContext serviceContext)
+		throws Exception {
+
+		DDMStructure ddmStructure = journalArticle.getDDMStructure();
+
+		return LayoutPageTemplateEntryLocalServiceUtil.
+			addLayoutPageTemplateEntry(
+				null, TestPropsValues.getUserId(),
+				serviceContext.getScopeGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				null,
+				PortalUtil.getClassNameId(
+					"com.liferay.journal.model.JournalArticle"),
+				ddmStructure.getStructureId(), name,
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, 0,
+				WorkflowConstants.STATUS_APPROVED, serviceContext);
+	}
+
+	private static String _getExternalDisplayPageTemplateFieldKey(
+		LayoutPageTemplateEntry layoutPageTemplateEntry) {
+
+		return StringBundler.concat(
+			LayoutPageTemplateEntry.class.getSimpleName(),
+			"__L_DISPLAY_PAGE_TEMPLATE_ERC__",
+			layoutPageTemplateEntry.getExternalReferenceCode());
+	}
+
 	private static String _getExternalGlobalGroupTemplateFieldKey(
 		TemplateEntry templateEntry) {
 
@@ -1339,6 +1632,14 @@ public class PageElementsTestUtil {
 		gridViewport.setId(id);
 
 		return gridViewport;
+	}
+
+	private static String _getInternalDisplayPageTemplateFieldKey(
+		LayoutPageTemplateEntry layoutPageTemplateEntry) {
+
+		return StringBundler.concat(
+			LayoutPageTemplateEntry.class.getSimpleName(), StringPool.UNDERLINE,
+			layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
 	}
 
 	private static String _getInternalTemplateFieldKey(
