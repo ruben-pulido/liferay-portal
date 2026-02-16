@@ -27,6 +27,8 @@ import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.template.info.item.provider.TemplateInfoItemFieldSetProvider;
 
@@ -76,10 +78,38 @@ public class ObjectEntryInfoItemFormProvider
 		return _getInfoForm(0);
 	}
 
+//	@Override
+//	public InfoForm getInfoForm() {
+//		long scopeGroupId = 0;
+//
+//		ServiceContext serviceContext =
+//			ServiceContextThreadLocal.getServiceContext();
+//
+//		if (serviceContext != null) {
+//			scopeGroupId = serviceContext.getScopeGroupId();
+//		}
+//
+//		return _getInfoForm(scopeGroupId);
+//	}
+
 	@Override
 	public InfoForm getInfoForm(ObjectEntry objectEntry) {
 		return _getInfoForm(objectEntry.getGroupId());
 	}
+
+//	@Override
+//	public InfoForm getInfoForm(ObjectEntry objectEntry) {
+//		long scopeGroupId = objectEntry.getGroupId();
+//
+//		ServiceContext serviceContext =
+//			ServiceContextThreadLocal.getServiceContext();
+//
+//		if (serviceContext != null) {
+//			scopeGroupId = serviceContext.getScopeGroupId();
+//		}
+//
+//		return _getInfoForm(scopeGroupId);
+//	}
 
 	@Override
 	public InfoForm getInfoForm(String formVariationKey, long groupId) {
