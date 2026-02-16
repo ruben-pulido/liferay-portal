@@ -231,6 +231,7 @@ public class DisplayPageTemplateResourceTest
 		Assert.assertFalse(_isPublished(layout));
 
 		_testGetSiteDisplayPageTemplateWithNestedFields(displayPageTemplate);
+		_testGetSiteDisplayPageTemplateWithPageElementsWithDisplayPageTemplates();
 		_testGetSiteDisplayPageTemplateWithPageElementsWithTemplateEntries();
 
 		ReflectionTestUtil.invoke(
@@ -1292,6 +1293,48 @@ public class DisplayPageTemplateResourceTest
 			displayPageTemplateResource.getSiteDisplayPageTemplate(
 				testGroup.getExternalReferenceCode(),
 				displayPageTemplate.getExternalReferenceCode()));
+	}
+
+	private void _testGetSiteDisplayPageTemplateWithPageElementsWithDisplayPageTemplates()
+		throws Exception {
+
+		FragmentEntry fragmentEntry =
+			PageElementsTestUtil.addCompanyGroupFragmentEntryWithTextEditable();
+
+		JournalArticle journalArticle =
+			AssetTestUtil.randomCompanyGroupJournalArticle();
+
+		DisplayPageTemplate displayPageTemplate =
+			_getDisplayPageTemplateWithPageElements(
+				PageElementsTestUtil.getPageElementsWithDisplayPageTemplates(
+					"draft-", fragmentEntry.getFragmentEntryKey(),
+					journalArticle,
+					LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
+					testGroup.getGroupId()),
+				PageElementsTestUtil.getPageElementsWithDisplayPageTemplates(
+					"published-", fragmentEntry.getFragmentEntryKey(),
+					journalArticle,
+					LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
+					testGroup.getGroupId()));
+
+		DisplayPageTemplate postDisplayPageTemplate =
+			displayPageTemplateResource.postSiteDisplayPageTemplate(
+				testGroup.getExternalReferenceCode(), displayPageTemplate);
+
+		DisplayPageTemplateResource displayPageTemplateResource =
+			_getDisplayPageTemplateResource("pageSpecifications");
+
+		DisplayPageTemplate getDisplayPageTemplate =
+			displayPageTemplateResource.getSiteDisplayPageTemplate(
+				testGroup.getExternalReferenceCode(),
+				postDisplayPageTemplate.getExternalReferenceCode());
+
+		assertEquals(displayPageTemplate, getDisplayPageTemplate);
+		assertValid(getDisplayPageTemplate);
+
+		PageElementsTestUtil.assertFieldKeysWithDisplayPageTemplates(
+			getDisplayPageTemplate.getPageSpecifications(),
+			displayPageTemplate.getPageSpecifications());
 	}
 
 	private void _testGetSiteDisplayPageTemplateWithPageElementsWithTemplateEntries()
