@@ -154,6 +154,31 @@ public class PageElementsTestUtil {
 			internalDraftPageSpecification.getPageExperiences()[0]);
 	}
 
+	public static void assertRenderedLayoutHTMLWithDisplayPageTemplates(
+		String renderLayoutHTML) {
+
+		Assert.assertNotNull(renderLayoutHTML);
+
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("published-display-page-template1"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("published-display-page-template2"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("published-display-page-template3"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("published-display-page-template4"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("published-display-page-template5"));
+		Assert.assertTrue(
+			renderLayoutHTML,
+			renderLayoutHTML.contains("published-display-page-template6"));
+	}
+
 	public static void assertRenderedLayoutHTMLWithTemplateEntries(
 		String renderLayoutHTML) {
 
