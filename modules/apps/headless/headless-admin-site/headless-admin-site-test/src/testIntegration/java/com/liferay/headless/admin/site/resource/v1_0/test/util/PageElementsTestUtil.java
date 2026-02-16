@@ -12,6 +12,7 @@ import com.liferay.asset.list.constants.AssetListEntryTypeConstants;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalServiceUtil;
 import com.liferay.asset.publisher.constants.AssetPublisherPortletKeys;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.contributor.util.FragmentCollectionContributorRegistryUtil;
 import com.liferay.fragment.model.FragmentCollection;
@@ -633,6 +634,82 @@ public class PageElementsTestUtil {
 				getPageElementDefinition(
 					PageElementDefinition.Type.WIDGET, scopeGroupId),
 				StringPool.BLANK, position));
+
+		return pageElements.toArray(new PageElement[0]);
+	}
+
+	public static PageElement[] getPageElementsWithDisplayPageTemplates(
+			String displayPageTemplateNamePrefix, String fragmentKey,
+			JournalArticle journalArticle, int layoutPageTemplateEntryType,
+			long scopeGroupId)
+		throws Exception {
+
+		List<PageElement> pageElements = new ArrayList<>();
+
+		ServiceContext scopeGroupServiceContext =
+			ServiceContextTestUtil.getServiceContext(scopeGroupId);
+
+		int position = 0;
+
+		pageElements.add(
+			_getBasicFragmentPageElement(
+				_getExternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						journalArticle,
+						displayPageTemplateNamePrefix +
+							"display-page-template1",
+						scopeGroupServiceContext)),
+				fragmentKey, journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getBasicFragmentPageElement(
+				_getInternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						journalArticle,
+						displayPageTemplateNamePrefix +
+							"display-page-template2",
+						scopeGroupServiceContext)),
+				fragmentKey, journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getCollectionDisplayPageElement(
+				_getExternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						journalArticle,
+						displayPageTemplateNamePrefix +
+							"display-page-template3",
+						scopeGroupServiceContext)),
+				fragmentKey, journalArticle, position++, scopeGroupId));
+		pageElements.add(
+			_getCollectionDisplayPageElement(
+				_getInternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						journalArticle,
+						displayPageTemplateNamePrefix +
+							"display-page-template4",
+						scopeGroupServiceContext)),
+				fragmentKey, journalArticle, position++, scopeGroupId));
+
+		if (layoutPageTemplateEntryType ==
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE) {
+
+			pageElements.add(
+				_getDisplayPageItemPageElement(
+					_getExternalDisplayPageTemplateFieldKey(
+						_getDisplayPageTemplateLayoutPageTemplateEntry(
+							journalArticle,
+							displayPageTemplateNamePrefix +
+								"display-page-template5",
+							scopeGroupServiceContext)),
+					fragmentKey, position++, scopeGroupId));
+			pageElements.add(
+				_getDisplayPageItemPageElement(
+					_getInternalDisplayPageTemplateFieldKey(
+						_getDisplayPageTemplateLayoutPageTemplateEntry(
+							journalArticle,
+							displayPageTemplateNamePrefix +
+								"display-page-template6",
+							scopeGroupServiceContext)),
+					fragmentKey, position, scopeGroupId));
+		}
 
 		return pageElements.toArray(new PageElement[0]);
 	}
