@@ -69,8 +69,10 @@ import com.liferay.headless.admin.site.client.dto.v1_0.WidgetInstancePageElement
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPermission;
 import com.liferay.headless.admin.site.client.scope.Scope;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -83,6 +85,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.segments.constants.SegmentsEntryConstants;
@@ -1380,6 +1383,28 @@ public class PageElementsTestUtil {
 		pageElement.setPosition(position);
 
 		return pageElement;
+	}
+
+	private static LayoutPageTemplateEntry
+			_getDisplayPageTemplateLayoutPageTemplateEntry(
+				JournalArticle journalArticle, String name,
+				ServiceContext serviceContext)
+		throws Exception {
+
+		DDMStructure ddmStructure = journalArticle.getDDMStructure();
+
+		return LayoutPageTemplateEntryLocalServiceUtil.
+			addLayoutPageTemplateEntry(
+				null, TestPropsValues.getUserId(),
+				serviceContext.getScopeGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				null,
+				PortalUtil.getClassNameId(
+					"com.liferay.journal.model.JournalArticle"),
+				ddmStructure.getStructureId(), name,
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, 0,
+				WorkflowConstants.STATUS_APPROVED, serviceContext);
 	}
 
 	private static String _getExternalDisplayPageTemplateFieldKey(
