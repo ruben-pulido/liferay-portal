@@ -203,23 +203,31 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 	private String _getExternalUniqueId(
 		String externalReferenceCode, long itemGroupId, long scopeGroupId) {
 
-		String scopeExternalReferenceCode = StringPool.BLANK;
+		String scopeExternalReferenceCode = null;
 
 		try {
 			scopeExternalReferenceCode = GetterUtil.getString(
 				ScopeUtil.getItemScopeExternalReferenceCode(
-					itemGroupId, scopeGroupId));
+					itemGroupId, scopeGroupId),
+				null);
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
-				_log.error(portalException);
+				_log.debug(portalException);
 			}
 		}
 
-		return StringBundler.concat(
-			LayoutPageTemplateEntry.class.getSimpleName(), StringPool.UNDERLINE,
-			externalReferenceCode, "__L_DISPLAY_PAGE_TEMPLATE_ERC__",
-			scopeExternalReferenceCode);
+		String externalUniqueId = StringBundler.concat(
+			LayoutPageTemplateEntry.class.getSimpleName(),
+			"__L_DISPLAY_PAGE_TEMPLATE_ERC__", externalReferenceCode);
+
+		if (scopeExternalReferenceCode != null) {
+			externalUniqueId = StringBundler.concat(
+				externalUniqueId, "__L_SCOPE_ERC__",
+				scopeExternalReferenceCode);
+		}
+
+		return externalUniqueId;
 	}
 
 	private List<InfoFieldSetEntry> _getInfoFieldSetEntries(
