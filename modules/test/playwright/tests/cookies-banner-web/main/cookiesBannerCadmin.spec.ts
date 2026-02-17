@@ -5,24 +5,28 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
+import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {isolatedLayoutTest} from '../../../fixtures/isolatedLayoutTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {
 	clearConsentCookies,
-	resetCookieManagerConfiguration,
-} from './utils/cookieManagerAfterEach';
+	resetConsentManagerConfiguration,
+} from './utils/consentManagerAfterEach';
 
 export const test = mergeTests(
+	featureFlagsTest({
+		'LPD-75032': {enabled: true},
+	}),
 	isolatedLayoutTest(),
 	loginTest(),
 	systemSettingsPageTest
 );
 
 test.afterEach(async ({systemSettingsPage}) => {
-	await test.step('Reset Cookie Manager Configuration', async () => {
-		await resetCookieManagerConfiguration(systemSettingsPage);
+	await test.step('Reset Consent Manager Configuration', async () => {
+		await resetConsentManagerConfiguration(systemSettingsPage);
 	});
 
 	await test.step('Clear Consent Cookies if present', async () => {
@@ -32,7 +36,10 @@ test.afterEach(async ({systemSettingsPage}) => {
 
 test('LPD-25440 Cookie Banner Cadmin', async ({page, systemSettingsPage}) => {
 	await test.step('Enable Third Party Cookies', async () => {
-		await systemSettingsPage.goToSystemSetting('Privacy', 'Cookie Manager');
+		await systemSettingsPage.goToSystemSetting(
+			'Privacy',
+			'Consent Manager'
+		);
 
 		const enabledButton = page.getByLabel('Enabled');
 

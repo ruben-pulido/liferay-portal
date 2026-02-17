@@ -63,6 +63,10 @@ public class LicenseManagerUtil {
 		return _licenseManager.getMacAddresses();
 	}
 
+	public static boolean isFreeTier() {
+		return _licenseManager.isFreeTier();
+	}
+
 	public static void registerLicense(JSONObject jsonObject) throws Exception {
 		_licenseManager.registerLicense(jsonObject);
 	}

@@ -8,11 +8,23 @@ components:
                     type: string
                 url:
                     type: string
+        AssignToBulkAction:
+            allOf:
+                -   $ref: "#/components/schemas/BulkAction"
+                -   properties:
+                        className:
+                            type: string
+                        externalReferenceCode:
+                            type: string
+                        name:
+                            type: string
         BulkAction:
             discriminator:
                 mapping:
+                    AssignToBulkAction: "#/components/schemas/AssignToBulkAction"
                     DefaultPermissionBulkAction: "#/components/schemas/DefaultPermissionBulkAction"
                     DeleteBulkAction: "#/components/schemas/DeleteBulkAction"
+                    DueDateBulkAction: "#/components/schemas/DueDateBulkAction"
                     ExpireBulkAction: "#/components/schemas/ExpireBulkAction"
                     KeywordBulkAction: "#/components/schemas/KeywordBulkAction"
                     MoveBulkAction: "#/components/schemas/MoveBulkAction"
@@ -30,8 +42,10 @@ components:
                     $ref: "#/components/schemas/SelectionScope"
                 type:
                     enum:
+                        -   AssignToBulkAction
                         -   DefaultPermissionBulkAction
                         -   DeleteBulkAction
+                        -   DueDateBulkAction
                         -   ExpireBulkAction
                         -   KeywordBulkAction
                         -   MoveBulkAction
@@ -102,6 +116,13 @@ components:
                     type: array
                 selectionScope:
                     $ref: "#/components/schemas/SelectionScope"
+        DueDateBulkAction:
+            allOf:
+                -   $ref: "#/components/schemas/BulkAction"
+                -   properties:
+                        dueDate:
+                            format: date-time
+                            type: string
         ExpireBulkAction:
             allOf:
                 -   $ref: "#/components/schemas/BulkAction"
@@ -193,8 +214,7 @@ components:
                 -   $ref: "#/components/schemas/BulkAction"
                 -   properties:
                         status:
-                            format: int32
-                            type: integer
+                            type: string
         TaxonomyCategory:
             properties:
                 taxonomyCategoryId:
@@ -251,7 +271,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.bulk.rest.client', and version '3.0.35'."
+        'com.liferay.bulk.rest.client', and version '3.0.38'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

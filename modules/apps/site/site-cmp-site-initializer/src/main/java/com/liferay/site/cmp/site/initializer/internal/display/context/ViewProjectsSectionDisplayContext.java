@@ -10,12 +10,12 @@ import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.service.ObjectEntryService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.site.cmp.site.initializer.internal.constants.CMPActionConstants;
@@ -38,20 +38,20 @@ public class ViewProjectsSectionDisplayContext
 
 	public ViewProjectsSectionDisplayContext(
 		HttpServletRequest httpServletRequest,
-		ObjectDefinition objectDefinition, UserLocalService userLocalService) {
+		ObjectDefinition objectDefinition,
+		ObjectEntryService objectEntryService) {
 
-		super(httpServletRequest, objectDefinition);
-
-		_userLocalService = userLocalService;
+		super(httpServletRequest, objectDefinition, objectEntryService);
 	}
 
 	public String getAPIURL() {
-		StringBundler sb = new StringBundler(4);
+		StringBundler sb = new StringBundler(5);
 
 		sb.append("/o/search/v1.0/search?emptySearch=true&");
 		sb.append("filter=objectDefinitionId eq ");
 		sb.append(objectDefinition.getObjectDefinitionId());
-		sb.append("&nestedFields=embedded");
+		sb.append("&nestedFields=embedded,r_userToCMPProjectManager_user");
+		sb.append(",r_userToCMPProjectSponsor_user");
 
 		return sb.toString();
 	}
@@ -79,7 +79,11 @@ public class ViewProjectsSectionDisplayContext
 		).build();
 	}
 
-	public CreationMenu getCreationMenu() {
+	public CreationMenu getCreationMenu() throws Exception {
+		if (!hasAddObjectEntryPortletResourcePermission()) {
+			return null;
+		}
+
 		return CreationMenuBuilder.addPrimaryDropdownItem(
 			dropdownItem -> {
 				dropdownItem.putData(
@@ -157,12 +161,9 @@ public class ViewProjectsSectionDisplayContext
 
 	public List<FDSFilter> getFDSFilters() {
 		return ListUtil.fromArray(
-			new DueDateRangeFDSFilter(),
-			new ProjectManagerSelectionFDSFilter(_userLocalService),
-			new ProjectSponsorSelectionFDSFilter(_userLocalService),
+			new DueDateRangeFDSFilter(), new ProjectManagerSelectionFDSFilter(),
+			new ProjectSponsorSelectionFDSFilter(),
 			new StateSelectionFDSFilter());
 	}
-
-	private final UserLocalService _userLocalService;
 
 }

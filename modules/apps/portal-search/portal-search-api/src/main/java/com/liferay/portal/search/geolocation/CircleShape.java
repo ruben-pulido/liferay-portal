@@ -5,16 +5,37 @@
 
 package com.liferay.portal.search.geolocation;
 
-import org.osgi.annotation.versioning.ProviderType;
+import java.util.List;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface CircleShape extends Shape {
+public class CircleShape extends Shape {
 
-	public Coordinate getCenter();
+	@Override
+	public <T> T accept(ShapeTranslator<T> shapeTranslator) {
+		return shapeTranslator.translate(this);
+	}
 
-	public GeoDistance getRadius();
+	public Coordinate getCenter() {
+		return _centerCoordinate;
+	}
+
+	public GeoDistance getRadius() {
+		return _radiusGeoDistance;
+	}
+
+	protected CircleShape(
+		List<Coordinate> coordinates, Coordinate centerCoordinate,
+		GeoDistance radiusGeoDistance) {
+
+		super(coordinates);
+
+		_centerCoordinate = centerCoordinate;
+		_radiusGeoDistance = radiusGeoDistance;
+	}
+
+	private final Coordinate _centerCoordinate;
+	private final GeoDistance _radiusGeoDistance;
 
 }

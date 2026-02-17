@@ -31,15 +31,20 @@ public class InfoItemFieldValues {
 
 	public InfoFieldValue<Object> getInfoFieldValue(String infoFieldName) {
 		Collection<InfoFieldValue<Object>> infoFieldValues =
-			_builder._infoFieldValuesByIdMap.getOrDefault(
+			_builder._infoFieldValuesByExternalUniqueIdMap.getOrDefault(
 				infoFieldName, Collections.emptyList());
+
+		if (infoFieldValues.isEmpty()) {
+			infoFieldValues = _builder._infoFieldValuesByIdMap.getOrDefault(
+				infoFieldName, Collections.emptyList());
+		}
 
 		if (infoFieldValues.isEmpty()) {
 			infoFieldValues = _builder._infoFieldValuesByNameMap.getOrDefault(
 				infoFieldName, Collections.emptyList());
 		}
 
-		if (infoFieldValues == null) {
+		if (infoFieldValues.isEmpty()) {
 			return null;
 		}
 
@@ -60,8 +65,15 @@ public class InfoItemFieldValues {
 		String infoFieldName) {
 
 		Collection<InfoFieldValue<Object>> infoFieldValues =
-			_builder._infoFieldValuesByIdMap.getOrDefault(
+			_builder._infoFieldValuesByExternalUniqueIdMap.getOrDefault(
 				infoFieldName, Collections.emptyList());
+
+		if (!infoFieldValues.isEmpty()) {
+			return infoFieldValues;
+		}
+
+		infoFieldValues = _builder._infoFieldValuesByIdMap.getOrDefault(
+			infoFieldName, Collections.emptyList());
 
 		if (!infoFieldValues.isEmpty()) {
 			return infoFieldValues;
@@ -113,13 +125,18 @@ public class InfoItemFieldValues {
 			InfoField<?> infoField = infoFieldValue.getInfoField();
 
 			Collection<InfoFieldValue<Object>> infoFieldValues =
-				_infoFieldValuesByNameMap.computeIfAbsent(
-					infoField.getName(), key -> new ArrayList<>());
+				_infoFieldValuesByExternalUniqueIdMap.computeIfAbsent(
+					infoField.getExternalUniqueId(), key -> new ArrayList<>());
 
 			infoFieldValues.add(infoFieldValue);
 
 			infoFieldValues = _infoFieldValuesByIdMap.computeIfAbsent(
 				infoField.getUniqueId(), key -> new ArrayList<>());
+
+			infoFieldValues.add(infoFieldValue);
+
+			infoFieldValues = _infoFieldValuesByNameMap.computeIfAbsent(
+				infoField.getName(), key -> new ArrayList<>());
 
 			infoFieldValues.add(infoFieldValue);
 
@@ -154,6 +171,8 @@ public class InfoItemFieldValues {
 
 		private final Collection<InfoFieldValue<Object>> _infoFieldValues =
 			new LinkedHashSet<>();
+		private final Map<String, Collection<InfoFieldValue<Object>>>
+			_infoFieldValuesByExternalUniqueIdMap = new HashMap<>();
 		private final Map<String, Collection<InfoFieldValue<Object>>>
 			_infoFieldValuesByIdMap = new HashMap<>();
 		private final Map<String, Collection<InfoFieldValue<Object>>>

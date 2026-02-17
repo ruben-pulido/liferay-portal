@@ -15,12 +15,12 @@ import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
 import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
 import com.google.pubsub.v1.Subscription;
+import com.google.pubsub.v1.SubscriptionName;
 import com.google.pubsub.v1.TopicName;
 
 import com.liferay.marketplace.constants.MarketplaceConstants;
 import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
-import com.liferay.petra.string.StringBundler;
 
 import java.io.ByteArrayInputStream;
 
@@ -63,14 +63,22 @@ public class MarketplaceTopicSubscriber {
 
 	@PostConstruct
 	protected void activate() throws Exception {
-		GoogleCredentials googleCredentials =
-			ServiceAccountCredentials.fromStream(
+		GoogleCredentials googleCredentials;
+
+		try {
+			googleCredentials = ServiceAccountCredentials.fromStream(
 				new ByteArrayInputStream(
 					_serviceAccountKey.getBytes(StandardCharsets.UTF_8))
 			).createScoped(
 				Collections.singletonList(
 					"https://www.googleapis.com/auth/cloud-platform")
 			);
+		}
+		catch (Exception exception) {
+			_log.error("Unable to get Google Credentials", exception);
+
+			return;
+		}
 
 		CredentialsProvider credentialsProvider =
 			FixedCredentialsProvider.create(googleCredentials);
@@ -94,20 +102,17 @@ public class MarketplaceTopicSubscriber {
 	}
 
 	private void _subscribe(
-			CredentialsProvider credentialsProvider, String topicName)
-		throws Exception {
+		CredentialsProvider credentialsProvider, String topicName) {
 
-		String subscriptionName = StringBundler.concat(
-			"projects/", _projectId, "/subscriptions/marketplace_", topicName,
-			"-subscription");
+		String subscriptionName = SubscriptionName.of(
+			_projectId, _topicPrefix + topicName + "-subscription"
+		).toString();
 
 		try {
 			_subscriptionAdminClient.getSubscription(subscriptionName);
 		}
 		catch (NotFoundException notFoundException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(notFoundException);
-			}
+			_log.error(notFoundException);
 
 			_subscriptionAdminClient.createSubscription(
 				Subscription.newBuilder(
@@ -158,5 +163,8 @@ public class MarketplaceTopicSubscriber {
 
 	private final List<Subscriber> _subscribers = new ArrayList<>();
 	private SubscriptionAdminClient _subscriptionAdminClient;
+
+	@Value("${liferay.marketplace.pubsub.topic.prefix}")
+	private String _topicPrefix;
 
 }

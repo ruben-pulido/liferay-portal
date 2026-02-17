@@ -8,10 +8,14 @@ package com.liferay.site.cmp.site.initializer.internal.fragment.renderer;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.fragment.renderer.FragmentRenderer;
+import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectEntryService;
+import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.service.ObjectStateFlowLocalService;
+import com.liferay.object.service.ObjectStateLocalService;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.RoleService;
-import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.cmp.site.initializer.internal.display.context.ViewTasksSectionDisplayContext;
@@ -49,14 +53,16 @@ public class ViewTasksJSPSectionFragmentRenderer
 		return new ViewTasksSectionDisplayContext(
 			_assetTagLocalService, _classNameLocalService,
 			_depotEntryLocalService, httpServletRequest,
+			_listTypeEntryLocalService, _objectEntryService,
+			_objectFieldLocalService, _objectStateFlowLocalService,
+			_objectStateLocalService,
 			_objectDefinitionLocalService.
 				fetchObjectDefinitionByExternalReferenceCode(
 					"L_CMP_PROJECT", themeDisplay.getCompanyId()),
 			_roleService,
 			_objectDefinitionLocalService.
 				fetchObjectDefinitionByExternalReferenceCode(
-					"L_CMP_TASK", themeDisplay.getCompanyId()),
-			_userLocalService);
+					"L_CMP_TASK", themeDisplay.getCompanyId()));
 	}
 
 	@Override
@@ -74,12 +80,24 @@ public class ViewTasksJSPSectionFragmentRenderer
 	private DepotEntryLocalService _depotEntryLocalService;
 
 	@Reference
+	private ListTypeEntryLocalService _listTypeEntryLocalService;
+
+	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 	@Reference
-	private RoleService _roleService;
+	private ObjectEntryService _objectEntryService;
 
 	@Reference
-	private UserLocalService _userLocalService;
+	private ObjectFieldLocalService _objectFieldLocalService;
+
+	@Reference
+	private ObjectStateFlowLocalService _objectStateFlowLocalService;
+
+	@Reference
+	private ObjectStateLocalService _objectStateLocalService;
+
+	@Reference
+	private RoleService _roleService;
 
 }

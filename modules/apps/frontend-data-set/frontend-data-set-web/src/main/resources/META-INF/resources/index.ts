@@ -4,6 +4,7 @@
  */
 
 export {default as FrontendDataSet} from './FrontendDataSet';
+export {default as FrontendDataSetContext} from './FrontendDataSetContext';
 export {default as DateRenderer} from './cell_renderers/DateRenderer';
 export {default as DateTimeRenderer} from './cell_renderers/DateTimeRenderer';
 
@@ -51,5 +52,6 @@ export {
 	ISelectionFilterState,
 	IView,
 	TOnFileDrop,
+	TSort,
 } from './utils/types';
 export {Card} from './views/cards/Cards';

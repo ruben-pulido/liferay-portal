@@ -1,0 +1,9 @@
+.side-navigation-container {
+	height: 100vh;
+
+	& .menubar .nav-link[aria-expanded] {
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+	}
+}

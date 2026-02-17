@@ -1,6 +1,8 @@
 {
 	"dependencies": {
+		"@clayui/badge": "*",
 		"@clayui/button": "*",
+		"@clayui/drop-down": "*",
 		"@clayui/icon": "*",
 		"@clayui/label": "*",
 		"@clayui/layout": "*",
@@ -15,7 +17,7 @@
 		"react": "18.2.0",
 		"react-dom": "18.2.0"
 	},
-	"main": "js/index.js",
+	"main": "js/index.ts",
 	"name": "product-navigation-applications-menu-web",
 	"scripts": {
 		"build": "node-scripts build",

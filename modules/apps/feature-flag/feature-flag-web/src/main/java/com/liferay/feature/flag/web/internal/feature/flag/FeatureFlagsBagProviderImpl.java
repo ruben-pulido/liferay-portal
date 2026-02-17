@@ -18,9 +18,8 @@ import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.aop.AopService;
-import com.liferay.portal.kernel.cluster.ClusterInvokeThreadLocal;
-import com.liferay.portal.kernel.cluster.Clusterable;
+import com.liferay.portal.kernel.cluster.ClusterExecutor;
+import com.liferay.portal.kernel.cluster.ClusterRequest;
 import com.liferay.portal.kernel.feature.flag.FeatureFlag;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagListener;
 import com.liferay.portal.kernel.feature.flag.constants.FeatureFlagConstants;
@@ -30,11 +29,14 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiServiceUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.MethodHandler;
+import com.liferay.portal.kernel.util.MethodKey;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -54,6 +56,7 @@ import java.util.function.Predicate;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -62,9 +65,9 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Drew Brokke
  */
-@Component(service = AopService.class)
+@Component(service = FeatureFlagsBagProvider.class)
 public class FeatureFlagsBagProviderImpl
-	implements AopService, FeatureFlagsBagProvider, IdentifiableOSGiService {
+	implements FeatureFlagsBagProvider, IdentifiableOSGiService {
 
 	@Override
 	public void clearCache() {
@@ -103,50 +106,33 @@ public class FeatureFlagsBagProviderImpl
 		return _systemFeatureFlags.contains(key);
 	}
 
-	@Clusterable
 	@Override
 	public void setEnabled(long companyId, String key, boolean enabled) {
-		if (ClusterInvokeThreadLocal.isEnabled()) {
-			_featureFlagPreferencesManager.setEnabled(companyId, key, enabled);
-		}
+		_featureFlagPreferencesManager.setEnabled(companyId, key, enabled);
 
-		FeatureFlagsBag featureFlagsBag = _featureFlagsBags.get(companyId);
+		_setEnabled(companyId, key, enabled);
 
-		if (featureFlagsBag == null) {
+		if (!_clusterExecutor.isEnabled()) {
 			return;
 		}
 
-		featureFlagsBag.setEnabled(key, enabled);
+		MethodHandler methodHandler = new MethodHandler(
+			_setEnabledMethodKey, companyId, key, enabled,
+			getOSGiServiceIdentifier());
 
-		List<FeatureFlagListener> featureFlagListeners =
-			_serviceTrackerMap.getService(key);
+		ClusterRequest clusterRequest = ClusterRequest.createMulticastRequest(
+			methodHandler, true);
 
-		if (featureFlagListeners != null) {
-			for (FeatureFlagListener featureFlagListener :
-					featureFlagListeners) {
+		clusterRequest.setFireAndForget(true);
 
-				featureFlagListener.onValue(companyId, key, enabled);
-			}
-		}
-
-		featureFlagListeners = _serviceTrackerMap.getService("*");
-
-		if (featureFlagListeners != null) {
-			for (FeatureFlagListener featureFlagListener :
-					featureFlagListeners) {
-
-				featureFlagListener.onValue(companyId, key, enabled);
-			}
-		}
-	}
-
-	@Override
-	public FeatureFlagsBagProvider unwrapProxy() {
-		return this;
+		_clusterExecutor.execute(clusterRequest);
 	}
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
+		_serviceRegistration = bundleContext.registerService(
+			IdentifiableOSGiService.class, this, null);
+
 		_initSystemFeatureFlags(false);
 
 		_serviceTrackerMap = ServiceTrackerMapFactory.openMultiValueMap(
@@ -173,6 +159,20 @@ public class FeatureFlagsBagProviderImpl
 	@Deactivate
 	protected void deactivate() {
 		_serviceTrackerMap.close();
+
+		_serviceRegistration.unregister();
+	}
+
+	private static void _setEnabled(
+		long companyId, String key, boolean enabled,
+		String osgiServiceIdentifier) {
+
+		FeatureFlagsBagProviderImpl featureFlagsBagProviderImpl =
+			(FeatureFlagsBagProviderImpl)
+				IdentifiableOSGiServiceUtil.getIdentifiableOSGiService(
+					osgiServiceIdentifier);
+
+		featureFlagsBagProviderImpl._setEnabled(companyId, key, enabled);
 	}
 
 	private FeatureFlagsBag _createFeatureFlagsBag(long companyId) {
@@ -367,11 +367,46 @@ public class FeatureFlagsBagProviderImpl
 		}
 	}
 
+	private void _setEnabled(long companyId, String key, boolean enabled) {
+		FeatureFlagsBag featureFlagsBag = _featureFlagsBags.get(companyId);
+
+		if (featureFlagsBag == null) {
+			return;
+		}
+
+		featureFlagsBag.setEnabled(key, enabled);
+
+		List<FeatureFlagListener> featureFlagListeners =
+			_serviceTrackerMap.getService(key);
+
+		if (featureFlagListeners != null) {
+			for (FeatureFlagListener featureFlagListener :
+					featureFlagListeners) {
+
+				featureFlagListener.onValue(companyId, key, enabled);
+			}
+		}
+
+		featureFlagListeners = _serviceTrackerMap.getService("*");
+
+		if (featureFlagListeners != null) {
+			for (FeatureFlagListener featureFlagListener :
+					featureFlagListeners) {
+
+				featureFlagListener.onValue(companyId, key, enabled);
+			}
+		}
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		FeatureFlagsBagProviderImpl.class);
 
-	private static final Map<Long, FeatureFlagsBag> _featureFlagsBags =
-		new ConcurrentHashMap<>();
+	private static final MethodKey _setEnabledMethodKey = new MethodKey(
+		FeatureFlagsBagProviderImpl.class, "_setEnabled", long.class,
+		String.class, boolean.class, String.class);
+
+	@Reference
+	private ClusterExecutor _clusterExecutor;
 
 	@Reference
 	private CompanyLocalService _companyLocalService;
@@ -383,6 +418,8 @@ public class FeatureFlagsBagProviderImpl
 		FeatureFlagConstants.PORTAL_PROPERTY_KEY_FEATURE_FLAG +
 			StringPool.PERIOD,
 		true);
+	private final Map<Long, FeatureFlagsBag> _featureFlagsBags =
+		new ConcurrentHashMap<>();
 
 	@Reference
 	private Language _language;
@@ -390,6 +427,7 @@ public class FeatureFlagsBagProviderImpl
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED)
 	private ModuleServiceLifecycle _moduleServiceLifecycle;
 
+	private ServiceRegistration<IdentifiableOSGiService> _serviceRegistration;
 	private ServiceTrackerMap<String, List<FeatureFlagListener>>
 		_serviceTrackerMap;
 	private final Set<String> _systemFeatureFlags = new HashSet<>();

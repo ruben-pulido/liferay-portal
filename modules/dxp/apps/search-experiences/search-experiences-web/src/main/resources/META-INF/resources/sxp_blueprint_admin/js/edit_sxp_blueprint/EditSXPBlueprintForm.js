@@ -24,7 +24,7 @@ import PageToolbar from '../shared/PageToolbar';
 import Sidebar from '../shared/Sidebar';
 import SubmitWarningModal from '../shared/SubmitWarningModal';
 import ThemeContext from '../shared/ThemeContext';
-import {DEFAULT_INDEX_CONFIGURATION} from '../utils/constants';
+import {DEFAULT_INDEX_CONFIGURATION, STATUS} from '../utils/constants';
 import {DEFAULT_ERROR} from '../utils/errorMessages';
 import addParams from '../utils/fetch/add_params';
 import fetchData, {DEFAULT_HEADERS} from '../utils/fetch/fetch_data';
@@ -116,6 +116,7 @@ function EditSXPBlueprintForm({
 
 	const [indexFields, setIndexFields] = useState(null);
 	const [searchIndexes, setSearchIndexes] = useState(null);
+	const [scope, setScope] = useState([]);
 
 	const {data: searchableTypes, refetch: refetchSearchableTypes} =
 		useFetchData({
@@ -169,7 +170,7 @@ function EditSXPBlueprintForm({
 		let elementInstances;
 
 		try {
-			configuration = _getConfiguration(values);
+			configuration = _getConfiguration(values, scope);
 			elementInstances = _getElementInstances(values);
 		}
 		catch (error) {
@@ -468,6 +469,67 @@ function EditSXPBlueprintForm({
 		}
 
 		setStorageAddSXPElementSidebar(SIDEBAR_STATE.OPEN);
+
+		const fetchAllScope = async () => {
+			const fetchScope = async (externalReferenceCode) => {
+				try {
+					const response = await fetch(
+						`/o/headless-admin-site/v1.0/sites/${externalReferenceCode}`,
+						{
+							headers: new Headers({
+								'Accept-Language':
+									Liferay.ThemeDisplay.getBCP47LanguageId(),
+								'Content-Type': 'application/json',
+							}),
+							method: 'GET',
+						}
+					);
+
+					if (!response.ok) {
+						throw `Error fetching site with ERC ${externalReferenceCode}`;
+					}
+
+					const data = await response.json();
+
+					return data;
+				}
+				catch (error) {
+					console.error(error);
+
+					return {
+						descriptiveName: externalReferenceCode,
+						externalReferenceCode,
+						status: false,
+					};
+				}
+			};
+
+			if (
+				initialConfiguration.generalConfiguration.scope &&
+				initialConfiguration.generalConfiguration.scope.length
+			) {
+				const responses = await Promise.all(
+					initialConfiguration.generalConfiguration.scope.map(
+						fetchScope
+					)
+				);
+
+				setScope(
+					responses.map((item) => {
+						return {
+							externalReferenceCode: item.externalReferenceCode,
+							name: item.descriptiveName,
+							status: item.active
+								? STATUS.ACTIVE
+								: STATUS.INACTIVE,
+							type: item.typeSettings?.depotEntryType,
+						};
+					})
+				);
+			}
+		};
+
+		fetchAllScope();
 	}, []); //eslint-disable-line
 
 	/**
@@ -511,16 +573,19 @@ function EditSXPBlueprintForm({
 	 * @param {Object} values Form values
 	 * @return {Object}
 	 */
-	const _getConfiguration = ({
-		advancedConfig,
-		aggregationConfig,
-		applyIndexerClauses,
-		frameworkConfig,
-		highlightConfig,
-		indexConfig,
-		parameterConfig,
-		sortConfig,
-	}) => {
+	const _getConfiguration = (
+		{
+			advancedConfig,
+			aggregationConfig,
+			applyIndexerClauses,
+			frameworkConfig,
+			highlightConfig,
+			indexConfig,
+			parameterConfig,
+			sortConfig,
+		},
+		scope
+	) => {
 		const configuration = {
 			advancedConfiguration: advancedConfig
 				? JSON.parse(advancedConfig)
@@ -528,7 +593,10 @@ function EditSXPBlueprintForm({
 			aggregationConfiguration: aggregationConfig
 				? JSON.parse(aggregationConfig)
 				: {},
-			generalConfiguration: frameworkConfig,
+			generalConfiguration: {
+				...frameworkConfig,
+				scope: scope.map((item) => item.externalReferenceCode),
+			},
 			highlightConfiguration: highlightConfig
 				? JSON.parse(highlightConfig)
 				: {},
@@ -671,7 +739,7 @@ function EditSXPBlueprintForm({
 		let elementInstances;
 
 		try {
-			configuration = _getConfiguration(formik.values);
+			configuration = _getConfiguration(formik.values, scope);
 			elementInstances = _getElementInstances(formik.values);
 
 			// Touch inputs with errors to show validation errors.
@@ -1052,10 +1120,12 @@ function EditSXPBlueprintForm({
 									_handleFrameworkConfigChange
 								}
 								openSidebar={openSidebar}
+								scope={scope}
 								searchableTypes={searchableTypes?.items}
 								setFieldTouched={formik.setFieldTouched}
 								setFieldValue={formik.setFieldValue}
 								setOpenSidebar={setOpenSidebar}
+								setScope={setScope}
 								touched={formik.touched.elementInstances}
 							/>
 						</div>
