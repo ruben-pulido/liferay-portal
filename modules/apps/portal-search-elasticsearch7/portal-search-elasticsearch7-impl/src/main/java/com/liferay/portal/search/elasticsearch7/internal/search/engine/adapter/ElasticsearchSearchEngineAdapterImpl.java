@@ -11,7 +11,11 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch7.internal.legacy.query.ElasticsearchQueryVisitor;
+import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.ccr.ElasticsearchCCRRequestExecutor;
+import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.cluster.ElasticsearchClusterRequestExecutor;
+import com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.index.ElasticsearchIndexRequestExecutor;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.ccr.CCRRequest;
 import com.liferay.portal.search.engine.adapter.ccr.CCRRequestExecutor;
@@ -38,6 +42,7 @@ import java.util.List;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -210,6 +215,16 @@ public class ElasticsearchSearchEngineAdapterImpl
 		}
 	}
 
+	@Activate
+	protected void activate() {
+		_ccrRequestExecutor = new ElasticsearchCCRRequestExecutor(
+			_elasticsearchClientResolver);
+		_clusterRequestExecutor = new ElasticsearchClusterRequestExecutor(
+			_elasticsearchClientResolver);
+		_indexRequestExecutor = new ElasticsearchIndexRequestExecutor(
+			_elasticsearchClientResolver);
+	}
+
 	protected void setThrowOriginalExceptions(boolean throwOriginalExceptions) {
 		_throwOriginalExceptions = throwOriginalExceptions;
 	}
@@ -249,16 +264,15 @@ public class ElasticsearchSearchEngineAdapterImpl
 			ElasticsearchSearchEngineAdapterImpl.class.getName() +
 				"._bulkDocumentRequest");
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
 	private CCRRequestExecutor _ccrRequestExecutor;
-
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
 	private ClusterRequestExecutor _clusterRequestExecutor;
 
 	@Reference(target = "(search.engine.impl=Elasticsearch)")
 	private DocumentRequestExecutor _documentRequestExecutor;
 
-	@Reference(target = "(search.engine.impl=Elasticsearch)")
+	@Reference
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+
 	private IndexRequestExecutor _indexRequestExecutor;
 
 	@Reference(target = "(search.engine.impl=Elasticsearch)")

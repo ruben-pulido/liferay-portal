@@ -115,7 +115,7 @@ type AddRelatedContentAction = {
 
 type AddRepeatableGroupAction = {
 	type: 'add-repeatable-group';
-	uuid?: Uuid;
+	uuids: Uuid[];
 };
 
 type AddErrorAction = {
@@ -350,11 +350,9 @@ function reducer(state: State, action: Action): State {
 			};
 		}
 		case 'add-repeatable-group': {
-			const {publishedChildren, selection, structure} = state;
+			const {history, publishedChildren, structure} = state;
 
-			const {uuid} = action;
-
-			const uuids = uuid ? [uuid] : selection;
+			const {uuids} = action;
 
 			const items = uuids.map(
 				(uuid) => findChild({root: structure, uuid})!
@@ -381,19 +379,6 @@ function reducer(state: State, action: Action): State {
 				showWarning({
 					text: Liferay.Language.get(
 						'the-repeatable-group-cannot-be-created-because-referenced-structure-fields-are-not-allowed-in-repeatable-groups'
-					),
-					title: Liferay.Language.get(
-						'repeatable-group-creation-not-allowed'
-					),
-				});
-
-				return state;
-			}
-
-			if (items.some(({uuid}) => publishedChildren.has(uuid))) {
-				showWarning({
-					text: Liferay.Language.get(
-						'the-repeatable-group-cannot-be-created-because-one-or-more-fields-of-the-selection-are-already-published'
 					),
 					title: Liferay.Language.get(
 						'repeatable-group-creation-not-allowed'
@@ -448,8 +433,24 @@ function reducer(state: State, action: Action): State {
 				root: structure,
 			});
 
+			const deletedChildrenUuids = new Set<Uuid>();
+
+			for (const item of items) {
+				if (publishedChildren.has(item.uuid)) {
+					deletedChildrenUuids.add(item.uuid);
+				}
+			}
+
 			return {
 				...state,
+				history: deletedChildrenUuids.size
+					? getHistory({
+							deletedChildrenUuids,
+							initialHistory: history,
+							publishedChildren,
+							structure,
+						})
+					: history,
 				selection: [groupUuid],
 				structure: {...structure, children},
 			};

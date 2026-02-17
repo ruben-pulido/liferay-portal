@@ -200,7 +200,7 @@ const Actions = ({dataSet, namespace, spritemap}: IDataSetSectionProps) => {
 				actionTypeOrder
 			];
 
-		setActions(sortItems(storedActions, actionsOrder) as IAction[]);
+		setActions(sortItems(storedActions, actionsOrder, false) as IAction[]);
 
 		setLoading(false);
 	};
@@ -296,7 +296,9 @@ const Actions = ({dataSet, namespace, spritemap}: IDataSetSectionProps) => {
 		const storedActionsOrder = responseJSON?.[actionTypeOrder];
 
 		if (actions && storedActionsOrder && storedActionsOrder === order) {
-			setActions(sortItems(actions, storedActionsOrder) as IAction[]);
+			setActions(
+				sortItems(actions, storedActionsOrder, false) as IAction[]
+			);
 
 			openDefaultSuccessToast();
 		}

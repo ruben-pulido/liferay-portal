@@ -3,19 +3,18 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {FDS_ORDER_BY_ERC_FEATURE_FLAG_KEY} from './constants';
 import {IOrderable} from './types';
 
 /**
- * sorts the provided items array according to the itemsOrder comma-separated list of ids.
- * If array contains items not included in the list of ids, then those are appended after
- * Example:
- * 		items = [ {id: 1}, {id: 4}, {id: 2}, {id: 3} ]
- * 		itemsOrder = "2, 3, 1"
- * 		output is [ {id: 2}, {id: 3}, {id: 1}, {id: 4} ]
- * Optionally, not included items can be sorted by creation date
+ * Sorts the provided items array according to the itemsOrder comma-separated list.
+ * When the FDS_ORDER_BY_ERC feature flag is off, itemsOrder is a list of ids;
+ * when on, a list of externalReferenceCodes.
+ * If array contains items not included in the list, then those are appended after.
+ * Optionally, not included items can be sorted by creation date.
  *
  * @param items {IOrderable[]}
- * @param itemsOrder {string}
+ * @param itemsOrder {string} - CSV of ids or externalReferenceCodes
  * @param useCreationDate {boolean}
  * @returns {Array}
  */
@@ -24,19 +23,29 @@ export default function sortItems(
 	itemsOrder: string,
 	useCreationDate: boolean = false
 ): IOrderable[] {
+	const orderByERC =
+		!!Liferay.FeatureFlags?.[FDS_ORDER_BY_ERC_FEATURE_FLAG_KEY];
+
 	const itemsOrderArray = itemsOrder?.split(',') || ([] as string[]);
 
-	let included: IOrderable[] = [];
-	let notIncluded: IOrderable[] = [];
+	const getItemKey = (item: IOrderable) =>
+		orderByERC
+			? String(item.externalReferenceCode ?? '')
+			: String(Number(item.id));
 
-	included = itemsOrderArray
-		.map((itemId) =>
-			items.find((item) => Number(item.id) === Number(itemId))
+	const getOrderKey = (orderKey: string) =>
+		orderByERC ? String(orderKey ?? '') : String(Number(orderKey));
+
+	const orderKeysSet = new Set(itemsOrderArray.map(getOrderKey));
+
+	const included = itemsOrderArray
+		.map((orderKey) =>
+			items.find((item) => getItemKey(item) === getOrderKey(orderKey))
 		)
 		.filter(Boolean) as IOrderable[];
 
-	notIncluded = items.filter(
-		(item) => !itemsOrderArray.includes(String(item.id))
+	let notIncluded = items.filter(
+		(item) => !orderKeysSet.has(getItemKey(item))
 	);
 
 	if (useCreationDate) {

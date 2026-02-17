@@ -519,14 +519,14 @@ const Sorting = ({
 		setFDSSorts(
 			sortItems(
 				storedFDSSorts,
-
 				storedFDSSorts?.[0]?.[OBJECT_RELATIONSHIP.DATA_SET_SORTS]
-					?.sortsOrder as string
+					?.sortsOrder as string,
+				false
 			) as IDataSetSort[]
 		);
 
 		setLoading(false);
-	}, [dataSet]);
+	}, [dataSet.externalReferenceCode]);
 
 	useEffect(() => {
 		fetchDataSetSorts();
@@ -650,7 +650,7 @@ const Sorting = ({
 
 		if (fdsSorts && storedSortsOrder && storedSortsOrder === sortsOrder) {
 			setFDSSorts(
-				sortItems(fdsSorts, storedSortsOrder) as IDataSetSort[]
+				sortItems(fdsSorts, storedSortsOrder, false) as IDataSetSort[]
 			);
 
 			openDefaultSuccessToast();

@@ -10,14 +10,12 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.search.document.DocumentBuilder;
 import com.liferay.portal.search.geolocation.GeoBuilders;
-import com.liferay.portal.search.internal.document.DocumentBuilderImpl;
 import com.liferay.portal.search.legacy.document.DocumentBuilderFactory;
 
 import java.util.Arrays;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Wade Cao
@@ -29,7 +27,7 @@ public class DocumentBuilderFactoryImpl implements DocumentBuilderFactory {
 	public DocumentBuilder builder(Document document) {
 		Map<String, Field> map = document.getFields();
 
-		DocumentBuilder documentBuilder = new DocumentBuilderImpl();
+		DocumentBuilder documentBuilder = new DocumentBuilder();
 
 		map.forEach((key, field) -> _addField(key, field, documentBuilder));
 
@@ -44,7 +42,7 @@ public class DocumentBuilderFactoryImpl implements DocumentBuilderFactory {
 		if (geoLocationPoint != null) {
 			documentBuilder.setGeoLocationPoint(
 				key,
-				_geoBuilders.geoLocationPoint(
+				GeoBuilders.INSTANCE.geoLocationPoint(
 					geoLocationPoint.getLatitude(),
 					geoLocationPoint.getLongitude()));
 
@@ -53,8 +51,5 @@ public class DocumentBuilderFactoryImpl implements DocumentBuilderFactory {
 
 		documentBuilder.setValues(key, Arrays.asList(field.getValues()));
 	}
-
-	@Reference
-	private GeoBuilders _geoBuilders;
 
 }

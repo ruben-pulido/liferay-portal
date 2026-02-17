@@ -9,25 +9,58 @@ import com.liferay.portal.search.geolocation.GeoDistance;
 import com.liferay.portal.search.geolocation.GeoLocationPoint;
 import com.liferay.portal.search.query.geolocation.ShapeRelation;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface GeoDistanceRangeQuery extends RangeTermQuery {
+public class GeoDistanceRangeQuery extends RangeTermQuery {
 
-	public GeoDistance getLowerBoundGeoDistance();
+	public GeoDistanceRangeQuery(
+		String field, boolean includesLower, boolean includesUpper,
+		GeoDistance lowerBoundGeoDistance, GeoLocationPoint pinGeoLocationPoint,
+		GeoDistance upperBoundGeoDistance) {
 
-	public GeoLocationPoint getPinGeoLocationPoint();
+		super(field, includesLower, includesUpper);
 
-	public ShapeRelation getShapeRelation();
+		_lowerBoundGeoDistance = lowerBoundGeoDistance;
+		_pinGeoLocationPoint = pinGeoLocationPoint;
+		_upperBoundGeoDistance = upperBoundGeoDistance;
+	}
 
 	@Override
-	public int getSortOrder();
+	public <T> T accept(QueryVisitor<T> queryVisitor) {
+		return queryVisitor.visit(this);
+	}
 
-	public GeoDistance getUpperBoundGeoDistance();
+	public GeoDistance getLowerBoundGeoDistance() {
+		return _lowerBoundGeoDistance;
+	}
 
-	public void setShapeRelation(ShapeRelation shapeRelation);
+	public GeoLocationPoint getPinGeoLocationPoint() {
+		return _pinGeoLocationPoint;
+	}
+
+	public ShapeRelation getShapeRelation() {
+		return _shapeRelation;
+	}
+
+	@Override
+	public int getSortOrder() {
+		return 110;
+	}
+
+	public GeoDistance getUpperBoundGeoDistance() {
+		return _upperBoundGeoDistance;
+	}
+
+	public void setShapeRelation(ShapeRelation shapeRelation) {
+		_shapeRelation = shapeRelation;
+	}
+
+	private static final long serialVersionUID = 1L;
+
+	private final GeoDistance _lowerBoundGeoDistance;
+	private final GeoLocationPoint _pinGeoLocationPoint;
+	private ShapeRelation _shapeRelation;
+	private final GeoDistance _upperBoundGeoDistance;
 
 }

@@ -21,9 +21,13 @@ import React from 'react';
 
 import {openCMPModal} from '../../utils/openCMPModal';
 import StateLabel from '../StateLabel';
+import BulkEditAssigneeModalContent from '../modal/BulkEditAssigneeModalContent';
+import BulkEditDueDateModalContent from '../modal/BulkEditDueDateModalContent';
+import BulkEditStateModalContent from '../modal/BulkEditStateModalContent';
 import EditAssigneeModalContent from '../modal/EditAssigneeModalContent';
 import ACTIONS from './actions/creationMenuActions';
 import {cmpTasksFDSAtom} from './atoms';
+import AssigneeRenderer from './cell_renderers/AssigneeRenderer';
 import KanbanView from './views/kanban_view/KanbanView';
 
 const _CLASS_NAME_KALEO_TASK_INSTANCE_TOKEN =
@@ -95,14 +99,18 @@ const WORKFLOW_TASK_MODALS: Record<
 };
 
 export default function TasksFDSPropsTransformer({
+	additionalProps,
 	creationMenu,
+	currentURL,
 	id,
 	itemsActions = [],
 	views,
 	...otherProps
 }: {
-	apiURL?: string;
+	additionalProps: any;
+	apiURL: string;
 	creationMenu: any;
+	currentURL: string;
 	id: string;
 	itemsActions?: any[];
 	otherProps: any;
@@ -116,8 +124,7 @@ export default function TasksFDSPropsTransformer({
 	});
 
 	const kanbanView: IView = {
-		component: (props: any) => KanbanView({...props}),
-		dataSetId: id,
+		component: (props: any) => KanbanView({...props, currentURL}),
 		default: false,
 		label: Liferay.Language.get('kanban'),
 		name: 'kanban',
@@ -159,7 +166,12 @@ export default function TasksFDSPropsTransformer({
 								.join(', ');
 						}
 
-						return itemData.embedded?.assignTo?.name;
+						return (
+							<AssigneeRenderer
+								image={itemData.embedded?.assignTo?.portrait}
+								name={itemData.embedded?.assignTo?.name}
+							/>
+						);
 					},
 					name: 'assigneeTableCellRenderer',
 					type: 'internal',
@@ -230,7 +242,21 @@ export default function TasksFDSPropsTransformer({
 							itemData.entryClassName ===
 							_CLASS_NAME_KALEO_TASK_INSTANCE_TOKEN
 						) {
-							return '-';
+							return StateLabel({
+								state: itemData.embedded?.completed
+									? {
+											key: 'completed',
+											name: Liferay.Language.get(
+												'completed'
+											),
+										}
+									: {
+											key: 'pending',
+											name: Liferay.Language.get(
+												'pending'
+											),
+										},
+							});
 						}
 
 						return StateLabel({
@@ -314,10 +340,61 @@ export default function TasksFDSPropsTransformer({
 			action: any;
 			selectedData: any;
 		}) => {
-			if (action?.data?.id === 'delete') {
+			if (action?.data?.id === 'assign-task') {
+				await openCMPModal({
+					center: true,
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) => (
+						<BulkEditAssigneeModalContent
+							apiURL={otherProps.apiURL}
+							closeModal={closeModal}
+							selectedData={selectedData}
+							value={{name: null}}
+						/>
+					),
+					size: 'md',
+				});
+			}
+			else if (action?.data?.id === 'delete') {
 				deleteAssetEntriesBulkAction({
 					apiURL: otherProps.apiURL,
 					selectedData,
+				});
+			}
+			else if (action?.data?.id === 'update-due-date') {
+				openCMPModal({
+					center: true,
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						BulkEditDueDateModalContent({
+							apiURL: otherProps?.apiURL,
+							closeModal,
+							selectedData,
+						}),
+					size: 'md',
+				});
+			}
+			else if (action?.data?.id === 'update-state') {
+				openCMPModal({
+					center: true,
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						BulkEditStateModalContent({
+							apiURL: otherProps?.apiURL,
+							closeModal,
+							selectedData,
+							states: additionalProps.states,
+						}),
+					size: 'md',
 				});
 			}
 		},

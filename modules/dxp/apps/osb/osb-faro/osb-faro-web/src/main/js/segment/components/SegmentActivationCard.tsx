@@ -6,7 +6,7 @@ import Form from '@clayui/form';
 import Label from '@clayui/label';
 import List from '@clayui/list';
 import Modal, {useModal} from '@clayui/modal';
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {addAlert} from 'shared/actions/alerts';
 import {Alert} from 'shared/types';
 import {connect, ConnectedProps} from 'react-redux';
@@ -33,7 +33,6 @@ export type SegmentActivationDetails = {
 	scheduleEndDate?: string;
 	scheduleStartDate?: string;
 	scheduleType: SegmentActivationScheduleTypes;
-	segmentActivationId: string;
 };
 
 type IActivationFormValues = {
@@ -53,7 +52,7 @@ interface IActivationConfigurationModalProps {
 }
 
 interface ISegmentActivationCardProps {
-	segmentActivation: SegmentActivationDetails;
+	segmentActivation: any;
 	segmentType: SegmentTypes;
 }
 
@@ -98,14 +97,12 @@ export const ActivationConfigurationModal: React.FC<
 }) => {
 	const [formState, setFormState] = useState<IActivationFormValues>({
 		...initialValues,
-		scheduleEndDate: formatUTCDateFromUnix(
-			initialValues.scheduleEndDate,
-			'yyyy-MM-DD'
-		),
-		scheduleStartDate: formatUTCDateFromUnix(
-			initialValues.scheduleStartDate,
-			'yyyy-MM-DD'
-		)
+		scheduleEndDate:
+			initialValues.scheduleEndDate &&
+			formatUTCDateFromUnix(initialValues.scheduleEndDate, 'yyyy-MM-DD'),
+		scheduleStartDate:
+			initialValues.scheduleStartDate &&
+			formatUTCDateFromUnix(initialValues.scheduleStartDate, 'yyyy-MM-DD')
 	});
 	const [isSaving, setIsSaving] = useState(false);
 
@@ -299,30 +296,39 @@ const ConnectedActivationConfigurationModal = connector(
 );
 
 const SegmentActivationCard: React.FC<ISegmentActivationCardProps> = ({
-	segmentActivation,
+	segmentActivation: initialActivation,
 	segmentType
 }) => {
+	const [localActivation, setLocalActivation] = useState(initialActivation);
+
+	useEffect(() => {
+		setLocalActivation(initialActivation);
+	}, [initialActivation]);
+
 	const {
 		frequencyType,
 		scheduleEndDate,
 		scheduleStartDate,
-		scheduleType,
-		segmentActivationId
-	} = segmentActivation;
+		scheduleType
+	} = localActivation.toJS();
 
 	const {observer, onOpenChange, open} = useModal();
 
 	const {groupId, id: segmentId} = useParams();
 
 	const handleSave = async (updatedValues: IActivationFormValues) =>
-		API.updateSegmentActivationStatus({
+		API.updateSegmentActivation({
 			groupId,
 			segmentActivation: {
-				...updatedValues,
-				segmentActivationId
+				...updatedValues
 			},
 			segmentId
 		}).then(() => {
+			setLocalActivation(prev => ({
+				...prev,
+				...updatedValues
+			}));
+
 			addAlert({
 				alertType: Alert.Types.Success,
 				message: Liferay.Language.get('changes-to-segment-saved')

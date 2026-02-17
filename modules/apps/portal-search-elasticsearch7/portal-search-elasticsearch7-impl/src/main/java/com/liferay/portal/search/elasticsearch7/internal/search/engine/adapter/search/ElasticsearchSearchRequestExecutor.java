@@ -91,14 +91,18 @@ public class ElasticsearchSearchRequestExecutor
 	protected void activate() {
 		_clearScrollRequestExecutor = new ClearScrollRequestExecutor(
 			_elasticsearchClientResolver);
+		_closePointInTimeRequestExecutor = new ClosePointInTimeRequestExecutor(
+			_elasticsearchClientResolver);
+		_countSearchRequestExecutor = new CountSearchRequestExecutor(
+			_elasticsearchClientResolver);
+		_openPointInTimeRequestExecutor = new OpenPointInTimeRequestExecutor(
+			_elasticsearchClientResolver);
+		_suggestSearchRequestExecutor = new SuggestSearchRequestExecutor(
+			_elasticsearchClientResolver);
 	}
 
 	private ClearScrollRequestExecutor _clearScrollRequestExecutor;
-
-	@Reference
 	private ClosePointInTimeRequestExecutor _closePointInTimeRequestExecutor;
-
-	@Reference
 	private CountSearchRequestExecutor _countSearchRequestExecutor;
 
 	@Reference
@@ -107,13 +111,11 @@ public class ElasticsearchSearchRequestExecutor
 	@Reference
 	private MultisearchSearchRequestExecutor _multisearchSearchRequestExecutor;
 
-	@Reference
 	private OpenPointInTimeRequestExecutor _openPointInTimeRequestExecutor;
 
 	@Reference
 	private SearchSearchRequestExecutor _searchSearchRequestExecutor;
 
-	@Reference
 	private SuggestSearchRequestExecutor _suggestSearchRequestExecutor;
 
 }

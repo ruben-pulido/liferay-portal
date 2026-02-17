@@ -5,13 +5,14 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
+import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {
 	clearConsentCookies,
-	resetCookieManagerConfiguration,
-} from './utils/cookieManagerAfterEach';
+	resetConsentManagerConfiguration,
+} from './utils/consentManagerAfterEach';
 
 const cookieKeys = [
 	'CONSENT_TYPE_FUNCTIONAL',
@@ -20,13 +21,19 @@ const cookieKeys = [
 	'CONSENT_TYPE_PERSONALIZATION',
 	'USER_CONSENT_CONFIGURED',
 	'USER_CONSENT_CONFIGURED_DATE',
-];
+]; //
 
-export const test = mergeTests(loginTest(), systemSettingsPageTest);
+export const test = mergeTests(
+	featureFlagsTest({
+		'LPD-75032': {enabled: true},
+	}),
+	loginTest(),
+	systemSettingsPageTest
+);
 
 test.afterEach(async ({systemSettingsPage}) => {
-	await test.step('Reset Cookie Manager Configuration', async () => {
-		await resetCookieManagerConfiguration(systemSettingsPage);
+	await test.step('Reset Consent Manager Configuration', async () => {
+		await resetConsentManagerConfiguration(systemSettingsPage);
 	});
 
 	await test.step('Clear Consent Cookies if present', async () => {
@@ -35,8 +42,11 @@ test.afterEach(async ({systemSettingsPage}) => {
 });
 
 test.beforeEach(async ({page, systemSettingsPage}) => {
-	await test.step('Enable Cookie Manager', async () => {
-		await systemSettingsPage.goToSystemSetting('Privacy', 'Cookie Manager');
+	await test.step('Enable Consent Manager', async () => {
+		await systemSettingsPage.goToSystemSetting(
+			'Privacy',
+			'Consent Manager'
+		);
 
 		const enabledButton = page.getByLabel('Enabled');
 
@@ -122,6 +132,24 @@ test(
 				await dialogWindow.accept();
 			});
 			await validateConsentRenewalPeriodValue('1', page, true);
+		});
+	}
+);
+
+test(
+	'Verify Consent Manager can be saved with Enabled set to false',
+	{tag: '@LPD-78627'},
+	async ({page}) => {
+		await test.step('Disable Consent Manager and save configuration', async () => {
+			await page.getByLabel('Enabled').setChecked(false);
+
+			await page
+				.getByRole('button', {name: 'Update'})
+				.dispatchEvent('click');
+
+			await waitForAlert(page);
+
+			await expect(page.getByLabel('Enabled')).not.toBeChecked();
 		});
 	}
 );

@@ -11,7 +11,6 @@ import com.liferay.portal.search.elasticsearch8.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.test.util.RequestExecutorFixture;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentResponse;
-import com.liferay.portal.search.internal.document.DocumentBuilderImpl;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import org.junit.After;
@@ -50,8 +49,10 @@ public class IndexDocumentRequestExecutorTest {
 
 	@Before
 	public void setUp() {
-		_indexDocumentRequestExecutor =
-			_requestExecutorFixture.getIndexDocumentRequestExecutor();
+		_getDocumentRequestExecutor = new GetDocumentRequestExecutor(
+			_elasticsearchFixture);
+		_indexDocumentRequestExecutor = new IndexDocumentRequestExecutor(
+			_elasticsearchFixture);
 
 		_requestExecutorFixture.createIndex(_INDEX_NAME);
 	}
@@ -72,7 +73,7 @@ public class IndexDocumentRequestExecutorTest {
 	}
 
 	protected Document buildDocument(String fieldName, String fieldValue) {
-		DocumentBuilder documentBuilder = new DocumentBuilderImpl();
+		DocumentBuilder documentBuilder = new DocumentBuilder();
 
 		return documentBuilder.setString(
 			fieldName, fieldValue
@@ -101,7 +102,8 @@ public class IndexDocumentRequestExecutorTest {
 		_assertFieldEquals(
 			_FIELD_NAME, document,
 			_requestExecutorFixture.getDocumentById(
-				_INDEX_NAME, indexDocumentResponse.getUid()));
+				_getDocumentRequestExecutor, _INDEX_NAME,
+				indexDocumentResponse.getUid()));
 	}
 
 	private static final String _FIELD_NAME = "testField";
@@ -111,6 +113,7 @@ public class IndexDocumentRequestExecutorTest {
 	private static ElasticsearchFixture _elasticsearchFixture;
 	private static RequestExecutorFixture _requestExecutorFixture;
 
+	private GetDocumentRequestExecutor _getDocumentRequestExecutor;
 	private IndexDocumentRequestExecutor _indexDocumentRequestExecutor;
 
 }

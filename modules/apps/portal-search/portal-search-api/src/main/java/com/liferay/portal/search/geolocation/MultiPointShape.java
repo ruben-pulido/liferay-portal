@@ -5,11 +5,20 @@
 
 package com.liferay.portal.search.geolocation;
 
-import org.osgi.annotation.versioning.ProviderType;
+import java.util.List;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface MultiPointShape extends Shape {
+public class MultiPointShape extends Shape {
+
+	@Override
+	public <T> T accept(ShapeTranslator<T> shapeTranslator) {
+		return shapeTranslator.translate(this);
+	}
+
+	protected MultiPointShape(List<Coordinate> coordinates) {
+		super(coordinates);
+	}
+
 }

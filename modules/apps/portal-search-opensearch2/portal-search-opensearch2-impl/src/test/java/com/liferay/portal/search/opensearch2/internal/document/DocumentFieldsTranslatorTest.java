@@ -8,7 +8,6 @@ package com.liferay.portal.search.opensearch2.internal.document;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.document.DocumentBuilder;
-import com.liferay.portal.search.internal.document.DocumentBuilderImpl;
 import com.liferay.portal.search.opensearch2.internal.OpenSearchTestRule;
 import com.liferay.portal.search.opensearch2.internal.hits.FieldsTranslator;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
@@ -38,9 +37,9 @@ public class DocumentFieldsTranslatorTest {
 
 	@Test
 	public void testDocumentSourceMapWithMultiValueField() {
-		FieldsTranslator fieldsTranslator = new FieldsTranslator(null);
+		FieldsTranslator fieldsTranslator = new FieldsTranslator();
 
-		DocumentBuilder documentBuilder = new DocumentBuilderImpl();
+		DocumentBuilder documentBuilder = new DocumentBuilder();
 
 		String fieldName = RandomTestUtil.randomString();
 

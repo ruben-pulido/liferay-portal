@@ -25,12 +25,17 @@ import com.liferay.portal.search.engine.adapter.search.SearchResponse;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotRequest;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotRequestExecutor;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotResponse;
+import com.liferay.portal.search.opensearch2.internal.connection.OpenSearchConnectionManager;
 import com.liferay.portal.search.opensearch2.internal.legacy.query.OpenSearchQueryVisitor;
+import com.liferay.portal.search.opensearch2.internal.search.engine.adapter.ccr.OpenSearchCCRRequestExecutor;
+import com.liferay.portal.search.opensearch2.internal.search.engine.adapter.cluster.OpenSearchClusterRequestExecutor;
+import com.liferay.portal.search.opensearch2.internal.search.engine.adapter.index.OpenSearchIndexRequestExecutor;
 import com.liferay.portal.search.opensearch2.internal.util.JsonpUtil;
 
 import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.opensearch.client.opensearch._types.query_dsl.QueryVariant;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -124,6 +129,15 @@ public class OpenSearchSearchEngineAdapterImpl implements SearchEngineAdapter {
 		}
 	}
 
+	@Activate
+	protected void activate() {
+		_ccrRequestExecutor = new OpenSearchCCRRequestExecutor();
+		_clusterRequestExecutor = new OpenSearchClusterRequestExecutor(
+			_openSearchConnectionManager);
+		_indexRequestExecutor = new OpenSearchIndexRequestExecutor(
+			_openSearchConnectionManager);
+	}
+
 	protected void setThrowOriginalExceptions(boolean throwOriginalExceptions) {
 		_throwOriginalExceptions = throwOriginalExceptions;
 	}
@@ -157,17 +171,16 @@ public class OpenSearchSearchEngineAdapterImpl implements SearchEngineAdapter {
 		return runtimeException1;
 	}
 
-	@Reference(target = "(search.engine.impl=OpenSearch)")
 	private CCRRequestExecutor _ccrRequestExecutor;
-
-	@Reference(target = "(search.engine.impl=OpenSearch)")
 	private ClusterRequestExecutor _clusterRequestExecutor;
 
 	@Reference(target = "(search.engine.impl=OpenSearch)")
 	private DocumentRequestExecutor _documentRequestExecutor;
 
-	@Reference(target = "(search.engine.impl=OpenSearch)")
 	private IndexRequestExecutor _indexRequestExecutor;
+
+	@Reference
+	private OpenSearchConnectionManager _openSearchConnectionManager;
 
 	@Reference(target = "(search.engine.impl=OpenSearch)")
 	private SearchRequestExecutor _searchRequestExecutor;

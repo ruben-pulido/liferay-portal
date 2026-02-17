@@ -24,7 +24,6 @@ import com.liferay.portal.search.document.DocumentBuilderFactory;
 import com.liferay.portal.search.elasticsearch8.internal.document.FieldsTranslator;
 import com.liferay.portal.search.elasticsearch8.internal.util.ConversionUtil;
 import com.liferay.portal.search.elasticsearch8.internal.util.JsonpUtil;
-import com.liferay.portal.search.geolocation.GeoBuilders;
 import com.liferay.portal.search.highlight.HighlightField;
 import com.liferay.portal.search.highlight.HighlightFieldBuilderFactory;
 import com.liferay.portal.search.hits.SearchHit;
@@ -47,13 +46,10 @@ import java.util.Map;
 public class HitsMetadataTranslator {
 
 	public HitsMetadataTranslator(
-		DocumentBuilderFactory documentBuilderFactory, GeoBuilders geoBuilders,
 		HighlightFieldBuilderFactory highlightFieldBuilderFactory,
 		SearchHitBuilderFactory searchHitBuilderFactory,
 		SearchHitsBuilderFactory searchHitsBuilderFactory) {
 
-		_documentBuilderFactory = documentBuilderFactory;
-		_geoBuilders = geoBuilders;
 		_highlightFieldBuilderFactory = highlightFieldBuilderFactory;
 		_searchHitBuilderFactory = searchHitBuilderFactory;
 		_searchHitsBuilderFactory = searchHitsBuilderFactory;
@@ -128,9 +124,9 @@ public class HitsMetadataTranslator {
 	private Document _translateDocument(
 		String alternateUidFieldName, Hit<JsonData> hit) {
 
-		DocumentBuilder documentBuilder = _documentBuilderFactory.builder();
+		DocumentBuilder documentBuilder = DocumentBuilderFactory.builder();
 
-		FieldsTranslator fieldsTranslator = new FieldsTranslator(_geoBuilders);
+		FieldsTranslator fieldsTranslator = new FieldsTranslator();
 
 		fieldsTranslator.translateSource(documentBuilder, hit.source());
 
@@ -181,8 +177,6 @@ public class HitsMetadataTranslator {
 		}
 	}
 
-	private final DocumentBuilderFactory _documentBuilderFactory;
-	private final GeoBuilders _geoBuilders;
 	private final HighlightFieldBuilderFactory _highlightFieldBuilderFactory;
 	private final SearchHitBuilderFactory _searchHitBuilderFactory;
 	private final SearchHitsBuilderFactory _searchHitsBuilderFactory;

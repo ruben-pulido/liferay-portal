@@ -24,8 +24,12 @@ import com.liferay.portal.search.engine.adapter.search.SearchResponse;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotRequest;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotRequestExecutor;
 import com.liferay.portal.search.engine.adapter.snapshot.SnapshotResponse;
+import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
 import com.liferay.portal.search.solr8.internal.query.SolrQueryVisitor;
+import com.liferay.portal.search.solr8.internal.search.engine.adapter.cluster.SolrClusterRequestExecutor;
+import com.liferay.portal.search.solr8.internal.search.engine.adapter.index.SolrIndexRequestExecutor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -110,6 +114,12 @@ public class SolrSearchEngineAdapterImpl implements SearchEngineAdapter {
 		}
 	}
 
+	@Activate
+	protected void activate() {
+		_indexRequestExecutor = new SolrIndexRequestExecutor(
+			_solrClientManager);
+	}
+
 	protected void setThrowOriginalExceptions(boolean throwOriginalExceptions) {
 		_throwOriginalExceptions = throwOriginalExceptions;
 	}
@@ -137,13 +147,12 @@ public class SolrSearchEngineAdapterImpl implements SearchEngineAdapter {
 		return runtimeException1;
 	}
 
-	@Reference(target = "(search.engine.impl=Solr)")
-	private ClusterRequestExecutor _clusterRequestExecutor;
+	private final ClusterRequestExecutor _clusterRequestExecutor =
+		new SolrClusterRequestExecutor();
 
 	@Reference(target = "(search.engine.impl=Solr)")
 	private DocumentRequestExecutor _documentRequestExecutor;
 
-	@Reference(target = "(search.engine.impl=Solr)")
 	private IndexRequestExecutor _indexRequestExecutor;
 
 	@Reference(target = "(search.engine.impl=Solr)")
@@ -151,6 +160,9 @@ public class SolrSearchEngineAdapterImpl implements SearchEngineAdapter {
 
 	@Reference(target = "(search.engine.impl=Solr)")
 	private SnapshotRequestExecutor _snapshotRequestExecutor;
+
+	@Reference
+	private SolrClientManager _solrClientManager;
 
 	private boolean _throwOriginalExceptions;
 

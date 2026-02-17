@@ -5,6 +5,9 @@ components:
                 externalReferenceCode:
                     readOnly: true
                     type: string
+                id:
+                    format: int64
+                    type: integer
                 name:
                     readOnly: true
                     type: string
@@ -71,6 +74,11 @@ paths:
                 -   in: query
                     name: search
                     schema:
+                        type: string
+                -   in: query
+                    name: type
+                    schema:
+                        enum: [Role, User]
                         type: string
             responses:
                 200:

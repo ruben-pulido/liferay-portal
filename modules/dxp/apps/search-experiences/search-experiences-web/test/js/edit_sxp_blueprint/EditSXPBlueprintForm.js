@@ -102,7 +102,7 @@ describe('EditSXPBlueprintForm', () => {
 			),
 		});
 
-		await findByText('query-settings');
+		await findByText('source');
 
 		const {getByText} = within(
 			container.querySelector('.layout-section-main')
@@ -117,7 +117,7 @@ describe('EditSXPBlueprintForm', () => {
 		const {container, findByText, queryAllByLabelText} =
 			renderEditSXPBlueprintForm();
 
-		await findByText('query-settings');
+		await findByText('source');
 
 		const sxpElementCountBefore =
 			container.querySelectorAll('.sxp-element').length;
@@ -151,7 +151,7 @@ describe('EditSXPBlueprintForm', () => {
 				),
 			});
 
-		await findByText('query-settings');
+		await findByText('source');
 
 		const sxpElementCountBefore =
 			container.querySelectorAll('.sxp-element').length;

@@ -5,6 +5,9 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.document;
 
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.document.configuration.BulkDocumentRequestRetryConfiguration;
 import com.liferay.portal.search.engine.adapter.document.BulkDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.BulkDocumentResponse;
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentRequest;
@@ -21,13 +24,18 @@ import com.liferay.portal.search.engine.adapter.document.UpdateByQueryDocumentRe
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentResponse;
 
+import java.util.Map;
+
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Dylan Rebelak
  */
 @Component(
+	configurationPid = "com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.document.configuration.BulkDocumentRequestRetryConfiguration",
 	property = "search.engine.impl=Elasticsearch",
 	service = DocumentRequestExecutor.class
 )
@@ -85,27 +93,51 @@ public class ElasticsearchDocumentRequestExecutor
 		return _updateDocumentRequestExecutor.execute(updateDocumentRequest);
 	}
 
-	@Reference
-	private BulkDocumentRequestExecutor _bulkDocumentRequestExecutor;
+	@Activate
+	protected void activate(Map<String, Object> properties) {
+		modified(properties);
 
-	@Reference
+		_deleteByQueryDocumentRequestExecutor =
+			new DeleteByQueryDocumentRequestExecutor(
+				_elasticsearchClientResolver);
+		_deleteDocumentRequestExecutor = new DeleteDocumentRequestExecutor(
+			_elasticsearchClientResolver);
+		_getDocumentRequestExecutor = new GetDocumentRequestExecutor(
+			_elasticsearchClientResolver);
+		_indexDocumentRequestExecutor = new IndexDocumentRequestExecutor(
+			_elasticsearchClientResolver);
+		_updateByQueryDocumentRequestExecutor =
+			new UpdateByQueryDocumentRequestExecutor(
+				_elasticsearchClientResolver);
+		_updateDocumentRequestExecutor = new UpdateDocumentRequestExecutor(
+			_elasticsearchClientResolver);
+	}
+
+	@Modified
+	protected void modified(Map<String, Object> properties) {
+		BulkDocumentRequestRetryConfiguration
+			bulkDocumentRequestRetryConfiguration =
+				ConfigurableUtil.createConfigurable(
+					BulkDocumentRequestRetryConfiguration.class, properties);
+
+		_bulkDocumentRequestExecutor = new BulkDocumentRequestExecutor(
+			_elasticsearchClientResolver,
+			bulkDocumentRequestRetryConfiguration.numberOfTries(),
+			bulkDocumentRequestRetryConfiguration.waitInSeconds());
+	}
+
+	private volatile BulkDocumentRequestExecutor _bulkDocumentRequestExecutor;
 	private DeleteByQueryDocumentRequestExecutor
 		_deleteByQueryDocumentRequestExecutor;
-
-	@Reference
 	private DeleteDocumentRequestExecutor _deleteDocumentRequestExecutor;
 
 	@Reference
+	private ElasticsearchClientResolver _elasticsearchClientResolver;
+
 	private GetDocumentRequestExecutor _getDocumentRequestExecutor;
-
-	@Reference
 	private IndexDocumentRequestExecutor _indexDocumentRequestExecutor;
-
-	@Reference
 	private UpdateByQueryDocumentRequestExecutor
 		_updateByQueryDocumentRequestExecutor;
-
-	@Reference
 	private UpdateDocumentRequestExecutor _updateDocumentRequestExecutor;
 
 }

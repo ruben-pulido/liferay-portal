@@ -165,11 +165,11 @@ public class TemplateInfoItemFieldSetProviderTest {
 		LocaleThreadLocal.setSiteDefaultLocale(_originalSiteDefaultLocale);
 		LocaleThreadLocal.setThemeDisplayLocale(_originalThemeDisplayLocale);
 
-		if (_globalTemplateEntry != null) {
+		if (_companyGroupTemplateEntry != null) {
 			_templateEntryLocalService.deleteTemplateEntry(
-				_globalTemplateEntry);
+				_companyGroupTemplateEntry);
 
-			_globalTemplateEntry = null;
+			_companyGroupTemplateEntry = null;
 		}
 	}
 
@@ -213,9 +213,25 @@ public class TemplateInfoItemFieldSetProviderTest {
 			infoField.getInfoFieldType() instanceof HTMLInfoFieldType);
 		Assert.assertEquals(
 			infoFields.toString(),
+			StringBundler.concat(
+				PortletDisplayTemplate.DISPLAY_STYLE_PREFIX,
+				StringPool.UNDERLINE,
+				PortletDisplayTemplate.DISPLAY_STYLE_PREFIX, "_ERC__",
+				journalArticleTemplateEntry.getExternalReferenceCode()),
+			infoField.getExternalUniqueId());
+		Assert.assertEquals(
+			infoFields.toString(),
 			PortletDisplayTemplate.DISPLAY_STYLE_PREFIX +
 				journalArticleTemplateEntry.getTemplateEntryId(),
 			infoField.getName());
+		Assert.assertEquals(
+			infoFields.toString(),
+			StringBundler.concat(
+				PortletDisplayTemplate.DISPLAY_STYLE_PREFIX,
+				StringPool.UNDERLINE,
+				PortletDisplayTemplate.DISPLAY_STYLE_PREFIX,
+				journalArticleTemplateEntry.getTemplateEntryId()),
+			infoField.getUniqueId());
 	}
 
 	@Test
@@ -226,7 +242,7 @@ public class TemplateInfoItemFieldSetProviderTest {
 
 		_serviceContext.setScopeGroupId(_company.getGroupId());
 
-		_globalTemplateEntry = TemplateTestUtil.addTemplateEntry(
+		_companyGroupTemplateEntry = TemplateTestUtil.addTemplateEntry(
 			BlogsEntry.class.getName(), StringPool.BLANK, _serviceContext);
 
 		_serviceContext.setScopeGroupId(groupId);
@@ -267,7 +283,7 @@ public class TemplateInfoItemFieldSetProviderTest {
 			infoFieldNames.containsAll(
 				Arrays.asList(
 					PortletDisplayTemplate.DISPLAY_STYLE_PREFIX +
-						_globalTemplateEntry.getTemplateEntryId(),
+						_companyGroupTemplateEntry.getTemplateEntryId(),
 					PortletDisplayTemplate.DISPLAY_STYLE_PREFIX +
 						groupBlogsEntryTemplateEntry.getTemplateEntryId())));
 	}
@@ -278,9 +294,11 @@ public class TemplateInfoItemFieldSetProviderTest {
 
 		long groupId = _serviceContext.getScopeGroupId();
 
-		_serviceContext.setScopeGroupId(_company.getGroupId());
+		Group companyGroup = _company.getGroup();
 
-		_globalTemplateEntry = TemplateTestUtil.addTemplateEntry(
+		_serviceContext.setScopeGroupId(companyGroup.getGroupId());
+
+		_companyGroupTemplateEntry = TemplateTestUtil.addTemplateEntry(
 			BlogsEntry.class.getName(), StringPool.BLANK, _serviceContext);
 
 		_serviceContext.setScopeGroupId(groupId);
@@ -302,9 +320,26 @@ public class TemplateInfoItemFieldSetProviderTest {
 			infoField.getInfoFieldType() instanceof HTMLInfoFieldType);
 		Assert.assertEquals(
 			infoFields.toString(),
+			StringBundler.concat(
+				PortletDisplayTemplate.DISPLAY_STYLE_PREFIX,
+				StringPool.UNDERLINE,
+				PortletDisplayTemplate.DISPLAY_STYLE_PREFIX, "_ERC__",
+				_companyGroupTemplateEntry.getExternalReferenceCode(),
+				"__SERC__", companyGroup.getExternalReferenceCode()),
+			infoField.getExternalUniqueId());
+		Assert.assertEquals(
+			infoFields.toString(),
 			PortletDisplayTemplate.DISPLAY_STYLE_PREFIX +
-				_globalTemplateEntry.getTemplateEntryId(),
+				_companyGroupTemplateEntry.getTemplateEntryId(),
 			infoField.getName());
+		Assert.assertEquals(
+			infoFields.toString(),
+			StringBundler.concat(
+				PortletDisplayTemplate.DISPLAY_STYLE_PREFIX,
+				StringPool.UNDERLINE,
+				PortletDisplayTemplate.DISPLAY_STYLE_PREFIX,
+				_companyGroupTemplateEntry.getTemplateEntryId()),
+			infoField.getUniqueId());
 	}
 
 	@Test
@@ -1344,6 +1379,7 @@ public class TemplateInfoItemFieldSetProviderTest {
 	private AssetVocabularyLocalService _assetVocabularyLocalService;
 
 	private Company _company;
+	private TemplateEntry _companyGroupTemplateEntry;
 
 	@Inject
 	private CompanyLocalService _companyLocalService;
@@ -1356,8 +1392,6 @@ public class TemplateInfoItemFieldSetProviderTest {
 
 	@Inject
 	private DDMTemplateLocalService _ddmTemplateLocalService;
-
-	private TemplateEntry _globalTemplateEntry;
 
 	@DeleteAfterTestRun
 	private Group _group;

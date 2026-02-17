@@ -8,14 +8,17 @@ import {
 	IBulkActionTaskType,
 } from '../../../common/types/BulkActionTask';
 import {
+	BULK_ACTION_ASSIGN_TO,
 	BULK_ACTION_CATEGORIES,
 	BULK_ACTION_DEFAULT_PERMISSIONS,
 	BULK_ACTION_DELETE,
 	BULK_ACTION_DOWNLOAD,
+	BULK_ACTION_DUE_DATE,
 	BULK_ACTION_EXPIRE,
 	BULK_ACTION_MOVE,
 	BULK_ACTION_PERMISSIONS,
 	BULK_ACTION_RESET_PERMISSIONS,
+	BULK_ACTION_STATUS,
 	BULK_ACTION_TAGS,
 } from './constants';
 
@@ -30,6 +33,19 @@ type BulkActionMessage = {
 };
 
 const BULK_ACTION_MESSAGES: BulkActionMessage = {
+	[BULK_ACTION_ASSIGN_TO]: {
+		info: {
+			all: Liferay.Language.get(
+				'assign-to-action-started-for-all-assets'
+			),
+			plural: Liferay.Language.get(
+				'assign-to-action-started-for-x-assets'
+			),
+			singular: Liferay.Language.get(
+				'assign-to-action-started-for-one-asset'
+			),
+		},
+	},
 	[BULK_ACTION_CATEGORIES]: {
 		info: {
 			all: Liferay.Language.get(
@@ -76,6 +92,19 @@ const BULK_ACTION_MESSAGES: BulkActionMessage = {
 			),
 		},
 	},
+	[BULK_ACTION_DUE_DATE]: {
+		info: {
+			all: Liferay.Language.get(
+				'due-date-update-action-started-for-all-tasks'
+			),
+			plural: Liferay.Language.get(
+				'due-date-update-action-started-for-x-tasks'
+			),
+			singular: Liferay.Language.get(
+				'due-date-update-action-started-for-one-task'
+			),
+		},
+	},
 	[BULK_ACTION_EXPIRE]: {
 		info: {
 			all: Liferay.Language.get('expire-action-started-for-all-assets'),
@@ -115,6 +144,19 @@ const BULK_ACTION_MESSAGES: BulkActionMessage = {
 			),
 			singular: Liferay.Language.get(
 				'reset-permissions-action-started-for-one-asset'
+			),
+		},
+	},
+	[BULK_ACTION_STATUS]: {
+		info: {
+			all: Liferay.Language.get(
+				'state-update-action-started-for-all-tasks'
+			),
+			plural: Liferay.Language.get(
+				'state-update-action-started-for-x-tasks'
+			),
+			singular: Liferay.Language.get(
+				'state-update-action-started-for-one-task'
 			),
 		},
 	},

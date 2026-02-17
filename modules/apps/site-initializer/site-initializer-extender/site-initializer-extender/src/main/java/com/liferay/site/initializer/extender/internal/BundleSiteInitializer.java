@@ -3273,6 +3273,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 					"C_" + jsonObject.getString("objectDefinitionName"));
 
 			if (objectDefinition == null) {
+				objectDefinition =
+					_objectDefinitionLocalService.fetchObjectDefinition(
+						serviceContext.getCompanyId(),
+						jsonObject.getString("objectDefinitionName"));
+			}
+
+			if (objectDefinition == null) {
 				continue;
 			}
 
@@ -3317,6 +3324,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					continue;
 				}
 
+				String objectDefinitionName = objectDefinition.getName();
 				com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry =
 					_objectEntryLocalService.getObjectEntry(
 						objectEntry.getId());
@@ -3331,7 +3339,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 								serviceBuilderObjectEntry.
 									getExternalReferenceCode();
 							title = StringBundler.concat(
-								objectDefinition.getName(), StringPool.SPACE,
+								objectDefinitionName, StringPool.SPACE,
 								serviceBuilderObjectEntry.getObjectEntryId());
 						}
 					});

@@ -5,6 +5,8 @@
 
 import {ApiHelper} from '@liferay/site-cms-site-initializer';
 
+import {ITask} from './types';
+
 export async function deleteTaskById({taskId}: {taskId: string}) {
 	return await ApiHelper.delete(`/o/cmp/tasks/${taskId}`);
 }
@@ -18,6 +20,12 @@ export async function getAllProjects() {
 export async function getAllStates() {
 	return await ApiHelper.get(
 		'/o/headless-admin-list-type/v1.0/list-type-definitions/by-external-reference-code/L_CMP_STATES/list-type-entries'
+	);
+}
+
+export async function getStateObjectField() {
+	return await ApiHelper.get(
+		'/o/object-admin/v1.0/object-definitions/by-external-reference-code/L_CMP_TASK/object-fields?search=state'
 	);
 }
 
@@ -48,7 +56,31 @@ export async function patchTaskById({
 	body: {[key: string]: any};
 	taskId: string;
 }) {
-	return await ApiHelper.patch(body, `/o/cmp/tasks/${taskId}`);
+	return await ApiHelper.patch<ITask>(body, `/o/cmp/tasks/${taskId}`);
+}
+
+export async function postSubscribeTaskByExternalReferenceCode({
+	externalReferenceCode,
+	scopeKey,
+}: {
+	externalReferenceCode: string;
+	scopeKey: string;
+}) {
+	return await ApiHelper.post(
+		`/o/cmp/tasks/scopes/${scopeKey}/by-external-reference-code/${externalReferenceCode}/subscribe`
+	);
+}
+
+export async function postUnsubscribeTaskByExternalReferenceCode({
+	externalReferenceCode,
+	scopeKey,
+}: {
+	externalReferenceCode: string;
+	scopeKey: string;
+}) {
+	return await ApiHelper.post(
+		`/o/cmp/tasks/scopes/${scopeKey}/by-external-reference-code/${externalReferenceCode}/unsubscribe`
+	);
 }
 
 export async function postTaskByScope({

@@ -2,6 +2,7 @@ import mockStore from 'test/mock-store';
 import React from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import {fireEvent, render} from '@testing-library/react';
+import {fromJS} from 'immutable';
 import {Provider} from 'react-redux';
 import {SegmentActivationCard} from '../SegmentActivationCard';
 import {
@@ -11,10 +12,6 @@ import {
 } from 'shared/util/constants';
 
 jest.unmock('react-dom');
-
-const mockData = {
-	segmentActivationId: '1'
-};
 
 const WrapperComponent: React.FC<{children: React.ReactNode}> = ({
 	children
@@ -41,12 +38,11 @@ describe('SegmentActivationCard', () => {
 		const {container} = render(
 			<WrapperComponent>
 				<SegmentActivationCard
-					segmentActivation={{
+					segmentActivation={fromJS({
 						frequencyType:
 							SegmentActivationFrequencyTypes.Indefinitely,
-						scheduleType: SegmentActivationScheduleTypes.Batch,
-						...mockData
-					}}
+						scheduleType: SegmentActivationScheduleTypes.Batch
+					})}
 					segmentType={SegmentTypes.Batch}
 				/>
 			</WrapperComponent>
@@ -58,12 +54,11 @@ describe('SegmentActivationCard', () => {
 		const {container} = render(
 			<WrapperComponent>
 				<SegmentActivationCard
-					segmentActivation={{
+					segmentActivation={fromJS({
 						frequencyType:
 							SegmentActivationFrequencyTypes.Indefinitely,
-						scheduleType: SegmentActivationScheduleTypes.RealTime,
-						...mockData
-					}}
+						scheduleType: SegmentActivationScheduleTypes.RealTime
+					})}
 					segmentType={SegmentTypes.Batch}
 				/>
 			</WrapperComponent>
@@ -75,13 +70,12 @@ describe('SegmentActivationCard', () => {
 		const {container} = render(
 			<WrapperComponent>
 				<SegmentActivationCard
-					segmentActivation={{
+					segmentActivation={fromJS({
 						frequencyType: SegmentActivationFrequencyTypes.Between,
 						scheduleEndDate: '1757818800000',
 						scheduleStartDate: '1756004400000',
-						scheduleType: SegmentActivationScheduleTypes.Batch,
-						...mockData
-					}}
+						scheduleType: SegmentActivationScheduleTypes.Batch
+					})}
 					segmentType={SegmentTypes.Batch}
 				/>
 			</WrapperComponent>
@@ -93,12 +87,11 @@ describe('SegmentActivationCard', () => {
 		const {findByTestId, findByText, getByTestId} = render(
 			<WrapperComponent>
 				<SegmentActivationCard
-					segmentActivation={{
+					segmentActivation={fromJS({
 						frequencyType:
 							SegmentActivationFrequencyTypes.Indefinitely,
-						scheduleType: SegmentActivationScheduleTypes.Batch,
-						...mockData
-					}}
+						scheduleType: SegmentActivationScheduleTypes.Batch
+					})}
 					segmentType={SegmentTypes.Batch}
 				/>
 			</WrapperComponent>
@@ -118,12 +111,11 @@ describe('SegmentActivationCard', () => {
 		const {findByTestId, findByText, getByTestId} = render(
 			<WrapperComponent>
 				<SegmentActivationCard
-					segmentActivation={{
+					segmentActivation={fromJS({
 						frequencyType:
 							SegmentActivationFrequencyTypes.Indefinitely,
-						scheduleType: SegmentActivationScheduleTypes.RealTime,
-						...mockData
-					}}
+						scheduleType: SegmentActivationScheduleTypes.RealTime
+					})}
 					segmentType={SegmentTypes.RealTime}
 				/>
 			</WrapperComponent>
@@ -146,13 +138,12 @@ describe('SegmentActivationCard', () => {
 		const {findByTestId, findByText, getByTestId} = render(
 			<WrapperComponent>
 				<SegmentActivationCard
-					segmentActivation={{
+					segmentActivation={fromJS({
 						frequencyType: SegmentActivationFrequencyTypes.Between,
 						scheduleEndDate: '1757818800000',
 						scheduleStartDate: '1756004400000',
-						scheduleType: SegmentActivationScheduleTypes.RealTime,
-						...mockData
-					}}
+						scheduleType: SegmentActivationScheduleTypes.RealTime
+					})}
 					segmentType={SegmentTypes.RealTime}
 				/>
 			</WrapperComponent>

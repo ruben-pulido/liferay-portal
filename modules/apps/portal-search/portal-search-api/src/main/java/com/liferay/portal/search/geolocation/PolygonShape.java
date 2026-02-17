@@ -5,20 +5,46 @@
 
 package com.liferay.portal.search.geolocation;
 
+import java.util.Collections;
 import java.util.List;
-
-import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface PolygonShape extends Shape {
+public class PolygonShape extends Shape {
 
-	public List<LineStringShape> getHoles();
+	@Override
+	public <T> T accept(ShapeTranslator<T> shapeTranslator) {
+		return shapeTranslator.translate(this);
+	}
 
-	public Orientation getOrientation();
+	public List<LineStringShape> getHoles() {
+		return _holeLineStringShapes;
+	}
 
-	public LineStringShape getShell();
+	public Orientation getOrientation() {
+		return _orientation;
+	}
+
+	public LineStringShape getShell() {
+		return _shell;
+	}
+
+	protected PolygonShape(
+		List<Coordinate> coordinates,
+		List<LineStringShape> holeLineStringShapes, Orientation orientation,
+		LineStringShape shell) {
+
+		super(coordinates);
+
+		_holeLineStringShapes = Collections.unmodifiableList(
+			holeLineStringShapes);
+		_orientation = orientation;
+		_shell = shell;
+	}
+
+	private final List<LineStringShape> _holeLineStringShapes;
+	private final Orientation _orientation;
+	private final LineStringShape _shell;
 
 }

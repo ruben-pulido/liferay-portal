@@ -192,6 +192,19 @@ public class FragmentEntryConfigurationParserTest {
 	}
 
 	@Test
+	@TestInfo("LPD-77079")
+	public void testGetFieldValueWithLocalizableFields() {
+		_testGetFieldValueWithLocalizableField(
+			"checkbox", Boolean.FALSE, Boolean.TRUE);
+		_testGetFieldValueWithLocalizableField(
+			"colorPicker", "#0F0303", "#35CC58");
+		_testGetFieldValueWithLocalizableField("length", "300px", "320px");
+		_testGetFieldValueWithLocalizableField(
+			"text", RandomTestUtil.randomString(),
+			RandomTestUtil.randomString());
+	}
+
+	@Test
 	public void testTranslateConfigurationEn() throws Exception {
 		_testTranslateConfiguration("en");
 	}
@@ -215,6 +228,67 @@ public class FragmentEntryConfigurationParserTest {
 		return JSONFactoryUtil.createJSONObject(
 			new String(
 				FileUtil.getBytes(getClass(), "dependencies/" + fileName)));
+	}
+
+	private void _testGetFieldValueWithLocalizableField(
+		String fieldType, Object expectedEnglishValue,
+		Object expectedSpanishValue) {
+
+		String fieldName = RandomTestUtil.randomString();
+
+		JSONObject configurationJSONObject = JSONUtil.put(
+			"fieldSets",
+			JSONUtil.put(
+				JSONUtil.put(
+					"fields",
+					JSONUtil.put(
+						JSONUtil.put(
+							"defaultValue", expectedEnglishValue
+						).put(
+							"label", fieldName
+						).put(
+							"localizable", true
+						).put(
+							"name", fieldName
+						).put(
+							"type", fieldType
+						)))));
+
+		JSONObject valueJSONObject =
+			(JSONObject)_fragmentEntryConfigurationParser.getFieldValue(
+				configurationJSONObject,
+				JSONUtil.put(
+					FragmentEntryProcessorConstants.
+						KEY_FREEMARKER_FRAGMENT_ENTRY_PROCESSOR,
+					JSONUtil.put(
+						fieldName,
+						JSONUtil.put(
+							LocaleUtil.toLanguageId(LocaleUtil.US),
+							expectedEnglishValue
+						).put(
+							LocaleUtil.toLanguageId(LocaleUtil.SPAIN),
+							expectedSpanishValue
+						))),
+				fieldName);
+
+		Object englishValue = null;
+		Object spanishValue = null;
+
+		if (expectedEnglishValue instanceof Boolean) {
+			englishValue = valueJSONObject.getBoolean(
+				LocaleUtil.toLanguageId(LocaleUtil.US));
+			spanishValue = valueJSONObject.getBoolean(
+				LocaleUtil.toLanguageId(LocaleUtil.SPAIN));
+		}
+		else {
+			englishValue = valueJSONObject.getString(
+				LocaleUtil.toLanguageId(LocaleUtil.US));
+			spanishValue = valueJSONObject.getString(
+				LocaleUtil.toLanguageId(LocaleUtil.SPAIN));
+		}
+
+		Assert.assertEquals(expectedEnglishValue, englishValue);
+		Assert.assertEquals(expectedSpanishValue, spanishValue);
 	}
 
 	private void _testTranslateConfiguration(String language) throws Exception {

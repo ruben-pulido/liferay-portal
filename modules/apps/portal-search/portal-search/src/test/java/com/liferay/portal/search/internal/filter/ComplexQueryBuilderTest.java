@@ -1,0 +1,152 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.portal.search.internal.filter;
+
+import com.liferay.portal.search.filter.ComplexQueryBuilder;
+import com.liferay.portal.search.filter.ComplexQueryPart;
+import com.liferay.portal.search.filter.ComplexQueryPartBuilderFactory;
+import com.liferay.portal.search.query.BooleanQuery;
+import com.liferay.portal.search.query.DateRangeTermQuery;
+import com.liferay.portal.search.query.FuzzyQuery;
+import com.liferay.portal.search.query.MatchQuery;
+import com.liferay.portal.search.query.NestedQuery;
+import com.liferay.portal.search.query.Query;
+import com.liferay.portal.search.query.RangeTermQuery;
+import com.liferay.portal.test.rule.LiferayUnitTestRule;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+
+/**
+ * @author Wade Cao
+ */
+public class ComplexQueryBuilderTest {
+
+	@ClassRule
+	@Rule
+	public static final LiferayUnitTestRule liferayUnitTestRule =
+		LiferayUnitTestRule.INSTANCE;
+
+	@Test
+	public void testFilterDateRangeTermQuery() {
+		Query query = _getQuery("date_range", "[now/d now+1d/d[");
+
+		Assert.assertTrue(query instanceof DateRangeTermQuery);
+	}
+
+	@Test
+	public void testFilterDateRangeTermQueryInvalidValue() {
+		List<Query> queries = _getQueries("date_range", "now/d now+1d/d[");
+
+		Assert.assertTrue(queries.isEmpty());
+	}
+
+	@Test
+	public void testFilterFuzzyQuery() {
+		Query query = _getQuery("fuzzy", "it is fuzzyyyyy");
+
+		Assert.assertTrue(query instanceof FuzzyQuery);
+	}
+
+	@Test
+	public void testFilterMatchQuery() {
+		Query query = _getQuery("match", "match-me");
+
+		Assert.assertTrue(query instanceof MatchQuery);
+	}
+
+	@Test
+	public void testFilterNestedQuery() {
+		Query query = _getQuery("nested", "path");
+
+		Assert.assertTrue(query instanceof NestedQuery);
+
+		NestedQuery nestedQuery = (NestedQuery)query;
+
+		Assert.assertTrue(nestedQuery.getQuery() instanceof BooleanQuery);
+	}
+
+	@Test
+	public void testFilterRangeTermQuery() {
+		Query query = _getQuery("range", "]10 20]");
+
+		Assert.assertTrue(query instanceof RangeTermQuery);
+	}
+
+	@Test
+	public void testFilterRangeTermQueryInvalidValue() {
+		List<Query> queries = _getQueries("range", "10 20]");
+
+		Assert.assertTrue(queries.isEmpty());
+	}
+
+	@Test
+	public void testInvalidType() {
+		List<Query> queries = _getQueries("whatever", "[now/d now+1d/d[");
+
+		Assert.assertTrue(queries.isEmpty());
+	}
+
+	@Test
+	public void testInvalidType2() {
+		List<Query> queries = _getQueries("whatever", "]10 20]");
+
+		Assert.assertTrue(queries.isEmpty());
+	}
+
+	private List<Query> _getQueries(String type, String value) {
+		ComplexQueryBuilder complexQueryBuilder = new ComplexQueryBuilder();
+
+		BooleanQuery booleanQuery = (BooleanQuery)complexQueryBuilder.root(
+			new BooleanQuery()
+		).addParts(
+			new ArrayList<ComplexQueryPart>() {
+
+				private static final long serialVersionUID = 1L;
+
+				{
+					add(
+						_complexQueryPartBuilderFactory.builder(
+						).boost(
+							Float.valueOf(1.0F)
+						).disabled(
+							false
+						).field(
+							"modified"
+						).name(
+							"myTerm"
+						).occur(
+							"filter"
+						).parent(
+							"no parent"
+						).type(
+							type
+						).value(
+							value
+						).build());
+				}
+			}
+		).build();
+
+		return booleanQuery.getFilterQueryClauses();
+	}
+
+	private Query _getQuery(String type, String value) {
+		List<Query> queries = _getQueries(type, value);
+
+		return queries.get(0);
+	}
+
+	private final ComplexQueryPartBuilderFactory
+		_complexQueryPartBuilderFactory =
+			new ComplexQueryPartBuilderFactoryImpl();
+
+}

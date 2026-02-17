@@ -5,18 +5,38 @@
 
 package com.liferay.portal.search.geolocation;
 
+import java.util.Collections;
 import java.util.List;
-
-import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface MultiPolygonShape extends Shape {
+public class MultiPolygonShape extends Shape {
 
-	public Orientation getOrientation();
+	@Override
+	public <T> T accept(ShapeTranslator<T> shapeTranslator) {
+		return shapeTranslator.translate(this);
+	}
 
-	public List<PolygonShape> getPolygonShapes();
+	public Orientation getOrientation() {
+		return _orientation;
+	}
+
+	public List<PolygonShape> getPolygonShapes() {
+		return _polygonShapes;
+	}
+
+	protected MultiPolygonShape(
+		List<Coordinate> coordinates, Orientation orientation,
+		List<PolygonShape> polygonShapes) {
+
+		super(coordinates);
+
+		_orientation = orientation;
+		_polygonShapes = Collections.unmodifiableList(polygonShapes);
+	}
+
+	private final Orientation _orientation;
+	private final List<PolygonShape> _polygonShapes;
 
 }

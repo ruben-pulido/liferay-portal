@@ -5,40 +5,117 @@
 
 package com.liferay.portal.search.query;
 
-import org.osgi.annotation.versioning.ProviderType;
+import com.liferay.petra.string.StringBundler;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface FuzzyQuery extends Query {
+public class FuzzyQuery extends Query {
 
-	public String getField();
+	public FuzzyQuery(String field, String value) {
+		_field = field;
+		_value = value;
+	}
 
-	public Float getFuzziness();
+	@Override
+	public <T> T accept(QueryVisitor<T> queryVisitor) {
+		return queryVisitor.visit(this);
+	}
 
-	public Integer getMaxEdits();
+	public String getField() {
+		return _field;
+	}
 
-	public Integer getMaxExpansions();
+	public Float getFuzziness() {
+		return _fuzziness;
+	}
 
-	public Integer getPrefixLength();
+	public Integer getMaxEdits() {
+		return _maxEdits;
+	}
 
-	public String getRewrite();
+	public Integer getMaxExpansions() {
+		return _maxExpansions;
+	}
 
-	public Boolean getTranspositions();
+	public Integer getPrefixLength() {
+		return _prefixLength;
+	}
 
-	public String getValue();
+	public String getRewrite() {
+		return _rewrite;
+	}
 
-	public void setFuzziness(Float fuzziness);
+	public Boolean getTranspositions() {
+		return _transpositions;
+	}
 
-	public void setMaxEdits(Integer maxEdits);
+	public String getValue() {
+		return _value;
+	}
 
-	public void setMaxExpansions(Integer maxExpansions);
+	public void setFuzziness(Float fuzziness) {
+		_fuzziness = fuzziness;
+	}
 
-	public void setPrefixLength(Integer prefixLength);
+	public void setMaxEdits(Integer maxEdits) {
+		_maxEdits = maxEdits;
+	}
 
-	public void setRewrite(String rewrite);
+	public void setMaxExpansions(Integer maxExpansions) {
+		_maxExpansions = maxExpansions;
+	}
 
-	public void setTranspositions(Boolean transpositions);
+	public void setPrefixLength(Integer prefixLength) {
+		_prefixLength = prefixLength;
+	}
+
+	public void setRewrite(String rewrite) {
+		_rewrite = rewrite;
+	}
+
+	public void setTranspositions(Boolean transpositions) {
+		_transpositions = transpositions;
+	}
+
+	@Override
+	public String toString() {
+		StringBundler sb = new StringBundler(17);
+
+		sb.append("{className=");
+
+		Class<?> clazz = getClass();
+
+		sb.append(clazz.getSimpleName());
+
+		sb.append(", field=");
+		sb.append(_field);
+		sb.append(", fuzziness=");
+		sb.append(_fuzziness);
+		sb.append(", maxEdits=");
+		sb.append(_maxEdits);
+		sb.append(", maxExpansions=");
+		sb.append(_maxExpansions);
+		sb.append(", prefixLength=");
+		sb.append(_prefixLength);
+		sb.append(", transpositions=");
+		sb.append(_transpositions);
+		sb.append(", value=");
+		sb.append(_value);
+		sb.append("}");
+
+		return sb.toString();
+	}
+
+	private static final long serialVersionUID = 1L;
+
+	private final String _field;
+	private Float _fuzziness;
+	private Integer _maxEdits;
+	private Integer _maxExpansions;
+	private Integer _prefixLength;
+	private String _rewrite;
+	private Boolean _transpositions;
+	private final String _value;
 
 }

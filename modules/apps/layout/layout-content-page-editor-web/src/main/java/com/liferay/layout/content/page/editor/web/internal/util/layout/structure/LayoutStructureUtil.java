@@ -5,17 +5,27 @@
 
 package com.liferay.layout.content.page.editor.web.internal.util.layout.structure;
 
+import com.liferay.fragment.contributor.util.FragmentCollectionContributorRegistryUtil;
+import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.fragment.renderer.FragmentRenderer;
+import com.liferay.fragment.renderer.util.FragmentRendererRegistryUtil;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
+import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureServiceUtil;
 import com.liferay.layout.util.structure.DeletedLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
+import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.ScopeUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
 
@@ -90,6 +100,20 @@ public class LayoutStructureUtil {
 			layoutPageTemplateStructure.getData(segmentsExperienceKey));
 	}
 
+	public static boolean hasMissingFragmentEntryFragmentEntryLinks(
+		String itemId, LayoutStructure layoutStructure) {
+
+		LayoutStructureItem layoutStructureItem =
+			layoutStructure.getLayoutStructureItem(itemId);
+
+		if (layoutStructureItem == null) {
+			return false;
+		}
+
+		return _hasMissingFragmentEntryFragmentEntryLinks(
+			layoutStructureItem.getChildrenItemIds(), layoutStructure);
+	}
+
 	public static JSONObject updateLayoutPageTemplateData(
 			long groupId, long segmentsExperienceId, long plid,
 			UnsafeConsumer<LayoutStructure, PortalException> unsafeConsumer)
@@ -107,6 +131,84 @@ public class LayoutStructureUtil {
 				groupId, plid, segmentsExperienceId, dataJSONObject.toString());
 
 		return dataJSONObject;
+	}
+
+	private static FragmentEntry _getFragmentEntry(
+		FragmentEntryLink fragmentEntryLink) {
+
+		if (Validator.isNull(fragmentEntryLink.getFragmentEntryERC())) {
+			return FragmentCollectionContributorRegistryUtil.getFragmentEntry(
+				fragmentEntryLink.getRendererKey());
+		}
+
+		Long fragmentEntryGroupId = ScopeUtil.getItemGroupId(
+			fragmentEntryLink.getCompanyId(),
+			fragmentEntryLink.getFragmentEntryScopeERC(),
+			fragmentEntryLink.getGroupId());
+
+		if (fragmentEntryGroupId == null) {
+			return null;
+		}
+
+		return FragmentEntryLocalServiceUtil.
+			fetchFragmentEntryByExternalReferenceCode(
+				fragmentEntryLink.getFragmentEntryERC(), fragmentEntryGroupId);
+	}
+
+	private static boolean _hasMissingFragmentEntryFragmentEntryLinks(
+		List<String> itemIds, LayoutStructure layoutStructure) {
+
+		for (String itemId : itemIds) {
+			LayoutStructureItem layoutStructureItem =
+				layoutStructure.getLayoutStructureItem(itemId);
+
+			if (_hasMissingFragmentEntryFragmentEntryLinks(
+					layoutStructureItem.getChildrenItemIds(),
+					layoutStructure)) {
+
+				return true;
+			}
+
+			if (!(layoutStructureItem instanceof
+					FragmentStyledLayoutStructureItem)) {
+
+				continue;
+			}
+
+			FragmentStyledLayoutStructureItem
+				fragmentStyledLayoutStructureItem =
+					(FragmentStyledLayoutStructureItem)layoutStructureItem;
+
+			FragmentEntryLink fragmentEntryLink =
+				FragmentEntryLinkLocalServiceUtil.fetchFragmentEntryLink(
+					fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
+
+			if (Validator.isNull(fragmentEntryLink.getFragmentEntryERC()) &&
+				Validator.isNull(fragmentEntryLink.getRendererKey())) {
+
+				continue;
+			}
+
+			FragmentEntry fragmentEntry = _getFragmentEntry(fragmentEntryLink);
+
+			if (fragmentEntry != null) {
+				continue;
+			}
+
+			if (Validator.isNull(fragmentEntryLink.getRendererKey())) {
+				return true;
+			}
+
+			FragmentRenderer fragmentRenderer =
+				FragmentRendererRegistryUtil.getFragmentRenderer(
+					fragmentEntryLink.getRendererKey());
+
+			if (fragmentRenderer == null) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

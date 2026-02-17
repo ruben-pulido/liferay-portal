@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.search.elasticsearch8.internal.connection.ElasticsearchFixture;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.test.util.RequestExecutorFixture;
+import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentResponse;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
@@ -51,8 +52,12 @@ public class UpdateDocumentRequestExecutorLegacyTest {
 
 	@Before
 	public void setUp() {
-		_updateDocumentRequestExecutor =
-			_requestExecutorFixture.getUpdateDocumentRequestExecutor();
+		_getDocumentRequestExecutor = new GetDocumentRequestExecutor(
+			_elasticsearchFixture);
+		_indexDocumentRequestExecutor = new IndexDocumentRequestExecutor(
+			_elasticsearchFixture);
+		_updateDocumentRequestExecutor = new UpdateDocumentRequestExecutor(
+			_elasticsearchFixture);
 
 		_requestExecutorFixture.createIndex(_INDEX_NAME);
 	}
@@ -65,8 +70,9 @@ public class UpdateDocumentRequestExecutorLegacyTest {
 	@Test
 	public void testFieldArrayWithNull() {
 		IndexDocumentResponse indexDocumentResponse =
-			_requestExecutorFixture.indexDocument(
-				_INDEX_NAME, buildDocument(_FIELD_NAME, "example test"));
+			_indexDocumentRequestExecutor.execute(
+				new IndexDocumentRequest(
+					_INDEX_NAME, buildDocument(_FIELD_NAME, "example test")));
 
 		String uid = indexDocumentResponse.getUid();
 
@@ -83,8 +89,9 @@ public class UpdateDocumentRequestExecutorLegacyTest {
 	@Test
 	public void testFieldEmptyArray() {
 		IndexDocumentResponse indexDocumentResponse =
-			_requestExecutorFixture.indexDocument(
-				_INDEX_NAME, buildDocument(_FIELD_NAME, "example test"));
+			_indexDocumentRequestExecutor.execute(
+				new IndexDocumentRequest(
+					_INDEX_NAME, buildDocument(_FIELD_NAME, "example test")));
 
 		String uid = indexDocumentResponse.getUid();
 
@@ -100,8 +107,9 @@ public class UpdateDocumentRequestExecutorLegacyTest {
 	@Test
 	public void testFieldNull() {
 		IndexDocumentResponse indexDocumentResponse =
-			_requestExecutorFixture.indexDocument(
-				_INDEX_NAME, buildDocument(_FIELD_NAME, "example test"));
+			_indexDocumentRequestExecutor.execute(
+				new IndexDocumentRequest(
+					_INDEX_NAME, buildDocument(_FIELD_NAME, "example test")));
 
 		String uid = indexDocumentResponse.getUid();
 
@@ -117,8 +125,9 @@ public class UpdateDocumentRequestExecutorLegacyTest {
 	@Test
 	public void testUnsetValue() {
 		IndexDocumentResponse indexDocumentResponse =
-			_requestExecutorFixture.indexDocument(
-				_INDEX_NAME, buildDocument(_FIELD_NAME, "example test"));
+			_indexDocumentRequestExecutor.execute(
+				new IndexDocumentRequest(
+					_INDEX_NAME, buildDocument(_FIELD_NAME, "example test")));
 
 		String uid = indexDocumentResponse.getUid();
 
@@ -145,7 +154,8 @@ public class UpdateDocumentRequestExecutorLegacyTest {
 		String uid, String fieldName, String expectedFieldValue) {
 
 		com.liferay.portal.search.document.Document document =
-			_requestExecutorFixture.getDocumentById(_INDEX_NAME, uid);
+			_requestExecutorFixture.getDocumentById(
+				_getDocumentRequestExecutor, _INDEX_NAME, uid);
 
 		Assert.assertEquals(expectedFieldValue, document.getString(fieldName));
 	}
@@ -179,8 +189,9 @@ public class UpdateDocumentRequestExecutorLegacyTest {
 
 	protected void doUpdateDocument(boolean refresh) {
 		IndexDocumentResponse indexDocumentResponse =
-			_requestExecutorFixture.indexDocument(
-				_INDEX_NAME, buildDocument(_FIELD_NAME, "example test"));
+			_indexDocumentRequestExecutor.execute(
+				new IndexDocumentRequest(
+					_INDEX_NAME, buildDocument(_FIELD_NAME, "example test")));
 
 		String uid = indexDocumentResponse.getUid();
 
@@ -203,6 +214,8 @@ public class UpdateDocumentRequestExecutorLegacyTest {
 	private static ElasticsearchFixture _elasticsearchFixture;
 	private static RequestExecutorFixture _requestExecutorFixture;
 
+	private GetDocumentRequestExecutor _getDocumentRequestExecutor;
+	private IndexDocumentRequestExecutor _indexDocumentRequestExecutor;
 	private UpdateDocumentRequestExecutor _updateDocumentRequestExecutor;
 
 }

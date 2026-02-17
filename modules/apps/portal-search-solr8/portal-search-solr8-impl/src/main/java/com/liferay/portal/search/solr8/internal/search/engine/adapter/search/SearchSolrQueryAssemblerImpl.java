@@ -33,7 +33,6 @@ import java.util.Set;
 import org.apache.solr.client.solrj.SolrQuery;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Bryan Engler
@@ -119,7 +118,7 @@ public class SearchSolrQueryAssemblerImpl implements SearchSolrQueryAssembler {
 
 		if (groupBy != null) {
 			_groupByTranslator.translate(
-				solrQuery, _groupByRequestFactory.getGroupByRequest(groupBy),
+				solrQuery, GroupByRequestFactory.getGroupByRequest(groupBy),
 				searchSearchRequest.getLocale(),
 				searchSearchRequest.getHighlightFieldNames(),
 				searchSearchRequest.isHighlightEnabled(),
@@ -256,7 +255,7 @@ public class SearchSolrQueryAssemblerImpl implements SearchSolrQueryAssembler {
 		if (MapUtil.isNotEmpty(statsMap)) {
 			for (Stats stats : statsMap.values()) {
 				StatsRequestBuilder statsRequestBuilder =
-					_statsRequestBuilderFactory.getStatsRequestBuilder(stats);
+					StatsRequestBuilderFactory.getStatsRequestBuilder(stats);
 
 				_statsTranslator.populateRequest(
 					solrQuery, statsRequestBuilder.build());
@@ -266,18 +265,10 @@ public class SearchSolrQueryAssemblerImpl implements SearchSolrQueryAssembler {
 
 	private final BaseSolrQueryAssembler _baseSolrQueryAssembler =
 		new BaseSolrQueryAssembler();
-
-	@Reference
-	private GroupByRequestFactory _groupByRequestFactory;
-
 	private final GroupByTranslator _groupByTranslator =
 		new GroupByTranslator();
 	private final SolrSortFieldTranslator _sortFieldTranslator =
 		new SolrSortFieldTranslator();
-
-	@Reference
-	private StatsRequestBuilderFactory _statsRequestBuilderFactory;
-
 	private final StatsTranslator _statsTranslator = new StatsTranslator();
 
 }

@@ -4,14 +4,21 @@
  */
 
 export {default as Breadcrumb} from './common/components/Breadcrumb';
+export {default as SpaceSelector} from './common/components/SpaceSelector';
 export {default as SpaceSticker} from './common/components/SpaceSticker';
 export {default as Toolbar} from './common/components/Toolbar';
 export {default as FieldPicker} from './common/components/forms/FieldPicker';
 export {default as FieldText} from './common/components/forms/FieldText';
 export {default as FieldWrapper} from './common/components/forms/FieldWrapper';
 export {required, validate} from './common/components/forms/validations';
-export {default as ApiHelper} from './common/services/ApiHelper';
+export {default as ApiHelper, RequestResult} from './common/services/ApiHelper';
 export {IAssetObjectEntry} from './common/types/AssetType';
+export {
+	IBulkActionFDSData,
+	IBulkActionTaskStarterDTO,
+} from './common/types/BulkActionTask';
+export {ObjectField, StateFlowValue} from './common/types/ObjectDefinition';
+export {type Space} from './common/types/Space';
 export {
 	displayCreateSuccessToast,
 	displayCreateTaskErrorToast,
@@ -30,8 +37,8 @@ export {default as ContentEditorSidePanel} from './content_editor/components/Con
 
 export {default as ContentEditorToolbar} from './content_editor/components/ContentEditorToolbar';
 export {default as Spaces} from './content_editor/components/Spaces';
-export {default as CommentsPanel} from './content_editor/components/panels/CommentsPanel';
 
+export {default as CommentsPanel} from './content_editor/components/panels/CommentsPanel';
 export {default as BulkActionTaskAssets} from './main_view/bulk_action_task/BulkActionTaskAssets';
 export {default as BulkActionTaskDuration} from './main_view/bulk_action_task/BulkActionTaskDuration';
 export {default as BulkActionTaskStatus} from './main_view/bulk_action_task/BulkActionTaskStatus';
@@ -41,10 +48,11 @@ export {default as EditCategoryPage} from './main_view/categorization/categories
 export {default as ViewTags} from './main_view/categorization/tags/ViewTags';
 export {default as EditVocabulary} from './main_view/categorization/vocabularies/EditVocabulary';
 export {default as ViewDashboard} from './main_view/dashboard/ViewDashboard';
-export {default as EditFolder} from './main_view/folders/EditFolder';
 
+export {default as EditFolder} from './main_view/folders/EditFolder';
 export {default as QuickActions} from './main_view/home/QuickActions';
 export {default as SearchBar} from './main_view/home/SearchBar';
+
 export {default as ViewWorkflowTasks} from './main_view/home/ViewWorkflowTasks';
 
 // Main
@@ -79,6 +87,7 @@ export {default as ACTIONS} from './main_view/props_transformer/actions/creation
 export {default as deleteAssetEntriesBulkAction} from './main_view/props_transformer/actions/deleteAssetEntriesBulkAction';
 export {default as deleteItemAction} from './main_view/props_transformer/actions/deleteItemAction';
 export {default as manageMembersAction} from './main_view/props_transformer/actions/manageMembersAction';
+export {triggerAssetBulkAction} from './main_view/props_transformer/actions/triggerAssetBulkAction';
 export {default as SimpleActionLinkRenderer} from './main_view/props_transformer/cell_renderers/SimpleActionLinkRenderer';
 export {default as addOnClickToCreationMenuItems} from './main_view/props_transformer/utils/addOnClickToCreationMenuItems';
 export {default as RecycleBinToolbar} from './main_view/recycle_bin/RecycleBinToolbar';

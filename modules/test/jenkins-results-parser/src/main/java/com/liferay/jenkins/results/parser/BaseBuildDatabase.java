@@ -415,7 +415,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 
 			buildsJSONObject.put(key, buildData.getJSONObject());
 
-			_writeJSONObjectFile();
+			_writeJSONFile();
 		}
 	}
 
@@ -428,7 +428,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 
 			jobsJSONObject.put(key, jobJSONObject);
 
-			_writeJSONObjectFile();
+			_writeJSONFile();
 		}
 	}
 
@@ -447,7 +447,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 			portalFixpackReleasesJSONObject.put(
 				key, portalFixpackRelease.getJSONObject());
 
-			_writeJSONObjectFile();
+			_writeJSONFile();
 		}
 	}
 
@@ -466,7 +466,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 			portalHotfixReleasesJSONObject.put(
 				key, portalHotfixRelease.getJSONObject());
 
-			_writeJSONObjectFile();
+			_writeJSONFile();
 		}
 	}
 
@@ -482,7 +482,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 
 			portalReleasesJSONObject.put(key, portalRelease.getJSONObject());
 
-			_writeJSONObjectFile();
+			_writeJSONFile();
 		}
 	}
 
@@ -516,7 +516,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 			propertiesJSONObject.put(key, _toJSONArray(properties));
 
 			if (writeFile) {
-				_writeJSONObjectFile();
+				_writeJSONFile();
 			}
 		}
 	}
@@ -552,7 +552,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 
 			pullRequestsJSONObject.put(key, pullRequest.getJSONObject());
 
-			_writeJSONObjectFile();
+			_writeJSONFile();
 		}
 	}
 
@@ -564,7 +564,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 
 			workspacesJSONObject.put(key, workspace.getJSONObject());
 
-			_writeJSONObjectFile();
+			_writeJSONFile();
 		}
 	}
 
@@ -579,7 +579,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 			workspaceGitRepositoriesJSONObject.put(
 				key, workspaceGitRepository.getJSONObject());
 
-			_writeJSONObjectFile();
+			_writeJSONFile();
 		}
 	}
 
@@ -850,7 +850,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 				_jsonObject.put("workspaces", new JSONObject());
 			}
 
-			_writeJSONObjectFile();
+			_writeJSONFile();
 		}
 	}
 
@@ -876,7 +876,7 @@ public abstract class BaseBuildDatabase implements BuildDatabase {
 		return jsonArray;
 	}
 
-	private synchronized void _writeJSONObjectFile() {
+	private synchronized void _writeJSONFile() {
 		synchronized (_buildDatabaseFile) {
 			try {
 				JenkinsResultsParserUtil.write(

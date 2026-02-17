@@ -5,89 +5,219 @@
 
 package com.liferay.portal.search.query;
 
+import com.liferay.petra.string.StringBundler;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface MultiMatchQuery extends Query {
+public class MultiMatchQuery extends Query {
 
-	public String getAnalyzer();
+	public MultiMatchQuery(Object value, Map<String, Float> fieldsBoosts) {
+		_value = value;
+		_fieldsBoosts = fieldsBoosts;
+	}
 
-	public Float getCutOffFrequency();
+	public MultiMatchQuery(Object value, Set<String> fields) {
+		_value = value;
+
+		for (String field : fields) {
+			_fieldsBoosts.put(field, null);
+		}
+	}
+
+	public MultiMatchQuery(Object value, String... fields) {
+		_value = value;
+
+		for (String field : fields) {
+			_fieldsBoosts.put(field, null);
+		}
+	}
+
+	@Override
+	public <T> T accept(QueryVisitor<T> queryVisitor) {
+		return queryVisitor.visit(this);
+	}
+
+	public String getAnalyzer() {
+		return _analyzer;
+	}
+
+	public Float getCutOffFrequency() {
+		return _cutOffFrequency;
+	}
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
 	 *             #getFieldsBoosts()}
 	 */
 	@Deprecated
-	public Set<String> getFields();
+	public Set<String> getFields() {
+		return _fieldsBoosts.keySet();
+	}
 
-	public Map<String, Float> getFieldsBoosts();
+	public Map<String, Float> getFieldsBoosts() {
+		return _fieldsBoosts;
+	}
 
-	public String getFuzziness();
+	public String getFuzziness() {
+		return _fuzziness;
+	}
 
-	public MatchQuery.RewriteMethod getFuzzyRewriteMethod();
+	public MatchQuery.RewriteMethod getFuzzyRewriteMethod() {
+		return _fuzzyRewriteMethod;
+	}
 
-	public Integer getMaxExpansions();
+	public Integer getMaxExpansions() {
+		return _maxExpansions;
+	}
 
-	public String getMinShouldMatch();
+	public String getMinShouldMatch() {
+		return _minShouldMatch;
+	}
 
-	public Operator getOperator();
+	public Operator getOperator() {
+		return _operator;
+	}
 
-	public Integer getPrefixLength();
+	public Integer getPrefixLength() {
+		return _prefixLength;
+	}
 
-	public Integer getSlop();
+	public Integer getSlop() {
+		return _slop;
+	}
 
-	public Float getTieBreaker();
+	public Float getTieBreaker() {
+		return _tieBreaker;
+	}
 
-	public Type getType();
+	public Type getType() {
+		return _type;
+	}
 
-	public Object getValue();
+	public Object getValue() {
+		return _value;
+	}
 
-	public MatchQuery.ZeroTermsQuery getZeroTermsQuery();
+	public MatchQuery.ZeroTermsQuery getZeroTermsQuery() {
+		return _zeroTermsQuery;
+	}
 
-	public boolean isFieldBoostsEmpty();
+	public boolean isFieldBoostsEmpty() {
+		return _fieldsBoosts.isEmpty();
+	}
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
 	 *             #isFieldBoostsEmpty()}
 	 */
 	@Deprecated
-	public boolean isFieldsEmpty();
+	public boolean isFieldsEmpty() {
+		return _fieldsBoosts.isEmpty();
+	}
 
-	public Boolean isLenient();
+	public Boolean isLenient() {
+		return _lenient;
+	}
 
-	public void setAnalyzer(String analyzer);
+	public void setAnalyzer(String analyzer) {
+		_analyzer = analyzer;
+	}
 
-	public void setCutOffFrequency(Float cutOffFrequency);
+	public void setCutOffFrequency(Float cutOffFrequency) {
+		_cutOffFrequency = cutOffFrequency;
+	}
 
-	public void setFuzziness(String fuzziness);
+	public void setFuzziness(String fuzziness) {
+		_fuzziness = fuzziness;
+	}
 
 	public void setFuzzyRewriteMethod(
-		MatchQuery.RewriteMethod fuzzyRewriteMethod);
+		MatchQuery.RewriteMethod fuzzyRewriteMethod) {
 
-	public void setLenient(Boolean lenient);
+		_fuzzyRewriteMethod = fuzzyRewriteMethod;
+	}
 
-	public void setMaxExpansions(Integer maxExpansions);
+	public void setLenient(Boolean lenient) {
+		_lenient = lenient;
+	}
 
-	public void setMinShouldMatch(String minShouldMatch);
+	public void setMaxExpansions(Integer maxExpansions) {
+		_maxExpansions = maxExpansions;
+	}
 
-	public void setOperator(Operator operator);
+	public void setMinShouldMatch(String minShouldMatch) {
+		_minShouldMatch = minShouldMatch;
+	}
 
-	public void setPrefixLength(Integer prefixLength);
+	public void setOperator(Operator operator) {
+		_operator = operator;
+	}
 
-	public void setSlop(Integer slop);
+	public void setPrefixLength(Integer prefixLength) {
+		_prefixLength = prefixLength;
+	}
 
-	public void setTieBreaker(Float tieBreaker);
+	public void setSlop(Integer slop) {
+		_slop = slop;
+	}
 
-	public void setType(Type type);
+	public void setTieBreaker(Float tieBreaker) {
+		_tieBreaker = tieBreaker;
+	}
 
-	public void setZeroTermsQuery(MatchQuery.ZeroTermsQuery zeroTermsQuery);
+	public void setType(Type type) {
+		_type = type;
+	}
+
+	public void setZeroTermsQuery(MatchQuery.ZeroTermsQuery zeroTermsQuery) {
+		_zeroTermsQuery = zeroTermsQuery;
+	}
+
+	@Override
+	public String toString() {
+		StringBundler sb = new StringBundler(29);
+
+		sb.append("{analyzer=");
+		sb.append(_analyzer);
+		sb.append(", className=");
+
+		Class<?> clazz = getClass();
+
+		sb.append(clazz.getSimpleName());
+
+		sb.append(", cutOffFrequency=");
+		sb.append(_cutOffFrequency);
+		sb.append(", _fieldsBoosts=");
+		sb.append(_fieldsBoosts);
+		sb.append(", fuzziness=");
+		sb.append(_fuzziness);
+		sb.append(", lenient=");
+		sb.append(_lenient);
+		sb.append(", maxExpansions=");
+		sb.append(_maxExpansions);
+		sb.append(", minShouldMatch=");
+		sb.append(_minShouldMatch);
+		sb.append(", operator=");
+		sb.append(_operator);
+		sb.append(", prefixLength=");
+		sb.append(_prefixLength);
+		sb.append(", slop=");
+		sb.append(_slop);
+		sb.append(", tieBreaker=");
+		sb.append(_tieBreaker);
+		sb.append(", type=");
+		sb.append(_type);
+		sb.append(", value=");
+		sb.append(_value);
+		sb.append("}");
+
+		return sb.toString();
+	}
 
 	public enum Type {
 
@@ -95,5 +225,23 @@ public interface MultiMatchQuery extends Query {
 		PHRASE_PREFIX
 
 	}
+
+	private static final long serialVersionUID = 1L;
+
+	private String _analyzer;
+	private Float _cutOffFrequency;
+	private Map<String, Float> _fieldsBoosts = new HashMap<>();
+	private String _fuzziness;
+	private MatchQuery.RewriteMethod _fuzzyRewriteMethod;
+	private Boolean _lenient;
+	private Integer _maxExpansions;
+	private String _minShouldMatch;
+	private Operator _operator;
+	private Integer _prefixLength;
+	private Integer _slop;
+	private Float _tieBreaker;
+	private Type _type;
+	private final Object _value;
+	private MatchQuery.ZeroTermsQuery _zeroTermsQuery;
 
 }

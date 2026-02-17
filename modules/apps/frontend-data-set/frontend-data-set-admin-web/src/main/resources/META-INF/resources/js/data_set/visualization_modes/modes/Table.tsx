@@ -420,7 +420,8 @@ function Table(props: IDataSetSectionProps & {title?: string}) {
 		setTableSections(
 			sortItems(
 				storedFDSFields,
-				tableSectionsOrder
+				tableSectionsOrder,
+				false
 			) as IDataSetTableSection[]
 		);
 	};
@@ -571,7 +572,8 @@ function Table(props: IDataSetSectionProps & {title?: string}) {
 			setTableSections(
 				sortItems(
 					tableSections,
-					storedFDSFieldsOrder
+					storedFDSFieldsOrder,
+					false
 				) as IDataSetTableSection[]
 			);
 

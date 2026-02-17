@@ -45,11 +45,17 @@ import java.util.function.Supplier;
 @JsonSubTypes(
 	{
 		@JsonSubTypes.Type(
+			name = "AssignToBulkAction", value = AssignToBulkAction.class
+		),
+		@JsonSubTypes.Type(
 			name = "DefaultPermissionBulkAction",
 			value = DefaultPermissionBulkAction.class
 		),
 		@JsonSubTypes.Type(
 			name = "DeleteBulkAction", value = DeleteBulkAction.class
+		),
+		@JsonSubTypes.Type(
+			name = "DueDateBulkAction", value = DueDateBulkAction.class
 		),
 		@JsonSubTypes.Type(
 			name = "ExpireBulkAction", value = ExpireBulkAction.class
@@ -319,8 +325,10 @@ public abstract class BulkAction implements Serializable {
 	@GraphQLName("Type")
 	public static enum Type {
 
+		ASSIGN_TO_BULK_ACTION("AssignToBulkAction"),
 		DEFAULT_PERMISSION_BULK_ACTION("DefaultPermissionBulkAction"),
 		DELETE_BULK_ACTION("DeleteBulkAction"),
+		DUE_DATE_BULK_ACTION("DueDateBulkAction"),
 		EXPIRE_BULK_ACTION("ExpireBulkAction"),
 		KEYWORD_BULK_ACTION("KeywordBulkAction"),
 		MOVE_BULK_ACTION("MoveBulkAction"),

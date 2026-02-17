@@ -5,22 +5,49 @@
 
 package com.liferay.portal.search.query;
 
-import java.util.Set;
+import com.liferay.portal.kernel.util.ArrayUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface IdsQuery extends Query {
+public class IdsQuery extends Query {
 
-	public void addIds(String... ids);
+	@Override
+	public <T> T accept(QueryVisitor<T> queryVisitor) {
+		return queryVisitor.visit(this);
+	}
 
-	public void addTypes(String... types);
+	public void addIds(String... ids) {
+		if (ArrayUtil.isEmpty(ids)) {
+			return;
+		}
 
-	public Set<String> getIds();
+		Collections.addAll(_ids, ids);
+	}
 
-	public Set<String> getTypes();
+	public void addTypes(String... types) {
+		if (ArrayUtil.isEmpty(types)) {
+			return;
+		}
+
+		Collections.addAll(_types, types);
+	}
+
+	public Set<String> getIds() {
+		return Collections.unmodifiableSet(_ids);
+	}
+
+	public Set<String> getTypes() {
+		return Collections.unmodifiableSet(_types);
+	}
+
+	private static final long serialVersionUID = 1L;
+
+	private final Set<String> _ids = new HashSet<>();
+	private final Set<String> _types = new HashSet<>();
 
 }

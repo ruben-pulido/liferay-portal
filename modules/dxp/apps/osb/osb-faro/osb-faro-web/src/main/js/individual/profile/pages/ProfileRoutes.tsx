@@ -12,6 +12,7 @@ import {CSVType} from 'shared/components/download-report/utils';
 import {ENABLE_CDP} from 'shared/util/constants';
 import {getMatchedRoute, Routes} from 'shared/util/router';
 import {Switch, withRouter} from 'react-router-dom';
+import {Text} from '@clayui/core';
 import {useDataSource} from 'shared/hooks/useDataSource';
 
 const AssociatedSegments = lazy(
@@ -39,10 +40,14 @@ const OverviewCDP = lazy(
 	() => import(/* webpackChunkName: "IndividualOverview" */ './OverviewCDP')
 );
 
+const overviewTabName = ENABLE_CDP
+	? Liferay.Language.get('activities')
+	: Liferay.Language.get('overview');
+
 const NAV_ITEMS = [
 	{
 		exact: true,
-		label: Liferay.Language.get('overview'),
+		label: overviewTabName,
 		route: Routes.CONTACTS_INDIVIDUAL
 	},
 	{
@@ -61,6 +66,23 @@ const NAV_ITEMS = [
 		route: Routes.CONTACTS_INDIVIDUAL_DETAILS
 	}
 ];
+
+const buildHeaderSubtitle = (individual: {
+	accountNames: string;
+	lastSessionCountry: string;
+	properties: {toJS: () => any};
+}) => {
+	const {email} = individual.properties.toJS();
+	const {accountNames, lastSessionCountry} = individual;
+
+	return (
+		<Text color='secondary' size={4}>
+			{[email, accountNames, lastSessionCountry]
+				.filter(Boolean)
+				.join(' | ')}
+		</Text>
+	);
+};
 
 export const IndividualProfileRoutes = ({
 	channelId,
@@ -102,7 +124,10 @@ export const IndividualProfileRoutes = ({
 				]}
 				groupId={groupId}
 			>
-				<BasePage.Header.TitleSection title={entityName} />
+				<BasePage.Header.TitleSection
+					subtitle={buildHeaderSubtitle(individual)}
+					title={entityName}
+				/>
 
 				<BasePage.Header.NavBar
 					items={NAV_ITEMS}

@@ -5,16 +5,31 @@
 
 package com.liferay.portal.search.geolocation;
 
+import java.util.Collections;
 import java.util.List;
-
-import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface MultiLineStringShape extends Shape {
+public class MultiLineStringShape extends Shape {
 
-	public List<LineStringShape> getLineStringShapes();
+	@Override
+	public <T> T accept(ShapeTranslator<T> shapeTranslator) {
+		return shapeTranslator.translate(this);
+	}
+
+	public List<LineStringShape> getLineStringShapes() {
+		return _lineStringShapes;
+	}
+
+	protected MultiLineStringShape(
+		List<Coordinate> coordinates, List<LineStringShape> lineStringShapes) {
+
+		super(coordinates);
+
+		_lineStringShapes = Collections.unmodifiableList(lineStringShapes);
+	}
+
+	private final List<LineStringShape> _lineStringShapes;
 
 }

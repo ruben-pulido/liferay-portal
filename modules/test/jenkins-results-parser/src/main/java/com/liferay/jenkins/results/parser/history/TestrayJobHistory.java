@@ -146,9 +146,7 @@ public class TestrayJobHistory extends BaseJobHistory {
 		_populated = true;
 	}
 
-	public void writeCIHistoryJSONObjectFile(String filePath)
-		throws IOException {
-
+	public void writeCIHistoryJSONFile(String filePath) throws IOException {
 		if (!_populated) {
 			populate();
 		}

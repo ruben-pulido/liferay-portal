@@ -7,7 +7,6 @@ package com.liferay.portal.search.solr8.internal.search.engine.adapter.document;
 
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.engine.adapter.document.DocumentRequestExecutor;
-import com.liferay.portal.search.internal.document.DocumentBuilderFactoryImpl;
 import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
 
 import java.util.Map;
@@ -26,56 +25,6 @@ public class DocumentRequestExecutorFixture {
 			_solrClientManager);
 	}
 
-	protected static BulkDocumentRequestExecutor
-		createBulkDocumentRequestExecutor(SolrClientManager solrClientManager) {
-
-		BulkDocumentRequestExecutorImpl bulkDocumentRequestExecutorImpl =
-			new BulkDocumentRequestExecutorImpl() {
-				{
-					activate(_properties);
-				}
-			};
-
-		ReflectionTestUtil.setFieldValue(
-			bulkDocumentRequestExecutorImpl, "_solrClientManager",
-			solrClientManager);
-
-		return bulkDocumentRequestExecutorImpl;
-	}
-
-	protected static DeleteByQueryDocumentRequestExecutor
-		createDeleteByQueryDocumentRequestExecutor(
-			SolrClientManager solrClientManager) {
-
-		DeleteByQueryDocumentRequestExecutorImpl
-			deleteByQueryDocumentRequestExecutorImpl =
-				new DeleteByQueryDocumentRequestExecutorImpl() {
-					{
-						activate(_properties);
-					}
-				};
-
-		ReflectionTestUtil.setFieldValue(
-			deleteByQueryDocumentRequestExecutorImpl, "_solrClientManager",
-			solrClientManager);
-
-		return deleteByQueryDocumentRequestExecutorImpl;
-	}
-
-	protected static DeleteDocumentRequestExecutor
-		createDeleteDocumentRequestExecutor(
-			SolrClientManager solrClientManager) {
-
-		DeleteDocumentRequestExecutorImpl deleteDocumentRequestExecutorImpl =
-			new DeleteDocumentRequestExecutorImpl();
-
-		ReflectionTestUtil.setFieldValue(
-			deleteDocumentRequestExecutorImpl, "_solrClientManager",
-			solrClientManager);
-
-		return deleteDocumentRequestExecutorImpl;
-	}
-
 	protected static DocumentRequestExecutor createDocumentRequestExecutor(
 		SolrClientManager solrClientManager) {
 
@@ -83,82 +32,12 @@ public class DocumentRequestExecutorFixture {
 			new SolrDocumentRequestExecutor();
 
 		ReflectionTestUtil.setFieldValue(
-			solrDocumentRequestExecutor, "_bulkDocumentRequestExecutor",
-			createBulkDocumentRequestExecutor(solrClientManager));
-		ReflectionTestUtil.setFieldValue(
-			solrDocumentRequestExecutor,
-			"_deleteByQueryDocumentRequestExecutor",
-			createDeleteByQueryDocumentRequestExecutor(solrClientManager));
+			solrDocumentRequestExecutor, "_solrClientManager",
+			solrClientManager);
 
-		ReflectionTestUtil.setFieldValue(
-			solrDocumentRequestExecutor, "_deleteDocumentRequestExecutor",
-			createDeleteDocumentRequestExecutor(solrClientManager));
-		ReflectionTestUtil.setFieldValue(
-			solrDocumentRequestExecutor, "_getDocumentRequestExecutor",
-			createGetDocumentRequestExecutor(solrClientManager));
-		ReflectionTestUtil.setFieldValue(
-			solrDocumentRequestExecutor, "_indexDocumentRequestExecutor",
-			createIndexDocumentRequestExecutor(solrClientManager));
-
-		ReflectionTestUtil.setFieldValue(
-			solrDocumentRequestExecutor,
-			"_updateByQueryDocumentRequestExecutor",
-			createUpdateByQueryDocumentRequestExecutor());
-		ReflectionTestUtil.setFieldValue(
-			solrDocumentRequestExecutor, "_updateDocumentRequestExecutor",
-			createUpdateDocumentRequestExecutor(solrClientManager));
+		solrDocumentRequestExecutor.activate(_properties);
 
 		return solrDocumentRequestExecutor;
-	}
-
-	protected static GetDocumentRequestExecutor
-		createGetDocumentRequestExecutor(SolrClientManager solrClientManager) {
-
-		GetDocumentRequestExecutorImpl getDocumentRequestExecutorImpl =
-			new GetDocumentRequestExecutorImpl();
-
-		ReflectionTestUtil.setFieldValue(
-			getDocumentRequestExecutorImpl, "_documentBuilderFactory",
-			new DocumentBuilderFactoryImpl());
-		ReflectionTestUtil.setFieldValue(
-			getDocumentRequestExecutorImpl, "_solrClientManager",
-			solrClientManager);
-
-		return getDocumentRequestExecutorImpl;
-	}
-
-	protected static IndexDocumentRequestExecutor
-		createIndexDocumentRequestExecutor(
-			SolrClientManager solrClientManager) {
-
-		IndexDocumentRequestExecutorImpl indexDocumentRequestExecutorImpl =
-			new IndexDocumentRequestExecutorImpl();
-
-		ReflectionTestUtil.setFieldValue(
-			indexDocumentRequestExecutorImpl, "_solrClientManager",
-			solrClientManager);
-
-		return indexDocumentRequestExecutorImpl;
-	}
-
-	protected static UpdateByQueryDocumentRequestExecutor
-		createUpdateByQueryDocumentRequestExecutor() {
-
-		return new UpdateByQueryDocumentRequestExecutorImpl();
-	}
-
-	protected static UpdateDocumentRequestExecutor
-		createUpdateDocumentRequestExecutor(
-			SolrClientManager solrClientManager) {
-
-		UpdateDocumentRequestExecutorImpl updateDocumentRequestExecutorImpl =
-			new UpdateDocumentRequestExecutorImpl();
-
-		ReflectionTestUtil.setFieldValue(
-			updateDocumentRequestExecutorImpl, "_solrClientManager",
-			solrClientManager);
-
-		return updateDocumentRequestExecutorImpl;
 	}
 
 	protected void setProperties(Map<String, Object> properties) {

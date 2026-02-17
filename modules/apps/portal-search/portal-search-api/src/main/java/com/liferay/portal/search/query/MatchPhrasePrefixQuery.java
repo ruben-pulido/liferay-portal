@@ -5,28 +5,59 @@
 
 package com.liferay.portal.search.query;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface MatchPhrasePrefixQuery extends Query {
+public class MatchPhrasePrefixQuery extends Query {
 
-	public String getAnalyzer();
+	public MatchPhrasePrefixQuery(String field, Object value) {
+		_field = field;
+		_value = value;
+	}
 
-	public String getField();
+	@Override
+	public <T> T accept(QueryVisitor<T> queryVisitor) {
+		return queryVisitor.visit(this);
+	}
 
-	public Integer getMaxExpansions();
+	public String getAnalyzer() {
+		return _analyzer;
+	}
 
-	public Integer getSlop();
+	public String getField() {
+		return _field;
+	}
 
-	public Object getValue();
+	public Integer getMaxExpansions() {
+		return _maxExpansions;
+	}
 
-	public void setAnalyzer(String analyzer);
+	public Integer getSlop() {
+		return _slop;
+	}
 
-	public void setMaxExpansions(Integer maxExpansions);
+	public Object getValue() {
+		return _value;
+	}
 
-	public void setSlop(Integer slop);
+	public void setAnalyzer(String analyzer) {
+		_analyzer = analyzer;
+	}
+
+	public void setMaxExpansions(Integer maxExpansions) {
+		_maxExpansions = maxExpansions;
+	}
+
+	public void setSlop(Integer slop) {
+		_slop = slop;
+	}
+
+	private static final long serialVersionUID = 1L;
+
+	private String _analyzer;
+	private final String _field;
+	private Integer _maxExpansions;
+	private Integer _slop;
+	private final Object _value;
 
 }

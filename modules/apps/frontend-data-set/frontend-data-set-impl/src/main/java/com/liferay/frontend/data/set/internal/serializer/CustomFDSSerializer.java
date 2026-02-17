@@ -37,6 +37,7 @@ import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -852,14 +853,25 @@ public class CustomFDSSerializer
 			externalReferenceCode, httpServletRequest, predicate,
 			relationshipNames);
 
-		objectEntries.sort(
-			new ObjectEntryComparator(
-				ListUtil.toList(
-					ListUtil.fromString(
-						MapUtil.getString(
-							objectEntry.getProperties(), propertyKey),
-						StringPool.COMMA),
-					GetterUtil::getLong)));
+		if (FeatureFlagManagerUtil.isEnabled(
+				PortalUtil.getCompanyId(httpServletRequest), "LPD-76632")) {
+
+			List<String> externalReferenceCodes = ListUtil.fromString(
+				MapUtil.getString(objectEntry.getProperties(), propertyKey),
+				StringPool.COMMA);
+
+			objectEntries.sort(
+				new ObjectEntryERCComparator(externalReferenceCodes));
+		}
+		else {
+			List<Long> ids = ListUtil.toList(
+				ListUtil.fromString(
+					MapUtil.getString(objectEntry.getProperties(), propertyKey),
+					StringPool.COMMA),
+				GetterUtil::getLong);
+
+			objectEntries.sort(new ObjectEntryIdComparator(ids));
+		}
 
 		return objectEntries;
 	}
@@ -1336,10 +1348,50 @@ public class CustomFDSSerializer
 	)
 	private FDSSerializer _systemFDSSerializer;
 
-	private static class ObjectEntryComparator
+	private static class ObjectEntryERCComparator
 		implements Comparator<ObjectEntry> {
 
-		public ObjectEntryComparator(List<Long> ids) {
+		public ObjectEntryERCComparator(List<String> externalReferenceCodes) {
+			_externalReferenceCodes = externalReferenceCodes;
+		}
+
+		@Override
+		public int compare(ObjectEntry objectEntry1, ObjectEntry objectEntry2) {
+			String externalReferenceCode1 =
+				objectEntry1.getExternalReferenceCode();
+			String externalReferenceCode2 =
+				objectEntry2.getExternalReferenceCode();
+
+			int index1 = _externalReferenceCodes.indexOf(
+				externalReferenceCode1);
+			int index2 = _externalReferenceCodes.indexOf(
+				externalReferenceCode2);
+
+			if ((index1 == -1) && (index2 == -1)) {
+				Date date = objectEntry1.getDateCreated();
+
+				return date.compareTo(objectEntry2.getDateCreated());
+			}
+
+			if (index1 == -1) {
+				return 1;
+			}
+
+			if (index2 == -1) {
+				return -1;
+			}
+
+			return Integer.compare(index1, index2);
+		}
+
+		private final List<String> _externalReferenceCodes;
+
+	}
+
+	private static class ObjectEntryIdComparator
+		implements Comparator<ObjectEntry> {
+
+		public ObjectEntryIdComparator(List<Long> ids) {
 			_ids = ids;
 		}
 
@@ -1348,9 +1400,11 @@ public class CustomFDSSerializer
 			ObjectEntry dataSetObjectEntry1, ObjectEntry dataSetObjectEntry2) {
 
 			long id1 = dataSetObjectEntry1.getId();
-			long id2 = dataSetObjectEntry2.getId();
 
 			int index1 = _ids.indexOf(id1);
+
+			long id2 = dataSetObjectEntry2.getId();
+
 			int index2 = _ids.indexOf(id2);
 
 			if ((index1 == -1) && (index2 == -1)) {
