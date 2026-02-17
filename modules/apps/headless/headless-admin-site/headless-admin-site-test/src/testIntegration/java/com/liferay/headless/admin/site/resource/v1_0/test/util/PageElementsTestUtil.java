@@ -12,6 +12,7 @@ import com.liferay.asset.list.constants.AssetListEntryTypeConstants;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalServiceUtil;
 import com.liferay.asset.publisher.constants.AssetPublisherPortletKeys;
+import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.contributor.util.FragmentCollectionContributorRegistryUtil;
@@ -79,6 +80,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -127,9 +129,8 @@ public class PageElementsTestUtil {
 	}
 
 	public static void assertFieldKeysWithDisplayPageTemplates(
-			PageSpecification[] externalPageSpecifications,
-			PageSpecification[] internalPageSpecifications)
-		throws PortalException {
+		PageSpecification[] externalPageSpecifications,
+		PageSpecification[] internalPageSpecifications) {
 
 		Assert.assertEquals(
 			Arrays.toString(externalPageSpecifications), 2,
@@ -153,7 +154,7 @@ public class PageElementsTestUtil {
 		ContentPageSpecification internalDraftPageSpecification =
 			(ContentPageSpecification)internalPageSpecifications[1];
 
-		_assertFieldKeysWithTemplateEntries(
+		_assertFieldKeysWithDisplayPageTemplates(
 			externalDraftPageSpecification.getPageExperiences()[0],
 			internalDraftPageSpecification.getPageExperiences()[0]);
 	}
@@ -643,6 +644,82 @@ public class PageElementsTestUtil {
 
 	public static PageElement[] getPageElementsWithDisplayPageTemplates(
 			String displayPageTemplateNamePrefix, String fragmentKey,
+			FileEntry fileEntry, int layoutPageTemplateEntryType,
+			long scopeGroupId)
+		throws Exception {
+
+		List<PageElement> pageElements = new ArrayList<>();
+
+		ServiceContext scopeGroupServiceContext =
+			ServiceContextTestUtil.getServiceContext(scopeGroupId);
+
+		int position = 0;
+
+		pageElements.add(
+			_getBasicFragmentPageElement(
+				_getExternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						fileEntry,
+						displayPageTemplateNamePrefix +
+							"display-page-template1",
+						scopeGroupServiceContext)),
+				fragmentKey, fileEntry, position++, scopeGroupId));
+		pageElements.add(
+			_getBasicFragmentPageElement(
+				_getInternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						fileEntry,
+						displayPageTemplateNamePrefix +
+							"display-page-template2",
+						scopeGroupServiceContext)),
+				fragmentKey, fileEntry, position++, scopeGroupId));
+		pageElements.add(
+			_getCollectionDisplayPageElement(
+				_getExternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						fileEntry,
+						displayPageTemplateNamePrefix +
+							"display-page-template3",
+						scopeGroupServiceContext)),
+				fragmentKey, fileEntry, position++, scopeGroupId));
+		pageElements.add(
+			_getCollectionDisplayPageElement(
+				_getInternalDisplayPageTemplateFieldKey(
+					_getDisplayPageTemplateLayoutPageTemplateEntry(
+						fileEntry,
+						displayPageTemplateNamePrefix +
+							"display-page-template4",
+						scopeGroupServiceContext)),
+				fragmentKey, fileEntry, position++, scopeGroupId));
+
+		if (layoutPageTemplateEntryType ==
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE) {
+
+			pageElements.add(
+				_getDisplayPageItemPageElement(
+					_getExternalDisplayPageTemplateFieldKey(
+						_getDisplayPageTemplateLayoutPageTemplateEntry(
+							fileEntry,
+							displayPageTemplateNamePrefix +
+								"display-page-template5",
+							scopeGroupServiceContext)),
+					fragmentKey, position++, scopeGroupId));
+			pageElements.add(
+				_getDisplayPageItemPageElement(
+					_getInternalDisplayPageTemplateFieldKey(
+						_getDisplayPageTemplateLayoutPageTemplateEntry(
+							fileEntry,
+							displayPageTemplateNamePrefix +
+								"display-page-template6",
+							scopeGroupServiceContext)),
+					fragmentKey, position, scopeGroupId));
+		}
+
+		return pageElements.toArray(new PageElement[0]);
+	}
+
+	public static PageElement[] getPageElementsWithDisplayPageTemplates(
+			String displayPageTemplateNamePrefix, String fragmentKey,
 			JournalArticle journalArticle, int layoutPageTemplateEntryType,
 			long scopeGroupId)
 		throws Exception {
@@ -829,7 +906,7 @@ public class PageElementsTestUtil {
 	}
 
 	private static AssetListEntry _addAssetListEntry(
-			long groupId, JournalArticle journalArticle)
+			String className, long classPK, long groupId)
 		throws Exception {
 
 		ServiceContext serviceContext =
@@ -843,11 +920,10 @@ public class PageElementsTestUtil {
 
 		AssetRendererFactory<?> assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
-				JournalArticle.class.getName());
+				className);
 
 		AssetEntry assetEntry = assetRendererFactory.getAssetEntry(
-			JournalArticle.class.getName(),
-			journalArticle.getResourcePrimKey());
+			className, classPK);
 
 		AssetListEntryLocalServiceUtil.addAssetEntrySelections(
 			assetListEntry.getAssetListEntryId(),
@@ -916,7 +992,7 @@ public class PageElementsTestUtil {
 	}
 
 	private static void _assertFieldKeysWithDisplayPageTemplates(
-			PageElement externalPageElement, PageElement internalPageElement) {
+		PageElement externalPageElement, PageElement internalPageElement) {
 
 		PageElementDefinition externalPageElementDefinition =
 			externalPageElement.getPageElementDefinition();
@@ -1035,8 +1111,8 @@ public class PageElementsTestUtil {
 	}
 
 	private static void _assertFieldKeysWithDisplayPageTemplates(
-			PageExperience externalPageExperience,
-			PageExperience internalPageExperience) {
+		PageExperience externalPageExperience,
+		PageExperience internalPageExperience) {
 
 		PageElement[] externalPageElements =
 			externalPageExperience.getPageElements();
@@ -1228,6 +1304,22 @@ public class PageElementsTestUtil {
 	}
 
 	private static PageElement _getBasicFragmentPageElement(
+		String fieldKey, String fragmentKey, FileEntry fileEntry,
+		int position, long scopeGroupId) {
+
+		PageElement pageElement = _getBasicFragmentPageElement(
+			FileEntry.class.getName(),
+//			DLFileEntry.class.getName(),
+			null,
+			fileEntry.getExternalReferenceCode(), fieldKey, fragmentKey,
+			"L_GLOBAL", scopeGroupId);
+
+		pageElement.setPosition(position);
+
+		return pageElement;
+	}
+
+	private static PageElement _getBasicFragmentPageElement(
 		String fieldKey, String fragmentKey, JournalArticle journalArticle,
 		int position, long scopeGroupId) {
 
@@ -1278,7 +1370,29 @@ public class PageElementsTestUtil {
 	}
 
 	private static PageElement _getCollectionDisplayPageElement(
+			String fieldKey, String fragmentKey, FileEntry fileEntry,
+			int position, long scopeGroupId) throws Exception {
+
+		return _getCollectionDisplayPageElement(
+			fieldKey, fragmentKey,
+//			FileEntry.class.getName(),
+			DLFileEntry.class.getName(), //TODO
+			fileEntry.getFileEntryId(), position, scopeGroupId
+		);
+	}
+
+	private static PageElement _getCollectionDisplayPageElement(
 			String fieldKey, String fragmentKey, JournalArticle journalArticle,
+			int position, long scopeGroupId) throws Exception {
+
+		return _getCollectionDisplayPageElement(
+			fieldKey, fragmentKey, JournalArticle.class.getName(),
+			journalArticle.getResourcePrimKey(), position, scopeGroupId
+		);
+	}
+
+	private static PageElement _getCollectionDisplayPageElement(
+			String fieldKey, String fragmentKey, String className, long classPK,
 			int position, long scopeGroupId)
 		throws Exception {
 
@@ -1294,7 +1408,7 @@ public class PageElementsTestUtil {
 			TestPropsValues.getCompanyId());
 
 		AssetListEntry assetListEntry = _addAssetListEntry(
-			company.getGroupId(), journalArticle);
+			className, classPK, company.getGroupId());
 
 		CollectionItemExternalReference collectionItemExternalReference =
 			new CollectionItemExternalReference();
@@ -1383,6 +1497,27 @@ public class PageElementsTestUtil {
 		pageElement.setPosition(position);
 
 		return pageElement;
+	}
+
+	private static LayoutPageTemplateEntry
+			_getDisplayPageTemplateLayoutPageTemplateEntry( //TODO
+		FileEntry fileEntry, String name,
+		ServiceContext serviceContext)
+		throws Exception {
+
+		return LayoutPageTemplateEntryLocalServiceUtil.
+			addLayoutPageTemplateEntry(
+				null, TestPropsValues.getUserId(),
+				serviceContext.getScopeGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				null,
+				PortalUtil.getClassNameId(
+					FileEntry.class.getName()), //TODO
+//					DLFileEntry.class.getName()),
+				0, name,
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, 0,
+				WorkflowConstants.STATUS_APPROVED, serviceContext);
 	}
 
 	private static LayoutPageTemplateEntry
