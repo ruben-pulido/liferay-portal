@@ -1118,7 +1118,7 @@ public class FragmentEntryLocalServiceImpl
 			groupId, fragmentEntryKey);
 
 		if (fragmentEntry != null) {
-			throw new DuplicateFragmentEntryKeyException();
+			throw new DuplicateFragmentEntryKeyException(fragmentEntryKey);
 		}
 	}
 
