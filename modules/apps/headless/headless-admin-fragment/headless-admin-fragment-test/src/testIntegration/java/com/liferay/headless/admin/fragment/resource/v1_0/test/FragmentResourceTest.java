@@ -129,6 +129,23 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 
 	@Override
 	@Test
+	public void testPostSiteFragment() throws Exception {
+		super.testPostSiteFragment();
+
+		_assertPostSiteFragmentDuplicateKeyProblemException();
+		_assertPostSiteFragmentFragmentSetExternalReferenceCodeNullProblemException();
+		_assertPostSiteFragmentFragmentSetNonexistingProblemException();
+		_assertPostSiteFragmentFragmentSetNullProblemException();
+		_testPostSiteFragmentApproved();
+		_testPostSiteFragmentApprovedAndDraft();
+		_testPostSiteFragmentDraft();
+		_testPostSiteFragmentEmpty();
+		_testPostSiteFragmentFragmentSetExisting();
+		_testPostSiteFragmentFragmentSetNonexisting();
+	}
+
+	@Override
+	@Test
 	public void testPostSiteFragmentSetFragment() throws Exception {
 		super.testPostSiteFragmentSetFragment();
 
@@ -310,6 +327,46 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 			_fragmentCollectionLocalService.
 				fetchFragmentCollectionByExternalReferenceCode(
 					fragmentSetExternalReferenceCode, testGroup.getGroupId()));
+	}
+
+	private void _assertPostSiteFragmentDuplicateKeyProblemException()
+		throws Exception {
+
+		_assertPostFragmentDuplicateKeyProblemException(
+			this::_postSiteFragment);
+	}
+
+	private void _assertPostSiteFragmentFragmentSetExternalReferenceCodeNullProblemException()
+		throws Exception {
+
+		Fragment fragment = randomFragment();
+
+		fragment.setFragmentSet(_randomFragmentSet(null));
+
+		_assertProblemException(
+			"a-fragment-set-external-reference-code-is-required-to-create-a-" +
+				"new-fragment",
+			() -> _postSiteFragment(fragment));
+	}
+
+	private void _assertPostSiteFragmentFragmentSetNonexistingProblemException()
+		throws Exception {
+
+		_assertPostFragmentFragmentSetNonexistingProblemException(
+			this::_postSiteFragment);
+	}
+
+	private void _assertPostSiteFragmentFragmentSetNullProblemException()
+		throws Exception {
+
+		Fragment fragment = randomFragment();
+
+		fragment.setFragmentSet((FragmentSet)null);
+
+		_assertProblemException(
+			"a-fragment-set-external-reference-code-is-required-to-create-a-" +
+				"new-fragment",
+			() -> _postSiteFragment(fragment));
 	}
 
 	private void _assertPostSiteFragmentSetFragmentDuplicateKeyProblemException()
@@ -548,6 +605,11 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 		return null;
 	}
 
+	private Fragment _postSiteFragment(Fragment fragment) throws Exception {
+		return fragmentResource.postSiteFragment(
+			testGroup.getExternalReferenceCode(), fragment);
+	}
+
 	private Fragment _postSiteFragmentSetFragment(Fragment fragment)
 		throws Exception {
 
@@ -761,6 +823,32 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 						fragmentSetExternalReferenceCode,
 						testGroup.getGroupId()));
 		}
+	}
+
+	private void _testPostSiteFragmentApproved() throws Exception {
+		_testPostFragmentApproved(this::_postSiteFragment);
+	}
+
+	private void _testPostSiteFragmentApprovedAndDraft() throws Exception {
+		_testPostFragmentApprovedAndDraft(this::_postSiteFragment);
+	}
+
+	private void _testPostSiteFragmentDraft() throws Exception {
+		_testPostFragmentDraft(this::_postSiteFragment);
+	}
+
+	private void _testPostSiteFragmentEmpty() throws Exception {
+		_testPostFragmentEmpty(this::_postSiteFragment);
+	}
+
+	private void _testPostSiteFragmentFragmentSetExisting() throws Exception {
+		_testPostFragmentFragmentSetExisting(this::_postSiteFragment);
+	}
+
+	private void _testPostSiteFragmentFragmentSetNonexisting()
+		throws Exception {
+
+		_testPostFragmentFragmentSetNonexisting(this::_postSiteFragment);
 	}
 
 	private void _testPostSiteFragmentSetFragmentApproved() throws Exception {
