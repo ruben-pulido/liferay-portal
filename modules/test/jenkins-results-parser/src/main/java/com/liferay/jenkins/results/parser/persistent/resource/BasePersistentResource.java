@@ -89,6 +89,78 @@ public abstract class BasePersistentResource implements PersistentResource {
 	}
 
 	@Override
+	public boolean isTouched() {
+		return _touched;
+	}
+
+	@Override
+	public void touch() {
+		if (_touched) {
+			return;
+		}
+
+		synchronized (this) {
+			if (_touched || _touching) {
+				return;
+			}
+
+			_touching = true;
+		}
+
+		try {
+			if (!isBuildCachingEnabled()) {
+				_touched = true;
+
+				return;
+			}
+
+			boolean allSucceeded = true;
+
+			String dataS3ObjectPath = _getDataS3ObjectPath();
+
+			try {
+				if (CloudBucketUtil.isS3ObjectPathAvailable(dataS3ObjectPath)) {
+					CloudBucketUtil.touchS3File(dataS3ObjectPath);
+				}
+			}
+			catch (IOException ioException) {
+				allSucceeded = false;
+
+				System.out.println(
+					"WARNING: Unable to touch " + getType() + " S3 resource: " +
+						ioException.getMessage());
+			}
+
+			for (Artifact artifact : getArtifacts()) {
+				if (!artifact.isAvailable()) {
+					continue;
+				}
+
+				try {
+					CloudBucketUtil.touchS3File(artifact.getS3ObjectPath());
+				}
+				catch (IOException ioException) {
+					allSucceeded = false;
+
+					System.out.println(
+						"WARNING: Unable to touch " + getType() +
+							" S3 artifact " + artifact.getName() + ": " +
+								ioException.getMessage());
+				}
+			}
+
+			_attempts++;
+
+			if (allSucceeded || (_attempts >= _MAX_TOUCH_ATTEMPTS)) {
+				_touched = true;
+			}
+		}
+		finally {
+			_touching = false;
+		}
+	}
+
+	@Override
 	public void upload(File baseDir) {
 		for (Artifact artifact : getArtifacts()) {
 			File artifactFile = new File(baseDir, artifact.getName());
@@ -352,12 +424,15 @@ public abstract class BasePersistentResource implements PersistentResource {
 			getBaseS3ObjectPath(), "/data.json.gz");
 	}
 
+	private static final int _MAX_TOUCH_ATTEMPTS = 2;
+
 	private static final long _MAX_WAIT_TIME = 1000 * 60 * 120;
 
 	private static final Pattern _buildURLPattern = Pattern.compile(
 		"https?://.+/job/(?<jobName>[^/]+)/(?<buildNumber>\\d+)");
 
 	private final Map<String, Artifact> _artifacts = new HashMap<>();
+	private volatile int _attempts;
 	private Boolean _buildCachingEnabled;
 	private final BuildDatabase _buildDatabase;
 	private String _controllerBuildURL;
@@ -367,5 +442,7 @@ public abstract class BasePersistentResource implements PersistentResource {
 	private long _producerQueueId;
 	private Properties _startProperties;
 	private Status _status;
+	private volatile boolean _touched;
+	private volatile boolean _touching;
 
 }

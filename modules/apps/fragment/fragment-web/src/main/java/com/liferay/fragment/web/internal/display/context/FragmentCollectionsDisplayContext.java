@@ -7,7 +7,7 @@ package com.liferay.fragment.web.internal.display.context;
 
 import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.model.FragmentCollection;
-import com.liferay.fragment.service.FragmentCollectionServiceUtil;
+import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.web.internal.util.FragmentPortletUtil;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -34,9 +34,13 @@ import jakarta.servlet.http.HttpServletRequest;
 public class FragmentCollectionsDisplayContext {
 
 	public FragmentCollectionsDisplayContext(
+		boolean exporting,
+		FragmentCollectionLocalService fragmentCollectionLocalService,
 		HttpServletRequest httpServletRequest, RenderRequest renderRequest,
 		RenderResponse renderResponse) {
 
+		_exporting = exporting;
+		_fragmentCollectionLocalService = fragmentCollectionLocalService;
 		_httpServletRequest = httpServletRequest;
 		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
@@ -76,7 +80,7 @@ public class FragmentCollectionsDisplayContext {
 				WebKeys.THEME_DISPLAY);
 
 		SearchContainer<FragmentCollection> searchContainer =
-			new SearchContainer(
+			new SearchContainer<>(
 				_renderRequest, _getPortletURL(), null,
 				"there-are-no-fragment-sets");
 
@@ -86,11 +90,70 @@ public class FragmentCollectionsDisplayContext {
 				_getOrderByCol(), getOrderByType()));
 		searchContainer.setOrderByType(getOrderByType());
 
+		long[] groupIds = _getGroupIds(themeDisplay);
+
+		if (_exporting) {
+			if (_isSearch()) {
+				searchContainer.setResultsAndTotal(
+					() ->
+						_fragmentCollectionLocalService.
+							getExportableFragmentCollectionsByGroupId(
+								groupIds, _getKeywords(),
+								searchContainer.getStart(),
+								searchContainer.getEnd(),
+								searchContainer.getOrderByComparator()),
+					_fragmentCollectionLocalService.
+						getExportableFragmentCollectionsCountByGroupId(
+							groupIds, _getKeywords()));
+			}
+			else {
+				searchContainer.setResultsAndTotal(
+					() ->
+						_fragmentCollectionLocalService.
+							getExportableFragmentCollectionsByGroupId(
+								groupIds, searchContainer.getStart(),
+								searchContainer.getEnd(),
+								searchContainer.getOrderByComparator()),
+					_fragmentCollectionLocalService.
+						getExportableFragmentCollectionsCountByGroupId(
+							groupIds));
+			}
+		}
+		else if (_isSearch()) {
+			searchContainer.setResultsAndTotal(
+				() -> _fragmentCollectionLocalService.getFragmentCollections(
+					groupIds, _getKeywords(),
+					_isIncludeMarketplaceFragmentCollections(),
+					searchContainer.getStart(), searchContainer.getEnd(),
+					searchContainer.getOrderByComparator()),
+				_fragmentCollectionLocalService.getFragmentCollectionsCount(
+					groupIds, _getKeywords(),
+					_isIncludeMarketplaceFragmentCollections()));
+		}
+		else {
+			searchContainer.setResultsAndTotal(
+				() -> _fragmentCollectionLocalService.getFragmentCollections(
+					groupIds, _isIncludeMarketplaceFragmentCollections(),
+					searchContainer.getStart(), searchContainer.getEnd(),
+					searchContainer.getOrderByComparator()),
+				_fragmentCollectionLocalService.getFragmentCollectionsCount(
+					groupIds, _isIncludeMarketplaceFragmentCollections()));
+		}
+
+		searchContainer.setRowChecker(
+			new EmptyOnClickRowChecker(_renderResponse));
+
+		_searchContainer = searchContainer;
+
+		return _searchContainer;
+	}
+
+	private long[] _getGroupIds(ThemeDisplay themeDisplay) {
 		long[] groupIds = {themeDisplay.getScopeGroupId()};
 
 		if (_isIncludeGlobalFragmentCollections()) {
 			groupIds = new long[] {
-				themeDisplay.getScopeGroupId(), themeDisplay.getCompanyGroupId()
+				themeDisplay.getCompanyGroupId(), themeDisplay.getScopeGroupId()
 			};
 		}
 
@@ -103,55 +166,7 @@ public class FragmentCollectionsDisplayContext {
 			groupIds = ArrayUtil.append(groupIds, CompanyConstants.SYSTEM);
 		}
 
-		long[] allGroupIds = groupIds;
-
-		if (_isSearch()) {
-			if (_isIncludeMarketplaceFragmentCollections()) {
-				searchContainer.setResultsAndTotal(
-					() -> FragmentCollectionServiceUtil.getFragmentCollections(
-						allGroupIds, _getKeywords(), searchContainer.getStart(),
-						searchContainer.getEnd(),
-						searchContainer.getOrderByComparator()),
-					FragmentCollectionServiceUtil.getFragmentCollectionsCount(
-						allGroupIds, _getKeywords()));
-			}
-			else {
-				searchContainer.setResultsAndTotal(
-					() -> FragmentCollectionServiceUtil.getFragmentCollections(
-						allGroupIds, _getKeywords(), false,
-						searchContainer.getStart(), searchContainer.getEnd(),
-						searchContainer.getOrderByComparator()),
-					FragmentCollectionServiceUtil.getFragmentCollectionsCount(
-						allGroupIds, _getKeywords(), false));
-			}
-		}
-		else {
-			if (_isIncludeMarketplaceFragmentCollections()) {
-				searchContainer.setResultsAndTotal(
-					() -> FragmentCollectionServiceUtil.getFragmentCollections(
-						allGroupIds, searchContainer.getStart(),
-						searchContainer.getEnd(),
-						searchContainer.getOrderByComparator()),
-					FragmentCollectionServiceUtil.getFragmentCollectionsCount(
-						allGroupIds));
-			}
-			else {
-				searchContainer.setResultsAndTotal(
-					() -> FragmentCollectionServiceUtil.getFragmentCollections(
-						allGroupIds, false, searchContainer.getStart(),
-						searchContainer.getEnd(),
-						searchContainer.getOrderByComparator()),
-					FragmentCollectionServiceUtil.getFragmentCollectionsCount(
-						allGroupIds, false));
-			}
-		}
-
-		searchContainer.setRowChecker(
-			new EmptyOnClickRowChecker(_renderResponse));
-
-		_searchContainer = searchContainer;
-
-		return _searchContainer;
+		return groupIds;
 	}
 
 	private String _getKeywords() {
@@ -180,7 +195,13 @@ public class FragmentCollectionsDisplayContext {
 		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCRenderCommandName(
-			"/fragment/view_fragment_collections"
+			() -> {
+				if (_exporting) {
+					return "/fragment/view_exportable_fragment_collections";
+				}
+
+				return "/fragment/view_fragment_collections";
+			}
 		).setKeywords(
 			() -> {
 				String keywords = _getKeywords();
@@ -251,6 +272,9 @@ public class FragmentCollectionsDisplayContext {
 	}
 
 	private String _eventName;
+	private final boolean _exporting;
+	private final FragmentCollectionLocalService
+		_fragmentCollectionLocalService;
 	private final HttpServletRequest _httpServletRequest;
 	private Boolean _includeGlobalFragmentCollections;
 	private Boolean _includeMarketplaceFragmentCollections;

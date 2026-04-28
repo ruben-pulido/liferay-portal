@@ -1,9 +1,16 @@
+variable "deletion_protection" {
+	default=true
+	type=bool
+}
 variable "deployment_name" {
 	type=string
 	validation {
 		condition=can(regex("^[a-z][a-z0-9-]{2,23}$", var.deployment_name))
 		error_message="The variable \"deployment_name\" must be 3-24 characters, start with a lowercase letter, and contain only lowercase letters, numbers, and hyphens."
 	}
+}
+variable "envoy_gateway_helm_chart_version" {
+	type=string
 }
 variable "gateway_namespace" {
 	default="envoy-gateway-system"
@@ -44,7 +51,7 @@ variable "regional_cluster" {
 	type=bool
 }
 variable "spot_instances" {
-	default=true
+	default=false
 	type=bool
 }
 variable "vpc_cidr" {

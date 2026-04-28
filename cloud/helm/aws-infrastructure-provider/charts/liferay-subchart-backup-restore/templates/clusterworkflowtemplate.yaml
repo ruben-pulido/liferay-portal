@@ -120,10 +120,10 @@ spec:
                             path: /tmp/backup-vault-name.txt
                     -   name: data-active
                         valueFrom:
-                            path: /tmp/data-active.txt
+                            path: /tmp/data-plane-active.txt
                     -   name: data-inactive
                         valueFrom:
-                            path: /tmp/data-inactive.txt
+                            path: /tmp/data-plane-inactive.txt
                     -   name: liferay-infrastructure-name
                         valueFrom:
                             path: /tmp/liferay-infrastructure-name.txt

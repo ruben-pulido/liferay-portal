@@ -38,6 +38,7 @@ const test = mergeTests(
 	featureFlagsTest({
 		'LPD-11235': {enabled: false},
 		'LPD-17564': {enabled: true},
+		'LPD-44507': {enabled: true},
 	}),
 	fragmentsPagesTest,
 	loginTest(),
@@ -1244,6 +1245,110 @@ test.describe('Schedule Publication', () => {
 			await contentsPage.deleteContent(title);
 		}
 	);
+
+	test(
+		'Schedule dates are maintained after a failed publication',
+		{tag: '@LPD-68099'},
+		async ({apiHelpers, contentsPage, page}) => {
+
+			// Create a required vocabulary
+
+			const vocabularyName = getRandomString();
+
+			const siteId = await apiHelpers.headlessAdminUser
+				.getSiteByFriendlyUrlPath('cms')
+				.then((response) => response.id);
+
+			await apiHelpers.headlessAdminTaxonomy.postSiteTaxonomyVocabulary({
+				assetLibraries: [{id: -1}],
+				assetTypes: [
+					{
+						required: true,
+						subtype: 'AllAssetSubtypes',
+						type: 'AllAssetTypes',
+					},
+				],
+				name: vocabularyName,
+				siteId,
+				visibilityType: 'PUBLIC',
+			});
+
+			// Create a content
+
+			await contentsPage.goto();
+
+			await contentsPage.createContent('Basic Web Content');
+
+			const title = getRandomString();
+
+			await page.getByPlaceholder('New Basic Web Content').fill(title);
+
+			const nextYear = new Date().getFullYear() + 1;
+
+			const expirationDateValue = `05/12/${nextYear} 12:55 PM`;
+			const reviewDateValue = `05/12/${nextYear} 12:57 PM`;
+
+			// Set expiration and review dates through the Schedule side
+			// panel
+
+			await contentsPage.openSidePanel('Schedule');
+
+			await page.getByLabel('Never Expire').uncheck();
+
+			await page
+				.getByRole('textbox', {name: 'Expiration Date'})
+				.fill(expirationDateValue);
+
+			await page.keyboard.press('Tab');
+
+			await page.getByLabel('Never Review').uncheck();
+
+			await page
+				.getByRole('textbox', {name: 'Review Date'})
+				.fill(reviewDateValue);
+
+			await page.keyboard.press('Tab');
+
+			// Set the display date through the Schedule Publication modal
+
+			await contentsPage.openSchedulePublication();
+
+			const displayDateValue = `10/31/${nextYear} 12:30 PM`;
+
+			await page
+				.getByRole('textbox', {name: 'Date and Time'})
+				.fill(displayDateValue);
+
+			await page.keyboard.press('Tab');
+
+			// Click Schedule. Submission fails on the server because the
+			// required vocabulary has no category selected.
+
+			await page.getByRole('button', {name: 'Schedule'}).click();
+
+			// After the failed submit the side panel is closed. Reopen it
+			// and check that the expiration and review dates are preserved.
+
+			await contentsPage.openSidePanel('Schedule');
+
+			await expect(
+				page.getByRole('textbox', {name: 'Expiration Date'})
+			).toHaveValue(expirationDateValue);
+
+			await expect(
+				page.getByRole('textbox', {name: 'Review Date'})
+			).toHaveValue(reviewDateValue);
+
+			// The modal is also closed. Reopen it and check that the
+			// display date is preserved.
+
+			await contentsPage.openSchedulePublication();
+
+			await expect(
+				page.getByRole('textbox', {name: 'Date and Time'})
+			).toHaveValue(displayDateValue);
+		}
+	);
 });
 
 test(
@@ -1860,6 +1965,108 @@ test(
 				await expect(
 					page.locator('.label-item', {hasText: tagName})
 				).toBeVisible();
+			});
+		}
+		finally {
+			await test.step('Delete content', async () => {
+				await contentsPage.goto();
+
+				await contentsPage.deleteContent(title);
+			});
+		}
+	}
+);
+
+test(
+	'The content preview opens and closes correctly, taking focus into account',
+	{tag: '@LPD-84613'},
+	async ({contentsPage, page}) => {
+		const title = getRandomString();
+		const previewTitle = `${title} Preview`;
+
+		try {
+			await test.step('Create a new basic web content and edit it', async () => {
+				await contentsPage.goto();
+
+				await contentsPage.createContent('Basic Web Content');
+
+				await page.getByLabel('Title').fill(title);
+
+				await contentsPage.saveContent();
+
+				await contentsPage.editContent(title);
+			});
+
+			const preview = page.getByLabel(previewTitle);
+			const previewButton = page
+				.locator('.content-editor__toolbar')
+				.getByRole('button', {
+					name: 'Preview',
+				});
+
+			await test.step('Open the content preview', async () => {
+				await page.getByRole('button', {name: 'Open Preview'}).click();
+
+				await expect(page.getByText(previewTitle)).toBeVisible();
+				await expect(preview).toBeFocused();
+			});
+
+			await test.step('Resize the content preview', async () => {
+				await page.keyboard.press('Tab');
+
+				await expect(
+					preview.getByRole('button', {name: 'Close Preview'})
+				).toBeFocused();
+
+				await page.keyboard.press('Tab');
+
+				const resizeHandle = preview.getByRole('separator');
+
+				await expect(resizeHandle).toBeFocused();
+
+				const initWidth = (await preview.boundingBox())?.width ?? 0;
+				const resizeHandleBox = await resizeHandle.boundingBox();
+
+				if (resizeHandleBox) {
+					await page.mouse.move(
+						resizeHandleBox.x + resizeHandleBox.width / 2,
+						100
+					);
+					await page.mouse.down();
+					await page.mouse.move(
+						resizeHandleBox.x + resizeHandleBox.width / 2 + 200,
+						100,
+						{steps: 20}
+					);
+					await page.mouse.up();
+				}
+
+				expect((await preview.boundingBox())?.width).toBeLessThan(
+					initWidth
+				);
+			});
+
+			await test.step('Close the content preview from the close button', async () => {
+				await preview
+					.getByRole('button', {name: 'Close Preview'})
+					.click();
+
+				await expect(previewButton).toBeFocused();
+				await expect(page.getByText(previewTitle)).not.toBeVisible();
+			});
+
+			await test.step('Close the content preview from the preview button', async () => {
+				await page.getByRole('button', {name: 'Open Preview'}).click();
+
+				await expect(page.getByText(previewTitle)).toBeVisible();
+
+				await page
+					.locator('.content-editor__toolbar')
+					.getByRole('button', {name: 'Close Preview'})
+					.click();
+
+				await expect(previewButton).toBeFocused();
+				await expect(page.getByText(previewTitle)).not.toBeVisible();
 			});
 		}
 		finally {

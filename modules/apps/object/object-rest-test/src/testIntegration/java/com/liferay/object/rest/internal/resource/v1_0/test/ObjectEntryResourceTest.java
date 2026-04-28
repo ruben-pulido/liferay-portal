@@ -73,6 +73,7 @@ import com.liferay.object.model.ObjectValidationRule;
 import com.liferay.object.rest.dto.v1_0.Folder;
 import com.liferay.object.rest.dto.v1_0.Link;
 import com.liferay.object.rest.dto.v1_0.SystemProperties;
+import com.liferay.object.rest.dto.v1_0.ValidationError;
 import com.liferay.object.rest.dto.v1_0.ValidationRequest;
 import com.liferay.object.rest.dto.v1_0.ValidationResponse;
 import com.liferay.object.rest.dto.v1_0.Version;
@@ -188,6 +189,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -1351,8 +1353,15 @@ public class ObjectEntryResourceTest {
 
 		// Site scope
 
-		_testDeleteObjectEntryWithComments(
-			_testGroupId, _siteScopedObjectDefinition1);
+		PropsUtil.set("feature.flag.LPD-43996", "false");
+
+		try {
+			_testDeleteObjectEntryWithComments(
+				_testGroupId, _siteScopedObjectDefinition1);
+		}
+		finally {
+			PropsUtil.set("feature.flag.LPD-43996", "true");
+		}
 	}
 
 	@Test
@@ -4757,9 +4766,12 @@ public class ObjectEntryResourceTest {
 
 		JSONObject itemJSONObject = itemsJSONArray.getJSONObject(0);
 
+		String objectEntry1ExternalReferenceCode =
+			_objectEntry1.getExternalReferenceCode();
+
 		Assert.assertEquals(
 			itemJSONObject.getString(objectRelationshipERCObjectFieldName),
-			_objectEntry1.getExternalReferenceCode());
+			objectEntry1ExternalReferenceCode);
 
 		// Comparison operators
 
@@ -4769,7 +4781,7 @@ public class ObjectEntryResourceTest {
 				String.format(
 					"%s/%s eq '%s'", _objectRelationship1.getName(),
 					objectRelationshipERCObjectFieldName,
-					_objectEntry1.getExternalReferenceCode())),
+					objectEntry1ExternalReferenceCode)),
 			_objectDefinition1);
 		_assertFilterString(
 			_OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_1,
@@ -4777,13 +4789,10 @@ public class ObjectEntryResourceTest {
 				String.format(
 					"%s/%s ge '%s'", _objectRelationship1.getName(),
 					objectRelationshipERCObjectFieldName,
-					_objectEntry1.getExternalReferenceCode())),
+					objectEntry1ExternalReferenceCode)),
 			_objectDefinition1);
 
-		String substring = _objectEntry1.getExternalReferenceCode(
-		).substring(
-			0, 4
-		);
+		String substring = objectEntry1ExternalReferenceCode.substring(0, 4);
 
 		_assertFilterString(
 			_OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_1,
@@ -4799,7 +4808,7 @@ public class ObjectEntryResourceTest {
 				String.format(
 					"%s/%s le '%s'", _objectRelationship1.getName(),
 					objectRelationshipERCObjectFieldName,
-					_objectEntry1.getExternalReferenceCode())),
+					objectEntry1ExternalReferenceCode)),
 			_objectDefinition1);
 		_assertFilterString(
 			_OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_1,
@@ -4825,7 +4834,7 @@ public class ObjectEntryResourceTest {
 				String.format(
 					"%s/%s in ('%s', '%s')", _objectRelationship1.getName(),
 					objectRelationshipERCObjectFieldName,
-					_objectEntry1.getExternalReferenceCode(),
+					objectEntry1ExternalReferenceCode,
 					RandomTestUtil.randomInt())),
 			_objectDefinition1);
 
@@ -6154,8 +6163,15 @@ public class ObjectEntryResourceTest {
 
 		// Site scope
 
-		_testGetObjectEntriesPageWithComments(
-			_testGroupId, _siteScopedObjectDefinition1);
+		PropsUtil.set("feature.flag.LPD-43996", "false");
+
+		try {
+			_testGetObjectEntriesPageWithComments(
+				_testGroupId, _siteScopedObjectDefinition1);
+		}
+		finally {
+			PropsUtil.set("feature.flag.LPD-43996", "true");
+		}
 	}
 
 	@Test
@@ -9504,12 +9520,19 @@ public class ObjectEntryResourceTest {
 
 		// Site scope
 
-		_enableComments(_siteScopedObjectDefinition1);
+		PropsUtil.set("feature.flag.LPD-43996", "false");
 
-		_testPatchPutObjectEntryWithComments(
-			_testGroupId, Http.Method.PATCH, _siteScopedObjectDefinition1);
-		_testPatchPutObjectEntryWithComments(
-			_testGroupId, Http.Method.PUT, _siteScopedObjectDefinition1);
+		try {
+			_enableComments(_siteScopedObjectDefinition1);
+
+			_testPatchPutObjectEntryWithComments(
+				_testGroupId, Http.Method.PATCH, _siteScopedObjectDefinition1);
+			_testPatchPutObjectEntryWithComments(
+				_testGroupId, Http.Method.PUT, _siteScopedObjectDefinition1);
+		}
+		finally {
+			PropsUtil.set("feature.flag.LPD-43996", "true");
+		}
 	}
 
 	@FeatureFlag("LPD-43996")
@@ -11044,8 +11067,15 @@ public class ObjectEntryResourceTest {
 
 		// Site scope
 
-		_testPostObjectEntriesWithComments(
-			_testGroupId, _siteScopedObjectDefinition1);
+		PropsUtil.set("feature.flag.LPD-43996", "false");
+
+		try {
+			_testPostObjectEntriesWithComments(
+				_testGroupId, _siteScopedObjectDefinition1);
+		}
+		finally {
+			PropsUtil.set("feature.flag.LPD-43996", "true");
+		}
 	}
 
 	@FeatureFlag("LPD-43996")
@@ -11296,57 +11326,14 @@ public class ObjectEntryResourceTest {
 
 	@Test
 	public void testPostScopeScopeKey() throws Exception {
+		Group group1 = _groupLocalService.fetchGroup(_testGroupId);
+		Group group2 = GroupTestUtil.addGroup();
 
-		// Site scope external reference code
-
-		Group group = _groupLocalService.fetchGroup(_testGroupId);
-
-		String objectFieldValue = RandomTestUtil.randomString();
-
-		Assert.assertEquals(
-			objectFieldValue,
-			JSONUtil.getValueAsString(
-				HTTPTestUtil.invokeToJSONObject(
-					JSONUtil.put(
-						_OBJECT_FIELD_NAME_1, objectFieldValue
-					).toString(),
-					_getEndpoint(
-						_siteScopedObjectDefinition1,
-						group.getExternalReferenceCode()),
-					Http.Method.POST),
-				"Object/" + _OBJECT_FIELD_NAME_1));
-
-		// Site scope group ID
-
-		objectFieldValue = RandomTestUtil.randomString();
-
-		Assert.assertEquals(
-			objectFieldValue,
-			JSONUtil.getValueAsString(
-				HTTPTestUtil.invokeToJSONObject(
-					JSONUtil.put(
-						_OBJECT_FIELD_NAME_1, objectFieldValue
-					).toString(),
-					_getEndpoint(
-						_siteScopedObjectDefinition1, group.getGroupId()),
-					Http.Method.POST),
-				"Object/" + _OBJECT_FIELD_NAME_1));
-
-		// Site scope group key
-
-		objectFieldValue = RandomTestUtil.randomString();
-
-		Assert.assertEquals(
-			objectFieldValue,
-			JSONUtil.getValueAsString(
-				HTTPTestUtil.invokeToJSONObject(
-					JSONUtil.put(
-						_OBJECT_FIELD_NAME_1, objectFieldValue
-					).toString(),
-					_getEndpoint(
-						_siteScopedObjectDefinition1, group.getGroupKey()),
-					Http.Method.POST),
-				"Object/" + _OBJECT_FIELD_NAME_1));
+		_testPostScopeScopeKey(
+			group1.getExternalReferenceCode(),
+			group2.getExternalReferenceCode());
+		_testPostScopeScopeKey(group1.getGroupId(), group2.getGroupId());
+		_testPostScopeScopeKey(group1.getGroupKey(), group2.getGroupKey());
 	}
 
 	@Test
@@ -20338,6 +20325,31 @@ public class ObjectEntryResourceTest {
 			JSONCompareMode.LENIENT);
 	}
 
+	private void _testPostScopeScopeKey(Object scopeKey1, Object scopeKey2)
+		throws Exception {
+
+		String objectFieldValue = RandomTestUtil.randomString();
+
+		Assert.assertEquals(
+			objectFieldValue,
+			JSONUtil.getValueAsString(
+				HTTPTestUtil.invokeToJSONObject(
+					JSONUtil.put(
+						_OBJECT_FIELD_NAME_1, objectFieldValue
+					).toString(),
+					_getEndpoint(_siteScopedObjectDefinition1, scopeKey1),
+					Http.Method.POST),
+				"Object/" + _OBJECT_FIELD_NAME_1));
+
+		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
+			null, _getEndpoint(_siteScopedObjectDefinition1, scopeKey2),
+			Http.Method.GET);
+
+		JSONArray itemsJSONArray = jsonObject.getJSONArray("items");
+
+		Assert.assertEquals(0, itemsJSONArray.length());
+	}
+
 	private void _testPostValidate(
 			String scopeKey, ObjectDefinition objectDefinition,
 			ObjectField objectField1)
@@ -20431,9 +20443,11 @@ public class ObjectEntryResourceTest {
 					).build(),
 					objectValidationRule1.getExternalReferenceCode()));
 
+			ValidationError[] validationErrors =
+				validationResponse.getValidationErrors();
+
 			Assert.assertEquals(
-				errorMessage1,
-				validationResponse.getValidationErrors()[0].getErrorMessage());
+				errorMessage1, validationErrors[0].getErrorMessage());
 
 			validationResponse = _validate(
 				scopeKey, objectEntryResource,
@@ -20443,8 +20457,9 @@ public class ObjectEntryResourceTest {
 					).build(),
 					objectValidationRule1.getExternalReferenceCode()));
 
-			Assert.assertTrue(
-				ArrayUtil.isEmpty(validationResponse.getValidationErrors()));
+			validationErrors = validationResponse.getValidationErrors();
+
+			Assert.assertTrue(ArrayUtil.isEmpty(validationErrors));
 
 			validationResponse = _validate(
 				scopeKey, objectEntryResource,
@@ -20453,16 +20468,15 @@ public class ObjectEntryResourceTest {
 						objectField1.getName(), RandomTestUtil.randomInt()
 					).build()));
 
+			validationErrors = validationResponse.getValidationErrors();
+
 			Assert.assertEquals(
-				errorMessage1,
-				validationResponse.getValidationErrors()[0].getErrorMessage());
+				errorMessage1, validationErrors[0].getErrorMessage());
 			Assert.assertEquals(
-				errorMessage2,
-				validationResponse.getValidationErrors()[1].getErrorMessage());
+				errorMessage2, validationErrors[1].getErrorMessage());
 			Assert.assertEquals(
 				objectField1.getName(),
-				validationResponse.getValidationErrors()[1].
-					getObjectFieldName());
+				validationErrors[1].getObjectFieldName());
 
 			objectValidationRule2.setActive(false);
 
@@ -20476,11 +20490,12 @@ public class ObjectEntryResourceTest {
 						objectField1.getName(), RandomTestUtil.randomInt()
 					).build()));
 
+			validationErrors = validationResponse.getValidationErrors();
+
 			Assert.assertEquals(
-				1, validationResponse.getValidationErrors().length);
+				Arrays.toString(validationErrors), 1, validationErrors.length);
 			Assert.assertEquals(
-				errorMessage1,
-				validationResponse.getValidationErrors()[0].getErrorMessage());
+				errorMessage1, validationErrors[0].getErrorMessage());
 
 			ObjectField objectField2 =
 				ObjectFieldLocalServiceUtil.addCustomObjectField(
@@ -20514,14 +20529,15 @@ public class ObjectEntryResourceTest {
 				scopeKey, objectEntryResource,
 				_getValidationRequest(Collections.emptyMap()));
 
+			validationErrors = validationResponse.getValidationErrors();
+
 			Assert.assertEquals(
-				errorMessage1,
-				validationResponse.getValidationErrors()[0].getErrorMessage());
+				errorMessage1, validationErrors[0].getErrorMessage());
 
 			Assert.assertEquals(
 				"No value was provided for required object field " +
 					"\"nameRequired\"",
-				validationResponse.getValidationErrors()[1].getErrorMessage());
+				validationErrors[1].getErrorMessage());
 
 			_objectValidationRuleLocalService.deleteObjectValidationRules(
 				objectDefinition.getObjectDefinitionId());
@@ -20533,10 +20549,12 @@ public class ObjectEntryResourceTest {
 						objectField2.getName(), RandomTestUtil.randomString(10)
 					).build()));
 
+			validationErrors = validationResponse.getValidationErrors();
+
 			Assert.assertEquals(
 				"Object entry value exceeds the maximum length of 9 " +
 					"characters for object field \"nameRequired\"",
-				validationResponse.getValidationErrors()[0].getErrorMessage());
+				validationErrors[0].getErrorMessage());
 
 			ObjectEntryTestUtil.addObjectEntry(
 				objectDefinition, objectField2.getName(), "Peter");
@@ -20548,12 +20566,14 @@ public class ObjectEntryResourceTest {
 						objectField2.getName(), "Peter"
 					).build()));
 
+			validationErrors = validationResponse.getValidationErrors();
+
 			Assert.assertEquals(
 				String.format(
 					"Unique value constraint violation for %s.%s with value %s",
 					objectField2.getDBTableName(),
 					objectField2.getDBColumnName(), "Peter"),
-				validationResponse.getValidationErrors()[0].getErrorMessage());
+				validationErrors[0].getErrorMessage());
 
 			_objectFieldLocalService.deleteObjectField(
 				objectField2.getObjectFieldId());
@@ -20575,17 +20595,19 @@ public class ObjectEntryResourceTest {
 						fileEntry.getFileEntryId()
 					).build()));
 
+			validationErrors = validationResponse.getValidationErrors();
+
 			Assert.assertEquals(
 				StringBundler.concat(
 					"The file extension \"pdf\" is invalid for object field \"",
 					_OBJECT_FIELD_NAME_ATTACHMENT_DOCS_AND_MEDIA_SOURCE, "\""),
-				validationResponse.getValidationErrors()[0].getErrorMessage());
+				validationErrors[0].getErrorMessage());
 			Assert.assertEquals(
 				StringBundler.concat(
 					"File exceeds the maximum permitted size of 1 MB for ",
 					"object field \"",
 					_OBJECT_FIELD_NAME_ATTACHMENT_DOCS_AND_MEDIA_SOURCE, "\""),
-				validationResponse.getValidationErrors()[1].getErrorMessage());
+				validationErrors[1].getErrorMessage());
 		}
 		finally {
 			PermissionThreadLocal.setPermissionChecker(

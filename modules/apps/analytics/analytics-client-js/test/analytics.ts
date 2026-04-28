@@ -11,7 +11,7 @@ import AnalyticsClient from '../src/analytics';
 import {SegmentCachedData} from '../src/segment';
 import {Analytics as AnalyticsType} from '../src/types';
 import {
-	ANALYTICS_BATCH_SEGMENT_IDS,
+	ANALYTICS_BATCH_SEGMENT_EXTERNAL_REFERENCE_CODES,
 	THREE_HOURS_IN_MILLISECONDS,
 } from '../src/utils/constants';
 import {getItem, setItem} from '../src/utils/storage';
@@ -318,9 +318,11 @@ describe('Analytics', () => {
 		});
 	});
 
-	describe('getBatchSegmentIds()', () => {
+	describe('getBatchSegmentExternalReferenceCodes()', () => {
 		it('is exposed as an Analytics method', () => {
-			expect(typeof Analytics.getBatchSegmentIds).toBe('function');
+			expect(typeof Analytics.getBatchSegmentExternalReferenceCodes).toBe(
+				'function'
+			);
 		});
 
 		it('gets batch segment ids for the first time', async () => {
@@ -330,28 +332,34 @@ describe('Analytics', () => {
 
 			Analytics = AnalyticsClient.create(INITIAL_CONFIG);
 
-			let analyticsBatchSegmentIds = getItem<SegmentCachedData>(
-				ANALYTICS_BATCH_SEGMENT_IDS
-			);
+			let analyticsBatchSegmentExternalReferenceCode =
+				getItem<SegmentCachedData>(
+					ANALYTICS_BATCH_SEGMENT_EXTERNAL_REFERENCE_CODES
+				);
 
-			expect(analyticsBatchSegmentIds).toBeNull();
+			expect(analyticsBatchSegmentExternalReferenceCode).toBeNull();
 
-			const result = await Analytics.getBatchSegmentIds();
+			const result =
+				await Analytics.getBatchSegmentExternalReferenceCodes();
 
 			expect(result).toEqual([1, 2, 3]);
 
-			analyticsBatchSegmentIds = getItem(ANALYTICS_BATCH_SEGMENT_IDS);
+			analyticsBatchSegmentExternalReferenceCode = getItem(
+				ANALYTICS_BATCH_SEGMENT_EXTERNAL_REFERENCE_CODES
+			);
 
 			const individualId = (Analytics as any)._getUserId();
 
 			expect(
-				analyticsBatchSegmentIds?.[individualId]?.segmentIds
+				analyticsBatchSegmentExternalReferenceCode?.[individualId]
+					?.segmentExternalReferenceCodes
 			).toEqual([1, 2, 3]);
 
 			const date = new Date();
 
 			const createDate =
-				analyticsBatchSegmentIds?.[individualId]?.createDate ?? 0;
+				analyticsBatchSegmentExternalReferenceCode?.[individualId]
+					?.createDate ?? 0;
 
 			expect(date.getTime()).toBeLessThan(
 				createDate + THREE_HOURS_IN_MILLISECONDS
@@ -371,27 +379,31 @@ describe('Analytics', () => {
 
 			date.setHours(date.getHours() - 5);
 
-			setItem(ANALYTICS_BATCH_SEGMENT_IDS, {
+			setItem(ANALYTICS_BATCH_SEGMENT_EXTERNAL_REFERENCE_CODES, {
 				[individualId]: {
 					createDate: date.getTime(),
-					segmentIds: [1, 2],
+					segmentExternalReferenceCodes: [1, 2],
 				},
 			});
 
-			const result = await Analytics.getBatchSegmentIds();
+			const result =
+				await Analytics.getBatchSegmentExternalReferenceCodes();
 
 			expect(result).toEqual([1, 2, 3]);
 
-			const analyticsBatchSegmentIds = getItem<SegmentCachedData>(
-				ANALYTICS_BATCH_SEGMENT_IDS
-			);
+			const analyticsBatchSegmentExternalReferenceCode =
+				getItem<SegmentCachedData>(
+					ANALYTICS_BATCH_SEGMENT_EXTERNAL_REFERENCE_CODES
+				);
 
 			expect(
-				analyticsBatchSegmentIds?.[individualId]?.segmentIds
+				analyticsBatchSegmentExternalReferenceCode?.[individualId]
+					?.segmentExternalReferenceCodes
 			).toEqual([1, 2, 3]);
 
 			const createDate =
-				analyticsBatchSegmentIds?.[individualId]?.createDate ?? 0;
+				analyticsBatchSegmentExternalReferenceCode?.[individualId]
+					?.createDate ?? 0;
 
 			expect(date.getTime()).toBeLessThan(createDate);
 		});
@@ -409,35 +421,41 @@ describe('Analytics', () => {
 
 			date.setHours(date.getHours() - 1);
 
-			setItem(ANALYTICS_BATCH_SEGMENT_IDS, {
+			setItem(ANALYTICS_BATCH_SEGMENT_EXTERNAL_REFERENCE_CODES, {
 				[individualId]: {
 					createDate: date.getTime(),
-					segmentIds: [1, 2],
+					segmentExternalReferenceCodes: [1, 2],
 				},
 			});
 
-			const result = await Analytics.getBatchSegmentIds();
+			const result =
+				await Analytics.getBatchSegmentExternalReferenceCodes();
 
 			expect(result).toEqual([1, 2]);
 
-			const analyticsBatchSegmentIds = getItem<SegmentCachedData>(
-				ANALYTICS_BATCH_SEGMENT_IDS
-			);
+			const analyticsBatchSegmentExternalReferenceCode =
+				getItem<SegmentCachedData>(
+					ANALYTICS_BATCH_SEGMENT_EXTERNAL_REFERENCE_CODES
+				);
 
 			expect(
-				analyticsBatchSegmentIds?.[individualId]?.segmentIds
+				analyticsBatchSegmentExternalReferenceCode?.[individualId]
+					?.segmentExternalReferenceCodes
 			).toEqual([1, 2]);
 
 			const createDate =
-				analyticsBatchSegmentIds?.[individualId]?.createDate ?? 0;
+				analyticsBatchSegmentExternalReferenceCode?.[individualId]
+					?.createDate ?? 0;
 
 			expect(date.getTime()).toEqual(createDate);
 		});
 	});
 
-	describe('getRealTimeSegmentIds()', () => {
+	describe('getRealTimeSegmentExternalReferenceCodes()', () => {
 		it('is exposed as an Analytics method', () => {
-			expect(typeof Analytics.getRealTimeSegmentIds).toBe('function');
+			expect(
+				typeof Analytics.getRealTimeSegmentExternalReferenceCodes
+			).toBe('function');
 		});
 
 		it('gets real time segment ids and never caches data', async () => {
@@ -447,7 +465,8 @@ describe('Analytics', () => {
 
 			Analytics = AnalyticsClient.create(INITIAL_CONFIG);
 
-			const result1 = await Analytics.getRealTimeSegmentIds();
+			const result1 =
+				await Analytics.getRealTimeSegmentExternalReferenceCodes();
 
 			expect(result1).toEqual([1, 2, 3]);
 
@@ -457,7 +476,8 @@ describe('Analytics', () => {
 				Promise.resolve([4, 5, 6])
 			);
 
-			const result2 = await Analytics.getRealTimeSegmentIds();
+			const result2 =
+				await Analytics.getRealTimeSegmentExternalReferenceCodes();
 
 			expect(result2).toEqual([4, 5, 6]);
 		});

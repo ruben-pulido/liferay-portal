@@ -580,10 +580,30 @@ public class JenkinsResultsParserUtil {
 			String... commands)
 		throws IOException, TimeoutException {
 
-		System.out.print("Executing commands: ");
+		return executeBashCommands(
+			baseDir, exitOnFirstFail, true, timeout, commands);
+	}
 
-		for (String command : commands) {
-			System.out.println(command);
+	public static Process executeBashCommands(
+			boolean exitOnFirstFail, String... commands)
+		throws IOException, TimeoutException {
+
+		return executeBashCommands(
+			exitOnFirstFail, new File("."),
+			_MILLIS_BASH_COMMAND_TIMEOUT_DEFAULT, commands);
+	}
+
+	public static Process executeBashCommands(
+			File baseDir, boolean exitOnFirstFail, boolean printCommands,
+			long timeout, String... commands)
+		throws IOException, TimeoutException {
+
+		if (printCommands) {
+			System.out.print("Executing commands: ");
+
+			for (String command : commands) {
+				System.out.println(command);
+			}
 		}
 
 		String[] bashCommands = new String[3];
@@ -700,15 +720,6 @@ public class JenkinsResultsParserUtil {
 		}
 
 		return process;
-	}
-
-	public static Process executeBashCommands(
-			boolean exitOnFirstFail, String... commands)
-		throws IOException, TimeoutException {
-
-		return executeBashCommands(
-			exitOnFirstFail, new File("."),
-			_MILLIS_BASH_COMMAND_TIMEOUT_DEFAULT, commands);
 	}
 
 	public static Process executeBashCommands(File baseDir, String... commands)
@@ -3780,6 +3791,7 @@ public class JenkinsResultsParserUtil {
 
 			GZIPOutputStream gzipOutputStream = new GZIPOutputStream(
 				fileOutputStream);
+
 			FileInputStream fileInputStream = new FileInputStream(sourceFile)) {
 
 			byte[] bytes = new byte[1024];
@@ -4274,6 +4286,30 @@ public class JenkinsResultsParserUtil {
 		_topLevelJobNames = retryable.executeWithRetries();
 
 		return _topLevelJobNames.contains(jobName);
+	}
+
+	public static boolean isUnifiedBuilderSupported(String upstreamBranchName) {
+		if (Objects.equals(upstreamBranchName, "master")) {
+			return true;
+		}
+
+		if (upstreamBranchName == null) {
+			return false;
+		}
+
+		Matcher matcher = _quarterlyReleaseYearPattern.matcher(
+			upstreamBranchName);
+
+		if (matcher.matches()) {
+			int year = Integer.parseInt(matcher.group(1));
+			int quarter = Integer.parseInt(matcher.group(2));
+
+			if ((year > 2026) || ((year == 2026) && (quarter >= 2))) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public static boolean isURL(String urlString) {
@@ -6111,8 +6147,10 @@ public class JenkinsResultsParserUtil {
 	public static void unGzip(File sourceGzipFile, File targetFile) {
 		try (FileOutputStream fileOutputStream = new FileOutputStream(
 				targetFile);
+
 			FileInputStream fileInputStream = new FileInputStream(
 				sourceGzipFile);
+
 			GZIPInputStream gzipInputStream = new GZIPInputStream(
 				fileInputStream)) {
 
@@ -7511,6 +7549,8 @@ public class JenkinsResultsParserUtil {
 		"\\$\\{([^\\}]+)\\}");
 	private static final Pattern _poshiFileNamePattern = Pattern.compile(
 		".*\\.(function|macro|path|prose|testcase)");
+	private static final Pattern _quarterlyReleaseYearPattern = Pattern.compile(
+		"release-(\\d{4})\\.q(\\d+).*");
 	private static final Set<String> _redactTokens = new HashSet<>();
 	private static final Pattern _remoteURLAuthorityPattern1 = Pattern.compile(
 		"https://(test-[0-9]+-[0])-aws.liferay.com/");

@@ -47,15 +47,15 @@ const views = {
 	name: 'table',
 	schema: {
 		fields: [
-			{fieldName: 'label', label: Liferay.Language.get('user-view-name')},
-			{
-				fieldName: 'creator.name',
-				label: Liferay.Language.get('created-by'),
-			},
 			{
 				contentRenderer: 'dataSetNameRenderer',
 				fieldName: 'dataSetName',
 				label: Liferay.Language.get('data-set'),
+			},
+			{fieldName: 'label', label: Liferay.Language.get('user-view-name')},
+			{
+				fieldName: 'creator.name',
+				label: Liferay.Language.get('created-by'),
 			},
 			{
 				contentRenderer: 'dateTime',
@@ -332,6 +332,23 @@ export default function ManageUserViews({
 					portletId={portletId}
 					selectedItemsKey="externalReferenceCode"
 					selectionType="multiple"
+					sorts={[
+						{
+							direction: 'asc',
+							key: 'fdsName',
+							label: Liferay.Language.get('data-set'),
+						},
+						{
+							direction: 'asc',
+							key: 'creator',
+							label: Liferay.Language.get('created-by'),
+						},
+						{
+							direction: 'asc',
+							key: 'dateModified',
+							label: Liferay.Language.get('modified-date'),
+						},
+					]}
 					style="fluid"
 					views={[views]}
 				/>

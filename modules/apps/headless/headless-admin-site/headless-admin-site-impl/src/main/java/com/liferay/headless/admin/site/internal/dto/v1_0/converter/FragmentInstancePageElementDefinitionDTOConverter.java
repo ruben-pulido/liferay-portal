@@ -5,10 +5,12 @@
 
 package com.liferay.headless.admin.site.internal.dto.v1_0.converter;
 
+import com.liferay.fragment.collection.filter.FragmentCollectionFilterRegistry;
 import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.processor.PortletRegistry;
+import com.liferay.fragment.renderer.constants.FragmentRendererConstants;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.util.configuration.FragmentConfigurationField;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
@@ -20,6 +22,7 @@ import com.liferay.headless.admin.site.dto.v1_0.FragmentInstance;
 import com.liferay.headless.admin.site.dto.v1_0.FragmentItemExternalReference;
 import com.liferay.headless.admin.site.dto.v1_0.PageElementDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetInstance;
+import com.liferay.headless.admin.site.internal.dto.v1_0.util.CollectionFilterConfigurationUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentEditableElementUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentViewportUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.ImageValueUtil;
@@ -48,6 +51,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
@@ -210,6 +214,19 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 		JSONObject configurationJSONObject =
 			fragmentEntryLink.getConfigurationJSONObject();
 
+		if (Objects.equals(
+				fragmentEntryLink.getRendererKey(),
+				FragmentRendererConstants.
+					FRAGMENT_RENDERER_CLASS_NAME_COLLECTION_FILTER)) {
+
+			String filterKey = GetterUtil.getString(
+				freeMarkerJSONObject.getString("filterKey"));
+
+			configurationJSONObject =
+				CollectionFilterConfigurationUtil.getConfigurationJSONObject(
+					_fragmentCollectionFilterRegistry, filterKey);
+		}
+
 		if (configurationJSONObject == null) {
 			return Collections.emptyMap();
 		}
@@ -221,8 +238,7 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 
 		for (FragmentConfigurationField fragmentConfigurationField :
 				_fragmentEntryConfigurationParser.
-					getFragmentConfigurationFields(
-						fragmentEntryLink.getConfigurationJSONObject())) {
+					getFragmentConfigurationFields(configurationJSONObject)) {
 
 			if (!freeMarkerJSONObject.has(
 					fragmentConfigurationField.getName())) {
@@ -407,6 +423,9 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 	private DTOConverter
 		<FragmentConfigurationField, FragmentConfigurationFieldValue>
 			_configurationFieldValueDTOConverter;
+
+	@Reference
+	private FragmentCollectionFilterRegistry _fragmentCollectionFilterRegistry;
 
 	@Reference
 	private FragmentEntryConfigurationParser _fragmentEntryConfigurationParser;

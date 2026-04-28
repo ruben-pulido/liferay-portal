@@ -11,10 +11,12 @@ import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
@@ -23,13 +25,16 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
@@ -47,6 +52,49 @@ public class ViewAllSectionDisplayContextTest
 		new AggregateTestRule(
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
+
+	@Override
+	public HashMap<String, Object> getBaseAdditionalProps() throws Exception {
+		return new HashMapBuilder<>().putAll(
+			super.getBaseAdditionalProps()
+		).put(
+			"breadcrumbProps",
+			HashMapBuilder.<String, Object>put(
+				"breadcrumbItems",
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"active", false
+					).put(
+						"href", (String)null
+					).put(
+						"label", "test"
+					))
+			).put(
+				"hideSpace", true
+			).build()
+		).build();
+	}
+
+	@Test
+	public void testGetAdditionalAPIURLParametersWithSearchQuery()
+		throws Exception {
+
+		MockHttpServletRequest mockHttpServletRequest =
+			getMockHttpServletRequest();
+
+		mockHttpServletRequest.setParameter("q", "test-query");
+
+		String additionalAPIURLParameters = ReflectionTestUtil.invoke(
+			getSectionDisplayContext(mockHttpServletRequest),
+			"getAdditionalAPIURLParameters", new Class<?>[0]);
+
+		Assert.assertFalse(
+			additionalAPIURLParameters,
+			additionalAPIURLParameters.contains(StringPool.QUESTION));
+		Assert.assertTrue(
+			additionalAPIURLParameters,
+			additionalAPIURLParameters.contains("&search=test-query"));
+	}
 
 	@Override
 	protected String getCMSSectionFilterString(Object displayContext) {

@@ -21,9 +21,6 @@ import com.liferay.object.service.ObjectDefinitionSettingLocalService;
 import com.liferay.object.service.ObjectEntryFolderLocalServiceUtil;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
-import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -37,7 +34,6 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
-import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -53,6 +49,7 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
+import com.liferay.site.cms.site.initializer.internal.util.CommentUtil;
 import com.liferay.site.cms.site.initializer.internal.util.PermissionUtil;
 import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporter;
 import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporterRegistry;
@@ -118,7 +115,14 @@ public abstract class BaseSectionDisplayContext {
 
 	public Map<String, Object> getAdditionalProps() {
 		return HashMapBuilder.<String, Object>put(
-			"additionalAPIURLParameters", getAdditionalAPIURLParameters()
+			"additionalAPIURLParameters",
+			() -> {
+				if (isFolderSearchEnabled()) {
+					return getAdditionalAPIURLParameters();
+				}
+
+				return null;
+			}
 		).put(
 			"assetLibraries",
 			_sectionDisplayContextHelper.getDepotEntriesJSONArray(
@@ -126,8 +130,8 @@ public abstract class BaseSectionDisplayContext {
 		).put(
 			"autocompleteURL",
 			() -> StringBundler.concat(
-				"/o/search/v1.0/search?emptySearch=",
-				"true&entryClassNames=com.liferay.portal.kernel.model.User,",
+				"/o/search/v1.0/search?emptySearch=true&entryClassNames=",
+				"com.liferay.portal.kernel.model.User,",
 				"com.liferay.portal.kernel.model.UserGroup&nestedFields=",
 				"embedded")
 		).put(
@@ -196,53 +200,13 @@ public abstract class BaseSectionDisplayContext {
 				return collaboratorURLs;
 			}
 		).put(
-			"commentsProps",
-			HashMapBuilder.<String, Object>put(
-				"addCommentURL",
-				StringBundler.concat(
-					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-					GroupConstants.CMS_FRIENDLY_URL,
-					"/add_content_item_comment")
-			).put(
-				"deleteCommentURL",
-				StringBundler.concat(
-					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-					GroupConstants.CMS_FRIENDLY_URL,
-					"/delete_content_item_comment")
-			).put(
-				"editCommentURL",
-				StringBundler.concat(
-					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-					GroupConstants.CMS_FRIENDLY_URL,
-					"/edit_content_item_comment")
-			).put(
-				"editorConfig",
-				() -> {
-					EditorConfiguration contentItemCommentEditorConfiguration =
-						EditorConfigurationFactoryUtil.getEditorConfiguration(
-							StringPool.BLANK, "contentItemCommentEditor",
-							StringPool.BLANK, Collections.emptyMap(),
-							themeDisplay,
-							RequestBackedPortletURLFactoryUtil.create(
-								httpServletRequest));
-
-					Map<String, Object> data =
-						contentItemCommentEditorConfiguration.getData();
-
-					return data.get("editorConfig");
-				}
-			).put(
-				"getCommentsURL",
-				StringBundler.concat(
-					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-					GroupConstants.CMS_FRIENDLY_URL, "/get_asset_comments")
-			).build()
+			"commentsProps", CommentUtil.getCommentsProps(httpServletRequest)
 		).put(
 			"contentViewURL",
 			StringBundler.concat(
 				themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
 				GroupConstants.CMS_FRIENDLY_URL,
-				"/edit_content_item?&p_l_mode=read&p_p_state=",
+				"/edit_content_item?p_l_mode=read&p_p_state=",
 				LiferayWindowState.POP_UP, "&redirect=",
 				themeDisplay.getURLCurrent(), "&objectEntryId={embedded.id}")
 		).put(
@@ -307,7 +271,11 @@ public abstract class BaseSectionDisplayContext {
 	}
 
 	public String getAPIURL() {
-		return "/o/search/v1.0/search";
+		if (isFolderSearchEnabled()) {
+			return "/o/search/v1.0/search";
+		}
+
+		return "/o/search/v1.0/search?" + getAdditionalAPIURLParameters();
 	}
 
 	public Map<String, Object> getBreadcrumbProps() throws PortalException {
@@ -380,6 +348,10 @@ public abstract class BaseSectionDisplayContext {
 
 	protected String getRootObjectEntryFolderExternalReferenceCode() {
 		return null;
+	}
+
+	protected boolean isFolderSearchEnabled() {
+		return false;
 	}
 
 	protected final DepotEntryLocalService depotEntryLocalService;

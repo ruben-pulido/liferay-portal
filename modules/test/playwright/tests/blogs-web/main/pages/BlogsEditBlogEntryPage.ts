@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Locator, Page} from '@playwright/test';
+import {Locator, Page, expect} from '@playwright/test';
 
 import {clickAndExpectToBeHidden} from '../../../../utils/clickAndExpectToBeHidden';
 import {openFieldset} from '../../../../utils/openFieldset';
@@ -20,27 +20,91 @@ type editBlogEntryAddfriendlyUrlType = {
 export class BlogsEditBlogEntryPage {
 	readonly page: Page;
 
+	readonly abstractDescription: Locator;
 	readonly blogsPage: BlogsPage;
-	readonly publishButton: Locator;
 	readonly contentEditor: Locator;
+	readonly customAbstractRadio: Locator;
+	readonly customUrlInput: Locator;
+	readonly publishButton: Locator;
+	readonly saveDraftStatus: Locator;
 	readonly submitToWorkflowButton: Locator;
+	readonly subtitleInput: Locator;
+	readonly titleInput: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
 
+		this.abstractDescription = page.locator(
+			'#_com_liferay_blogs_web_portlet_BlogsAdminPortlet_description'
+		);
 		this.blogsPage = new BlogsPage(page);
 		this.contentEditor = page.locator(
 			'#_com_liferay_blogs_web_portlet_BlogsAdminPortlet_contentEditor.cke_editable'
 		);
+		this.customAbstractRadio = page.getByLabel('Custom Abstract');
+		this.customUrlInput = page.locator(
+			'#_com_liferay_blogs_web_portlet_BlogsAdminPortlet_urlTitle'
+		);
 		this.publishButton = page.getByRole('button', {name: 'Publish'});
+		this.saveDraftStatus = page.locator(
+			'#_com_liferay_blogs_web_portlet_BlogsAdminPortlet_saveStatus'
+		);
 		this.submitToWorkflowButton = page.getByRole('button', {
 			name: 'Submit for Workflow',
 		});
+		this.subtitleInput = page.getByPlaceholder('Subtitle');
+		this.titleInput = page.getByPlaceholder('Title *');
 	}
 
 	async goto(siteUrl?: Site['friendlyUrlPath']) {
 		await this.blogsPage.goto(siteUrl);
 		await this.blogsPage.goToCreateBlogEntry();
+	}
+
+	async expandPanel(
+		name:
+			| 'Categorization'
+			| 'Configuration'
+			| 'Display Page'
+			| 'Friendly URL'
+	): Promise<Locator> {
+		return openFieldset(this.page, name);
+	}
+
+	async setCustomAbstract(value: string) {
+		await this.expandPanel('Configuration');
+
+		await this.customAbstractRadio.click();
+
+		await expect(this.abstractDescription).toBeEnabled();
+
+		await this.abstractDescription.fill(value);
+	}
+
+	async setCustomUrl(value: string) {
+		const fieldset = await this.expandPanel('Friendly URL');
+
+		await fieldset.getByText('Use a Customized URL').click();
+
+		await this.customUrlInput.fill(value);
+	}
+
+	async saveAsDraft() {
+		await this.saveDraftStatus.getByText('Draft Saved').waitFor({
+			timeout: 40_000,
+		});
+	}
+
+	async fillTitle(title: string) {
+		await this.titleInput.fill(title);
+	}
+
+	async fillSubtitle(subtitle: string) {
+		await this.subtitleInput.fill(subtitle);
+	}
+
+	async fillContent(content: string) {
+		await this.contentEditor.fill(content);
 	}
 
 	private async editBlogEntryAddCategories({
@@ -90,17 +154,23 @@ export class BlogsEditBlogEntryPage {
 		friendlyUrl,
 		publish = true,
 		submitToWorkflow,
+		subtitle,
 		title,
 	}: {
 		content: string;
 		friendlyUrl?: editBlogEntryAddfriendlyUrlType;
 		publish?: boolean;
 		submitToWorkflow?: boolean;
+		subtitle?: string;
 		title: string;
 	}) {
-		await this.page.getByPlaceholder('Title *').fill(title);
+		await this.fillTitle(title);
 
-		await this.contentEditor.fill(content);
+		if (subtitle !== undefined) {
+			await this.fillSubtitle(subtitle);
+		}
+
+		await this.fillContent(content);
 
 		if (friendlyUrl) {
 			const {categories, vocabularyName} = friendlyUrl;
@@ -121,10 +191,16 @@ export class BlogsEditBlogEntryPage {
 
 	async publishBlogEntry() {
 		await this.publishButton.click();
-		await waitForAlert(this.page);
+		await waitForAlert(this.page, undefined, {timeout: 60_000});
 	}
 
-	async selectCoverImage(coverImageTitle) {
+	async publishBlogEntryExpectError(partialText: string) {
+		await this.publishButton.click();
+
+		await expect(this.page.getByText(partialText).first()).toBeVisible();
+	}
+
+	async selectCoverImage(coverImageTitle: string) {
 		await this.page
 			.getByRole('button', {name: 'Select File'})
 			.first()

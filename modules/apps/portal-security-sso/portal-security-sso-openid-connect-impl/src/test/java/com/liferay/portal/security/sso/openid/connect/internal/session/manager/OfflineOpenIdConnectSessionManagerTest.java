@@ -5,23 +5,38 @@
 
 package com.liferay.portal.security.sso.openid.connect.internal.session.manager;
 
+import com.liferay.oauth.client.persistence.model.OAuthClientEntry;
+import com.liferay.oauth.client.persistence.service.OAuthClientEntryLocalService;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.security.sso.openid.connect.internal.AuthorizationServerMetadataResolver;
 import com.liferay.portal.security.sso.openid.connect.persistence.model.OpenIdConnectSession;
 import com.liferay.portal.security.sso.openid.connect.persistence.service.OpenIdConnectSessionLocalService;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.oauth2.sdk.id.Issuer;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
 import com.nimbusds.oauth2.sdk.token.AccessTokenType;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
+import com.nimbusds.openid.connect.sdk.SubjectType;
+import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import com.nimbusds.openid.connect.sdk.token.OIDCTokens;
 
+import java.net.URI;
+
+import java.util.List;
+
+import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
  * @author Manuele Castro
@@ -32,6 +47,157 @@ public class OfflineOpenIdConnectSessionManagerTest {
 	@Rule
 	public static final LiferayUnitTestRule liferayUnitTestRule =
 		LiferayUnitTestRule.INSTANCE;
+
+	@Test
+	public void testExtendOpenIdConnectSession() throws Exception {
+		Assert.assertEquals(Long.valueOf(0), CompanyThreadLocal.getCompanyId());
+
+		OpenIdConnectSession openIdConnectSession = Mockito.mock(
+			OpenIdConnectSession.class);
+
+		long oAuthClientEntryCompanyId = RandomTestUtil.randomLong();
+
+		Mockito.when(
+			openIdConnectSession.getCompanyId()
+		).thenReturn(
+			oAuthClientEntryCompanyId
+		);
+
+		String authServerWellKnownURI = RandomTestUtil.randomString();
+
+		Mockito.when(
+			openIdConnectSession.getAuthServerWellKnownURI()
+		).thenReturn(
+			authServerWellKnownURI
+		);
+
+		String clientId = RandomTestUtil.randomString();
+
+		Mockito.when(
+			openIdConnectSession.getClientId()
+		).thenReturn(
+			clientId
+		);
+
+		Mockito.when(
+			openIdConnectSession.getRefreshToken()
+		).thenReturn(
+			RandomTestUtil.randomString()
+		);
+
+		OAuthClientEntry oAuthClientEntry = Mockito.mock(
+			OAuthClientEntry.class);
+
+		Mockito.when(
+			oAuthClientEntry.getOAuthClientEntryId()
+		).thenReturn(
+			RandomTestUtil.randomLong()
+		);
+
+		Mockito.when(
+			oAuthClientEntry.getCompanyId()
+		).thenReturn(
+			oAuthClientEntryCompanyId
+		);
+
+		Mockito.when(
+			oAuthClientEntry.getAuthServerWellKnownURI()
+		).thenReturn(
+			authServerWellKnownURI
+		);
+
+		Mockito.when(
+			oAuthClientEntry.getClientId()
+		).thenReturn(
+			clientId
+		);
+
+		Mockito.when(
+			oAuthClientEntry.getMetadataCacheInSeconds()
+		).thenReturn(
+			3600
+		);
+
+		OAuthClientEntryLocalService oAuthClientEntryLocalService =
+			Mockito.mock(OAuthClientEntryLocalService.class);
+
+		Mockito.when(
+			oAuthClientEntryLocalService.fetchOAuthClientEntry(
+				oAuthClientEntryCompanyId, authServerWellKnownURI, clientId)
+		).thenReturn(
+			oAuthClientEntry
+		);
+
+		OIDCProviderMetadata oidcProviderMetadata = new OIDCProviderMetadata(
+			new Issuer(RandomTestUtil.randomString()),
+			List.of(SubjectType.PUBLIC),
+			new URI(RandomTestUtil.randomString()));
+
+		oidcProviderMetadata.setTokenEndpointURI(
+			new URI(RandomTestUtil.randomString()));
+
+		AuthorizationServerMetadataResolver
+			authorizationServerMetadataResolver = Mockito.mock(
+				AuthorizationServerMetadataResolver.class);
+
+		Mockito.when(
+			authorizationServerMetadataResolver.resolveOIDCProviderMetadata(
+				Mockito.anyString(), Mockito.anyLong(), Mockito.anyInt(),
+				Mockito.anyLong())
+		).thenReturn(
+			oidcProviderMetadata
+		);
+
+		ConfigurationAdmin configurationAdmin = Mockito.mock(
+			ConfigurationAdmin.class);
+
+		Mockito.when(
+			configurationAdmin.listConfigurations(Mockito.anyString())
+		).thenReturn(
+			null
+		);
+
+		OpenIdConnectSessionLocalService openIdConnectSessionLocalService =
+			Mockito.mock(OpenIdConnectSessionLocalService.class);
+
+		OfflineOpenIdConnectSessionManager offlineOpenIdConnectSessionManager =
+			new OfflineOpenIdConnectSessionManager();
+
+		ReflectionTestUtil.setFieldValue(
+			offlineOpenIdConnectSessionManager,
+			"_authorizationServerMetadataResolver",
+			authorizationServerMetadataResolver);
+		ReflectionTestUtil.setFieldValue(
+			offlineOpenIdConnectSessionManager, "_configurationAdmin",
+			configurationAdmin);
+		ReflectionTestUtil.setFieldValue(
+			offlineOpenIdConnectSessionManager, "_oAuthClientEntryLocalService",
+			oAuthClientEntryLocalService);
+		ReflectionTestUtil.setFieldValue(
+			offlineOpenIdConnectSessionManager,
+			"_openIdConnectSessionLocalService",
+			openIdConnectSessionLocalService);
+
+		ReflectionTestUtil.invoke(
+			offlineOpenIdConnectSessionManager, "_extendOpenIdConnectSession",
+			new Class<?>[] {OpenIdConnectSession.class}, openIdConnectSession);
+
+		ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(
+			String.class);
+
+		Mockito.verify(
+			configurationAdmin
+		).listConfigurations(
+			argumentCaptor.capture()
+		);
+
+		String filterString = argumentCaptor.getValue();
+
+		Assert.assertFalse(filterString.contains("(companyId=0)"));
+		Assert.assertTrue(
+			filterString.contains(
+				"(companyId=" + oAuthClientEntryCompanyId + ")"));
+	}
 
 	@Test
 	public void testStartOpenIdConnectSession() {

@@ -35,12 +35,13 @@ import {workflowPagesTest} from '../../../fixtures/workflowPagesTest';
 import createUserWithPermissions from '../../../utils/createUserWithPermissions';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
-import {performUserSwitch} from '../../../utils/performLogin';
+import {performUserSwitch, userData} from '../../../utils/performLogin';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
 import getPageDefinition from '../../layout-content-page-editor-web/main/utils/getPageDefinition';
 import getWidgetDefinition from '../../layout-content-page-editor-web/main/utils/getWidgetDefinition';
 import createSiteTemplate from '../../layout-set-prototype-web/main/utils/createSiteTemplate';
+import {cmsPagesTest} from '../../site-cms-site-initializer/main/fixtures/cmsPagesTest';
 import {templatesPageTest} from '../../template-web/main/fixtures/templatesPageTest';
 import {
 	getFDSDateTimeFormat,
@@ -64,7 +65,6 @@ const test = mergeTests(
 	isolatedSiteTest,
 	editObjectDefinitionPagesTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	globalMenuPagesTest,
@@ -84,10 +84,18 @@ const assigneeTest = test;
 
 const cmsTest = mergeTests(
 	test,
+	cmsPagesTest,
 	featureFlagsTest({
 		'LPD-11235': {enabled: false},
 		'LPD-17564': {enabled: true},
 		'LPD-34594': {enabled: true},
+	})
+);
+
+const ckEditor4Test = mergeTests(
+	test,
+	featureFlagsTest({
+		'LPD-11235': {enabled: true},
 	})
 );
 
@@ -547,7 +555,7 @@ cmsTest.describe('Manage attachment ObjectField storage locations', () => {
 				.click();
 
 			await viewObjectEntriesPage.selectFileFromUserComputer(
-				path.join(__dirname, '../../dependencies'),
+				__dirname,
 				'astronaut.png',
 				1
 			);
@@ -567,6 +575,118 @@ cmsTest.describe('Manage attachment ObjectField storage locations', () => {
 			await expect(
 				viewObjectEntriesPage.page.getByText('astronaut.png')
 			).toBeVisible();
+		}
+	);
+
+	cmsTest(
+		'creates nested CMS folders when attachment storage path contains subfolders',
+		{tag: '@LPD-80971'},
+		async ({apiHelpers, page, spaceSummaryPage, viewObjectEntriesPage}) => {
+			const childFolderName = `Child${getRandomString()}`;
+			const parentFolderName = `Parent${getRandomString()}`;
+			const spaceName = getRandomString();
+
+			const space =
+				await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+					name: spaceName,
+					settings: {},
+					type: 'Space',
+				});
+
+			const objectDefinition =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					objectFields: generateObjectFields({
+						objectFieldBusinessTypes: [
+							{
+								businessType: 'Attachment',
+								name: 'userComputerToCMSBasicDocument',
+								objectFieldSettings: [
+									{
+										name: 'acceptedFileExtensions',
+										value: 'jpeg, jpg, pdf, png, txt',
+									},
+									{
+										name: 'maximumFileSize',
+										value: 0,
+									},
+									{
+										name: 'fileSource',
+										value: 'userComputerToCMSBasicDocument',
+									},
+									{
+										name: 'showFilesInLibrary',
+										value: true,
+									},
+									{
+										name: 'storageDLFolderPath',
+										value: `/${parentFolderName}/${childFolderName}`,
+									},
+									{
+										name: 'storageDepotGroup',
+										value: space.externalReferenceCode,
+									},
+								],
+							},
+						],
+					}),
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition.id,
+				type: 'objectDefinition',
+			});
+
+			await test.step('Create object entry uploading a file from user computer', async () => {
+				await viewObjectEntriesPage.goto(objectDefinition.className);
+
+				await viewObjectEntriesPage.clickAddObjectEntry(
+					objectDefinition.label['en_US']
+				);
+
+				await viewObjectEntriesPage.selectFileFromUserComputer(
+					__dirname,
+					'../dependencies/astronaut.png'
+				);
+
+				await page
+					.getByRole('button', {name: 'astronaut.png'})
+					.waitFor({state: 'visible'});
+
+				await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+				await waitForAlert(page);
+			});
+
+			await test.step('Verify nested folders were created in CMS Files', async () => {
+				await spaceSummaryPage.goto(space.name);
+
+				const parentFolder = page.getByRole('link', {
+					exact: true,
+					name: parentFolderName,
+				});
+
+				await expect(parentFolder).toBeVisible();
+
+				await expect(
+					page.getByText(`${parentFolderName}/${childFolderName}`)
+				).toHaveCount(0);
+
+				await parentFolder.click();
+
+				const childFolder = page.getByRole('link', {
+					exact: true,
+					name: childFolderName,
+				});
+
+				await expect(childFolder).toBeVisible();
+
+				await childFolder.click();
+
+				await expect(
+					page.getByText('astronaut.png', {exact: false}).first()
+				).toBeVisible();
+			});
 		}
 	);
 
@@ -3237,6 +3357,185 @@ test.describe('Manage object entries through View Object Entries', () => {
 		);
 	});
 
+	test('can only see entries from their own account', async ({
+		apiHelpers,
+		page,
+		viewObjectEntriesPage,
+	}) => {
+		const account1 = await apiHelpers.headlessAdminUser.postAccount();
+		const account2 = await apiHelpers.headlessAdminUser.postAccount();
+
+		const user1 = await apiHelpers.headlessAdminUser.postUserAccount();
+		const user2 = await apiHelpers.headlessAdminUser.postUserAccount();
+
+		apiHelpers.data.push({id: user1.id, type: 'userAccount'});
+		apiHelpers.data.push({id: user2.id, type: 'userAccount'});
+
+		await apiHelpers.headlessAdminUser.assignUserToAccountByEmailAddress(
+			account1.id,
+			[user1.emailAddress]
+		);
+		await apiHelpers.headlessAdminUser.assignUserToAccountByEmailAddress(
+			account2.id,
+			[user2.emailAddress]
+		);
+
+		const objectFields = generateObjectFields({
+			objectFieldBusinessTypes: ['Text'],
+		});
+
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				objectFields,
+				panelCategoryKey: 'control_panel.object',
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const objectDefinitionAPIClient =
+			await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+		const {body: accountObjectDefinition} =
+			await objectDefinitionAPIClient.getObjectDefinitionByExternalReferenceCode(
+				'L_ACCOUNT'
+			);
+
+		const objectRelationshipAPIClient = await apiHelpers.buildRestClient(
+			ObjectRelationshipAPI
+		);
+
+		const {body: objectRelationship} =
+			await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+				'L_ACCOUNT',
+				{
+					label: {
+						en_US: 'objectRelationshipLabel' + getRandomInt(),
+					},
+					name: 'objectRelationshipName' + getRandomInt(),
+					objectDefinitionExternalReferenceCode1: 'L_ACCOUNT',
+					objectDefinitionExternalReferenceCode2:
+						objectDefinition.externalReferenceCode,
+					objectDefinitionId1: accountObjectDefinition.id,
+					objectDefinitionId2: objectDefinition.id,
+					objectDefinitionName2: objectDefinition.name,
+					type: 'oneToMany',
+				}
+			);
+
+		apiHelpers.data.push({
+			id: objectRelationship.id,
+			type: 'objectRelationship',
+		});
+
+		const companyId = await page.evaluate(() => {
+			return Liferay.ThemeDisplay.getCompanyId();
+		});
+
+		const role = await apiHelpers.headlessAdminUser.postRole({
+			name: 'ObjRole' + getRandomInt(),
+			rolePermissions: [
+				{
+					actionIds: ['VIEW_CONTROL_PANEL'],
+					primaryKey: companyId,
+					resourceName: '90',
+					scope: 1,
+				},
+				{
+					actionIds: ['ACCESS_IN_CONTROL_PANEL'],
+					primaryKey: companyId,
+					resourceName: `com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet_${objectDefinition.className.split('#')[1]}`,
+					scope: 1,
+				},
+				{
+					actionIds: ['ADD_OBJECT_ENTRY'],
+					primaryKey: companyId,
+					resourceName: `com.liferay.object#${objectDefinition.id}`,
+					scope: 1,
+				},
+			],
+		});
+
+		apiHelpers.data.push({id: role.id, type: 'role'});
+
+		await apiHelpers.headlessAdminUser.assignUserToRole(
+			role.externalReferenceCode,
+			user1.id
+		);
+		await apiHelpers.headlessAdminUser.assignUserToRole(
+			role.externalReferenceCode,
+			user2.id
+		);
+
+		userData[user1.alternateName] = {
+			name: user1.givenName,
+			password: 'test',
+			surname: user1.familyName,
+		};
+		userData[user2.alternateName] = {
+			name: user2.givenName,
+			password: 'test',
+			surname: user2.familyName,
+		};
+
+		await performUserSwitch(page, user1.alternateName);
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await viewObjectEntriesPage.clickAddObjectEntry(
+			objectDefinition.label['en_US']
+		);
+
+		await page.getByRole('textbox', {name: 'Search'}).click();
+
+		await expect(
+			page.getByRole('menuitem', {name: account1.name})
+		).toBeVisible();
+		await expect(
+			page.getByRole('menuitem', {name: account2.name})
+		).toBeHidden();
+
+		await page.getByRole('menuitem', {name: account1.name}).click();
+
+		await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+		await waitForAlert(page);
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await expect(page.getByText(account1.name)).toBeVisible();
+
+		await performUserSwitch(page, user2.alternateName);
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await viewObjectEntriesPage.clickAddObjectEntry(
+			objectDefinition.label['en_US']
+		);
+
+		await page.getByRole('textbox', {name: 'Search'}).click();
+
+		await expect(
+			page.getByRole('menuitem', {name: account1.name})
+		).toBeHidden();
+		await expect(
+			page.getByRole('menuitem', {name: account2.name})
+		).toBeVisible();
+
+		await page.getByRole('menuitem', {name: account2.name}).click();
+
+		await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+		await waitForAlert(page);
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await expect(page.getByText(account2.name)).toBeVisible();
+	});
+
 	test('can prevent duplicate value when creating an entry with unique values', async ({
 		apiHelpers,
 		page,
@@ -4386,51 +4685,6 @@ test.describe('Manage object entries through View Object Entries', () => {
 		}
 	);
 
-	test('verify that its not possible to paste file on richText field', async ({
-		apiHelpers,
-		page,
-		viewObjectEntriesPage,
-	}) => {
-		const objectFields = generateObjectFields({
-			objectFieldBusinessTypes: ['RichText'],
-		});
-
-		const objectDefinition =
-			await apiHelpers.objectAdmin.postRandomObjectDefinition({
-				objectFields,
-				status: {code: 0},
-			});
-
-		apiHelpers.data.push({
-			id: objectDefinition.id,
-			type: 'objectDefinition',
-		});
-
-		await test.step('go to entry page, try to upload file by pasting it into editor and verify error message', async () => {
-			await viewObjectEntriesPage.goto(objectDefinition.className);
-
-			await viewObjectEntriesPage.clickAddObjectEntry(
-				objectDefinition.label['en_US']
-			);
-
-			const editorFrame = page.frameLocator('iframe[title="editor"]');
-
-			const editorBody = editorFrame.locator('body');
-
-			const file = fs.readFileSync(
-				path.join(__dirname, '../dependencies', 'tree.png')
-			);
-
-			await pasteFile(editorBody, {
-				buffer: file,
-				fileName: 'tree.png',
-				fileType: 'image/png',
-			});
-
-			await expect(editorFrame.locator('img')).not.toBeVisible();
-		});
-	});
-
 	test('verify that relationship API is called only once and uses pagination when adding object entry', async ({
 		apiHelpers,
 		page,
@@ -4747,6 +5001,59 @@ test.describe('Manage object entries through View Object Entries', () => {
 			page.getByRole('cell', {name: secondItemName})
 		).toBeVisible();
 	});
+});
+
+ckEditor4Test.describe('Manage object entries with CKEditor 4', () => {
+	ckEditor4Test(
+		'verify that its not possible to paste file on richText field',
+		async ({apiHelpers, page, viewObjectEntriesPage}) => {
+			const objectFields = generateObjectFields({
+				objectFieldBusinessTypes: ['RichText'],
+			});
+
+			const objectDefinition =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					objectFields,
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition.id,
+				type: 'objectDefinition',
+			});
+
+			await ckEditor4Test.step(
+				'go to entry page, try to upload file by pasting it into editor and verify error message',
+				async () => {
+					await viewObjectEntriesPage.goto(
+						objectDefinition.className
+					);
+
+					await viewObjectEntriesPage.clickAddObjectEntry(
+						objectDefinition.label['en_US']
+					);
+
+					const editorFrame = page.frameLocator(
+						'iframe[title="editor"]'
+					);
+
+					const editorBody = editorFrame.locator('body');
+
+					const file = fs.readFileSync(
+						path.join(__dirname, '../dependencies', 'tree.png')
+					);
+
+					await pasteFile(editorBody, {
+						buffer: file,
+						fileName: 'tree.png',
+						fileType: 'image/png',
+					});
+
+					await expect(editorFrame.locator('img')).not.toBeVisible();
+				}
+			);
+		}
+	);
 });
 
 test.describe('Manage object entries through Workflow', () => {

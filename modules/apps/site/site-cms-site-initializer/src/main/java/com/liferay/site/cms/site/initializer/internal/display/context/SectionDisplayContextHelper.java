@@ -141,7 +141,7 @@ public class SectionDisplayContextHelper {
 			httpServletRequest.getAttribute(InfoDisplayWebKeys.INFO_ITEM),
 			rootObjectEntryFolderExternalReferenceCode);
 
-		StringBundler sb = new StringBundler(10);
+		StringBundler sb = new StringBundler(11);
 
 		sb.append("emptySearch=true&filter=");
 
@@ -169,6 +169,7 @@ public class SectionDisplayContextHelper {
 		sb.append("file.metadata,file.previewURL,file.thumbnailURL,");
 		sb.append("numberOfObjectEntries,numberOfObjectEntryFolders,");
 		sb.append("systemProperties.objectDefinitionBrief");
+		sb.append("&sort=dateModified:desc");
 
 		return sb.toString();
 	}
@@ -345,7 +346,7 @@ public class SectionDisplayContextHelper {
 				StringBundler.concat(
 					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
 					GroupConstants.CMS_FRIENDLY_URL,
-					"/edit_content_item?&p_l_mode=read&p_p_state=",
+					"/edit_content_item?p_l_mode=read&p_p_state=",
 					LiferayWindowState.POP_UP, "&redirect=",
 					themeDisplay.getURLCurrent(),
 					"&objectEntryId={embedded.id}"),

@@ -134,7 +134,8 @@ public class StylebookEntryStagedModelRepository
 			styleBookEntry.isDefaultStyleBookEntry(),
 			styleBookEntry.getFrontendTokensValues(), styleBookEntry.getName(),
 			styleBookEntry.getStyleBookEntryKey(),
-			styleBookEntry.getPreviewFileEntryId());
+			styleBookEntry.getPreviewFileEntryId(),
+			portletDataContext.createServiceContext(styleBookEntry));
 	}
 
 	@Reference

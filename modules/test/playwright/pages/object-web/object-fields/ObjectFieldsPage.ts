@@ -22,6 +22,7 @@ export class ObjectFieldsPage {
 	readonly fieldsTabItem: Locator;
 	readonly maximumFileSize: Locator;
 	readonly objectFieldLabelInput: Locator;
+	readonly objectFieldNameInput: Locator;
 	readonly objectFieldOptionsDropdown: Locator;
 	readonly page: Page;
 	readonly saveButton: Locator;
@@ -58,6 +59,7 @@ export class ObjectFieldsPage {
 			.frameLocator('iframe')
 			.getByLabel('Maximum File Size' + 'Mandatory');
 		this.objectFieldLabelInput = page.locator('input[name="label"]');
+		this.objectFieldNameInput = page.locator('input[name="name"]');
 		this.objectFieldOptionsDropdown = page.getByText('Select an Option');
 		this.page = page;
 		this.saveButton = page.getByRole('button', {name: 'Save'});
@@ -222,6 +224,14 @@ export class ObjectFieldsPage {
 
 			await this.page.waitForLoadState('networkidle');
 		});
+	}
+
+	async closeObjectFieldSidePanel() {
+		const cancelButton = this.iframeLocator.getByLabel('Cancel');
+
+		await cancelButton.click();
+
+		await cancelButton.waitFor({state: 'hidden'});
 	}
 
 	async saveObjectField() {

@@ -3,7 +3,10 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {IInternalRenderer} from '@liferay/frontend-data-set-web';
+import {
+	IBulkActionItem,
+	IInternalRenderer,
+} from '@liferay/frontend-data-set-web';
 import {sub} from 'frontend-js-web';
 
 import {OBJECT_ENTRY_FOLDER_CLASS_NAME} from '../../common/utils/constants';
@@ -16,18 +19,29 @@ import restoreItemAction from './actions/restoreItemAction';
 import AuthorRenderer from './cell_renderers/AuthorRenderer';
 import SimpleActionLinkRenderer from './cell_renderers/SimpleActionLinkRenderer';
 import SpaceRendererWithCache from './cell_renderers/SpaceRendererWithCache';
+import transformFDSBulkActions from './utils/transformFDSBulkActions';
 
 export default function RecycleBinFDSPropsTransformer({
+	additionalProps,
+	bulkActions = [],
 	itemsActions = [],
 	...otherProps
 }: {
+	additionalProps: {additionalAPIURLParameters?: string};
 	apiURL: string;
+	bulkActions: Array<IBulkActionItem>;
 	id: string;
 	itemsActions?: any[];
 	otherProps: any;
 }) {
+	const {additionalAPIURLParameters, ...remainingAdditionalProps} =
+		additionalProps || {};
+
 	return {
 		...otherProps,
+		additionalAPIURLParameters,
+		additionalProps: remainingAdditionalProps,
+		bulkActions: transformFDSBulkActions(bulkActions),
 		customRenderers: {
 			tableCell: [
 				{

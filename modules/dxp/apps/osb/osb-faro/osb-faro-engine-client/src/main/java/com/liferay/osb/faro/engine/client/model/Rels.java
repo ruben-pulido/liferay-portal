@@ -12,6 +12,9 @@ public interface Rels {
 
 	public static final String ACCOUNT = "account";
 
+	public static final String ACCOUNT_LIFECYCLE_OVERVIEW =
+		"account-lifecycle-overview";
+
 	public static final String ACCOUNTS = "accounts";
 
 	public static final String ACCOUNTS_DISTRIBUTION = "accounts-distribution";
@@ -44,6 +47,9 @@ public interface Rels {
 
 	public static final String ASSET_SUMMARY_CATEGORIES =
 		"asset-summary-categories";
+
+	public static final String ASSET_SUMMARY_MIME_TYPES =
+		"asset-summary-mime-types";
 
 	public static final String ASSET_SUMMARY_TAGS = "asset-summary-tags";
 

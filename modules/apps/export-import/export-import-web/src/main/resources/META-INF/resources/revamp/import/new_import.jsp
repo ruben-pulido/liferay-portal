@@ -50,5 +50,10 @@ portletDisplay.setURLBack(backURL);
 
 	<react:component
 		module="{NewImport} from exportimport-web"
+		props='<%=
+			HashMapBuilder.<String, Object>put(
+				"isCompanyGroup", stagingGroupHelper.isCompanyGroup(liveGroup)
+			).build()
+		%>'
 	/>
 </clay:container-fluid>

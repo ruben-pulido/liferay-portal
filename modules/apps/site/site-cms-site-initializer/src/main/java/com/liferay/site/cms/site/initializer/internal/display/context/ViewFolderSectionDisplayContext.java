@@ -435,6 +435,11 @@ public class ViewFolderSectionDisplayContext extends BaseSectionDisplayContext {
 		return null;
 	}
 
+	@Override
+	protected boolean isFolderSearchEnabled() {
+		return true;
+	}
+
 	private final HttpServletRequest _httpServletRequest;
 	private final ObjectEntryFolderLocalService _objectEntryFolderLocalService;
 	private String _objectFolderExternalReferenceCode;

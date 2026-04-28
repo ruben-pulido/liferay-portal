@@ -173,6 +173,8 @@ public class ObjectDefinitionUtil {
 		).put(
 			"CMSExternalVideo", "/cms/external-videos"
 		).put(
+			"CommerceOrderAttachment", "/commerce/order-attachments"
+		).put(
 			"CommerceReturn", "/commerce/returns"
 		).put(
 			"CommerceReturnItem", "/commerce/return-items"
@@ -226,6 +228,8 @@ public class ObjectDefinitionUtil {
 			"FunctionalCookieEntry", "/functional-cookies-entries"
 		).put(
 			"KnowledgeBase", "/cms/knowledge-bases"
+		).put(
+			"MCPServerProfile", "/mcp/server-profiles"
 		).put(
 			"MCPServerPrompt", "/mcp/server-prompts"
 		).put(

@@ -16,8 +16,6 @@ import java.util.Set;
  */
 public interface ScriptingExecutor {
 
-	public void clearCache();
-
 	public Map<String, Object> eval(
 			Set<String> allowedClasses, Map<String, Object> inputObjects,
 			Set<String> outputNames, File scriptFile)
@@ -30,8 +28,8 @@ public interface ScriptingExecutor {
 
 	public String getLanguage();
 
-	public ScriptingContainer<?> getScriptingContainer();
-
 	public ScriptingExecutor newInstance(boolean executeInSeparateThread);
+
+	public void validate(String script) throws ScriptingException;
 
 }

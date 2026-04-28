@@ -247,7 +247,7 @@ public abstract class BaseSectionDisplayContextTestCase
 			StringBundler.concat(
 				themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
 				GroupConstants.CMS_FRIENDLY_URL,
-				"/edit_content_item?&p_l_mode=read&p_p_state=",
+				"/edit_content_item?p_l_mode=read&p_p_state=",
 				LiferayWindowState.POP_UP, "&redirect=",
 				themeDisplay.getURLCurrent(), "&objectEntryId={embedded.id}")
 		).put(
@@ -297,6 +297,17 @@ public abstract class BaseSectionDisplayContextTestCase
 		_objectEntryFolder = null;
 
 		setUser(adminUser);
+	}
+
+	@Test
+	public void testGetAdditionalAPIURLParameters() throws Exception {
+		String additionalAPIURLParameters = ReflectionTestUtil.invoke(
+			getSectionDisplayContext(getMockHttpServletRequest()),
+			"getAdditionalAPIURLParameters", new Class<?>[0]);
+
+		Assert.assertTrue(
+			additionalAPIURLParameters,
+			additionalAPIURLParameters.contains("sort=dateModified:desc"));
 	}
 
 	@Test
@@ -704,7 +715,7 @@ public abstract class BaseSectionDisplayContextTestCase
 			"&nestedFields=embedded,embeddedTaxonomyCategory,",
 			"file.metadata,file.previewURL,file.thumbnailURL,",
 			"numberOfObjectEntries,numberOfObjectEntryFolders,",
-			"systemProperties.objectDefinitionBrief");
+			"systemProperties.objectDefinitionBrief&sort=dateModified:desc");
 	}
 
 	protected String getCMSSectionFilterString(Object displayContext) {

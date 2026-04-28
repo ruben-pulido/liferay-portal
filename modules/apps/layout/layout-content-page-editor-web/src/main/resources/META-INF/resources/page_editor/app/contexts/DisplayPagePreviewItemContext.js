@@ -68,19 +68,16 @@ export function useSelectDisplayPagePreviewItem() {
 			setState(({recentItemList}) => {
 				let nextRecentItemList = recentItemList;
 
-				if (selectedItem) {
+				if (
+					selectedItem &&
+					!nextRecentItemList.some((item) =>
+						itemsAreEqual(selectedItem, item)
+					)
+				) {
 					nextRecentItemList = [
 						selectedItem,
 						...recentItemList,
 					].slice(0, MAX_RECENT_ITEMS);
-
-					nextRecentItemList = nextRecentItemList.filter(
-						(item, index) =>
-							index ===
-							nextRecentItemList.findIndex((recentItem) =>
-								itemsAreEqual(item, recentItem)
-							)
-					);
 				}
 
 				return {

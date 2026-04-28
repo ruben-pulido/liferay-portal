@@ -61,7 +61,7 @@ export class ObjectAdminApiHelper {
 		objectFields?: Partial<ObjectField>[];
 		objectFolderExternalReferenceCode?: string;
 		panelCategoryKey?: string;
-		scope?: 'site' | 'company';
+		scope?: 'company' | 'depot' | 'site';
 		status: {code: number};
 		titleObjectFieldName?: string;
 	}) {
@@ -111,6 +111,21 @@ export class ObjectAdminApiHelper {
 
 		return (
 			await objectDefinitionAPIClient.postObjectDefinition(requestBody)
+		).body;
+	}
+
+	async postObjectDefinitionPublish({
+		objectDefinitionId,
+	}: {
+		objectDefinitionId: number;
+	}): Promise<ObjectDefinition> {
+		const objectDefinitionAPIClient =
+			await this.apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+		return (
+			await objectDefinitionAPIClient.postObjectDefinitionPublish(
+				objectDefinitionId
+			)
 		).body;
 	}
 

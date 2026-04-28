@@ -60,6 +60,8 @@ import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
+import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
+import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
@@ -80,17 +82,20 @@ import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.PortletPreferences;
 import com.liferay.portal.kernel.model.Repository;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -111,6 +116,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.ScopeUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -526,6 +532,86 @@ public class LayoutsImporterTest {
 
 		_testImportLayoutPageTemplateEntryWithItemSelectorTypeFragmentConfigurationField(
 			_jsonFactory.createJSONObject());
+	}
+
+	@Test
+	@TestInfo("LPD-86505")
+	public void testImportLayoutPageTemplateEntryWithMasterLayoutAndChildLayout()
+		throws Exception {
+
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext1);
+
+		try {
+			_layoutsImporter.importFile(
+				TestPropsValues.getUserId(), _group1.getGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				_getFile(_RESOURCES_PATH_MASTER_PAGES),
+				LayoutsImportStrategy.OVERWRITE, true);
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
+
+		LayoutPageTemplateEntry masterLayoutPageTemplateEntry =
+			_layoutPageTemplateEntryLocalService.fetchLayoutPageTemplateEntry(
+				_group1.getGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				"Default Master Page",
+				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT);
+
+		Layout masterPublishedLayout = _layoutLocalService.getLayout(
+			masterLayoutPageTemplateEntry.getPlid());
+
+		Layout masterDraftLayout = masterPublishedLayout.fetchDraftLayout();
+
+		ContentLayoutTestUtil.addPortletToLayout(
+			masterDraftLayout,
+			LayoutPageTemplateAdminWebPortletKeys.
+				LAYOUT_PAGE_TEMPLATE_ADMIN_WEB_NONINSTANCEABLE_TEST_PORTLET);
+
+		ContentLayoutTestUtil.publishLayout(
+			masterDraftLayout, masterPublishedLayout);
+
+		Layout childLayout = LayoutTestUtil.addTypeContentLayout(
+			_group1, false, false,
+			masterLayoutPageTemplateEntry.getExternalReferenceCode());
+
+		PortletPreferencesFactoryUtil.getLayoutPortletSetup(
+			childLayout,
+			LayoutPageTemplateAdminWebPortletKeys.
+				LAYOUT_PAGE_TEMPLATE_ADMIN_WEB_NONINSTANCEABLE_TEST_PORTLET);
+
+		List<PortletPreferences> portletPreferences =
+			_portletPreferencesLocalService.getPortletPreferences(
+				PortletKeys.PREFS_OWNER_ID_DEFAULT,
+				PortletKeys.PREFS_OWNER_TYPE_LAYOUT, childLayout.getPlid());
+
+		Assert.assertEquals(
+			portletPreferences.toString(), 1, portletPreferences.size());
+
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext1);
+
+		try {
+			_layoutsImporter.importFile(
+				TestPropsValues.getUserId(), _group1.getGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				_getFile(_RESOURCES_PATH_MASTER_PAGES),
+				LayoutsImportStrategy.OVERWRITE, true);
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
+
+		portletPreferences =
+			_portletPreferencesLocalService.getPortletPreferences(
+				PortletKeys.PREFS_OWNER_ID_DEFAULT,
+				PortletKeys.PREFS_OWNER_TYPE_LAYOUT, childLayout.getPlid());
+
+		Assert.assertEquals(
+			portletPreferences.toString(), 0, portletPreferences.size());
 	}
 
 	@Test
@@ -966,6 +1052,44 @@ public class LayoutsImporterTest {
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
 		}
+	}
+
+	@Test
+	@TestInfo("LPD-86505")
+	public void testImportUtilityPageEntryIsApprovedAndCanBeSetAsDefault()
+		throws Exception {
+
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext1);
+
+		try {
+			_layoutsImporter.importFile(
+				TestPropsValues.getUserId(), _group1.getGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				_getFile(_RESOURCES_PATH_UTILITY_PAGES),
+				LayoutsImportStrategy.OVERWRITE, true);
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
+
+		LayoutUtilityPageEntry layoutUtilityPageEntry =
+			_layoutUtilityPageEntryLocalService.
+				getLayoutUtilityPageEntryByExternalReferenceCode(
+					"test-default-utility-page", _group1.getGroupId());
+
+		Layout layout = _layoutLocalService.getLayout(
+			layoutUtilityPageEntry.getPlid());
+
+		Assert.assertTrue(layout.isPublished());
+
+		layoutUtilityPageEntry =
+			_layoutUtilityPageEntryLocalService.
+				setDefaultLayoutUtilityPageEntry(
+					layoutUtilityPageEntry.getLayoutUtilityPageEntryId());
+
+		Assert.assertTrue(
+			layoutUtilityPageEntry.isDefaultLayoutUtilityPageEntry());
 	}
 
 	@Test
@@ -2397,6 +2521,10 @@ public class LayoutsImporterTest {
 		"com/liferay/layout/page/template/admin/web/internal/importer/test" +
 			"/dependencies/page-templates";
 
+	private static final String _RESOURCES_PATH_UTILITY_PAGES =
+		"com/liferay/layout/page/template/admin/web/internal/importer/test" +
+			"/dependencies/utility-pages";
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutsImporterTest.class);
 
@@ -2470,7 +2598,14 @@ public class LayoutsImporterTest {
 	private LayoutStructureProvider _layoutStructureProvider;
 
 	@Inject
+	private LayoutUtilityPageEntryLocalService
+		_layoutUtilityPageEntryLocalService;
+
+	@Inject
 	private Portal _portal;
+
+	@Inject
+	private PortletPreferencesLocalService _portletPreferencesLocalService;
 
 	@Inject
 	private ResourcePermissionLocalService _resourcePermissionLocalService;

@@ -35,8 +35,12 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.search.filter.RangeTermFilter;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -60,6 +64,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+
+import java.lang.reflect.Method;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -206,6 +212,24 @@ public class BatchEngineExportTaskExecutorImpl
 		LastSessionRecorderHelperUtil.syncLastSessionState();
 	}
 
+	private Filter _createCursorFilter(
+		Filter originalFilter, long lastEntryClassPK) {
+
+		BooleanFilter booleanFilter = new BooleanFilter();
+
+		if (originalFilter != null) {
+			booleanFilter.add(originalFilter, BooleanClauseOccur.MUST);
+		}
+
+		booleanFilter.add(
+			new RangeTermFilter(
+				Field.ENTRY_CLASS_PK, false, false,
+				String.valueOf(lastEntryClassPK), null),
+			BooleanClauseOccur.MUST);
+
+		return booleanFilter;
+	}
+
 	private InputStream _exportItems(
 			BatchEngineExportTask batchEngineExportTask, Settings settings)
 		throws Exception {
@@ -272,6 +296,14 @@ public class BatchEngineExportTaskExecutorImpl
 			Sort[] sorts = _getSorts(
 				batchEngineTaskItemDelegate, parameters, user);
 
+			boolean cursorPaginationActive = false;
+
+			if (_USE_EXPORT_CURSOR_PAGINATION &&
+				_isSearchCursorPaginationEnabled(sorts)) {
+
+				cursorPaginationActive = true;
+			}
+
 			Page<?> page = batchEngineTaskItemDelegate.read(
 				filter, Pagination.of(1, exportBatchSize), sorts,
 				filteredParameters, (String)parameters.get("search"));
@@ -336,11 +368,29 @@ public class BatchEngineExportTaskExecutorImpl
 					break;
 				}
 
-				page = batchEngineTaskItemDelegate.read(
-					filter,
-					Pagination.of((int)page.getPage() + 1, exportBatchSize),
-					sorts, filteredParameters,
-					(String)parameters.get("search"));
+				Long lastItemId = null;
+
+				if (cursorPaginationActive) {
+					lastItemId = _getLastItemId(items);
+
+					if (lastItemId == null) {
+						cursorPaginationActive = false;
+					}
+				}
+
+				if (cursorPaginationActive) {
+					page = batchEngineTaskItemDelegate.read(
+						_createCursorFilter(filter, lastItemId),
+						Pagination.of(1, exportBatchSize), sorts,
+						filteredParameters, (String)parameters.get("search"));
+				}
+				else {
+					page = batchEngineTaskItemDelegate.read(
+						filter,
+						Pagination.of((int)page.getPage() + 1, exportBatchSize),
+						sorts, filteredParameters,
+						(String)parameters.get("search"));
+				}
 
 				items = page.getItems();
 			}
@@ -483,6 +533,47 @@ public class BatchEngineExportTaskExecutorImpl
 		return filteredParameters;
 	}
 
+	private Long _getItemId(Object item) {
+		Class<?> clazz = item.getClass();
+
+		try {
+			Method method = clazz.getMethod("getId");
+
+			Object id = method.invoke(item);
+
+			if (id instanceof Long) {
+				return (Long)id;
+			}
+
+			if (id instanceof Number) {
+				Number number = (Number)id;
+
+				return number.longValue();
+			}
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug("Unable to extract ID from " + clazz, exception);
+			}
+		}
+
+		return null;
+	}
+
+	private Long _getLastItemId(Collection<?> items) {
+		if (items.isEmpty()) {
+			return null;
+		}
+
+		Object lastItem = null;
+
+		for (Object item : items) {
+			lastItem = item;
+		}
+
+		return _getItemId(lastItem);
+	}
+
 	private Map<String, Serializable> _getParameters(
 		BatchEngineExportTask batchEngineExportTask) {
 
@@ -556,6 +647,14 @@ public class BatchEngineExportTaskExecutorImpl
 		return zipOutputStream;
 	}
 
+	private boolean _isSearchCursorPaginationEnabled(Sort[] sorts) {
+		if (sorts == null) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private Map<String, List<String>> _toMultivaluedMap(
 		Map<String, Serializable> parameterMap) {
 
@@ -589,6 +688,8 @@ public class BatchEngineExportTaskExecutorImpl
 			batchEngineExportTask.getExecuteStatus(),
 			batchEngineExportTask.getBatchEngineExportTaskId());
 	}
+
+	private static final boolean _USE_EXPORT_CURSOR_PAGINATION = true;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		BatchEngineExportTaskExecutorImpl.class);
