@@ -10,21 +10,26 @@ import com.liferay.fragment.exception.RequiredFragmentEntryVersionException;
 import com.liferay.fragment.exception.UnsupportedUnpublishFragmentEntryOperationException;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentCollectionService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.fragment.service.FragmentEntryService;
 import com.liferay.headless.admin.fragment.dto.v1_0.Fragment;
+import com.liferay.headless.admin.fragment.dto.v1_0.FragmentSet;
 import com.liferay.headless.admin.fragment.dto.v1_0.FragmentVersion;
+import com.liferay.headless.admin.fragment.internal.resource.v1_0.util.FragmentSetUtil;
 import com.liferay.headless.admin.fragment.internal.util.EnabledUtil;
 import com.liferay.headless.admin.fragment.resource.v1_0.FragmentResource;
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
 import com.liferay.headless.common.spi.util.GroupUtil;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
@@ -140,14 +145,11 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 
 		EnabledUtil.checkEnabled(contextCompany);
 
-		fragment.setFragmentSetExternalReferenceCode(
-			() -> fragmentSetExternalReferenceCode);
-
 		return _addFragmentEntry(
 			fragment.getExternalReferenceCode(),
 			GroupUtil.getStagingAwareGroupId(
 				true, contextCompany.getCompanyId(), siteExternalReferenceCode),
-			fragment);
+			fragment, fragmentSetExternalReferenceCode);
 	}
 
 	@Override
@@ -184,32 +186,23 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 			}
 
 			return _addFragmentEntry(
-				fragmentExternalReferenceCode, groupId, fragment);
+				fragmentExternalReferenceCode, groupId, fragment, null);
 		}
 	}
 
 	private Fragment _addFragmentEntry(
-			String externalReferenceCode, long groupId, Fragment fragment)
+			String externalReferenceCode, long groupId, Fragment fragment,
+			String fragmentSetExternalReferenceCode)
 		throws Exception {
-
-		if (fragment.getFragmentSetExternalReferenceCode() == null) {
-			throw new IllegalArgumentException(
-				_language.get(
-					contextAcceptLanguage.getPreferredLocale(),
-					"a-fragment-set-external-reference-code-is-required-to-" +
-						"create-a-new-fragment"));
-		}
 
 		FragmentEntry fragmentEntry = null;
 
+		FragmentCollection fragmentCollection = _getFragmentCollection(
+			fragment, fragmentSetExternalReferenceCode, groupId);
 		FragmentVersion approvedFragmentVersion = _getFragmentVersion(
 			fragment, FragmentVersion.Status.APPROVED);
 		FragmentVersion draftFragmentVersion = _getFragmentVersion(
 			fragment, FragmentVersion.Status.DRAFT);
-		FragmentCollection fragmentCollection =
-			_fragmentCollectionService.
-				getFragmentCollectionByExternalReferenceCode(
-					fragment.getFragmentSetExternalReferenceCode(), groupId);
 
 		if (approvedFragmentVersion != null) {
 			fragmentEntry = _fragmentEntryService.addFragmentEntry(
@@ -261,6 +254,25 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 		return _toFragment(fragmentEntry);
 	}
 
+	private FragmentCollection _getFragmentCollection(
+			Fragment fragment, String fragmentSetExternalReferenceCode,
+			long groupId)
+		throws Exception {
+
+		FragmentSet fragmentSet = fragment.getFragmentSet();
+
+		if (Validator.isNotNull(fragmentSetExternalReferenceCode) &&
+			((fragmentSet == null) ||
+			 Validator.isNull(fragmentSet.getExternalReferenceCode()))) {
+
+			return _fragmentCollectionService.
+				getFragmentCollectionByExternalReferenceCode(
+					fragmentSetExternalReferenceCode, groupId);
+		}
+
+		return _getOrAddFragmentCollection(fragmentSet, groupId);
+	}
+
 	private FragmentVersion _getFragmentVersion(
 		Fragment fragment, FragmentVersion.Status status) {
 
@@ -277,6 +289,41 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 		}
 
 		return null;
+	}
+
+	private FragmentCollection _getOrAddFragmentCollection(
+			FragmentSet fragmentSet, long groupId)
+		throws Exception {
+
+		if ((fragmentSet == null) ||
+			Validator.isNull(fragmentSet.getExternalReferenceCode())) {
+
+			throw new IllegalArgumentException(
+				_language.get(
+					contextAcceptLanguage.getPreferredLocale(),
+					"a-fragment-set-external-reference-code-is-required-to-" +
+						"create-a-new-fragment"));
+		}
+
+		FragmentCollection fragmentCollection =
+			_fragmentCollectionLocalService.
+				fetchFragmentCollectionByExternalReferenceCode(
+					fragmentSet.getExternalReferenceCode(), groupId);
+
+		if (fragmentCollection != null) {
+			return fragmentCollection;
+		}
+
+		if (!LazyReferencingThreadLocal.isEnabled()) {
+			throw new IllegalArgumentException(
+				_language.format(
+					contextAcceptLanguage.getPreferredLocale(),
+					"no-fragment-set-was-found-with-external-reference-code-x",
+					fragmentSet.getExternalReferenceCode()));
+		}
+
+		return FragmentSetUtil.addFragmentCollection(
+			fragmentSet, groupId, contextHttpServletRequest);
 	}
 
 	private ServiceContext _getServiceContext(long groupId, Fragment fragment) {
@@ -339,14 +386,13 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 
 		long fragmentCollectionId = fragmentEntry.getFragmentCollectionId();
 
-		String fragmentSetExternalReferenceCode =
-			fragment.getFragmentSetExternalReferenceCode();
+		FragmentSet fragmentSet = fragment.getFragmentSet();
 
-		if (fragmentSetExternalReferenceCode != null) {
-			FragmentCollection fragmentCollection =
-				_fragmentCollectionService.
-					getFragmentCollectionByExternalReferenceCode(
-						fragmentSetExternalReferenceCode, groupId);
+		if ((fragmentSet != null) &&
+			Validator.isNotNull(fragmentSet.getExternalReferenceCode())) {
+
+			FragmentCollection fragmentCollection = _getOrAddFragmentCollection(
+				fragmentSet, groupId);
 
 			fragmentCollectionId = fragmentCollection.getFragmentCollectionId();
 		}
@@ -402,6 +448,9 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
+
+	@Reference
+	private FragmentCollectionLocalService _fragmentCollectionLocalService;
 
 	@Reference
 	private FragmentCollectionService _fragmentCollectionService;
