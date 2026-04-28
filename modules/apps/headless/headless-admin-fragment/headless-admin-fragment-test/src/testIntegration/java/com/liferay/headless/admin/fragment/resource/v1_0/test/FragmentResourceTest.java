@@ -238,6 +238,14 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 	}
 
 	@Override
+	protected Fragment testPostSiteFragment_addFragment(Fragment fragment)
+		throws Exception {
+
+		return fragmentResource.postSiteFragment(
+			testGroup.getExternalReferenceCode(), fragment);
+	}
+
+	@Override
 	protected Fragment testPostSiteFragmentSetFragment_addFragment(
 			Fragment fragment)
 		throws Exception {
