@@ -58,6 +58,10 @@ components:
                     description:
                         A flag that indicates whether the fragment is read-only.
                     type: boolean
+                thumbnail:
+                    $ref: "#/components/schemas/Thumbnail"
+                    description:
+                        The fragment's thumbnail. Returned only when `nestedFields=thumbnail` is requested.
                 type:
                     description:
                         The fragment's type.
@@ -128,6 +132,29 @@ components:
                     description:
                         The fragment version's status (Approved or Draft).
                     enum: [Approved, Draft]
+                    type: string
+            type: object
+        Thumbnail:
+            description:
+                A reference to a thumbnail file. On write, `externalReferenceCode` is the canonical identifier; if it
+                does not resolve to an existing file in the destination, `fileBase64` (preferred) or `url` is used to
+                materialize a new file carrying that `externalReferenceCode`. On read, `externalReferenceCode` and `url`
+                are populated from the underlying file entry. During a staging export, `url` is a `lar://` URL pointing
+                at bytes embedded in the LAR archive.
+            properties:
+                externalReferenceCode:
+                    type: string
+                fileBase64:
+                    description:
+                        Base64-encoded file content. Used to create a new file when `externalReferenceCode` does not
+                        resolve in the destination.
+                    type: string
+                    writeOnly: true
+                url:
+                    description:
+                        A URL the thumbnail can be fetched from. On write, used to download bytes (supports `http`,
+                        `https` and `lar://`) when `externalReferenceCode` does not resolve and `fileBase64` is absent.
+                        On read, the canonical URL of the stored file.
                     type: string
             type: object
 info:
