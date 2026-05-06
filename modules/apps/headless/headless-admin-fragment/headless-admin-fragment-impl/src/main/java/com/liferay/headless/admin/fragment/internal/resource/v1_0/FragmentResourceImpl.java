@@ -5,6 +5,7 @@
 
 package com.liferay.headless.admin.fragment.internal.resource.v1_0;
 
+import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.exception.RequiredFragmentEntryVersionException;
@@ -40,6 +41,9 @@ import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
+import java.util.List;
+import java.util.function.Function;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
@@ -49,9 +53,12 @@ import org.osgi.service.component.annotations.ServiceScope;
  */
 @Component(
 	properties = "OSGI-INF/liferay/rest/v1_0/fragment.properties",
+	property = "export.import.vulcan.batch.engine.task.item.delegate=true",
 	scope = ServiceScope.PROTOTYPE, service = FragmentResource.class
 )
-public class FragmentResourceImpl extends BaseFragmentResourceImpl {
+public class FragmentResourceImpl
+	extends BaseFragmentResourceImpl
+	implements ExportImportVulcanBatchEngineTaskItemDelegate<Fragment> {
 
 	@Override
 	public void deleteSiteFragment(
@@ -66,6 +73,56 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 			GroupUtil.getStagingAwareGroupId(
 				true, contextCompany.getCompanyId(),
 				siteExternalReferenceCode));
+	}
+
+	@Override
+	public ExportImportDescriptor<FragmentEntry> getExportImportDescriptor() {
+		return new ExportImportDescriptor<FragmentEntry>() {
+
+			@Override
+			public Function<FragmentEntry, Boolean>
+				getApplicableModelFunction() {
+
+				return fragmentEntry ->
+					fragmentEntry.getType() == FragmentConstants.TYPE_COMPONENT;
+			}
+
+			@Override
+			public String getKey() {
+				return FragmentResourceImpl.class.getName();
+			}
+
+			@Override
+			public String getLabelLanguageKey() {
+				return "fragments";
+			}
+
+			@Override
+			public Class<FragmentEntry> getModelClass() {
+				return FragmentEntry.class;
+			}
+
+			@Override
+			public List<String> getNestedFields() {
+				return List.of("thumbnail");
+			}
+
+			@Override
+			public String getPortletId() {
+				return FragmentPortletKeys.FRAGMENT;
+			}
+
+			@Override
+			public Scope getScope() {
+				return Scope.SITE;
+			}
+
+			@Override
+			public boolean isStagingSupported() {
+				return true;
+			}
+
+		};
 	}
 
 	@Override
