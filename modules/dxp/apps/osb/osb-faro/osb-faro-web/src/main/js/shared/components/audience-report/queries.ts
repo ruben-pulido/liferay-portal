@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import {Name} from './types';
 
 const AudienceReportFragment = gql`
 	fragment audienceReportFragment on Metric {
@@ -19,7 +20,13 @@ const AudienceReportFragment = gql`
 	}
 `;
 
-export const PageAudienceReportQuery = ({metricName, name}) => gql`
+export const PageAudienceReportQuery = ({
+	metricName,
+	name
+}: {
+	metricName: string;
+	name: Name;
+}) => gql`
 	query ${name}AudienceReportQuery(
 		$channelId: String
 		$devices: String
@@ -51,12 +58,17 @@ export const PageAudienceReportQuery = ({metricName, name}) => gql`
 	${AudienceReportFragment}
 `;
 
-export const AssetAudienceReportQuery = ({metricName, name}) => gql`
+export const AssetAudienceReportQuery = ({
+	metricName,
+	name
+}: {
+	metricName: string;
+	name: Name;
+}) => gql`
 	query ${name}AudienceReportQuery(
 		$assetId: String!
 		$channelId: String
 		$devices: String
-		$experienceId: String
 		$location: String
 		$rangeEnd: String
 		$rangeKey: Int
@@ -70,7 +82,6 @@ export const AssetAudienceReportQuery = ({metricName, name}) => gql`
 			channelId: $channelId
 			country: $location
 			deviceType: $devices
-			experienceId: $experienceId
 			rangeEnd: $rangeEnd
 			rangeKey: $rangeKey
 			rangeStart: $rangeStart

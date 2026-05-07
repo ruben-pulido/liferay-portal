@@ -75,7 +75,21 @@ public class PortletCategory implements Serializable {
 	}
 
 	public PortletCategory getCategory(String name) {
-		return _portletCategories.get(name);
+		int index = name.indexOf(_DELIMITER);
+
+		if (index == -1) {
+			return _portletCategories.get(name);
+		}
+
+		PortletCategory portletCategory = _portletCategories.get(
+			name.substring(0, index));
+
+		if (portletCategory == null) {
+			return null;
+		}
+
+		return portletCategory.getCategory(
+			name.substring(index + _DELIMITER.length()));
 	}
 
 	public String getName() {
@@ -108,6 +122,18 @@ public class PortletCategory implements Serializable {
 
 	public void merge(PortletCategory newPortletCategory) {
 		merge(this, newPortletCategory);
+	}
+
+	public void mergeCategory(PortletCategory portletCategory) {
+		PortletCategory curPortletCategory = _portletCategories.get(
+			portletCategory.getName());
+
+		if (curPortletCategory != null) {
+			merge(curPortletCategory, portletCategory);
+		}
+		else {
+			addCategory(portletCategory);
+		}
 	}
 
 	public void separate(Set<String> portletIds) {
@@ -170,6 +196,12 @@ public class PortletCategory implements Serializable {
 
 	protected void setPath(String path) {
 		_path = path;
+
+		for (PortletCategory portletCategory : getCategories()) {
+			portletCategory.setPath(
+				StringBundler.concat(
+					_path, _DELIMITER, portletCategory.getName()));
+		}
 	}
 
 	private static final String _DELIMITER = StringPool.DOUBLE_SLASH;

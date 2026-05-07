@@ -35,7 +35,6 @@ import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.ResourceLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
@@ -190,7 +189,7 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 			return layoutUtilityPageEntryLocalService.
 				updateLayoutUtilityPageEntry(
 					targetLayoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
-					previewFileEntryId);
+					previewFileEntryId, serviceContext);
 		}
 
 		return targetLayoutUtilityPageEntry;
@@ -391,16 +390,19 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 		return layoutUtilityPageEntryPersistence.update(layoutUtilityPageEntry);
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public LayoutUtilityPageEntry updateLayoutUtilityPageEntry(
-			long layoutUtilityPageEntryId, long previewFileEntryId)
+			long layoutUtilityPageEntryId, long previewFileEntryId,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		LayoutUtilityPageEntry layoutUtilityPageEntry =
 			layoutUtilityPageEntryPersistence.findByPrimaryKey(
 				layoutUtilityPageEntryId);
 
-		layoutUtilityPageEntry.setModifiedDate(new Date());
+		layoutUtilityPageEntry.setModifiedDate(
+			serviceContext.getModifiedDate(new Date()));
 
 		long previousPreviewFileEntryId =
 			layoutUtilityPageEntry.getPreviewFileEntryId();
@@ -421,7 +423,8 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public LayoutUtilityPageEntry updateLayoutUtilityPageEntry(
-			long layoutUtilityPageEntryId, String name)
+			long layoutUtilityPageEntryId, String name,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		LayoutUtilityPageEntry layoutUtilityPageEntry =
@@ -431,6 +434,9 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 		_validateName(
 			layoutUtilityPageEntry.getGroupId(), layoutUtilityPageEntryId, name,
 			layoutUtilityPageEntry.getType());
+
+		layoutUtilityPageEntry.setModifiedDate(
+			serviceContext.getModifiedDate(new Date()));
 
 		layoutUtilityPageEntry.setName(name);
 
@@ -442,13 +448,6 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 
 		Layout draftLayout = _layoutLocalService.fetchDraftLayout(
 			layoutUtilityPageEntry.getPlid());
-
-		ServiceContext serviceContext =
-			ServiceContextThreadLocal.getServiceContext();
-
-		if (serviceContext == null) {
-			serviceContext = new ServiceContext();
-		}
 
 		serviceContext.setAttribute(
 			"layout.instanceable.allowed", Boolean.TRUE);

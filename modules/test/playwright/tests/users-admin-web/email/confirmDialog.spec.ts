@@ -6,7 +6,6 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {usersAndOrganizationsPagesTest} from '../../../fixtures/usersAndOrganizationsPagesTest';
 import {getRandomInt} from '../../../utils/getRandomInt';
@@ -14,9 +13,6 @@ import {waitForAlert} from '../../../utils/waitForAlert';
 
 export const test = mergeTests(
 	dataApiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	loginTest(),
 	usersAndOrganizationsPagesTest
 );
@@ -79,6 +75,8 @@ test(
 
 		await expect(editUserPage.yourPasswordInput).toBeVisible();
 
+		await editUserPage.passwordConfirmationFrameCancelButton.click();
+
 		await deleteUser();
 
 		await addUser();
@@ -87,6 +85,8 @@ test(
 		await editUserPage.saveButton.click();
 
 		await expect(editUserPage.yourPasswordInput).toBeVisible();
+
+		await editUserPage.passwordConfirmationFrameCancelButton.click();
 
 		await deleteUser();
 	}

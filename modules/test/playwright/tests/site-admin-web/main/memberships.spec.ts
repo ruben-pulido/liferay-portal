@@ -482,6 +482,8 @@ test(
 				.getByTitle('Go to Membership Requests')
 		).toBeVisible();
 
+		await page.waitForTimeout(300);
+
 		await page.keyboard.press('Tab');
 
 		await page.keyboard.press('Tab');
@@ -509,6 +511,8 @@ test(
 		).toBeVisible();
 
 		await page.reload();
+
+		await page.waitForTimeout(300);
 
 		await page.keyboard.press('Tab');
 
@@ -746,3 +750,277 @@ test(
 		).not.toBeVisible();
 	}
 );
+
+test('Allow Manual Membership Management toggle controls product menu visibility', async ({
+	membershipsPage,
+	page,
+	site,
+	siteSettingsPage,
+}) => {
+	await page.goto(`/group${site.friendlyUrlPath}/~/control_panel/manage`);
+
+	await membershipsPage.productMenuPage.openProductMenuIfClosed();
+	await membershipsPage.productMenuPage.peopleButton.click();
+
+	await expect(
+		membershipsPage.productMenuPage.membershipsButton
+	).toBeVisible();
+
+	await siteSettingsPage.goToSiteSetting(
+		'Site Configuration',
+		null,
+		site.friendlyUrlPath
+	);
+
+	await page.getByLabel('Allow Manual Membership Management').click();
+
+	await siteSettingsPage.saveConfiguration();
+
+	await page.goto(`/group${site.friendlyUrlPath}/~/control_panel/manage`);
+
+	await membershipsPage.productMenuPage.openProductMenuIfClosed();
+	await membershipsPage.productMenuPage.peopleButton.click();
+
+	await expect(
+		membershipsPage.productMenuPage.membershipsButton
+	).not.toBeVisible();
+});
+
+test('Assign organization as site member and search', async ({
+	apiHelpers,
+	membershipsPage,
+	page,
+}) => {
+	const organization1 = await apiHelpers.headlessAdminUser.postOrganization();
+	const organization2 = await apiHelpers.headlessAdminUser.postOrganization();
+
+	await membershipsPage.goto();
+
+	await page.getByRole('link', {name: 'Organizations'}).click();
+
+	await expect(
+		page.getByText(
+			'No organization was found that is a member of this site.'
+		)
+	).toBeVisible();
+
+	await page.getByRole('button', {name: 'Add'}).click();
+
+	await page.waitForTimeout(500);
+
+	await page
+		.frameLocator('iframe[title="Assign Organizations to This Site"]')
+		.getByLabel(organization1.name)
+		.check();
+
+	await page.getByRole('button', {name: 'Done'}).click();
+
+	await waitForAlert(page);
+
+	const searchBox = page.getByPlaceholder('Search for');
+
+	await expect(async () => {
+		await searchBox.fill(organization1.name);
+		await searchBox.press('Enter');
+
+		await expect(
+			page.getByRole('cell', {exact: true, name: organization1.name})
+		).toBeVisible({timeout: 2000});
+	}).toPass();
+
+	await expect(async () => {
+		await searchBox.fill(organization2.name);
+		await searchBox.press('Enter');
+
+		await expect(
+			page.getByText(
+				'No organization was found that is a member of this site.'
+			)
+		).toBeVisible({timeout: 2000});
+	}).toPass();
+});
+
+test('Limit child site membership to parent site members', async ({
+	apiHelpers,
+	membershipsPage,
+	page,
+	siteSettingsPage,
+}) => {
+	const parentSite = await apiHelpers.headlessAdminSite.postSite({
+		name: getRandomString(),
+	});
+
+	const childSite = await apiHelpers.headlessAdminSite.postSite({
+		name: getRandomString(),
+		parentSiteExternalReferenceCode: parentSite.externalReferenceCode,
+	});
+
+	const userInParent = await apiHelpers.headlessAdminUser.postUserAccount();
+	const userNotInParent =
+		await apiHelpers.headlessAdminUser.postUserAccount();
+
+	const siteRole =
+		await apiHelpers.headlessAdminUser.getRoleByName('Site Member');
+
+	await apiHelpers.headlessAdminUser.assignUserToSite(
+		siteRole.id,
+		parentSite.id,
+		userInParent.id
+	);
+
+	await siteSettingsPage.goToSiteSetting(
+		'Site Configuration',
+		null,
+		childSite.friendlyUrlPath
+	);
+
+	await page
+		.getByLabel('Limit membership to members of the parent site')
+		.click();
+
+	await siteSettingsPage.saveConfiguration();
+
+	await membershipsPage.goto();
+
+	await page.getByRole('button', {name: 'Add'}).click();
+
+	await page.waitForTimeout(500);
+
+	const usersFrame = page.frameLocator(
+		'iframe[title="Assign Users to This Site"]'
+	);
+
+	await expect(usersFrame.getByLabel(userInParent.givenName)).toBeVisible();
+	await expect(
+		usersFrame.getByLabel(userNotInParent.givenName)
+	).not.toBeVisible();
+});
+
+test('Search and paginate site members', async ({
+	apiHelpers,
+	membershipsPage,
+	page,
+}) => {
+	const siteId = await page.evaluate(() => {
+		return String(Liferay.ThemeDisplay.getSiteGroupId());
+	});
+
+	const siteRole =
+		await apiHelpers.headlessAdminUser.getRoleByName('Site Member');
+
+	const users: TUserAccount[] = [];
+
+	for (let i = 0; i < 20; i++) {
+		const user = await apiHelpers.headlessAdminUser.postUserAccount();
+
+		await apiHelpers.headlessAdminUser.assignUserToSite(
+			siteRole.id,
+			siteId,
+			user.id
+		);
+
+		users.push(user);
+	}
+
+	await membershipsPage.goto();
+
+	await expect(
+		page.getByText('Showing 1 to 20 of 21 entries.')
+	).toBeVisible();
+
+	await page.getByLabel('Page 2').click();
+
+	await expect(
+		page.getByText('Showing 21 to 21 of 21 entries.')
+	).toBeVisible();
+
+	await page.getByLabel('Page 1').click();
+
+	await expect(
+		page.getByText('Showing 1 to 20 of 21 entries.')
+	).toBeVisible();
+
+	const searchBox = page.getByPlaceholder('Search for');
+
+	const searchForMember = async (query: string, user: TUserAccount) => {
+		await expect(async () => {
+			await searchBox.fill(query);
+			await searchBox.press('Enter');
+
+			await expect(
+				page.locator(
+					`[id="_com_liferay_site_memberships_web_portlet_SiteMembershipsPortlet_users_${user.alternateName}"]`
+				)
+			).toBeVisible({timeout: 2000});
+		}).toPass();
+	};
+
+	await searchForMember(users[0].givenName, users[0]);
+	await searchForMember(users[1].familyName, users[1]);
+	await searchForMember(users[2].alternateName, users[2]);
+
+	await searchBox.fill('nonexistentmember');
+	await searchBox.press('Enter');
+
+	await expect(
+		page.getByText(
+			'No user was found that is a direct member of this site.'
+		)
+	).toBeVisible();
+});
+
+test('Search user group site members', async ({
+	apiHelpers,
+	membershipsPage,
+	page,
+}) => {
+	const userGroup1 = await apiHelpers.headlessAdminUser.postUserGroup();
+	const userGroup2 = await apiHelpers.headlessAdminUser.postUserGroup();
+
+	await membershipsPage.goto();
+
+	await page.getByRole('link', {name: 'User Groups'}).click();
+
+	await expect(
+		page.getByText('No user group was found that is a member of this site.')
+	).toBeVisible();
+
+	await page.getByRole('button', {name: 'Add'}).click();
+
+	await page.waitForTimeout(500);
+
+	const userGroupsFrame = page.frameLocator(
+		'iframe[title="Assign User Groups to This Site"]'
+	);
+
+	await userGroupsFrame.getByPlaceholder('Search for').fill(userGroup1.name);
+	await userGroupsFrame.getByPlaceholder('Search for').press('Enter');
+
+	await userGroupsFrame.getByLabel('Select All Items on the Page').click();
+
+	await page.getByRole('button', {name: 'Done'}).click();
+
+	await waitForAlert(page);
+
+	const searchBox = page.getByPlaceholder('Search for');
+
+	await expect(async () => {
+		await searchBox.fill(userGroup1.name);
+		await searchBox.press('Enter');
+
+		await expect(
+			page.getByRole('cell', {exact: true, name: userGroup1.name})
+		).toBeVisible({timeout: 2000});
+	}).toPass();
+
+	await expect(async () => {
+		await searchBox.fill(userGroup2.name);
+		await searchBox.press('Enter');
+
+		await expect(
+			page.getByText(
+				'No user group was found that is a member of this site.'
+			)
+		).toBeVisible({timeout: 2000});
+	}).toPass();
+});

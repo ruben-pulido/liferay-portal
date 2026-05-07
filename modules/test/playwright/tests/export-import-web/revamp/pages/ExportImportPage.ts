@@ -10,6 +10,7 @@ import {zipFolder} from '../../../../utils/zip';
 import type {taskStatus} from '../../main/pages/ExportImportPage';
 
 export class ExportImportPage {
+	readonly completedLabel: Locator;
 	readonly continueButton: Locator;
 	readonly currentAndPreviousTab: Locator;
 	readonly exportButton: Locator;
@@ -17,8 +18,10 @@ export class ExportImportPage {
 	readonly fileSelector: Locator;
 	readonly importButton: Locator;
 	readonly importMenuItem: Locator;
+	readonly nameInput: Locator;
 	readonly newExportButton: Locator;
 	readonly newExportTab: Locator;
+	readonly newImport: Locator;
 	readonly newImportTab: Locator;
 	readonly page: Page;
 	readonly title: Locator;
@@ -29,6 +32,7 @@ export class ExportImportPage {
 	) => Locator;
 
 	constructor(page: Page) {
+		this.completedLabel = page.getByText('completed');
 		this.continueButton = page.getByRole('button', {name: 'Continue'});
 		this.currentAndPreviousTab = page.getByRole('link', {
 			name: 'Current and Previous',
@@ -37,15 +41,17 @@ export class ExportImportPage {
 		this.exportMenuItem = page.getByRole('menuitem', {
 			name: 'Export',
 		});
-		this.fileSelector = page.getByRole('button', {name: 'Select File'});
+		this.fileSelector = page.getByText('Select file');
 		this.importButton = page.getByRole('button', {name: 'Import'});
 		this.importMenuItem = page.getByRole('menuitem', {
 			name: 'Import',
 		});
+		this.nameInput = page.getByRole('textbox', {name: 'Name'});
 		this.newExportButton = page.getByRole('link', {name: 'Custom Export'});
 		this.newExportTab = page.getByRole('link', {
 			name: 'New Export Process',
 		});
+		this.newImport = page.getByRole('link', {name: 'Import'});
 		this.newImportTab = page.getByRole('link', {
 			name: 'New Import Process',
 		});
@@ -72,14 +78,32 @@ export class ExportImportPage {
 		await this.exportButton.click();
 	}
 
-	async import(folderPath: string) {
+	async selectFile(folderPath: string) {
 		const fileChooserPromise = this.page.waitForEvent('filechooser');
 
 		await this.fileSelector.click();
 
 		const fileChooser = await fileChooserPromise;
 
-		await fileChooser.setFiles(await zipFolder(folderPath));
+		await fileChooser.setFiles(
+			folderPath.endsWith('.lar')
+				? await zipFolder(folderPath)
+				: folderPath
+		);
+	}
+
+	async import(folderPath: string, expectedUploadErrorMessage?: string) {
+		await this.fileSelector.click();
+
+		await this.selectFile(folderPath);
+
+		if (expectedUploadErrorMessage) {
+			await this.page
+				.getByText(expectedUploadErrorMessage, {exact: true})
+				.waitFor();
+
+			return;
+		}
 
 		await this.continueButton.click();
 

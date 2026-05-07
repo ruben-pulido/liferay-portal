@@ -34,6 +34,8 @@ public interface TopLevelBuildReport extends BuildReport {
 
 	public ControllerBuildReport getControllerBuildReport();
 
+	public List<FailureReport> getDistinctFailureReports();
+
 	public DownstreamBuildReport getDownstreamBuildReport(String axisName);
 
 	public List<DownstreamBuildReport> getDownstreamBuildReports();
@@ -41,6 +43,8 @@ public interface TopLevelBuildReport extends BuildReport {
 	public URL getJenkinsReportURL();
 
 	public JobReport getJobReport();
+
+	public TopLevelBuildReport getPreviousTopLevelBuildReport();
 
 	public String getTestrayBuildDateString();
 
@@ -57,5 +61,7 @@ public interface TopLevelBuildReport extends BuildReport {
 	public long getTotalCachedDuration();
 
 	public long getTotalDuration();
+
+	public List<FailureReport> getUniqueFailureReports();
 
 }

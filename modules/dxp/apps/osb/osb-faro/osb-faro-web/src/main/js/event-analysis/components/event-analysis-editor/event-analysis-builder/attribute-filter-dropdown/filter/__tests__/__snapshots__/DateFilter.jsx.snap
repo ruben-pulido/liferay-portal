@@ -69,7 +69,6 @@ exports[`DateFilter should render 1`] = `
               class="dropdown dropdown-range-key-root"
             >
               <div
-                aria-controls="clay-dropdown-menu-1"
                 aria-expanded="false"
                 aria-haspopup="true"
                 class="dropdown-toggle"
@@ -121,7 +120,6 @@ exports[`DateFilter should render 1`] = `
     >
       <button
         class="button-root btn btn-block btn-primary"
-        disabled=""
         type="submit"
       >
         Apply

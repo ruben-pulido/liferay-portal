@@ -19,25 +19,6 @@ definition {
 			ACSettings.takeTokenFromAnalyticsCloud();
 		}
 
-		task ("Enable DXP segments deprecation feature flag") {
-			SignIn.signInTestSetup();
-
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "System Settings");
-
-			SystemSettings.gotoConfiguration(
-				configurationCategory = "Feature Flags",
-				configurationName = "Deprecation",
-				configurationScope = "System Scope");
-
-			FeatureFlag.enableFeatureFlag(
-				configurationScope = "System Scope",
-				featureFlag = "DXP Segments",
-				scope = "Deprecation");
-		}
-
 		task ("Go to DXP portal, login and create site") {
 			TestCase.setUpPortalInstance();
 
@@ -55,8 +36,10 @@ definition {
 				groupName = "Test Site Name",
 				layoutName = "Content Page",
 				type = "content");
+		}
 
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
+		task ("Enable DXP segments deprecation feature flag") {
+			Segmentation.enableDXPSegments();
 		}
 	}
 
@@ -303,52 +286,6 @@ definition {
 				key_index = 1,
 				key_nodeName = "Heading",
 				locator1 = "Treeview#PAGE_STRUCTURE_TREE_VERTICAL_ELLIPSIS");
-		}
-	}
-
-	@description = "LPS-99225: Validate if the admin cannot rename a segment in an experience with an A/B test in running status"
-	@priority = 3
-	test CanNotRenameSegmentABTestRunning {
-		property portal.upstream = "quarantine";
-
-		// Test quarantined due to LPD-34180
-
-		task ("Create a segment and an Experience using the segment created") {
-			ContentPages.gotoPageEditor();
-
-			Segmentation.createExperienceWithSegment(
-				newExperience = "NewExp1",
-				newSegment = "SegmentForABTest");
-
-			Button.clickPublish();
-		}
-
-		task ("Create a new A/B test with a new experience and run it") {
-			ABTest.openABTestPanel();
-
-			ContentPages.changeExperience(experienceName = "NewExp1");
-
-			ABTest.createABTest(
-				goal = "Bounce Rate",
-				testTitle = "AB test title");
-
-			ABTest.createVariant(variantName = "Variant name");
-
-			ABTest.runTest();
-		}
-
-		task ("Go to Segments page and try to rename that segment") {
-			Segmentation.openSegmentsAdmin(siteURLKey = "test-site-name");
-
-			Segmentation.editSegment(entry = "SegmentForABTest");
-
-			Segmentation.fillTitle(titleField = "SegmentForABTest 2");
-
-			Button.clickSave();
-		}
-
-		task ("Assert the changes have not applied") {
-			LexiconEntry.viewNoEntry(rowEntry = "SegmentForABTest 2");
 		}
 	}
 

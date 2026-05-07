@@ -126,7 +126,7 @@ public class CalendarBookingStagedModelDataHandlerTest
 		Map<String, List<StagedModel>> dependentStagedModelsMap =
 			new HashMap<>();
 
-		Calendar calendar = CalendarTestUtil.getDefaultCalendar(group);
+		Calendar calendar = CalendarTestUtil.addCalendarResourceCalendar(group);
 
 		addDependentStagedModel(
 			dependentStagedModelsMap, CalendarResource.class,
@@ -154,6 +154,21 @@ public class CalendarBookingStagedModelDataHandlerTest
 		return CalendarBookingTestUtil.addRegularCalendarBooking(
 			TestPropsValues.getUser(), calendarResource.getDefaultCalendar(),
 			serviceContext);
+	}
+
+	@Override
+	protected StagedModel addStagedModelWithExternalReferenceCode(
+			Group group, String externalReferenceCode,
+			Map<String, List<StagedModel>> dependentStagedModelsMap)
+		throws Exception {
+
+		CalendarBooking calendarBooking = (CalendarBooking)addStagedModel(
+			group, dependentStagedModelsMap);
+
+		calendarBooking.setExternalReferenceCode(externalReferenceCode);
+
+		return _calendarBookingLocalService.updateCalendarBooking(
+			calendarBooking);
 	}
 
 	@Override

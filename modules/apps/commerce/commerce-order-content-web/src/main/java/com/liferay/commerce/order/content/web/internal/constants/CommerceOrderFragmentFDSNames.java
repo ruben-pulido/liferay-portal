@@ -12,12 +12,20 @@ import com.liferay.commerce.constants.CommerceFragmentRendererKeys;
  */
 public class CommerceOrderFragmentFDSNames {
 
+	public static final String PENDING_ORDER_ATTACHMENTS =
+		CommerceFragmentRendererKeys.ORDER_ATTACHMENTS_DATA_SET +
+			"-pendingOrderAttachments";
+
 	public static final String PENDING_ORDER_ITEMS =
 		CommerceFragmentRendererKeys.ORDER_ITEMS_DATA_SET +
 			"-pendingOrderItems";
 
 	public static final String PENDING_ORDERS =
 		CommerceFragmentRendererKeys.ORDERS_DATA_SET + "-pendingOrders";
+
+	public static final String PLACED_ORDER_ATTACHMENTS =
+		CommerceFragmentRendererKeys.ORDER_ATTACHMENTS_DATA_SET +
+			"-placedOrderAttachments";
 
 	public static final String PLACED_ORDER_ITEMS =
 		CommerceFragmentRendererKeys.ORDER_ITEMS_DATA_SET + "-placedOrderItems";

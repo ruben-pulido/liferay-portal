@@ -11,6 +11,7 @@ interface ICriteriaCardProps {
 	criteriaString: string;
 	includeAnonymousUsers: boolean;
 	segmentType: SegmentTypes;
+	sequential: boolean;
 	timeZoneId: string;
 }
 
@@ -18,14 +19,13 @@ const CriteriaCard: React.FC<ICriteriaCardProps> = ({
 	criteriaString,
 	includeAnonymousUsers,
 	segmentType,
+	sequential,
 	timeZoneId
 }) => {
 	const _criteriaViewRef = React.createRef<HTMLDivElement>();
 
-	const {
-		clearReportContainers,
-		setReportContainer
-	} = useDownloadReportContext();
+	const {clearReportContainers, setReportContainer} =
+		useDownloadReportContext();
 
 	useEffect(() => {
 		setReportContainer(ReportContainer.SegmentCriteriaCard);
@@ -51,10 +51,18 @@ const CriteriaCard: React.FC<ICriteriaCardProps> = ({
 						{Liferay.Language.get('includes-anonymous-individuals')}
 					</Label>
 				)}
+
+				{segmentType === SegmentTypes.RealTime && sequential && (
+					<Label display='info' size='lg' uppercase>
+						{Liferay.Language.get('sequential-events')}
+					</Label>
+				)}
+
 				<CriteriaView
 					criteria={translateQueryToCriteria(criteriaString)}
 					ref={_criteriaViewRef}
 					segmentType={segmentType}
+					sequential={sequential}
 					timeZoneId={timeZoneId}
 				/>
 			</Panel.Body>

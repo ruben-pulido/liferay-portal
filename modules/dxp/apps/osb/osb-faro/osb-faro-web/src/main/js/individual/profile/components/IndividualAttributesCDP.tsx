@@ -4,9 +4,10 @@ import {
 	GeneralInfoSection
 } from 'shared/components/GeneralInfoSection';
 import {formatUTCDate} from 'shared/util/date';
-import {SectionHeader} from './SectionHeader';
+import {SectionHeader} from 'shared/components/SectionHeader';
 
 interface IIndividualAttributesProps {
+	children?: React.ReactNode;
 	contactId?: string;
 	propertiesData: Map<string, any>;
 	showEmptyState?: boolean;

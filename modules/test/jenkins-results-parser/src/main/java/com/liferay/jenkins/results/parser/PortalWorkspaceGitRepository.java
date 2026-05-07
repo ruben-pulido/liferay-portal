@@ -140,19 +140,22 @@ public class PortalWorkspaceGitRepository extends BaseWorkspaceGitRepository {
 		System.out.println(toString());
 
 		try {
-			if (JenkinsResultsParserUtil.isBuildCachingEnabled(
-					System.getenv("JOB_NAME"),
-					System.getenv("CI_TEST_SUITE"))) {
+			boolean buildCachingEnabled =
+				JenkinsResultsParserUtil.isBuildCachingEnabled(
+					System.getenv("JOB_NAME"), System.getenv("CI_TEST_SUITE"));
 
+			if (buildCachingEnabled) {
 				checkAvailableGitArchive();
 			}
 
 			if (!isSnapshot()) {
 				prepareGitWorkingDirectory();
 
-				_setUpBinariesCache();
+				if (buildCachingEnabled) {
+					_setUpBinariesCache();
 
-				prepareGitArchive();
+					prepareGitArchive();
+				}
 
 				setSetUp(true);
 			}

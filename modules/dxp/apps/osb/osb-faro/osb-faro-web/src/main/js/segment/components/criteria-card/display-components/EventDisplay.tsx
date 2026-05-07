@@ -1,7 +1,6 @@
 import DateFilterConjunctionDisplay from './DateFilterConjunctionDisplay';
 import OccurenceConjunctionDisplay from './OccurenceConjunctionDisplay';
 import React from 'react';
-import RealTimePeriodDisplay from './RealTimePeriodDisplay';
 import {CustomValue} from 'shared/util/records';
 import {getFilterCriterionIMap} from 'segment/segment-editor/dynamic/utils/custom-inputs';
 import {getOperatorLabel, maybeFormatToKnownType} from '../utils';
@@ -20,7 +19,7 @@ const EventDisplay: React.FC<IDisplayComponentProps> = ({
 
 	const {label, options, type} = property;
 
-	const operatorKey = maybeFormatToKnownType(operatorName, name);
+	const operatorKey = maybeFormatToKnownType(operatorName ?? '', name);
 
 	const operatorLabel = getOperatorLabel(operatorKey, type);
 
@@ -56,19 +55,17 @@ const EventDisplay: React.FC<IDisplayComponentProps> = ({
 
 			<b>{label}</b>
 
-			<OccurenceConjunctionDisplay
-				operatorName={eventOperator}
-				value={occurenceCount}
-			/>
+			{segmentType === SegmentTypes.Batch && (
+				<>
+					<OccurenceConjunctionDisplay
+						operatorName={eventOperator}
+						value={occurenceCount}
+					/>
 
-			{segmentType === SegmentTypes.RealTime ? (
-				<RealTimePeriodDisplay
-					conjunctionCriterion={conjunctionCriterion}
-				/>
-			) : (
-				<DateFilterConjunctionDisplay
-					conjunctionCriterion={conjunctionCriterion}
-				/>
+					<DateFilterConjunctionDisplay
+						conjunctionCriterion={conjunctionCriterion}
+					/>
+				</>
 			)}
 		</>
 	);

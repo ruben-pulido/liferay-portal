@@ -88,6 +88,11 @@ components:
                         The last time the item was changed.
                     format: date-time
                     type: string
+                dateReview:
+                    description:
+                        The time when the item should next be reviewed.
+                    format: date-time
+                    type: string
                 description:
                     description:
                         The item's description.
@@ -147,7 +152,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.portal.search.rest.client', and version '1.0.27'."
+        'com.liferay.portal.search.rest.client', and version '1.0.28'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

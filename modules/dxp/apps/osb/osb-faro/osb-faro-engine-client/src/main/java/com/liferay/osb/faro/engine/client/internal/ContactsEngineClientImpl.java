@@ -15,6 +15,8 @@ import com.liferay.osb.faro.engine.client.constants.FieldMappingConstants;
 import com.liferay.osb.faro.engine.client.constants.FilterConstants;
 import com.liferay.osb.faro.engine.client.exception.FaroEngineClientException;
 import com.liferay.osb.faro.engine.client.model.Account;
+import com.liferay.osb.faro.engine.client.model.AccountLifecycleMetric;
+import com.liferay.osb.faro.engine.client.model.AccountMetric;
 import com.liferay.osb.faro.engine.client.model.Activity;
 import com.liferay.osb.faro.engine.client.model.ActivityAggregation;
 import com.liferay.osb.faro.engine.client.model.ActivityAsset;
@@ -23,8 +25,10 @@ import com.liferay.osb.faro.engine.client.model.AsahProject;
 import com.liferay.osb.faro.engine.client.model.Asset;
 import com.liferay.osb.faro.engine.client.model.AssetSummary;
 import com.liferay.osb.faro.engine.client.model.AssetSummaryCategory;
+import com.liferay.osb.faro.engine.client.model.AssetSummaryMimeType;
 import com.liferay.osb.faro.engine.client.model.AssetSummaryTag;
 import com.liferay.osb.faro.engine.client.model.AssetSummaryType;
+import com.liferay.osb.faro.engine.client.model.AssetSummaryVocabulary;
 import com.liferay.osb.faro.engine.client.model.Author;
 import com.liferay.osb.faro.engine.client.model.BlockedKeyword;
 import com.liferay.osb.faro.engine.client.model.Channel;
@@ -300,7 +304,7 @@ public class ContactsEngineClientImpl
 	public IndividualSegment addIndividualSegment(
 		FaroProject faroProject, long userId, String channelId,
 		String filterString, boolean includeAnonymousUsers, String name,
-		String segmentType, String status) {
+		String segmentType, boolean sequential, String status) {
 
 		IndividualSegment individualSegment = new IndividualSegment();
 
@@ -311,6 +315,7 @@ public class ContactsEngineClientImpl
 		individualSegment.setIncludeAnonymousUsers(includeAnonymousUsers);
 		individualSegment.setName(name);
 		individualSegment.setSegmentType(segmentType);
+		individualSegment.setSequential(sequential);
 		individualSegment.setStatus(status);
 
 		return post(
@@ -653,6 +658,52 @@ public class ContactsEngineClientImpl
 			uriVariables);
 
 		return pagedModel.getResults();
+	}
+
+	@Override
+	public List<AccountLifecycleMetric> getAccountLifecycleMetrics(
+			FaroProject faroProject, String country, String id, String industry,
+			String revenue)
+		throws FaroEngineClientException {
+
+		Map<String, Object> uriVariables = getUriVariables(faroProject);
+
+		if (Validator.isNotNull(country)) {
+			uriVariables.put("country", country);
+		}
+
+		uriVariables.put("id", id);
+
+		if (Validator.isNotNull(industry)) {
+			uriVariables.put("industry", industry);
+		}
+
+		if (Validator.isNotNull(revenue)) {
+			uriVariables.put("revenue", revenue);
+		}
+
+		return get(
+			faroProject, Rels.ACCOUNT_LIFECYCLE_OVERVIEW,
+			new ParameterizedTypeReference<List<AccountLifecycleMetric>>() {
+			},
+			uriVariables);
+	}
+
+	@Override
+	public List<AccountMetric> getAccountMetrics(
+		FaroProject faroProject, Long channelId) {
+
+		Map<String, Object> uriVariables = getUriVariables(faroProject);
+
+		if (Validator.isNotNull(channelId)) {
+			uriVariables.put("channelId", channelId);
+		}
+
+		return get(
+			faroProject, Rels.ACCOUNTS_METRICS,
+			new ParameterizedTypeReference<List<AccountMetric>>() {
+			},
+			uriVariables);
 	}
 
 	@Override
@@ -1028,6 +1079,34 @@ public class ContactsEngineClientImpl
 	}
 
 	@Override
+	public Results<AssetSummaryMimeType> getAssetSummaryMimeTypes(
+		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
+		String rangeStart, int cur, int delta) {
+
+		Map<String, Object> uriVariables = getUriVariables(
+			faroProject, cur, delta, null);
+
+		uriVariables.put("channelId", channelId);
+
+		if ((rangeEnd != null) && (rangeStart != null)) {
+			uriVariables.put("rangeEnd", rangeEnd);
+			uriVariables.put("rangeStart", rangeStart);
+		}
+		else {
+			uriVariables.put("rangeKey", rangeKey);
+		}
+
+		PagedModel<?, AssetSummaryMimeType> pagedModel = get(
+			faroProject, Rels.ASSET_SUMMARY_MIME_TYPES,
+			new ParameterizedTypeReference
+				<EntityModelPagedModel<AssetSummaryMimeType>>() {
+			},
+			uriVariables);
+
+		return pagedModel.getResults();
+	}
+
+	@Override
 	public Results<AssetSummaryTag> getAssetSummaryTags(
 		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
 		String rangeStart, int cur, int delta) {
@@ -1077,6 +1156,34 @@ public class ContactsEngineClientImpl
 			faroProject, Rels.ASSET_SUMMARY_TYPES,
 			new ParameterizedTypeReference
 				<EntityModelPagedModel<AssetSummaryType>>() {
+			},
+			uriVariables);
+
+		return pagedModel.getResults();
+	}
+
+	@Override
+	public Results<AssetSummaryVocabulary> getAssetSummaryVocabularies(
+		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
+		String rangeStart, int cur, int delta) {
+
+		Map<String, Object> uriVariables = getUriVariables(
+			faroProject, cur, delta, null);
+
+		uriVariables.put("channelId", channelId);
+
+		if ((rangeEnd != null) && (rangeStart != null)) {
+			uriVariables.put("rangeEnd", rangeEnd);
+			uriVariables.put("rangeStart", rangeStart);
+		}
+		else {
+			uriVariables.put("rangeKey", rangeKey);
+		}
+
+		PagedModel<?, AssetSummaryVocabulary> pagedModel = get(
+			faroProject, Rels.ASSET_SUMMARY_VOCABULARIES,
+			new ParameterizedTypeReference
+				<EntityModelPagedModel<AssetSummaryVocabulary>>() {
 			},
 			uriVariables);
 
@@ -3081,7 +3188,7 @@ public class ContactsEngineClientImpl
 	public IndividualSegment updateIndividualSegment(
 		FaroProject faroProject, String id, long userId, String channelId,
 		String filterString, boolean includeAnonymousUsers, String name,
-		String segmentType) {
+		String segmentType, boolean sequential) {
 
 		IndividualSegment individualSegment = new IndividualSegment();
 
@@ -3092,6 +3199,7 @@ public class ContactsEngineClientImpl
 		individualSegment.setIncludeAnonymousUsers(includeAnonymousUsers);
 		individualSegment.setName(name);
 		individualSegment.setSegmentType(segmentType);
+		individualSegment.setSequential(sequential);
 		individualSegment.setStatus(IndividualSegment.Status.ACTIVE.name());
 
 		return put(

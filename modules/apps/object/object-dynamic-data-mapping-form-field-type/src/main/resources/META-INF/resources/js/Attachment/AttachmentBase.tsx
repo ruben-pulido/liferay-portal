@@ -11,7 +11,7 @@ import {
 	useConfig,
 } from 'data-engine-js-components-web';
 import {openSelectionModal} from 'frontend-js-components-web';
-import {fetch} from 'frontend-js-web';
+import {fetch, getFileAsBase64} from 'frontend-js-web';
 import React, {ChangeEventHandler, useEffect, useRef, useState} from 'react';
 
 import FileContainer from './FileContainer';
@@ -23,6 +23,10 @@ import {validateFileExtension, validateFileSize} from './util/attachment';
 import './Attachment.scss';
 
 import type {LocalizedValue} from 'dynamic-data-mapping-form-field-type';
+
+type Space = {
+	externalReferenceCode: string;
+};
 
 export type AttachmentFile = {
 	contentURL: string;
@@ -51,9 +55,15 @@ type CMSUploadResponse = {
 	title: string;
 };
 
-interface Space {
+type FolderEntry = {
 	externalReferenceCode: string;
-}
+	id: number;
+	title: string;
+};
+
+type FolderRef =
+	| {objectEntryFolderExternalReferenceCode: string}
+	| {objectEntryFolderId: number};
 
 export interface AttachmentBaseProps<TValue> {
 	acceptedFileExtensions: string;
@@ -72,23 +82,6 @@ export interface AttachmentBaseProps<TValue> {
 	url: string;
 	value: TValue;
 }
-
-const getBase64 = (file: File): Promise<string> =>
-	new Promise((resolve, reject) => {
-		const reader = new FileReader();
-
-		reader.onload = () => {
-			if (typeof reader.result === 'string') {
-				resolve(reader.result.split(',')[1]);
-			}
-			else {
-				reject(new Error('Invalid FileReader result'));
-			}
-		};
-
-		reader.onerror = reject;
-		reader.readAsDataURL(file);
-	});
 
 export default function AttachmentBase({
 	acceptedFileExtensions,
@@ -114,11 +107,13 @@ export default function AttachmentBase({
 
 	const {
 		observer: spaceItemSelectorObserver,
-		onOpenChange: spaceItemSelectorOpenChange,
+		onOpenChange: onSpaceItemSelectorOpenChange,
 		open: spaceItemSelectorOpen,
 	} = useModal();
 
 	const DEFAULT_FOLDER_ERC = 'L_FILES';
+
+	const HIDDEN_FOLDER_PATH = 'HIDDEN_FILES';
 
 	const isCMSBasicDocument = fileSource === 'CMSBasicDocument';
 
@@ -195,81 +190,111 @@ export default function AttachmentBase({
 			});
 	}, []);
 
+	useEffect(() => {
+		if (!attachment) {
+			setCMSFiles([]);
+		}
+	}, [attachment]);
+
+	const findOrCreateFolder = async (
+		folderName: string,
+		parentFolderERC: string,
+		parentFolderId: number | undefined,
+		isVisible: boolean,
+		spaceERC: string
+	): Promise<FolderEntry> => {
+		const searchParams = new URLSearchParams({
+			currentURL: '/web/cms/files',
+			emptySearch: 'true',
+			nestedFields: 'embedded,scope',
+			pageSize: '30',
+			search: folderName,
+		});
+
+		if (parentFolderId) {
+			searchParams.set('filter', `folderId eq ${parentFolderId}`);
+		}
+		else if (isVisible) {
+			searchParams.set(
+				'filter',
+				"cmsRoot eq true and cmsSection eq 'files' and status in (0)"
+			);
+		}
+
+		const searchResponse = await fetch(
+			`/o/search/v1.0/search?${searchParams.toString()}`
+		);
+
+		if (searchResponse.ok) {
+			const {items = []} = await searchResponse.json();
+
+			const match = items.find((item: any) => {
+				const data = item.embedded ?? item;
+
+				return (
+					data.title === folderName &&
+					data.scope?.externalReferenceCode === spaceERC
+				);
+			});
+
+			const folder: FolderEntry | null = match?.embedded ?? match ?? null;
+
+			if (folder) {
+				return folder;
+			}
+		}
+
+		const createResponse = await fetch(
+			`/o/headless-object/v1.0/scopes/${spaceERC}/object-entry-folders`,
+			{
+				body: JSON.stringify({
+					parentObjectEntryFolderExternalReferenceCode:
+						parentFolderERC,
+					title: folderName,
+				}),
+				headers: {'Content-Type': 'application/json'},
+				method: 'POST',
+			}
+		);
+
+		if (!createResponse.ok) {
+			throw new Error(`Unable to create folder ${folderName}`);
+		}
+
+		return createResponse.json();
+	};
+
 	const resolveFolderId = async (
 		isVisible: boolean,
 		spaceERC: string,
-		folderName?: string
-	): Promise<{
-		objectEntryFolderExternalReferenceCode?: string;
-		objectEntryFolderId?: number;
-	}> => {
-		if (!folderName) {
+		storageDLFolderPath?: string
+	): Promise<FolderRef> => {
+		const folderNames = (storageDLFolderPath || '')
+			.split('/')
+			.map((name) => name.trim())
+			.filter(Boolean);
+
+		if (!folderNames.length) {
 			return {objectEntryFolderExternalReferenceCode: DEFAULT_FOLDER_ERC};
 		}
 
-		try {
-			const searchParams = new URLSearchParams({
-				nestedFields: 'embedded,scope',
-				pageSize: '30',
-				search: folderName,
-			});
+		let parentFolderERC = DEFAULT_FOLDER_ERC;
+		let parentFolderId: number | undefined;
 
-			const searchResponse = await fetch(
-				`/o/search/v1.0/search?${searchParams}`
+		for (const folderName of folderNames) {
+			const folder = await findOrCreateFolder(
+				folderName,
+				parentFolderERC,
+				parentFolderId,
+				isVisible,
+				spaceERC
 			);
 
-			if (searchResponse.ok) {
-				const {items = []} = await searchResponse.json();
-
-				const match = items.find((item: any) => {
-					const data = item.embedded ?? item;
-
-					return (
-						data.title === folderName &&
-						data.scope?.externalReferenceCode === spaceERC
-					);
-				});
-
-				const id = match?.embedded?.id ?? match?.id;
-
-				if (id) {
-					return {objectEntryFolderId: id};
-				}
-			}
-
-			const createBody: any = {
-				title: folderName,
-			};
-
-			if (isVisible) {
-				createBody.parentObjectEntryFolderExternalReferenceCode =
-					'L_FILES';
-			}
-
-			const createResponse = await fetch(
-				`/o/headless-object/v1.0/scopes/${spaceERC}/object-entry-folders`,
-				{
-					body: JSON.stringify(createBody),
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					method: 'POST',
-				}
-			);
-
-			if (createResponse.ok) {
-				const {id} = await createResponse.json();
-
-				if (id) {
-					return {objectEntryFolderId: id};
-				}
-			}
-		}
-		catch (error) {
-			console.warn('Folder resolution failed', error);
+			parentFolderId = folder.id;
+			parentFolderERC = folder.externalReferenceCode;
 		}
 
-		return {objectEntryFolderExternalReferenceCode: DEFAULT_FOLDER_ERC};
+		return {objectEntryFolderId: parentFolderId!};
 	};
 
 	const uploadToCMS = async (
@@ -280,18 +305,20 @@ export default function AttachmentBase({
 		const spaceERC =
 			storageDepotGroup || spaces[0]?.externalReferenceCode || '';
 
-		const fileBase64 = await getBase64(file);
+		if (!spaceERC) {
+			throw new Error(
+				Liferay.Language.get('unable-to-upload-the-selected-file')
+			);
+		}
+
+		const fileBase64 = await getFileAsBase64(file);
 
 		const isVisible = !!storageDepotGroup;
 
-		const folderName = storageDLFolderPath
-			? storageDLFolderPath.replace(/^\//, '')
-			: 'HIDDEN_FILES';
-
 		const folder = await resolveFolderId(
 			isVisible,
-			String(spaceERC),
-			folderName
+			spaceERC,
+			storageDLFolderPath || HIDDEN_FOLDER_PATH
 		);
 
 		const body = {
@@ -437,7 +464,7 @@ export default function AttachmentBase({
 								}
 							}
 							else if (isCMSBasicDocument) {
-								spaceItemSelectorOpenChange(true);
+								onSpaceItemSelectorOpenChange(true);
 							}
 						}}
 					>
@@ -458,7 +485,7 @@ export default function AttachmentBase({
 					items={cmsFiles}
 					observer={spaceItemSelectorObserver}
 					onItemsChange={handleCMSItemsChange}
-					onOpenChange={spaceItemSelectorOpenChange}
+					onOpenChange={onSpaceItemSelectorOpenChange}
 					open={spaceItemSelectorOpen}
 				/>
 			)}

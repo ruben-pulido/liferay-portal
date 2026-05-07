@@ -2868,26 +2868,31 @@ public class ObjectDefinitionLocalServiceTest {
 					TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
 					0, true, ObjectDefinitionConstants.SCOPE_COMPANY, false);
 
+			ObjectRelationship objectRelationship =
+				_objectRelationshipLocalService.addObjectRelationship(
+					null, TestPropsValues.getUserId(),
+					_objectDefinitionLocalService.fetchSystemObjectDefinition(
+						TestPropsValues.getCompanyId(), "AccountEntry"
+					).getObjectDefinitionId(),
+					objectDefinition.getObjectDefinitionId(), 0,
+					ObjectRelationshipConstants.DELETION_TYPE_PREVENT, false,
+					RandomTestUtil.randomLocaleStringMap(),
+					StringUtil.randomId(), false,
+					ObjectRelationshipConstants.TYPE_ONE_TO_MANY, null);
+
 			objectDefinition =
 				_objectDefinitionLocalService.enableAccountEntryRestricted(
-					_objectRelationshipLocalService.addObjectRelationship(
-						null, TestPropsValues.getUserId(),
-						_objectDefinitionLocalService.
-							fetchSystemObjectDefinition(
-								TestPropsValues.getCompanyId(), "AccountEntry"
-							).getObjectDefinitionId(),
-						objectDefinition.getObjectDefinitionId(), 0,
-						ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
-						false,
-						LocalizedMapUtil.getLocalizedMap(
-							RandomTestUtil.randomString()),
-						StringUtil.randomId(), false,
-						ObjectRelationshipConstants.TYPE_ONE_TO_MANY, null));
+					objectRelationship);
 
 			Assert.assertTrue(
 				objectDefinition.getAccountEntryRestrictedObjectFieldId() > 0);
 			Assert.assertTrue(objectDefinition.isAccountEntryRestricted());
 			Assert.assertFalse(objectDefinition.isSystem());
+
+			ObjectField objectField = _objectFieldLocalService.fetchObjectField(
+				objectRelationship.getObjectFieldId2());
+
+			Assert.assertTrue(objectField.isRequired());
 		}
 		finally {
 			if (objectDefinition != null) {
@@ -4030,7 +4035,7 @@ public class ObjectDefinitionLocalServiceTest {
 		throws Exception {
 
 		_sharingEntryLocalService.addSharingEntry(
-			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
+			RandomTestUtil.randomString(), TestPropsValues.getUserId(), 0,
 			userGroupId, 0, _classNameLocalService.getClassNameId(className),
 			classPK, TestPropsValues.getGroupId(), true,
 			Arrays.asList(SharingEntryAction.VIEW), null,

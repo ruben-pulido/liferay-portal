@@ -6,6 +6,15 @@
 package com.liferay.portal.cache.internal.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetCategoryLocalServiceUtil;
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalServiceUtil;
+import com.liferay.blogs.model.BlogsEntry;
+import com.liferay.blogs.service.BlogsEntryLocalServiceUtil;
+import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.petra.lang.SafeCloseable;
@@ -36,13 +45,23 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.security.auth.AuthException;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.constants.TestDataConstants;
 import com.liferay.portal.kernel.test.rule.TomcatClusterTestRule;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.SearchContextTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ContentTypes;
@@ -53,9 +72,11 @@ import com.liferay.portal.kernel.util.MethodKey;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.language.override.model.PLOEntry;
 import com.liferay.portal.language.override.service.PLOEntryLocalServiceUtil;
 import com.liferay.portal.model.impl.CompanyImpl;
+import com.liferay.portal.security.auth.session.AuthenticatedSessionManagerUtil;
 import com.liferay.portal.test.cluster.tomcat.TomcatCluster;
 import com.liferay.portal.test.cluster.tomcat.TomcatNode;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -95,6 +116,8 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
+import org.springframework.mock.web.MockHttpServletRequest;
+
 /**
  * @author Jiefeng Wu
  */
@@ -125,6 +148,112 @@ public class ClusterGeneralTest implements Serializable {
 		_tomcatNode2 = builder2.build();
 
 		_tomcatNode2.start(true);
+	}
+
+	@Test
+	public void testAddAndDeleteBlogEntriesOnSeparateNodes() throws Exception {
+		long groupId = TestPropsValues.getGroupId();
+		long userId = TestPropsValues.getUserId();
+
+		BlogsEntry blogsEntry1 = _tomcatNode1.syncExecute(
+			() -> BlogsEntryLocalServiceUtil.addEntry(
+				userId, "Blogs Entry1 Title", "Blogs Entry1 Content",
+				ServiceContextTestUtil.getServiceContext(groupId, userId)));
+
+		Assert.assertEquals(
+			blogsEntry1,
+			_tomcatNode2.syncExecute(
+				() -> BlogsEntryLocalServiceUtil.fetchBlogsEntry(
+					blogsEntry1.getEntryId())));
+
+		BlogsEntry blogsEntry2 = _tomcatNode2.syncExecute(
+			() -> BlogsEntryLocalServiceUtil.addEntry(
+				userId, "Blogs Entry2 Title", "Blogs Entry2 Content",
+				ServiceContextTestUtil.getServiceContext(groupId, userId)));
+
+		Assert.assertEquals(
+			blogsEntry2,
+			_tomcatNode1.syncExecute(
+				() -> BlogsEntryLocalServiceUtil.fetchBlogsEntry(
+					blogsEntry2.getEntryId())));
+
+		Hits hits = _getSearchHits(_tomcatNode1, "Entry2");
+
+		Assert.assertEquals(hits.toString(), 1, hits.getLength());
+
+		Document document = hits.doc(0);
+
+		Assert.assertEquals(
+			String.valueOf(blogsEntry2.getEntryId()),
+			document.get(Field.ENTRY_CLASS_PK));
+
+		_tomcatNode2.syncExecute(
+			() -> {
+				BlogsEntryLocalServiceUtil.deleteEntry(blogsEntry2);
+
+				return null;
+			});
+
+		Assert.assertEquals(
+			blogsEntry1,
+			_tomcatNode1.syncExecute(
+				() -> BlogsEntryLocalServiceUtil.fetchBlogsEntry(
+					blogsEntry1.getEntryId())));
+
+		Assert.assertNull(
+			_tomcatNode1.syncExecute(
+				() -> BlogsEntryLocalServiceUtil.fetchBlogsEntry(
+					blogsEntry2.getEntryId())));
+
+		hits = _getSearchHits(_tomcatNode1, "Entry2");
+
+		Assert.assertEquals(hits.toString(), 0, hits.getLength());
+	}
+
+	@Test
+	public void testCanAddCategoryToDocumentOnSlaveNode() throws Exception {
+		long groupId = TestPropsValues.getGroupId();
+		long userId = TestPropsValues.getUserId();
+
+		AssetCategory assetCategory = _tomcatNode1.syncExecute(
+			() -> {
+				AssetVocabulary assetVocabulary =
+					AssetVocabularyLocalServiceUtil.addVocabulary(
+						userId, groupId, "Vocabulary Name 1",
+						ServiceContextTestUtil.getServiceContext(
+							groupId, userId));
+
+				return AssetCategoryLocalServiceUtil.addCategory(
+					userId, groupId, "Category Name 1",
+					assetVocabulary.getVocabularyId(),
+					ServiceContextTestUtil.getServiceContext(groupId, userId));
+			});
+
+		FileEntry fileEntry = _tomcatNode1.syncExecute(
+			() -> DLAppLocalServiceUtil.addFileEntry(
+				null, userId, groupId,
+				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, "Document_1.docx",
+				"application/docx", TestDataConstants.TEST_BYTE_ARRAY, null,
+				null, null,
+				ServiceContextTestUtil.getServiceContext(groupId, userId)));
+
+		_tomcatNode2.syncExecute(
+			() -> {
+				AssetEntryLocalServiceUtil.updateEntry(
+					userId, groupId, DLFileEntry.class.getName(),
+					fileEntry.getFileEntryId(),
+					new long[] {assetCategory.getCategoryId()}, null);
+
+				return null;
+			});
+
+		AssetEntry assetEntry = _tomcatNode1.syncExecute(
+			() -> AssetEntryLocalServiceUtil.getEntry(
+				DLFileEntry.class.getName(), fileEntry.getFileEntryId()));
+
+		Assert.assertArrayEquals(
+			new long[] {assetCategory.getCategoryId()},
+			assetEntry.getCategoryIds());
 	}
 
 	@Test
@@ -196,6 +325,51 @@ public class ClusterGeneralTest implements Serializable {
 	@Test
 	public void testCanUpdateLogLevelsForAllNodesFromSlave() throws Exception {
 		_testCanUpdateLogLevelsForAllNodes(_tomcatNode1, _tomcatNode2, false);
+	}
+
+	@Test
+	public void testCanUpdatePortalPropertiesWithMultipleClusters()
+		throws Exception {
+
+		_testCanUpdatePortalPropertiesWithMultipleClusters(
+			_tomcatNode1, "emailAddress");
+		_testCanUpdatePortalPropertiesWithMultipleClusters(
+			_tomcatNode2, "emailAddress");
+
+		String originalNode2AuthType = _tomcatNode2.syncExecute(
+			() -> ReflectionTestUtil.getAndSetFieldValue(
+				PropsValues.class, "COMPANY_SECURITY_AUTH_TYPE", "screenName"));
+
+		try {
+			_testCanUpdatePortalPropertiesWithMultipleClusters(
+				_tomcatNode1, "emailAddress");
+			_testCanUpdatePortalPropertiesWithMultipleClusters(
+				_tomcatNode2, "screenName");
+
+			String originalNode1AuthType = _tomcatNode1.syncExecute(
+				() -> ReflectionTestUtil.getAndSetFieldValue(
+					PropsValues.class, "COMPANY_SECURITY_AUTH_TYPE",
+					"screenName"));
+
+			try {
+				_testCanUpdatePortalPropertiesWithMultipleClusters(
+					_tomcatNode1, "screenName");
+				_testCanUpdatePortalPropertiesWithMultipleClusters(
+					_tomcatNode2, "screenName");
+			}
+			finally {
+				_tomcatNode1.syncExecute(
+					() -> ReflectionTestUtil.getAndSetFieldValue(
+						PropsValues.class, "COMPANY_SECURITY_AUTH_TYPE",
+						originalNode1AuthType));
+			}
+		}
+		finally {
+			_tomcatNode2.syncExecute(
+				() -> ReflectionTestUtil.getAndSetFieldValue(
+					PropsValues.class, "COMPANY_SECURITY_AUTH_TYPE",
+					originalNode2AuthType));
+		}
 	}
 
 	@Test
@@ -442,6 +616,15 @@ public class ClusterGeneralTest implements Serializable {
 				}));
 	}
 
+	private long _authenticate(TomcatNode tomcatNode, String login)
+		throws Exception {
+
+		return tomcatNode.syncExecute(
+			() -> AuthenticatedSessionManagerUtil.getAuthenticatedUserId(
+				new MockHttpServletRequest(), login,
+				TestPropsValues.USER_PASSWORD, null));
+	}
+
 	private AutoCloseable _disableClusterableAdviceCallMasterTimeout(
 			TomcatNode tomcatNode)
 		throws Exception {
@@ -475,6 +658,32 @@ public class ClusterGeneralTest implements Serializable {
 
 		return bundleContext.getService(
 			editServerMVCActionCommandServiceReference);
+	}
+
+	private Hits _getSearchHits(TomcatNode tomcatNode, String keywords)
+		throws Exception {
+
+		return tomcatNode.syncExecute(
+			() -> {
+				try {
+					PermissionThreadLocal.setPermissionChecker(
+						PermissionCheckerFactoryUtil.create(
+							TestPropsValues.getUser()));
+
+					Indexer<BlogsEntry> indexer =
+						IndexerRegistryUtil.getIndexer(BlogsEntry.class);
+
+					SearchContext searchContext =
+						SearchContextTestUtil.getSearchContext();
+
+					searchContext.setKeywords(keywords);
+
+					return indexer.search(searchContext);
+				}
+				finally {
+					PermissionThreadLocal.setPermissionChecker(null);
+				}
+			});
 	}
 
 	private void _restartAndVerifyNode(
@@ -693,6 +902,37 @@ public class ClusterGeneralTest implements Serializable {
 					return Log4JUtil.getPriority(
 						ClusterGeneralTest.class.getName());
 				}));
+	}
+
+	private void _testCanUpdatePortalPropertiesWithMultipleClusters(
+			TomcatNode tomcatNode, String expectedAuthType)
+		throws Exception {
+
+		if (expectedAuthType.equals("emailAddress")) {
+			Assert.assertEquals(
+				TestPropsValues.getUserId(),
+				_authenticate(tomcatNode, "test@liferay.com"));
+
+			try {
+				_authenticate(tomcatNode, "test");
+
+				Assert.fail();
+			}
+			catch (AuthException authException) {
+			}
+		}
+		else if (expectedAuthType.equals("screenName")) {
+			Assert.assertEquals(
+				TestPropsValues.getUserId(), _authenticate(tomcatNode, "test"));
+
+			try {
+				_authenticate(tomcatNode, "test@liferay.com");
+
+				Assert.fail();
+			}
+			catch (AuthException authException) {
+			}
+		}
 	}
 
 	private void _testControlChannelProperties(

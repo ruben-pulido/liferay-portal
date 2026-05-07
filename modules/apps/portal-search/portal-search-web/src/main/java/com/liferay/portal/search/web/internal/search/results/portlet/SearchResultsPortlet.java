@@ -111,10 +111,6 @@ public class SearchResultsPortlet extends MVCPortlet {
 		super.render(renderRequest, renderResponse);
 	}
 
-	protected String getCurrentURL(RenderRequest renderRequest) {
-		return _portal.getCurrentURL(renderRequest);
-	}
-
 	protected HttpServletRequest getHttpServletRequest(
 		RenderRequest renderRequest) {
 
@@ -329,8 +325,6 @@ public class SearchResultsPortlet extends MVCPortlet {
 			assetRendererFactoryLookup
 		).setClassNameLocalService(
 			_classNameLocalService
-		).setCurrentURL(
-			getCurrentURL(renderRequest)
 		).setDocument(
 			document
 		).setFastDateFormatFactory(

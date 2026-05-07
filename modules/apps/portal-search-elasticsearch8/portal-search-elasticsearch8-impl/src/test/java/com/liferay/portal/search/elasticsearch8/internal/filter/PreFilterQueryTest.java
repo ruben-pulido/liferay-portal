@@ -6,13 +6,12 @@
 package com.liferay.portal.search.elasticsearch8.internal.filter;
 
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.MatchAllQuery;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.MatchAllQuery;
 import com.liferay.portal.search.elasticsearch8.internal.indexing.LiferayElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.DocumentCreationHelpers;
@@ -48,12 +47,11 @@ public class PreFilterQueryTest extends BaseIndexingTestCase {
 	protected void assertTermsFilter(String[] values) throws Exception {
 		assertSearch(
 			indexingTestHelper -> {
-				BooleanQueryImpl booleanQueryImpl = new BooleanQueryImpl();
+				BooleanQuery booleanQuery = new BooleanQuery();
 
-				booleanQueryImpl.add(
-					new MatchAllQuery(), BooleanClauseOccur.MUST);
+				booleanQuery.add(new MatchAllQuery(), BooleanClauseOccur.MUST);
 
-				indexingTestHelper.setQuery(booleanQueryImpl);
+				indexingTestHelper.setQuery(booleanQuery);
 
 				BooleanFilter booleanFilter = new BooleanFilter();
 
@@ -65,11 +63,11 @@ public class PreFilterQueryTest extends BaseIndexingTestCase {
 
 				booleanFilter.add(filter, BooleanClauseOccur.MUST);
 
-				booleanQueryImpl.setPreBooleanFilter(booleanFilter);
+				booleanQuery.setPreBooleanFilter(booleanFilter);
 
 				@SuppressWarnings("rawtypes")
-				BooleanClause booleanClause = BooleanClauseFactoryUtil.create(
-					booleanQueryImpl, BooleanClauseOccur.MUST.getName());
+				BooleanClause booleanClause = new BooleanClause<>(
+					booleanQuery, BooleanClauseOccur.MUST);
 
 				indexingTestHelper.define(
 					searchContext -> searchContext.setBooleanClauses(

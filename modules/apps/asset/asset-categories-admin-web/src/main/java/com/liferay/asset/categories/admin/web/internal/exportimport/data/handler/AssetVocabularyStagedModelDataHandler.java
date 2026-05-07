@@ -237,8 +237,6 @@ public class AssetVocabularyStagedModelDataHandler
 				null, portletDataContext.getScopeGroupId(),
 				vocabulary.getName(), 2);
 
-			serviceContext.setUuid(vocabulary.getUuid());
-
 			importedVocabulary = _assetVocabularyLocalService.addVocabulary(
 				vocabulary.getExternalReferenceCode(), userId,
 				portletDataContext.getScopeGroupId(), name,
@@ -261,6 +259,12 @@ public class AssetVocabularyStagedModelDataHandler
 				vocabulary.getDescriptionMap(), vocabulary.getSettings(),
 				vocabulary.getVisibilityType(), serviceContext);
 		}
+
+		importedVocabulary.setUuid(vocabulary.getUuid());
+		importedVocabulary.setModifiedDate(vocabulary.getModifiedDate());
+
+		importedVocabulary = _assetVocabularyLocalService.updateAssetVocabulary(
+			importedVocabulary);
 
 		Group group = _groupLocalService.getGroup(
 			portletDataContext.getScopeGroupId());

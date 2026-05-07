@@ -135,10 +135,10 @@ public class DDMFormPageChangeTest {
 	private static final String _DDM_FORM_INSTANCE_ID =
 		RandomTestUtil.randomString();
 
-	@Inject
-	private static DDMFormPageChangeRegistry _ddmFormPageChangeRegistry;
-
 	private static ServiceRegistration<DDMFormPageChange> _serviceRegistration;
+
+	@Inject
+	private DDMFormPageChangeRegistry _ddmFormPageChangeRegistry;
 
 	private static class DDMTestFormPageChange implements DDMFormPageChange {
 

@@ -30,10 +30,15 @@ export default class MarketplaceDeliveryOrder {
 		return this.order.createDate;
 	}
 
-	get dxpProvisioningEnabled() {
+	get canGenerateLicenses() {
 		return (
-			this.order.orderTypeExternalReferenceCode === OrderTypes.DXP_APP &&
-			!this.isFreeApp
+			[
+				OrderTypes.CLIENT_EXTENSION,
+				OrderTypes.COMPOSITE_APP,
+				OrderTypes.DXP_APP,
+			].includes(
+				this.order.orderTypeExternalReferenceCode as OrderTypes
+			) && !this.isFreeApp
 		);
 	}
 	get customFields() {

@@ -16,7 +16,6 @@ import {dataSetFragmentPageTest} from './fixtures/dataSetFragmentPageTest';
 export const test = mergeTests(
 	dataSetManagerApiHelpersTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPS-164563': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
@@ -401,14 +400,14 @@ test(
 			await menuItem.click();
 
 			await expect(
-				dataSetFragmentPage.userViewsSaveModal
+				dataSetFragmentPage.userViewsRenameModal
 			).toBeInViewport();
 
-			await dataSetFragmentPage.userViewsSaveModal
+			await dataSetFragmentPage.userViewsRenameModal
 				.getByLabel('NameRequired')
 				.fill(userView2Name);
 
-			await dataSetFragmentPage.userViewsSaveModal
+			await dataSetFragmentPage.userViewsRenameModal
 				.getByRole('button', {name: 'Save'})
 				.click();
 

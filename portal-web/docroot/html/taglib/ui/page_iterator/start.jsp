@@ -30,14 +30,16 @@ int initialPages = 20;
 if (portletURL != null) {
 	String[] urlArray = PortalUtil.stripURLAnchor(portletURL.toString(), StringPool.POUND);
 
-	url = urlArray[0];
+	url = PortalUtil.escapeRedirect(urlArray[0]);
 	urlAnchor = urlArray[1];
 
-	if (url.indexOf(CharPool.QUESTION) == -1) {
-		url += "?";
-	}
-	else if (!url.endsWith("&")) {
-		url += "&";
+	if (Validator.isNotNull(url)) {
+		if (url.indexOf(CharPool.QUESTION) == -1) {
+			url += "?";
+		}
+		else if (!url.endsWith("&")) {
+			url += "&";
+		}
 	}
 }
 
@@ -101,6 +103,8 @@ NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
 						}
 
 						String curDeltaURL = HttpComponentsUtil.setParameter(url + urlAnchor, namespace + deltaParam, curDelta);
+
+						curDeltaURL = HttpComponentsUtil.sortParameters(curDeltaURL);
 					%>
 
 						<li role="presentation">
@@ -119,9 +123,19 @@ NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
 			</div>
 
 			<aui:script senna="temporary" type="text/javascript">
-				function <portlet:namespace />handleDropdownKeyPress(button, list, options, dropdown) {
+				function <portlet:namespace />handleDropdownKeyPress(
+					button,
+					list,
+					options,
+					dropdown
+				) {
 					function onButtonKeyDown(event) {
-						if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Enter' || event.key === ' ') {
+						if (
+							event.key === 'ArrowDown' ||
+							event.key === 'ArrowUp' ||
+							event.key === 'Enter' ||
+							event.key === ' '
+						) {
 							event.preventDefault();
 
 							button.setAttribute('aria-expanded', 'true');
@@ -135,7 +149,7 @@ NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
 						}
 					}
 
-					button.addEventListener('keydown', onButtonKeyDown );
+					button.addEventListener('keydown', onButtonKeyDown);
 
 					function onLeaveDropdown() {
 						button.setAttribute('aria-expanded', 'false');
@@ -173,18 +187,18 @@ NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
 						}
 					}
 
-					list.addEventListener('focusout', dropdownFocusOut );
+					list.addEventListener('focusout', dropdownFocusOut);
 
 					var destroyDropDownPagination = function () {
 						button.removeEventListener('keydown', onButtonKeyDown);
-						list.removeEventListener('focusout', dropdownFocusOut );
+						list.removeEventListener('focusout', dropdownFocusOut);
 						list.removeEventListener('keydown', handleKeyEvents);
 					};
 
 					Liferay.once('beforeScreenFlip', destroyDropDownPagination);
 				}
 
-				var dropdown = document.getElementById("<%= ariaPagination %>");
+				var dropdown = document.getElementById('<%= ariaPagination %>');
 
 				var button = dropdown.querySelector('.dropdown-toggle');
 				var list = dropdown.querySelector('.dropdown-menu');
@@ -487,24 +501,22 @@ NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
 	<aui:script sandbox="<%= true %>">
 		Liferay.component(
 			'<%= randomNamespace %>dynamicInlineScroll',
-			new Liferay.Util.DynamicInlineScroll(
-				{
-					applyNamespaceToCurParam: <%= Validator.isNotNull(namespace) %>,
-					cur: '<%= cur %>',
-					curParam: '<%= curParam %>',
-					forcePost: <%= forcePost %>,
-					formName: '<%= formName %>',
-					initialPages: '<%= initialPages %>',
-					jsCall: '<%= jsCall %>',
-					namespace: '<%= namespace %>',
-					pages: '<%= pages %>',
-					randomNamespace: '<%= randomNamespace %>',
-					url: '<%= HtmlUtil.escapeJS(HttpComponentsUtil.removeParameter(url, namespace + curParam)) %>',
-					urlAnchor: '<%= urlAnchor %>'
-				}
-			),
+			new Liferay.Util.DynamicInlineScroll({
+				applyNamespaceToCurParam: <%= Validator.isNotNull(namespace) %>,
+				cur: '<%= cur %>',
+				curParam: '<%= curParam %>',
+				forcePost: <%= forcePost %>,
+				formName: '<%= formName %>',
+				initialPages: '<%= initialPages %>',
+				jsCall: '<%= jsCall %>',
+				namespace: '<%= namespace %>',
+				pages: '<%= pages %>',
+				randomNamespace: '<%= randomNamespace %>',
+				url: '<%= HtmlUtil.escapeJS(HttpComponentsUtil.removeParameter(url, namespace + curParam)) %>',
+				urlAnchor: '<%= urlAnchor %>',
+			}),
 			{
-				portletId: '<%= portletDisplay.getId() %>'
+				portletId: '<%= portletDisplay.getId() %>',
 			}
 		);
 	</aui:script>
@@ -519,7 +531,7 @@ NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
 		Liferay.Util.postForm(
 			document.<%= randomNamespace + namespace %>pageIteratorFm,
 			{
-				data: data
+				data: data,
 			}
 		);
 	}
@@ -528,7 +540,13 @@ NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
 <%!
 private String _getHREF(String formName, String curParam, int cur, String jsCall, String url, String urlAnchor) throws Exception {
 	if (Validator.isNotNull(url)) {
-		return HtmlUtil.escapeHREF(HttpComponentsUtil.addParameter(HttpComponentsUtil.removeParameter(url, curParam) + urlAnchor, curParam, cur));
+		url = HttpComponentsUtil.removeParameter(url, curParam);
+
+		url = HttpComponentsUtil.addParameter(url + urlAnchor, curParam, cur);
+
+		url = HttpComponentsUtil.sortParameters(url);
+
+		return HtmlUtil.escapeHREF(url);
 	}
 
 	return "javascript:document." + formName + "." + curParam + ".value = '" + cur + "'; " + jsCall;

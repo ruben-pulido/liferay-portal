@@ -6,14 +6,11 @@
 package com.liferay.site.cms.site.initializer.internal.display.context;
 
 import com.liferay.depot.service.DepotEntryLocalService;
-import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
@@ -24,7 +21,6 @@ import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporterRe
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,21 +81,6 @@ public class ViewContentsSectionDisplayContext
 	}
 
 	@Override
-	public List<FDSActionDropdownItem> getFDSActionDropdownItems() {
-		List<FDSActionDropdownItem> fdsActionDropdownItems =
-			super.getFDSActionDropdownItems();
-
-		fdsActionDropdownItems.add(
-			7,
-			new FDSActionDropdownItem(
-				StringPool.BLANK, "info-circle-open", "show-details",
-				LanguageUtil.get(httpServletRequest, "show-details"), null,
-				null, "infoPanel"));
-
-		return fdsActionDropdownItems;
-	}
-
-	@Override
 	protected String getCMSSectionFilterString() {
 		return appendStatus(
 			appendGroupIds("cmsRoot eq true and cmsSection eq 'contents'"));
@@ -108,6 +89,11 @@ public class ViewContentsSectionDisplayContext
 	@Override
 	protected String getEmptyStateDescriptionKey() {
 		return "click-new-to-create-your-first-piece-of-content";
+	}
+
+	@Override
+	protected boolean isFolderSearchEnabled() {
+		return true;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

@@ -161,7 +161,7 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 			SharedAsset sharedAsset = randomSharedAsset();
 
 			_sharingEntryLocalService.addSharingEntry(
-				sharedAsset.getExternalReferenceCode(), _user.getUserId(), 0,
+				sharedAsset.getExternalReferenceCode(), _user.getUserId(), 0, 0,
 				TestPropsValues.getUserId(),
 				_classNameLocalService.getClassNameId(
 					depotObjectDefinition.getClassName()),
@@ -230,7 +230,7 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 			sharedAsset,
 			_sharingEntryLocalService.addSharingEntry(
 				sharedAsset.getExternalReferenceCode(),
-				TestPropsValues.getUserId(), 0, _user.getUserId(),
+				TestPropsValues.getUserId(), 0, 0, _user.getUserId(),
 				_classNameLocalService.getClassNameId(
 					ObjectEntryFolder.class.getName()),
 				objectEntryFolder.getObjectEntryFolderId(),
@@ -445,7 +445,7 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 		return _toObjectEntrySharedAsset(
 			objectEntry, sharedAsset,
 			_sharingEntryLocalService.addSharingEntry(
-				sharedAsset.getExternalReferenceCode(), _user.getUserId(), 0,
+				sharedAsset.getExternalReferenceCode(), _user.getUserId(), 0, 0,
 				TestPropsValues.getUserId(),
 				_classNameLocalService.getClassNameId(
 					objectDefinition.getClassName()),
@@ -482,7 +482,7 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 		SharedAsset sharedAsset = randomSharedAsset();
 
 		_sharingEntryLocalService.addSharingEntry(
-			sharedAsset.getExternalReferenceCode(), _user.getUserId(), 0,
+			sharedAsset.getExternalReferenceCode(), _user.getUserId(), 0, 0,
 			TestPropsValues.getUserId(),
 			_classNameLocalService.getClassNameId(
 				ObjectEntryFolder.class.getName()),
@@ -642,23 +642,6 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 		};
 	}
 
-	private static ObjectDefinition _objectDefinition;
-
-	@Inject
-	private static ObjectDefinitionLocalService _objectDefinitionLocalService;
-
-	@Inject
-	private static ObjectFieldLocalService _objectFieldLocalService;
-
-	@Inject
-	private static ObjectFieldSettingLocalService
-		_objectFieldSettingLocalService;
-
-	private static User _user;
-
-	@Inject
-	private static UserLocalService _userLocalService;
-
 	@Inject
 	private ClassNameLocalService _classNameLocalService;
 
@@ -670,6 +653,11 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 
 	@Inject
 	private DLFileEntryLocalService _dlFileEntryLocalService;
+
+	private ObjectDefinition _objectDefinition;
+
+	@Inject
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 	@Inject
 	private ObjectDefinitionSettingLocalService
@@ -691,6 +679,17 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 	private ObjectEntryService _objectEntryService;
 
 	@Inject
+	private ObjectFieldLocalService _objectFieldLocalService;
+
+	@Inject
+	private ObjectFieldSettingLocalService _objectFieldSettingLocalService;
+
+	@Inject
 	private SharingEntryLocalService _sharingEntryLocalService;
+
+	private User _user;
+
+	@Inject
+	private UserLocalService _userLocalService;
 
 }

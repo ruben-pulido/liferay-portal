@@ -59,9 +59,9 @@ definition {
 		MessageboardsThread.viewNoReplies(replyBody = "スレッドメッセージの返信");
 	}
 
-	@description = "This is a test for LPS-136929. It checks that categories can be viewed in Arabic."
+	@description = "This is a test for LPS-136929 and LPS-136930. It checks that categories can be viewed in Arabic and Japanese."
 	@priority = 3
-	test CanViewCategoriesInArabic {
+	test CanViewCategoriesInArabicAndJapanese {
 		JSONMBMessage.addCategory(
 			categoryDescription = "وصف الفئة",
 			categoryName = "اسم الفئة",
@@ -76,11 +76,7 @@ definition {
 			categoryName = "اسم الفئة",
 			localizedHeader = "لوحات الرسائل",
 			threadCount = "0 من النقاشات");
-	}
 
-	@description = "This is a test for LPS-136930. It checks that categories can be viewed in Japanese."
-	@priority = 3
-	test CanViewCategoriesInJapanese {
 		JSONMBMessage.addCategory(
 			categoryDescription = "カテゴリ説明",
 			categoryName = "種別名",
@@ -97,9 +93,9 @@ definition {
 			threadCount = "スレッド 0");
 	}
 
-	@description = "This is a test for LPS-136931. It checks that a thread can be viewed in Arabic."
+	@description = "This is a test for LPS-136931 and LPS-136932. It checks that a thread can be viewed in Arabic and Japanese."
 	@priority = 3
-	test CanViewThreadInArabic {
+	test CanViewThreadInArabicAndJapanese {
 		JSONMBMessage.addMessage(
 			groupName = "Guest",
 			threadBody = "نص رسالة الموضوع",
@@ -114,11 +110,7 @@ definition {
 			threadBody = "نص رسالة الموضوع",
 			threadSubject = "موضوع رسالة الموضوع",
 			userName = "Test Test");
-	}
 
-	@description = "This is a test for LPS-136932. It checks that a thread can be viewed in Japanese."
-	@priority = 3
-	test CanViewThreadInJapanese {
 		JSONMBMessage.addMessage(
 			groupName = "Guest",
 			threadBody = "メッセージボードのネジ本体",

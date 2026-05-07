@@ -764,6 +764,10 @@ public class ObjectFieldLocalServiceImpl
 			_validateObjectRelationshipDeletionType(objectFieldId, required);
 		}
 
+		if (objectField.isRequired() == required) {
+			return objectField;
+		}
+
 		objectField.setRequired(required);
 
 		return objectFieldPersistence.update(objectField);
@@ -940,6 +944,15 @@ public class ObjectFieldLocalServiceImpl
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
+
+		if (!FeatureFlagManagerUtil.isEnabled(
+				objectDefinition.getCompanyId(), "LPD-83570") &&
+			Objects.equals(
+				businessType,
+				ObjectFieldConstants.BUSINESS_TYPE_PHONE_NUMBER)) {
+
+			throw new UnsupportedOperationException();
+		}
 
 		if (Validator.isNull(dbTableName)) {
 			dbTableName = objectDefinition.getDBTableName();
@@ -1595,6 +1608,15 @@ public class ObjectFieldLocalServiceImpl
 
 		ObjectField oldObjectField = objectFieldPersistence.findByPrimaryKey(
 			objectFieldId);
+
+		if (!FeatureFlagManagerUtil.isEnabled(
+				oldObjectField.getCompanyId(), "LPD-83570") &&
+			Objects.equals(
+				businessType,
+				ObjectFieldConstants.BUSINESS_TYPE_PHONE_NUMBER)) {
+
+			throw new UnsupportedOperationException();
+		}
 
 		ObjectField newObjectField = (ObjectField)oldObjectField.clone();
 

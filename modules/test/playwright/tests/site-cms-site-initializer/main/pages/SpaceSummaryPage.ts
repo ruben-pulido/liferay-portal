@@ -46,7 +46,7 @@ export class SpaceSummaryPage {
 			name: 'View All Content',
 		});
 
-		this.viewAllFilesLink = this.page.getByRole('link', {
+		this.viewAllFilesLink = this.page.getByRole('button', {
 			name: 'View All Files',
 		});
 
@@ -180,7 +180,10 @@ export class SpaceSummaryPage {
 	}
 
 	async connectSite(siteName: string) {
-		await this.page.getByRole('button', {name: 'Connect Sites'}).click();
+		await this.page
+			.getByRole('button', {name: 'Connect Sites'})
+			.or(this.page.getByRole('button', {name: 'View All Sites'}))
+			.click();
 
 		this.page.getByRole('dialog').waitFor();
 		await this.page.getByLabel('Site', {exact: true}).click();

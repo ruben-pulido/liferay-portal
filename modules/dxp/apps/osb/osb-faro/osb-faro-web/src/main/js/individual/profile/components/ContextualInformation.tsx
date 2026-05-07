@@ -4,7 +4,7 @@ import {
 	GeneralInfoSection
 } from 'shared/components/GeneralInfoSection';
 import {Map} from 'immutable';
-import {SectionHeader} from './SectionHeader';
+import {SectionHeader} from 'shared/components/SectionHeader';
 
 const contextualInfoConfig: DataDrivenConfig = [
 	{
@@ -49,6 +49,7 @@ function formatTimeZoneOffset(timeZoneOffset?: string, region?: string) {
 }
 
 interface IContextualInfoProps {
+	children?: React.ReactNode;
 	contactId?: string;
 	contextData: Map<string, any>;
 	email?: string;

@@ -132,6 +132,15 @@ public class CIForwardProcessor {
 
 						return pullRequestURL;
 					}
+					catch (PullRequest.ForwardPullRequestException
+								forwardPullRequestException) {
+
+						if (!forwardPullRequestException.isRetryable()) {
+							breakLoop();
+						}
+
+						throw new RuntimeException(forwardPullRequestException);
+					}
 					catch (Exception exception) {
 						if (exception instanceof RuntimeException) {
 							throw (RuntimeException)exception;
@@ -171,12 +180,22 @@ public class CIForwardProcessor {
 					"Unable to forward pull request", "Liferay CI");
 
 				throw new GitHubSecondaryRateLimitRuntimeException(
-					gitHubSecondaryRateLimitRuntimeException.getGitHubApiUrl(),
+					gitHubSecondaryRateLimitRuntimeException.getGitHubAPIURL(),
 					gitHubSecondaryRateLimitRuntimeException.
 						getRetryAfterSeconds(),
 					sb.toString(), gitHubSecondaryRateLimitRuntimeException);
 			}
 			catch (Exception exception) {
+				Throwable throwable = exception.getCause();
+
+				if (throwable instanceof
+						PullRequest.ForwardPullRequestException) {
+
+					_pullRequest.addComment(throwable.getMessage());
+
+					return;
+				}
+
 				exception.printStackTrace();
 
 				StringBuilder sb = new StringBuilder();

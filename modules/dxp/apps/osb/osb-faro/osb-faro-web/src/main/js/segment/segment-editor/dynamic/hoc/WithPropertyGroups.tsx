@@ -103,12 +103,13 @@ const mapResultToProps = (
 		webBehaviors,
 		interestKeywords,
 		sessionProperties
-	],
-	{type}
+	]: any[],
+	{type}: {type: SegmentTypes}
 ) => {
-	const individualDemographicProperties = individualDemographicsMappings.items.map(
-		convertFieldMappingToIndividualProperty
-	);
+	const individualDemographicProperties =
+		individualDemographicsMappings.items.map(
+			convertFieldMappingToIndividualProperty
+		);
 
 	let individualSubgroupsIList = List([
 		new PropertySubgroup({
@@ -171,28 +172,30 @@ const mapResultToProps = (
 					].filter(Boolean)
 				)
 			}),
-			new PropertyGroup({
-				label: sub(Liferay.Language.get('x-attributes'), [
-					Liferay.Language.get('individual')
-				]) as string,
-				propertyKey: FieldOwnerTypes.Individual,
-				propertySubgroups: individualSubgroupsIList
-			}),
-			new PropertyGroup({
-				label: sub(Liferay.Language.get('x-attributes'), [
-					Liferay.Language.get('account')
-				]) as string,
-				propertyKey: FieldOwnerTypes.Account,
-				propertySubgroups: List([
-					new PropertySubgroup({
-						properties: List(
-							accountMappings.items.map(
-								convertFieldMappingToAccountProperty
+			type === SegmentTypes.Batch &&
+				new PropertyGroup({
+					label: sub(Liferay.Language.get('x-attributes'), [
+						Liferay.Language.get('individual')
+					]) as string,
+					propertyKey: FieldOwnerTypes.Individual,
+					propertySubgroups: individualSubgroupsIList
+				}),
+			type === SegmentTypes.Batch &&
+				new PropertyGroup({
+					label: sub(Liferay.Language.get('x-attributes'), [
+						Liferay.Language.get('account')
+					]) as string,
+					propertyKey: FieldOwnerTypes.Account,
+					propertySubgroups: List([
+						new PropertySubgroup({
+							properties: List(
+								accountMappings.items.map(
+									convertFieldMappingToAccountProperty
+								)
 							)
-						)
-					})
-				])
-			}),
+						})
+					])
+				}),
 			type === SegmentTypes.Batch &&
 				new PropertyGroup({
 					label: Liferay.Language.get('interests'),
@@ -223,11 +226,16 @@ const mapResultToProps = (
 	);
 
 	return {
-		propertyGroupsIList: propertyGroupsIList.push(organizationPropertyGroup)
+		propertyGroupsIList:
+			type === SegmentTypes.Batch
+				? propertyGroupsIList.push(organizationPropertyGroup)
+				: propertyGroupsIList
 	};
 };
 
-export const withPropertyGroups = WrappedComponent =>
+export const withPropertyGroups = (
+	WrappedComponent: React.ComponentType<any>
+) =>
 	class extends React.Component<{
 		propertyGroupsIList: List<PropertyGroup>;
 	}> {

@@ -6,6 +6,7 @@
 package com.liferay.osb.faro.web.internal.controller.contacts;
 
 import com.liferay.osb.faro.engine.client.model.Account;
+import com.liferay.osb.faro.engine.client.model.AccountMetric;
 import com.liferay.osb.faro.engine.client.model.Results;
 import com.liferay.osb.faro.engine.client.util.OrderByField;
 import com.liferay.osb.faro.web.internal.constants.FaroConstants;
@@ -56,6 +57,19 @@ public class AccountController extends BaseFaroController {
 	}
 
 	@GET
+	@Path("/metrics")
+	@RolesAllowed(RoleConstants.SITE_MEMBER)
+	public List<AccountMetric> getAccountMetrics(
+			@PathParam("groupId") long groupId,
+			@QueryParam("channelId") long channelId)
+		throws Exception {
+
+		return contactsEngineClient.getAccountMetrics(
+			faroProjectLocalService.getFaroProjectByGroupId(groupId),
+			channelId);
+	}
+
+	@GET
 	@Path("/distribution")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
 	public FaroResultsDisplay getDistribution(
@@ -91,14 +105,14 @@ public class AccountController extends BaseFaroController {
 			@QueryParam("channelId") String channelId,
 			@QueryParam("filter") String filterString,
 			@QueryParam("page") int page, @QueryParam("pageSize") int pageSize,
-			@QueryParam("query") String query,
+			@QueryParam("search") String search,
 			@DefaultValue(StringPool.BLANK) @QueryParam("sort") String
 				sortString)
 		throws Exception {
 
 		Results<Account> results = contactsEngineClient.getAccounts(
 			faroProjectLocalService.getFaroProjectByGroupId(groupId), channelId,
-			filterString, query, page, pageSize, sortString);
+			filterString, search, page, pageSize, sortString);
 
 		Function<Account, AccountDisplay> function = AccountDisplay::new;
 

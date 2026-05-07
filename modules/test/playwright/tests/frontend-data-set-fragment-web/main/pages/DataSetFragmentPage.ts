@@ -50,6 +50,7 @@ export class DataSetFragmentPage {
 	};
 	readonly userViewsActionsButton: Locator;
 	readonly userViewsDeleteAlert: Locator;
+	readonly userViewsRenameModal: Locator;
 	readonly userViewsSelectorButton: Locator;
 	readonly userViewsSaveModal: Locator;
 
@@ -136,6 +137,9 @@ export class DataSetFragmentPage {
 		this.userViewsActionsButton = page.getByLabel('Show View Actions');
 		this.userViewsDeleteAlert = page.getByRole('dialog', {
 			name: 'Delete View',
+		});
+		this.userViewsRenameModal = page.getByRole('dialog', {
+			name: 'Rename View',
 		});
 		this.userViewsSelectorButton = page.getByLabel('Views');
 		this.userViewsSaveModal = page.getByRole('dialog', {

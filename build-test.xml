@@ -211,7 +211,7 @@ passwords.encryption.algorithm=NONE</echo>
 			<basename file="@{src}" property="archive.basename" />
 
 			<if>
-				<matches pattern=".*\.7z$" string="${archive.basename}" />
+				<matches casesensitive="false" pattern=".*\.7z$" string="${archive.basename}" />
 				<then>
 					<if>
 						<os family="mac" />
@@ -232,7 +232,7 @@ passwords.encryption.algorithm=NONE</echo>
 					</if>
 				</then>
 				<elseif>
-					<matches pattern=".*\.tar\.gz$" string="${archive.basename}" />
+					<matches casesensitive="false" pattern=".*\.tar\.gz$" string="${archive.basename}" />
 					<then>
 						<execute>
 							<![CDATA[
@@ -244,7 +244,7 @@ passwords.encryption.algorithm=NONE</echo>
 					</then>
 				</elseif>
 				<elseif>
-					<matches pattern=".*\.zip$" string="${archive.basename}" />
+					<matches casesensitive="false" pattern=".*\.zip$" string="${archive.basename}" />
 					<then>
 						<execute>
 							<![CDATA[
@@ -6990,6 +6990,85 @@ ${custom.upgrade.properties}</echo>
 		</sequential>
 	</macrodef>
 
+	<macrodef name="set-playwright-object-storage-salesforce-properties">
+		<sequential>
+			<var name="env.object.storage.salesforce.consumer.key" value="" />
+
+			<if>
+				<isset property="env.OBJECT_STORAGE_SALESFORCE_CONSUMER_KEY" />
+				<then>
+					<var name="env.object.storage.salesforce.consumer.key" value="--env=OBJECT_STORAGE_SALESFORCE_CONSUMER_KEY=${env.OBJECT_STORAGE_SALESFORCE_CONSUMER_KEY}" />
+				</then>
+				<elseif>
+					<isset property="object.storage.salesforce.consumer.key" />
+					<then>
+						<var name="env.object.storage.salesforce.consumer.key" value="--env=OBJECT_STORAGE_SALESFORCE_CONSUMER_KEY=${object.storage.salesforce.consumer.key}" />
+					</then>
+				</elseif>
+			</if>
+
+			<var name="env.object.storage.salesforce.consumer.secret" value="" />
+
+			<if>
+				<isset property="env.OBJECT_STORAGE_SALESFORCE_CONSUMER_SECRET" />
+				<then>
+					<var name="env.object.storage.salesforce.consumer.secret" value="--env=OBJECT_STORAGE_SALESFORCE_CONSUMER_SECRET=${env.OBJECT_STORAGE_SALESFORCE_CONSUMER_SECRET}" />
+				</then>
+				<elseif>
+					<isset property="object.storage.salesforce.consumer.secret" />
+					<then>
+						<var name="env.object.storage.salesforce.consumer.secret" value="--env=OBJECT_STORAGE_SALESFORCE_CONSUMER_SECRET=${object.storage.salesforce.consumer.secret}" />
+					</then>
+				</elseif>
+			</if>
+
+			<var name="env.object.storage.salesforce.login.url" value="" />
+
+			<if>
+				<isset property="env.OBJECT_STORAGE_SALESFORCE_LOGIN_URL" />
+				<then>
+					<var name="env.object.storage.salesforce.login.url" value="--env=OBJECT_STORAGE_SALESFORCE_LOGIN_URL=${env.OBJECT_STORAGE_SALESFORCE_LOGIN_URL}" />
+				</then>
+				<elseif>
+					<isset property="object.storage.salesforce.login.url" />
+					<then>
+						<var name="env.object.storage.salesforce.login.url" value="--env=OBJECT_STORAGE_SALESFORCE_LOGIN_URL=${object.storage.salesforce.login.url}" />
+					</then>
+				</elseif>
+			</if>
+
+			<var name="env.object.storage.salesforce.password" value="" />
+
+			<if>
+				<isset property="env.OBJECT_STORAGE_SALESFORCE_PASSWORD" />
+				<then>
+					<var name="env.object.storage.salesforce.password" value="--env=OBJECT_STORAGE_SALESFORCE_PASSWORD=${env.OBJECT_STORAGE_SALESFORCE_PASSWORD}" />
+				</then>
+				<elseif>
+					<isset property="object.storage.salesforce.password" />
+					<then>
+						<var name="env.object.storage.salesforce.password" value="--env=OBJECT_STORAGE_SALESFORCE_PASSWORD=${object.storage.salesforce.password}" />
+					</then>
+				</elseif>
+			</if>
+
+			<var name="env.object.storage.salesforce.username" value="" />
+
+			<if>
+				<isset property="env.OBJECT_STORAGE_SALESFORCE_USERNAME" />
+				<then>
+					<var name="env.object.storage.salesforce.username" value="--env=OBJECT_STORAGE_SALESFORCE_USERNAME=${env.OBJECT_STORAGE_SALESFORCE_USERNAME}" />
+				</then>
+				<elseif>
+					<isset property="object.storage.salesforce.username" />
+					<then>
+						<var name="env.object.storage.salesforce.username" value="--env=OBJECT_STORAGE_SALESFORCE_USERNAME=${object.storage.salesforce.username}" />
+					</then>
+				</elseif>
+			</if>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="set-portal-impl-portal-test-ext-properties">
 		<sequential>
 			<generate-jdbc-properties properties.file="portal-impl/test/portal-test-ext.properties">
@@ -7366,7 +7445,7 @@ log.sanitizer.enabled=false</echo>
 					</then>
 				</elseif>
 				<else>
-					<var name="app.server.tomcat.version" value="10.1.52" />
+					<var name="app.server.tomcat.version" value="10.1.54" />
 				</else>
 			</if>
 
@@ -8565,6 +8644,8 @@ ${docker.start.error}</fail>
 
 			<set-playwright-click-to-chat-properties />
 
+			<set-playwright-object-storage-salesforce-properties />
+
 			<local name="env.portal.url.arg" />
 
 			<condition else="" property="env.portal.url.arg" value="--env=PORTAL_URL=http://${env.NODE_NAME}:8080">
@@ -8599,6 +8680,11 @@ ${docker.start.error}</fail>
 				${env.click.to.chat.tawkto.password} \
 				${env.click.to.chat.tidio.password} \
 				${env.click.to.chat.zendesk.password} \
+				${env.object.storage.salesforce.consumer.key} \
+				${env.object.storage.salesforce.consumer.secret} \
+				${env.object.storage.salesforce.login.url} \
+				${env.object.storage.salesforce.password} \
+				${env.object.storage.salesforce.username} \
 				${env.osb.asah.api.token} \
 				${env.osb.asah.backend.url} \
 				${env.osb.asah.batch.curator.url} \
@@ -10956,11 +11042,15 @@ org.apache.catalina.ha.session.level=INFO]]>
 					</then>
 				</if>
 
+				<get-testcase-property property.name="legacy.database.file" />
 				<get-testcase-property property.name="portal.version" />
 
 				<if>
 					<and>
-						<isset property="portal.version" />
+						<or>
+							<isset property="legacy.database.file" />
+							<isset property="portal.version" />
+						</or>
 						<not>
 							<equals arg1="${keep.osgi.state}" arg2="true" />
 						</not>
@@ -13498,14 +13588,6 @@ feature.flag.LPD-11342=true</echo>
 		<echo append="true" file="portal-impl/src/portal-ext.properties">
 analytics.cloud.domain.allowed=*</echo>
 
-		<if>
-			<equals arg1="${functional.test.type}" arg2="poshi" />
-			<then>
-				<echo append="true" file="portal-impl/src/portal-ext.properties">
-feature.flag.LPD-36105=true</echo>
-			</then>
-		</if>
-
 		<apply-portal-ext-properties />
 	</target>
 
@@ -15571,6 +15653,7 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 			</not>
 			<then>
 				<get-testcase-property property.name="data.archive.type" />
+				<get-testcase-property property.name="legacy.database.file" />
 				<get-testcase-property property.name="portal.version" />
 			</then>
 		</if>
@@ -15578,20 +15661,163 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 		<delete dir="${liferay.home}/data" />
 
 		<if>
-			<contains string="${data.archive.type}" substring="partition-large" />
+			<isset property="legacy.database.file" />
 			<then>
-				<mirrors-get
-					dest="${liferay.home}"
-					src="http://files.liferay.com/mirrors/data-archive-portal-partition-large.zip"
-				/>
+				<for param="legacy.database.leftover.dir">
+					<path>
+						<dirset
+							dir="${liferay.home}"
+							includes="legacy-database-*"
+						/>
+					</path>
+					<sequential>
+						<delete dir="@{legacy.database.leftover.dir}" />
+					</sequential>
+				</for>
 
-				<unzip
-					dest="${liferay.home}"
-					src="${liferay.home}/data-archive-portal-partition-large.zip"
-				/>
+				<local name="legacy.database.temp.dir" />
 
-				<delete file="${liferay.home}/data-archive-portal-partition-large.zip" />
+				<tempfile destdir="${liferay.home}" prefix="legacy-database-" property="legacy.database.temp.dir" />
+
+				<mkdir dir="${legacy.database.temp.dir}" />
+
+				<trycatch>
+					<try>
+						<if>
+							<matches casesensitive="false" pattern=".*\.(7z|tar\.gz|zip)$" string="${legacy.database.file}" />
+							<then>
+								<decompress
+									dest="${legacy.database.temp.dir}"
+									src="${legacy.database.file}"
+								/>
+							</then>
+							<elseif>
+								<matches casesensitive="false" pattern=".*\.gz$" string="${legacy.database.file}" />
+								<then>
+									<gunzip
+										dest="${legacy.database.temp.dir}"
+										src="${legacy.database.file}"
+									/>
+								</then>
+							</elseif>
+							<else>
+								<copy
+									file="${legacy.database.file}"
+									todir="${legacy.database.temp.dir}"
+								/>
+							</else>
+						</if>
+
+						<if>
+							<not>
+								<equals arg1="${database.type}" arg2="db2" />
+							</not>
+							<then>
+								<local name="legacy.database.dump.extension" />
+
+								<if>
+									<equals arg1="${database.type}" arg2="oracle" />
+									<then>
+										<property name="legacy.database.dump.extension" value="dmp" />
+									</then>
+									<elseif>
+										<equals arg1="${database.type}" arg2="sqlserver" />
+										<then>
+											<property name="legacy.database.dump.extension" value="bak" />
+										</then>
+									</elseif>
+									<else>
+										<property name="legacy.database.dump.extension" value="sql" />
+									</else>
+								</if>
+
+								<local name="legacy.database.dump.count" />
+
+								<resourcecount property="legacy.database.dump.count">
+									<fileset
+										dir="${legacy.database.temp.dir}"
+										includes="*"
+									>
+										<type type="file" />
+									</fileset>
+								</resourcecount>
+
+								<local name="legacy.database.dump.ext.count" />
+
+								<resourcecount property="legacy.database.dump.ext.count">
+									<fileset
+										dir="${legacy.database.temp.dir}"
+										includes="*.${legacy.database.dump.extension}"
+									>
+										<type type="file" />
+									</fileset>
+								</resourcecount>
+
+								<local name="legacy.database.dump.includes" />
+
+								<if>
+									<equals arg1="${legacy.database.dump.count}" arg2="1" />
+									<then>
+										<property name="legacy.database.dump.includes" value="*" />
+									</then>
+									<elseif>
+										<equals arg1="${legacy.database.dump.ext.count}" arg2="1" />
+										<then>
+											<property name="legacy.database.dump.includes" value="*.${legacy.database.dump.extension}" />
+										</then>
+									</elseif>
+									<else>
+										<fail message="Unable to identify the database dump file in ${legacy.database.file}." />
+									</else>
+								</if>
+
+								<local name="legacy.database.dump.file" />
+
+								<pathconvert property="legacy.database.dump.file">
+									<fileset
+										dir="${legacy.database.temp.dir}"
+										includes="${legacy.database.dump.includes}"
+									>
+										<type type="file" />
+									</fileset>
+								</pathconvert>
+
+								<move
+									file="${legacy.database.dump.file}"
+									tofile="${liferay.home}/${database.type}.${legacy.database.dump.extension}"
+								/>
+							</then>
+						</if>
+
+						<move
+							todir="${liferay.home}"
+						>
+							<fileset
+								dir="${legacy.database.temp.dir}"
+							/>
+						</move>
+					</try>
+					<finally>
+						<delete dir="${legacy.database.temp.dir}" />
+					</finally>
+				</trycatch>
 			</then>
+			<elseif>
+				<contains string="${data.archive.type}" substring="partition-large" />
+				<then>
+					<mirrors-get
+						dest="${liferay.home}"
+						src="http://files.liferay.com/mirrors/data-archive-portal-partition-large.zip"
+					/>
+
+					<unzip
+						dest="${liferay.home}"
+						src="${liferay.home}/data-archive-portal-partition-large.zip"
+					/>
+
+					<delete file="${liferay.home}/data-archive-portal-partition-large.zip" />
+				</then>
+			</elseif>
 			<else>
 				<unzip
 					dest="${liferay.home}"
@@ -15626,17 +15852,19 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 				<equals arg1="${database.type}" arg2="mysql" />
 			</or>
 			<then>
-				<loadresource property="found.utf8mb3.line">
-					<concat>
-						<file file="${liferay.home}/${database.type}.sql" />
-						<filterchain>
-							<linecontainsregexp casesensitive="false">
-								<regexp pattern="DEFAULT CHARSET\s*=\s*utf8(mb3)?(?![mb4])" />
-							</linecontainsregexp>
-							<headfilter lines="1" />
-						</filterchain>
-					</concat>
-				</loadresource>
+				<local name="grep.utf8mb3.exit" />
+
+				<exec executable="grep" failonerror="false" resultproperty="grep.utf8mb3.exit">
+					<arg value="-iE" />
+					<arg value="-m" />
+					<arg value="1" />
+					<arg value="DEFAULT CHARSET\s*=\s*utf8(mb3)?([^mb4]|$)" />
+					<arg value="${liferay.home}/${database.type}.sql" />
+				</exec>
+
+				<condition property="found.utf8mb3.line">
+					<equals arg1="${grep.utf8mb3.exit}" arg2="0" />
+				</condition>
 
 				<if>
 					<isset property="found.utf8mb3.line" />
@@ -15912,22 +16140,6 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 						docker exec ${database.host} /bin/bash /tmp/import-database.sh
 					]]>
 				</execute>
-
-				<get-testcase-property property.name="custom.mysql.sql.statement" />
-
-				<if>
-					<and>
-						<equals arg1="${database.type}" arg2="mysql" />
-						<isset property="custom.mysql.sql.statement" />
-					</and>
-					<then>
-						<sql classpath="${app.server.shielded-container-lib.portal.dir}/${jdbc.mysql.driver}" driver="${database.mysql.driver}" onerror="continue" output="output.txt" password="${database.mysql.password}" print="true" url="${database.mysql.url}" userid="${database.mysql.username}">
-							<![CDATA[
-								${custom.mysql.sql.statement}
-							]]>
-						</sql>
-					</then>
-				</if>
 			</then>
 			<else>
 				<if>
@@ -16030,22 +16242,6 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 									<exec executable="mysql_upgrade" />
 								</then>
 							</if>
-
-							<get-testcase-property property.name="custom.mysql.sql.statement" />
-
-							<if>
-								<and>
-									<equals arg1="${database.type}" arg2="mysql" />
-									<isset property="custom.mysql.sql.statement" />
-								</and>
-								<then>
-									<sql classpath="${app.server.shielded-container-lib.portal.dir}/${jdbc.mysql.driver}" driver="${database.mysql.driver}" onerror="continue" output="output.txt" password="${database.mysql.password}" print="true" url="${database.mysql.url}" userid="${database.mysql.username}">
-										<![CDATA[
-											${custom.mysql.sql.statement}
-										]]>
-									</sql>
-								</then>
-							</if>
 						</then>
 					</elseif>
 					<elseif>
@@ -16117,8 +16313,70 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 							</exec>
 						</then>
 					</elseif>
+					<elseif>
+						<equals arg1="${database.type}" arg2="sqlserver" />
+						<then>
+							<get-database-property property.name="database.host" />
+							<get-database-property property.name="database.password" />
+							<get-database-property property.name="database.schema" />
+							<get-database-property property.name="database.username" />
+
+							<exec executable="${database.sqlserver.executable}" failonerror="true">
+								<arg value="-P" />
+								<arg value="${database.password}" />
+								<arg value="-Q" />
+								<arg value="RESTORE DATABASE ${database.schema} FROM DISK='${liferay.home}/${database.type}.bak'" />
+								<arg value="-S" />
+								<arg value="${database.host}" />
+								<arg value="-U" />
+								<arg value="${database.username}" />
+							</exec>
+						</then>
+					</elseif>
 				</if>
 			</else>
+		</if>
+
+		<get-testcase-property property.name="custom.${database.type}.sql.statement" />
+
+		<local name="custom.sql.statement" />
+
+		<propertycopy from="custom.${database.type}.sql.statement" name="custom.sql.statement" silent="true" />
+
+		<if>
+			<isset property="custom.sql.statement" />
+			<then>
+				<local name="custom.sql.driver" />
+				<local name="custom.sql.driver.jar" />
+				<local name="custom.sql.password" />
+				<local name="custom.sql.url" />
+				<local name="custom.sql.username" />
+
+				<propertycopy from="jdbc.${database.type}.driver" name="custom.sql.driver.jar" silent="true" />
+				<propertycopy from="database.${database.type}.driver" name="custom.sql.driver" silent="true" />
+				<propertycopy from="database.${database.type}.password" name="custom.sql.password" silent="true" />
+				<propertycopy from="database.${database.type}.url" name="custom.sql.url" silent="true" />
+				<propertycopy from="database.${database.type}.username" name="custom.sql.username" silent="true" />
+
+				<delete failonerror="false" file="output.txt" />
+
+				<for delimiter="${line.separator}" list="${custom.sql.statement}" param="sql.statement">
+					<sequential>
+						<if>
+							<not>
+								<equals arg1="@{sql.statement}" arg2="" trim="true" />
+							</not>
+							<then>
+								<sql append="true" classpath="${app.server.shielded-container-lib.portal.dir}/${custom.sql.driver.jar}" driver="${custom.sql.driver}" onerror="continue" output="output.txt" password="${custom.sql.password}" print="true" url="${custom.sql.url}" userid="${custom.sql.username}">
+									<![CDATA[
+										@{sql.statement}
+									]]>
+								</sql>
+							</then>
+						</if>
+					</sequential>
+				</for>
+			</then>
 		</if>
 
 		<delete file="sql/create-bare/create-bare-mysql-utf8mb3.sql" quiet="true" />
@@ -17008,12 +17266,16 @@ sendBlacklist=[]
 			</then>
 		</if>
 
+		<get-testcase-property property.name="legacy.database.file" />
 		<get-testcase-property property.name="portal.version" />
 		<get-testcase-property property.name="rebuild.staging.database" />
 		<get-testcase-property property.name="skip.upgrade-legacy-database" />
 
 		<if>
-			<isset property="portal.version" />
+			<or>
+				<isset property="legacy.database.file" />
+				<isset property="portal.version" />
+			</or>
 			<then>
 				<antcall target="rebuild-legacy-database" />
 

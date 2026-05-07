@@ -16,6 +16,7 @@ import UserIcon from '../../UserIcon';
 const InfoBoxModalNotes = ({
 	handleDelete,
 	handleToggle,
+	hasManageOrderNotesPermission,
 	hasManageOrderRestrictedNotesPermission,
 	isRestricted,
 	notes,
@@ -63,9 +64,8 @@ const InfoBoxModalNotes = ({
 												{author}
 
 												{themeDisplay.getUserId() ===
-												authorId.toString()
-													? ` (${Liferay.Language.get('you')})`
-													: null}
+													authorId.toString() &&
+													` (${Liferay.Language.get('you')})`}
 											</span>
 
 											<span className="d-flex m-1 small">
@@ -74,12 +74,12 @@ const InfoBoxModalNotes = ({
 										</div>
 
 										<div>
-											{restricted ? (
+											{restricted && (
 												<ClayIcon
 													spritemap={spritemap}
 													symbol="lock"
 												/>
-											) : null}
+											)}
 										</div>
 
 										<div className="d-flex mb-2">
@@ -122,48 +122,52 @@ const InfoBoxModalNotes = ({
 				</div>
 			</InfiniteScrollerComponent>
 
-			<ClayInput.Group className="commerce-panel">
-				<ClayInput.GroupItem>
-					<ClayInput
-						aria-required={true}
-						className="field form-control lfr-textarea"
-						component="textarea"
-						id="infoBoxModalInput"
-						maxLength={4000}
-						onChange={(event) => {
-							event.preventDefault();
-							setInputValue(event.target.value);
-						}}
-						placeholder={Liferay.Language.get(
-							'type-your-note-here'
-						)}
-						required={true}
-						type="text"
-					/>
+			{hasManageOrderNotesPermission && (
+				<>
+					<ClayInput.Group className="commerce-panel">
+						<ClayInput.GroupItem>
+							<ClayInput
+								aria-required={true}
+								className="field form-control lfr-textarea"
+								component="textarea"
+								id="infoBoxModalInput"
+								maxLength={4000}
+								onChange={(event) => {
+									event.preventDefault();
+									setInputValue(event.target.value);
+								}}
+								placeholder={Liferay.Language.get(
+									'type-your-note-here'
+								)}
+								required={true}
+								type="text"
+							/>
 
-					<span className="hide-accessible sr-only">
-						{Liferay.Language.get('required')}
-					</span>
-				</ClayInput.GroupItem>
-			</ClayInput.Group>
+							<span className="hide-accessible sr-only">
+								{Liferay.Language.get('required')}
+							</span>
+						</ClayInput.GroupItem>
+					</ClayInput.Group>
 
-			{hasManageOrderRestrictedNotesPermission ? (
-				<div className="form-group inline-item">
-					<ClayToggle
-						label={Liferay.Language.get('private')}
-						onToggle={handleToggle}
-						spritemap={spritemap}
-						toggled={isRestricted}
-					/>
+					{hasManageOrderRestrictedNotesPermission && (
+						<div className="form-group inline-item">
+							<ClayToggle
+								label={Liferay.Language.get('private')}
+								onToggle={handleToggle}
+								spritemap={spritemap}
+								toggled={isRestricted}
+							/>
 
-					<ClayButtonWithIcon
-						className="lfr-portal-tooltip ml-1 taglib-icon-help"
-						displayType="unstyled"
-						symbol="question-circle-full"
-						title={Liferay.Language.get('restricted-help')}
-					/>
-				</div>
-			) : null}
+							<ClayButtonWithIcon
+								className="lfr-portal-tooltip ml-1 taglib-icon-help"
+								displayType="unstyled"
+								symbol="question-circle-full"
+								title={Liferay.Language.get('restricted-help')}
+							/>
+						</div>
+					)}
+				</>
+			)}
 		</>
 	);
 };

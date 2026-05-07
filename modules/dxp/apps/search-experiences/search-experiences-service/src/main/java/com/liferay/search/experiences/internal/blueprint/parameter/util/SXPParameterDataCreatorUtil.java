@@ -382,7 +382,27 @@ public class SXPParameterDataCreatorUtil {
 		}
 
 		if (object != null) {
-			return ArrayUtil.toArray(GetterUtil.getIntegerValues(object));
+			int[] intArray = GetterUtil.getIntegerValues(object);
+
+			if (ArrayUtil.isNotEmpty(intArray)) {
+				return ArrayUtil.toArray(intArray);
+			}
+
+			if (object instanceof List<?> list) {
+				boolean allInteger = true;
+
+				for (Object element : list) {
+					if (!(element instanceof Integer)) {
+						allInteger = false;
+
+						break;
+					}
+				}
+
+				if (allInteger) {
+					return list.toArray(new Integer[0]);
+				}
+			}
 		}
 
 		if (defaultValue != null) {
@@ -441,7 +461,27 @@ public class SXPParameterDataCreatorUtil {
 		}
 
 		if (object != null) {
-			return ArrayUtil.toArray(GetterUtil.getLongValues(object));
+			long[] longArray = GetterUtil.getLongValues(object);
+
+			if (ArrayUtil.isNotEmpty(longArray)) {
+				return ArrayUtil.toArray(longArray);
+			}
+
+			if (object instanceof List<?> list) {
+				boolean allLong = true;
+
+				for (Object element : list) {
+					if (!(element instanceof Long)) {
+						allLong = false;
+
+						break;
+					}
+				}
+
+				if (allLong) {
+					return list.toArray(new Long[0]);
+				}
+			}
 		}
 
 		if (defaultValue != null) {
@@ -494,7 +534,27 @@ public class SXPParameterDataCreatorUtil {
 		String[] defaultValue, Object object) {
 
 		if (object != null) {
-			return GetterUtil.getStringValues(object);
+			String[] stringArray = GetterUtil.getStringValues(object);
+
+			if (ArrayUtil.isNotEmpty(stringArray)) {
+				return stringArray;
+			}
+
+			if (object instanceof List<?> list) {
+				boolean allString = true;
+
+				for (Object element : list) {
+					if (!(element instanceof String)) {
+						allString = false;
+
+						break;
+					}
+				}
+
+				if (allString) {
+					return list.toArray(new String[0]);
+				}
+			}
 		}
 
 		if (defaultValue != null) {

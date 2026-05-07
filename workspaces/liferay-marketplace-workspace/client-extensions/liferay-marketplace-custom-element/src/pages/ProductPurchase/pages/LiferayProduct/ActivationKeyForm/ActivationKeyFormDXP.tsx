@@ -23,6 +23,7 @@ import useMarketo from '../../../../../hooks/useMarketoForm';
 import i18n from '../../../../../i18n';
 import {Liferay} from '../../../../../liferay/liferay';
 import zodSchema, {z} from '../../../../../schema/zod';
+import provisioningOAuth2 from '../../../../../services/oauth/Provisioning';
 import {productAgreements} from '../../../../../utils/agreements';
 import {phones} from '../../../../../utils/phones';
 import {useProductPurchaseOutletContext} from '../../../ProductPurchaseOutlet';
@@ -39,7 +40,6 @@ const setValuesOptions = {
 const ActivationKeyFormDXP = () => {
 	const {properties} = useMarketplaceContext();
 	const [active, setActive] = useState(false);
-	const [loading, setLoading] = useState(false);
 
 	const {handlePurchase, product, selectedAccount} =
 		useProductPurchaseOutletContext();
@@ -47,9 +47,10 @@ const ActivationKeyFormDXP = () => {
 	const {data: regionsResponse} = useCommerceRegions();
 
 	const {
-		formState: {errors, isValid},
+		formState: {errors, isSubmitting, isValid},
 		handleSubmit,
 		register,
+		setError,
 		setValue,
 		watch,
 	} = useForm<z.infer<typeof zodSchema.activationKey>>({
@@ -113,7 +114,28 @@ const ActivationKeyFormDXP = () => {
 	};
 
 	const onSubmit = async (form: z.infer<typeof zodSchema.activationKey>) => {
-		setLoading(true);
+		try {
+			await provisioningOAuth2.licenseKeyTypeFreeDomainsCheck({
+				domains: form.domain,
+				owner:
+					form.businessEmailAddress ||
+					Liferay.ThemeDisplay.getUserEmailAddress(),
+			});
+		}
+		catch (error: any) {
+			if (error?.status === 409) {
+				setError('domain', {
+					message: i18n.translate(
+						'a-license-key-for-the-entered-domain-already-exists'
+					),
+				});
+			}
+
+			return Liferay.Util.openToast({
+				message: i18n.translate('an-unexpected-error-occurred'),
+				type: 'danger',
+			});
+		}
 
 		try {
 			submitMarketoForm(form);
@@ -127,11 +149,9 @@ const ActivationKeyFormDXP = () => {
 
 			await handlePurchase(productPurchase);
 		}
-		catch (error) {
-			console.error(error);
+		catch (error: any) {
+			console.error('Unexpected error:', error);
 		}
-
-		setLoading(false);
 	};
 
 	return (
@@ -505,14 +525,14 @@ const ActivationKeyFormDXP = () => {
 
 			<ClayButton
 				className="w-100"
-				disabled={loading || !isValid}
+				disabled={isSubmitting || !isValid}
 				onClick={handleSubmit(onSubmit)}
 			>
 				<div className="align-items-center d-flex justify-content-center">
 					<span>{i18n.translate('get-activation-key')}</span>
 
 					<span className="ml-3">
-						{loading && <ClayLoadingIndicator />}
+						{isSubmitting && <ClayLoadingIndicator />}
 					</span>
 				</div>
 			</ClayButton>

@@ -6,23 +6,24 @@
 package com.liferay.portal.osgi.web.portlet.container.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.layout.test.util.LayoutFriendlyURLRandomizerBumper;
-import com.liferay.petra.string.StringPool;
+import com.liferay.layout.test.util.ContentLayoutTestUtil;
+import com.liferay.layout.test.util.LayoutTestUtil;
+import com.liferay.petra.function.UnsafeRunnable;
+import com.liferay.petra.function.UnsafeSupplier;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.application.type.ApplicationType;
-import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.PortletQName;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
-import com.liferay.portal.kernel.test.randomizerbumpers.NumericStringRandomizerBumper;
-import com.liferay.portal.kernel.test.randomizerbumpers.UniqueStringRandomizerBumper;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.osgi.web.portlet.container.test.util.PortletContainerTestUtil;
 
@@ -33,9 +34,12 @@ import jakarta.portlet.RenderResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,13 +49,117 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class PublicRenderParameterTest extends BasePortletContainerTestCase {
 
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+
+		_publicRenderParameterName = "test_" + RandomTestUtil.randomString();
+		_publicRenderParameterValue = RandomTestUtil.randomString();
+	}
+
+	@Test
+	@TestInfo("LPD-86498")
+	public void testWithContentLayoutDirectURL() throws Exception {
+		Layout contentLayout = LayoutTestUtil.addTypeContentLayout(group);
+
+		Layout draftLayout = contentLayout.fetchDraftLayout();
+
+		_testPublicRenderParameter(
+			() -> {
+				ContentLayoutTestUtil.addPortletToLayout(
+					draftLayout, TEST_PORTLET_ID);
+
+				ContentLayoutTestUtil.publishLayout(draftLayout, contentLayout);
+			},
+			Collections.emptyMap(),
+			() -> StringBundler.concat(
+				"http://localhost:8080/web", group.getFriendlyURL(),
+				contentLayout.getFriendlyURL(LocaleUtil.getDefault()),
+				"?p_r_p_", _publicRenderParameterName, "=",
+				_publicRenderParameterValue));
+	}
+
+	@Test
+	@TestInfo("LPD-86498")
+	public void testWithContentLayoutRenderURL() throws Exception {
+		Layout contentLayout = LayoutTestUtil.addTypeContentLayout(group);
+
+		Layout draftLayout = contentLayout.fetchDraftLayout();
+
+		_testPublicRenderParameter(
+			() -> {
+				ContentLayoutTestUtil.addPortletToLayout(
+					draftLayout, TEST_PORTLET_ID);
+
+				ContentLayoutTestUtil.publishLayout(draftLayout, contentLayout);
+			},
+			Collections.emptyMap(),
+			() -> PortletURLBuilder.create(
+				PortletURLFactoryUtil.create(
+					PortletContainerTestUtil.getHttpServletRequest(
+						group, contentLayout),
+					TEST_PORTLET_ID, contentLayout.getPlid(),
+					PortletRequest.RENDER_PHASE)
+			).setParameter(
+				_publicRenderParameterName, _publicRenderParameterValue
+			).buildString());
+	}
+
 	@Test
 	public void testWithModuleLayoutTypeController() throws Exception {
-		final String prpName = "categoryId";
-		final String prpValue = RandomTestUtil.randomString(
-			LayoutFriendlyURLRandomizerBumper.INSTANCE,
-			NumericStringRandomizerBumper.INSTANCE,
-			UniqueStringRandomizerBumper.INSTANCE);
+		_testPublicRenderParameter(
+			() -> {
+				layout = LayoutTestUtil.addTypeFullPageApplicationLayout(
+					group.getGroupId());
+
+				UnicodeProperties typeSettingsUnicodeProperties =
+					layout.getTypeSettingsProperties();
+
+				typeSettingsUnicodeProperties.setProperty(
+					"fullPageApplicationPortlet", TEST_PORTLET_ID);
+
+				LayoutLocalServiceUtil.updateLayout(layout);
+			},
+			Collections.singletonMap(
+				"com.liferay.portlet.application-type",
+				new String[] {
+					ApplicationType.FULL_PAGE_APPLICATION.toString(),
+					ApplicationType.WIDGET.toString()
+				}),
+			() -> PortletURLBuilder.create(
+				PortletURLFactoryUtil.create(
+					PortletContainerTestUtil.getHttpServletRequest(
+						group, layout),
+					TEST_PORTLET_ID, layout.getPlid(),
+					PortletRequest.RENDER_PHASE)
+			).setParameter(
+				_publicRenderParameterName, _publicRenderParameterValue
+			).buildString());
+	}
+
+	@Test
+	public void testWithPortalLayoutTypeController() throws Exception {
+		_testPublicRenderParameter(
+			() -> LayoutTestUtil.addPortletToLayout(layout, TEST_PORTLET_ID),
+			Collections.emptyMap(),
+			() -> PortletURLBuilder.create(
+				PortletURLFactoryUtil.create(
+					PortletContainerTestUtil.getHttpServletRequest(
+						group, layout),
+					TEST_PORTLET_ID, layout.getPlid(),
+					PortletRequest.RENDER_PHASE)
+			).setParameter(
+				_publicRenderParameterName, _publicRenderParameterValue
+			).buildString());
+	}
+
+	private void _testPublicRenderParameter(
+			UnsafeRunnable<Exception> layoutSetUpUnsafeRunnable,
+			Map<String, Object> portletProperties,
+			UnsafeSupplier<String, Exception> portletURLStringUnsafeSupplier)
+		throws Exception {
+
 		final AtomicBoolean success = new AtomicBoolean(false);
 
 		testPortlet = new TestPortlet() {
@@ -63,9 +171,10 @@ public class PublicRenderParameterTest extends BasePortletContainerTestCase {
 
 				PrintWriter printWriter = renderResponse.getWriter();
 
-				String value = renderRequest.getParameter(prpName);
+				String value = renderRequest.getParameter(
+					_publicRenderParameterName);
 
-				if (prpValue.equals(value)) {
+				if (_publicRenderParameterValue.equals(value)) {
 					success.set(true);
 				}
 
@@ -77,13 +186,12 @@ public class PublicRenderParameterTest extends BasePortletContainerTestCase {
 		setUpPortlet(
 			testPortlet,
 			HashMapDictionaryBuilder.<String, Object>put(
-				"com.liferay.portlet.application-type",
-				new String[] {
-					ApplicationType.FULL_PAGE_APPLICATION.toString(),
-					ApplicationType.WIDGET.toString()
-				}
+				"jakarta.portlet.supported-public-render-parameter",
+				_publicRenderParameterName
 			).put(
-				"jakarta.portlet.supported-public-render-parameter", prpName
+				"jakarta.portlet.version", "3.0"
+			).putAll(
+				portletProperties
 			).build(),
 			TEST_PORTLET_ID, false);
 
@@ -92,33 +200,9 @@ public class PublicRenderParameterTest extends BasePortletContainerTestCase {
 
 		Assert.assertFalse(portlet.isUndeployedPortlet());
 
-		String name = RandomTestUtil.randomString(
-			LayoutFriendlyURLRandomizerBumper.INSTANCE,
-			NumericStringRandomizerBumper.INSTANCE,
-			UniqueStringRandomizerBumper.INSTANCE);
+		layoutSetUpUnsafeRunnable.run();
 
-		layout = LayoutLocalServiceUtil.addLayout(
-			null, TestPropsValues.getUserId(), group.getGroupId(), false,
-			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, name, null, null,
-			"full_page_application", false,
-			StringPool.SLASH + FriendlyURLNormalizerUtil.normalize(name),
-			ServiceContextTestUtil.getServiceContext());
-
-		UnicodeProperties typeSettingsUnicodeProperties =
-			layout.getTypeSettingsProperties();
-
-		typeSettingsUnicodeProperties.setProperty(
-			"fullPageApplicationPortlet", TEST_PORTLET_ID);
-
-		LayoutLocalServiceUtil.updateLayout(layout);
-
-		String portletURLString = PortletURLBuilder.create(
-			PortletURLFactoryUtil.create(
-				PortletContainerTestUtil.getHttpServletRequest(group, layout),
-				TEST_PORTLET_ID, layout.getPlid(), PortletRequest.RENDER_PHASE)
-		).setParameter(
-			prpName, prpValue
-		).buildString();
+		String portletURLString = portletURLStringUnsafeSupplier.get();
 
 		Assert.assertTrue(
 			portletURLString,
@@ -133,61 +217,7 @@ public class PublicRenderParameterTest extends BasePortletContainerTestCase {
 		Assert.assertTrue(success.get());
 	}
 
-	@Test
-	public void testWithPortalLayoutTypeController() throws Exception {
-		final String prpName = "categoryId";
-		final String prpValue = RandomTestUtil.randomString(
-			LayoutFriendlyURLRandomizerBumper.INSTANCE,
-			NumericStringRandomizerBumper.INSTANCE,
-			UniqueStringRandomizerBumper.INSTANCE);
-		final AtomicBoolean success = new AtomicBoolean(false);
-
-		testPortlet = new TestPortlet() {
-
-			@Override
-			public void render(
-					RenderRequest renderRequest, RenderResponse renderResponse)
-				throws IOException {
-
-				PrintWriter printWriter = renderResponse.getWriter();
-
-				String value = renderRequest.getParameter(prpName);
-
-				if (prpValue.equals(value)) {
-					success.set(true);
-				}
-
-				printWriter.write(value);
-			}
-
-		};
-
-		setUpPortlet(
-			testPortlet,
-			HashMapDictionaryBuilder.<String, Object>put(
-				"jakarta.portlet.supported-public-render-parameter", prpName
-			).build(),
-			TEST_PORTLET_ID);
-
-		String portletURLString = PortletURLBuilder.create(
-			PortletURLFactoryUtil.create(
-				PortletContainerTestUtil.getHttpServletRequest(group, layout),
-				TEST_PORTLET_ID, layout.getPlid(), PortletRequest.RENDER_PHASE)
-		).setParameter(
-			prpName, prpValue
-		).buildString();
-
-		Assert.assertTrue(
-			portletURLString,
-			portletURLString.contains(
-				PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE));
-
-		PortletContainerTestUtil.Response response =
-			PortletContainerTestUtil.request(portletURLString);
-
-		Assert.assertEquals(200, response.getCode());
-
-		Assert.assertTrue(success.get());
-	}
+	private String _publicRenderParameterName;
+	private String _publicRenderParameterValue;
 
 }

@@ -48,7 +48,7 @@ public interface JournalArticleLocalizationPersistence
 	 * Returns a range of all the journal article localizations where companyId = &#63; and articlePK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalArticleLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalArticleLocalizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -64,7 +64,7 @@ public interface JournalArticleLocalizationPersistence
 	 * Returns an ordered range of all the journal article localizations where companyId = &#63; and articlePK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalArticleLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalArticleLocalizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -83,7 +83,7 @@ public interface JournalArticleLocalizationPersistence
 	 * Returns an ordered range of all the journal article localizations where companyId = &#63; and articlePK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalArticleLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalArticleLocalizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -261,74 +261,5 @@ public interface JournalArticleLocalizationPersistence
 	public JournalArticleLocalization fetchByPrimaryKey(
 		long articleLocalizationId);
 
-	/**
-	 * Returns all the journal article localizations.
-	 *
-	 * @return the journal article localizations
-	 */
-	public java.util.List<JournalArticleLocalization> findAll();
-
-	/**
-	 * Returns a range of all the journal article localizations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalArticleLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of journal article localizations
-	 * @param end the upper bound of the range of journal article localizations (not inclusive)
-	 * @return the range of journal article localizations
-	 */
-	public java.util.List<JournalArticleLocalization> findAll(
-		int start, int end);
-
-	/**
-	 * Returns an ordered range of all the journal article localizations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalArticleLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of journal article localizations
-	 * @param end the upper bound of the range of journal article localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of journal article localizations
-	 */
-	public java.util.List<JournalArticleLocalization> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<JournalArticleLocalization> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the journal article localizations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalArticleLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of journal article localizations
-	 * @param end the upper bound of the range of journal article localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of journal article localizations
-	 */
-	public java.util.List<JournalArticleLocalization> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<JournalArticleLocalization> orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the journal article localizations from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of journal article localizations.
-	 *
-	 * @return the number of journal article localizations
-	 */
-	public int countAll();
-
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1341722141
+// LIFERAY-SERVICE-BUILDER-HASH:1001302321

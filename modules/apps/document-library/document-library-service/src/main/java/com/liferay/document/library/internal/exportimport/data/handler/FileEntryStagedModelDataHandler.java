@@ -23,6 +23,7 @@ import com.liferay.document.library.kernel.service.DLFileEntryTypeLocalService;
 import com.liferay.document.library.kernel.service.DLFileVersionLocalService;
 import com.liferay.document.library.kernel.service.DLTrashService;
 import com.liferay.document.library.kernel.store.DLStoreUtil;
+import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.document.library.util.DLFileEntryTypeUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesDeserializerDeserializeRequest;
@@ -491,15 +492,16 @@ public class FileEntryStagedModelDataHandler
 						"fileVersionUuid", fileVersionUuid);
 					serviceContext.setUuid(fileEntry.getUuid());
 
-					String fileEntryTitle =
-						_dlFileEntryLocalService.getUniqueTitle(
-							portletDataContext.getScopeGroupId(), folderId, 0,
-							fileEntry.getTitle(), fileEntry.getExtension());
-
 					importedFileEntry = _dlAppLocalService.addFileEntry(
 						fileEntry.getExternalReferenceCode(), userId,
-						repositoryId, folderId, fileEntry.getFileName(),
-						fileEntry.getMimeType(), fileEntryTitle,
+						repositoryId, folderId,
+						DLUtil.getUniqueFileName(
+							portletDataContext.getScopeGroupId(), folderId,
+							fileEntry.getFileName(), false),
+						fileEntry.getMimeType(),
+						_dlFileEntryLocalService.getUniqueTitle(
+							portletDataContext.getScopeGroupId(), folderId, 0,
+							fileEntry.getTitle(), fileEntry.getExtension()),
 						StringPool.BLANK, fileEntry.getDescription(), null,
 						inputStream, fileEntry.getSize(),
 						fileEntry.getDisplayDate(),
@@ -605,6 +607,15 @@ public class FileEntryStagedModelDataHandler
 									folderId, serviceContext);
 						}
 
+						DLFileEntry importedDLFileEntry =
+							_dlFileEntryLocalService.fetchDLFileEntry(
+								importedFileEntry.getFileEntryId());
+
+						importedDLFileEntry.setUuid(fileEntry.getUuid());
+
+						_dlFileEntryLocalService.updateDLFileEntry(
+							importedDLFileEntry);
+
 						if (importedFileEntry instanceof LiferayFileEntry) {
 							LiferayFileEntry liferayFileEntry =
 								(LiferayFileEntry)importedFileEntry;
@@ -647,18 +658,20 @@ public class FileEntryStagedModelDataHandler
 				}
 			}
 			else {
-				String fileEntryTitle = _dlFileEntryLocalService.getUniqueTitle(
-					portletDataContext.getScopeGroupId(), folderId, 0,
-					fileEntry.getTitle(), fileEntry.getExtension());
-
 				importedFileEntry = _dlAppLocalService.addFileEntry(
 					fileEntry.getExternalReferenceCode(), userId, repositoryId,
-					folderId, fileEntry.getFileName(), fileEntry.getMimeType(),
-					fileEntryTitle, StringPool.BLANK,
-					fileEntry.getDescription(), null, inputStream,
-					fileEntry.getSize(), fileEntry.getDisplayDate(),
-					fileEntry.getExpirationDate(), fileEntry.getReviewDate(),
-					serviceContext);
+					folderId,
+					DLUtil.getUniqueFileName(
+						portletDataContext.getScopeGroupId(), folderId,
+						fileEntry.getFileName(), false),
+					fileEntry.getMimeType(),
+					_dlFileEntryLocalService.getUniqueTitle(
+						portletDataContext.getScopeGroupId(), folderId, 0,
+						fileEntry.getTitle(), fileEntry.getExtension()),
+					StringPool.BLANK, fileEntry.getDescription(), null,
+					inputStream, fileEntry.getSize(),
+					fileEntry.getDisplayDate(), fileEntry.getExpirationDate(),
+					fileEntry.getReviewDate(), serviceContext);
 			}
 
 			for (DLPluggableContentDataHandler<?>

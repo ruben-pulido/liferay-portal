@@ -9,12 +9,13 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.audit.AuditMessage;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.security.audit.AuditMessageProcessor;
 import com.liferay.portal.security.audit.event.generators.constants.EventTypes;
+import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
@@ -73,7 +74,7 @@ public class UserModelListenerTest {
 		}
 
 		if (_user != null) {
-			UserLocalServiceUtil.deleteUser(_user);
+			_userLocalService.deleteUser(_user);
 		}
 	}
 
@@ -85,12 +86,12 @@ public class UserModelListenerTest {
 
 		_auditMessages.clear();
 
-		UserLocalServiceUtil.updateAgreedToTermsOfUse(_user.getUserId(), true);
+		_userLocalService.updateAgreedToTermsOfUse(_user.getUserId(), true);
 
 		AuditMessage agreedToTermsOfUseAuditMessage = null;
 
 		for (AuditMessage auditMessage : _auditMessages) {
-			if (EventTypes.AGGREED_TO_TERMS_OF_USE.equals(
+			if (EventTypes.AGREED_TO_TERMS_OF_USE.equals(
 					auditMessage.getEventType())) {
 
 				agreedToTermsOfUseAuditMessage = auditMessage;
@@ -116,19 +117,23 @@ public class UserModelListenerTest {
 
 		_auditMessages.clear();
 
+		_user = _userLocalService.getUser(_user.getUserId());
+
 		_user.setComments(RandomTestUtil.randomString());
 
-		UserLocalServiceUtil.updateUser(_user);
+		_userLocalService.updateUser(_user);
 
 		for (AuditMessage auditMessage : _auditMessages) {
 			Assert.assertNotEquals(
-				EventTypes.AGGREED_TO_TERMS_OF_USE,
-				auditMessage.getEventType());
+				EventTypes.AGREED_TO_TERMS_OF_USE, auditMessage.getEventType());
 		}
 	}
 
 	private List<AuditMessage> _auditMessages;
 	private ServiceRegistration<AuditMessageProcessor> _serviceRegistration;
 	private User _user;
+
+	@Inject
+	private UserLocalService _userLocalService;
 
 }

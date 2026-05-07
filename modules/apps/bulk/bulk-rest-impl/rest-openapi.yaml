@@ -41,6 +41,7 @@ components:
                     MoveObjectBulkSelectionAction: "#/components/schemas/MoveObjectBulkSelectionAction"
                     PermissionObjectBulkSelectionAction: "#/components/schemas/PermissionObjectBulkSelectionAction"
                     ResetPermissionObjectBulkSelectionAction: "#/components/schemas/ResetPermissionObjectBulkSelectionAction"
+                    RestoreObjectBulkSelectionAction: "#/components/schemas/RestoreObjectBulkSelectionAction"
                     StatusObjectBulkSelectionAction: "#/components/schemas/StatusObjectBulkSelectionAction"
                     UpdateObjectValuesBulkSelectionAction: "#/components/schemas/UpdateObjectValuesBulkSelectionAction"
                 propertyName: type
@@ -66,6 +67,7 @@ components:
                         -   MoveObjectBulkSelectionAction
                         -   PermissionObjectBulkSelectionAction
                         -   ResetPermissionObjectBulkSelectionAction
+                        -   RestoreObjectBulkSelectionAction
                         -   StatusObjectBulkSelectionAction
                         -   EditObjectCategoriesBulkSelectionAction
                         -   UpdateObjectValuesBulkSelectionAction
@@ -248,6 +250,9 @@ components:
         ResetPermissionObjectBulkSelectionAction:
             allOf:
                 -   $ref: "#/components/schemas/BulkAction"
+        RestoreObjectBulkSelectionAction:
+            allOf:
+                -   $ref: "#/components/schemas/BulkAction"
         Selection:
             properties:
                 size:
@@ -323,7 +328,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.bulk.rest.client', and version '3.0.40'."
+        'com.liferay.bulk.rest.client', and version '3.0.41'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

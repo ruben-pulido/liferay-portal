@@ -2,11 +2,8 @@ import ClayLink from '@clayui/link';
 import FaroConstants from 'shared/util/constants';
 import Label from '@clayui/label';
 import React, {useEffect, useState} from 'react';
-import {AssetIcon, MimeTypes} from 'assets/components/AssetsIcon';
-import {CUSTOM_DATE_FORMAT, formatUTCDate} from 'shared/util/date';
-import {Routes, toRoute} from './router';
-import {Text} from '@clayui/core';
-import {toThousands} from './numbers';
+import {CUSTOM_DATE_FORMAT, formatUTCDate} from './date';
+import {toRoute} from './router';
 
 const {cur, delta, deltaValues} = FaroConstants.pagination;
 
@@ -16,56 +13,12 @@ export const pagination = {
 	initialPageNumber: cur
 };
 
+type FDSCellProps<TValue = unknown, TItemData = Record<string, unknown>> = {
+	itemData: TItemData;
+	value: TValue;
+};
+
 export const columns = {
-	assetMetricRenderer: ({value}) => <span>{toThousands(value.value)}</span>,
-	assetTitleRenderer: ({channelId, groupId, rangeSelectorParams}) => ({
-		itemData,
-		value
-	}) => {
-		const mapRoutes = {
-			blog: Routes.ASSETS_BLOGS_OVERVIEW,
-			document: Routes.ASSETS_DOCUMENTS_AND_MEDIA_OVERVIEW,
-			form: Routes.ASSETS_FORMS_OVERVIEW,
-			webContent: Routes.ASSETS_WEB_CONTENT_OVERVIEW
-		};
-
-		const assetTitle = value || itemData.id;
-		const route =
-			mapRoutes?.[itemData.assetType] ??
-			Routes.ASSETS_OBJECT_ENTRY_OVERVIEW;
-
-		const URL = `${toRoute(route, {
-			assetId: itemData.id,
-			channelId,
-			groupId,
-			touchpoint: 'Any',
-			...(assetTitle && {
-				title: encodeURIComponent(assetTitle)
-			})
-		})}?${rangeSelectorParams}`;
-
-		return (
-			<div className='align-items-center d-flex'>
-				{itemData.mimeType && (
-					<div className='mr-2'>
-						<AssetIcon mimeType={itemData.mimeType as MimeTypes} />
-					</div>
-				)}
-
-				<div>
-					<ClayLink displayType='tertiary' href={URL}>
-						{value || itemData.id}
-					</ClayLink>
-
-					<div>
-						<Text color='secondary' size={3}>
-							{itemData.id}
-						</Text>
-					</div>
-				</div>
-			</div>
-		);
-	},
 	cmsLabelRenderer: ({
 		displayType,
 		label
@@ -80,10 +33,20 @@ export const columns = {
 			{label}
 		</Label>
 	),
-	dateRenderer: ({value}) => (
+	dateRenderer: ({value}: FDSCellProps<string | number>) => (
 		<div>{value && formatUTCDate(value, CUSTOM_DATE_FORMAT)}</div>
 	),
-	nameAndLinkRenderer: ({groupId, itemData, route, value}) => {
+	nameAndLinkRenderer: ({
+		groupId,
+		itemData,
+		route,
+		value
+	}: {
+		groupId: string;
+		itemData: {id: string | number};
+		route: string;
+		value: string;
+	}) => {
 		const itemTitle = value || itemData.id;
 
 		return (

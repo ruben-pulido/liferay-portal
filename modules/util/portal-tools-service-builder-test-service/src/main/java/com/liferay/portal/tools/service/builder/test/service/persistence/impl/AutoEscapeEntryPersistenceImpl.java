@@ -5,18 +5,13 @@
 
 package com.liferay.portal.tools.service.builder.test.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
-import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
@@ -32,7 +27,6 @@ import java.io.Serializable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * The persistence implementation for the auto escape entry service.
@@ -45,7 +39,7 @@ import java.util.Set;
  * @generated
  */
 public class AutoEscapeEntryPersistenceImpl
-	extends BasePersistenceImpl<AutoEscapeEntry>
+	extends BasePersistenceImpl<AutoEscapeEntry, NoSuchAutoEscapeEntryException>
 	implements AutoEscapeEntryPersistence {
 
 	/*
@@ -61,10 +55,6 @@ public class AutoEscapeEntryPersistenceImpl
 
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
-
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 
 	public AutoEscapeEntryPersistenceImpl() {
 		setModelClass(AutoEscapeEntry.class);
@@ -115,49 +105,6 @@ public class AutoEscapeEntryPersistenceImpl
 	}
 
 	/**
-	 * Clears the cache for all auto escape entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(AutoEscapeEntryImpl.class);
-
-		finderCache.clearCache(AutoEscapeEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the auto escape entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(AutoEscapeEntry autoEscapeEntry) {
-		entityCache.removeResult(AutoEscapeEntryImpl.class, autoEscapeEntry);
-	}
-
-	@Override
-	public void clearCache(List<AutoEscapeEntry> autoEscapeEntries) {
-		for (AutoEscapeEntry autoEscapeEntry : autoEscapeEntries) {
-			entityCache.removeResult(
-				AutoEscapeEntryImpl.class, autoEscapeEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(AutoEscapeEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(AutoEscapeEntryImpl.class, primaryKey);
-		}
-	}
-
-	/**
 	 * Creates a new auto escape entry with the primary key. Does not add the auto escape entry to the database.
 	 *
 	 * @param autoEscapeEntryId the primary key for the new auto escape entry
@@ -185,47 +132,6 @@ public class AutoEscapeEntryPersistenceImpl
 		throws NoSuchAutoEscapeEntryException {
 
 		return remove((Serializable)autoEscapeEntryId);
-	}
-
-	/**
-	 * Removes the auto escape entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the auto escape entry
-	 * @return the auto escape entry that was removed
-	 * @throws NoSuchAutoEscapeEntryException if a auto escape entry with the primary key could not be found
-	 */
-	@Override
-	public AutoEscapeEntry remove(Serializable primaryKey)
-		throws NoSuchAutoEscapeEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			AutoEscapeEntry autoEscapeEntry = (AutoEscapeEntry)session.get(
-				AutoEscapeEntryImpl.class, primaryKey);
-
-			if (autoEscapeEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchAutoEscapeEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(autoEscapeEntry);
-		}
-		catch (NoSuchAutoEscapeEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -296,31 +202,6 @@ public class AutoEscapeEntryPersistenceImpl
 	}
 
 	/**
-	 * Returns the auto escape entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the auto escape entry
-	 * @return the auto escape entry
-	 * @throws NoSuchAutoEscapeEntryException if a auto escape entry with the primary key could not be found
-	 */
-	@Override
-	public AutoEscapeEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchAutoEscapeEntryException {
-
-		AutoEscapeEntry autoEscapeEntry = fetchByPrimaryKey(primaryKey);
-
-		if (autoEscapeEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchAutoEscapeEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return autoEscapeEntry;
-	}
-
-	/**
 	 * Returns the auto escape entry with the primary key or throws a <code>NoSuchAutoEscapeEntryException</code> if it could not be found.
 	 *
 	 * @param autoEscapeEntryId the primary key of the auto escape entry
@@ -343,187 +224,6 @@ public class AutoEscapeEntryPersistenceImpl
 	@Override
 	public AutoEscapeEntry fetchByPrimaryKey(long autoEscapeEntryId) {
 		return fetchByPrimaryKey((Serializable)autoEscapeEntryId);
-	}
-
-	/**
-	 * Returns all the auto escape entries.
-	 *
-	 * @return the auto escape entries
-	 */
-	@Override
-	public List<AutoEscapeEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the auto escape entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AutoEscapeEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of auto escape entries
-	 * @param end the upper bound of the range of auto escape entries (not inclusive)
-	 * @return the range of auto escape entries
-	 */
-	@Override
-	public List<AutoEscapeEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the auto escape entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AutoEscapeEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of auto escape entries
-	 * @param end the upper bound of the range of auto escape entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of auto escape entries
-	 */
-	@Override
-	public List<AutoEscapeEntry> findAll(
-		int start, int end,
-		OrderByComparator<AutoEscapeEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the auto escape entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AutoEscapeEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of auto escape entries
-	 * @param end the upper bound of the range of auto escape entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of auto escape entries
-	 */
-	@Override
-	public List<AutoEscapeEntry> findAll(
-		int start, int end,
-		OrderByComparator<AutoEscapeEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<AutoEscapeEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<AutoEscapeEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_AUTOESCAPEENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_AUTOESCAPEENTRY;
-
-				sql = sql.concat(AutoEscapeEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<AutoEscapeEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the auto escape entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (AutoEscapeEntry autoEscapeEntry : findAll()) {
-			remove(autoEscapeEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of auto escape entries.
-	 *
-	 * @return the number of auto escape entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_AUTOESCAPEENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -553,18 +253,6 @@ public class AutoEscapeEntryPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		AutoEscapeEntryUtil.setPersistence(this);
 	}
 
@@ -580,16 +268,11 @@ public class AutoEscapeEntryPersistenceImpl
 	@ServiceReference(type = FinderCache.class)
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		AutoEscapeEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_AUTOESCAPEENTRY =
 		"SELECT autoEscapeEntry FROM AutoEscapeEntry autoEscapeEntry";
-
-	private static final String _SQL_COUNT_AUTOESCAPEENTRY =
-		"SELECT COUNT(autoEscapeEntry) FROM AutoEscapeEntry autoEscapeEntry";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "autoEscapeEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No AutoEscapeEntry exists with the primary key ";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		AutoEscapeEntryPersistenceImpl.class);
@@ -600,4 +283,4 @@ public class AutoEscapeEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1790548905
+// LIFERAY-SERVICE-BUILDER-HASH:1172609378

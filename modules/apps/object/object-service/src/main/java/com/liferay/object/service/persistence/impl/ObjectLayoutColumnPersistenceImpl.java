@@ -13,13 +13,10 @@ import com.liferay.object.model.impl.ObjectLayoutColumnModelImpl;
 import com.liferay.object.service.persistence.ObjectLayoutColumnPersistence;
 import com.liferay.object.service.persistence.ObjectLayoutColumnUtil;
 import com.liferay.object.service.persistence.impl.constants.ObjectPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
@@ -29,6 +26,8 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -46,7 +45,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -68,7 +66,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = ObjectLayoutColumnPersistence.class)
 public class ObjectLayoutColumnPersistenceImpl
-	extends BasePersistenceImpl<ObjectLayoutColumn>
+	extends BasePersistenceImpl
+		<ObjectLayoutColumn, NoSuchObjectLayoutColumnException>
 	implements ObjectLayoutColumnPersistence {
 
 	/*
@@ -85,12 +84,11 @@ public class ObjectLayoutColumnPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByUuid;
 	private FinderPath _finderPathWithoutPaginationFindByUuid;
 	private FinderPath _finderPathCountByUuid;
+	private CollectionPersistenceFinder<ObjectLayoutColumn>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns all the object layout columns where uuid = &#63;.
@@ -163,106 +161,9 @@ public class ObjectLayoutColumnPersistenceImpl
 		OrderByComparator<ObjectLayoutColumn> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid;
-				finderArgs = new Object[] {uuid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid;
-			finderArgs = new Object[] {uuid, start, end, orderByComparator};
-		}
-
-		List<ObjectLayoutColumn> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectLayoutColumn>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectLayoutColumn objectLayoutColumn : list) {
-					if (!uuid.equals(objectLayoutColumn.getUuid())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTLAYOUTCOLUMN_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectLayoutColumnModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				list = (List<ObjectLayoutColumn>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -286,16 +187,9 @@ public class ObjectLayoutColumnPersistenceImpl
 			return objectLayoutColumn;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchObjectLayoutColumnException(sb.toString());
+		throw new NoSuchObjectLayoutColumnException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -309,14 +203,8 @@ public class ObjectLayoutColumnPersistenceImpl
 	public ObjectLayoutColumn fetchByUuid_First(
 		String uuid, OrderByComparator<ObjectLayoutColumn> orderByComparator) {
 
-		List<ObjectLayoutColumn> list = findByUuid(
-			uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -326,11 +214,8 @@ public class ObjectLayoutColumnPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (ObjectLayoutColumn objectLayoutColumn :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(objectLayoutColumn);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -341,69 +226,15 @@ public class ObjectLayoutColumnPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid;
-
-		Object[] finderArgs = new Object[] {uuid};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_OBJECTLAYOUTCOLUMN_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"objectLayoutColumn.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(objectLayoutColumn.uuid IS NULL OR objectLayoutColumn.uuid = '')";
 
 	private FinderPath _finderPathWithPaginationFindByUuid_C;
 	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
 	private FinderPath _finderPathCountByUuid_C;
+	private CollectionPersistenceFinder<ObjectLayoutColumn>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns all the object layout columns where uuid = &#63; and companyId = &#63;.
@@ -482,114 +313,9 @@ public class ObjectLayoutColumnPersistenceImpl
 		OrderByComparator<ObjectLayoutColumn> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_C;
-				finderArgs = new Object[] {uuid, companyId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_C;
-			finderArgs = new Object[] {
-				uuid, companyId, start, end, orderByComparator
-			};
-		}
-
-		List<ObjectLayoutColumn> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectLayoutColumn>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectLayoutColumn objectLayoutColumn : list) {
-					if (!uuid.equals(objectLayoutColumn.getUuid()) ||
-						(companyId != objectLayoutColumn.getCompanyId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTLAYOUTCOLUMN_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectLayoutColumnModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				list = (List<ObjectLayoutColumn>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -614,19 +340,9 @@ public class ObjectLayoutColumnPersistenceImpl
 			return objectLayoutColumn;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchObjectLayoutColumnException(sb.toString());
+		throw new NoSuchObjectLayoutColumnException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -642,14 +358,8 @@ public class ObjectLayoutColumnPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<ObjectLayoutColumn> orderByComparator) {
 
-		List<ObjectLayoutColumn> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -660,13 +370,8 @@ public class ObjectLayoutColumnPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (ObjectLayoutColumn objectLayoutColumn :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(objectLayoutColumn);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -678,76 +383,15 @@ public class ObjectLayoutColumnPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_C;
-
-		Object[] finderArgs = new Object[] {uuid, companyId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_OBJECTLAYOUTCOLUMN_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"objectLayoutColumn.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(objectLayoutColumn.uuid IS NULL OR objectLayoutColumn.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"objectLayoutColumn.companyId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByObjectFieldId;
 	private FinderPath _finderPathWithoutPaginationFindByObjectFieldId;
 	private FinderPath _finderPathCountByObjectFieldId;
+	private CollectionPersistenceFinder<ObjectLayoutColumn>
+		_collectionPersistenceFinderByObjectFieldId;
 
 	/**
 	 * Returns all the object layout columns where objectFieldId = &#63;.
@@ -822,97 +466,9 @@ public class ObjectLayoutColumnPersistenceImpl
 		OrderByComparator<ObjectLayoutColumn> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByObjectFieldId;
-				finderArgs = new Object[] {objectFieldId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByObjectFieldId;
-			finderArgs = new Object[] {
-				objectFieldId, start, end, orderByComparator
-			};
-		}
-
-		List<ObjectLayoutColumn> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectLayoutColumn>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectLayoutColumn objectLayoutColumn : list) {
-					if (objectFieldId !=
-							objectLayoutColumn.getObjectFieldId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTLAYOUTCOLUMN_WHERE);
-
-			sb.append(_FINDER_COLUMN_OBJECTFIELDID_OBJECTFIELDID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectLayoutColumnModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(objectFieldId);
-
-				list = (List<ObjectLayoutColumn>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByObjectFieldId.find(
+			finderCache, new Object[] {objectFieldId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -936,16 +492,9 @@ public class ObjectLayoutColumnPersistenceImpl
 			return objectLayoutColumn;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("objectFieldId=");
-		sb.append(objectFieldId);
-
-		sb.append("}");
-
-		throw new NoSuchObjectLayoutColumnException(sb.toString());
+		throw new NoSuchObjectLayoutColumnException(
+			_collectionPersistenceFinderByObjectFieldId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {objectFieldId}));
 	}
 
 	/**
@@ -960,14 +509,8 @@ public class ObjectLayoutColumnPersistenceImpl
 		long objectFieldId,
 		OrderByComparator<ObjectLayoutColumn> orderByComparator) {
 
-		List<ObjectLayoutColumn> list = findByObjectFieldId(
-			objectFieldId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByObjectFieldId.fetchFirst(
+			finderCache, new Object[] {objectFieldId}, orderByComparator);
 	}
 
 	/**
@@ -977,13 +520,8 @@ public class ObjectLayoutColumnPersistenceImpl
 	 */
 	@Override
 	public void removeByObjectFieldId(long objectFieldId) {
-		for (ObjectLayoutColumn objectLayoutColumn :
-				findByObjectFieldId(
-					objectFieldId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(objectLayoutColumn);
-		}
+		_collectionPersistenceFinderByObjectFieldId.remove(
+			finderCache, new Object[] {objectFieldId});
 	}
 
 	/**
@@ -994,53 +532,15 @@ public class ObjectLayoutColumnPersistenceImpl
 	 */
 	@Override
 	public int countByObjectFieldId(long objectFieldId) {
-		FinderPath finderPath = _finderPathCountByObjectFieldId;
-
-		Object[] finderArgs = new Object[] {objectFieldId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_OBJECTLAYOUTCOLUMN_WHERE);
-
-			sb.append(_FINDER_COLUMN_OBJECTFIELDID_OBJECTFIELDID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(objectFieldId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByObjectFieldId.count(
+			finderCache, new Object[] {objectFieldId});
 	}
-
-	private static final String _FINDER_COLUMN_OBJECTFIELDID_OBJECTFIELDID_2 =
-		"objectLayoutColumn.objectFieldId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByObjectLayoutRowId;
 	private FinderPath _finderPathWithoutPaginationFindByObjectLayoutRowId;
 	private FinderPath _finderPathCountByObjectLayoutRowId;
+	private CollectionPersistenceFinder<ObjectLayoutColumn>
+		_collectionPersistenceFinderByObjectLayoutRowId;
 
 	/**
 	 * Returns all the object layout columns where objectLayoutRowId = &#63;.
@@ -1117,98 +617,9 @@ public class ObjectLayoutColumnPersistenceImpl
 		OrderByComparator<ObjectLayoutColumn> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByObjectLayoutRowId;
-				finderArgs = new Object[] {objectLayoutRowId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByObjectLayoutRowId;
-			finderArgs = new Object[] {
-				objectLayoutRowId, start, end, orderByComparator
-			};
-		}
-
-		List<ObjectLayoutColumn> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectLayoutColumn>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectLayoutColumn objectLayoutColumn : list) {
-					if (objectLayoutRowId !=
-							objectLayoutColumn.getObjectLayoutRowId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTLAYOUTCOLUMN_WHERE);
-
-			sb.append(_FINDER_COLUMN_OBJECTLAYOUTROWID_OBJECTLAYOUTROWID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectLayoutColumnModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(objectLayoutRowId);
-
-				list = (List<ObjectLayoutColumn>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByObjectLayoutRowId.find(
+			finderCache, new Object[] {objectLayoutRowId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1232,16 +643,11 @@ public class ObjectLayoutColumnPersistenceImpl
 			return objectLayoutColumn;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("objectLayoutRowId=");
-		sb.append(objectLayoutRowId);
-
-		sb.append("}");
-
-		throw new NoSuchObjectLayoutColumnException(sb.toString());
+		throw new NoSuchObjectLayoutColumnException(
+			_collectionPersistenceFinderByObjectLayoutRowId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {objectLayoutRowId}));
 	}
 
 	/**
@@ -1256,14 +662,8 @@ public class ObjectLayoutColumnPersistenceImpl
 		long objectLayoutRowId,
 		OrderByComparator<ObjectLayoutColumn> orderByComparator) {
 
-		List<ObjectLayoutColumn> list = findByObjectLayoutRowId(
-			objectLayoutRowId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByObjectLayoutRowId.fetchFirst(
+			finderCache, new Object[] {objectLayoutRowId}, orderByComparator);
 	}
 
 	/**
@@ -1273,13 +673,8 @@ public class ObjectLayoutColumnPersistenceImpl
 	 */
 	@Override
 	public void removeByObjectLayoutRowId(long objectLayoutRowId) {
-		for (ObjectLayoutColumn objectLayoutColumn :
-				findByObjectLayoutRowId(
-					objectLayoutRowId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(objectLayoutColumn);
-		}
+		_collectionPersistenceFinderByObjectLayoutRowId.remove(
+			finderCache, new Object[] {objectLayoutRowId});
 	}
 
 	/**
@@ -1290,50 +685,9 @@ public class ObjectLayoutColumnPersistenceImpl
 	 */
 	@Override
 	public int countByObjectLayoutRowId(long objectLayoutRowId) {
-		FinderPath finderPath = _finderPathCountByObjectLayoutRowId;
-
-		Object[] finderArgs = new Object[] {objectLayoutRowId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_OBJECTLAYOUTCOLUMN_WHERE);
-
-			sb.append(_FINDER_COLUMN_OBJECTLAYOUTROWID_OBJECTLAYOUTROWID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(objectLayoutRowId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByObjectLayoutRowId.count(
+			finderCache, new Object[] {objectLayoutRowId});
 	}
-
-	private static final String
-		_FINDER_COLUMN_OBJECTLAYOUTROWID_OBJECTLAYOUTROWID_2 =
-			"objectLayoutColumn.objectLayoutRowId = ?";
 
 	public ObjectLayoutColumnPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -1391,50 +745,6 @@ public class ObjectLayoutColumnPersistenceImpl
 	}
 
 	/**
-	 * Clears the cache for all object layout columns.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(ObjectLayoutColumnImpl.class);
-
-		finderCache.clearCache(ObjectLayoutColumnImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the object layout column.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(ObjectLayoutColumn objectLayoutColumn) {
-		entityCache.removeResult(
-			ObjectLayoutColumnImpl.class, objectLayoutColumn);
-	}
-
-	@Override
-	public void clearCache(List<ObjectLayoutColumn> objectLayoutColumns) {
-		for (ObjectLayoutColumn objectLayoutColumn : objectLayoutColumns) {
-			entityCache.removeResult(
-				ObjectLayoutColumnImpl.class, objectLayoutColumn);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(ObjectLayoutColumnImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(ObjectLayoutColumnImpl.class, primaryKey);
-		}
-	}
-
-	/**
 	 * Creates a new object layout column with the primary key. Does not add the object layout column to the database.
 	 *
 	 * @param objectLayoutColumnId the primary key for the new object layout column
@@ -1468,48 +778,6 @@ public class ObjectLayoutColumnPersistenceImpl
 		throws NoSuchObjectLayoutColumnException {
 
 		return remove((Serializable)objectLayoutColumnId);
-	}
-
-	/**
-	 * Removes the object layout column with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the object layout column
-	 * @return the object layout column that was removed
-	 * @throws NoSuchObjectLayoutColumnException if a object layout column with the primary key could not be found
-	 */
-	@Override
-	public ObjectLayoutColumn remove(Serializable primaryKey)
-		throws NoSuchObjectLayoutColumnException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			ObjectLayoutColumn objectLayoutColumn =
-				(ObjectLayoutColumn)session.get(
-					ObjectLayoutColumnImpl.class, primaryKey);
-
-			if (objectLayoutColumn == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchObjectLayoutColumnException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(objectLayoutColumn);
-		}
-		catch (NoSuchObjectLayoutColumnException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1636,31 +904,6 @@ public class ObjectLayoutColumnPersistenceImpl
 	}
 
 	/**
-	 * Returns the object layout column with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the object layout column
-	 * @return the object layout column
-	 * @throws NoSuchObjectLayoutColumnException if a object layout column with the primary key could not be found
-	 */
-	@Override
-	public ObjectLayoutColumn findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchObjectLayoutColumnException {
-
-		ObjectLayoutColumn objectLayoutColumn = fetchByPrimaryKey(primaryKey);
-
-		if (objectLayoutColumn == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchObjectLayoutColumnException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return objectLayoutColumn;
-	}
-
-	/**
 	 * Returns the object layout column with the primary key or throws a <code>NoSuchObjectLayoutColumnException</code> if it could not be found.
 	 *
 	 * @param objectLayoutColumnId the primary key of the object layout column
@@ -1683,188 +926,6 @@ public class ObjectLayoutColumnPersistenceImpl
 	@Override
 	public ObjectLayoutColumn fetchByPrimaryKey(long objectLayoutColumnId) {
 		return fetchByPrimaryKey((Serializable)objectLayoutColumnId);
-	}
-
-	/**
-	 * Returns all the object layout columns.
-	 *
-	 * @return the object layout columns
-	 */
-	@Override
-	public List<ObjectLayoutColumn> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the object layout columns.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutColumnModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of object layout columns
-	 * @param end the upper bound of the range of object layout columns (not inclusive)
-	 * @return the range of object layout columns
-	 */
-	@Override
-	public List<ObjectLayoutColumn> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the object layout columns.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutColumnModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of object layout columns
-	 * @param end the upper bound of the range of object layout columns (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of object layout columns
-	 */
-	@Override
-	public List<ObjectLayoutColumn> findAll(
-		int start, int end,
-		OrderByComparator<ObjectLayoutColumn> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the object layout columns.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutColumnModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of object layout columns
-	 * @param end the upper bound of the range of object layout columns (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of object layout columns
-	 */
-	@Override
-	public List<ObjectLayoutColumn> findAll(
-		int start, int end,
-		OrderByComparator<ObjectLayoutColumn> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<ObjectLayoutColumn> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectLayoutColumn>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_OBJECTLAYOUTCOLUMN);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_OBJECTLAYOUTCOLUMN;
-
-				sql = sql.concat(ObjectLayoutColumnModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<ObjectLayoutColumn>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the object layout columns from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (ObjectLayoutColumn objectLayoutColumn : findAll()) {
-			remove(objectLayoutColumn);
-		}
-	}
-
-	/**
-	 * Returns the number of object layout columns.
-	 *
-	 * @return the number of object layout columns
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_OBJECTLAYOUTCOLUMN);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -1900,18 +961,6 @@ public class ObjectLayoutColumnPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathWithPaginationFindByUuid = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
 			new String[] {
@@ -1929,6 +978,16 @@ public class ObjectLayoutColumnPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
 			new String[] {String.class.getName()}, new String[] {"uuid_"},
 			false);
+
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByUuid,
+			_finderPathWithoutPaginationFindByUuid, _finderPathCountByUuid,
+			_SQL_SELECT_OBJECTLAYOUTCOLUMN_WHERE,
+			_SQL_COUNT_OBJECTLAYOUTCOLUMN_WHERE,
+			ObjectLayoutColumnModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"objectLayoutColumn.", "uuid", FinderColumn.Type.STRING, "=",
+				true, true, ObjectLayoutColumn::getUuid));
 
 		_finderPathWithPaginationFindByUuid_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
@@ -1949,6 +1008,20 @@ public class ObjectLayoutColumnPersistenceImpl
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "companyId"}, false);
 
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByUuid_C,
+				_finderPathWithoutPaginationFindByUuid_C,
+				_finderPathCountByUuid_C, _SQL_SELECT_OBJECTLAYOUTCOLUMN_WHERE,
+				_SQL_COUNT_OBJECTLAYOUTCOLUMN_WHERE,
+				ObjectLayoutColumnModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"objectLayoutColumn.", "uuid", FinderColumn.Type.STRING,
+					"=", true, false, ObjectLayoutColumn::getUuid),
+				new FinderColumn<>(
+					"objectLayoutColumn.", "companyId", FinderColumn.Type.LONG,
+					"=", true, true, ObjectLayoutColumn::getCompanyId));
+
 		_finderPathWithPaginationFindByObjectFieldId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByObjectFieldId",
 			new String[] {
@@ -1967,6 +1040,19 @@ public class ObjectLayoutColumnPersistenceImpl
 			new String[] {Long.class.getName()}, new String[] {"objectFieldId"},
 			false);
 
+		_collectionPersistenceFinderByObjectFieldId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByObjectFieldId,
+				_finderPathWithoutPaginationFindByObjectFieldId,
+				_finderPathCountByObjectFieldId,
+				_SQL_SELECT_OBJECTLAYOUTCOLUMN_WHERE,
+				_SQL_COUNT_OBJECTLAYOUTCOLUMN_WHERE,
+				ObjectLayoutColumnModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"objectLayoutColumn.", "objectFieldId",
+					FinderColumn.Type.LONG, "=", true, true,
+					ObjectLayoutColumn::getObjectFieldId));
+
 		_finderPathWithPaginationFindByObjectLayoutRowId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByObjectLayoutRowId",
 			new String[] {
@@ -1984,6 +1070,19 @@ public class ObjectLayoutColumnPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByObjectLayoutRowId", new String[] {Long.class.getName()},
 			new String[] {"objectLayoutRowId"}, false);
+
+		_collectionPersistenceFinderByObjectLayoutRowId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByObjectLayoutRowId,
+				_finderPathWithoutPaginationFindByObjectLayoutRowId,
+				_finderPathCountByObjectLayoutRowId,
+				_SQL_SELECT_OBJECTLAYOUTCOLUMN_WHERE,
+				_SQL_COUNT_OBJECTLAYOUTCOLUMN_WHERE,
+				ObjectLayoutColumnModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"objectLayoutColumn.", "objectLayoutRowId",
+					FinderColumn.Type.LONG, "=", true, true,
+					ObjectLayoutColumn::getObjectLayoutRowId));
 
 		ObjectLayoutColumnUtil.setPersistence(this);
 	}
@@ -2027,22 +1126,17 @@ public class ObjectLayoutColumnPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		ObjectLayoutColumnModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_OBJECTLAYOUTCOLUMN =
 		"SELECT objectLayoutColumn FROM ObjectLayoutColumn objectLayoutColumn";
 
 	private static final String _SQL_SELECT_OBJECTLAYOUTCOLUMN_WHERE =
 		"SELECT objectLayoutColumn FROM ObjectLayoutColumn objectLayoutColumn WHERE ";
 
-	private static final String _SQL_COUNT_OBJECTLAYOUTCOLUMN =
-		"SELECT COUNT(objectLayoutColumn) FROM ObjectLayoutColumn objectLayoutColumn";
-
 	private static final String _SQL_COUNT_OBJECTLAYOUTCOLUMN_WHERE =
 		"SELECT COUNT(objectLayoutColumn) FROM ObjectLayoutColumn objectLayoutColumn WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "objectLayoutColumn.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No ObjectLayoutColumn exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No ObjectLayoutColumn exists with the key {";
@@ -2059,4 +1153,4 @@ public class ObjectLayoutColumnPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:759746207
+// LIFERAY-SERVICE-BUILDER-HASH:-1215643598

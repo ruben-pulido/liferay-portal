@@ -15,6 +15,7 @@ import com.liferay.osb.patcher.util.EmailUtil;
 import com.liferay.osb.patcher.util.PatcherFixRelUtil;
 import com.liferay.osb.patcher.util.PatcherFixUtil;
 import com.liferay.osb.patcher.util.PatcherProjectVersionUtil;
+import com.liferay.osb.patcher.util.PatcherUtil;
 import com.liferay.osb.patcher.util.comparator.PatcherFixKeyVersionComparator;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -25,6 +26,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -58,7 +60,6 @@ public class PatcherFixLocalServiceImpl extends PatcherFixLocalServiceBaseImpl {
 		patcherFix.setUserName(user.getFullName());
 
 		patcherFix.setCreateDate(new Date());
-		patcherFix.setModifiedDate(new Date());
 		patcherFix.setPatcherProductVersionId(
 			PatcherProjectVersionUtil.getPatcherProductVersionId(
 				patcherProjectVersionId));
@@ -70,9 +71,45 @@ public class PatcherFixLocalServiceImpl extends PatcherFixLocalServiceBaseImpl {
 		patcherFix.setName(name);
 		patcherFix.setType(type);
 		patcherFix.setStatus(status);
+		patcherFix.setStatusDate(new Date());
 
 		PatcherFixRelUtil.addPatcherFixRel(
 			patcherFix.getPatcherFixId(), parentPatcherFixIds);
+
+		return patcherFixPersistence.update(patcherFix);
+	}
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
+	public PatcherFix addPatcherFix(
+			long userId, long patcherProductVersionId,
+			long patcherProjectVersionId, String committish,
+			String gitRemoteURL, String name, int type, int status)
+		throws Exception {
+
+		PatcherFix patcherFix = patcherFixPersistence.create(
+			counterLocalService.increment());
+
+		User user = _userLocalService.getUser(userId);
+
+		patcherFix.setCompanyId(user.getCompanyId());
+		patcherFix.setUserId(user.getUserId());
+		patcherFix.setUserName(user.getFullName());
+
+		patcherFix.setCreateDate(new Date());
+		patcherFix.setPatcherProductVersionId(patcherProductVersionId);
+		patcherFix.setPatcherProjectVersionId(patcherProjectVersionId);
+		patcherFix.setCommittish(committish);
+		patcherFix.setGitRemoteURL(gitRemoteURL);
+		patcherFix.setKey(
+			PatcherFixUtil.generateKey(patcherProjectVersionId, name));
+		patcherFix.setKeyVersion(PatcherFixConstants.KEY_VERSION_DEFAULT);
+		patcherFix.setLatestFix(true);
+		patcherFix.setName(StringUtil.merge(PatcherUtil.sortTokens(name)));
+		patcherFix.setObsolete(false);
+		patcherFix.setType(type);
+		patcherFix.setStatus(status);
+		patcherFix.setStatusDate(new Date());
 
 		return patcherFixPersistence.update(patcherFix);
 	}
@@ -287,6 +324,7 @@ public class PatcherFixLocalServiceImpl extends PatcherFixLocalServiceBaseImpl {
 		patcherFix.setModifiedDate(new Date());
 		patcherFix.setGitHash(gitHash);
 		patcherFix.setStatus(status);
+		patcherFix.setStatusDate(new Date());
 
 		User user = _userLocalService.getUser(userId);
 
@@ -316,6 +354,7 @@ public class PatcherFixLocalServiceImpl extends PatcherFixLocalServiceBaseImpl {
 		patcherFix.setGitHash(gitHash);
 		patcherFix.setJenkinsResults(jenkinsResults);
 		patcherFix.setStatus(status);
+		patcherFix.setStatusDate(new Date());
 
 		User user = _userLocalService.getUser(userId);
 
@@ -398,6 +437,7 @@ public class PatcherFixLocalServiceImpl extends PatcherFixLocalServiceBaseImpl {
 
 		patcherFix.setModifiedDate(new Date());
 		patcherFix.setStatus(status);
+		patcherFix.setStatusDate(new Date());
 
 		User user = _userLocalService.getUser(userId);
 

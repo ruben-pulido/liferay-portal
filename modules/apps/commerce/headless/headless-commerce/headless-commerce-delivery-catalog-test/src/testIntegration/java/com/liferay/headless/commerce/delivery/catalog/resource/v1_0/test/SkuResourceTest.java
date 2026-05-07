@@ -5,6 +5,8 @@
 
 package com.liferay.headless.commerce.delivery.catalog.resource.v1_0.test;
 
+import com.liferay.account.model.AccountEntry;
+import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
@@ -12,7 +14,8 @@ import com.liferay.commerce.currency.test.util.CommerceCurrencyTestUtil;
 import com.liferay.commerce.price.list.constants.CommercePriceListConstants;
 import com.liferay.commerce.price.list.model.CommercePriceEntry;
 import com.liferay.commerce.price.list.model.CommercePriceList;
-import com.liferay.commerce.price.list.service.CommercePriceEntryLocalServiceUtil;
+import com.liferay.commerce.price.list.service.CommercePriceEntryLocalService;
+import com.liferay.commerce.price.list.service.CommercePriceListAccountRelLocalService;
 import com.liferay.commerce.price.list.service.CommercePriceListLocalServiceUtil;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionOptionRel;
@@ -98,6 +101,7 @@ public class SkuResourceTest extends BaseSkuResourceTestCase {
 		_testGetChannelProductSkuAllowMultiplePriceEntriesInTheSamePriceList();
 		_testGetChannelProductSkuAllowMultiplePriceEntriesInTheSamePromotion();
 		_testGetChannelProductSkuWithCurrencyCode();
+		_testGetChannelProductSkuWithUnitOfMeasurePrice();
 	}
 
 	@Override
@@ -105,6 +109,7 @@ public class SkuResourceTest extends BaseSkuResourceTestCase {
 	public void testGetChannelProductSkusPage() throws Exception {
 		super.testGetChannelProductSkusPage();
 
+		_testGetChannelProductSkusPageWithPriceListAccountRel();
 		_testGetChannelProductSkusPageWithUnitOfMeasure();
 		_testGetChannelProductSkusPageWithUnitOfMeasurePrice();
 	}
@@ -357,7 +362,7 @@ public class SkuResourceTest extends BaseSkuResourceTestCase {
 		Calendar calendar = new GregorianCalendar();
 
 		CommercePriceEntry commercePriceEntry =
-			CommercePriceEntryLocalServiceUtil.addCommercePriceEntry(
+			_commercePriceEntryLocalService.addCommercePriceEntry(
 				RandomTestUtil.randomString(), cpDefinition.getCProductId(),
 				cpInstance.getCPInstanceUuid(),
 				commercePriceList.getCommercePriceListId(), true, null, null,
@@ -372,7 +377,7 @@ public class SkuResourceTest extends BaseSkuResourceTestCase {
 
 		_serviceContext.setWorkflowAction(WorkflowConstants.ACTION_SAVE_DRAFT);
 
-		CommercePriceEntryLocalServiceUtil.addCommercePriceEntry(
+		_commercePriceEntryLocalService.addCommercePriceEntry(
 			RandomTestUtil.randomString(), cpDefinition.getCProductId(),
 			cpInstance.getCPInstanceUuid(),
 			commercePriceList.getCommercePriceListId(), true, null, null, null,
@@ -424,7 +429,7 @@ public class SkuResourceTest extends BaseSkuResourceTestCase {
 
 		Calendar calendar = new GregorianCalendar();
 
-		CommercePriceEntryLocalServiceUtil.addCommercePriceEntry(
+		_commercePriceEntryLocalService.addCommercePriceEntry(
 			RandomTestUtil.randomString(), cpDefinition.getCProductId(),
 			cpInstance.getCPInstanceUuid(),
 			catalogBaseCommercePriceList.getCommercePriceListId(), true, null,
@@ -442,7 +447,7 @@ public class SkuResourceTest extends BaseSkuResourceTestCase {
 				CommercePriceListConstants.TYPE_PROMOTION, 1.0);
 
 		CommercePriceEntry commercePriceEntry =
-			CommercePriceEntryLocalServiceUtil.addCommercePriceEntry(
+			_commercePriceEntryLocalService.addCommercePriceEntry(
 				RandomTestUtil.randomString(), cpDefinition.getCProductId(),
 				cpInstance.getCPInstanceUuid(),
 				commercePriceList.getCommercePriceListId(), true, null, null,
@@ -457,7 +462,7 @@ public class SkuResourceTest extends BaseSkuResourceTestCase {
 
 		_serviceContext.setWorkflowAction(WorkflowConstants.ACTION_SAVE_DRAFT);
 
-		CommercePriceEntryLocalServiceUtil.addCommercePriceEntry(
+		_commercePriceEntryLocalService.addCommercePriceEntry(
 			RandomTestUtil.randomString(), cpDefinition.getCProductId(),
 			cpInstance.getCPInstanceUuid(),
 			commercePriceList.getCommercePriceListId(), true, null, null, null,
@@ -481,6 +486,79 @@ public class SkuResourceTest extends BaseSkuResourceTestCase {
 		Assert.assertTrue(
 			Objects.equals(
 				price.getPromoPrice(), commercePriceEntryPrice.doubleValue()));
+	}
+
+	private void _testGetChannelProductSkusPageWithPriceListAccountRel()
+		throws Exception {
+
+		CommerceCurrency commerceCurrency =
+			CommerceCurrencyTestUtil.addCommerceCurrency(
+				testCompany.getCompanyId());
+
+		CommerceCatalog commerceCatalog = CommerceTestUtil.addCommerceCatalog(
+			testGroup.getCompanyId(), testGroup.getGroupId(), _user.getUserId(),
+			commerceCurrency.getCode());
+
+		CPInstance cpInstance = CPTestUtil.addCPInstanceFromCatalog(
+			commerceCatalog.getGroupId());
+
+		CPDefinition cpDefinition = cpInstance.getCPDefinition();
+
+		Sku channelProductSku = skuResource.getChannelProductSku(
+			_commerceChannel.getCommerceChannelId(),
+			cpDefinition.getCProductId(), cpInstance.getCPInstanceId(), -1L,
+			null);
+
+		_addCPInstanceUnitOfMeasure(channelProductSku, true);
+
+		Price price = channelProductSku.getPrice();
+
+		Assert.assertTrue(
+			Objects.equals(price.getPrice(), BigDecimal.ZERO.doubleValue()));
+
+		CommercePriceList commercePriceList =
+			CommercePriceListTestUtil.addCommercePriceList(
+				commerceCatalog.getGroupId(), false,
+				CommercePriceListConstants.TYPE_PRICE_LIST, 0.0);
+
+		AccountEntry accountEntry = _accountEntryLocalService.addAccountEntry(
+			StringPool.BLANK, _user.getUserId(), 0,
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(), null,
+			RandomTestUtil.randomString() + "@liferay.com", null,
+			RandomTestUtil.randomString(), "business", 1, _serviceContext);
+
+		_commercePriceListAccountRelLocalService.addCommercePriceListAccountRel(
+			_user.getUserId(), commercePriceList.getCommercePriceListId(),
+			accountEntry.getAccountEntryId(), 0, _serviceContext);
+
+		Calendar calendar = new GregorianCalendar();
+
+		CommercePriceEntry commercePriceEntry =
+			_commercePriceEntryLocalService.addCommercePriceEntry(
+				RandomTestUtil.randomString(), cpDefinition.getCProductId(),
+				cpInstance.getCPInstanceUuid(),
+				commercePriceList.getCommercePriceListId(), true, null, null,
+				null, null, calendar.get(Calendar.MONTH),
+				calendar.get(Calendar.DAY_OF_MONTH),
+				calendar.get(Calendar.YEAR), calendar.get(Calendar.HOUR),
+				calendar.get(Calendar.MINUTE), calendar.get(Calendar.MONTH),
+				calendar.get(Calendar.DAY_OF_MONTH),
+				calendar.get(Calendar.YEAR) + 1, calendar.get(Calendar.HOUR),
+				calendar.get(Calendar.MINUTE), false, BigDecimal.TEN, false,
+				BigDecimal.TEN, StringPool.BLANK, _serviceContext);
+
+		channelProductSku = skuResource.getChannelProductSku(
+			_commerceChannel.getCommerceChannelId(),
+			cpDefinition.getCProductId(), cpInstance.getCPInstanceId(),
+			accountEntry.getAccountEntryId(), null);
+
+		price = channelProductSku.getPrice();
+
+		BigDecimal commercePriceEntryPrice = commercePriceEntry.getPrice();
+
+		Assert.assertTrue(
+			Objects.equals(
+				price.getPrice(), commercePriceEntryPrice.doubleValue()));
 	}
 
 	private void _testGetChannelProductSkusPageWithUnitOfMeasure()
@@ -671,11 +749,85 @@ public class SkuResourceTest extends BaseSkuResourceTestCase {
 			convertedPrice.doubleValue(), tierPrices[0].getPrice(), 0);
 	}
 
+	private void _testGetChannelProductSkuWithUnitOfMeasurePrice()
+		throws Exception {
+
+		CommerceCurrency commerceCurrency =
+			CommerceCurrencyTestUtil.addCommerceCurrency(
+				testCompany.getCompanyId());
+
+		CommerceCatalog commerceCatalog = CommerceTestUtil.addCommerceCatalog(
+			testGroup.getCompanyId(), testGroup.getGroupId(), _user.getUserId(),
+			commerceCurrency.getCode());
+
+		CPInstance cpInstance = CPTestUtil.addCPInstanceFromCatalog(
+			commerceCatalog.getGroupId(), BigDecimal.TEN);
+
+		String unitOfMeasureKey = RandomTestUtil.randomString();
+
+		CPTestUtil.addCPInstanceUnitOfMeasure(
+			testGroup.getGroupId(), cpInstance.getCPInstanceId(),
+			unitOfMeasureKey, BigDecimal.ONE, cpInstance.getSku());
+
+		CPDefinition cpDefinition = cpInstance.getCPDefinition();
+
+		Sku channelProductSku = skuResource.getChannelProductSku(
+			_commerceChannel.getCommerceChannelId(),
+			cpDefinition.getCProductId(), cpInstance.getCPInstanceId(), -1L,
+			null);
+
+		Price price = channelProductSku.getPrice();
+
+		Assert.assertNotNull(price.getPricingQuantityPriceFormatted());
+
+		CommercePriceList catalogBaseCommercePriceList =
+			CommercePriceListLocalServiceUtil.
+				getCatalogBaseCommercePriceListByType(
+					commerceCatalog.getGroupId(),
+					CommercePriceListConstants.TYPE_PRICE_LIST);
+
+		CommercePriceEntry commercePriceEntry =
+			_commercePriceEntryLocalService.fetchCommercePriceEntry(
+				catalogBaseCommercePriceList.getCommercePriceListId(),
+				cpInstance.getCPInstanceUuid(), unitOfMeasureKey);
+
+		commercePriceEntry.setPricingQuantity(null);
+
+		commercePriceEntry =
+			_commercePriceEntryLocalService.updateCommercePriceEntry(
+				commercePriceEntry);
+
+		channelProductSku = skuResource.getChannelProductSku(
+			_commerceChannel.getCommerceChannelId(),
+			cpDefinition.getCProductId(), cpInstance.getCPInstanceId(), -1L,
+			null);
+
+		Price updatedPrice = channelProductSku.getPrice();
+
+		Assert.assertTrue(
+			BigDecimalUtil.eq(
+				commercePriceEntry.getPrice(),
+				BigDecimal.valueOf(updatedPrice.getPrice())));
+		Assert.assertEquals(
+			price.getPricingQuantityPriceFormatted(),
+			updatedPrice.getPricingQuantityPriceFormatted());
+	}
+
+	@Inject
+	private AccountEntryLocalService _accountEntryLocalService;
+
 	@DeleteAfterTestRun
 	private CommerceChannel _commerceChannel;
 
 	@Inject
 	private CommerceCurrencyLocalService _commerceCurrencyLocalService;
+
+	@Inject
+	private CommercePriceEntryLocalService _commercePriceEntryLocalService;
+
+	@Inject
+	private CommercePriceListAccountRelLocalService
+		_commercePriceListAccountRelLocalService;
 
 	@DeleteAfterTestRun
 	private CPDefinition _cpDefinition;

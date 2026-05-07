@@ -99,6 +99,13 @@ const IndividualsDashboardCDP = lazy(() =>
 	)
 );
 
+/* Lifecycle */
+const LifecycleDashboard = lazy(() =>
+	import(
+		/* webpackChunkname: "LifecycleDashboard" */ '../../lifecycle/pages/BaseLifecycle'
+	)
+);
+
 /* Sites */
 
 const SitesDashboard = lazy(() =>
@@ -128,7 +135,7 @@ const TouchpointRoutes = lazy(() =>
 /* Assets */
 
 const NewAssetsList = lazy(() =>
-	import(/* webpackChunkName: "NewAssetsList" */ 'assets/List')
+	import(/* webpackChunkName: "NewAssetsList" */ 'assets/pages/List')
 );
 
 const AssetsList = lazy(() =>
@@ -170,16 +177,6 @@ const CommerceDashboard = lazy(() =>
 );
 
 const ROUTES = [
-	{
-		data: AccountsList,
-		path: Routes.CONTACTS_LIST_ACCOUNT
-	},
-	{
-		data: AccountProfileRoutes,
-		exact: false,
-		path: Routes.CONTACTS_ACCOUNT
-	},
-
 	{
 		data: SegmentsList,
 		path: Routes.CONTACTS_LIST_SEGMENT
@@ -301,7 +298,7 @@ export default class AppSidebarRoutes extends React.PureComponent {
 	static contextType = ChannelContext;
 
 	render() {
-		const {currentUser, groupId, LDPEnabled} = this.props;
+		const {LDPEnabled, currentUser, groupId} = this.props;
 		const {selectedChannel} = this.context;
 
 		return (
@@ -344,6 +341,31 @@ export default class AppSidebarRoutes extends React.PureComponent {
 								destructured={false}
 								exact={false}
 								path={Routes.CONTACTS_INDIVIDUALS}
+							/>
+						)}
+
+						{LDPEnabled && (
+							<BundleRouter
+								data={AccountsList}
+								exact
+								path={Routes.CONTACTS_LIST_ACCOUNT}
+							/>
+						)}
+
+						{LDPEnabled && (
+							<BundleRouter
+								data={AccountProfileRoutes}
+								exact={false}
+								path={Routes.CONTACTS_ACCOUNT}
+							/>
+						)}
+
+						{LDPEnabled && (
+							<BundleRouter
+								data={LifecycleDashboard}
+								destructured={false}
+								exact
+								path={Routes.LIFECYCLE}
 							/>
 						)}
 

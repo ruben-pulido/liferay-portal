@@ -151,6 +151,12 @@ public class StyleBookEntryServiceUtil {
 		return getService().getStyleBookEntriesCount(groupId, name);
 	}
 
+	public static StyleBookEntry getStyleBookEntry(long styleBookEntryId)
+		throws PortalException {
+
+		return getService().getStyleBookEntry(styleBookEntryId);
+	}
+
 	public static StyleBookEntry getStyleBookEntryByExternalReferenceCode(
 			String externalReferenceCode, long groupId)
 		throws PortalException {
@@ -188,30 +194,33 @@ public class StyleBookEntryServiceUtil {
 	}
 
 	public static StyleBookEntry updatePreviewFileEntryId(
-			long styleBookEntryId, long previewFileEntryId)
+			long styleBookEntryId, long previewFileEntryId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().updatePreviewFileEntryId(
-			styleBookEntryId, previewFileEntryId);
+			styleBookEntryId, previewFileEntryId, serviceContext);
 	}
 
 	public static StyleBookEntry updateStyleBookEntry(
 			long styleBookEntryId, boolean defaultStylebookEntry,
 			String frontendTokensValues, String name, String styleBookEntryKey,
-			long previewFileEntryId)
+			long previewFileEntryId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().updateStyleBookEntry(
 			styleBookEntryId, defaultStylebookEntry, frontendTokensValues, name,
-			styleBookEntryKey, previewFileEntryId);
+			styleBookEntryKey, previewFileEntryId, serviceContext);
 	}
 
 	public static StyleBookEntry updateStyleBookEntry(
-			long styleBookEntryId, String frontendTokensValues, String name)
+			long styleBookEntryId, String frontendTokensValues, String name,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().updateStyleBookEntry(
-			styleBookEntryId, frontendTokensValues, name);
+			styleBookEntryId, frontendTokensValues, name, serviceContext);
 	}
 
 	public static StyleBookEntryService getService() {
@@ -223,4 +232,4 @@ public class StyleBookEntryServiceUtil {
 			StyleBookEntryServiceUtil.class, StyleBookEntryService.class);
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:574895026
+// LIFERAY-SERVICE-BUILDER-HASH:-2127676313

@@ -27,9 +27,11 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.PortletKeys;
+import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portlet.display.template.test.util.BaseExportImportTestCase;
 import com.liferay.site.navigation.constants.SiteNavigationMenuPortletKeys;
+import com.liferay.site.navigation.menu.item.layout.constants.SiteNavigationMenuItemTypeConstants;
 import com.liferay.site.navigation.model.SiteNavigationMenu;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
@@ -228,6 +230,172 @@ public class SiteNavigationMenuExportImportTest
 		Assert.assertNull(
 			portletPreferences.getValue(
 				"siteNavigationMenuGroupExternalReferenceCode", null));
+	}
+
+	@Test
+	public void testExportImportWithDeletedSiteNavigationMenu()
+		throws Exception {
+
+		_setUpLocalStaging();
+
+		SiteNavigationMenu siteNavigationMenu =
+			SiteNavigationMenuTestUtil.addSiteNavigationMenu(_stagingGroup);
+
+		_publishAllLayouts();
+
+		Assert.assertNotNull(
+			_siteNavigationMenuLocalService.
+				fetchSiteNavigationMenuByExternalReferenceCode(
+					siteNavigationMenu.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
+
+		_siteNavigationMenuLocalService.deleteSiteNavigationMenu(
+			siteNavigationMenu.getSiteNavigationMenuId());
+
+		_publishAllLayouts();
+
+		Assert.assertNull(
+			_siteNavigationMenuLocalService.
+				fetchSiteNavigationMenuByExternalReferenceCode(
+					siteNavigationMenu.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
+	}
+
+	@Test
+	public void testExportImportWithDeletedSiteNavigationMenuItem()
+		throws Exception {
+
+		_setUpLocalStaging();
+
+		Layout stagingLayout1 = LayoutTestUtil.addTypePortletLayout(
+			_stagingGroup);
+		Layout stagingLayout2 = LayoutTestUtil.addTypePortletLayout(
+			_stagingGroup);
+
+		_setUpSiteNavigationMenu(_stagingGroup);
+
+		SiteNavigationMenuItem layoutItem1 =
+			SiteNavigationMenuItemTestUtil.addLayoutTypeSiteNavigationMenuItem(
+				_siteNavigationMenu, stagingLayout1, 0L);
+
+		SiteNavigationMenuItem layoutItem2 =
+			SiteNavigationMenuItemTestUtil.addLayoutTypeSiteNavigationMenuItem(
+				_siteNavigationMenu, stagingLayout2, 0L);
+
+		SiteNavigationMenuItem urlItem =
+			SiteNavigationMenuItemTestUtil.addSiteNavigationMenuItem(
+				_siteNavigationMenu, SiteNavigationMenuItemTypeConstants.URL,
+				UnicodePropertiesBuilder.put(
+					"name", "Liferay"
+				).put(
+					"url", "https://www.liferay.com/"
+				).put(
+					"useNewTab", Boolean.FALSE.toString()
+				).buildString());
+
+		_publishAllLayouts();
+
+		Assert.assertNotNull(
+			_siteNavigationMenuItemLocalService.
+				fetchSiteNavigationMenuItemByExternalReferenceCode(
+					layoutItem1.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
+		Assert.assertNotNull(
+			_siteNavigationMenuItemLocalService.
+				fetchSiteNavigationMenuItemByExternalReferenceCode(
+					layoutItem2.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
+		Assert.assertNotNull(
+			_siteNavigationMenuItemLocalService.
+				fetchSiteNavigationMenuItemByExternalReferenceCode(
+					urlItem.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
+
+		_siteNavigationMenuItemLocalService.deleteSiteNavigationMenuItem(
+			layoutItem1.getSiteNavigationMenuItemId());
+
+		Map<String, String[]> parameterMap =
+			ExportImportConfigurationParameterMapFactoryUtil.
+				buildFullPublishParameterMap();
+
+		parameterMap.put(
+			PortletDataHandlerKeys.DELETIONS,
+			new String[] {Boolean.TRUE.toString()});
+
+		StagingUtil.publishLayouts(
+			TestPropsValues.getUserId(), _stagingGroup.getGroupId(),
+			_liveGroup.getGroupId(), false, parameterMap);
+
+		Assert.assertNull(
+			_siteNavigationMenuItemLocalService.
+				fetchSiteNavigationMenuItemByExternalReferenceCode(
+					layoutItem1.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
+		Assert.assertNotNull(
+			_siteNavigationMenuItemLocalService.
+				fetchSiteNavigationMenuItemByExternalReferenceCode(
+					layoutItem2.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
+		Assert.assertNotNull(
+			_siteNavigationMenuItemLocalService.
+				fetchSiteNavigationMenuItemByExternalReferenceCode(
+					urlItem.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
+	}
+
+	@Test
+	public void testExportImportWithLayoutDeletedFromLive() throws Exception {
+		_setUpLocalStaging();
+
+		Layout stagingLayout1 = LayoutTestUtil.addTypePortletLayout(
+			_stagingGroup);
+		Layout stagingLayout2 = LayoutTestUtil.addTypePortletLayout(
+			_stagingGroup);
+		Layout stagingLayout3 = LayoutTestUtil.addTypePortletLayout(
+			_stagingGroup);
+
+		_setUpSiteNavigationMenu(_stagingGroup);
+
+		SiteNavigationMenuItem layoutItem1 =
+			SiteNavigationMenuItemTestUtil.addLayoutTypeSiteNavigationMenuItem(
+				_siteNavigationMenu, stagingLayout1, 0L);
+
+		SiteNavigationMenuItem layoutItem2 =
+			SiteNavigationMenuItemTestUtil.addLayoutTypeSiteNavigationMenuItem(
+				_siteNavigationMenu, stagingLayout2, 0L);
+
+		SiteNavigationMenuItem layoutItem3 =
+			SiteNavigationMenuItemTestUtil.addLayoutTypeSiteNavigationMenuItem(
+				_siteNavigationMenu, stagingLayout3, 0L);
+
+		_publishAllLayouts();
+
+		Layout liveLayout3 = _layoutLocalService.getLayoutByUuidAndGroupId(
+			stagingLayout3.getUuid(), _liveGroup.getGroupId(),
+			stagingLayout3.isPrivateLayout());
+
+		_layoutLocalService.deleteLayout(liveLayout3);
+
+		_publishLayouts(
+			new long[] {
+				stagingLayout1.getLayoutId(), stagingLayout2.getLayoutId()
+			});
+
+		Assert.assertNotNull(
+			_siteNavigationMenuItemLocalService.
+				fetchSiteNavigationMenuItemByExternalReferenceCode(
+					layoutItem1.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
+		Assert.assertNotNull(
+			_siteNavigationMenuItemLocalService.
+				fetchSiteNavigationMenuItemByExternalReferenceCode(
+					layoutItem2.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
+		Assert.assertNull(
+			_siteNavigationMenuItemLocalService.
+				fetchSiteNavigationMenuItemByExternalReferenceCode(
+					layoutItem3.getExternalReferenceCode(),
+					_liveGroup.getGroupId()));
 	}
 
 	@Test

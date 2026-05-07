@@ -5,18 +5,21 @@
 
 package com.liferay.portal.search.elasticsearch8.internal.logging;
 
-import com.liferay.portal.kernel.search.generic.MatchAllQuery;
-import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.search.MatchAllQuery;
 import com.liferay.portal.search.elasticsearch8.internal.ElasticsearchIndexSearcher;
 import com.liferay.portal.search.elasticsearch8.internal.indexing.LiferayElasticsearchIndexingFixtureFactory;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.search.CountSearchRequestExecutor;
 import com.liferay.portal.search.elasticsearch8.internal.search.engine.adapter.search.SearchSearchRequestExecutor;
-import com.liferay.portal.search.test.rule.logging.ExpectedLogMethodTestRule;
 import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
-import com.liferay.portal.search.test.util.logging.ExpectedLog;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
+import java.util.List;
+
+import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,72 +33,110 @@ public class ElasticsearchIndexSearcherLoggingTest
 
 	@ClassRule
 	@Rule
-	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			ExpectedLogMethodTestRule.INSTANCE, LiferayUnitTestRule.INSTANCE);
+	public static final LiferayUnitTestRule liferayUnitTestRule =
+		LiferayUnitTestRule.INSTANCE;
 
-	@ExpectedLog(
-		expectedClass = CountSearchRequestExecutor.class,
-		expectedLevel = ExpectedLog.Level.FINE,
-		expectedLog = "The search engine processed"
-	)
 	@Test
 	public void testCountSearchRequestExecutorLogsViaIndexer() {
-		searchCount(createSearchContext(), new MatchAllQuery());
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				CountSearchRequestExecutor.class.getName(),
+				LoggerTestUtil.DEBUG)) {
+
+			searchCount(createSearchContext(), new MatchAllQuery());
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertEquals(logEntries.toString(), 3, logEntries.size());
+
+			_assertLogEntry(
+				logEntries.get(0), "Stack trace for", LoggerTestUtil.INFO);
+			_assertLogEntry(
+				logEntries.get(1), "Search request string for",
+				LoggerTestUtil.DEBUG);
+			_assertLogEntry(
+				logEntries.get(2), "The search engine processed the request in",
+				LoggerTestUtil.DEBUG);
+		}
 	}
 
-	@ExpectedLog(
-		expectedClass = ElasticsearchIndexSearcher.class,
-		expectedLevel = ExpectedLog.Level.INFO,
-		expectedLog = "The search engine processed"
-	)
 	@Test
 	public void testIndexerSearchCountLogs() {
-		searchCount(createSearchContext(), new MatchAllQuery());
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				ElasticsearchIndexSearcher.class.getName(),
+				LoggerTestUtil.INFO)) {
+
+			searchCount(createSearchContext(), new MatchAllQuery());
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertEquals(logEntries.toString(), 2, logEntries.size());
+
+			_assertLogEntry(
+				logEntries.get(0), "The search engine processed",
+				LoggerTestUtil.INFO);
+			_assertLogEntry(
+				logEntries.get(1), "Searching took", LoggerTestUtil.INFO);
+		}
 	}
 
-	@ExpectedLog(
-		expectedClass = ElasticsearchIndexSearcher.class,
-		expectedLevel = ExpectedLog.Level.INFO,
-		expectedLog = "The search engine processed"
-	)
 	@Test
 	public void testIndexerSearchLogs() {
-		search(createSearchContext());
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				ElasticsearchIndexSearcher.class.getName(),
+				LoggerTestUtil.INFO)) {
+
+			search(createSearchContext());
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertEquals(logEntries.toString(), 2, logEntries.size());
+
+			_assertLogEntry(
+				logEntries.get(0), "The search engine processed",
+				LoggerTestUtil.INFO);
+			_assertLogEntry(
+				logEntries.get(1), "Searching took", LoggerTestUtil.INFO);
+		}
 	}
 
-	@ExpectedLog(
-		expectedClass = SearchSearchRequestExecutor.class,
-		expectedLevel = ExpectedLog.Level.FINE,
-		expectedLog = "The search engine processed the request in"
-	)
 	@Test
-	public void testSearchSearchRequestExecutorLogsExecutionTime() {
-		search(createSearchContext());
-	}
+	public void testSearchSearchRequestExecutorLogs() {
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				SearchSearchRequestExecutor.class.getName(),
+				LoggerTestUtil.DEBUG)) {
 
-	@ExpectedLog(
-		expectedClass = SearchSearchRequestExecutor.class,
-		expectedLevel = ExpectedLog.Level.FINE,
-		expectedLog = "Search request string for"
-	)
-	@Test
-	public void testSearchSearchRequestExecutorLogsRequestString() {
-		search(createSearchContext());
-	}
+			search(createSearchContext());
 
-	@ExpectedLog(
-		expectedClass = SearchSearchRequestExecutor.class,
-		expectedLevel = ExpectedLog.Level.INFO, expectedLog = "Stack trace for"
-	)
-	@Test
-	public void testSearchSearchRequestExecutorLogsStackTraceInfo() {
-		search(createSearchContext());
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertEquals(logEntries.toString(), 3, logEntries.size());
+
+			_assertLogEntry(
+				logEntries.get(0), "Stack trace for", LoggerTestUtil.INFO);
+			_assertLogEntry(
+				logEntries.get(1), "Search request string for",
+				LoggerTestUtil.DEBUG);
+			_assertLogEntry(
+				logEntries.get(2), "The search engine processed the request in",
+				LoggerTestUtil.DEBUG);
+		}
 	}
 
 	@Override
 	protected IndexingFixture createIndexingFixture() {
 		return LiferayElasticsearchIndexingFixtureFactory.getInstance();
+	}
+
+	private void _assertLogEntry(
+		LogEntry logEntry, String expectedMessage, String logLevel) {
+
+		Assert.assertEquals(logLevel, logEntry.getPriority());
+
+		String message = logEntry.getMessage();
+
+		Assert.assertTrue(
+			message + " does not start with " + expectedMessage,
+			message.startsWith(expectedMessage));
 	}
 
 }

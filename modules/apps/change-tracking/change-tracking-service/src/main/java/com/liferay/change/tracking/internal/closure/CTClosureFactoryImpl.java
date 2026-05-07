@@ -29,6 +29,9 @@ import com.liferay.portal.dao.orm.common.SQLTransformer;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.PortalCacheHelperUtil;
 import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
+import com.liferay.portal.kernel.dao.db.DB;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
+import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.dao.orm.ORMException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -41,6 +44,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.AbstractMap;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
@@ -51,7 +55,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -123,6 +126,19 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 	protected void activate() {
 		_ctClosuresPortalCache = PortalCacheHelperUtil.getPortalCache(
 			PortalCacheManagerNames.SINGLE_VM, _CT_CLOSURES_PORTAL_CACHE_NAME);
+
+		DB db = DBManagerUtil.getDB();
+
+		DBType dbType = db.getDBType();
+
+		_oracle = dbType == DBType.ORACLE;
+
+		if (dbType == DBType.SQLSERVER) {
+			_sqlParameterLimit = _SQL_SERVER_PARAMETER_LIMIT;
+		}
+		else {
+			_sqlParameterLimit = _SQL_PLACEHOLDER_LIMIT;
+		}
 	}
 
 	private Map<Node, Collection<Node>> _buildClosureMap(
@@ -162,10 +178,10 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 
 		Map<Node, Collection<Edge>> edgeMap = new LinkedHashMap<>();
 
-		Queue<Map.Entry<Long, List<Long>>> queue = new LinkedList<>(
+		ArrayDeque<Map.Entry<Long, List<Long>>> queue = new ArrayDeque<>(
 			map.entrySet());
 
-		while (queue.size() > 0) {
+		while (!queue.isEmpty()) {
 			Map.Entry<Long, List<Long>> queueEntry = queue.poll();
 
 			long childClassNameId = queueEntry.getKey();
@@ -216,7 +232,7 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 				int i = 0;
 
 				while (i < childPrimaryKeysArray.length) {
-					int batchSize = _SQL_PLACEHOLDER_LIMIT;
+					int batchSize = _sqlParameterLimit;
 
 					if ((i + batchSize) > childPrimaryKeysArray.length) {
 						batchSize = childPrimaryKeysArray.length - i;
@@ -259,7 +275,7 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 		int i = 0;
 
 		while (i < childPrimaryKeys.length) {
-			int batchSize = _SQL_SERVER_PARAMETER_LIMIT;
+			int batchSize = _sqlParameterLimit;
 
 			if ((i + batchSize) > childPrimaryKeys.length) {
 				batchSize = childPrimaryKeys.length - i;
@@ -358,6 +374,10 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 
 	private Predicate _getChildPKColumnPredicate(
 		Column<?, Long> childPKColumn, Long[] childPrimaryKeysArray) {
+
+		if (!_oracle) {
+			return childPKColumn.in(childPrimaryKeysArray);
+		}
 
 		Predicate predicate = null;
 
@@ -527,6 +547,9 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 
 	@Reference
 	private CTEntryLocalService _ctEntryLocalService;
+
+	private boolean _oracle;
+	private int _sqlParameterLimit;
 
 	@Reference
 	private TableReferenceDefinitionManager _tableReferenceDefinitionManager;

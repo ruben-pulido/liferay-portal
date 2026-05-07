@@ -61,14 +61,16 @@ export function create({
 	groupId,
 	includeAnonymousUsers = false,
 	name,
-	segmentType
+	segmentType,
+	sequential = false
 }) {
 	const data = {
 		channelId,
 		filter: criteriaString,
 		includeAnonymousUsers,
 		name,
-		segmentType
+		segmentType,
+		sequential
 	};
 
 	return sendRequest({
@@ -85,14 +87,16 @@ export function update({
 	id,
 	includeAnonymousUsers = false,
 	name,
-	segmentType
+	segmentType,
+	sequential = false
 }) {
 	const data = {
 		channelId,
 		filter: criteriaString,
 		includeAnonymousUsers,
 		name,
-		segmentType
+		segmentType,
+		sequential
 	};
 
 	return sendRequest({
@@ -258,12 +262,8 @@ export function updateSegmentActivation({
 	segmentActivation,
 	segmentId
 }) {
-	const {
-		frequencyType,
-		scheduleEndDate,
-		scheduleStartDate,
-		scheduleType
-	} = segmentActivation;
+	const {frequencyType, scheduleEndDate, scheduleStartDate, scheduleType} =
+		segmentActivation;
 
 	const data = {
 		frequencyType,

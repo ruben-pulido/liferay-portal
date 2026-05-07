@@ -13,13 +13,10 @@ import com.liferay.object.model.impl.ObjectStateTransitionModelImpl;
 import com.liferay.object.service.persistence.ObjectStateTransitionPersistence;
 import com.liferay.object.service.persistence.ObjectStateTransitionUtil;
 import com.liferay.object.service.persistence.impl.constants.ObjectPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
@@ -29,6 +26,8 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -46,7 +45,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -68,7 +66,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = ObjectStateTransitionPersistence.class)
 public class ObjectStateTransitionPersistenceImpl
-	extends BasePersistenceImpl<ObjectStateTransition>
+	extends BasePersistenceImpl
+		<ObjectStateTransition, NoSuchObjectStateTransitionException>
 	implements ObjectStateTransitionPersistence {
 
 	/*
@@ -85,12 +84,11 @@ public class ObjectStateTransitionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByUuid;
 	private FinderPath _finderPathWithoutPaginationFindByUuid;
 	private FinderPath _finderPathCountByUuid;
+	private CollectionPersistenceFinder<ObjectStateTransition>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns all the object state transitions where uuid = &#63;.
@@ -163,106 +161,9 @@ public class ObjectStateTransitionPersistenceImpl
 		OrderByComparator<ObjectStateTransition> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid;
-				finderArgs = new Object[] {uuid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid;
-			finderArgs = new Object[] {uuid, start, end, orderByComparator};
-		}
-
-		List<ObjectStateTransition> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectStateTransition>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectStateTransition objectStateTransition : list) {
-					if (!uuid.equals(objectStateTransition.getUuid())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTSTATETRANSITION_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectStateTransitionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				list = (List<ObjectStateTransition>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -286,16 +187,9 @@ public class ObjectStateTransitionPersistenceImpl
 			return objectStateTransition;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchObjectStateTransitionException(sb.toString());
+		throw new NoSuchObjectStateTransitionException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -310,14 +204,8 @@ public class ObjectStateTransitionPersistenceImpl
 		String uuid,
 		OrderByComparator<ObjectStateTransition> orderByComparator) {
 
-		List<ObjectStateTransition> list = findByUuid(
-			uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -327,11 +215,8 @@ public class ObjectStateTransitionPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (ObjectStateTransition objectStateTransition :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(objectStateTransition);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -342,69 +227,15 @@ public class ObjectStateTransitionPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid;
-
-		Object[] finderArgs = new Object[] {uuid};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_OBJECTSTATETRANSITION_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"objectStateTransition.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(objectStateTransition.uuid IS NULL OR objectStateTransition.uuid = '')";
 
 	private FinderPath _finderPathWithPaginationFindByUuid_C;
 	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
 	private FinderPath _finderPathCountByUuid_C;
+	private CollectionPersistenceFinder<ObjectStateTransition>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns all the object state transitions where uuid = &#63; and companyId = &#63;.
@@ -485,114 +316,9 @@ public class ObjectStateTransitionPersistenceImpl
 		OrderByComparator<ObjectStateTransition> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_C;
-				finderArgs = new Object[] {uuid, companyId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_C;
-			finderArgs = new Object[] {
-				uuid, companyId, start, end, orderByComparator
-			};
-		}
-
-		List<ObjectStateTransition> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectStateTransition>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectStateTransition objectStateTransition : list) {
-					if (!uuid.equals(objectStateTransition.getUuid()) ||
-						(companyId != objectStateTransition.getCompanyId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTSTATETRANSITION_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectStateTransitionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				list = (List<ObjectStateTransition>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -617,19 +343,9 @@ public class ObjectStateTransitionPersistenceImpl
 			return objectStateTransition;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchObjectStateTransitionException(sb.toString());
+		throw new NoSuchObjectStateTransitionException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -645,14 +361,8 @@ public class ObjectStateTransitionPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<ObjectStateTransition> orderByComparator) {
 
-		List<ObjectStateTransition> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -663,13 +373,8 @@ public class ObjectStateTransitionPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (ObjectStateTransition objectStateTransition :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(objectStateTransition);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -681,76 +386,15 @@ public class ObjectStateTransitionPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_C;
-
-		Object[] finderArgs = new Object[] {uuid, companyId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_OBJECTSTATETRANSITION_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"objectStateTransition.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(objectStateTransition.uuid IS NULL OR objectStateTransition.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"objectStateTransition.companyId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByObjectStateFlowId;
 	private FinderPath _finderPathWithoutPaginationFindByObjectStateFlowId;
 	private FinderPath _finderPathCountByObjectStateFlowId;
+	private CollectionPersistenceFinder<ObjectStateTransition>
+		_collectionPersistenceFinderByObjectStateFlowId;
 
 	/**
 	 * Returns all the object state transitions where objectStateFlowId = &#63;.
@@ -827,98 +471,9 @@ public class ObjectStateTransitionPersistenceImpl
 		OrderByComparator<ObjectStateTransition> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByObjectStateFlowId;
-				finderArgs = new Object[] {objectStateFlowId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByObjectStateFlowId;
-			finderArgs = new Object[] {
-				objectStateFlowId, start, end, orderByComparator
-			};
-		}
-
-		List<ObjectStateTransition> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectStateTransition>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectStateTransition objectStateTransition : list) {
-					if (objectStateFlowId !=
-							objectStateTransition.getObjectStateFlowId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTSTATETRANSITION_WHERE);
-
-			sb.append(_FINDER_COLUMN_OBJECTSTATEFLOWID_OBJECTSTATEFLOWID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectStateTransitionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(objectStateFlowId);
-
-				list = (List<ObjectStateTransition>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByObjectStateFlowId.find(
+			finderCache, new Object[] {objectStateFlowId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -943,16 +498,11 @@ public class ObjectStateTransitionPersistenceImpl
 			return objectStateTransition;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("objectStateFlowId=");
-		sb.append(objectStateFlowId);
-
-		sb.append("}");
-
-		throw new NoSuchObjectStateTransitionException(sb.toString());
+		throw new NoSuchObjectStateTransitionException(
+			_collectionPersistenceFinderByObjectStateFlowId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {objectStateFlowId}));
 	}
 
 	/**
@@ -967,14 +517,8 @@ public class ObjectStateTransitionPersistenceImpl
 		long objectStateFlowId,
 		OrderByComparator<ObjectStateTransition> orderByComparator) {
 
-		List<ObjectStateTransition> list = findByObjectStateFlowId(
-			objectStateFlowId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByObjectStateFlowId.fetchFirst(
+			finderCache, new Object[] {objectStateFlowId}, orderByComparator);
 	}
 
 	/**
@@ -984,13 +528,8 @@ public class ObjectStateTransitionPersistenceImpl
 	 */
 	@Override
 	public void removeByObjectStateFlowId(long objectStateFlowId) {
-		for (ObjectStateTransition objectStateTransition :
-				findByObjectStateFlowId(
-					objectStateFlowId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(objectStateTransition);
-		}
+		_collectionPersistenceFinderByObjectStateFlowId.remove(
+			finderCache, new Object[] {objectStateFlowId});
 	}
 
 	/**
@@ -1001,54 +540,15 @@ public class ObjectStateTransitionPersistenceImpl
 	 */
 	@Override
 	public int countByObjectStateFlowId(long objectStateFlowId) {
-		FinderPath finderPath = _finderPathCountByObjectStateFlowId;
-
-		Object[] finderArgs = new Object[] {objectStateFlowId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_OBJECTSTATETRANSITION_WHERE);
-
-			sb.append(_FINDER_COLUMN_OBJECTSTATEFLOWID_OBJECTSTATEFLOWID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(objectStateFlowId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByObjectStateFlowId.count(
+			finderCache, new Object[] {objectStateFlowId});
 	}
-
-	private static final String
-		_FINDER_COLUMN_OBJECTSTATEFLOWID_OBJECTSTATEFLOWID_2 =
-			"objectStateTransition.objectStateFlowId = ?";
 
 	private FinderPath _finderPathWithPaginationFindBySourceObjectStateId;
 	private FinderPath _finderPathWithoutPaginationFindBySourceObjectStateId;
 	private FinderPath _finderPathCountBySourceObjectStateId;
+	private CollectionPersistenceFinder<ObjectStateTransition>
+		_collectionPersistenceFinderBySourceObjectStateId;
 
 	/**
 	 * Returns all the object state transitions where sourceObjectStateId = &#63;.
@@ -1125,98 +625,9 @@ public class ObjectStateTransitionPersistenceImpl
 		OrderByComparator<ObjectStateTransition> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindBySourceObjectStateId;
-				finderArgs = new Object[] {sourceObjectStateId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindBySourceObjectStateId;
-			finderArgs = new Object[] {
-				sourceObjectStateId, start, end, orderByComparator
-			};
-		}
-
-		List<ObjectStateTransition> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectStateTransition>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectStateTransition objectStateTransition : list) {
-					if (sourceObjectStateId !=
-							objectStateTransition.getSourceObjectStateId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTSTATETRANSITION_WHERE);
-
-			sb.append(_FINDER_COLUMN_SOURCEOBJECTSTATEID_SOURCEOBJECTSTATEID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectStateTransitionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(sourceObjectStateId);
-
-				list = (List<ObjectStateTransition>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderBySourceObjectStateId.find(
+			finderCache, new Object[] {sourceObjectStateId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1241,16 +652,11 @@ public class ObjectStateTransitionPersistenceImpl
 			return objectStateTransition;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("sourceObjectStateId=");
-		sb.append(sourceObjectStateId);
-
-		sb.append("}");
-
-		throw new NoSuchObjectStateTransitionException(sb.toString());
+		throw new NoSuchObjectStateTransitionException(
+			_collectionPersistenceFinderBySourceObjectStateId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {sourceObjectStateId}));
 	}
 
 	/**
@@ -1265,14 +671,8 @@ public class ObjectStateTransitionPersistenceImpl
 		long sourceObjectStateId,
 		OrderByComparator<ObjectStateTransition> orderByComparator) {
 
-		List<ObjectStateTransition> list = findBySourceObjectStateId(
-			sourceObjectStateId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderBySourceObjectStateId.fetchFirst(
+			finderCache, new Object[] {sourceObjectStateId}, orderByComparator);
 	}
 
 	/**
@@ -1282,13 +682,8 @@ public class ObjectStateTransitionPersistenceImpl
 	 */
 	@Override
 	public void removeBySourceObjectStateId(long sourceObjectStateId) {
-		for (ObjectStateTransition objectStateTransition :
-				findBySourceObjectStateId(
-					sourceObjectStateId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(objectStateTransition);
-		}
+		_collectionPersistenceFinderBySourceObjectStateId.remove(
+			finderCache, new Object[] {sourceObjectStateId});
 	}
 
 	/**
@@ -1299,54 +694,15 @@ public class ObjectStateTransitionPersistenceImpl
 	 */
 	@Override
 	public int countBySourceObjectStateId(long sourceObjectStateId) {
-		FinderPath finderPath = _finderPathCountBySourceObjectStateId;
-
-		Object[] finderArgs = new Object[] {sourceObjectStateId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_OBJECTSTATETRANSITION_WHERE);
-
-			sb.append(_FINDER_COLUMN_SOURCEOBJECTSTATEID_SOURCEOBJECTSTATEID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(sourceObjectStateId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderBySourceObjectStateId.count(
+			finderCache, new Object[] {sourceObjectStateId});
 	}
-
-	private static final String
-		_FINDER_COLUMN_SOURCEOBJECTSTATEID_SOURCEOBJECTSTATEID_2 =
-			"objectStateTransition.sourceObjectStateId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByTargetObjectStateId;
 	private FinderPath _finderPathWithoutPaginationFindByTargetObjectStateId;
 	private FinderPath _finderPathCountByTargetObjectStateId;
+	private CollectionPersistenceFinder<ObjectStateTransition>
+		_collectionPersistenceFinderByTargetObjectStateId;
 
 	/**
 	 * Returns all the object state transitions where targetObjectStateId = &#63;.
@@ -1423,98 +779,9 @@ public class ObjectStateTransitionPersistenceImpl
 		OrderByComparator<ObjectStateTransition> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByTargetObjectStateId;
-				finderArgs = new Object[] {targetObjectStateId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByTargetObjectStateId;
-			finderArgs = new Object[] {
-				targetObjectStateId, start, end, orderByComparator
-			};
-		}
-
-		List<ObjectStateTransition> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectStateTransition>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectStateTransition objectStateTransition : list) {
-					if (targetObjectStateId !=
-							objectStateTransition.getTargetObjectStateId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTSTATETRANSITION_WHERE);
-
-			sb.append(_FINDER_COLUMN_TARGETOBJECTSTATEID_TARGETOBJECTSTATEID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectStateTransitionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(targetObjectStateId);
-
-				list = (List<ObjectStateTransition>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByTargetObjectStateId.find(
+			finderCache, new Object[] {targetObjectStateId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1539,16 +806,11 @@ public class ObjectStateTransitionPersistenceImpl
 			return objectStateTransition;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("targetObjectStateId=");
-		sb.append(targetObjectStateId);
-
-		sb.append("}");
-
-		throw new NoSuchObjectStateTransitionException(sb.toString());
+		throw new NoSuchObjectStateTransitionException(
+			_collectionPersistenceFinderByTargetObjectStateId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {targetObjectStateId}));
 	}
 
 	/**
@@ -1563,14 +825,8 @@ public class ObjectStateTransitionPersistenceImpl
 		long targetObjectStateId,
 		OrderByComparator<ObjectStateTransition> orderByComparator) {
 
-		List<ObjectStateTransition> list = findByTargetObjectStateId(
-			targetObjectStateId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByTargetObjectStateId.fetchFirst(
+			finderCache, new Object[] {targetObjectStateId}, orderByComparator);
 	}
 
 	/**
@@ -1580,13 +836,8 @@ public class ObjectStateTransitionPersistenceImpl
 	 */
 	@Override
 	public void removeByTargetObjectStateId(long targetObjectStateId) {
-		for (ObjectStateTransition objectStateTransition :
-				findByTargetObjectStateId(
-					targetObjectStateId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(objectStateTransition);
-		}
+		_collectionPersistenceFinderByTargetObjectStateId.remove(
+			finderCache, new Object[] {targetObjectStateId});
 	}
 
 	/**
@@ -1597,50 +848,9 @@ public class ObjectStateTransitionPersistenceImpl
 	 */
 	@Override
 	public int countByTargetObjectStateId(long targetObjectStateId) {
-		FinderPath finderPath = _finderPathCountByTargetObjectStateId;
-
-		Object[] finderArgs = new Object[] {targetObjectStateId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_OBJECTSTATETRANSITION_WHERE);
-
-			sb.append(_FINDER_COLUMN_TARGETOBJECTSTATEID_TARGETOBJECTSTATEID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(targetObjectStateId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByTargetObjectStateId.count(
+			finderCache, new Object[] {targetObjectStateId});
 	}
-
-	private static final String
-		_FINDER_COLUMN_TARGETOBJECTSTATEID_TARGETOBJECTSTATEID_2 =
-			"objectStateTransition.targetObjectStateId = ?";
 
 	public ObjectStateTransitionPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -1701,53 +911,6 @@ public class ObjectStateTransitionPersistenceImpl
 	}
 
 	/**
-	 * Clears the cache for all object state transitions.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(ObjectStateTransitionImpl.class);
-
-		finderCache.clearCache(ObjectStateTransitionImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the object state transition.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(ObjectStateTransition objectStateTransition) {
-		entityCache.removeResult(
-			ObjectStateTransitionImpl.class, objectStateTransition);
-	}
-
-	@Override
-	public void clearCache(List<ObjectStateTransition> objectStateTransitions) {
-		for (ObjectStateTransition objectStateTransition :
-				objectStateTransitions) {
-
-			entityCache.removeResult(
-				ObjectStateTransitionImpl.class, objectStateTransition);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(ObjectStateTransitionImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				ObjectStateTransitionImpl.class, primaryKey);
-		}
-	}
-
-	/**
 	 * Creates a new object state transition with the primary key. Does not add the object state transition to the database.
 	 *
 	 * @param objectStateTransitionId the primary key for the new object state transition
@@ -1782,48 +945,6 @@ public class ObjectStateTransitionPersistenceImpl
 		throws NoSuchObjectStateTransitionException {
 
 		return remove((Serializable)objectStateTransitionId);
-	}
-
-	/**
-	 * Removes the object state transition with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the object state transition
-	 * @return the object state transition that was removed
-	 * @throws NoSuchObjectStateTransitionException if a object state transition with the primary key could not be found
-	 */
-	@Override
-	public ObjectStateTransition remove(Serializable primaryKey)
-		throws NoSuchObjectStateTransitionException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			ObjectStateTransition objectStateTransition =
-				(ObjectStateTransition)session.get(
-					ObjectStateTransitionImpl.class, primaryKey);
-
-			if (objectStateTransition == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchObjectStateTransitionException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(objectStateTransition);
-		}
-		catch (NoSuchObjectStateTransitionException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1952,32 +1073,6 @@ public class ObjectStateTransitionPersistenceImpl
 	}
 
 	/**
-	 * Returns the object state transition with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the object state transition
-	 * @return the object state transition
-	 * @throws NoSuchObjectStateTransitionException if a object state transition with the primary key could not be found
-	 */
-	@Override
-	public ObjectStateTransition findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchObjectStateTransitionException {
-
-		ObjectStateTransition objectStateTransition = fetchByPrimaryKey(
-			primaryKey);
-
-		if (objectStateTransition == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchObjectStateTransitionException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return objectStateTransition;
-	}
-
-	/**
 	 * Returns the object state transition with the primary key or throws a <code>NoSuchObjectStateTransitionException</code> if it could not be found.
 	 *
 	 * @param objectStateTransitionId the primary key of the object state transition
@@ -2002,188 +1097,6 @@ public class ObjectStateTransitionPersistenceImpl
 		long objectStateTransitionId) {
 
 		return fetchByPrimaryKey((Serializable)objectStateTransitionId);
-	}
-
-	/**
-	 * Returns all the object state transitions.
-	 *
-	 * @return the object state transitions
-	 */
-	@Override
-	public List<ObjectStateTransition> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the object state transitions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateTransitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of object state transitions
-	 * @param end the upper bound of the range of object state transitions (not inclusive)
-	 * @return the range of object state transitions
-	 */
-	@Override
-	public List<ObjectStateTransition> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the object state transitions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateTransitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of object state transitions
-	 * @param end the upper bound of the range of object state transitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of object state transitions
-	 */
-	@Override
-	public List<ObjectStateTransition> findAll(
-		int start, int end,
-		OrderByComparator<ObjectStateTransition> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the object state transitions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateTransitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of object state transitions
-	 * @param end the upper bound of the range of object state transitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of object state transitions
-	 */
-	@Override
-	public List<ObjectStateTransition> findAll(
-		int start, int end,
-		OrderByComparator<ObjectStateTransition> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<ObjectStateTransition> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectStateTransition>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_OBJECTSTATETRANSITION);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_OBJECTSTATETRANSITION;
-
-				sql = sql.concat(ObjectStateTransitionModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<ObjectStateTransition>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the object state transitions from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (ObjectStateTransition objectStateTransition : findAll()) {
-			remove(objectStateTransition);
-		}
-	}
-
-	/**
-	 * Returns the number of object state transitions.
-	 *
-	 * @return the number of object state transitions
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_OBJECTSTATETRANSITION);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -2219,18 +1132,6 @@ public class ObjectStateTransitionPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathWithPaginationFindByUuid = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
 			new String[] {
@@ -2248,6 +1149,16 @@ public class ObjectStateTransitionPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
 			new String[] {String.class.getName()}, new String[] {"uuid_"},
 			false);
+
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByUuid,
+			_finderPathWithoutPaginationFindByUuid, _finderPathCountByUuid,
+			_SQL_SELECT_OBJECTSTATETRANSITION_WHERE,
+			_SQL_COUNT_OBJECTSTATETRANSITION_WHERE,
+			ObjectStateTransitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"objectStateTransition.", "uuid", FinderColumn.Type.STRING, "=",
+				true, true, ObjectStateTransition::getUuid));
 
 		_finderPathWithPaginationFindByUuid_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
@@ -2268,6 +1179,23 @@ public class ObjectStateTransitionPersistenceImpl
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "companyId"}, false);
 
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByUuid_C,
+				_finderPathWithoutPaginationFindByUuid_C,
+				_finderPathCountByUuid_C,
+				_SQL_SELECT_OBJECTSTATETRANSITION_WHERE,
+				_SQL_COUNT_OBJECTSTATETRANSITION_WHERE,
+				ObjectStateTransitionModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"objectStateTransition.", "uuid", FinderColumn.Type.STRING,
+					"=", true, false, ObjectStateTransition::getUuid),
+				new FinderColumn<>(
+					"objectStateTransition.", "companyId",
+					FinderColumn.Type.LONG, "=", true, true,
+					ObjectStateTransition::getCompanyId));
+
 		_finderPathWithPaginationFindByObjectStateFlowId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByObjectStateFlowId",
 			new String[] {
@@ -2285,6 +1213,20 @@ public class ObjectStateTransitionPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByObjectStateFlowId", new String[] {Long.class.getName()},
 			new String[] {"objectStateFlowId"}, false);
+
+		_collectionPersistenceFinderByObjectStateFlowId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByObjectStateFlowId,
+				_finderPathWithoutPaginationFindByObjectStateFlowId,
+				_finderPathCountByObjectStateFlowId,
+				_SQL_SELECT_OBJECTSTATETRANSITION_WHERE,
+				_SQL_COUNT_OBJECTSTATETRANSITION_WHERE,
+				ObjectStateTransitionModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"objectStateTransition.", "objectStateFlowId",
+					FinderColumn.Type.LONG, "=", true, true,
+					ObjectStateTransition::getObjectStateFlowId));
 
 		_finderPathWithPaginationFindBySourceObjectStateId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findBySourceObjectStateId",
@@ -2304,6 +1246,20 @@ public class ObjectStateTransitionPersistenceImpl
 			"countBySourceObjectStateId", new String[] {Long.class.getName()},
 			new String[] {"sourceObjectStateId"}, false);
 
+		_collectionPersistenceFinderBySourceObjectStateId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindBySourceObjectStateId,
+				_finderPathWithoutPaginationFindBySourceObjectStateId,
+				_finderPathCountBySourceObjectStateId,
+				_SQL_SELECT_OBJECTSTATETRANSITION_WHERE,
+				_SQL_COUNT_OBJECTSTATETRANSITION_WHERE,
+				ObjectStateTransitionModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"objectStateTransition.", "sourceObjectStateId",
+					FinderColumn.Type.LONG, "=", true, true,
+					ObjectStateTransition::getSourceObjectStateId));
+
 		_finderPathWithPaginationFindByTargetObjectStateId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByTargetObjectStateId",
 			new String[] {
@@ -2321,6 +1277,20 @@ public class ObjectStateTransitionPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByTargetObjectStateId", new String[] {Long.class.getName()},
 			new String[] {"targetObjectStateId"}, false);
+
+		_collectionPersistenceFinderByTargetObjectStateId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByTargetObjectStateId,
+				_finderPathWithoutPaginationFindByTargetObjectStateId,
+				_finderPathCountByTargetObjectStateId,
+				_SQL_SELECT_OBJECTSTATETRANSITION_WHERE,
+				_SQL_COUNT_OBJECTSTATETRANSITION_WHERE,
+				ObjectStateTransitionModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"objectStateTransition.", "targetObjectStateId",
+					FinderColumn.Type.LONG, "=", true, true,
+					ObjectStateTransition::getTargetObjectStateId));
 
 		ObjectStateTransitionUtil.setPersistence(this);
 	}
@@ -2364,23 +1334,17 @@ public class ObjectStateTransitionPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		ObjectStateTransitionModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_OBJECTSTATETRANSITION =
 		"SELECT objectStateTransition FROM ObjectStateTransition objectStateTransition";
 
 	private static final String _SQL_SELECT_OBJECTSTATETRANSITION_WHERE =
 		"SELECT objectStateTransition FROM ObjectStateTransition objectStateTransition WHERE ";
 
-	private static final String _SQL_COUNT_OBJECTSTATETRANSITION =
-		"SELECT COUNT(objectStateTransition) FROM ObjectStateTransition objectStateTransition";
-
 	private static final String _SQL_COUNT_OBJECTSTATETRANSITION_WHERE =
 		"SELECT COUNT(objectStateTransition) FROM ObjectStateTransition objectStateTransition WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"objectStateTransition.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No ObjectStateTransition exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No ObjectStateTransition exists with the key {";
@@ -2397,4 +1361,4 @@ public class ObjectStateTransitionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1965486327
+// LIFERAY-SERVICE-BUILDER-HASH:1648834097

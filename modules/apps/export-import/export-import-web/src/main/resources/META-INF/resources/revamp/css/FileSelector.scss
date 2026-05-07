@@ -1,0 +1,15 @@
+@import 'atlas-variables';
+
+.dropzone {
+	background-color: $light;
+	outline: 2px dashed $secondary-l2;
+
+	transition:
+		background-color 0.2s ease-in-out,
+		outline-color 0.2s ease-in-out;
+
+	&-drag-active {
+		background-color: $primary-l3;
+		outline-color: $primary;
+	}
+}

@@ -6,14 +6,11 @@
 package com.liferay.portal.tools.service.builder.test.service.persistence.impl;
 
 import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -26,13 +23,15 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.tools.service.builder.test.exception.DuplicateIndexEntryExternalReferenceCodeException;
@@ -51,9 +50,7 @@ import java.lang.reflect.InvocationHandler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -70,7 +67,8 @@ import java.util.Set;
  * @generated
  */
 public class IndexEntryPersistenceImpl
-	extends BasePersistenceImpl<IndexEntry> implements IndexEntryPersistence {
+	extends BasePersistenceImpl<IndexEntry, NoSuchIndexEntryException>
+	implements IndexEntryPersistence {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -86,12 +84,11 @@ public class IndexEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByOwnerId;
 	private FinderPath _finderPathWithoutPaginationFindByOwnerId;
 	private FinderPath _finderPathCountByOwnerId;
+	private CollectionPersistenceFinder<IndexEntry>
+		_collectionPersistenceFinderByOwnerId;
 
 	/**
 	 * Returns all the index entries where ownerId = &#63;.
@@ -167,95 +164,9 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByOwnerId;
-					finderArgs = new Object[] {ownerId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByOwnerId;
-				finderArgs = new Object[] {
-					ownerId, start, end, orderByComparator
-				};
-			}
-
-			List<IndexEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<IndexEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (IndexEntry indexEntry : list) {
-						if (ownerId != indexEntry.getOwnerId()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_OWNERID_OWNERID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(IndexEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerId);
-
-					list = (List<IndexEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByOwnerId.find(
+				finderCache, new Object[] {ownerId}, start, end,
+				orderByComparator, useFinderCache);
 		}
 	}
 
@@ -279,16 +190,9 @@ public class IndexEntryPersistenceImpl
 			return indexEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("ownerId=");
-		sb.append(ownerId);
-
-		sb.append("}");
-
-		throw new NoSuchIndexEntryException(sb.toString());
+		throw new NoSuchIndexEntryException(
+			_collectionPersistenceFinderByOwnerId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ownerId}));
 	}
 
 	/**
@@ -302,13 +206,8 @@ public class IndexEntryPersistenceImpl
 	public IndexEntry fetchByOwnerId_First(
 		long ownerId, OrderByComparator<IndexEntry> orderByComparator) {
 
-		List<IndexEntry> list = findByOwnerId(ownerId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByOwnerId.fetchFirst(
+			finderCache, new Object[] {ownerId}, orderByComparator);
 	}
 
 	/**
@@ -318,12 +217,8 @@ public class IndexEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByOwnerId(long ownerId) {
-		for (IndexEntry indexEntry :
-				findByOwnerId(
-					ownerId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(indexEntry);
-		}
+		_collectionPersistenceFinderByOwnerId.remove(
+			finderCache, new Object[] {ownerId});
 	}
 
 	/**
@@ -338,55 +233,16 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			FinderPath finderPath = _finderPathCountByOwnerId;
-
-			Object[] finderArgs = new Object[] {ownerId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_OWNERID_OWNERID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByOwnerId.count(
+				finderCache, new Object[] {ownerId});
 		}
 	}
-
-	private static final String _FINDER_COLUMN_OWNERID_OWNERID_2 =
-		"indexEntry.ownerId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByPlid;
 	private FinderPath _finderPathWithoutPaginationFindByPlid;
 	private FinderPath _finderPathCountByPlid;
+	private CollectionPersistenceFinder<IndexEntry>
+		_collectionPersistenceFinderByPlid;
 
 	/**
 	 * Returns all the index entries where plid = &#63;.
@@ -461,93 +317,9 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByPlid;
-					finderArgs = new Object[] {plid};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByPlid;
-				finderArgs = new Object[] {plid, start, end, orderByComparator};
-			}
-
-			List<IndexEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<IndexEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (IndexEntry indexEntry : list) {
-						if (plid != indexEntry.getPlid()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_PLID_PLID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(IndexEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(plid);
-
-					list = (List<IndexEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByPlid.find(
+				finderCache, new Object[] {plid}, start, end, orderByComparator,
+				useFinderCache);
 		}
 	}
 
@@ -570,16 +342,9 @@ public class IndexEntryPersistenceImpl
 			return indexEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("plid=");
-		sb.append(plid);
-
-		sb.append("}");
-
-		throw new NoSuchIndexEntryException(sb.toString());
+		throw new NoSuchIndexEntryException(
+			_collectionPersistenceFinderByPlid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {plid}));
 	}
 
 	/**
@@ -593,13 +358,8 @@ public class IndexEntryPersistenceImpl
 	public IndexEntry fetchByPlid_First(
 		long plid, OrderByComparator<IndexEntry> orderByComparator) {
 
-		List<IndexEntry> list = findByPlid(plid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByPlid.fetchFirst(
+			finderCache, new Object[] {plid}, orderByComparator);
 	}
 
 	/**
@@ -609,11 +369,8 @@ public class IndexEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByPlid(long plid) {
-		for (IndexEntry indexEntry :
-				findByPlid(plid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(indexEntry);
-		}
+		_collectionPersistenceFinderByPlid.remove(
+			finderCache, new Object[] {plid});
 	}
 
 	/**
@@ -628,55 +385,16 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			FinderPath finderPath = _finderPathCountByPlid;
-
-			Object[] finderArgs = new Object[] {plid};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_PLID_PLID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(plid);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByPlid.count(
+				finderCache, new Object[] {plid});
 		}
 	}
-
-	private static final String _FINDER_COLUMN_PLID_PLID_2 =
-		"indexEntry.plid = ?";
 
 	private FinderPath _finderPathWithPaginationFindByPortletId;
 	private FinderPath _finderPathWithoutPaginationFindByPortletId;
 	private FinderPath _finderPathCountByPortletId;
+	private CollectionPersistenceFinder<IndexEntry>
+		_collectionPersistenceFinderByPortletId;
 
 	/**
 	 * Returns all the index entries where portletId = &#63;.
@@ -754,108 +472,9 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByPortletId;
-					finderArgs = new Object[] {portletId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByPortletId;
-				finderArgs = new Object[] {
-					portletId, start, end, orderByComparator
-				};
-			}
-
-			List<IndexEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<IndexEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (IndexEntry indexEntry : list) {
-						if (!portletId.equals(indexEntry.getPortletId())) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_PORTLETID_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_PORTLETID_PORTLETID_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(IndexEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					list = (List<IndexEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByPortletId.find(
+				finderCache, new Object[] {portletId}, start, end,
+				orderByComparator, useFinderCache);
 		}
 	}
 
@@ -879,16 +498,9 @@ public class IndexEntryPersistenceImpl
 			return indexEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("portletId=");
-		sb.append(portletId);
-
-		sb.append("}");
-
-		throw new NoSuchIndexEntryException(sb.toString());
+		throw new NoSuchIndexEntryException(
+			_collectionPersistenceFinderByPortletId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {portletId}));
 	}
 
 	/**
@@ -902,14 +514,8 @@ public class IndexEntryPersistenceImpl
 	public IndexEntry fetchByPortletId_First(
 		String portletId, OrderByComparator<IndexEntry> orderByComparator) {
 
-		List<IndexEntry> list = findByPortletId(
-			portletId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByPortletId.fetchFirst(
+			finderCache, new Object[] {portletId}, orderByComparator);
 	}
 
 	/**
@@ -919,12 +525,8 @@ public class IndexEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByPortletId(String portletId) {
-		for (IndexEntry indexEntry :
-				findByPortletId(
-					portletId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(indexEntry);
-		}
+		_collectionPersistenceFinderByPortletId.remove(
+			finderCache, new Object[] {portletId});
 	}
 
 	/**
@@ -939,71 +541,16 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = _finderPathCountByPortletId;
-
-			Object[] finderArgs = new Object[] {portletId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_INDEXENTRY_WHERE);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_PORTLETID_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_PORTLETID_PORTLETID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByPortletId.count(
+				finderCache, new Object[] {portletId});
 		}
 	}
-
-	private static final String _FINDER_COLUMN_PORTLETID_PORTLETID_2 =
-		"indexEntry.portletId = ?";
-
-	private static final String _FINDER_COLUMN_PORTLETID_PORTLETID_3 =
-		"(indexEntry.portletId IS NULL OR indexEntry.portletId = '')";
 
 	private FinderPath _finderPathWithPaginationFindByO_P;
 	private FinderPath _finderPathWithoutPaginationFindByO_P;
 	private FinderPath _finderPathCountByO_P;
+	private CollectionPersistenceFinder<IndexEntry>
+		_collectionPersistenceFinderByO_P;
 
 	/**
 	 * Returns all the index entries where ownerType = &#63; and portletId = &#63;.
@@ -1086,114 +633,9 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByO_P;
-					finderArgs = new Object[] {ownerType, portletId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByO_P;
-				finderArgs = new Object[] {
-					ownerType, portletId, start, end, orderByComparator
-				};
-			}
-
-			List<IndexEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<IndexEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (IndexEntry indexEntry : list) {
-						if ((ownerType != indexEntry.getOwnerType()) ||
-							!portletId.equals(indexEntry.getPortletId())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_O_P_OWNERTYPE_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_O_P_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_O_P_PORTLETID_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(IndexEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerType);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					list = (List<IndexEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByO_P.find(
+				finderCache, new Object[] {ownerType, portletId}, start, end,
+				orderByComparator, useFinderCache);
 		}
 	}
 
@@ -1219,19 +661,9 @@ public class IndexEntryPersistenceImpl
 			return indexEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("ownerType=");
-		sb.append(ownerType);
-
-		sb.append(", portletId=");
-		sb.append(portletId);
-
-		sb.append("}");
-
-		throw new NoSuchIndexEntryException(sb.toString());
+		throw new NoSuchIndexEntryException(
+			_collectionPersistenceFinderByO_P.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ownerType, portletId}));
 	}
 
 	/**
@@ -1247,14 +679,9 @@ public class IndexEntryPersistenceImpl
 		int ownerType, String portletId,
 		OrderByComparator<IndexEntry> orderByComparator) {
 
-		List<IndexEntry> list = findByO_P(
-			ownerType, portletId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByO_P.fetchFirst(
+			finderCache, new Object[] {ownerType, portletId},
+			orderByComparator);
 	}
 
 	/**
@@ -1265,13 +692,8 @@ public class IndexEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByO_P(int ownerType, String portletId) {
-		for (IndexEntry indexEntry :
-				findByO_P(
-					ownerType, portletId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(indexEntry);
-		}
+		_collectionPersistenceFinderByO_P.remove(
+			finderCache, new Object[] {ownerType, portletId});
 	}
 
 	/**
@@ -1287,78 +709,16 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = _finderPathCountByO_P;
-
-			Object[] finderArgs = new Object[] {ownerType, portletId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_O_P_OWNERTYPE_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_O_P_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_O_P_PORTLETID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerType);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByO_P.count(
+				finderCache, new Object[] {ownerType, portletId});
 		}
 	}
-
-	private static final String _FINDER_COLUMN_O_P_OWNERTYPE_2 =
-		"indexEntry.ownerType = ? AND ";
-
-	private static final String _FINDER_COLUMN_O_P_PORTLETID_2 =
-		"indexEntry.portletId = ?";
-
-	private static final String _FINDER_COLUMN_O_P_PORTLETID_3 =
-		"(indexEntry.portletId IS NULL OR indexEntry.portletId = '')";
 
 	private FinderPath _finderPathWithPaginationFindByP_P;
 	private FinderPath _finderPathWithoutPaginationFindByP_P;
 	private FinderPath _finderPathCountByP_P;
+	private CollectionPersistenceFinder<IndexEntry>
+		_collectionPersistenceFinderByP_P;
 
 	/**
 	 * Returns all the index entries where plid = &#63; and portletId = &#63;.
@@ -1440,114 +800,9 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByP_P;
-					finderArgs = new Object[] {plid, portletId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByP_P;
-				finderArgs = new Object[] {
-					plid, portletId, start, end, orderByComparator
-				};
-			}
-
-			List<IndexEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<IndexEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (IndexEntry indexEntry : list) {
-						if ((plid != indexEntry.getPlid()) ||
-							!portletId.equals(indexEntry.getPortletId())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_P_P_PLID_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_P_P_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_P_P_PORTLETID_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(IndexEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(plid);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					list = (List<IndexEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByP_P.find(
+				finderCache, new Object[] {plid, portletId}, start, end,
+				orderByComparator, useFinderCache);
 		}
 	}
 
@@ -1573,19 +828,9 @@ public class IndexEntryPersistenceImpl
 			return indexEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("plid=");
-		sb.append(plid);
-
-		sb.append(", portletId=");
-		sb.append(portletId);
-
-		sb.append("}");
-
-		throw new NoSuchIndexEntryException(sb.toString());
+		throw new NoSuchIndexEntryException(
+			_collectionPersistenceFinderByP_P.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {plid, portletId}));
 	}
 
 	/**
@@ -1601,14 +846,8 @@ public class IndexEntryPersistenceImpl
 		long plid, String portletId,
 		OrderByComparator<IndexEntry> orderByComparator) {
 
-		List<IndexEntry> list = findByP_P(
-			plid, portletId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByP_P.fetchFirst(
+			finderCache, new Object[] {plid, portletId}, orderByComparator);
 	}
 
 	/**
@@ -1619,13 +858,8 @@ public class IndexEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByP_P(long plid, String portletId) {
-		for (IndexEntry indexEntry :
-				findByP_P(
-					plid, portletId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(indexEntry);
-		}
+		_collectionPersistenceFinderByP_P.remove(
+			finderCache, new Object[] {plid, portletId});
 	}
 
 	/**
@@ -1641,78 +875,16 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = _finderPathCountByP_P;
-
-			Object[] finderArgs = new Object[] {plid, portletId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_P_P_PLID_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_P_P_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_P_P_PORTLETID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(plid);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByP_P.count(
+				finderCache, new Object[] {plid, portletId});
 		}
 	}
-
-	private static final String _FINDER_COLUMN_P_P_PLID_2 =
-		"indexEntry.plid = ? AND ";
-
-	private static final String _FINDER_COLUMN_P_P_PORTLETID_2 =
-		"indexEntry.portletId = ?";
-
-	private static final String _FINDER_COLUMN_P_P_PORTLETID_3 =
-		"(indexEntry.portletId IS NULL OR indexEntry.portletId = '')";
 
 	private FinderPath _finderPathWithPaginationFindByO_O_P;
 	private FinderPath _finderPathWithoutPaginationFindByO_O_P;
 	private FinderPath _finderPathCountByO_O_P;
+	private CollectionPersistenceFinder<IndexEntry>
+		_collectionPersistenceFinderByO_O_P;
 
 	/**
 	 * Returns all the index entries where ownerId = &#63; and ownerType = &#63; and plid = &#63;.
@@ -1802,106 +974,9 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByO_O_P;
-					finderArgs = new Object[] {ownerId, ownerType, plid};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByO_O_P;
-				finderArgs = new Object[] {
-					ownerId, ownerType, plid, start, end, orderByComparator
-				};
-			}
-
-			List<IndexEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<IndexEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (IndexEntry indexEntry : list) {
-						if ((ownerId != indexEntry.getOwnerId()) ||
-							(ownerType != indexEntry.getOwnerType()) ||
-							(plid != indexEntry.getPlid())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						5 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(5);
-				}
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_O_O_P_OWNERID_2);
-
-				sb.append(_FINDER_COLUMN_O_O_P_OWNERTYPE_2);
-
-				sb.append(_FINDER_COLUMN_O_O_P_PLID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(IndexEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerId);
-
-					queryPos.add(ownerType);
-
-					queryPos.add(plid);
-
-					list = (List<IndexEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByO_O_P.find(
+				finderCache, new Object[] {ownerId, ownerType, plid}, start,
+				end, orderByComparator, useFinderCache);
 		}
 	}
 
@@ -1928,22 +1003,10 @@ public class IndexEntryPersistenceImpl
 			return indexEntry;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("ownerId=");
-		sb.append(ownerId);
-
-		sb.append(", ownerType=");
-		sb.append(ownerType);
-
-		sb.append(", plid=");
-		sb.append(plid);
-
-		sb.append("}");
-
-		throw new NoSuchIndexEntryException(sb.toString());
+		throw new NoSuchIndexEntryException(
+			_collectionPersistenceFinderByO_O_P.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {ownerId, ownerType, plid}));
 	}
 
 	/**
@@ -1960,14 +1023,9 @@ public class IndexEntryPersistenceImpl
 		long ownerId, int ownerType, long plid,
 		OrderByComparator<IndexEntry> orderByComparator) {
 
-		List<IndexEntry> list = findByO_O_P(
-			ownerId, ownerType, plid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByO_O_P.fetchFirst(
+			finderCache, new Object[] {ownerId, ownerType, plid},
+			orderByComparator);
 	}
 
 	/**
@@ -1979,13 +1037,8 @@ public class IndexEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByO_O_P(long ownerId, int ownerType, long plid) {
-		for (IndexEntry indexEntry :
-				findByO_O_P(
-					ownerId, ownerType, plid, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(indexEntry);
-		}
+		_collectionPersistenceFinderByO_O_P.remove(
+			finderCache, new Object[] {ownerId, ownerType, plid});
 	}
 
 	/**
@@ -2002,69 +1055,16 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			FinderPath finderPath = _finderPathCountByO_O_P;
-
-			Object[] finderArgs = new Object[] {ownerId, ownerType, plid};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_COUNT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_O_O_P_OWNERID_2);
-
-				sb.append(_FINDER_COLUMN_O_O_P_OWNERTYPE_2);
-
-				sb.append(_FINDER_COLUMN_O_O_P_PLID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerId);
-
-					queryPos.add(ownerType);
-
-					queryPos.add(plid);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByO_O_P.count(
+				finderCache, new Object[] {ownerId, ownerType, plid});
 		}
 	}
-
-	private static final String _FINDER_COLUMN_O_O_P_OWNERID_2 =
-		"indexEntry.ownerId = ? AND ";
-
-	private static final String _FINDER_COLUMN_O_O_P_OWNERTYPE_2 =
-		"indexEntry.ownerType = ? AND ";
-
-	private static final String _FINDER_COLUMN_O_O_P_PLID_2 =
-		"indexEntry.plid = ?";
 
 	private FinderPath _finderPathWithPaginationFindByO_O_PI;
 	private FinderPath _finderPathWithoutPaginationFindByO_O_PI;
 	private FinderPath _finderPathCountByO_O_PI;
+	private CollectionPersistenceFinder<IndexEntry>
+		_collectionPersistenceFinderByO_O_PI;
 
 	/**
 	 * Returns all the index entries where ownerId = &#63; and ownerType = &#63; and portletId = &#63;.
@@ -2154,119 +1154,9 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByO_O_PI;
-					finderArgs = new Object[] {ownerId, ownerType, portletId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByO_O_PI;
-				finderArgs = new Object[] {
-					ownerId, ownerType, portletId, start, end, orderByComparator
-				};
-			}
-
-			List<IndexEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<IndexEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (IndexEntry indexEntry : list) {
-						if ((ownerId != indexEntry.getOwnerId()) ||
-							(ownerType != indexEntry.getOwnerType()) ||
-							!portletId.equals(indexEntry.getPortletId())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						5 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(5);
-				}
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_O_O_PI_OWNERID_2);
-
-				sb.append(_FINDER_COLUMN_O_O_PI_OWNERTYPE_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_O_O_PI_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_O_O_PI_PORTLETID_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(IndexEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerId);
-
-					queryPos.add(ownerType);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					list = (List<IndexEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByO_O_PI.find(
+				finderCache, new Object[] {ownerId, ownerType, portletId},
+				start, end, orderByComparator, useFinderCache);
 		}
 	}
 
@@ -2293,22 +1183,10 @@ public class IndexEntryPersistenceImpl
 			return indexEntry;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("ownerId=");
-		sb.append(ownerId);
-
-		sb.append(", ownerType=");
-		sb.append(ownerType);
-
-		sb.append(", portletId=");
-		sb.append(portletId);
-
-		sb.append("}");
-
-		throw new NoSuchIndexEntryException(sb.toString());
+		throw new NoSuchIndexEntryException(
+			_collectionPersistenceFinderByO_O_PI.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {ownerId, ownerType, portletId}));
 	}
 
 	/**
@@ -2325,14 +1203,9 @@ public class IndexEntryPersistenceImpl
 		long ownerId, int ownerType, String portletId,
 		OrderByComparator<IndexEntry> orderByComparator) {
 
-		List<IndexEntry> list = findByO_O_PI(
-			ownerId, ownerType, portletId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByO_O_PI.fetchFirst(
+			finderCache, new Object[] {ownerId, ownerType, portletId},
+			orderByComparator);
 	}
 
 	/**
@@ -2344,13 +1217,8 @@ public class IndexEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByO_O_PI(long ownerId, int ownerType, String portletId) {
-		for (IndexEntry indexEntry :
-				findByO_O_PI(
-					ownerId, ownerType, portletId, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(indexEntry);
-		}
+		_collectionPersistenceFinderByO_O_PI.remove(
+			finderCache, new Object[] {ownerId, ownerType, portletId});
 	}
 
 	/**
@@ -2367,85 +1235,16 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = _finderPathCountByO_O_PI;
-
-			Object[] finderArgs = new Object[] {ownerId, ownerType, portletId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_COUNT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_O_O_PI_OWNERID_2);
-
-				sb.append(_FINDER_COLUMN_O_O_PI_OWNERTYPE_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_O_O_PI_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_O_O_PI_PORTLETID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerId);
-
-					queryPos.add(ownerType);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByO_O_PI.count(
+				finderCache, new Object[] {ownerId, ownerType, portletId});
 		}
 	}
-
-	private static final String _FINDER_COLUMN_O_O_PI_OWNERID_2 =
-		"indexEntry.ownerId = ? AND ";
-
-	private static final String _FINDER_COLUMN_O_O_PI_OWNERTYPE_2 =
-		"indexEntry.ownerType = ? AND ";
-
-	private static final String _FINDER_COLUMN_O_O_PI_PORTLETID_2 =
-		"indexEntry.portletId = ?";
-
-	private static final String _FINDER_COLUMN_O_O_PI_PORTLETID_3 =
-		"(indexEntry.portletId IS NULL OR indexEntry.portletId = '')";
 
 	private FinderPath _finderPathWithPaginationFindByO_P_P;
 	private FinderPath _finderPathWithoutPaginationFindByO_P_P;
 	private FinderPath _finderPathCountByO_P_P;
+	private CollectionPersistenceFinder<IndexEntry>
+		_collectionPersistenceFinderByO_P_P;
 
 	/**
 	 * Returns all the index entries where ownerType = &#63; and plid = &#63; and portletId = &#63;.
@@ -2535,119 +1334,9 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByO_P_P;
-					finderArgs = new Object[] {ownerType, plid, portletId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByO_P_P;
-				finderArgs = new Object[] {
-					ownerType, plid, portletId, start, end, orderByComparator
-				};
-			}
-
-			List<IndexEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<IndexEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (IndexEntry indexEntry : list) {
-						if ((ownerType != indexEntry.getOwnerType()) ||
-							(plid != indexEntry.getPlid()) ||
-							!portletId.equals(indexEntry.getPortletId())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						5 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(5);
-				}
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_O_P_P_OWNERTYPE_2);
-
-				sb.append(_FINDER_COLUMN_O_P_P_PLID_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_O_P_P_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_O_P_P_PORTLETID_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(IndexEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerType);
-
-					queryPos.add(plid);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					list = (List<IndexEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByO_P_P.find(
+				finderCache, new Object[] {ownerType, plid, portletId}, start,
+				end, orderByComparator, useFinderCache);
 		}
 	}
 
@@ -2674,22 +1363,10 @@ public class IndexEntryPersistenceImpl
 			return indexEntry;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("ownerType=");
-		sb.append(ownerType);
-
-		sb.append(", plid=");
-		sb.append(plid);
-
-		sb.append(", portletId=");
-		sb.append(portletId);
-
-		sb.append("}");
-
-		throw new NoSuchIndexEntryException(sb.toString());
+		throw new NoSuchIndexEntryException(
+			_collectionPersistenceFinderByO_P_P.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {ownerType, plid, portletId}));
 	}
 
 	/**
@@ -2706,14 +1383,9 @@ public class IndexEntryPersistenceImpl
 		int ownerType, long plid, String portletId,
 		OrderByComparator<IndexEntry> orderByComparator) {
 
-		List<IndexEntry> list = findByO_P_P(
-			ownerType, plid, portletId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByO_P_P.fetchFirst(
+			finderCache, new Object[] {ownerType, plid, portletId},
+			orderByComparator);
 	}
 
 	/**
@@ -2725,13 +1397,8 @@ public class IndexEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByO_P_P(int ownerType, long plid, String portletId) {
-		for (IndexEntry indexEntry :
-				findByO_P_P(
-					ownerType, plid, portletId, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(indexEntry);
-		}
+		_collectionPersistenceFinderByO_P_P.remove(
+			finderCache, new Object[] {ownerType, plid, portletId});
 	}
 
 	/**
@@ -2748,84 +1415,15 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = _finderPathCountByO_P_P;
-
-			Object[] finderArgs = new Object[] {ownerType, plid, portletId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_COUNT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_O_P_P_OWNERTYPE_2);
-
-				sb.append(_FINDER_COLUMN_O_P_P_PLID_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_O_P_P_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_O_P_P_PORTLETID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerType);
-
-					queryPos.add(plid);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByO_P_P.count(
+				finderCache, new Object[] {ownerType, plid, portletId});
 		}
 	}
 
-	private static final String _FINDER_COLUMN_O_P_P_OWNERTYPE_2 =
-		"indexEntry.ownerType = ? AND ";
-
-	private static final String _FINDER_COLUMN_O_P_P_PLID_2 =
-		"indexEntry.plid = ? AND ";
-
-	private static final String _FINDER_COLUMN_O_P_P_PORTLETID_2 =
-		"indexEntry.portletId = ?";
-
-	private static final String _FINDER_COLUMN_O_P_P_PORTLETID_3 =
-		"(indexEntry.portletId IS NULL OR indexEntry.portletId = '')";
-
 	private FinderPath _finderPathWithPaginationFindByC_O_O_LikeP;
 	private FinderPath _finderPathWithPaginationCountByC_O_O_LikeP;
+	private CollectionPersistenceFinder<IndexEntry>
+		_collectionPersistenceFinderByC_O_O_LikeP;
 
 	/**
 	 * Returns all the index entries where companyId = &#63; and ownerId = &#63; and ownerType = &#63; and portletId LIKE &#63;.
@@ -2922,117 +1520,10 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			finderPath = _finderPathWithPaginationFindByC_O_O_LikeP;
-			finderArgs = new Object[] {
-				companyId, ownerId, ownerType, portletId, start, end,
-				orderByComparator
-			};
-
-			List<IndexEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<IndexEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (IndexEntry indexEntry : list) {
-						if ((companyId != indexEntry.getCompanyId()) ||
-							(ownerId != indexEntry.getOwnerId()) ||
-							(ownerType != indexEntry.getOwnerType()) ||
-							!StringUtil.wildcardMatches(
-								indexEntry.getPortletId(), portletId, '_', '%',
-								'\\', true)) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						6 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(6);
-				}
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_C_O_O_LIKEP_COMPANYID_2);
-
-				sb.append(_FINDER_COLUMN_C_O_O_LIKEP_OWNERID_2);
-
-				sb.append(_FINDER_COLUMN_C_O_O_LIKEP_OWNERTYPE_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_C_O_O_LIKEP_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_C_O_O_LIKEP_PORTLETID_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(IndexEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(companyId);
-
-					queryPos.add(ownerId);
-
-					queryPos.add(ownerType);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					list = (List<IndexEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByC_O_O_LikeP.find(
+				finderCache,
+				new Object[] {companyId, ownerId, ownerType, portletId}, start,
+				end, orderByComparator, useFinderCache);
 		}
 	}
 
@@ -3060,25 +1551,10 @@ public class IndexEntryPersistenceImpl
 			return indexEntry;
 		}
 
-		StringBundler sb = new StringBundler(10);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append(", ownerId=");
-		sb.append(ownerId);
-
-		sb.append(", ownerType=");
-		sb.append(ownerType);
-
-		sb.append(", portletIdLIKE");
-		sb.append(portletId);
-
-		sb.append("}");
-
-		throw new NoSuchIndexEntryException(sb.toString());
+		throw new NoSuchIndexEntryException(
+			_collectionPersistenceFinderByC_O_O_LikeP.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {companyId, ownerId, ownerType, portletId}));
 	}
 
 	/**
@@ -3096,14 +1572,10 @@ public class IndexEntryPersistenceImpl
 		long companyId, long ownerId, int ownerType, String portletId,
 		OrderByComparator<IndexEntry> orderByComparator) {
 
-		List<IndexEntry> list = findByC_O_O_LikeP(
-			companyId, ownerId, ownerType, portletId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByC_O_O_LikeP.fetchFirst(
+			finderCache,
+			new Object[] {companyId, ownerId, ownerType, portletId},
+			orderByComparator);
 	}
 
 	/**
@@ -3118,13 +1590,9 @@ public class IndexEntryPersistenceImpl
 	public void removeByC_O_O_LikeP(
 		long companyId, long ownerId, int ownerType, String portletId) {
 
-		for (IndexEntry indexEntry :
-				findByC_O_O_LikeP(
-					companyId, ownerId, ownerType, portletId, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(indexEntry);
-		}
+		_collectionPersistenceFinderByC_O_O_LikeP.remove(
+			finderCache,
+			new Object[] {companyId, ownerId, ownerType, portletId});
 	}
 
 	/**
@@ -3144,92 +1612,15 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			FinderPath finderPath = _finderPathWithPaginationCountByC_O_O_LikeP;
-
-			Object[] finderArgs = new Object[] {
-				companyId, ownerId, ownerType, portletId
-			};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(5);
-
-				sb.append(_SQL_COUNT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_C_O_O_LIKEP_COMPANYID_2);
-
-				sb.append(_FINDER_COLUMN_C_O_O_LIKEP_OWNERID_2);
-
-				sb.append(_FINDER_COLUMN_C_O_O_LIKEP_OWNERTYPE_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_C_O_O_LIKEP_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_C_O_O_LIKEP_PORTLETID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(companyId);
-
-					queryPos.add(ownerId);
-
-					queryPos.add(ownerType);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByC_O_O_LikeP.count(
+				finderCache,
+				new Object[] {companyId, ownerId, ownerType, portletId});
 		}
 	}
 
-	private static final String _FINDER_COLUMN_C_O_O_LIKEP_COMPANYID_2 =
-		"indexEntry.companyId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_O_O_LIKEP_OWNERID_2 =
-		"indexEntry.ownerId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_O_O_LIKEP_OWNERTYPE_2 =
-		"indexEntry.ownerType = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_O_O_LIKEP_PORTLETID_2 =
-		"indexEntry.portletId LIKE ?";
-
-	private static final String _FINDER_COLUMN_C_O_O_LIKEP_PORTLETID_3 =
-		"(indexEntry.portletId IS NULL OR indexEntry.portletId LIKE '')";
-
 	private FinderPath _finderPathFetchByO_O_P_P;
+	private UniquePersistenceFinder<IndexEntry>
+		_uniquePersistenceFinderByO_O_P_P;
 
 	/**
 	 * Returns the index entry where ownerId = &#63; and ownerType = &#63; and plid = &#63; and portletId = &#63; or throws a <code>NoSuchIndexEntryException</code> if it could not be found.
@@ -3250,29 +1641,16 @@ public class IndexEntryPersistenceImpl
 			ownerId, ownerType, plid, portletId);
 
 		if (indexEntry == null) {
-			StringBundler sb = new StringBundler(10);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("ownerId=");
-			sb.append(ownerId);
-
-			sb.append(", ownerType=");
-			sb.append(ownerType);
-
-			sb.append(", plid=");
-			sb.append(plid);
-
-			sb.append(", portletId=");
-			sb.append(portletId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByO_O_P_P.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {ownerId, ownerType, plid, portletId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchIndexEntryException(sb.toString());
+			throw new NoSuchIndexEntryException(message);
 		}
 
 		return indexEntry;
@@ -3313,106 +1691,9 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			portletId = Objects.toString(portletId, "");
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {ownerId, ownerType, plid, portletId};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByO_O_P_P, finderArgs, this);
-			}
-
-			if (result instanceof IndexEntry) {
-				IndexEntry indexEntry = (IndexEntry)result;
-
-				if ((ownerId != indexEntry.getOwnerId()) ||
-					(ownerType != indexEntry.getOwnerType()) ||
-					(plid != indexEntry.getPlid()) ||
-					!Objects.equals(portletId, indexEntry.getPortletId())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(6);
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_O_O_P_P_OWNERID_2);
-
-				sb.append(_FINDER_COLUMN_O_O_P_P_OWNERTYPE_2);
-
-				sb.append(_FINDER_COLUMN_O_O_P_P_PLID_2);
-
-				boolean bindPortletId = false;
-
-				if (portletId.isEmpty()) {
-					sb.append(_FINDER_COLUMN_O_O_P_P_PORTLETID_3);
-				}
-				else {
-					bindPortletId = true;
-
-					sb.append(_FINDER_COLUMN_O_O_P_P_PORTLETID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(ownerId);
-
-					queryPos.add(ownerType);
-
-					queryPos.add(plid);
-
-					if (bindPortletId) {
-						queryPos.add(portletId);
-					}
-
-					List<IndexEntry> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByO_O_P_P, finderArgs, list);
-						}
-					}
-					else {
-						IndexEntry indexEntry = list.get(0);
-
-						result = indexEntry;
-
-						cacheResult(indexEntry);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (IndexEntry)result;
-			}
+			return _uniquePersistenceFinderByO_O_P_P.fetch(
+				finderCache, new Object[] {ownerId, ownerType, plid, portletId},
+				useFinderCache);
 		}
 	}
 
@@ -3449,32 +1730,12 @@ public class IndexEntryPersistenceImpl
 	public int countByO_O_P_P(
 		long ownerId, int ownerType, long plid, String portletId) {
 
-		IndexEntry indexEntry = fetchByO_O_P_P(
-			ownerId, ownerType, plid, portletId);
-
-		if (indexEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByO_O_P_P.count(
+			finderCache, new Object[] {ownerId, ownerType, plid, portletId});
 	}
 
-	private static final String _FINDER_COLUMN_O_O_P_P_OWNERID_2 =
-		"indexEntry.ownerId = ? AND ";
-
-	private static final String _FINDER_COLUMN_O_O_P_P_OWNERTYPE_2 =
-		"indexEntry.ownerType = ? AND ";
-
-	private static final String _FINDER_COLUMN_O_O_P_P_PLID_2 =
-		"indexEntry.plid = ? AND ";
-
-	private static final String _FINDER_COLUMN_O_O_P_P_PORTLETID_2 =
-		"indexEntry.portletId = ?";
-
-	private static final String _FINDER_COLUMN_O_O_P_P_PORTLETID_3 =
-		"(indexEntry.portletId IS NULL OR indexEntry.portletId = '')";
-
 	private FinderPath _finderPathFetchByERC_C;
+	private UniquePersistenceFinder<IndexEntry> _uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the index entry where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchIndexEntryException</code> if it could not be found.
@@ -3491,23 +1752,16 @@ public class IndexEntryPersistenceImpl
 		IndexEntry indexEntry = fetchByERC_C(externalReferenceCode, companyId);
 
 		if (indexEntry == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("externalReferenceCode=");
-			sb.append(externalReferenceCode);
-
-			sb.append(", companyId=");
-			sb.append(companyId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {externalReferenceCode, companyId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchIndexEntryException(sb.toString());
+			throw new NoSuchIndexEntryException(message);
 		}
 
 		return indexEntry;
@@ -3543,98 +1797,9 @@ public class IndexEntryPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					IndexEntry.class)) {
 
-			externalReferenceCode = Objects.toString(externalReferenceCode, "");
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {externalReferenceCode, companyId};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByERC_C, finderArgs, this);
-			}
-
-			if (result instanceof IndexEntry) {
-				IndexEntry indexEntry = (IndexEntry)result;
-
-				if (!Objects.equals(
-						externalReferenceCode,
-						indexEntry.getExternalReferenceCode()) ||
-					(companyId != indexEntry.getCompanyId())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_INDEXENTRY_WHERE);
-
-				boolean bindExternalReferenceCode = false;
-
-				if (externalReferenceCode.isEmpty()) {
-					sb.append(_FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_3);
-				}
-				else {
-					bindExternalReferenceCode = true;
-
-					sb.append(_FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_2);
-				}
-
-				sb.append(_FINDER_COLUMN_ERC_C_COMPANYID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindExternalReferenceCode) {
-						queryPos.add(externalReferenceCode);
-					}
-
-					queryPos.add(companyId);
-
-					List<IndexEntry> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByERC_C, finderArgs, list);
-						}
-					}
-					else {
-						IndexEntry indexEntry = list.get(0);
-
-						result = indexEntry;
-
-						cacheResult(indexEntry);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (IndexEntry)result;
-			}
+			return _uniquePersistenceFinderByERC_C.fetch(
+				finderCache, new Object[] {externalReferenceCode, companyId},
+				useFinderCache);
 		}
 	}
 
@@ -3664,23 +1829,9 @@ public class IndexEntryPersistenceImpl
 	 */
 	@Override
 	public int countByERC_C(String externalReferenceCode, long companyId) {
-		IndexEntry indexEntry = fetchByERC_C(externalReferenceCode, companyId);
-
-		if (indexEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByERC_C.count(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
-
-	private static final String _FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_2 =
-		"indexEntry.externalReferenceCode = ? AND ";
-
-	private static final String _FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_3 =
-		"(indexEntry.externalReferenceCode IS NULL OR indexEntry.externalReferenceCode = '') AND ";
-
-	private static final String _FINDER_COLUMN_ERC_C_COMPANYID_2 =
-		"indexEntry.companyId = ?";
 
 	public IndexEntryPersistenceImpl() {
 		setModelClass(IndexEntry.class);
@@ -3754,48 +1905,6 @@ public class IndexEntryPersistenceImpl
 		}
 	}
 
-	/**
-	 * Clears the cache for all index entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(IndexEntryImpl.class);
-
-		finderCache.clearCache(IndexEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the index entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(IndexEntry indexEntry) {
-		entityCache.removeResult(IndexEntryImpl.class, indexEntry);
-	}
-
-	@Override
-	public void clearCache(List<IndexEntry> indexEntries) {
-		for (IndexEntry indexEntry : indexEntries) {
-			entityCache.removeResult(IndexEntryImpl.class, indexEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(IndexEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(IndexEntryImpl.class, primaryKey);
-		}
-	}
-
 	protected void cacheUniqueFindersCache(
 		IndexEntryModelImpl indexEntryModelImpl) {
 
@@ -3853,47 +1962,6 @@ public class IndexEntryPersistenceImpl
 		throws NoSuchIndexEntryException {
 
 		return remove((Serializable)indexEntryId);
-	}
-
-	/**
-	 * Removes the index entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the index entry
-	 * @return the index entry that was removed
-	 * @throws NoSuchIndexEntryException if a index entry with the primary key could not be found
-	 */
-	@Override
-	public IndexEntry remove(Serializable primaryKey)
-		throws NoSuchIndexEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			IndexEntry indexEntry = (IndexEntry)session.get(
-				IndexEntryImpl.class, primaryKey);
-
-			if (indexEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchIndexEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(indexEntry);
-		}
-		catch (NoSuchIndexEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -4053,31 +2121,6 @@ public class IndexEntryPersistenceImpl
 	}
 
 	/**
-	 * Returns the index entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the index entry
-	 * @return the index entry
-	 * @throws NoSuchIndexEntryException if a index entry with the primary key could not be found
-	 */
-	@Override
-	public IndexEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchIndexEntryException {
-
-		IndexEntry indexEntry = fetchByPrimaryKey(primaryKey);
-
-		if (indexEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchIndexEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return indexEntry;
-	}
-
-	/**
 	 * Returns the index entry with the primary key or throws a <code>NoSuchIndexEntryException</code> if it could not be found.
 	 *
 	 * @param indexEntryId the primary key of the index entry
@@ -4091,52 +2134,9 @@ public class IndexEntryPersistenceImpl
 		return findByPrimaryKey((Serializable)indexEntryId);
 	}
 
-	/**
-	 * Returns the index entry with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the index entry
-	 * @return the index entry, or <code>null</code> if a index entry with the primary key could not be found
-	 */
 	@Override
-	public IndexEntry fetchByPrimaryKey(Serializable primaryKey) {
-		if (ctPersistenceHelper.isProductionMode(
-				IndexEntry.class, primaryKey)) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKey(primaryKey);
-			}
-		}
-
-		IndexEntry indexEntry = (IndexEntry)entityCache.getResult(
-			IndexEntryImpl.class, primaryKey);
-
-		if (indexEntry != null) {
-			return indexEntry;
-		}
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			indexEntry = (IndexEntry)session.get(
-				IndexEntryImpl.class, primaryKey);
-
-			if (indexEntry != null) {
-				cacheResult(indexEntry);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return indexEntry;
+	protected CTPersistenceHelper getCTPersistenceHelper() {
+		return ctPersistenceHelper;
 	}
 
 	/**
@@ -4148,318 +2148,6 @@ public class IndexEntryPersistenceImpl
 	@Override
 	public IndexEntry fetchByPrimaryKey(long indexEntryId) {
 		return fetchByPrimaryKey((Serializable)indexEntryId);
-	}
-
-	@Override
-	public Map<Serializable, IndexEntry> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (ctPersistenceHelper.isProductionMode(IndexEntry.class)) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKeys(primaryKeys);
-			}
-		}
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, IndexEntry> map =
-			new HashMap<Serializable, IndexEntry>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			IndexEntry indexEntry = fetchByPrimaryKey(primaryKey);
-
-			if (indexEntry != null) {
-				map.put(primaryKey, indexEntry);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			try (SafeCloseable safeCloseable =
-					ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-						IndexEntry.class, primaryKey)) {
-
-				IndexEntry indexEntry = (IndexEntry)entityCache.getResult(
-					IndexEntryImpl.class, primaryKey);
-
-				if (indexEntry == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, indexEntry);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		if ((databaseInMaxParameters > 0) &&
-			(primaryKeys.size() > databaseInMaxParameters)) {
-
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			while (iterator.hasNext()) {
-				Set<Serializable> page = new HashSet<>();
-
-				for (int i = 0;
-					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
-
-					page.add(iterator.next());
-				}
-
-				map.putAll(fetchByPrimaryKeys(page));
-			}
-
-			return map;
-		}
-
-		StringBundler sb = new StringBundler((primaryKeys.size() * 2) + 1);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		for (Serializable primaryKey : primaryKeys) {
-			sb.append((long)primaryKey);
-
-			sb.append(",");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			for (IndexEntry indexEntry : (List<IndexEntry>)query.list()) {
-				map.put(indexEntry.getPrimaryKeyObj(), indexEntry);
-
-				cacheResult(indexEntry);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
-	}
-
-	/**
-	 * Returns all the index entries.
-	 *
-	 * @return the index entries
-	 */
-	@Override
-	public List<IndexEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the index entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>IndexEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of index entries
-	 * @param end the upper bound of the range of index entries (not inclusive)
-	 * @return the range of index entries
-	 */
-	@Override
-	public List<IndexEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the index entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>IndexEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of index entries
-	 * @param end the upper bound of the range of index entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of index entries
-	 */
-	@Override
-	public List<IndexEntry> findAll(
-		int start, int end, OrderByComparator<IndexEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the index entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>IndexEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of index entries
-	 * @param end the upper bound of the range of index entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of index entries
-	 */
-	@Override
-	public List<IndexEntry> findAll(
-		int start, int end, OrderByComparator<IndexEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					IndexEntry.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindAll;
-					finderArgs = FINDER_ARGS_EMPTY;
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindAll;
-				finderArgs = new Object[] {start, end, orderByComparator};
-			}
-
-			List<IndexEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<IndexEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-				String sql = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						2 + (orderByComparator.getOrderByFields().length * 2));
-
-					sb.append(_SQL_SELECT_INDEXENTRY);
-
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-					sql = sb.toString();
-				}
-				else {
-					sql = _SQL_SELECT_INDEXENTRY;
-
-					sql = sql.concat(IndexEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					list = (List<IndexEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
-	}
-
-	/**
-	 * Removes all the index entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (IndexEntry indexEntry : findAll()) {
-			remove(indexEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of index entries.
-	 *
-	 * @return the number of index entries
-	 */
-	@Override
-	public int countAll() {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					IndexEntry.class)) {
-
-			Long count = (Long)finderCache.getResult(
-				_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-			if (count == null) {
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(_SQL_COUNT_INDEXENTRY);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(
-						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
 	}
 
 	@Override
@@ -4549,18 +2237,6 @@ public class IndexEntryPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathWithPaginationFindByOwnerId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByOwnerId",
 			new String[] {
@@ -4579,6 +2255,17 @@ public class IndexEntryPersistenceImpl
 			new String[] {Long.class.getName()}, new String[] {"ownerId"},
 			false);
 
+		_collectionPersistenceFinderByOwnerId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByOwnerId,
+				_finderPathWithoutPaginationFindByOwnerId,
+				_finderPathCountByOwnerId, _SQL_SELECT_INDEXENTRY_WHERE,
+				_SQL_COUNT_INDEXENTRY_WHERE, IndexEntryModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"indexEntry.", "ownerId", FinderColumn.Type.LONG, "=", true,
+					true, IndexEntry::getOwnerId));
+
 		_finderPathWithPaginationFindByPlid = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByPlid",
 			new String[] {
@@ -4594,6 +2281,15 @@ public class IndexEntryPersistenceImpl
 		_finderPathCountByPlid = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByPlid",
 			new String[] {Long.class.getName()}, new String[] {"plid"}, false);
+
+		_collectionPersistenceFinderByPlid = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByPlid,
+			_finderPathWithoutPaginationFindByPlid, _finderPathCountByPlid,
+			_SQL_SELECT_INDEXENTRY_WHERE, _SQL_COUNT_INDEXENTRY_WHERE,
+			IndexEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"indexEntry.", "plid", FinderColumn.Type.LONG, "=", true, true,
+				IndexEntry::getPlid));
 
 		_finderPathWithPaginationFindByPortletId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByPortletId",
@@ -4612,6 +2308,17 @@ public class IndexEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByPortletId",
 			new String[] {String.class.getName()}, new String[] {"portletId"},
 			false);
+
+		_collectionPersistenceFinderByPortletId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByPortletId,
+				_finderPathWithoutPaginationFindByPortletId,
+				_finderPathCountByPortletId, _SQL_SELECT_INDEXENTRY_WHERE,
+				_SQL_COUNT_INDEXENTRY_WHERE, IndexEntryModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"indexEntry.", "portletId", FinderColumn.Type.STRING, "=",
+					true, true, IndexEntry::getPortletId));
 
 		_finderPathWithPaginationFindByO_P = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByO_P",
@@ -4632,6 +2339,18 @@ public class IndexEntryPersistenceImpl
 			new String[] {Integer.class.getName(), String.class.getName()},
 			new String[] {"ownerType", "portletId"}, false);
 
+		_collectionPersistenceFinderByO_P = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByO_P,
+			_finderPathWithoutPaginationFindByO_P, _finderPathCountByO_P,
+			_SQL_SELECT_INDEXENTRY_WHERE, _SQL_COUNT_INDEXENTRY_WHERE,
+			IndexEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"indexEntry.", "ownerType", FinderColumn.Type.INTEGER, "=",
+				true, false, IndexEntry::getOwnerType),
+			new FinderColumn<>(
+				"indexEntry.", "portletId", FinderColumn.Type.STRING, "=", true,
+				true, IndexEntry::getPortletId));
+
 		_finderPathWithPaginationFindByP_P = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByP_P",
 			new String[] {
@@ -4650,6 +2369,18 @@ public class IndexEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByP_P",
 			new String[] {Long.class.getName(), String.class.getName()},
 			new String[] {"plid", "portletId"}, false);
+
+		_collectionPersistenceFinderByP_P = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByP_P,
+			_finderPathWithoutPaginationFindByP_P, _finderPathCountByP_P,
+			_SQL_SELECT_INDEXENTRY_WHERE, _SQL_COUNT_INDEXENTRY_WHERE,
+			IndexEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"indexEntry.", "plid", FinderColumn.Type.LONG, "=", true, false,
+				IndexEntry::getPlid),
+			new FinderColumn<>(
+				"indexEntry.", "portletId", FinderColumn.Type.STRING, "=", true,
+				true, IndexEntry::getPortletId));
 
 		_finderPathWithPaginationFindByO_O_P = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByO_O_P",
@@ -4676,6 +2407,21 @@ public class IndexEntryPersistenceImpl
 			},
 			new String[] {"ownerId", "ownerType", "plid"}, false);
 
+		_collectionPersistenceFinderByO_O_P = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByO_O_P,
+			_finderPathWithoutPaginationFindByO_O_P, _finderPathCountByO_O_P,
+			_SQL_SELECT_INDEXENTRY_WHERE, _SQL_COUNT_INDEXENTRY_WHERE,
+			IndexEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"indexEntry.", "ownerId", FinderColumn.Type.LONG, "=", true,
+				false, IndexEntry::getOwnerId),
+			new FinderColumn<>(
+				"indexEntry.", "ownerType", FinderColumn.Type.INTEGER, "=",
+				true, false, IndexEntry::getOwnerType),
+			new FinderColumn<>(
+				"indexEntry.", "plid", FinderColumn.Type.LONG, "=", true, true,
+				IndexEntry::getPlid));
+
 		_finderPathWithPaginationFindByO_O_PI = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByO_O_PI",
 			new String[] {
@@ -4700,6 +2446,23 @@ public class IndexEntryPersistenceImpl
 				String.class.getName()
 			},
 			new String[] {"ownerId", "ownerType", "portletId"}, false);
+
+		_collectionPersistenceFinderByO_O_PI =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByO_O_PI,
+				_finderPathWithoutPaginationFindByO_O_PI,
+				_finderPathCountByO_O_PI, _SQL_SELECT_INDEXENTRY_WHERE,
+				_SQL_COUNT_INDEXENTRY_WHERE, IndexEntryModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"indexEntry.", "ownerId", FinderColumn.Type.LONG, "=", true,
+					false, IndexEntry::getOwnerId),
+				new FinderColumn<>(
+					"indexEntry.", "ownerType", FinderColumn.Type.INTEGER, "=",
+					true, false, IndexEntry::getOwnerType),
+				new FinderColumn<>(
+					"indexEntry.", "portletId", FinderColumn.Type.STRING, "=",
+					true, true, IndexEntry::getPortletId));
 
 		_finderPathWithPaginationFindByO_P_P = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByO_P_P",
@@ -4726,6 +2489,21 @@ public class IndexEntryPersistenceImpl
 			},
 			new String[] {"ownerType", "plid", "portletId"}, false);
 
+		_collectionPersistenceFinderByO_P_P = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByO_P_P,
+			_finderPathWithoutPaginationFindByO_P_P, _finderPathCountByO_P_P,
+			_SQL_SELECT_INDEXENTRY_WHERE, _SQL_COUNT_INDEXENTRY_WHERE,
+			IndexEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"indexEntry.", "ownerType", FinderColumn.Type.INTEGER, "=",
+				true, false, IndexEntry::getOwnerType),
+			new FinderColumn<>(
+				"indexEntry.", "plid", FinderColumn.Type.LONG, "=", true, false,
+				IndexEntry::getPlid),
+			new FinderColumn<>(
+				"indexEntry.", "portletId", FinderColumn.Type.STRING, "=", true,
+				true, IndexEntry::getPortletId));
+
 		_finderPathWithPaginationFindByC_O_O_LikeP = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_O_O_LikeP",
 			new String[] {
@@ -4746,6 +2524,25 @@ public class IndexEntryPersistenceImpl
 			new String[] {"companyId", "ownerId", "ownerType", "portletId"},
 			false);
 
+		_collectionPersistenceFinderByC_O_O_LikeP =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByC_O_O_LikeP, null,
+				_finderPathWithPaginationCountByC_O_O_LikeP,
+				_SQL_SELECT_INDEXENTRY_WHERE, _SQL_COUNT_INDEXENTRY_WHERE,
+				IndexEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"indexEntry.", "companyId", FinderColumn.Type.LONG, "=",
+					true, false, IndexEntry::getCompanyId),
+				new FinderColumn<>(
+					"indexEntry.", "ownerId", FinderColumn.Type.LONG, "=", true,
+					false, IndexEntry::getOwnerId),
+				new FinderColumn<>(
+					"indexEntry.", "ownerType", FinderColumn.Type.INTEGER, "=",
+					true, false, IndexEntry::getOwnerType),
+				new FinderColumn<>(
+					"indexEntry.", "portletId", FinderColumn.Type.STRING,
+					"LIKE", true, true, IndexEntry::getPortletId));
+
 		_finderPathFetchByO_O_P_P = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByO_O_P_P",
 			new String[] {
@@ -4754,10 +2551,35 @@ public class IndexEntryPersistenceImpl
 			},
 			new String[] {"ownerId", "ownerType", "plid", "portletId"}, true);
 
+		_uniquePersistenceFinderByO_O_P_P = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByO_O_P_P, _SQL_SELECT_INDEXENTRY_WHERE,
+			new FinderColumn<>(
+				"indexEntry.", "ownerId", FinderColumn.Type.LONG, "=", true,
+				false, IndexEntry::getOwnerId),
+			new FinderColumn<>(
+				"indexEntry.", "ownerType", FinderColumn.Type.INTEGER, "=",
+				true, false, IndexEntry::getOwnerType),
+			new FinderColumn<>(
+				"indexEntry.", "plid", FinderColumn.Type.LONG, "=", true, false,
+				IndexEntry::getPlid),
+			new FinderColumn<>(
+				"indexEntry.", "portletId", FinderColumn.Type.STRING, "=", true,
+				true, IndexEntry::getPortletId));
+
 		_finderPathFetchByERC_C = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByERC_C",
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"externalReferenceCode", "companyId"}, true);
+
+		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByERC_C, _SQL_SELECT_INDEXENTRY_WHERE,
+			new FinderColumn<>(
+				"indexEntry.", "externalReferenceCode",
+				FinderColumn.Type.STRING, "=", true, false,
+				IndexEntry::getExternalReferenceCode),
+			new FinderColumn<>(
+				"indexEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
+				true, IndexEntry::getCompanyId));
 
 		IndexEntryUtil.setPersistence(this);
 	}
@@ -4777,22 +2599,17 @@ public class IndexEntryPersistenceImpl
 	@ServiceReference(type = FinderCache.class)
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		IndexEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_INDEXENTRY =
 		"SELECT indexEntry FROM IndexEntry indexEntry";
 
 	private static final String _SQL_SELECT_INDEXENTRY_WHERE =
 		"SELECT indexEntry FROM IndexEntry indexEntry WHERE ";
 
-	private static final String _SQL_COUNT_INDEXENTRY =
-		"SELECT COUNT(indexEntry) FROM IndexEntry indexEntry";
-
 	private static final String _SQL_COUNT_INDEXENTRY_WHERE =
 		"SELECT COUNT(indexEntry) FROM IndexEntry indexEntry WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "indexEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No IndexEntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No IndexEntry exists with the key {";
@@ -4806,4 +2623,4 @@ public class IndexEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2011187274
+// LIFERAY-SERVICE-BUILDER-HASH:1440638858

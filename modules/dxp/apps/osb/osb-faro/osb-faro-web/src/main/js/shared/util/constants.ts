@@ -57,7 +57,8 @@ export enum CompositionTypes {
 
 export enum ConjunctionKey {
 	And = 'and',
-	Or = 'or'
+	Or = 'or',
+	Then = 'then'
 }
 
 export enum CredentialTypes {
@@ -105,6 +106,7 @@ export enum DataSourceStatuses {
 export enum DataSourceTypes {
 	Csv = 'CSV',
 	Demandbase = 'DEMANDBASE',
+	Hubspot = 'HUBSPOT',
 	Liferay = 'LIFERAY',
 	Salesforce = 'SALESFORCE'
 }

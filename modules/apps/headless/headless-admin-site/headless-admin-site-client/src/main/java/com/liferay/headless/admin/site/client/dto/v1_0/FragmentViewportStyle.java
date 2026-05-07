@@ -625,4 +625,4 @@ public class FragmentViewportStyle implements Cloneable, Serializable {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:-501333249
+// LIFERAY-REST-BUILDER-HASH:-171122504

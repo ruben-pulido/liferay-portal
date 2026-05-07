@@ -508,17 +508,22 @@ export async function initializerSetUp(
 			catalogName
 		);
 
-	apiHelpers.data.push({id: catalogs.items[0].id, type: 'catalog'});
+	if (catalogs.items?.length) {
+		apiHelpers.data.push({id: catalogs.items[0].id, type: 'catalog'});
 
-	const products =
-		await apiHelpers.headlessCommerceAdminCatalog.getProductsPage(100, '');
+		const products =
+			await apiHelpers.headlessCommerceAdminCatalog.getProductsPage(
+				100,
+				''
+			);
 
-	for (let i = 0; i < products.totalCount; i++) {
-		if (products.items[i].catalogId === catalogs.items[0].id) {
-			apiHelpers.data.push({
-				id: products.items[i].productId,
-				type: 'product',
-			});
+		for (let i = 0; i < products.totalCount; i++) {
+			if (products.items[i].catalogId === catalogs.items[0].id) {
+				apiHelpers.data.push({
+					id: products.items[i].productId,
+					type: 'product',
+				});
+			}
 		}
 	}
 
@@ -719,4 +724,113 @@ export async function createAccountWithBuyerUser(
 	};
 
 	return {account, buyerUser};
+}
+
+export async function createChannelAccountManagerUser(
+	apiHelpers: DataApiHelpers,
+	{
+		accountEntryActionIds = [],
+		companyId,
+		organizationActionIds = [],
+		siteId,
+	}: {
+		accountEntryActionIds?: string[];
+		companyId: string;
+		organizationActionIds?: string[];
+		siteId: number | string;
+	}
+) {
+	const rolePermissions = [];
+
+	if (accountEntryActionIds.length) {
+		rolePermissions.push({
+			actionIds: accountEntryActionIds,
+			primaryKey: companyId,
+			resourceName: 'com.liferay.account.model.AccountEntry',
+			scope: 1,
+		});
+	}
+
+	if (organizationActionIds.length) {
+		rolePermissions.push({
+			actionIds: organizationActionIds,
+			primaryKey: companyId,
+			resourceName: 'com.liferay.portal.kernel.model.Organization',
+			scope: 1,
+		});
+	}
+
+	const role = await apiHelpers.headlessAdminUser.postRole({
+		name: 'Test Channel Account Manager ' + getRandomString(),
+		rolePermissions,
+	});
+
+	const user = await apiHelpers.headlessAdminUser.postUserAccount();
+
+	userData[user.alternateName] = {
+		name: user.givenName,
+		password: 'test',
+		surname: user.familyName,
+	};
+
+	await apiHelpers.headlessAdminUser.assignUserToRole(
+		role.externalReferenceCode,
+		user.id
+	);
+
+	const siteMemberRole =
+		await apiHelpers.headlessAdminUser.getRoleByName('Site Member');
+
+	await apiHelpers.headlessAdminUser.assignUserToSite(
+		siteMemberRole.id,
+		siteId,
+		user.id
+	);
+
+	return {role, user};
+}
+
+export async function createSalesAgentUser(
+	apiHelpers: DataApiHelpers,
+	{
+		accountId,
+		siteId,
+	}: {
+		accountId?: number;
+		siteId: number | string;
+	}
+) {
+	const salesAgentRole =
+		await apiHelpers.headlessAdminUser.getRoleByName('Sales Agent');
+
+	const user = await apiHelpers.headlessAdminUser.postUserAccount();
+
+	userData[user.alternateName] = {
+		name: user.givenName,
+		password: 'test',
+		surname: user.familyName,
+	};
+
+	await apiHelpers.headlessAdminUser.assignUserToRole(
+		salesAgentRole.externalReferenceCode,
+		user.id
+	);
+
+	const siteRole =
+		await apiHelpers.headlessAdminUser.getRoleByName('Site Member');
+
+	await apiHelpers.headlessAdminUser.assignUserToSite(
+		siteRole.id,
+		siteId,
+		user.id
+	);
+
+	if (accountId) {
+		await apiHelpers.headlessAdminUser.assignUserToAccountByEmailAddress(
+			accountId,
+			[user.emailAddress]
+		);
+	}
+
+	return user;
 }

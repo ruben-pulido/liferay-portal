@@ -92,10 +92,10 @@ public class DDMDataProviderTest {
 				"ddm.data.provider.instance.id", "test"));
 	}
 
-	@Inject
-	private static DDMDataProviderRegistry _ddmDataProviderRegistry;
-
 	private static ServiceRegistration<DDMDataProvider> _serviceRegistration;
+
+	@Inject
+	private DDMDataProviderRegistry _ddmDataProviderRegistry;
 
 	private static class DDMTestDataProvider implements DDMDataProvider {
 

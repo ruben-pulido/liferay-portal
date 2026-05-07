@@ -5,9 +5,10 @@
 
 // AC Version
 
-export const ANALYTICS_CLIENT_VERSION = '1.3.3';
+export const ANALYTICS_CLIENT_VERSION = '1.3.4';
 
-export const ANALYTICS_BATCH_SEGMENT_IDS = 'analyticsBatchSegmentIds';
+export const ANALYTICS_BATCH_SEGMENT_EXTERNAL_REFERENCE_CODES =
+	'analyticsBatchSegmentExternalReferenceCodes';
 
 // Default Config
 
@@ -25,9 +26,17 @@ export const QUEUE_STORAGE_LIMIT = 512;
 
 // Queue priority
 
+export const QUEUE_PRIORITY_ACCOUNT = 10;
+
 export const QUEUE_PRIORITY_DEFAULT = 1;
 
 export const QUEUE_PRIORITY_IDENTITY = 10;
+
+// Demandbase
+
+export const DEMANDBASE_READY_POLL_INTERVAL = 500;
+
+export const DEMANDBASE_READY_TIMEOUT = 5000;
 
 // Request Constants
 

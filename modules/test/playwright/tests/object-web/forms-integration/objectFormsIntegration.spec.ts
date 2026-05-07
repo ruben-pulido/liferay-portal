@@ -7,7 +7,6 @@ import {ObjectDefinition} from '@liferay/object-admin-rest-client-js';
 import {expect, mergeTests} from '@playwright/test';
 
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {formsPagesTest} from '../../../fixtures/formsPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {objectPagesTest} from '../../../fixtures/objectPagesTest';
@@ -26,9 +25,6 @@ import {postListTypeDefinitionListTypeEntries} from '../utils/postListTypeDefini
 
 const test = mergeTests(
 	dataApiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	formsPagesTest,
 	loginTest(),
 	objectPagesTest
@@ -1964,5 +1960,182 @@ test(
 		).not.toBeVisible();
 
 		await expect(page.getByLabel('Searchable')).not.toBeVisible();
+	}
+);
+
+test(
+	'verify that form entry submission is blocked when an Object is inactivated and restored when reactivated',
+	{tag: '@LPS-139005'},
+	async ({
+		apiHelpers,
+		formBuilderPage,
+		formBuilderSidePanelPage,
+		formSettingsModalPage,
+		formsPage,
+		page,
+		viewObjectDefinitionsPage,
+		viewObjectEntriesPage,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await formBuilderPage.goToNew();
+
+		const formTitle = 'Form' + getRandomInt();
+
+		await formBuilderPage.fillFormTitle(formTitle);
+
+		await formBuilderPage.formSettingsButton.click();
+
+		await formSettingsModalPage.selectStorageType('Object');
+
+		await formSettingsModalPage.selectObject(
+			objectDefinition.label['en_US']
+		);
+
+		await formSettingsModalPage.clickDoneButton();
+
+		await formBuilderSidePanelPage.addFieldByDoubleClick('Text');
+
+		await formBuilderSidePanelPage.clickAdvancedTab();
+
+		await formBuilderSidePanelPage.selectObjectField('textField');
+
+		await page.waitForTimeout(1000);
+
+		await formBuilderSidePanelPage.clickBackButton();
+
+		await formBuilderPage.clickSaveButton();
+
+		await formBuilderPage.clickPublishFormButton();
+
+		const formSubmissionURL = await formBuilderPage.getFormSubmissionURL();
+
+		await viewObjectDefinitionsPage.goto();
+
+		await viewObjectDefinitionsPage.changeObjectActivateStatus(
+			objectDefinition.name
+		);
+
+		await formsPage.goTo();
+
+		await page.reload();
+
+		await expect(
+			page.getByRole('cell', {
+				exact: true,
+				name: `This form was created using an inactive object as storage type. 
+				Activate "${objectDefinition.name}" object to make it available for 
+				editing. ${formTitle}`,
+			})
+		).toBeVisible();
+
+		await viewObjectDefinitionsPage.goto();
+
+		await viewObjectDefinitionsPage.changeObjectActivateStatus(
+			objectDefinition.name
+		);
+
+		await formsPage.goTo();
+
+		await page.reload();
+
+		await expect(
+			page.getByRole('cell', {
+				exact: true,
+				name: `This form was created using an inactive object as storage type. 
+				Activate "${objectDefinition.name}" object to make it available for 
+				editing. ${formTitle}`,
+			})
+		).toBeHidden();
+
+		await page.goto(formSubmissionURL);
+
+		await page.getByLabel('Text').fill('Entry 1');
+
+		await page.getByRole('button', {name: 'Save'}).click();
+
+		await expect(
+			page.getByText(
+				'Your information was successfully received. Thank you for filling out the form.'
+			)
+		).toBeVisible();
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await expect(page.getByText('Entry 1')).toBeVisible();
+	}
+);
+
+test(
+	'verify that the Object visibility in the Form storage type changes according to activation status',
+	{tag: '@LPS-139005'},
+	async ({
+		apiHelpers,
+		formBuilderPage,
+		formSettingsModalPage,
+		page,
+		viewObjectDefinitionsPage,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await viewObjectDefinitionsPage.goto();
+
+		await viewObjectDefinitionsPage.changeObjectActivateStatus(
+			objectDefinition.name
+		);
+
+		await formBuilderPage.goToNew();
+
+		await formBuilderPage.formSettingsButton.click();
+
+		await formSettingsModalPage.storageTypeSelect.click();
+
+		await page.getByRole('option', {name: 'Object'}).click();
+
+		await formSettingsModalPage.objectSelect.click();
+
+		await expect(
+			page.getByRole('option', {
+				name: objectDefinition.label['en_US'],
+			})
+		).toBeHidden();
+
+		await viewObjectDefinitionsPage.goto();
+
+		await viewObjectDefinitionsPage.changeObjectActivateStatus(
+			objectDefinition.name
+		);
+
+		await formBuilderPage.goToNew();
+
+		await formBuilderPage.formSettingsButton.click();
+
+		await formSettingsModalPage.storageTypeSelect.click();
+
+		await page.getByRole('option', {name: 'Object'}).click();
+
+		await formSettingsModalPage.objectSelect.click();
+
+		await expect(
+			page.getByRole('option', {
+				name: objectDefinition.label['en_US'],
+			})
+		).toBeVisible();
 	}
 );

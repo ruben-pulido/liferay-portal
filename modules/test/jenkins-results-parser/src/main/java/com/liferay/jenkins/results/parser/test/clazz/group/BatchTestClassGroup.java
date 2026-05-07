@@ -403,6 +403,7 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 		return JenkinsMaster.getSlavesPerHostDefault();
 	}
 
+	@Override
 	public Integer getMinimumSlaveRAM() {
 		JobProperty jobProperty = getJobProperty(
 			"test.batch.minimum.slave.ram");
@@ -506,6 +507,25 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 		_testAnalyticsCloud = false;
 
 		return _testAnalyticsCloud;
+	}
+
+	public boolean isUnifiedBuilderSupported() {
+		JobProperty jobProperty = getJobProperty(
+			"test.batch.unified.builder.supported");
+
+		if (jobProperty == null) {
+			return false;
+		}
+
+		String jobPropertyValue = jobProperty.getValue();
+
+		if (JenkinsResultsParserUtil.isNullOrEmpty(jobPropertyValue)) {
+			return false;
+		}
+
+		recordJobProperty(jobProperty);
+
+		return Boolean.parseBoolean(jobPropertyValue);
 	}
 
 	protected BatchTestClassGroup(
@@ -622,8 +642,9 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 		String slaveLabel = null;
 
 		try {
-			slaveLabel = JenkinsResultsParserUtil.getBuildProperty(
-				"jenkins.osb.jenkins.web.slave.label", getBatchJobName(),
+			slaveLabel = JenkinsResultsParserUtil.getProperty(
+				JenkinsResultsParserUtil.getBuildProperties(),
+				"jenkins.osb.jenkins.web.slave.label", false, getBatchJobName(),
 				getTestSuiteName());
 
 			if (JenkinsResultsParserUtil.isNullOrEmpty(slaveLabel)) {

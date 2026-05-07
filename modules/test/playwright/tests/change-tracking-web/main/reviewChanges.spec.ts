@@ -35,7 +35,6 @@ export const test = mergeTests(
 	documentLibraryPagesTest,
 	featureFlagsTest({
 		'LPD-34594': {enabled: true},
-		'LPD-36105': {enabled: true},
 		'LPD-84028': {enabled: true},
 		'LPS-164563': {enabled: true},
 	}),
@@ -205,15 +204,13 @@ test('LPD-29088 Assert Publication Overview panel is visible', async ({
 }) => {
 	await changeTrackingPage.workOnProduction();
 
-	const site1 = await apiHelpers.headlessSite.createSite({
+	const site1 = await apiHelpers.headlessAdminSite.postSite({
 		name: getRandomString(),
 	});
-	apiHelpers.data.push({id: site1.externalReferenceCode, type: 'site'});
 
-	const site2 = await apiHelpers.headlessSite.createSite({
+	const site2 = await apiHelpers.headlessAdminSite.postSite({
 		name: getRandomString(),
 	});
-	apiHelpers.data.push({id: site2.externalReferenceCode, type: 'site'});
 
 	await changeTrackingPage.workOnPublication(ctCollection);
 
@@ -633,28 +630,18 @@ test.describe('Publications with incomplete status tests', () => {
 		}
 	);
 
-	test.afterEach(async ({apiHelpers, page, workflowPage}) => {
+	test.afterEach(async ({apiHelpers, workflowPage}) => {
 		await apiHelpers.headlessChangeTracking.checkoutCTCollection(0);
 
 		await workflowPage.goto();
 
-		const row = await page
-			.getByRole('row')
-			.filter({hasText: 'Web Content Article'});
-
-		const workflowEnabled = await row
-			.getByTitle('Workflow Definition')
-			.filter({hasText: 'Single Approver'});
-
-		if (await workflowEnabled.isVisible()) {
-			await workflowPage.changeWorkflow(
-				'Web Content Article',
-				'No Workflow',
-				{
-					disable: true,
-				}
-			);
-		}
+		await workflowPage.changeWorkflow(
+			'Web Content Article',
+			'No Workflow',
+			{
+				disable: true,
+			}
+		);
 	});
 
 	test('LPD-73271 Can view CTEntry actions in review changes page', async ({
@@ -799,6 +786,7 @@ test.describe('Publications with incomplete status tests', () => {
 		ctCollection,
 		journalEditArticlePage,
 		page,
+		workflowPage,
 	}) => {
 		const ctCollection2 =
 			await apiHelpers.headlessChangeTracking.createCTCollection(
@@ -807,6 +795,16 @@ test.describe('Publications with incomplete status tests', () => {
 
 		await apiHelpers.headlessChangeTracking.checkoutCTCollection(
 			ctCollection2.body.id
+		);
+
+		await workflowPage.goto();
+
+		await workflowPage.changeWorkflow(
+			'Web Content Article',
+			'No Workflow',
+			{
+				disable: true,
+			}
 		);
 
 		const journalArticleTitle = getRandomString();

@@ -107,6 +107,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.template.TemplateConstants;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
@@ -187,6 +188,79 @@ public class JournalArticleLocalServiceTest {
 		_journalFolderFixture = new JournalFolderFixture(
 			_journalFolderLocalService);
 		_themeDisplay = _getThemeDisplay();
+	}
+
+	@Test
+	@TestInfo("LPD-84195")
+	public void testAddArticleDefaultValuesWithFieldSetAndMultipleLocales()
+		throws Exception {
+
+		DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
+			DDMFormTestUtil.createAvailableLocales(
+				LocaleUtil.BRAZIL, LocaleUtil.US),
+			LocaleUtil.US);
+
+		ddmForm.setDefinitionSchemaVersion("2.0");
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createLocalizedTextDDMFormField(
+				"name", false, false, LocaleUtil.BRAZIL, LocaleUtil.US));
+
+		DDMFormField fieldsetDDMFormField = new DDMFormField(
+			"Fieldset", "fieldset");
+
+		LocalizedValue fieldsetTip = new LocalizedValue(LocaleUtil.US);
+
+		fieldsetTip.addString(LocaleUtil.US, "Tip");
+
+		fieldsetDDMFormField.setTip(fieldsetTip);
+
+		ddmForm.addDDMFormField(fieldsetDDMFormField);
+
+		ddmForm.setAllowInvalidAvailableLocalesForProperty(true);
+
+		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+			_group.getGroupId(), JournalArticle.class.getName(), ddmForm);
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		String brContent = RandomTestUtil.randomString();
+		String enContent = RandomTestUtil.randomString();
+
+		String content = DDMStructureTestUtil.getSampleStructuredContent(
+			HashMapBuilder.put(
+				LocaleUtil.BRAZIL, brContent
+			).put(
+				LocaleUtil.US, enContent
+			).build(),
+			LocaleUtil.US.toString());
+
+		Assert.assertNotNull(
+			_journalArticleLocalService.addArticleDefaultValues(
+				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+				_classNameLocalService.getClassNameId(DDMStructure.class),
+				ddmStructure.getStructureId(),
+				HashMapBuilder.put(
+					LocaleUtil.US, RandomTestUtil.randomString()
+				).build(),
+				null, content, ddmStructure.getStructureId(), null, null, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, true, 0, 0, 0, 0, 0, true, true, false,
+				0, 0, null, null, serviceContext));
+
+		DDMStructure updatedDDMStructure =
+			_ddmStructureLocalService.getStructure(
+				ddmStructure.getStructureId());
+
+		LocalizedValue updatedNamePredefinedValue =
+			updatedDDMStructure.getDDMFormField(
+				"name"
+			).getPredefinedValue();
+
+		Assert.assertEquals(
+			brContent, updatedNamePredefinedValue.getString(LocaleUtil.BRAZIL));
+		Assert.assertEquals(
+			enContent, updatedNamePredefinedValue.getString(LocaleUtil.US));
 	}
 
 	@Test(expected = AssetCategoryException.class)
@@ -2479,6 +2553,33 @@ public class JournalArticleLocalServiceTest {
 			false, true, ServiceContextTestUtil.getServiceContext());
 
 		Assert.assertEquals(date, journalArticle2.getDisplayDate());
+
+		calendar.add(Calendar.YEAR, 1);
+
+		Date futureDate = calendar.getTime();
+
+		journalArticle2 = JournalTestUtil.updateArticle(
+			journalArticle2.getUserId(), journalArticle2,
+			journalArticle2.getTitleMap(), journalArticle2.getContent(),
+			futureDate, false, true,
+			ServiceContextTestUtil.getServiceContext());
+
+		Assert.assertEquals(futureDate, journalArticle2.getDisplayDate());
+
+		journalArticle2 = _journalArticleLocalService.updateArticle(
+			journalArticle2.getUserId(), journalArticle2.getGroupId(),
+			journalArticle2.getFolderId(), journalArticle2.getArticleId(),
+			journalArticle2.getVersion(), journalArticle2.getTitleMap(),
+			journalArticle2.getDescriptionMap(), null,
+			journalArticle2.getContent(), journalArticle2.getDDMTemplateKey(),
+			journalArticle2.getLayoutUuid(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, true,
+			0, 0, 0, 0, 0, true, journalArticle2.isIndexable(),
+			journalArticle2.isSmallImage(), 0,
+			journalArticle2.getSmallImageSource(),
+			journalArticle2.getSmallImageURL(), null, null, null,
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+
+		Assert.assertEquals(futureDate, journalArticle2.getDisplayDate());
 	}
 
 	@Test

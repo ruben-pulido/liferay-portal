@@ -2,7 +2,6 @@
 definition {
 
 	property browser.chrome.version = "139.0";
-	property custom.properties = "feature.flag.LPD-82301=true";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Questions";
@@ -11,6 +10,8 @@ definition {
 		TestCase.setUpPortalInstance();
 
 		User.firstLoginPG();
+
+		Questions.enableWidgetQuestions();
 
 		JSONLayout.addPublicLayout(
 			groupName = "Guest",

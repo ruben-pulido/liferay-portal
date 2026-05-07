@@ -143,11 +143,15 @@ PatcherFix patcherFix = PatcherFixLocalServiceUtil.fetchPatcherFix(patcherFixId)
 			</p>
 		</div>
 
-		<aui:input label="branch-name" name="committish" />
+		<aui:input helpMessage="enable-to-automatically-fetch-and-backport-code-instead-of-providing-a-manual-branch" label="auto-fix" name="autoFix" onChange='<%= liferayPortletResponse.getNamespace() + "autoFixOnChange();" %>' type="checkbox" value="<%= patcherFix.getType() == PatcherFixConstants.TYPE_AUTO_FIX %>" />
 
-		<aui:input label="github-url" name="gitRemoteURL" />
+		<aui:fieldset id='<%= liferayPortletResponse.getNamespace() + "manualFixFieldset" %>'>
+			<aui:input label="branch-name" name="committish" />
 
-		<aui:input name="workaround" type="checkbox" value="<%= patcherFix.getType() == PatcherFixConstants.TYPE_WORKAROUND %>" />
+			<aui:input label="github-url" name="gitRemoteURL" />
+
+			<aui:input name="workaround" type="checkbox" value="<%= patcherFix.getType() == PatcherFixConstants.TYPE_WORKAROUND %>" />
+		</aui:fieldset>
 	</liferay-frontend:edit-form-body>
 
 	<liferay-frontend:edit-form-footer>
@@ -166,10 +170,28 @@ PatcherFix patcherFix = PatcherFixLocalServiceUtil.fetchPatcherFix(patcherFixId)
 </liferay-frontend:edit-form>
 
 <aui:script>
+	var autoFix = document.getElementById('<portlet:namespace />autoFix');
+	var manualFixFieldset = document.getElementById(
+		'<portlet:namespace />manualFixFieldset'
+	);
+
 	function <portlet:namespace />handleClick() {
 		Liferay.Util.openModal({
 			title: '<liferay-ui:message key="edit-fix-packs" />',
 			url: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="mvcRenderCommandName" value="/patcher/edit_fix_pack_fields_fixes" /><portlet:param name="patcherFixId" value="<%= String.valueOf(patcherFix.getPatcherFixId()) %>" /></portlet:renderURL>',
 		});
 	}
+
+	Liferay.provide(
+		window,
+		'<portlet:namespace />autoFixOnChange',
+		function () {
+			Liferay.Patcher.handleAutoFixCheckbox(autoFix, manualFixFieldset);
+		},
+		['aui-base']
+	);
+
+	AUI().ready(function () {
+		Liferay.Patcher.handleAutoFixCheckbox(autoFix, manualFixFieldset);
+	});
 </aui:script>

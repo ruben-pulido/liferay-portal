@@ -7,15 +7,20 @@
 
 <%@ include file="/dynamic_include/init.jsp" %>
 
+<%
+String clickToChatAIHubServiceURL = (String)request.getAttribute(ClickToChatWebKeys.CLICK_TO_CHAT_AIHUB_SERVICE_URL);
+%>
+
 <aui:script position="inline">
 	(function () {
-		if (document.getElementById('aihub-chat-widget-script')) {
+		if (document.getElementById('aihub-chatbot-widget-script')) {
 			return;
 		}
 
 		var linkElement = document.createElement('link');
 
-		linkElement.href = 'https://ai.hub.liferay.com/index-css';
+		linkElement.href =
+			'<%= HtmlUtil.escapeJS(clickToChatAIHubServiceURL) %>/documents/d/global/index-css';
 		linkElement.rel = 'stylesheet';
 
 		document.head.appendChild(linkElement);
@@ -23,7 +28,12 @@
 		var scriptElement = document.createElement('script');
 
 		scriptElement.id = 'aihub-chatbot-widget-script';
-		scriptElement.src = 'https://ai.hub.liferay.com/index-js';
+		scriptElement.src =
+			'<%= HtmlUtil.escapeJS(clickToChatAIHubServiceURL) %>/documents/d/global/index-js';
+		scriptElement.setAttribute(
+			'ai-hub-url',
+			'<%= HtmlUtil.escapeJS(clickToChatAIHubServiceURL) %>'
+		);
 		scriptElement.setAttribute(
 			'chatbot-external-reference-code',
 			'<%= clickToChatChatProviderAccountId %>'

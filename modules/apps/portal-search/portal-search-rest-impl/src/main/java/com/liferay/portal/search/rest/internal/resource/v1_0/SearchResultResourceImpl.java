@@ -12,20 +12,18 @@ import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.MatchAllQuery;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.MatchAllQuery;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -183,7 +181,7 @@ public class SearchResultResourceImpl extends BaseSearchResultResourceImpl {
 		UnsafeConsumer<BooleanQuery, Exception> booleanQueryUnsafeConsumer,
 		Filter filter) {
 
-		BooleanQuery booleanQuery = new BooleanQueryImpl() {
+		BooleanQuery booleanQuery = new BooleanQuery() {
 			{
 				add(new MatchAllQuery(), BooleanClauseOccur.MUST);
 
@@ -200,8 +198,7 @@ public class SearchResultResourceImpl extends BaseSearchResultResourceImpl {
 		try {
 			booleanQueryUnsafeConsumer.accept(booleanQuery);
 
-			return BooleanClauseFactoryUtil.create(
-				booleanQuery, BooleanClauseOccur.MUST.getName());
+			return new BooleanClause<>(booleanQuery, BooleanClauseOccur.MUST);
 		}
 		catch (Exception exception) {
 			throw new RuntimeException(exception);
@@ -445,6 +442,22 @@ public class SearchResultResourceImpl extends BaseSearchResultResourceImpl {
 		}
 	}
 
+	private void _setDateReview(
+		Document document, List<String> fields, SearchResult searchResult) {
+
+		if (!_isEmptyOrContains(fields, "dateReview")) {
+			return;
+		}
+
+		String reviewDate = document.getString(
+			com.liferay.portal.kernel.search.Field.REVIEW_DATE);
+
+		if (reviewDate != null) {
+			searchResult.setDateReview(
+				() -> _parseDateStringFieldValue(reviewDate));
+		}
+	}
+
 	private void _setDescription(
 		AssetRenderer<?> assetRenderer, List<String> fields,
 		SearchResult searchResult, Summary summary) {
@@ -643,6 +656,7 @@ public class SearchResultResourceImpl extends BaseSearchResultResourceImpl {
 				embedded, entryClassName, entryClassPK, fields, searchResult);
 			_setDateCreated(document, fields, searchResult);
 			_setDateModified(document, fields, searchResult);
+			_setDateReview(document, fields, searchResult);
 			_setScore(fields, searchHit, searchResult);
 
 			searchResults.add(searchResult);

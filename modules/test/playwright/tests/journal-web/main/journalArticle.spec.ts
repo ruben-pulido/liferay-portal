@@ -43,17 +43,12 @@ const translateNameAndMetadataFields = async (
 	);
 	await fillAndClickOutside(
 		page,
-		page
-			.frameLocator(':text("Description")+div iframe')
-			.getByRole('textbox')
+		page.getByText('Description Rich Text Editor').getByRole('textbox')
 	);
 };
 
 const baseTest = mergeTests(
 	apiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	isolatedSiteTest,
 	journalPagesTest,
 	loginTest(),
@@ -297,7 +292,6 @@ baseTest(
 	{
 		tag: '@LPD-66008',
 	},
-
 	async ({apiHelpers, journalEditArticlePage, page, site}) => {
 		const structureName = 'Test Structure';
 
@@ -1469,9 +1463,8 @@ baseTest(
 
 		await expect(
 			page
-				.getByLabel('Content', {exact: true})
-				.locator('iframe[title="editor"]')
-				.contentFrame()
+				.getByTestId('content')
+				.getByRole('textbox', {name: 'Rich Text Editor'})
 				.getByText(catalanContent)
 		).toBeVisible();
 	}

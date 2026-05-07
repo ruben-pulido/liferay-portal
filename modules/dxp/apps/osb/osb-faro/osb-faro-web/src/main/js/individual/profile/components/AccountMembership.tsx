@@ -10,7 +10,7 @@ import {
 } from 'shared/components/GeneralInfoSection';
 import {formatUTCDate} from 'shared/util/date';
 import {Map} from 'immutable';
-import {SectionHeader} from './SectionHeader';
+import {SectionHeader} from 'shared/components/SectionHeader';
 
 function formatCurrency(currencyCode: string, value: string): string {
 	return new Intl.NumberFormat(undefined, {
@@ -59,6 +59,7 @@ const dateKeys = ['createdDate', 'lastActivityDate'];
 
 interface IAccountMembershipProps {
 	accountData?: Map<string, any>;
+	children?: React.ReactNode;
 	showEmptyState?: boolean;
 }
 

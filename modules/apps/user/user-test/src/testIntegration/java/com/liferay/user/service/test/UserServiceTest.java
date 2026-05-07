@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.UserService;
@@ -115,6 +116,48 @@ public class UserServiceTest {
 		finally {
 			PermissionThreadLocal.setPermissionChecker(
 				originalPermissionChecker);
+		}
+	}
+
+	@Test
+	public void testAddOrganizationUsers() throws Exception {
+		Role role = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
+
+		User user1 = UserTestUtil.addUser();
+
+		_userLocalService.addRoleUser(role.getRoleId(), user1.getUserId());
+
+		_resourcePermissionLocalService.setResourcePermissions(
+			TestPropsValues.getCompanyId(), Organization.class.getName(),
+			ResourceConstants.SCOPE_COMPANY,
+			String.valueOf(TestPropsValues.getCompanyId()), role.getRoleId(),
+			new String[] {
+				ActionKeys.ASSIGN_MEMBERS, ActionKeys.MANAGE_USERS,
+				ActionKeys.VIEW_MEMBERS
+			});
+
+		RoleTestUtil.addResourcePermission(
+			role, User.class.getName(), ResourceConstants.SCOPE_COMPANY,
+			String.valueOf(TestPropsValues.getCompanyId()), ActionKeys.VIEW);
+
+		Organization organization = _organizationLocalService.addOrganization(
+			TestPropsValues.getUserId(),
+			OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID,
+			RandomTestUtil.randomString(), false);
+
+		User user2 = UserTestUtil.addUser();
+
+		try (ContextUserReplace contextUserReplace = new ContextUserReplace(
+				user1, PermissionCheckerFactoryUtil.create(user1))) {
+
+			_userService.addOrganizationUsers(
+				organization.getOrganizationId(),
+				new long[] {user2.getUserId()});
+
+			long[] userIds = _userService.getOrganizationUserIds(
+				organization.getOrganizationId());
+
+			Assert.assertEquals(user2.getUserId(), userIds[0]);
 		}
 	}
 
@@ -331,6 +374,9 @@ public class UserServiceTest {
 
 	@Inject
 	private OrganizationLocalService _organizationLocalService;
+
+	@Inject
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
 
 	@Inject
 	private UserLocalService _userLocalService;

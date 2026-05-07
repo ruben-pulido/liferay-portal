@@ -62,20 +62,18 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.NestedQuery;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.SortFactoryUtil;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.NestedQuery;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
+import com.liferay.portal.kernel.search.TermQuery;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -371,7 +369,7 @@ public class ObjectEntrySingleFormVariationInfoCollectionProvider
 	private BooleanClause[] _getBooleanClauses(CollectionQuery collectionQuery)
 		throws Exception {
 
-		BooleanQuery booleanQuery = new BooleanQueryImpl();
+		BooleanQuery booleanQuery = new BooleanQuery();
 
 		List<ObjectField> objectFields =
 			_objectFieldLocalService.getObjectFields(
@@ -398,14 +396,13 @@ public class ObjectEntrySingleFormVariationInfoCollectionProvider
 				continue;
 			}
 
-			BooleanQuery nestedBooleanQuery = new BooleanQueryImpl();
+			BooleanQuery nestedBooleanQuery = new BooleanQuery();
 
 			nestedBooleanQuery.add(
-				new TermQueryImpl(
-					_getFieldName(objectField), entry.getValue()[0]),
+				new TermQuery(_getFieldName(objectField), entry.getValue()[0]),
 				BooleanClauseOccur.MUST);
 			nestedBooleanQuery.add(
-				new TermQueryImpl("nestedFieldArray.fieldName", entry.getKey()),
+				new TermQuery("nestedFieldArray.fieldName", entry.getKey()),
 				BooleanClauseOccur.MUST);
 
 			booleanQuery.add(
@@ -414,8 +411,7 @@ public class ObjectEntrySingleFormVariationInfoCollectionProvider
 		}
 
 		return new BooleanClause[] {
-			BooleanClauseFactoryUtil.create(
-				booleanQuery, BooleanClauseOccur.MUST.getName())
+			new BooleanClause<>(booleanQuery, BooleanClauseOccur.MUST)
 		};
 	}
 

@@ -17,8 +17,7 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.IndexWriter;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
+import com.liferay.portal.kernel.search.TermQuery;
 import com.liferay.portal.kernel.search.suggest.SpellCheckIndexWriter;
 import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
@@ -208,19 +207,18 @@ public class SolrIndexWriter extends BaseIndexWriter {
 		SearchContext searchContext, String className) {
 
 		try {
-			BooleanQuery booleanQuery = new BooleanQueryImpl();
+			BooleanQuery booleanQuery = new BooleanQuery();
 
 			long companyId = searchContext.getCompanyId();
 
 			if (companyId > 0) {
 				booleanQuery.add(
-					new TermQueryImpl(
-						Field.COMPANY_ID, String.valueOf(companyId)),
+					new TermQuery(Field.COMPANY_ID, String.valueOf(companyId)),
 					BooleanClauseOccur.MUST);
 			}
 
 			booleanQuery.add(
-				new TermQueryImpl(Field.ENTRY_CLASS_NAME, className),
+				new TermQuery(Field.ENTRY_CLASS_NAME, className),
 				BooleanClauseOccur.MUST);
 
 			DeleteByQueryDocumentRequest deleteByQueryDocumentRequest =

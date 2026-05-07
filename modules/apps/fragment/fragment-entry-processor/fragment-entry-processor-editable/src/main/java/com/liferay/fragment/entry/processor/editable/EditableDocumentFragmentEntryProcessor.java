@@ -5,6 +5,7 @@
 
 package com.liferay.fragment.entry.processor.editable;
 
+import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.entry.processor.editable.mapper.EditableElementMapper;
 import com.liferay.fragment.entry.processor.editable.parser.EditableElementParser;
@@ -24,6 +25,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
@@ -89,6 +92,9 @@ public class EditableDocumentFragmentEntryProcessor
 
 		Map<InfoItemReference, InfoItemFieldValues> infoDisplaysFieldValues =
 			new HashMap<>();
+
+		boolean analyticsEnabled = _isAnalyticsEnabled(
+			fragmentEntryLink.getCompanyId());
 
 		Elements elements = Collector.collect(
 			new Evaluator() {
@@ -228,12 +234,15 @@ public class EditableDocumentFragmentEntryProcessor
 				element.removeAttr("view-tag-name");
 			}
 
-			if (fragmentEntryProcessorContext.isViewMode()) {
-				AnalyticsAttributesUtil.addAnalyticsAttributes(
-					editableValueJSONObject, element,
-					fragmentEntryProcessorContext,
-					_fragmentEntryProcessorHelper, infoDisplaysFieldValues,
-					_infoItemServiceRegistry);
+			if (analyticsEnabled &&
+				fragmentEntryProcessorContext.isViewMode()) {
+
+				_setAnalyticsAttributes(
+					element,
+					AnalyticsAttributesUtil.getAnalyticsAttributes(
+						editableValueJSONObject, fragmentEntryProcessorContext,
+						_fragmentEntryProcessorHelper, infoDisplaysFieldValues,
+						_infoItemServiceRegistry));
 			}
 		}
 
@@ -308,6 +317,45 @@ public class EditableDocumentFragmentEntryProcessor
 
 		return _editableElementParserServiceTrackerMap.getService(type);
 	}
+
+	private boolean _isAnalyticsEnabled(long companyId) {
+		try {
+			return _analyticsSettingsManager.isAnalyticsEnabled(companyId);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+
+			return false;
+		}
+	}
+
+	private void _setAnalyticsAttributes(
+		Element element, Map<String, Object> analyticsAttributes) {
+
+		for (Map.Entry<String, Object> entry : analyticsAttributes.entrySet()) {
+			Object value = entry.getValue();
+
+			if (value == null) {
+				continue;
+			}
+
+			String stringValue = String.valueOf(value);
+
+			if (Validator.isNull(stringValue)) {
+				continue;
+			}
+
+			element.attr("data-" + entry.getKey(), stringValue);
+		}
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		EditableDocumentFragmentEntryProcessor.class);
+
+	@Reference
+	private AnalyticsSettingsManager _analyticsSettingsManager;
 
 	private ServiceTrackerMap<String, EditableElementMapper>
 		_editableElementMapperServiceTrackerMap;

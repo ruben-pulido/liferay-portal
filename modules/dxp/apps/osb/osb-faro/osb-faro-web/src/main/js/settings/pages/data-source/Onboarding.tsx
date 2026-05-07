@@ -1,21 +1,29 @@
-import ConnectDemandbase from './ConnectDemandbase';
+import ConnectConnector from './ConnectConnector';
 import ConnectLiferayDXP from './ConnectLiferayDXP';
 import ConnectSalesforce from './ConnectSalesforce';
 import React from 'react';
 import RouteNotFound from 'shared/components/RouteNotFound';
 import {DataSourceTypes} from 'shared/util/constants';
+import {getConnectorConfig} from 'settings/components/3rd-party-connector/registry';
 import {useParams} from 'react-router-dom';
 
 const PAGE_MAP = {
-	[DataSourceTypes.Demandbase]: ConnectDemandbase,
 	[DataSourceTypes.Liferay]: ConnectLiferayDXP,
 	[DataSourceTypes.Salesforce]: ConnectSalesforce
 };
 
 const DataSourceOnboarding = () => {
-	const {id} = useParams();
+	const {id = ''} = useParams<{id: string}>();
 
-	const Component = PAGE_MAP[id.toUpperCase()];
+	const normalizedId = id.toUpperCase();
+
+	if (getConnectorConfig(normalizedId)) {
+		return <ConnectConnector />;
+	}
+
+	const Component = (PAGE_MAP as {[key: string]: React.ComponentType})[
+		normalizedId
+	];
 
 	if (Component) {
 		return <Component />;

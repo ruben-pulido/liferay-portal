@@ -8,7 +8,6 @@ package com.liferay.segments.internal.odata.search;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
@@ -17,6 +16,7 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.HitsImpl;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistry;
+import com.liferay.portal.kernel.search.MatchAllQuery;
 import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryConfig;
@@ -24,9 +24,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.TermRangeQuery;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.MatchAllQuery;
-import com.liferay.portal.kernel.search.generic.TermRangeQueryImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -180,8 +177,7 @@ public class ODataSearchAdapterImpl implements ODataSearchAdapter {
 	private BooleanClause<Query> _getBooleanClause(BooleanQuery booleanQuery)
 		throws PortalException {
 
-		return BooleanClauseFactoryUtil.create(
-			booleanQuery, BooleanClauseOccur.MUST.getName());
+		return new BooleanClause<>(booleanQuery, BooleanClauseOccur.MUST);
 	}
 
 	private BooleanQuery _getBooleanQuery(
@@ -189,7 +185,7 @@ public class ODataSearchAdapterImpl implements ODataSearchAdapter {
 			FilterParser filterParser, Locale locale)
 		throws Exception {
 
-		BooleanQuery booleanQuery = new BooleanQueryImpl();
+		BooleanQuery booleanQuery = new BooleanQuery();
 
 		booleanQuery.add(new MatchAllQuery(), BooleanClauseOccur.MUST);
 
@@ -220,11 +216,11 @@ public class ODataSearchAdapterImpl implements ODataSearchAdapter {
 				"Missing " + sortField + " in the last document");
 		}
 
-		BooleanQuery lastDocumentBooleanQuery = new BooleanQueryImpl();
+		BooleanQuery lastDocumentBooleanQuery = new BooleanQuery();
 
 		lastDocumentBooleanQuery.add(booleanQuery, BooleanClauseOccur.MUST);
 
-		TermRangeQuery termRangeQuery = new TermRangeQueryImpl(
+		TermRangeQuery termRangeQuery = new TermRangeQuery(
 			sortField, lastDocument.get(sortField), null, false, true);
 
 		lastDocumentBooleanQuery.add(termRangeQuery, BooleanClauseOccur.MUST);

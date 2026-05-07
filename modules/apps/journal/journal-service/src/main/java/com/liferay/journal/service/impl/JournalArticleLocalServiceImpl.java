@@ -4714,19 +4714,6 @@ public class JournalArticleLocalServiceImpl
 
 		if (displayDate == null) {
 			displayDate = article.getDisplayDate();
-
-			if ((displayDate != null) && displayDate.before(new Date())) {
-				displayDate = article.getDisplayDate();
-			}
-			else {
-				Calendar calendar = CalendarFactoryUtil.getCalendar(
-					user.getTimeZone());
-
-				calendar.set(Calendar.SECOND, 0);
-				calendar.set(Calendar.MILLISECOND, 0);
-
-				displayDate = calendar.getTime();
-			}
 		}
 
 		Date expirationDate = null;
@@ -8602,6 +8589,8 @@ public class JournalArticleLocalServiceImpl
 			ddmStructureId);
 
 		DDMForm ddmForm = ddmStructure.getDDMForm();
+
+		ddmForm.setAllowInvalidAvailableLocalesForProperty(true);
 
 		Map<String, DDMFormField> ddmFormFieldsMap =
 			ddmForm.getDDMFormFieldsMap(true);

@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.odata.entity.DateTimeEntityField;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.odata.entity.IntegerEntityField;
 import com.liferay.portal.odata.entity.StringEntityField;
 
 import java.util.Map;
@@ -30,6 +31,7 @@ public class AssetLibraryEntityModel implements EntityModel {
 				locale -> "type",
 				value -> String.valueOf(
 					AssetLibraryUtil.getDepotEntryType((String)value))),
+			new IntegerEntityField("siteId", locale -> Field.GROUP_ID),
 			new StringEntityField("name", locale -> Field.NAME));
 	}
 

@@ -170,6 +170,8 @@ public class DynamicRegistrationServiceTest extends BaseClientTestCase {
 		invocationBuilder = authorize(
 			registerWebTarget.request(), _getToken(oAuth2Application));
 
+		invocationBuilder.header("Origin", RandomTestUtil.randomString());
+
 		response = invocationBuilder.get();
 
 		Assert.assertEquals(200, response.getStatus());
@@ -178,6 +180,9 @@ public class DynamicRegistrationServiceTest extends BaseClientTestCase {
 
 		Assert.assertEquals(
 			clientName, responseJSONObject.getString("client_name"));
+
+		Assert.assertNull(
+			response.getHeaderString("Access-Control-Allow-Origin"));
 	}
 
 	@FeatureFlag("LPD-63416")

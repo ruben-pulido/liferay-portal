@@ -31,14 +31,19 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
+import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -115,9 +120,16 @@ public class DBUpgradeClient {
 			if (logFile.exists()) {
 				String logFileName = logFile.getName();
 
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+					"yyyyMMdd_HHmmss", Locale.US);
+
+				simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+				String timestamp = simpleDateFormat.format(
+					new Date(logFile.lastModified()));
+
 				logFile.renameTo(
-					new File(
-						logDir, logFileName + "." + logFile.lastModified()));
+					new File(logDir, logFileName + "." + timestamp));
 
 				logFile = new File(logDir, logFileName);
 			}
@@ -219,8 +231,10 @@ public class DBUpgradeClient {
 
 		try (ObjectOutputStream bootstrapObjectOutputStream =
 				new ObjectOutputStream(process.getOutputStream());
+
 			InputStreamReader inputStreamReader = new InputStreamReader(
 				process.getInputStream());
+
 			BufferedReader bufferedReader = new BufferedReader(
 				inputStreamReader)) {
 
@@ -785,19 +799,20 @@ public class DBUpgradeClient {
 				}
 			}
 
+			File dir = _appServer.getDir();
+
 			String appServerDirName = _requestDirName(
 				true,
 				new File(
 					_portalUpgradeExtProperties.getProperty("liferay.home")),
-				_appServer.getDir(
-				).getPath(),
+				dir.getPath(),
 				"Please enter your application server directory");
 
 			if (appServerDirName != null) {
 				_appServer.setDirName(appServerDirName);
-			}
 
-			File dir = _appServer.getDir();
+				dir = _appServer.getDir();
+			}
 
 			String extraLibDirNames = _requestDirNames(
 				false, dir, _appServer.getExtraLibDirNames(),
@@ -827,7 +842,6 @@ public class DBUpgradeClient {
 			}
 
 			_appServerProperties.setProperty("dir", dir.getCanonicalPath());
-
 			_appServerProperties.setProperty(
 				"extra.lib.dirs", _appServer.getExtraLibDirNames());
 			_appServerProperties.setProperty(

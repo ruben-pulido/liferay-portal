@@ -15,6 +15,7 @@ import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.product.constants.CommerceChannelConstants;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.service.CommerceOrderLocalService;
+import com.liferay.commerce.test.util.CommerceOrderAttachmentTestUtil;
 import com.liferay.commerce.test.util.CommerceTestUtil;
 import com.liferay.headless.commerce.delivery.cart.client.dto.v1_0.Attachment;
 import com.liferay.headless.commerce.delivery.cart.client.dto.v1_0.AttachmentBase64;
@@ -26,6 +27,7 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 
 import java.math.BigDecimal;
@@ -39,6 +41,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Stefano Motta
  */
+@FeatureFlag("LPD-6252")
 @RunWith(Arquillian.class)
 public class AttachmentResourceTest extends BaseAttachmentResourceTestCase {
 
@@ -46,6 +49,8 @@ public class AttachmentResourceTest extends BaseAttachmentResourceTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+
+		CommerceOrderAttachmentTestUtil.initialize(getClass());
 
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(
@@ -96,12 +101,22 @@ public class AttachmentResourceTest extends BaseAttachmentResourceTestCase {
 	}
 
 	@Override
+	protected String[] getIgnoredEntityFieldNames() {
+		return new String[] {
+			"commerceOrderId", "dateCreated", "dateModified", "type"
+		};
+	}
+
+	@Override
 	protected Attachment randomAttachment() throws Exception {
 		return new Attachment() {
 			{
 				externalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
-				title = RandomTestUtil.randomString() + ".jpg";
+				priority = RandomTestUtil.nextDouble();
+				restricted = RandomTestUtil.randomBoolean();
+				title = RandomTestUtil.randomString();
+				type = "invoice";
 			}
 		};
 	}
@@ -221,7 +236,10 @@ public class AttachmentResourceTest extends BaseAttachmentResourceTestCase {
 						AttachmentResourceTest.class,
 						"dependencies/image.jpg"));
 				externalReferenceCode = attachment1.getExternalReferenceCode();
+				priority = attachment1.getPriority();
+				restricted = attachment1.getRestricted();
 				title = attachment1.getTitle();
+				type = attachment1.getType();
 			}
 		};
 	}

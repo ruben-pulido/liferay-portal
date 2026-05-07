@@ -16,11 +16,20 @@ import {productMenuPageTest} from '../../../fixtures/productMenuPageTest';
 import {remotePageTest} from '../../../fixtures/remotePageTest';
 import {uiElementsPageTest} from '../../../fixtures/uiElementsTest';
 import {webContentDisplayPageTest} from '../../../fixtures/webContentDisplayPageTest';
+import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
+import {
+	JournalContentPage,
+	PageNode,
+	createLayoutHierarchy,
+	flattenPageHierarchy,
+} from '../../../utils/createLayoutHierarchy';
 import getGlobalSiteId from '../../../utils/getGlobalSiteId';
 import getRandomString from '../../../utils/getRandomString';
 import {PORTLET_URLS} from '../../../utils/portletUrls';
 import {reloadUntilVisible} from '../../../utils/reloadUntilVisible';
 import getBasicWebContentStructureId from '../../../utils/structured-content/getBasicWebContentStructureId';
+import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
+import getDataStructureDefinition from '../../journal-web/main/utils/getDataStructureDefinition';
 import {pagesPagesTest} from '../../layout-admin-web/main/fixtures/pagesPagesTest';
 import {remoteStagingPagesTest} from './fixtures/remoteStagingPagesTest';
 import {safeTeardown} from './utils/safeTeardown';
@@ -28,13 +37,15 @@ import {safeTeardown} from './utils/safeTeardown';
 const remotePort = '9080';
 const remotePage = remotePageTest(remotePort);
 
-export const test = mergeTests(
+const test = mergeTests(
 	dataApiHelpersTest,
 	dataRemoteApiHelpersTest(remotePage, remotePort),
 	loginTest(),
 	featureFlagsTest({
 		'LPD-39304': {enabled: true},
+		'LPS-178052': {enabled: true},
 	}),
+	journalPagesTest,
 	pageEditorPagesTest,
 	pagesAdminPagesTest,
 	pagesPagesTest,
@@ -43,6 +54,289 @@ export const test = mergeTests(
 	remoteStagingPagesTest,
 	uiElementsPageTest,
 	webContentDisplayPageTest
+);
+
+test(
+	'Can publish web content with URL references to live via remote staging',
+	{tag: '@LPS-159626'},
+	async ({
+		apiHelpers,
+		journalEditTemplatePage,
+		pageEditorPage,
+		remoteApiHelpers,
+		remotePage,
+		remoteStagingPage,
+	}) => {
+		test.slow();
+
+		const PAGE_HIERARCHY: Array<PageNode<{verify?: boolean}>> = [
+			{
+				children: [
+					{
+						children: [
+							{
+								pageNumber: '111',
+								title: 'Page 111',
+								verify: true,
+							},
+						],
+						pageNumber: '11',
+						title: 'Page 11',
+					},
+					{pageNumber: '12', title: 'Page 12'},
+				],
+				pageNumber: '1',
+				title: 'Page 1',
+			},
+			{
+				children: [
+					{pageNumber: '21', title: 'Page 21', verify: true},
+					{pageNumber: '22', title: 'Page 22'},
+				],
+				pageNumber: '2',
+				title: 'Page 2',
+			},
+			{
+				children: [
+					{pageNumber: '31', title: 'Page 31'},
+					{pageNumber: '32', title: 'Page 32'},
+				],
+				pageNumber: '3',
+				title: 'Page 3',
+				verify: true,
+			},
+		];
+
+		const flatPages = flattenPageHierarchy<{verify?: boolean}>(
+			PAGE_HIERARCHY
+		);
+
+		let remoteSite: Site;
+		let site: Site;
+
+		await test.step('Setup remote staging and sites', async () => {
+			site = await apiHelpers.headlessSite.createSite({
+				name: `site-${getRandomString()}`,
+			});
+
+			apiHelpers.data.push({
+				id: site.externalReferenceCode,
+				type: 'site',
+			});
+
+			remoteSite = await remoteApiHelpers.headlessSite.createSite({
+				name: site.name,
+			});
+
+			remoteApiHelpers.data.push({
+				id: remoteSite.externalReferenceCode,
+				type: 'site',
+			});
+
+			await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({
+				groupId: site.id,
+				remoteGroupId: remoteSite.id,
+				remotePort,
+			});
+		});
+
+		const webContentTitle = getRandomString();
+
+		let structure;
+		let templateKey;
+
+		await test.step('Create a data structure and template for page links', async () => {
+			const structureName = getRandomString();
+			const fields = flatPages.flatMap(({pageNumber}) => [
+				{name: `Openpage${pageNumber}`, repeatable: false},
+				{name: `URL${pageNumber}`, repeatable: false},
+			]);
+
+			const dataDefinition = getDataStructureDefinition({
+				defaultLanguageId: 'en_US',
+				fields,
+				name: structureName,
+			});
+
+			structure = await apiHelpers.dataEngine.createStructure(
+				site.id,
+				dataDefinition
+			);
+
+			const templateScript = flatPages
+				.map(({pageNumber}) => {
+					return `<p><a href="\${URL${pageNumber}.getData()}">\${Openpage${pageNumber}.getData()}</a></p>`;
+				})
+				.join('\n');
+			const templateName = 'template1';
+
+			await journalEditTemplatePage.goto(site.friendlyUrlPath);
+			await journalEditTemplatePage.selectStructure(structureName);
+			await journalEditTemplatePage.editTemplate(
+				templateName,
+				templateScript
+			);
+			await journalEditTemplatePage.saveTemplate();
+			await journalEditTemplatePage.selectTemplateToEdit(templateName);
+
+			templateKey = await journalEditTemplatePage.getDDMTemplateKey();
+		});
+
+		let structure2;
+		let templateKey2;
+
+		await test.step('Create a data structure and template for individual page content', async () => {
+			const structureName2 = getRandomString();
+			const dataDefinition2 = getDataStructureDefinition({
+				defaultLanguageId: 'en_US',
+				fields: [
+					{name: 'Content1', repeatable: false},
+					{name: 'Content2', repeatable: false},
+				],
+				name: structureName2,
+			});
+
+			structure2 = await apiHelpers.dataEngine.createStructure(
+				site.id,
+				dataDefinition2
+			);
+
+			await journalEditTemplatePage.goto(site.friendlyUrlPath);
+			await journalEditTemplatePage.selectStructure(structureName2);
+
+			const templateScript2 =
+				'<h1>${Content1.getData()}</h1>\n' +
+				'<p>${Content2.getData()}</p>';
+			const templateName2 = 'template2';
+			await journalEditTemplatePage.editTemplate(
+				templateName2,
+				templateScript2
+			);
+			await journalEditTemplatePage.saveTemplate();
+			await journalEditTemplatePage.selectTemplateToEdit(templateName2);
+
+			templateKey2 = await journalEditTemplatePage.getDDMTemplateKey();
+		});
+
+		let allLinksArticleId: string;
+		const perPageArticleIds = new Map<string, string>();
+
+		await test.step('Create the "all links" web content article', async () => {
+			const {articleId} =
+				await apiHelpers.jsonWebServicesJournal.addWebContent({
+					contentFields: flatPages.flatMap(
+						({friendlyUrlPath, pageNumber, title}) => [
+							{name: `Openpage${pageNumber}`, value: title},
+							{
+								name: `URL${pageNumber}`,
+								value: `/web${site.friendlyUrlPath}/${friendlyUrlPath}`,
+							},
+						]
+					),
+					ddmStructureId: structure.id,
+					ddmTemplateKey: templateKey,
+					groupId: site.id,
+					titleMap: {en_US: webContentTitle},
+				});
+
+			allLinksArticleId = articleId!;
+		});
+
+		await test.step('Create per-page web content articles', async () => {
+			for (const {contentTitle, pageNumber} of flatPages) {
+				const {articleId} =
+					await apiHelpers.jsonWebServicesJournal.addWebContent({
+						contentFields: [
+							{name: 'Content1', value: contentTitle},
+							{
+								name: 'Content2',
+								value: `Text Content for ${contentTitle}`,
+							},
+						],
+						ddmStructureId: structure2.id,
+						ddmTemplateKey: templateKey2,
+						groupId: site.id,
+						titleMap: {en_US: contentTitle},
+					});
+
+				perPageArticleIds.set(pageNumber, articleId!);
+			}
+		});
+
+		const WC_DISPLAY =
+			'com_liferay_journal_content_web_portlet_JournalContentPortlet';
+
+		const attachWidgetsToNodes = (
+			nodes: Array<PageNode<{verify?: boolean}>>
+		): Array<PageNode<{verify?: boolean}>> =>
+			nodes.map((node) => ({
+				...node,
+				children: node.children
+					? attachWidgetsToNodes(node.children)
+					: undefined,
+				widgets: [
+					{
+						config: {
+							articleId: allLinksArticleId,
+							ddmTemplateKey: templateKey,
+						},
+						name: WC_DISPLAY,
+					},
+					{
+						config: {
+							articleId: perPageArticleIds.get(node.pageNumber)!,
+							ddmTemplateKey: templateKey2,
+						},
+						name: WC_DISPLAY,
+					},
+				],
+			}));
+
+		let layouts: Array<JournalContentPage<{verify?: boolean}>> = [];
+
+		await test.step('Create page hierarchy with pre-configured Web Content Display widgets', async () => {
+			layouts = await createLayoutHierarchy<{verify?: boolean}>({
+				apiHelpers,
+				pageNodes: attachWidgetsToNodes(PAGE_HIERARCHY),
+				siteId: site.id,
+			});
+		});
+
+		await test.step('Publish each page so staging picks up the drafts', async () => {
+			for (const layout of layouts) {
+				await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+				await pageEditorPage.publishPage();
+			}
+		});
+
+		await test.step('Publish to live and verify content and links on the remote site', async () => {
+			await remoteStagingPage.publishToLive({
+				layoutFriendlyURL: layouts[0].friendlyUrlPath,
+				siteFriendlyUrl: site.friendlyUrlPath,
+			});
+
+			await remotePage.goto(
+				`/web${remoteSite.friendlyUrlPath}${layouts[0].friendlyUrlPath}`
+			);
+
+			for (const layout of layouts.filter(({verify}) => verify)) {
+				await clickAndExpectToBeVisible({
+					target: remotePage.locator('h1', {
+						hasText: layout.contentTitle,
+					}),
+					trigger: remotePage.getByRole('link', {
+						exact: true,
+						name: layout.title,
+					}),
+				});
+
+				await expect(remotePage).toHaveURL(
+					`/web/${site.name}${layout.friendlyUrlPath}`
+				);
+			}
+		});
+	}
 );
 
 test(
@@ -60,11 +354,9 @@ test(
 	}) => {
 		test.slow();
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: 'Site Name',
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const layout = await apiHelpers.jsonWebServicesLayout.addLayout({
 			groupId: site.id,
@@ -74,13 +366,8 @@ test(
 			title: 'Staging Test Page',
 		});
 
-		const remoteSite = await remoteApiHelpers.headlessSite.createSite({
+		const remoteSite = await remoteApiHelpers.headlessAdminSite.postSite({
 			name: 'Remote Site Name',
-		});
-
-		remoteApiHelpers.data.push({
-			id: remoteSite.externalReferenceCode,
-			type: 'site',
 		});
 
 		await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({

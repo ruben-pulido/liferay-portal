@@ -103,7 +103,6 @@ import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.MultivaluedMap;
 
 import java.io.Serializable;
@@ -1081,10 +1080,6 @@ public class DocumentResourceImpl extends BaseDocumentResourceImpl {
 		Document document = multipartBody.getValueAsNullableInstance(
 			"document", Document.class);
 
-		if (document == null) {
-			throw new BadRequestException("Document not found in body");
-		}
-
 		BinaryFile binaryFile = multipartBody.getBinaryFile("file");
 
 		if (binaryFile == null) {
@@ -1097,11 +1092,18 @@ public class DocumentResourceImpl extends BaseDocumentResourceImpl {
 			fileEntry.getFileEntryId(), document, fileEntry);
 
 		String fileName = null;
+
+		String contentType = binaryFile.getContentType();
+
+		if (contentType == null) {
+			contentType = fileEntry.getMimeType();
+		}
+
 		String title = null;
 		String urlTitle = null;
-		String description = null;
-		Date displayDate = null;
-		Date expirationDate = null;
+		String description = fileEntry.getDescription();
+		Date displayDate = fileEntry.getDisplayDate();
+		Date expirationDate = fileEntry.getExpirationDate();
 
 		if (document != null) {
 			fileName = document.getFileName();
@@ -1116,17 +1118,20 @@ public class DocumentResourceImpl extends BaseDocumentResourceImpl {
 			fileName = binaryFile.getFileName();
 		}
 
+		if (fileName == null) {
+			fileName = fileEntry.getFileName();
+		}
+
 		if (title == null) {
 			title = fileEntry.getTitle();
 		}
 
 		return _toDocument(
 			_dlAppService.updateFileEntry(
-				fileEntry.getFileEntryId(), fileName,
-				binaryFile.getContentType(), title, urlTitle, description, null,
-				DLVersionNumberIncrease.AUTOMATIC, binaryFile.getInputStream(),
-				binaryFile.getSize(), displayDate, expirationDate,
-				fileEntry.getReviewDate(),
+				fileEntry.getFileEntryId(), fileName, contentType, title,
+				urlTitle, description, null, DLVersionNumberIncrease.AUTOMATIC,
+				binaryFile.getInputStream(), binaryFile.getSize(), displayDate,
+				expirationDate, fileEntry.getReviewDate(),
 				_createServiceContext(
 					Constants.UPDATE, () -> new Long[0], () -> new String[0],
 					_getDLFileEntryType(

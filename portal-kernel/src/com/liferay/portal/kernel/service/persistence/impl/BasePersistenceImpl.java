@@ -6,6 +6,8 @@
 package com.liferay.portal.kernel.service.persistence.impl;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.sql.dsl.Column;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.sql.dsl.Table;
@@ -30,6 +32,7 @@ import com.liferay.petra.sql.dsl.spi.query.Select;
 import com.liferay.petra.sql.dsl.spi.query.SetOperation;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.dao.db.DB;
@@ -67,6 +70,7 @@ import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
+import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -76,6 +80,11 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyFactory;
 
 import java.io.Serializable;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.ParameterizedType;
 
 import java.math.BigDecimal;
 
@@ -115,10 +124,53 @@ import javax.sql.DataSource;
  * @author Shuyang Zhou
  * @author Peter Fellwock
  */
-public class BasePersistenceImpl<T extends BaseModel<T>>
-	implements BasePersistence<T>, SessionFactory {
+public class BasePersistenceImpl
+	<T extends BaseModel<T>, E extends NoSuchModelException>
+		implements BasePersistence<T>, SessionFactory {
 
 	public static final String COUNT_COLUMN_NAME = "COUNT_VALUE";
+
+	public BasePersistenceImpl() {
+		Class<?> exceptionClass = NoSuchModelException.class;
+
+		Class<?> clazz = getClass();
+
+		while (clazz.getSuperclass() != BasePersistenceImpl.class) {
+			clazz = clazz.getSuperclass();
+		}
+
+		java.lang.reflect.Type genericSuperclass = clazz.getGenericSuperclass();
+
+		if (genericSuperclass instanceof ParameterizedType) {
+			ParameterizedType parameterizedType =
+				(ParameterizedType)genericSuperclass;
+
+			java.lang.reflect.Type typeArgument =
+				parameterizedType.getActualTypeArguments()[1];
+
+			if (typeArgument instanceof Class<?>) {
+				exceptionClass = (Class<?>)typeArgument;
+			}
+		}
+
+		try {
+			MethodHandle methodHandle = MethodHandles.lookup(
+			).unreflectConstructor(
+				exceptionClass.getConstructor(String.class)
+			);
+
+			_noSuchModelExceptionMethodHandle = methodHandle.asType(
+				_NEW_NO_SUCH_MODEL_EXCEPTION_METHOD_TYPE);
+		}
+		catch (ReflectiveOperationException reflectiveOperationException) {
+			throw ReflectionUtil.<RuntimeException>throwException(
+				reflectiveOperationException);
+		}
+	}
+
+	public void cacheResult(List<T> models) {
+		throw new UnsupportedOperationException();
+	}
 
 	public void cacheResult(T model) {
 		throw new UnsupportedOperationException();
@@ -126,19 +178,62 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 
 	@Override
 	public void clearCache() {
+		EntityCache entityCache = getEntityCache();
+
+		entityCache.clearCache(_modelImplClass);
+
+		FinderCache finderCache = getFinderCache();
+
+		finderCache.clearCache(_modelImplClass);
 	}
 
 	@Override
-	public void clearCache(List<T> model) {
+	public void clearCache(List<T> models) {
+		EntityCache entityCache = getEntityCache();
+
+		for (T model : models) {
+			entityCache.removeResult(_modelImplClass, model);
+		}
+	}
+
+	public void clearCache(Set<Serializable> primaryKeys) {
+		FinderCache finderCache = getFinderCache();
+
+		finderCache.clearCache(_modelImplClass);
+
+		EntityCache entityCache = getEntityCache();
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(_modelImplClass, primaryKey);
+		}
 	}
 
 	@Override
 	public void clearCache(T model) {
+		EntityCache entityCache = getEntityCache();
+
+		entityCache.removeResult(_modelImplClass, model);
 	}
 
 	@Override
 	public void closeSession(Session session) {
 		_sessionFactory.closeSession(session);
+	}
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public int countAll() {
+		CTPersistenceHelper ctPersistenceHelper = getCTPersistenceHelper();
+
+		if (ctPersistenceHelper == null) {
+			return _countAll();
+		}
+
+		try (SafeCloseable safeCloseable =
+				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
+					(Class)_modelClass)) {
+
+			return _countAll();
+		}
 	}
 
 	@Override
@@ -330,44 +425,22 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public T fetchByPrimaryKey(Serializable primaryKey) {
-		EntityCache entityCache = getEntityCache();
+		CTPersistenceHelper ctPersistenceHelper = getCTPersistenceHelper();
 
-		Serializable serializable = entityCache.getResult(
-			_modelImplClass, primaryKey);
+		if ((ctPersistenceHelper != null) &&
+			ctPersistenceHelper.isProductionMode(
+				(Class)_modelClass, primaryKey)) {
 
-		if (serializable == nullModel) {
-			return null;
-		}
+			try (SafeCloseable safeCloseable =
+					CTCollectionThreadLocal.
+						setProductionModeWithSafeCloseable()) {
 
-		T model = (T)serializable;
-
-		if (model == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				model = (T)session.get(_modelImplClass, primaryKey);
-
-				if (model == null) {
-					entityCache.putResult(
-						_modelImplClass, primaryKey, nullModel);
-				}
-				else {
-					cacheResult(model);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
+				return _fetchByPrimaryKey(primaryKey);
 			}
 		}
 
-		return model;
+		return _fetchByPrimaryKey(primaryKey);
 	}
 
 	@Override
@@ -375,155 +448,72 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 	public Map<Serializable, T> fetchByPrimaryKeys(
 		Set<Serializable> primaryKeys) {
 
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
+		CTPersistenceHelper ctPersistenceHelper = getCTPersistenceHelper();
 
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
+		if ((ctPersistenceHelper != null) &&
+			ctPersistenceHelper.isProductionMode((Class)_modelClass)) {
 
-			Serializable primaryKey = iterator.next();
+			try (SafeCloseable safeCloseable =
+					CTCollectionThreadLocal.
+						setProductionModeWithSafeCloseable()) {
 
-			T model = fetchByPrimaryKey(primaryKey);
-
-			if (model == null) {
-				return Collections.emptyMap();
-			}
-
-			return Collections.singletonMap(primaryKey, model);
-		}
-
-		Map<Serializable, T> map = new HashMap<>();
-
-		if (_modelPKType == ModelPKType.COMPOUND) {
-			for (Serializable primaryKey : primaryKeys) {
-				T model = fetchByPrimaryKey(primaryKey);
-
-				if (model != null) {
-					map.put(primaryKey, model);
-				}
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		EntityCache entityCache = getEntityCache();
-
-		for (Serializable primaryKey : primaryKeys) {
-			Serializable serializable = entityCache.getResult(
-				_modelImplClass, primaryKey);
-
-			if (serializable != nullModel) {
-				if (serializable == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, (T)serializable);
-				}
+				return _fetchByPrimaryKeys(primaryKeys, null);
 			}
 		}
 
-		if (uncachedPrimaryKeys == null) {
-			return map;
+		return _fetchByPrimaryKeys(primaryKeys, ctPersistenceHelper);
+	}
+
+	public List<T> findAll() {
+		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	public List<T> findAll(int start, int end) {
+		return findAll(start, end, null);
+	}
+
+	public List<T> findAll(
+		int start, int end, OrderByComparator<T> orderByComparator) {
+
+		return findAll(start, end, orderByComparator, true);
+	}
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public List<T> findAll(
+		int start, int end, OrderByComparator<T> orderByComparator,
+		boolean useFinderCache) {
+
+		CTPersistenceHelper ctPersistenceHelper = getCTPersistenceHelper();
+
+		if (ctPersistenceHelper == null) {
+			return _findAll(start, end, orderByComparator, useFinderCache);
 		}
 
-		if ((databaseInMaxParameters > 0) &&
-			(uncachedPrimaryKeys.size() > databaseInMaxParameters)) {
+		try (SafeCloseable safeCloseable =
+				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
+					(Class)_modelClass)) {
 
-			Iterator<Serializable> iterator = uncachedPrimaryKeys.iterator();
-
-			while (iterator.hasNext()) {
-				Set<Serializable> page = new HashSet<>();
-
-				for (int i = 0;
-					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
-
-					page.add(iterator.next());
-				}
-
-				map.putAll(fetchByPrimaryKeys(page));
-			}
-
-			return map;
+			return _findAll(start, end, orderByComparator, useFinderCache);
 		}
-
-		StringBundler sb = new StringBundler(
-			(2 * uncachedPrimaryKeys.size()) + 4);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		if (_modelPKType == ModelPKType.STRING) {
-			for (int i = 0; i < uncachedPrimaryKeys.size(); i++) {
-				sb.append("?");
-
-				sb.append(",");
-			}
-		}
-		else {
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				sb.append((long)primaryKey);
-
-				sb.append(",");
-			}
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			if (_modelPKType == ModelPKType.STRING) {
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				for (Serializable primaryKey : uncachedPrimaryKeys) {
-					queryPos.add(primaryKey);
-				}
-			}
-
-			for (T model : (List<T>)query.list()) {
-				map.put(model.getPrimaryKeyObj(), model);
-
-				cacheResult(model);
-
-				uncachedPrimaryKeys.remove(model.getPrimaryKeyObj());
-			}
-
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				entityCache.putResult(_modelImplClass, primaryKey, nullModel);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
 	}
 
 	@Override
-	public T findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchModelException {
+	public T findByPrimaryKey(Serializable primaryKey) throws E {
+		T model = fetchByPrimaryKey(primaryKey);
 
-		throw new UnsupportedOperationException();
+		if (model == null) {
+			String message = StringBundler.concat(
+				"No ", _modelClass.getSimpleName(),
+				" exists with the primary key ", primaryKey);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(message);
+			}
+
+			throw newNoSuchModelException(message);
+		}
+
+		return model;
 	}
 
 	@Override
@@ -663,13 +653,49 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 	}
 
 	@Override
-	public T remove(Serializable primaryKey) throws NoSuchModelException {
-		throw new UnsupportedOperationException();
+	@SuppressWarnings("unchecked")
+	public T remove(Serializable primaryKey) throws E {
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			T model = (T)session.get(_modelImplClass, primaryKey);
+
+			if (model == null) {
+				String message = StringBundler.concat(
+					"No ", _modelClass.getSimpleName(),
+					" exists with the primary key ", primaryKey);
+
+				if (_log.isDebugEnabled()) {
+					_log.debug(message);
+				}
+
+				throw newNoSuchModelException(message);
+			}
+
+			return remove(model);
+		}
+		catch (NoSuchModelException noSuchModelException) {
+			throw (E)noSuchModelException;
+		}
+		catch (Exception exception) {
+			throw processException(exception);
+		}
+		finally {
+			closeSession(session);
+		}
 	}
 
 	@Override
 	public T remove(T model) {
 		return removeByFunction(model, this::removeImpl);
+	}
+
+	public void removeAll() {
+		for (T model : findAll()) {
+			remove(model);
+		}
 	}
 
 	@Override
@@ -926,6 +952,10 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 		return fieldName;
 	}
 
+	protected CTPersistenceHelper getCTPersistenceHelper() {
+		return null;
+	}
+
 	protected EntityCache getEntityCache() {
 		throw new UnsupportedOperationException();
 	}
@@ -958,6 +988,16 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 		}
 
 		return _permissionsInMemoryFilterEnabled;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected E newNoSuchModelException(String message) {
+		try {
+			return (E)_noSuchModelExceptionMethodHandle.invokeExact(message);
+		}
+		catch (Throwable throwable) {
+			return ReflectionUtil.throwException(throwable);
+		}
 	}
 
 	/**
@@ -997,6 +1037,41 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 
 	protected void setModelImplClass(Class<? extends T> modelImplClass) {
 		_modelImplClass = modelImplClass;
+
+		String className = modelImplClass.getName();
+
+		_finderPathCountAll = new FinderPath(
+			className.concat(".List2"), "countAll", new String[0],
+			new String[0], false);
+		_finderPathWithoutPaginationFindAll = new FinderPath(
+			className.concat(".List2"), "findAll", new String[0], new String[0],
+			true);
+		_finderPathWithPaginationFindAll = new FinderPath(
+			className.concat(".List1"), "findAll", new String[0], new String[0],
+			true);
+
+		try {
+			_defaultOrderByJPQL = (String)modelImplClass.getField(
+				"ORDER_BY_JPQL"
+			).get(
+				null
+			);
+
+			String entityAlias = (String)modelImplClass.getField(
+				"ENTITY_ALIAS"
+			).get(
+				null
+			);
+
+			_entityAliasPrefix = entityAlias.concat(".");
+
+			_countSQL = StringBundler.concat(
+				"SELECT COUNT(", entityAlias, ") FROM ",
+				_modelClass.getSimpleName(), " ", entityAlias);
+		}
+		catch (ReflectiveOperationException reflectiveOperationException) {
+			ReflectionUtil.throwException(reflectiveOperationException);
+		}
 	}
 
 	protected void setModelPKClass(Class<? extends Serializable> clazz) {
@@ -1077,6 +1152,314 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 	 */
 	@Deprecated
 	protected boolean finderCacheEnabled = true;
+
+	private int _countAll() {
+		FinderCache finderCache = getFinderCache();
+
+		Long count = (Long)finderCache.getResult(
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
+
+		if (count == null) {
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(_countSQL);
+
+				count = (Long)query.uniqueResult();
+
+				finderCache.putResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	private T _fetchByPrimaryKey(Serializable primaryKey) {
+		EntityCache entityCache = getEntityCache();
+
+		Serializable serializable = entityCache.getResult(
+			_modelImplClass, primaryKey);
+
+		if (serializable == nullModel) {
+			return null;
+		}
+
+		T model = (T)serializable;
+
+		if (model == null) {
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				model = (T)session.get(_modelImplClass, primaryKey);
+
+				if (model == null) {
+					entityCache.putResult(
+						_modelImplClass, primaryKey, nullModel);
+				}
+				else {
+					cacheResult(model);
+				}
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return model;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<Serializable, T> _fetchByPrimaryKeys(
+		Set<Serializable> primaryKeys,
+		CTPersistenceHelper ctPersistenceHelper) {
+
+		if (primaryKeys.isEmpty()) {
+			return Collections.emptyMap();
+		}
+
+		if (primaryKeys.size() == 1) {
+			Iterator<Serializable> iterator = primaryKeys.iterator();
+
+			Serializable primaryKey = iterator.next();
+
+			T model = fetchByPrimaryKey(primaryKey);
+
+			if (model == null) {
+				return Collections.emptyMap();
+			}
+
+			return Collections.singletonMap(primaryKey, model);
+		}
+
+		Map<Serializable, T> map = new HashMap<>();
+
+		if (_modelPKType == ModelPKType.COMPOUND) {
+			for (Serializable primaryKey : primaryKeys) {
+				T model = fetchByPrimaryKey(primaryKey);
+
+				if (model != null) {
+					map.put(primaryKey, model);
+				}
+			}
+
+			return map;
+		}
+
+		Set<Serializable> uncachedPrimaryKeys = null;
+
+		EntityCache entityCache = getEntityCache();
+
+		for (Serializable primaryKey : primaryKeys) {
+			Serializable serializable;
+
+			if (ctPersistenceHelper == null) {
+				serializable = entityCache.getResult(
+					_modelImplClass, primaryKey);
+			}
+			else {
+				try (SafeCloseable safeCloseable =
+						ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
+							(Class)_modelClass, primaryKey)) {
+
+					serializable = entityCache.getResult(
+						_modelImplClass, primaryKey);
+				}
+			}
+
+			if (serializable != nullModel) {
+				if (serializable == null) {
+					if (uncachedPrimaryKeys == null) {
+						uncachedPrimaryKeys = new HashSet<>();
+					}
+
+					uncachedPrimaryKeys.add(primaryKey);
+				}
+				else {
+					map.put(primaryKey, (T)serializable);
+				}
+			}
+		}
+
+		if (uncachedPrimaryKeys == null) {
+			return map;
+		}
+
+		if ((databaseInMaxParameters > 0) &&
+			(uncachedPrimaryKeys.size() > databaseInMaxParameters)) {
+
+			Iterator<Serializable> iterator = uncachedPrimaryKeys.iterator();
+
+			while (iterator.hasNext()) {
+				Set<Serializable> page = new HashSet<>();
+
+				for (int i = 0;
+					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
+
+					page.add(iterator.next());
+				}
+
+				map.putAll(fetchByPrimaryKeys(page));
+			}
+
+			return map;
+		}
+
+		StringBundler sb = new StringBundler(
+			(2 * uncachedPrimaryKeys.size()) + 4);
+
+		sb.append(getSelectSQL());
+		sb.append(" WHERE ");
+		sb.append(getPKDBName());
+		sb.append(" IN (");
+
+		if (_modelPKType == ModelPKType.STRING) {
+			for (int i = 0; i < uncachedPrimaryKeys.size(); i++) {
+				sb.append("?");
+
+				sb.append(",");
+			}
+		}
+		else {
+			for (Serializable primaryKey : uncachedPrimaryKeys) {
+				sb.append((long)primaryKey);
+
+				sb.append(",");
+			}
+		}
+
+		sb.setIndex(sb.index() - 1);
+
+		sb.append(")");
+
+		String sql = sb.toString();
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Query query = session.createQuery(sql);
+
+			if (_modelPKType == ModelPKType.STRING) {
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				for (Serializable primaryKey : uncachedPrimaryKeys) {
+					queryPos.add(primaryKey);
+				}
+			}
+
+			for (T model : (List<T>)query.list()) {
+				map.put(model.getPrimaryKeyObj(), model);
+
+				cacheResult(model);
+
+				uncachedPrimaryKeys.remove(model.getPrimaryKeyObj());
+			}
+
+			if (ctPersistenceHelper == null) {
+				for (Serializable primaryKey : uncachedPrimaryKeys) {
+					entityCache.putResult(
+						_modelImplClass, primaryKey, nullModel);
+				}
+			}
+		}
+		catch (Exception exception) {
+			throw processException(exception);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		return map;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<T> _findAll(
+		int start, int end, OrderByComparator<T> orderByComparator,
+		boolean useFinderCache) {
+
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindAll;
+				finderArgs = FINDER_ARGS_EMPTY;
+			}
+		}
+		else if (useFinderCache) {
+			finderPath = _finderPathWithPaginationFindAll;
+			finderArgs = new Object[] {start, end, orderByComparator};
+		}
+
+		FinderCache finderCache = getFinderCache();
+
+		List<T> list = null;
+
+		if (useFinderCache) {
+			list = (List<T>)finderCache.getResult(finderPath, finderArgs, this);
+		}
+
+		if (list == null) {
+			String sql = null;
+
+			if (orderByComparator == null) {
+				sql = getSelectSQL().concat(_defaultOrderByJPQL);
+			}
+			else {
+				StringBundler sb = new StringBundler(
+					2 + (orderByComparator.getOrderByFields().length * 2));
+
+				sb.append(getSelectSQL());
+
+				appendOrderByComparator(
+					sb, _entityAliasPrefix, orderByComparator);
+
+				sql = sb.toString();
+			}
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				list = (List<T>)QueryUtil.list(query, getDialect(), start, end);
+
+				cacheResult(list);
+
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
 
 	private String[] _getAliasTypes(
 		Collection<? extends Expression<?>> expressions) {
@@ -1261,6 +1644,9 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 		return queryTable.getDslQuery();
 	}
 
+	private static final MethodType _NEW_NO_SUCH_MODEL_EXCEPTION_METHOD_TYPE =
+		MethodType.methodType(NoSuchModelException.class, String.class);
+
 	private static final boolean _PERMISSIONS_IN_MEMORY_FILTER_ENABLED =
 		GetterUtil.getBoolean(
 			PropsUtil.get("permissions.in.memory.filter.enabled"), true);
@@ -1295,14 +1681,21 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 			Timestamp.class, Type.TIMESTAMP
 		).build();
 
+	private String _countSQL;
 	private int _databaseOrderByMaxColumns;
 	private long _dataLimitModelMaxCount;
 	private DataSource _dataSource;
 	private DB _db;
 	private Map<String, String> _dbColumnNames = Collections.emptyMap();
+	private String _defaultOrderByJPQL;
+	private String _entityAliasPrefix;
+	private FinderPath _finderPathCountAll;
+	private FinderPath _finderPathWithoutPaginationFindAll;
+	private FinderPath _finderPathWithPaginationFindAll;
 	private Class<T> _modelClass;
 	private Class<? extends T> _modelImplClass;
 	private ModelPKType _modelPKType = ModelPKType.COMPOUND;
+	private final MethodHandle _noSuchModelExceptionMethodHandle;
 	private Boolean _permissionsInMemoryFilterEnabled;
 	private SessionFactory _sessionFactory;
 	private Table<?> _table;

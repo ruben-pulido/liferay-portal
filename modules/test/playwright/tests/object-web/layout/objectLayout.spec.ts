@@ -17,6 +17,7 @@ import {loginTest} from '../../../fixtures/loginTest';
 import {objectPagesTest} from '../../../fixtures/objectPagesTest';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
+import {performUserSwitch, userData} from '../../../utils/performLogin';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {generateObjectEntryValues} from '../utils/generateObjectEntry';
 import {generateObjectFields} from '../utils/generateObjectFields';
@@ -31,6 +32,144 @@ export const test = mergeTests(
 );
 
 test.describe('Manage custom layouts through object layout tab', () => {
+	test('can add a block to a layout', async ({
+		apiHelpers,
+		objectLayoutsPage,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+		const blockName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await objectLayoutsPage.openObjectLayoutConfiguration(objectLayoutName);
+
+		await objectLayoutsPage.createObjectLayoutTab(getRandomString());
+
+		await objectLayoutsPage.createObjectLayoutBlock({
+			objectLayoutRegularBlockName: blockName,
+		});
+
+		await expect(
+			objectLayoutsPage.iframeLocator.getByText(blockName)
+		).toBeVisible();
+	});
+
+	test('can add a field to the second column of a block', async ({
+		apiHelpers,
+		objectLayoutsPage,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await objectLayoutsPage.openObjectLayoutConfiguration(objectLayoutName);
+
+		await objectLayoutsPage.createObjectLayoutTab(getRandomString());
+
+		await objectLayoutsPage.createObjectLayoutBlock({
+			objectLayoutRegularBlockName: getRandomString(),
+		});
+
+		await objectLayoutsPage.openObjectLayoutObjectField();
+
+		await objectLayoutsPage.addObjectLayoutObjectField('textField', 2);
+
+		await expect(
+			objectLayoutsPage.layoutTabPanel.getByText('textField')
+		).toBeVisible();
+	});
+
+	test('can add a field to the third column of a block', async ({
+		apiHelpers,
+		objectLayoutsPage,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await objectLayoutsPage.openObjectLayoutConfiguration(objectLayoutName);
+
+		await objectLayoutsPage.createObjectLayoutTab(getRandomString());
+
+		await objectLayoutsPage.createObjectLayoutBlock({
+			objectLayoutRegularBlockName: getRandomString(),
+		});
+
+		await objectLayoutsPage.openObjectLayoutObjectField();
+
+		await objectLayoutsPage.addObjectLayoutObjectField('textField', 3);
+
+		await expect(
+			objectLayoutsPage.layoutTabPanel.getByText('textField')
+		).toBeVisible();
+	});
+
+	test('can add a tab of type Fields', async ({
+		apiHelpers,
+		objectLayoutsPage,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+		const tabName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await objectLayoutsPage.openObjectLayoutConfiguration(objectLayoutName);
+
+		await objectLayoutsPage.createObjectLayoutTab(tabName);
+
+		await expect(
+			objectLayoutsPage.iframeLocator.getByText(tabName)
+		).toBeVisible();
+	});
+
 	test('can add seo block when creating its layout', async ({
 		apiHelpers,
 		objectLayoutsPage,
@@ -98,6 +237,48 @@ test.describe('Manage custom layouts through object layout tab', () => {
 				'entry-a-friendlyurl'
 			);
 		});
+	});
+
+	test('can cancel an in-progress layout update', async ({
+		apiHelpers,
+		objectLayoutsPage,
+		page,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await page.getByRole('link', {name: objectLayoutName}).click();
+
+		await objectLayoutsPage.iframeLocator
+			.getByRole('tab', {name: 'Info'})
+			.click();
+
+		await objectLayoutsPage.iframeLocator
+			.getByRole('textbox')
+			.fill('Layout Updated');
+
+		await objectLayoutsPage.iframeLocator
+			.getByRole('button', {name: 'Cancel'})
+			.first()
+			.click();
+
+		await page.reload();
+
+		await expect(page.getByText(objectLayoutName).first()).toBeVisible();
+		await expect(page.getByText('Layout Updated')).toBeHidden();
 	});
 
 	test('can create, read, update and delete relationship child entry when selected', async ({
@@ -340,6 +521,305 @@ test.describe('Manage custom layouts through object layout tab', () => {
 		});
 	});
 
+	test('can delete a field from a layout', async ({
+		apiHelpers,
+		objectLayoutsPage,
+		page,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await objectLayoutsPage.createObjectLayoutContent({
+			objectFieldNames: ['textField'],
+			objectLayoutName,
+			objectLayoutRegularBlockName: getRandomString(),
+			objectLayoutTabName: getRandomString(),
+		});
+
+		await objectLayoutsPage.iframeLocator.getByText('textField').hover();
+
+		await page
+			.frameLocator('iframe')
+			.getByLabel('More Actions')
+			.nth(2)
+			.click();
+
+		await page
+			.frameLocator('iframe')
+			.getByRole('menuitem', {name: 'Delete'})
+			.click();
+
+		await expect(
+			objectLayoutsPage.iframeLocator.getByText('textField')
+		).toBeHidden();
+	});
+
+	test('can delete a layout', async ({
+		apiHelpers,
+		objectLayoutsPage,
+		page,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await page
+			.getByRole('row')
+			.filter({hasText: objectLayoutName})
+			.locator('.dropdown-toggle')
+			.click();
+
+		await page.getByRole('menuitem', {name: 'Delete'}).click();
+
+		await waitForAlert(page);
+
+		await expect(page.getByText(objectLayoutName)).toBeHidden();
+	});
+
+	test("can update a layout's name", async ({
+		apiHelpers,
+		objectLayoutsPage,
+		page,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await objectLayoutsPage.createObjectLayoutContent({
+			objectFieldNames: ['textField'],
+			objectLayoutName,
+			objectLayoutRegularBlockName: getRandomString(),
+			objectLayoutTabName: getRandomString(),
+		});
+
+		await objectLayoutsPage.setObjectLayoutAsDefault();
+
+		await objectLayoutsPage.iframeLocator
+			.getByRole('button', {name: 'Save'})
+			.first()
+			.click();
+
+		await waitForAlert(page, 'The object layout was updated successfully');
+
+		await page.getByRole('link', {name: objectLayoutName}).click();
+
+		await objectLayoutsPage.iframeLocator
+			.getByRole('tab', {name: 'Info'})
+			.click();
+
+		const updatedObjectLayoutName = getRandomString();
+
+		await objectLayoutsPage.iframeLocator
+			.getByRole('textbox')
+			.fill(updatedObjectLayoutName);
+
+		await objectLayoutsPage.iframeLocator
+			.getByRole('button', {name: 'Save'})
+			.first()
+			.click();
+
+		await waitForAlert(page, 'The object layout was updated successfully');
+
+		await expect(
+			page.getByText(updatedObjectLayoutName).first()
+		).toBeVisible();
+	});
+
+	test('can update an entry on the relationship tab with update permission', async ({
+		apiHelpers,
+		objectLayoutsPage,
+		page,
+		viewObjectEntriesPage,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				panelCategoryKey: 'control_panel.object',
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const objectRelationshipAPIClient = await apiHelpers.buildRestClient(
+			ObjectRelationshipAPI
+		);
+
+		const {body: objectRelationship} =
+			await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+				objectDefinition.externalReferenceCode,
+				{
+					label: {
+						en_US: 'Relationship' + getRandomInt(),
+					},
+					name: 'relationship' + getRandomInt(),
+					objectDefinitionExternalReferenceCode1:
+						objectDefinition.externalReferenceCode,
+					objectDefinitionExternalReferenceCode2:
+						objectDefinition.externalReferenceCode,
+					objectDefinitionId1: objectDefinition.id,
+					objectDefinitionId2: objectDefinition.id,
+					type: 'oneToMany',
+				}
+			);
+
+		apiHelpers.data.push({
+			id: objectRelationship.id,
+			type: 'objectRelationship',
+		});
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await page.getByRole('link', {name: objectLayoutName}).click();
+
+		await objectLayoutsPage.markAsDefaultButton.check();
+
+		await objectLayoutsPage.createObjectLayoutContent({
+			objectFieldNames: ['textField'],
+			objectLayoutName,
+			objectLayoutRegularBlockName: 'Block 1',
+			objectLayoutTabName: 'Field Tab',
+		});
+
+		await objectLayoutsPage.createObjectRelationshipTab(
+			objectLayoutName,
+			'Relationship Tab',
+			objectRelationship.label['en_US']
+		);
+
+		await waitForAlert(
+			page,
+			'Success:The object layout was updated successfully'
+		);
+
+		const applicationName =
+			'c/' + objectDefinition.name.toLowerCase() + 's';
+
+		await apiHelpers.objectEntry.postObjectEntry(
+			{textField: 'Entry Test'},
+			applicationName
+		);
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await page
+			.getByRole('row', {name: 'Entry Test'})
+			.getByRole('link')
+			.click();
+
+		await page.getByRole('link', {name: 'Relationship Tab'}).click();
+
+		await page.getByRole('button', {name: 'New'}).first().click();
+
+		await page.getByRole('menuitem', {name: 'Create New'}).click();
+
+		await page.getByLabel('textField').fill('New entry related');
+
+		await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+		await waitForAlert(page);
+
+		const company =
+			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
+				'liferay.com'
+			);
+
+		const user = await apiHelpers.headlessAdminUser.postUserAccount();
+
+		userData[user.alternateName] = {
+			name: user.givenName,
+			password: 'test',
+			surname: user.familyName,
+		};
+
+		const role = await apiHelpers.headlessAdminUser.postRole({
+			name: 'role' + getRandomInt(),
+			rolePermissions: [
+				{
+					actionIds: ['ACCESS_IN_CONTROL_PANEL'],
+					primaryKey: String(company.companyId),
+					resourceName: `com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet_${objectDefinition.className.split('#')[1]}`,
+					scope: 1,
+				},
+				{
+					actionIds: ['VIEW', 'UPDATE'],
+					primaryKey: String(company.companyId),
+					resourceName: objectDefinition.className,
+					scope: 1,
+				},
+			],
+		});
+
+		await apiHelpers.headlessAdminUser.assignUserToRole(
+			role.externalReferenceCode,
+			user.id
+		);
+
+		await performUserSwitch(page, user.alternateName);
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await viewObjectEntriesPage.frontendDatasetItems.first().click();
+
+		await page.getByRole('link', {name: 'Relationship Tab'}).click();
+
+		await viewObjectEntriesPage.frontendDatasetItems.first().click();
+
+		await page.getByLabel('textField').fill('Entry Updated');
+
+		await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+		await waitForAlert(page);
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await expect(
+			page.getByRole('row', {name: 'Entry Updated'})
+		).toBeVisible();
+	});
+
 	test('can view all fields of an object when creating its layout', async ({
 		apiHelpers,
 		objectLayoutsPage,
@@ -378,8 +858,6 @@ test.describe('Manage custom layouts through object layout tab', () => {
 					.getByRole('option', {name: label.en_US})
 			).toBeVisible();
 		});
-
-		// Clean up
 
 		const objectDefinitionAPIClient =
 			await apiHelpers.buildRestClient(ObjectDefinitionAPI);
@@ -465,6 +943,70 @@ test.describe('Manage custom layouts through object layout tab', () => {
 		});
 	});
 
+	test('cannot add a Relationship tab as the first tab', async ({
+		apiHelpers,
+		objectLayoutsPage,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await objectLayoutsPage.openObjectLayoutConfiguration(objectLayoutName);
+
+		await objectLayoutsPage.addTab.click();
+
+		await expect(
+			objectLayoutsPage.iframeLocator.getByRole('menuitem', {
+				name: 'Relationship Tab',
+			})
+		).toBeHidden();
+	});
+
+	test('cannot add a Relationship tab to an object without relationships', async ({
+		apiHelpers,
+		objectLayoutsPage,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await objectLayoutsPage.openObjectLayoutConfiguration(objectLayoutName);
+
+		await objectLayoutsPage.createObjectLayoutTab(getRandomString());
+
+		await objectLayoutsPage.addTab.click();
+
+		await expect(
+			objectLayoutsPage.iframeLocator.getByRole('menuitem', {
+				name: 'Relationship Tab',
+			})
+		).toBeHidden();
+	});
+
 	test(
 		'cannot save layout as default when other is already set',
 		{tag: ['@LPS-165850']},
@@ -533,6 +1075,201 @@ test.describe('Manage custom layouts through object layout tab', () => {
 			);
 		}
 	);
+
+	test('cannot set a layout as default without the required fields on the first tab', async ({
+		apiHelpers,
+		objectLayoutsPage,
+		page,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await objectLayoutsPage.openObjectLayoutConfiguration(objectLayoutName);
+
+		await objectLayoutsPage.createObjectLayoutTab(getRandomString());
+
+		await objectLayoutsPage.createObjectLayoutBlock({
+			objectLayoutRegularBlockName: getRandomString(),
+		});
+
+		await objectLayoutsPage.setObjectLayoutAsDefault();
+
+		await objectLayoutsPage.iframeLocator
+			.getByRole('button', {name: 'Save'})
+			.first()
+			.click();
+
+		await expect(
+			page.getByText('Error:Please add at least one field')
+		).toBeVisible();
+	});
+
+	test('cannot update an entry on the relationship tab without update permission', async ({
+		apiHelpers,
+		objectLayoutsPage,
+		page,
+		viewObjectEntriesPage,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				panelCategoryKey: 'control_panel.object',
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const objectRelationshipAPIClient = await apiHelpers.buildRestClient(
+			ObjectRelationshipAPI
+		);
+
+		const {body: objectRelationship} =
+			await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+				objectDefinition.externalReferenceCode,
+				{
+					label: {
+						en_US: 'Relationship' + getRandomInt(),
+					},
+					name: 'relationship' + getRandomInt(),
+					objectDefinitionExternalReferenceCode1:
+						objectDefinition.externalReferenceCode,
+					objectDefinitionExternalReferenceCode2:
+						objectDefinition.externalReferenceCode,
+					objectDefinitionId1: objectDefinition.id,
+					objectDefinitionId2: objectDefinition.id,
+					type: 'oneToMany',
+				}
+			);
+
+		apiHelpers.data.push({
+			id: objectRelationship.id,
+			type: 'objectRelationship',
+		});
+
+		const objectLayoutName = getRandomString();
+
+		await objectLayoutsPage.goto(objectDefinition.name);
+
+		await objectLayoutsPage.createObjectLayout(objectLayoutName);
+
+		await page.getByRole('link', {name: objectLayoutName}).click();
+
+		await objectLayoutsPage.markAsDefaultButton.check();
+
+		await objectLayoutsPage.createObjectLayoutContent({
+			objectFieldNames: ['textField'],
+			objectLayoutName,
+			objectLayoutRegularBlockName: 'Block 1',
+			objectLayoutTabName: 'Field Tab',
+		});
+
+		await objectLayoutsPage.createObjectRelationshipTab(
+			objectLayoutName,
+			'Relationship Tab',
+			objectRelationship.label['en_US']
+		);
+
+		await waitForAlert(
+			page,
+			'Success:The object layout was updated successfully'
+		);
+
+		const applicationName =
+			'c/' + objectDefinition.name.toLowerCase() + 's';
+
+		await apiHelpers.objectEntry.postObjectEntry(
+			{textField: 'Entry Test'},
+			applicationName
+		);
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await page
+			.getByRole('row', {name: 'Entry Test'})
+			.getByRole('link')
+			.click();
+
+		await page.getByRole('link', {name: 'Relationship Tab'}).click();
+
+		await page.getByRole('button', {name: 'New'}).first().click();
+
+		await page.getByRole('menuitem', {name: 'Create New'}).click();
+
+		await page.getByLabel('textField').fill('New entry related');
+
+		await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+		await waitForAlert(page);
+
+		const company =
+			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
+				'liferay.com'
+			);
+
+		const user = await apiHelpers.headlessAdminUser.postUserAccount();
+
+		userData[user.alternateName] = {
+			name: user.givenName,
+			password: 'test',
+			surname: user.familyName,
+		};
+
+		const role = await apiHelpers.headlessAdminUser.postRole({
+			name: 'role' + getRandomInt(),
+			rolePermissions: [
+				{
+					actionIds: ['ACCESS_IN_CONTROL_PANEL'],
+					primaryKey: String(company.companyId),
+					resourceName: `com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet_${objectDefinition.className.split('#')[1]}`,
+					scope: 1,
+				},
+				{
+					actionIds: ['VIEW'],
+					primaryKey: String(company.companyId),
+					resourceName: objectDefinition.className,
+					scope: 1,
+				},
+			],
+		});
+
+		await apiHelpers.headlessAdminUser.assignUserToRole(
+			role.externalReferenceCode,
+			user.id
+		);
+
+		await performUserSwitch(page, user.alternateName);
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await viewObjectEntriesPage.frontendDatasetItems.first().click();
+
+		await expect(page.getByLabel('textField')).toBeDisabled();
+
+		await expect(viewObjectEntriesPage.saveObjectEntryButton).toBeHidden();
+
+		await page.getByRole('link', {name: 'Relationship Tab'}).click();
+
+		await viewObjectEntriesPage.frontendDatasetItems.first().click();
+
+		await expect(page.getByLabel('textField')).toBeDisabled();
+
+		await expect(viewObjectEntriesPage.saveObjectEntryButton).toBeHidden();
+	});
 
 	test('seo and categorization blocks can be added and removed from layout', async ({
 		apiHelpers,

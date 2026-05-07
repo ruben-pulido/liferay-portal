@@ -45,14 +45,13 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -352,7 +351,7 @@ public class AssetListAssetEntryProviderImpl
 			return new BooleanClause[0];
 		}
 
-		BooleanQueryImpl booleanQueryImpl = new BooleanQueryImpl();
+		BooleanQuery booleanQuery = new BooleanQuery();
 
 		BooleanFilter assetCategoryIdsBooleanFilter = new BooleanFilter();
 
@@ -367,11 +366,10 @@ public class AssetListAssetEntryProviderImpl
 				assetCategoryIdTermsFilter, BooleanClauseOccur.MUST);
 		}
 
-		booleanQueryImpl.setPreBooleanFilter(assetCategoryIdsBooleanFilter);
+		booleanQuery.setPreBooleanFilter(assetCategoryIdsBooleanFilter);
 
 		return new BooleanClause[] {
-			BooleanClauseFactoryUtil.create(
-				booleanQueryImpl, BooleanClauseOccur.MUST.getName())
+			new BooleanClause<>(booleanQuery, BooleanClauseOccur.MUST)
 		};
 	}
 
@@ -412,7 +410,7 @@ public class AssetListAssetEntryProviderImpl
 			return new BooleanClause[0];
 		}
 
-		BooleanQueryImpl booleanQueryImpl = new BooleanQueryImpl();
+		BooleanQuery booleanQuery = new BooleanQuery();
 
 		BooleanFilter assetTagNamesBooleanFilter = new BooleanFilter();
 
@@ -427,11 +425,10 @@ public class AssetListAssetEntryProviderImpl
 				assetTagIdTermsFilter, BooleanClauseOccur.MUST);
 		}
 
-		booleanQueryImpl.setPreBooleanFilter(assetTagNamesBooleanFilter);
+		booleanQuery.setPreBooleanFilter(assetTagNamesBooleanFilter);
 
 		return new BooleanClause[] {
-			BooleanClauseFactoryUtil.create(
-				booleanQueryImpl, BooleanClauseOccur.MUST.getName())
+			new BooleanClause<>(booleanQuery, BooleanClauseOccur.MUST)
 		};
 	}
 
@@ -537,7 +534,7 @@ public class AssetListAssetEntryProviderImpl
 			return new BooleanClause[0];
 		}
 
-		BooleanQueryImpl booleanQueryImpl = new BooleanQueryImpl();
+		BooleanQuery booleanQuery = new BooleanQuery();
 
 		BooleanFilter booleanFilter = new BooleanFilter();
 
@@ -547,11 +544,10 @@ public class AssetListAssetEntryProviderImpl
 
 		booleanFilter.add(termsFilter, BooleanClauseOccur.MUST);
 
-		booleanQueryImpl.setPreBooleanFilter(booleanFilter);
+		booleanQuery.setPreBooleanFilter(booleanFilter);
 
 		return new BooleanClause[] {
-			BooleanClauseFactoryUtil.create(
-				booleanQueryImpl, BooleanClauseOccur.MUST.getName())
+			new BooleanClause<>(booleanQuery, BooleanClauseOccur.MUST)
 		};
 	}
 

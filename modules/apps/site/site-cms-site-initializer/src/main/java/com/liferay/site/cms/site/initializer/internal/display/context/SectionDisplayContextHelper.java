@@ -16,9 +16,7 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.info.constants.InfoDisplayWebKeys;
 import com.liferay.object.constants.ObjectActionKeys;
-import com.liferay.object.constants.ObjectDefinitionSettingConstants;
 import com.liferay.object.constants.ObjectEntryFolderConstants;
-import com.liferay.object.model.ObjectDefinitionSetting;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
 import com.liferay.object.service.ObjectEntryFolderLocalServiceUtil;
@@ -48,8 +46,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
@@ -61,7 +57,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -141,7 +136,7 @@ public class SectionDisplayContextHelper {
 			httpServletRequest.getAttribute(InfoDisplayWebKeys.INFO_ITEM),
 			rootObjectEntryFolderExternalReferenceCode);
 
-		StringBundler sb = new StringBundler(10);
+		StringBundler sb = new StringBundler(11);
 
 		sb.append("emptySearch=true&filter=");
 
@@ -169,8 +164,116 @@ public class SectionDisplayContextHelper {
 		sb.append("file.metadata,file.previewURL,file.thumbnailURL,");
 		sb.append("numberOfObjectEntries,numberOfObjectEntryFolders,");
 		sb.append("systemProperties.objectDefinitionBrief");
+		sb.append("&sort=dateModified:desc");
 
 		return sb.toString();
+	}
+
+	public List<DropdownItem> getAllSectionBulkActionDropdownItems(
+		HttpServletRequest httpServletRequest) {
+
+		List<DropdownItem> bulkActionDropdownItems =
+			_getBulkActionDropdownItems(httpServletRequest);
+
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setHighlighted(
+				true
+			).setHref(
+				"#"
+			).setIcon(
+				"upload"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "export-for-translation")
+			).build(
+				"export-for-translation"
+			));
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setHref(
+				"#"
+			).setIcon(
+				"download"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "download")
+			).build(
+				"download"
+			));
+
+		_addEditCategoriesAndTagsBulkActions(
+			bulkActionDropdownItems, httpServletRequest);
+
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setHighlighted(
+				true
+			).setHref(
+				"#"
+			).setIcon(
+				"semantic-search"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "find-and-replace")
+			).build(
+				"find-and-replace"
+			));
+
+		_addPermissionsBulkActions(bulkActionDropdownItems, httpServletRequest);
+
+		return bulkActionDropdownItems;
+	}
+
+	public List<FDSActionDropdownItem> getAllSectionFDSActionDropdownItems(
+		HttpServletRequest httpServletRequest) {
+
+		List<FDSActionDropdownItem> fdsActionDropdownItems =
+			getFDSActionDropdownItems(httpServletRequest);
+
+		fdsActionDropdownItems.add(
+			6,
+			FDSActionDropdownItemBuilder.setHref(
+				"{embedded.file.link.href}"
+			).setIcon(
+				"download"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "download")
+			).setMethod(
+				"get"
+			).setTarget(
+				"link"
+			).build(
+				"download"
+			));
+
+		return fdsActionDropdownItems;
+	}
+
+	public List<DropdownItem> getContentsBulkActionDropdownItems(
+		HttpServletRequest httpServletRequest) {
+
+		List<DropdownItem> bulkActionDropdownItems =
+			_getBulkActionDropdownItems(httpServletRequest);
+
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setHighlighted(
+				true
+			).setHref(
+				"#"
+			).setIcon(
+				"upload"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "export-for-translation")
+			).build(
+				"export-for-translation"
+			));
+
+		_addEditCategoriesAndTagsBulkActions(
+			bulkActionDropdownItems, httpServletRequest);
+		_addPermissionsBulkActions(bulkActionDropdownItems, httpServletRequest);
+
+		return bulkActionDropdownItems;
+	}
+
+	public List<FDSActionDropdownItem> getContentsFDSActionDropdownItems(
+		HttpServletRequest httpServletRequest) {
+
+		return getFDSActionDropdownItems(httpServletRequest);
 	}
 
 	public CreationMenu getCreationMenu(
@@ -312,85 +415,181 @@ public class SectionDisplayContextHelper {
 				WebKeys.THEME_DISPLAY);
 
 		return ListUtil.fromArray(
-			new FDSActionDropdownItem(
-				ActionUtil.getBaseViewFolderURL(themeDisplay) + "{embedded.id}",
-				"view", "actionLinkFolder",
-				LanguageUtil.get(httpServletRequest, "view-folder"), "get",
-				"get", null,
+			FDSActionDropdownItemBuilder.setHref(
+				ActionUtil.getBaseViewFolderURL(themeDisplay) + "{embedded.id}"
+			).setIcon(
+				"view"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "view-folder")
+			).setMethod(
+				"get"
+			).setPermissionKey(
+				"get"
+			).setVisibilityFilters(
 				HashMapBuilder.<String, Object>put(
 					"entryClassName", ObjectEntryFolder.class.getName()
-				).build()),
-			new FDSActionDropdownItem(
+				).build()
+			).build(
+				"actionLinkFolder"
+			),
+			FDSActionDropdownItemBuilder.setHref(
 				StringBundler.concat(
 					themeDisplay.getPathFriendlyURLPublic(),
 					GroupConstants.CMS_FRIENDLY_URL, "/e/edit-folder/",
 					_portal.getClassNameId(ObjectEntryFolder.class),
-					"/{embedded.id}?redirect=", themeDisplay.getURLCurrent()),
-				"pencil", "editFolder",
-				LanguageUtil.get(httpServletRequest, "edit"), "get", "update",
-				null,
+					"/{embedded.id}?redirect=", themeDisplay.getURLCurrent())
+			).setIcon(
+				"pencil"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "edit")
+			).setMethod(
+				"get"
+			).setPermissionKey(
+				"update"
+			).setVisibilityFilters(
 				HashMapBuilder.<String, Object>put(
 					"entryClassName", ObjectEntryFolder.class.getName()
-				).build()),
-			new FDSActionDropdownItem(
+				).build()
+			).build(
+				"editFolder"
+			),
+			FDSActionDropdownItemBuilder.setHref(
 				StringBundler.concat(
 					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
 					GroupConstants.CMS_FRIENDLY_URL,
 					"/edit_content_item?objectEntryId={embedded.id}&",
-					"redirect=", themeDisplay.getURLCurrent()),
-				"pencil", "actionLink",
-				LanguageUtil.get(httpServletRequest, "edit"), "get", "update",
-				null),
-			new FDSActionDropdownItem(
+					"redirect=", themeDisplay.getURLCurrent())
+			).setIcon(
+				"pencil"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "edit")
+			).setMethod(
+				"get"
+			).setPermissionKey(
+				"update"
+			).build(
+				"actionLink"
+			),
+			FDSActionDropdownItemBuilder.setHref(
 				StringBundler.concat(
 					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
 					GroupConstants.CMS_FRIENDLY_URL,
-					"/edit_content_item?&p_l_mode=read&p_p_state=",
+					"/edit_content_item?p_l_mode=read&p_p_state=",
 					LiferayWindowState.POP_UP, "&redirect=",
 					themeDisplay.getURLCurrent(),
-					"&objectEntryId={embedded.id}"),
-				"view", "view-content",
-				LanguageUtil.get(httpServletRequest, "view"), null, "get",
-				null),
-			new FDSActionDropdownItem(
-				StringPool.BLANK, "view", "view-file",
-				LanguageUtil.get(httpServletRequest, "view"), null, "get",
-				null),
-			new FDSActionDropdownItem(
+					"&objectEntryId={embedded.id}")
+			).setIcon(
+				"view"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "view")
+			).setPermissionKey(
+				"get"
+			).build(
+				"view-content"
+			),
+			FDSActionDropdownItemBuilder.setHref(
+				StringPool.BLANK
+			).setIcon(
+				"view"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "view")
+			).setPermissionKey(
+				"get"
+			).build(
+				"view-file"
+			),
+			FDSActionDropdownItemBuilder.setHref(
 				StringBundler.concat(
 					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
 					GroupConstants.CMS_FRIENDLY_URL,
 					"/translate_content_item?objectEntryId={embedded.id}&",
-					"redirect=", themeDisplay.getURLCurrent()),
-				"automatic-translate", "translate",
-				LanguageUtil.get(httpServletRequest, "translate"), "get",
-				"update", null),
-			new FDSActionDropdownItem(
-				null, "share", "share",
-				LanguageUtil.get(httpServletRequest, "share"), "get", "share",
-				"link"),
-			new FDSActionDropdownItem(
-				"{actions.expire.href}", "time", "expire",
-				LanguageUtil.get(httpServletRequest, "expire"), "post",
-				"expire", "headless"),
-			new FDSActionDropdownItem(
+					"redirect=", themeDisplay.getURLCurrent())
+			).setIcon(
+				"automatic-translate"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "translate")
+			).setMethod(
+				"get"
+			).setPermissionKey(
+				"update"
+			).build(
+				"translate"
+			),
+			FDSActionDropdownItemBuilder.setIcon(
+				"share"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "share")
+			).setMethod(
+				"get"
+			).setPermissionKey(
+				"share"
+			).setTarget(
+				"link"
+			).build(
+				"share"
+			),
+			FDSActionDropdownItemBuilder.setHref(
+				StringPool.BLANK
+			).setIcon(
+				"info-circle-open"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "show-details")
+			).setTarget(
+				"infoPanel"
+			).build(
+				"show-details"
+			),
+			FDSActionDropdownItemBuilder.setHref(
+				"{actions.expire.href}"
+			).setIcon(
+				"time"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "expire")
+			).setMethod(
+				"post"
+			).setPermissionKey(
+				"expire"
+			).setTarget(
+				"headless"
+			).build(
+				"expire"
+			),
+			FDSActionDropdownItemBuilder.setHref(
 				StringBundler.concat(
 					themeDisplay.getPathFriendlyURLPublic(),
 					GroupConstants.CMS_FRIENDLY_URL,
 					"/version-history?objectEntryId={embedded.id}&backURL=",
-					themeDisplay.getURLCurrent()),
-				"date-time", "version-history",
-				LanguageUtil.get(httpServletRequest, "view-history"), "get",
-				"versions", null),
-			new FDSActionDropdownItem(
-				null, "move-folder", "move",
-				_language.get(httpServletRequest, "move"), null, "update",
-				null),
-			new FDSActionDropdownItem(
-				null, "copy", "copy",
-				_language.get(httpServletRequest, "copy-to"), null, "update",
-				null),
-			new FDSActionDropdownItem(
+					themeDisplay.getURLCurrent())
+			).setIcon(
+				"date-time"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "view-history")
+			).setMethod(
+				"get"
+			).setPermissionKey(
+				"versions"
+			).build(
+				"version-history"
+			),
+			FDSActionDropdownItemBuilder.setIcon(
+				"move-folder"
+			).setLabel(
+				_language.get(httpServletRequest, "move")
+			).setPermissionKey(
+				"update"
+			).build(
+				"move"
+			),
+			FDSActionDropdownItemBuilder.setIcon(
+				"copy"
+			).setLabel(
+				_language.get(httpServletRequest, "copy-to")
+			).setPermissionKey(
+				"update"
+			).build(
+				"copy"
+			),
+			FDSActionDropdownItemBuilder.setHref(
 				PortletURLBuilder.create(
 					_portal.getControlPanelPortletURL(
 						httpServletRequest, TranslationPortletKeys.TRANSLATION,
@@ -405,65 +604,249 @@ public class SectionDisplayContextHelper {
 					"groupId", "{embedded.scopeId}"
 				).setWindowState(
 					LiferayWindowState.POP_UP
-				).buildString(),
-				"upload", "export-for-translation",
-				LanguageUtil.get(httpServletRequest, "export-for-translation"),
-				null, "get", null),
-			new FDSActionDropdownItem(
+				).buildString()
+			).setIcon(
+				"upload"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "export-for-translation")
+			).setPermissionKey(
+				"get"
+			).build(
+				"export-for-translation"
+			),
+			FDSActionDropdownItemBuilder.setHref(
 				StringBundler.concat(
 					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
 					GroupConstants.CMS_FRIENDLY_URL,
 					"/edit_content_item?objectEntryId={embedded.id}&",
-					"redirect=", themeDisplay.getURLCurrent()),
-				"download", "import-translation",
-				LanguageUtil.get(httpServletRequest, "import-translation"),
-				null, "update", null),
+					"redirect=", themeDisplay.getURLCurrent())
+			).setIcon(
+				"download"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "import-translation")
+			).setPermissionKey(
+				"update"
+			).build(
+				"import-translation"
+			),
 			_getPermissionsFDSActionDropdownItem(
 				httpServletRequest, themeDisplay),
-			new FDSActionDropdownItem(
-				null, "trash", "delete",
-				_language.get(httpServletRequest, "delete"), null, "delete",
-				null));
+			FDSActionDropdownItemBuilder.setIcon(
+				"trash"
+			).setLabel(
+				_language.get(httpServletRequest, "delete")
+			).setPermissionKey(
+				"delete"
+			).build(
+				"delete"
+			));
 	}
 
-	private List<Long> _getAcceptedDepotEntryGroupIds(
-		List<Long> depotEntryGroupIds, long objectDefinitionId) {
+	public List<DropdownItem> getFilesBulkActionDropdownItems(
+		HttpServletRequest httpServletRequest) {
 
-		if (_isAcceptAllGroups(objectDefinitionId)) {
-			return depotEntryGroupIds;
-		}
+		List<DropdownItem> bulkActionDropdownItems =
+			_getBulkActionDropdownItems(httpServletRequest);
 
-		List<Long> acceptedGroupIds = _getAcceptedGroupIds(objectDefinitionId);
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setHref(
+				"#"
+			).setIcon(
+				"download"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "download")
+			).build(
+				"download"
+			));
 
-		if (acceptedGroupIds.isEmpty()) {
-			return Collections.emptyList();
-		}
+		_addEditCategoriesAndTagsBulkActions(
+			bulkActionDropdownItems, httpServletRequest);
+		_addPermissionsBulkActions(bulkActionDropdownItems, httpServletRequest);
 
-		return new ArrayList<>(
-			SetUtil.intersect(acceptedGroupIds, depotEntryGroupIds));
+		return bulkActionDropdownItems;
 	}
 
-	private List<Long> _getAcceptedGroupIds(long objectDefinitionId) {
-		List<Long> acceptedGroupIds = new ArrayList<>();
+	public List<FDSActionDropdownItem> getFilesFDSActionDropdownItems(
+		HttpServletRequest httpServletRequest) {
 
-		ObjectDefinitionSetting objectDefinitionSetting =
-			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinitionId,
-				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS);
+		List<FDSActionDropdownItem> fdsActionDropdownItems =
+			getFDSActionDropdownItems(httpServletRequest);
 
-		for (String groupId :
-				StringUtil.split(objectDefinitionSetting.getValue())) {
+		fdsActionDropdownItems.add(
+			6,
+			FDSActionDropdownItemBuilder.setHref(
+				"{embedded.file.link.href}"
+			).setIcon(
+				"download"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "download")
+			).setMethod(
+				"get"
+			).setTarget(
+				"link"
+			).build(
+				"download"
+			));
+		fdsActionDropdownItems.add(
+			7,
+			FDSActionDropdownItemBuilder.setHref(
+				StringBundler.concat(
+					"/o", GroupConstants.CMS_FRIENDLY_URL, "/download-folder/",
+					_portal.getClassNameId(ObjectEntryFolder.class),
+					"/{embedded.id}")
+			).setIcon(
+				"download"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "download")
+			).setMethod(
+				"get"
+			).setTarget(
+				"link"
+			).setVisibilityFilters(
+				HashMapBuilder.<String, Object>put(
+					"entryClassName", ObjectEntryFolder.class.getName()
+				).build()
+			).build(
+				"download-folder"
+			));
 
-			DepotEntry depotEntry =
-				_depotEntryLocalService.fetchGroupDepotEntry(
-					GetterUtil.getLong(groupId));
+		return fdsActionDropdownItems;
+	}
 
-			if (depotEntry != null) {
-				acceptedGroupIds.add(depotEntry.getGroupId());
-			}
-		}
+	private void _addEditCategoriesAndTagsBulkActions(
+		List<DropdownItem> bulkActionDropdownItems,
+		HttpServletRequest httpServletRequest) {
 
-		return acceptedGroupIds;
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setIcon(
+				"pencil"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "edit-categories")
+			).setMethod(
+				"post"
+			).setPermissionKey(
+				"edit-categories"
+			).build(
+				"edit-categories"
+			));
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setIcon(
+				"pencil"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "edit-tags")
+			).setMethod(
+				"post"
+			).setPermissionKey(
+				"edit-tags"
+			).build(
+				"edit-tags"
+			));
+	}
+
+	private void _addPermissionsBulkActions(
+		List<DropdownItem> bulkActionDropdownItems,
+		HttpServletRequest httpServletRequest) {
+
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setHref(
+				"#"
+			).setIcon(
+				"password-policies"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "permissions")
+			).build(
+				"permissions"
+			));
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setHref(
+				"#"
+			).setIcon(
+				"password-policies"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "default-permissions")
+			).build(
+				"default-permissions"
+			));
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setHref(
+				StringPool.BLANK
+			).setIcon(
+				"password-policies"
+			).setLabel(
+				LanguageUtil.get(
+					httpServletRequest, "edit-default-permissions-by-role")
+			).build(
+				"edit-default-permissions-by-role"
+			));
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setHref(
+				StringPool.BLANK
+			).setIcon(
+				"password-policies"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "edit-permissions-by-role")
+			).build(
+				"edit-permissions-by-role"
+			));
+		bulkActionDropdownItems.add(
+			FDSActionDropdownItemBuilder.setHref(
+				StringPool.BLANK
+			).setIcon(
+				"password-policies"
+			).setLabel(
+				LanguageUtil.get(
+					httpServletRequest, "reset-to-default-permissions")
+			).build(
+				"reset-to-default-permissions"
+			));
+	}
+
+	private List<DropdownItem> _getBulkActionDropdownItems(
+		HttpServletRequest httpServletRequest) {
+
+		return ListUtil.fromArray(
+			FDSActionDropdownItemBuilder.setHref(
+				"#"
+			).setIcon(
+				"trash"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "delete")
+			).build(
+				"delete"
+			),
+			FDSActionDropdownItemBuilder.setHighlighted(
+				true
+			).setHref(
+				"#"
+			).setIcon(
+				"move-folder"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "move-to")
+			).build(
+				"move-to"
+			),
+			FDSActionDropdownItemBuilder.setHighlighted(
+				true
+			).setHref(
+				"#"
+			).setIcon(
+				"copy"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "copy-to")
+			).build(
+				"copy-to"
+			),
+			FDSActionDropdownItemBuilder.setHighlighted(
+				true
+			).setHref(
+				"#"
+			).setIcon(
+				"time"
+			).setLabel(
+				LanguageUtil.get(httpServletRequest, "expire")
+			).build(
+				"expire"
+			));
 	}
 
 	private JSONArray _getDepotEntriesJSONArray(
@@ -478,7 +861,7 @@ public class SectionDisplayContextHelper {
 
 		if (objectDefinitionId != 0) {
 			return _getDepotEntriesJSONArray(
-				_getAcceptedDepotEntryGroupIds(
+				ActionUtil.getAcceptedDepotEntryGroupIds(
 					depotEntryGroupIds, objectDefinitionId),
 				locale);
 		}
@@ -702,32 +1085,6 @@ public class SectionDisplayContextHelper {
 		}
 
 		return new String[] {rootObjectEntryFolderExternalReferenceCode};
-	}
-
-	private boolean _isAcceptAllGroups(long objectDefinitionId) {
-		ObjectDefinitionSetting objectDefinitionSetting =
-			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinitionId,
-				ObjectDefinitionSettingConstants.NAME_ACCEPT_ALL_GROUPS);
-
-		if ((objectDefinitionSetting != null) &&
-			GetterUtil.getBoolean(objectDefinitionSetting.getValue())) {
-
-			return true;
-		}
-
-		objectDefinitionSetting =
-			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinitionId,
-				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS);
-
-		if ((objectDefinitionSetting == null) ||
-			Validator.isNull(objectDefinitionSetting.getValue())) {
-
-			return true;
-		}
-
-		return false;
 	}
 
 	private boolean _modelResourcePermissionContains(

@@ -17,7 +17,6 @@ import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
@@ -32,7 +31,6 @@ import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ResourceLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -339,6 +337,14 @@ public class SegmentsEntryLocalServiceImpl
 
 	@Override
 	public List<SegmentsEntry> getSegmentsEntries(
+		long[] groupIds, boolean active, String[] sources) {
+
+		return segmentsEntryPersistence.findByG_A_SRC(
+			groupIds, active, sources);
+	}
+
+	@Override
+	public List<SegmentsEntry> getSegmentsEntries(
 		long[] segmentsEntryIds, int start, int end) {
 
 		return segmentsEntryPersistence.findBySegmentsEntryId(
@@ -460,7 +466,7 @@ public class SegmentsEntryLocalServiceImpl
 		if (!FeatureFlagManagerUtil.isEnabled(
 				CompanyConstants.SYSTEM, "LPD-78863")) {
 
-			BooleanQuery booleanQuery = new BooleanQueryImpl();
+			BooleanQuery booleanQuery = new BooleanQuery();
 
 			booleanQuery.addTerm(
 				"source",
@@ -469,8 +475,7 @@ public class SegmentsEntryLocalServiceImpl
 
 			searchContext.setBooleanClauses(
 				new BooleanClause[] {
-					BooleanClauseFactoryUtil.create(
-						booleanQuery, BooleanClauseOccur.MUST.getName())
+					new BooleanClause<>(booleanQuery, BooleanClauseOccur.MUST)
 				});
 		}
 

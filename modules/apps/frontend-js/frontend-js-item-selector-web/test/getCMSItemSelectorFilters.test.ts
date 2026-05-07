@@ -28,7 +28,7 @@ describe('getCMSItemSelectorFilters', () => {
 
 		expect(filters.map((f) => f.id)).toEqual([
 			'groupIds',
-			'objectDefinitionId',
+			'objectDefinitionExternalReferenceCode',
 			'taxonomyCategoryIds',
 			'keywords',
 			'creatorId',
@@ -41,14 +41,20 @@ describe('getCMSItemSelectorFilters', () => {
 			'dateReview',
 		]);
 
+		const spaceFilter = filters.find(
+			(f) => f.id === 'groupIds'
+		) as ISelectionFilterConfig;
+
+		expect(spaceFilter?.apiURL).toContain("filter=type eq 'Space'");
+
 		const typeFilter = filters.find(
-			(f) => f.id === 'objectDefinitionId'
+			(f) => f.id === 'objectDefinitionExternalReferenceCode'
 		) as ISelectionFilterConfig;
 
 		expect(typeFilter?.apiURL).toContain(
 			"objectFolderExternalReferenceCode eq 'L_CMS_FILE_TYPES'"
 		);
-		expect(typeFilter?.entityFieldType).toBe(EEntityFieldType.INTEGER);
+		expect(typeFilter?.entityFieldType).toBe(EEntityFieldType.STRING);
 		expect(typeFilter?.itemLabel).toBe('label.LANG');
 
 		const categoryFilter = filters.find(
@@ -76,6 +82,13 @@ describe('getCMSItemSelectorFilters', () => {
 
 		expect(groupedFilters.length).toBe(2);
 		expect(groupedFilters[0].filters.length).toBe(6);
+		expect(groupedFilters[0].filters[0]).toBe('groupIds');
 		expect(groupedFilters[1].filters.length).toBe(6);
+	});
+
+	it('lets the caller override the space filter id', () => {
+		const groupedFilters = getCMSItemSelectorGroupedFilters('scopeGroupId');
+
+		expect(groupedFilters[0].filters[0]).toBe('scopeGroupId');
 	});
 });

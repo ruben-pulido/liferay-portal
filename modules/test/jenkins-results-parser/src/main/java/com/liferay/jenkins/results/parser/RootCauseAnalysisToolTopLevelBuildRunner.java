@@ -493,6 +493,7 @@ public class RootCauseAnalysisToolTopLevelBuildRunner
 			portalBatchName.startsWith("modules-compile") ||
 			portalBatchName.startsWith("modules-semantic-versioning") ||
 			portalBatchName.startsWith("rest-builder") ||
+			portalBatchName.startsWith("rest-builder-and-service-builder") ||
 			portalBatchName.startsWith("service-builder")) {
 
 			return true;

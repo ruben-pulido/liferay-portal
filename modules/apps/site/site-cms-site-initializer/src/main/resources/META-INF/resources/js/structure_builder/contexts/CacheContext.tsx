@@ -210,11 +210,17 @@ function useCache<T extends CacheKey>(
 }
 
 function useStaleCache() {
-	const broadcast = new BroadcastChannel('update-cache');
+	const broadcastRef = useRef<BroadcastChannel | null>(null);
 
-	return (key: CacheKey) => {
-		broadcast.postMessage({key, type: 'staleCache'});
-	};
+	useEffect(() => {
+		broadcastRef.current = new BroadcastChannel('update-cache');
+
+		return () => broadcastRef.current?.close();
+	}, []);
+
+	return useCallback((key: CacheKey) => {
+		broadcastRef.current?.postMessage({key, type: 'staleCache'});
+	}, []);
 }
 
 export default CacheContextProvider;

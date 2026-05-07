@@ -366,6 +366,10 @@ public class MarketplaceUtil {
 			ByteArrayOutputStream byteArrayOutputStream =
 				new ByteArrayOutputStream();
 
+			Properties properties = entry.getValue();
+
+			properties.store(byteArrayOutputStream, null);
+
 			zipOutputStream.write(byteArrayOutputStream.toByteArray());
 
 			zipOutputStream.closeEntry();

@@ -10,8 +10,8 @@ import {
 } from '@liferay/object-admin-rest-client-js';
 import {expect, mergeTests} from '@playwright/test';
 
-import {applicationsMenuPageTest} from '../../../fixtures/applicationsMenuPageTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
+import {globalMenuPagesTest} from '../../../fixtures/globalMenuPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {objectPagesTest} from '../../../fixtures/objectPagesTest';
 import {workflowPagesTest} from '../../../fixtures/workflowPagesTest';
@@ -22,7 +22,7 @@ import {generateObjectEntryValues} from '../utils/generateObjectEntry';
 import {generateObjectFields} from '../utils/generateObjectFields';
 
 export const test = mergeTests(
-	applicationsMenuPageTest,
+	globalMenuPagesTest,
 	dataApiHelpersTest,
 	loginTest(),
 	objectPagesTest,
@@ -92,7 +92,8 @@ test(
 		await page.getByRole('link', {name: viewName}).waitFor();
 
 		await page
-			.getByPlaceholder('Search')
+			.getByRole('search')
+			.getByRole('searchbox', {name: 'Search'})
 			.fill('NonExistentView' + getRandomInt());
 
 		await page.keyboard.press('Enter');
@@ -1539,9 +1540,9 @@ test(
 	{tag: '@LPS-144957'},
 	async ({
 		apiHelpers,
-		applicationsMenuPage,
 		configurationTabPage,
 		editObjectViewPage,
+		globalMenuPage,
 		objectViewPage,
 		page,
 		viewObjectEntriesPage,
@@ -1564,7 +1565,7 @@ test(
 			applicationName
 		);
 
-		await applicationsMenuPage.goToProcessBuilder();
+		await globalMenuPage.goToApplications('Process Builder');
 
 		await configurationTabPage.configurationTabLink.click();
 
@@ -1958,9 +1959,9 @@ test(
 	{tag: '@LPS-169016'},
 	async ({
 		apiHelpers,
-		applicationsMenuPage,
 		configurationTabPage,
 		editObjectViewPage,
+		globalMenuPage,
 		objectViewPage,
 		page,
 		viewObjectEntriesPage,
@@ -1983,7 +1984,7 @@ test(
 			applicationName
 		);
 
-		await applicationsMenuPage.goToProcessBuilder();
+		await globalMenuPage.goToApplications('Process Builder');
 
 		await configurationTabPage.configurationTabLink.click();
 
@@ -2321,7 +2322,10 @@ test(
 
 		await page.getByRole('link', {name: viewNameB}).waitFor();
 
-		await page.getByPlaceholder('Search').fill(viewNameA);
+		await page
+			.getByRole('search')
+			.getByRole('searchbox', {name: 'Search'})
+			.fill(viewNameA);
 
 		await page.keyboard.press('Enter');
 

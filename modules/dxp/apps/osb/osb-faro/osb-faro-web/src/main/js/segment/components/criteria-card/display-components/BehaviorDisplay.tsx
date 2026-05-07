@@ -1,7 +1,6 @@
 import DateFilterConjunctionDisplay from './DateFilterConjunctionDisplay';
 import OccurenceConjunctionDisplay from './OccurenceConjunctionDisplay';
 import React from 'react';
-import RealTimePeriodDisplay from './RealTimePeriodDisplay';
 import ReferencedEntityDisplay from './ReferencedEntityDisplay';
 import {ASSET_TYPE_LANG_MAP} from 'shared/util/lang';
 import {CustomValue} from 'shared/util/records';
@@ -31,7 +30,7 @@ const BehaviorDisplay: React.FC<IDisplayComponentProps> = ({
 		getPropertyValue(valueIMap, 'value', 0)
 	);
 
-	const operatorKey = maybeFormatToKnownType(operatorName, name);
+	const operatorKey = maybeFormatToKnownType(operatorName ?? '', name);
 
 	const operatorLabel = getOperatorLabel(operatorKey, type);
 
@@ -54,23 +53,25 @@ const BehaviorDisplay: React.FC<IDisplayComponentProps> = ({
 
 			<ReferencedEntityDisplay
 				id={id}
-				label={ASSET_TYPE_LANG_MAP[objectType]}
+				label={
+					ASSET_TYPE_LANG_MAP[
+						objectType as keyof typeof ASSET_TYPE_LANG_MAP
+					]
+				}
 				type={EntityType.Assets}
 			/>
 
-			<OccurenceConjunctionDisplay
-				operatorName={eventOperator}
-				value={occurenceCount}
-			/>
+			{segmentType === SegmentTypes.Batch && (
+				<>
+					<OccurenceConjunctionDisplay
+						operatorName={eventOperator}
+						value={occurenceCount}
+					/>
 
-			{segmentType === SegmentTypes.RealTime ? (
-				<RealTimePeriodDisplay
-					conjunctionCriterion={conjunctionCriterion}
-				/>
-			) : (
-				<DateFilterConjunctionDisplay
-					conjunctionCriterion={conjunctionCriterion}
-				/>
+					<DateFilterConjunctionDisplay
+						conjunctionCriterion={conjunctionCriterion}
+					/>
+				</>
 			)}
 		</>
 	);
