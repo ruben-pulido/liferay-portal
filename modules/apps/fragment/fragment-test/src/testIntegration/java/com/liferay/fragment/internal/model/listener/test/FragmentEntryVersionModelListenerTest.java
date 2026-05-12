@@ -15,7 +15,9 @@ import com.liferay.fragment.model.FragmentEntryVersion;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.fragment.service.persistence.FragmentEntryVersionPersistence;
 import com.liferay.fragment.test.util.FragmentTestUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -27,6 +29,7 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
+import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -34,11 +37,7 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.sql.Timestamp;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -64,15 +63,46 @@ public class FragmentEntryVersionModelListenerTest {
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
-		_date = new Date(System.currentTimeMillis() + 3600000L);
-		_modifiedDateCounter = System.currentTimeMillis() + 3600000L;
-		_versionCounter = 1000;
+		_createDateTimestamp = new Timestamp(
+			System.currentTimeMillis() + 3_600_000L);
+		_modifiedDateTime = System.currentTimeMillis() + 3_600_000L;
+		_version = 1000;
 	}
 
 	@Test
 	public void testOnAfterCreate() throws Throwable {
-		_testOnAfterCreateDeletesOldVersions();
-		_testOnAfterCreateSkipsCleanup();
+		FragmentEntry fragmentEntry = _addFragmentEntry();
+
+		int oldestVersion = _getOldestVersion(fragmentEntry);
+
+		Assert.assertTrue(oldestVersion > 0);
+
+		Assert.assertEquals(1, _countFragmentEntryVersions(fragmentEntry));
+
+		_insertFragmentEntryVersions(
+			FragmentEntryVersionModelListener.MAX_VERSIONS - 2, fragmentEntry);
+
+		Assert.assertEquals(
+			FragmentEntryVersionModelListener.MAX_VERSIONS - 1,
+			_countFragmentEntryVersions(fragmentEntry));
+		Assert.assertTrue(
+			_hasFragmentEntryVersion(fragmentEntry, oldestVersion));
+
+		_updateFragmentEntry(fragmentEntry);
+
+		Assert.assertEquals(
+			FragmentEntryVersionModelListener.MAX_VERSIONS,
+			_countFragmentEntryVersions(fragmentEntry));
+		Assert.assertTrue(
+			_hasFragmentEntryVersion(fragmentEntry, oldestVersion));
+
+		_updateFragmentEntry(fragmentEntry);
+
+		Assert.assertEquals(
+			FragmentEntryVersionModelListener.MAX_VERSIONS,
+			_countFragmentEntryVersions(fragmentEntry));
+		Assert.assertFalse(
+			_hasFragmentEntryVersion(fragmentEntry, oldestVersion));
 	}
 
 	private FragmentEntry _addFragmentEntry() throws Exception {
@@ -91,125 +121,112 @@ public class FragmentEntryVersionModelListenerTest {
 				_group.getGroupId(), TestPropsValues.getUserId()));
 	}
 
-	private void _addFragmentEntryVersions(
-			int count, FragmentEntry fragmentEntry)
+	private int _countFragmentEntryVersions(FragmentEntry fragmentEntry)
 		throws Throwable {
 
-		for (int i = 0; i < count; i++) {
-			FragmentEntryVersion newVersion =
-				_fragmentEntryVersionPersistence.create(
-					_counterLocalService.increment(
-						FragmentEntryVersion.class.getName()));
+		return TransactionInvokerUtil.invoke(
+			_transactionConfig,
+			() -> _fragmentEntryVersionPersistence.countByFragmentEntryId(
+				fragmentEntry.getFragmentEntryId()));
+	}
 
-			Date modifiedDate = new Date(_modifiedDateCounter);
+	private int _getOldestVersion(FragmentEntry fragmentEntry)
+		throws Throwable {
 
-			_modifiedDateCounter += 1000L;
-
-			newVersion.setVersion(_versionCounter++);
-			newVersion.setFragmentEntryId(fragmentEntry.getFragmentEntryId());
-			newVersion.setGroupId(fragmentEntry.getGroupId());
-			newVersion.setCompanyId(fragmentEntry.getCompanyId());
-			newVersion.setUserId(fragmentEntry.getUserId());
-			newVersion.setUserName(fragmentEntry.getUserName());
-			newVersion.setCreateDate(_date);
-			newVersion.setModifiedDate(modifiedDate);
-			newVersion.setFragmentCollectionId(
-				fragmentEntry.getFragmentCollectionId());
-			newVersion.setFragmentEntryKey(fragmentEntry.getFragmentEntryKey());
-			newVersion.setName(RandomTestUtil.randomString());
-			newVersion.setStatus(WorkflowConstants.STATUS_APPROVED);
-
+		FragmentEntryVersion fragmentEntryVersion =
 			TransactionInvokerUtil.invoke(
 				_transactionConfig,
-				() -> _fragmentEntryVersionPersistence.update(newVersion));
+				() ->
+					_fragmentEntryVersionPersistence.
+						fetchByFragmentEntryId_First(
+							fragmentEntry.getFragmentEntryId(),
+							OrderByComparatorFactoryUtil.create(
+								"FragmentEntryVersion", "version", true)));
+
+		if (fragmentEntryVersion == null) {
+			return -1;
 		}
+
+		return fragmentEntryVersion.getVersion();
 	}
 
-	private long _countFragmentEntryVersions(FragmentEntry fragmentEntry)
+	private boolean _hasFragmentEntryVersion(
+			FragmentEntry fragmentEntry, int version)
+		throws Throwable {
+
+		FragmentEntryVersion fragmentEntryVersion =
+			TransactionInvokerUtil.invoke(
+				_transactionConfig,
+				() ->
+					_fragmentEntryVersionPersistence.
+						fetchByFragmentEntryId_Version(
+							fragmentEntry.getFragmentEntryId(), version));
+
+		if (fragmentEntryVersion != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private void _insertFragmentEntryVersions(
+			int count, FragmentEntry fragmentEntry)
 		throws Exception {
 
 		try (Connection connection = DataAccess.getConnection();
 
-			PreparedStatement preparedStatement = connection.prepareStatement(
-				"select count(*) as count from FragmentEntryVersion where " +
-					"fragmentEntryId = ?")) {
+			PreparedStatement preparedStatement =
+				AutoBatchPreparedStatementUtil.autoBatch(
+					connection,
+					StringBundler.concat(
+						"insert into FragmentEntryVersion (mvccVersion, ",
+						"ctCollectionId, fragmentEntryVersionId, version, ",
+						"fragmentEntryId, groupId, companyId, userId, ",
+						"createDate, modifiedDate, name, status) values (0, ",
+						"0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))) {
 
-			preparedStatement.setLong(1, fragmentEntry.getFragmentEntryId());
+			for (int i = 0; i < count; i++) {
+				Timestamp modifiedDateTimestamp = new Timestamp(
+					_modifiedDateTime);
 
-			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				if (resultSet.next()) {
-					return resultSet.getLong("count");
-				}
+				_modifiedDateTime += 1000L;
 
-				return 0;
+				preparedStatement.setLong(
+					1,
+					_counterLocalService.increment(
+						FragmentEntryVersion.class.getName()));
+				preparedStatement.setInt(2, _version++);
+				preparedStatement.setLong(
+					3, fragmentEntry.getFragmentEntryId());
+				preparedStatement.setLong(4, fragmentEntry.getGroupId());
+				preparedStatement.setLong(5, fragmentEntry.getCompanyId());
+				preparedStatement.setLong(6, fragmentEntry.getUserId());
+				preparedStatement.setTimestamp(7, _createDateTimestamp);
+				preparedStatement.setTimestamp(8, modifiedDateTimestamp);
+				preparedStatement.setString(9, RandomTestUtil.randomString());
+				preparedStatement.setInt(10, WorkflowConstants.STATUS_APPROVED);
+
+				preparedStatement.addBatch();
 			}
+
+			preparedStatement.executeBatch();
 		}
+
+		_fragmentEntryVersionPersistence.clearCache();
 	}
 
-	private List<Integer> _getFragmentEntryVersions(FragmentEntry fragmentEntry)
+	private FragmentEntry _updateFragmentEntry(FragmentEntry fragmentEntry)
 		throws Exception {
 
-		List<Integer> versions = new ArrayList<>();
+		fragmentEntry.setHtml(RandomTestUtil.randomString());
 
-		try (Connection connection = DataAccess.getConnection();
-
-			PreparedStatement preparedStatement = connection.prepareStatement(
-				"select version from FragmentEntryVersion where " +
-					"fragmentEntryId = ? order by version")) {
-
-			preparedStatement.setLong(1, fragmentEntry.getFragmentEntryId());
-
-			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				while (resultSet.next()) {
-					versions.add(resultSet.getInt("version"));
-				}
-			}
-		}
-
-		return versions;
+		return _fragmentEntryLocalService.updateFragmentEntry(fragmentEntry);
 	}
-
-	private void _testOnAfterCreateDeletesOldVersions() throws Throwable {
-		FragmentEntry fragmentEntry = _addFragmentEntry();
-
-		_addFragmentEntryVersions(20, fragmentEntry);
-
-		int maxVersions = FragmentEntryVersionModelListener.MAX_VERSIONS;
-
-		List<Integer> expectedVersions = new ArrayList<>(maxVersions);
-
-		for (int version = _versionCounter - maxVersions;
-			 version < _versionCounter; version++) {
-
-			expectedVersions.add(version);
-		}
-
-		Assert.assertEquals(
-			expectedVersions, _getFragmentEntryVersions(fragmentEntry));
-	}
-
-	private void _testOnAfterCreateSkipsCleanup() throws Throwable {
-		int versionsToGenerate = 5;
-
-		FragmentEntry fragmentEntry = _addFragmentEntry();
-
-		long initialCount = _countFragmentEntryVersions(fragmentEntry);
-
-		_addFragmentEntryVersions(versionsToGenerate, fragmentEntry);
-
-		Assert.assertEquals(
-			versionsToGenerate + initialCount,
-			_countFragmentEntryVersions(fragmentEntry));
-	}
-
-	private static final TransactionConfig _transactionConfig =
-		TransactionConfig.Factory.create(
-			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
 	@Inject
 	private CounterLocalService _counterLocalService;
 
-	private Date _date;
+	private Timestamp _createDateTimestamp;
 
 	@Inject
 	private FragmentEntryLocalService _fragmentEntryLocalService;
@@ -220,7 +237,10 @@ public class FragmentEntryVersionModelListenerTest {
 	@DeleteAfterTestRun
 	private Group _group;
 
-	private long _modifiedDateCounter;
-	private int _versionCounter;
+	private long _modifiedDateTime;
+	private final TransactionConfig _transactionConfig =
+		TransactionConfig.Factory.create(
+			Propagation.REQUIRED, new Class<?>[] {Exception.class});
+	private int _version;
 
 }
