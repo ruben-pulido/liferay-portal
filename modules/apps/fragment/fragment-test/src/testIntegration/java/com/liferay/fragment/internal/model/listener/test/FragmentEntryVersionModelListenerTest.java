@@ -8,6 +8,7 @@ package com.liferay.fragment.internal.model.listener.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.change.tracking.model.CTCollection;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
+import com.liferay.change.tracking.service.CTCollectionService;
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.internal.model.listener.FragmentEntryVersionModelListener;
@@ -107,6 +108,38 @@ public class FragmentEntryVersionModelListenerTest {
 			_countFragmentEntryVersions(fragmentEntry));
 		Assert.assertFalse(
 			_hasFragmentEntryVersion(fragmentEntry, oldestVersion));
+	}
+
+	@Test
+	public void testOnAfterCreateAfterPublishingCtCollection()
+		throws Throwable {
+
+		FragmentEntry fragmentEntry = _addFragmentEntry();
+
+		_insertFragmentEntryVersions(
+			FragmentEntryVersionModelListener.MAX_VERSIONS - 1, fragmentEntry);
+
+		Assert.assertEquals(
+			FragmentEntryVersionModelListener.MAX_VERSIONS,
+			_countFragmentEntryVersions(fragmentEntry));
+
+		CTCollection ctCollection = _ctCollectionLocalService.addCTCollection(
+			null, TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
+			0, RandomTestUtil.randomString(), null);
+
+		try (SafeCloseable safeCloseable =
+				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+					ctCollection.getCtCollectionId())) {
+
+			_updateFragmentEntry(fragmentEntry);
+		}
+
+		_ctCollectionService.publishCTCollection(
+			TestPropsValues.getUserId(), ctCollection.getCtCollectionId());
+
+		Assert.assertEquals(
+			FragmentEntryVersionModelListener.MAX_VERSIONS,
+			_countFragmentEntryVersions(fragmentEntry));
 	}
 
 	@Test
@@ -261,6 +294,9 @@ public class FragmentEntryVersionModelListenerTest {
 
 	@Inject
 	private CTCollectionLocalService _ctCollectionLocalService;
+
+	@Inject
+	private CTCollectionService _ctCollectionService;
 
 	@Inject
 	private FragmentEntryLocalService _fragmentEntryLocalService;
