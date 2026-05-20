@@ -33,10 +33,15 @@ public class FragmentEntryVersionModelListener
 	public void onAfterCreate(FragmentEntryVersion fragmentEntryVersion)
 		throws ModelListenerException {
 
-		try {
-			long ctCollectionId = fragmentEntryVersion.getCtCollectionId();
-			long fragmentEntryId = fragmentEntryVersion.getFragmentEntryId();
+		_trimVersions(
+			fragmentEntryVersion.getCtCollectionId(),
+			fragmentEntryVersion.getFragmentEntryId());
+	}
 
+	private void _trimVersions(long ctCollectionId, long fragmentEntryId)
+		throws ModelListenerException {
+
+		try {
 			int versionCount = _fragmentEntryVersionPersistence.dslQueryCount(
 				DSLQueryFactoryUtil.count(
 				).from(
@@ -84,8 +89,7 @@ public class FragmentEntryVersionModelListener
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					"Unable to clean up old fragment entry versions for " +
-						"fragment entry ID " +
-							fragmentEntryVersion.getFragmentEntryId(),
+						"fragment entry ID " + fragmentEntryId,
 					exception);
 			}
 		}
