@@ -24,9 +24,14 @@ public class FragmentEntryVersionUpgradeProcess extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		for (long fragmentEntryId : _getFragmentEntryIds()) {
+		for (long[] ctCollectionAndFragmentEntryId :
+				_getCtCollectionAndFragmentEntryIds()) {
+
+			long ctCollectionId = ctCollectionAndFragmentEntryId[0];
+			long fragmentEntryId = ctCollectionAndFragmentEntryId[1];
+
 			List<Long> fragmentEntryVersionIds = _getFragmentEntryVersionIds(
-				fragmentEntryId);
+				ctCollectionId, fragmentEntryId);
 
 			List<Long> fragmentEntryVersionIdsToDelete =
 				fragmentEntryVersionIds.subList(
@@ -49,33 +54,44 @@ public class FragmentEntryVersionUpgradeProcess extends UpgradeProcess {
 		}
 	}
 
-	private List<Long> _getFragmentEntryIds() throws Exception {
-		List<Long> fragmentEntryIds = new ArrayList<>();
+	private List<long[]> _getCtCollectionAndFragmentEntryIds()
+		throws Exception {
+
+		List<long[]> ctCollectionAndFragmentEntryIds = new ArrayList<>();
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(
-				"select fragmentEntryId from FragmentEntryVersion group by " +
-					"fragmentEntryId having count(*) > " + MAX_VERSIONS);
+				StringBundler.concat(
+					"select ctCollectionId, fragmentEntryId from ",
+					"FragmentEntryVersion group by ctCollectionId, ",
+					"fragmentEntryId having count(*) > ", MAX_VERSIONS));
 
 			ResultSet resultSet = preparedStatement.executeQuery()) {
 
 			while (resultSet.next()) {
-				fragmentEntryIds.add(resultSet.getLong("fragmentEntryId"));
+				ctCollectionAndFragmentEntryIds.add(
+					new long[] {
+						resultSet.getLong("ctCollectionId"),
+						resultSet.getLong("fragmentEntryId")
+					});
 			}
 		}
 
-		return fragmentEntryIds;
+		return ctCollectionAndFragmentEntryIds;
 	}
 
-	private List<Long> _getFragmentEntryVersionIds(long fragmentEntryId)
+	private List<Long> _getFragmentEntryVersionIds(
+			long ctCollectionId, long fragmentEntryId)
 		throws Exception {
 
 		List<Long> fragmentEntryVersionIds = new ArrayList<>();
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(
 				"select fragmentEntryVersionId from FragmentEntryVersion " +
-					"where fragmentEntryId = ? order by version desc")) {
+					"where ctCollectionId = ? and fragmentEntryId = ? order " +
+						"by version desc")) {
 
-			preparedStatement.setLong(1, fragmentEntryId);
+			preparedStatement.setLong(1, ctCollectionId);
+			preparedStatement.setLong(2, fragmentEntryId);
 
 			try (ResultSet resultSet = preparedStatement.executeQuery()) {
 				while (resultSet.next()) {
